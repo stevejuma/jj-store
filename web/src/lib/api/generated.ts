@@ -2171,6 +2171,14 @@ export interface components {
           type: "review_comment";
         }
       | {
+          task_id: components["schemas"]["TaskId"];
+          comment_id: components["schemas"]["WorkCommentId"];
+          /** Format: uint64 */
+          version: number;
+          /** @constant */
+          type: "work_comment";
+        }
+      | {
           session_id: components["schemas"]["AgentSessionId"];
           checkpoint_id: components["schemas"]["AgentCheckpointId"];
           version: components["schemas"]["AgentObjectRef"];
@@ -2240,6 +2248,8 @@ export interface components {
       | "relation_page"
       | "status_page";
     ReviewObjectId: string;
+    TaskId: string;
+    WorkCommentId: string;
     AgentCheckpointId: string;
     TurnId: string;
     /** @enum {string} */
@@ -2508,6 +2518,14 @@ export interface components {
           /** @constant */
           target: "agent_artifact";
           value: components["schemas"]["AgentArtifactAnchorV1"];
+        }
+      | {
+          /** @constant */
+          target: "agent_session";
+          value: {
+            session_id: components["schemas"]["AgentSessionId"];
+            session_snapshot: components["schemas"]["AgentObjectRef"];
+          };
         }
       | {
           /** @constant */
@@ -2879,6 +2897,7 @@ export interface components {
       reaction_state_version: number;
       agent_root: components["schemas"]["RecordDigest"] | null;
       review_root: components["schemas"]["RecordDigest"] | null;
+      work_root?: components["schemas"]["RecordDigest"] | null;
     };
     CollabPageItems:
       | {
@@ -3237,8 +3256,6 @@ export interface components {
     /** @enum {string} */
     ContentKind: "thread" | "message" | "project" | "task" | "comment";
     ProjectId: string;
-    TaskId: string;
-    WorkCommentId: string;
     WorkBrowsePage: {
       /** Format: uint32 */
       version: number;
@@ -10434,6 +10451,37 @@ export interface operations {
                       }
                     | {
                         /** @constant */
+                        target: "agent_session";
+                        value: {
+                          session_id: string;
+                          session_snapshot: {
+                            /** @enum {string} */
+                            kind:
+                              | "index_page"
+                              | "session_snapshot"
+                              | "turn_snapshot"
+                              | "message_snapshot"
+                              | "tool_snapshot"
+                              | "intent"
+                              | "observation_batch"
+                              | "event_batch"
+                              | "transcript_manifest"
+                              | "transcript_page"
+                              | "transcript_chunk"
+                              | "content"
+                              | "checkpoint_version"
+                              | "association"
+                              | "alias"
+                              | "relation_page"
+                              | "source_state"
+                              | "projection_catalog"
+                              | "catalog_conflict";
+                            id: string;
+                          };
+                        };
+                      }
+                    | {
+                        /** @constant */
                         target: "revision";
                         value: {
                           operation_id: string;
@@ -12788,6 +12836,14 @@ export interface operations {
                 type: "review_comment";
               }
             | {
+                task_id: string;
+                comment_id: string;
+                /** Format: uint64 */
+                version: number;
+                /** @constant */
+                type: "work_comment";
+              }
+            | {
                 session_id: string;
                 checkpoint_id: string;
                 version: {
@@ -13157,6 +13213,14 @@ export interface operations {
                       type: "review_comment";
                     }
                   | {
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                      /** @constant */
+                      type: "work_comment";
+                    }
+                  | {
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -13432,6 +13496,14 @@ export interface operations {
                       type: "review_comment";
                     }
                   | {
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                      /** @constant */
+                      type: "work_comment";
+                    }
+                  | {
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -13671,6 +13743,14 @@ export interface operations {
                       };
                       /** @constant */
                       type: "review_comment";
+                    }
+                  | {
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                      /** @constant */
+                      type: "work_comment";
                     }
                   | {
                       session_id: string;
@@ -25904,6 +25984,37 @@ export interface operations {
                                 /** @constant */
                                 kind: "plan";
                               };
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "agent_session";
+                        value: {
+                          session_id: string;
+                          session_snapshot: {
+                            /** @enum {string} */
+                            kind:
+                              | "index_page"
+                              | "session_snapshot"
+                              | "turn_snapshot"
+                              | "message_snapshot"
+                              | "tool_snapshot"
+                              | "intent"
+                              | "observation_batch"
+                              | "event_batch"
+                              | "transcript_manifest"
+                              | "transcript_page"
+                              | "transcript_chunk"
+                              | "content"
+                              | "checkpoint_version"
+                              | "association"
+                              | "alias"
+                              | "relation_page"
+                              | "source_state"
+                              | "projection_catalog"
+                              | "catalog_conflict";
+                            id: string;
+                          };
                         };
                       }
                     | {

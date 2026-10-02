@@ -5,6 +5,7 @@
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import * as ButtonGroup from "@lapismd/design-core/shadcn/button-group";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+  import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
@@ -51,9 +52,11 @@
       >{/if}
   </header>
   {#if !supported}
-    <p class="store-settings__empty">
-      Local folder management is not available for this connection.
-    </p>
+    <StoreSettingsEmpty
+      Icon={GitBranchIcon}
+      title="Local folder management unavailable"
+      description="Local folder management is not available for this connection."
+    />
   {:else}
     {#if settings.workspaceLinks?.links.length}
       <dl class="store-settings__rows" aria-label="Linked local folders">

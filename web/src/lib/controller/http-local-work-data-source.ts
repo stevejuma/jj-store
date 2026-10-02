@@ -16,6 +16,12 @@ export class HttpLocalWorkDataSource implements WorkBrowseTransport {
     private source: StoreDataSource,
     private read: LocalClient["request"],
   ) {}
+  agents = async (cursor?: string, signal?: AbortSignal) => {
+    signal?.throwIfAborted();
+    const page = await this.source.agentSessions(cursor);
+    signal?.throwIfAborted();
+    return page;
+  };
   refresh = async () => {
     await this.source.snapshot(true);
   };

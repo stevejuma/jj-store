@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import {
@@ -9,15 +10,21 @@
   import "../editor-focus.css";
   let {
     controller,
+    reviewDetail,
+    onActivate,
     inline,
     path,
+    page = false,
   }: {
     controller: StoreController;
+    reviewDetail?: import("../../controller/repository-read-types.js").ReviewDetail;
+    onActivate?: () => Promise<void>;
     inline: boolean;
     path: string | undefined;
+    page?: boolean;
   } = $props();
   const view = $derived(controller.state),
-    detail = $derived(view.reviewThread);
+    detail = $derived(reviewDetail ?? view.reviewThread);
   const draft = $derived(
     reviewDraft(controller, detail?.thread.thread_id ?? ""),
   );
@@ -26,7 +33,8 @@
       view.repository?.permission !== "admin") ||
       view.status.reviewAction === "refreshing" ||
       view.status.reviewAction === "loading" ||
-      !!view.reviewActionRequestId,
+      !!view.reviewActionRequestId ||
+      !!draft.pendingRequestId,
   );
   const members = $derived([
     ...new Map(
@@ -79,10 +87,17 @@
   }
   async function submit(content: string) {
     if (disabled || !detail) return;
+    const currentDetail = detail;
     const currentDraft = draft;
-    const threadId = detail.thread.thread_id;
+    await onActivate?.();
+    if (
+      controller.state.reviewThread?.thread.thread_id !==
+      currentDetail.thread.thread_id
+    )
+      throw new Error("The selected comment target is no longer available.");
+    const threadId = currentDetail.thread.thread_id;
     if (currentDraft.edit) {
-      const selected = detail.comments.find(
+      const selected = currentDetail.comments.find(
         (comment) => comment.comment_id === currentDraft.edit!.comment_id,
       );
       if (
@@ -127,13 +142,31 @@
     {members}
     {disabled}
     {context}
-    onCancelContext={cancelContext}
+    onCancelContext={draft.pendingRequestId ? undefined : cancelContext}
     busy={view.status.reviewAction === "refreshing"}
-    ariaLabel={inline
-      ? `Add a comment to ${path ?? "the selected diff"}`
-      : "Reply to review thread"}
-    submitLabel={draft.edit ? "Save comment" : inline ? "Comment" : "Reply"}
-    placeholder={inline ? "Add a review comment" : "Reply with Markdown"}
+    ariaLabel={page && !draft.reply && !draft.edit
+      ? "Review comment"
+      : inline
+        ? `Add a comment to ${path ?? "the selected diff"}`
+        : "Reply to review thread"}
+    submitLabel={draft.edit
+      ? "Save comment"
+      : page && !draft.reply
+        ? "Add comment"
+        : inline
+          ? "Comment"
+          : "Reply"}
+    placeholder={page && !draft.reply && !draft.edit
+      ? "Add a comment…"
+      : inline
+        ? "Add a review comment"
+        : "Reply with Markdown"}
     onSubmit={(submission) => submit(submission.content)}
   />
+  {#if draft.pendingRequestId}<Button
+      variant="secondary"
+      size="sm"
+      onclick={() => controller.actions.checkReviewAction()}
+      >Check comment status</Button
+    >{/if}
 </div>

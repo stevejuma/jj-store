@@ -935,3 +935,163 @@ async fn local_reply_parent_and_receipt_survive_gc_and_cold_reopen() {
     };
     assert_eq!(parent.body.as_deref(), Some("Parent"));
 }
+
+#[tokio::test]
+async fn local_work_comment_reactions_share_companion_pin_and_survive_gc_and_reopen() {
+    use jj_store_service::work::{ProjectId, TaskId, WorkCommandV1, WorkCommentId};
+    let (root, repo) = fixture();
+    let project = ProjectId::new([90; 16]);
+    let task = TaskId::new([91; 16]);
+    let comment = WorkCommentId::new([92; 16]);
+    let work = |id, command| jj_store_service::work::Request {
+        version: 1,
+        request_id: m::RequestId::new([id; 16]),
+        command,
+    };
+    for (id, command) in [
+        (
+            90,
+            WorkCommandV1::CreateProject {
+                id: project,
+                title: "Home".into(),
+                body: String::new(),
+            },
+        ),
+        (
+            91,
+            WorkCommandV1::CreateTask {
+                id: task,
+                project,
+                expected_project_version: 1,
+                title: "Task".into(),
+                body: String::new(),
+                repository: None,
+                parent: None,
+            },
+        ),
+        (
+            92,
+            WorkCommandV1::AddComment {
+                id: comment,
+                task,
+                expected_task_version: 1,
+                reply_to: None,
+                body: "Visible".into(),
+            },
+        ),
+    ] {
+        repo.apply_work_command(&work(id, command)).unwrap();
+    }
+    let target = ReactionTargetV1::WorkComment {
+        task_id: task,
+        comment_id: comment,
+        version: 1,
+    };
+    let before = repo.metadata_store().read().unwrap().unwrap();
+    let set = react(93, target.clone(), ReactionValueV1::Like, BTreeSet::new());
+    let accepted = receipt(repo.apply_collab_command(&set).await.unwrap());
+    let active = reaction_result(accepted.clone()).active;
+    let page = repo.reaction_query(&target, None, 20, None).await.unwrap();
+    assert_eq!(page.rows.len(), 1);
+    assert_eq!(
+        repo.metadata_store()
+            .read()
+            .unwrap()
+            .unwrap()
+            .selection(Domain::Work),
+        before.selection(Domain::Work)
+    );
+    let path = root.path().join("repo");
+    drop(repo);
+    gc(&path);
+    let cold = reopen(&path);
+    assert_eq!(
+        receipt(cold.apply_collab_command(&set).await.unwrap()),
+        accepted
+    );
+    assert_eq!(
+        receipt(cold.collab_command_status(set.request_id).unwrap()),
+        accepted
+    );
+    assert_eq!(
+        cold.reaction_query(&target, None, 20, None)
+            .await
+            .unwrap()
+            .rows[0]
+            .value,
+        Some(ReactionValueV1::Like)
+    );
+    let clear = request(
+        94,
+        LocalCollabCommand::Reaction {
+            intent: ReactionCommandV1::Clear {
+                target: target.clone(),
+                observed: active,
+            },
+        },
+    );
+    cold.apply_collab_command(&clear).await.unwrap();
+    assert!(
+        cold.reaction_query(&target, None, 20, None)
+            .await
+            .unwrap()
+            .rows
+            .iter()
+            .all(|row| row.value.is_none())
+    );
+    cold.apply_work_command(&work(
+        95,
+        WorkCommandV1::EditComment {
+            id: comment,
+            expected_version: 1,
+            expected_task_version: 2,
+            body: "Edited".into(),
+        },
+    ))
+    .unwrap();
+    assert_eq!(
+        cold.reaction_query(&target, None, 20, None)
+            .await
+            .unwrap_err(),
+        LocalError::NotFound
+    );
+    assert_eq!(
+        cold.reaction_query(&target, None, 20, page.snapshot.metadata_commit)
+            .await
+            .unwrap_err(),
+        LocalError::Stale
+    );
+    assert_eq!(
+        cold.apply_collab_command(&react(96, target, ReactionValueV1::Like, BTreeSet::new()))
+            .await
+            .unwrap_err(),
+        LocalError::NotFound
+    );
+    let current = ReactionTargetV1::WorkComment {
+        task_id: task,
+        comment_id: comment,
+        version: 2,
+    };
+    assert!(
+        cold.reaction_query(&current, None, 20, None)
+            .await
+            .unwrap()
+            .rows
+            .is_empty()
+    );
+    cold.apply_work_command(&work(
+        97,
+        WorkCommandV1::TombstoneComment {
+            id: comment,
+            expected_version: 2,
+            expected_task_version: 3,
+        },
+    ))
+    .unwrap();
+    assert_eq!(
+        cold.reaction_query(&current, None, 20, None)
+            .await
+            .unwrap_err(),
+        LocalError::NotFound
+    );
+}

@@ -6,29 +6,48 @@ home may contain several projects and may also contain ordinary code.
 
 Repository directory rows and cards use Community's name/description,
 contributor avatar, commit/review/task activity bar and relative date anatomy.
-The native profile uses the latest selected change summary and contributor when
-there is no independently stored repository description or owner. Code counts
-and activity come from bounded, separately authorized snapshots; partial pages
-and unavailable homes remain explicit. Mine continues to mean administer access.
+Cards place link-state chips at the right of the name row, use the full content
+width for description/access, bound descriptions to two visible lines, and
+stretch to equal grid heights with bottom-aligned metadata. Retired and active
+links share this layout; full description text remains accessible. The native
+profile uses the latest selected change summary and contributor when there is no
+independently stored repository description or owner. Code counts and activity
+come from bounded, separately authorized snapshots; partial pages and
+unavailable homes remain explicit. Mine continues to mean administer access.
 Review rows and cards use the current root comment excerpt, full bound thread
 identity, exact artifact label, comment count, creation actor and last accepted
 event date. Tombstoned, hidden and conflicted root comments expose no old body.
+Selecting a review from the directory or a project's Reviews tab opens the same
+full main-page detail as the repository Reviews tab, with a fixed header and
+composer and scrolling content between them. Thread Focus/Split settings do not
+alter this top-level review navigation.
 
 ## Requirements
 
-| ID           | Requirement                                                                                                                                                                                                                            |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-WORK-001 | Projects MUST have stable identities and link repositories by stable RepositoryId. Retired links preserve existing task targets; new targets require active membership.                                                                |
-| JST-WORK-002 | Tasks MUST have title, body, optional linked repository, optional same-project parent and open, in_progress, blocked or done state. Parent cycles and cross-project parents MUST be rejected.                                          |
-| JST-WORK-003 | Comments MUST support same-task threaded replies, versioned edits and tombstones with authenticated actors and immutable history.                                                                                                      |
-| JST-WORK-004 | WorkStore MUST use typed repository-bound immutable records, bounded persistent radix catalogs, an independent manifest root/version, manifest CAS, WAL and durable request receipts. Unselected objects MUST remain invisible.        |
-| JST-WORK-005 | Reads MUST pin the selected WorkStore root. Mutations MUST validate exact entity and project versions; identical retries and reconstructed-service status MUST return the original durable receipt.                                    |
-| JST-WORK-006 | Home repository read/write permissions MUST govern metadata; linked-code reads MUST separately authorize the target repository. CLI, RPC and HTTP MUST share owned service semantics.                                                  |
-| JST-WORK-007 | Cold recovery and manifest-last native copy MUST verify every selected and historical WorkStore closure. Unsupported origin replication MUST fail closed for a WorkStore home while retaining its existing origin ledger.              |
-| JST-WORK-008 | CLI and browser MUST expose project links, task state/hierarchy and comments. SSE announces freshness; explicit refresh changes displayed snapshots. Unknown command outcomes retain the request identity.                             |
-| JST-WORK-009 | Browse summaries MUST filter the complete authorized selected root before paging, derive counts and parent labels from that root, bind exact queries to opaque continuations and share the existing bounded WorkStore cursor registry. |
+| ID           | Requirement                                                                                                                                                                                                                                                                 |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-WORK-001 | Projects MUST have stable identities and link repositories by stable RepositoryId. Retired links preserve existing task targets; new targets require active membership.                                                                                                     |
+| JST-WORK-002 | Tasks MUST have title, body, optional linked repository, optional same-project parent and open, in_progress, blocked or done state. Parent cycles and cross-project parents MUST be rejected.                                                                               |
+| JST-WORK-003 | Comments MUST support same-task threaded replies, versioned edits and tombstones with authenticated actors and immutable history.                                                                                                                                           |
+| JST-WORK-004 | WorkStore MUST use typed repository-bound immutable records, bounded persistent radix catalogs, an independent manifest root/version, manifest CAS, WAL and durable request receipts. Unselected objects MUST remain invisible.                                             |
+| JST-WORK-005 | Reads MUST pin the selected WorkStore root. Mutations MUST validate exact entity and project versions; identical retries and reconstructed-service status MUST return the original durable receipt.                                                                         |
+| JST-WORK-006 | Home repository read/write permissions MUST govern metadata; linked-code reads MUST separately authorize the target repository. CLI, RPC and HTTP MUST share owned service semantics.                                                                                       |
+| JST-WORK-007 | Cold recovery and manifest-last native copy MUST verify every selected and historical WorkStore closure. Unsupported origin replication MUST fail closed for a WorkStore home while retaining its existing origin ledger.                                                   |
+| JST-WORK-008 | CLI and browser MUST expose project links, task state/hierarchy and comments. Committed saves, SSE and periodic checks automatically refresh displayed browser snapshots while retaining drafts and pending commands. Unknown command outcomes retain the request identity. |
+| JST-WORK-009 | Browse summaries MUST filter the complete authorized selected root before paging, derive counts and parent labels from that root, bind exact queries to opaque continuations and share the existing bounded WorkStore cursor registry.                                      |
 
 ## Initial profile
+
+Browser project listings align creator avatars across rows independently of
+count and date widths. Initial collections and task details use busy skeletons
+from discovery through their first accepted read, while background refresh
+retains displayed data and drafts. Settled empty and failure states remain
+explicit; this changes no WorkStore identity, read or command semantics.
+
+Task detail keeps the title header and writable comment composer in fixed page
+rows, with metadata, description, subtasks and comments scrolling between them.
+Read-only detail retains the fixed header without a composer. Scroll, Activity
+collapse and background refresh do not discard drafts or reply/edit context.
 
 The native profile below remains manifest/WAL backed. M13's separate local
 Git-backed profile uses the same `WorkStateV1` reducer, semantic validation and
@@ -72,7 +91,7 @@ checkpointing, recovery and manifest-last copy. Fake storage and real RustFS
 qualification are recorded separately. Transport gates additionally require home
 authorization, target-code authorization, executed HTTP contract capture, CLI
 publication over local RPC and unknown-outcome status. Browser gates cover
-project/task selection, state and hierarchy, comment interactions, explicit
+project/task selection, state and hierarchy, comment interactions, automatic
 refresh, accessibility and a cold startup. Visual baselines remain pending.
 
 ## Paged service reads
@@ -89,10 +108,26 @@ session.
 
 Browser tasks and discussion order loaded parent/reply branches and cap visual
 indentation. Missing parents from another page retain their exact identity and a
-visible fragment rather than inventing another relationship. Cold RustFS
-qualification covers separate source/destination stores, historical WorkStore
-closures after checkpointing, retained origin ledger, local readiness and
-durable service receipts after both stores restart.
+visible fragment rather than inventing another relationship. The task's main
+page shows threaded comments under the initially expanded Activity disclosure
+after Subtasks, with the composer below Activity. Collapsing the disclosure
+retains composer drafts and reply/edit context; a native comment link reopens
+Activity and focuses that comment. Tasks do not use a separate discussion panel
+or an Open task discussion action. Projects restoration forwards the exact
+project, task and comment selection into the bounded WorkStore reader; an
+unavailable comment stays explicit and a route without a comment clears focus.
+Visible task comments use the shared reaction picker and count bar, scoped to
+the metadata home and exact comment version. Read-only users can inspect counts;
+writes require home permission. Reaction feedback retains unknown request
+identity and status recovery after comment edits or removal, and reloads
+automatically with other task data. Task Open target repository, Edit task and
+Add subtask actions use the public secondary Button surface with leading
+repository, edit and subtask icons and its semantic hover state so the actions
+remain visible at rest across themes. The repository action keeps a small inline
+gap before the repository name. Cold RustFS qualification covers separate
+source/destination stores, historical WorkStore closures after checkpointing,
+retained origin ledger, local readiness and durable service receipts after both
+stores restart.
 
 ## Projects hub browse reads
 
@@ -105,16 +140,21 @@ Filters and continuations bind the exact query and retained root. The hub keeps
 independent home snapshots and visibly reports partial discovery, failed homes
 and remaining pages. Linked repository metadata never grants code access.
 
-The installation directory includes Projects, Tasks, Reviews and Repositories.
-The sidebar reads unfiltered projects independently from main-view queries and
-nests active linked repositories. Reviews remain owned by ReviewStore and are
-read with separate target authorization and independent pinned pagination.
-Missing project metadata never broadens project review scope. Repository
-permission changes clear protected retained results on explicit refresh.
+The installation directory includes Projects, Tasks, Reviews, Agents and
+Repositories. The sidebar reads unfiltered projects independently from main-view
+queries and nests active linked repositories. Reviews remain owned by
+ReviewStore and are read with separate target authorization and independent
+pinned pagination. Missing project metadata never broadens project review scope.
+Repository permission changes clear protected retained results on automatic
+rediscovery.
 
 Projects navigation uses Community's FolderGit2 icon, restores the section gap
 above collapsible groups, and places each project expand/collapse control at the
 trailing edge of its row without reserving space for an absent row menu.
+
+Directory card/list controls MUST retain exactly one selected layout for pointer
+and keyboard selection. Project list titles, descriptions, counts and avatars
+align in stable columns, including wrapped narrow lists.
 
 Directory card/list layout and collapsible Mine/Other groups copy Community,
 including the inset content spacing beneath collection headings. Project titles
@@ -129,18 +169,27 @@ secondary text at weight 500, an adjacent chevron, 1.5rem horizontal trigger
 inset, 2.5rem row height and 0.1rem section spacing, while content retains its
 existing alignment. Project filters live in the far-right rail; breadcrumbs use
 the centered top shell header and the mobile toolbar. Forms reuse Settings-style
-bordered field groups with divided rows. Projects and tasks belong to Mine only
-when their creation actor matches the current principal reauthorized for their
-home. Repositories belong to Mine when the current session can administer them;
-this is an access grouping and does not introduce repository ownership. Unknown
-principals leave authored items in Other. Selection controls use one searchable
-repository Command View with full native IDs as values, distinct duplicate
-names, retained inaccessible selections, permission-scoped choices, and optional
-project-only/all choices. Repository picker search sits in the first row beside
-the trailing close control; its accessible title is visually hidden because the
-placeholder already identifies the search surface. Editing a comment previews
-the displayed original body independently from its mutable draft, with a single
-truncated line and full-text title.
+bordered field groups with divided rows. On a selected project, one Add menu
+offers permission-gated task creation and, on Repositories in LocalTrusted mode,
+local repository registration, with task-add and Git-add icons. The Link
+repository header icon opens a separate Settings-style dialog; its picker and
+manual full-ID option are absent from the page itself. Cancel and failed or
+unknown requests retain the link draft. Successful linking closes the dialog
+after the accepted metadata refresh; status/retry preserves the exact command.
+Local folder dialogs use matching divided Folder, Name and Inspection rows and
+retain registration state after the Add menu closes. Menu-to-dialog navigation
+supports keyboard focus and narrow screens. Projects and tasks belong to Mine
+only when their creation actor matches the current principal reauthorized for
+their home. Repositories belong to Mine when the current session can administer
+them; this is an access grouping and does not introduce repository ownership.
+Unknown principals leave authored items in Other. Selection controls use one
+searchable repository Command View with full native IDs as values, distinct
+duplicate names, retained inaccessible selections, permission-scoped choices,
+and optional project-only/all choices. Repository picker search sits in the
+first row beside the trailing close control; its accessible title is visually
+hidden because the placeholder already identifies the search surface. Editing a
+comment previews the displayed original body independently from its mutable
+draft, with a single truncated line and full-text title.
 
 Task selectors use the same Command View composition with title, state,
 repository context and shortened identity, retaining the full native value.
@@ -171,3 +220,24 @@ Local browser WorkStore uses the CLI device actor and existing typed commands.
 Metadata-home access remains independent of linked-code availability. Local
 project homes participate in Projects, Tasks, repository directory and Activity;
 unsupported reviews remain visibly unavailable without issuing review requests.
+
+### Project agent-session directories
+
+A selected project's Agents tab reads AgentStore sessions only in independently
+authorized linked repositories. The main landing Agents tab discovers all
+accessible project links through unfiltered, independently pinned WorkStore
+pages, deduplicates repositories and reads their independent AgentStore pages.
+No project access grant authorizes a code or agent repository. Failed project
+selection cannot broaden the scope; inaccessible links, failed homes and bounded
+scope continuations remain explicit. Agent pagination validates the exact
+repository snapshot and never mixes captures. Refresh preserves loaded windows,
+while access loss and teardown clear protected rows. Selecting a row uses the
+full native repository and session IDs and opens the shared agent response
+without replacing or reloading the scoped list. The device Thread layout selects
+the standard full-height AppShell right sidebar for Split or the structural
+discussion sheet for Focus, using the same pattern as Thread replies. Shell
+header and dismissal mechanics remain shared; Split retains keyboard/pointer
+resize and the mobile right lane, while Focus covers both right panels and uses
+the mobile root. Neighboring agent row backgrounds retain at least four pixels
+of separation through virtualization. Closing restores the selected row focus;
+navigation, reload and layout changes retain an admitted response selection.

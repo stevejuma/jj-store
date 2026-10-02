@@ -1,8 +1,6 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import PaletteIcon from "@lucide/svelte/icons/palette";
-  import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import DatabaseIcon from "@lucide/svelte/icons/database";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import SearchIcon from "@lucide/svelte/icons/search";
@@ -14,13 +12,11 @@
 
   let {
     section,
-    onClose,
     tabs = [],
     value = $bindable(""),
     children,
   }: {
     section: StoreSettingsSection;
-    onClose?: () => void;
     tabs?: readonly { value: string; label: string; disabled?: boolean }[];
     value?: string;
     children: Snippet;
@@ -58,15 +54,10 @@
 
 {#snippet navigation()}
   <nav class="store-settings__tab-bar" aria-label="Settings page navigation">
-    {#if onClose}<Button
-        variant="ghost"
-        size="icon"
-        class="store-settings__back"
-        aria-label="Back to app"
-        title="Back to app"
-        onclick={onClose}
-        ><ArrowLeftIcon data-icon="inline-start" aria-hidden="true" /></Button
-      >{/if}
+    <h1 id="store-settings-title" class="store-settings__page-title">
+      <PageIcon aria-hidden="true" />
+      <span>{title}</span>
+    </h1>
     {#if tabs.length}
       <ScrollArea
         orientation="horizontal"
@@ -85,10 +76,6 @@
         </Tabs.List>
       </ScrollArea>
     {/if}
-    <h1 id="store-settings-title" class="store-settings__page-title">
-      <PageIcon aria-hidden="true" />
-      <span>{title}</span>
-    </h1>
   </nav>
 {/snippet}
 
@@ -112,16 +99,12 @@
   .store-settings :global(.store-settings__section:first-child) {
     margin-block-start: 0;
   }
-  :global(.store-settings__back) {
-    --ui-button-radius: 9999px;
-  }
   .store-settings__page-title {
     display: flex;
     flex: none;
     align-items: center;
     gap: 0.4rem;
     margin: 0;
-    margin-inline-start: auto;
     font-size: var(--community-text-body);
     font-weight: 600;
     white-space: nowrap;

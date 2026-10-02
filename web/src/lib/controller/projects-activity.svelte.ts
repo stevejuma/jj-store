@@ -107,6 +107,7 @@ export function createProjectsActivity(context: {
         Array.from({ length: Math.min(2, homes.length) }, async () => {
           while (index < homes.length && ticket === generation) {
             const home = homes[index++]!;
+            const count = Math.min(home.page?.commits.length ?? 0, 1000);
             if (!home.page || refresh)
               await read(
                 home,
@@ -115,6 +116,19 @@ export function createProjectsActivity(context: {
                 false,
                 operations[home.repository.id],
               );
+            const seen = new Set<string>();
+            while (
+              refresh &&
+              home.page?.cursor &&
+              !home.error &&
+              ticket === generation &&
+              home.page.commits.length < count
+            ) {
+              if (seen.has(home.page.cursor))
+                throw new Error("Repeated activity cursor.");
+              seen.add(home.page.cursor);
+              await read(home, false, ticket, true);
+            }
           }
         }),
       );

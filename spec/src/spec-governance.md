@@ -1,5 +1,11 @@
 # Specification governance
 
+Appearance integration retains both completed histories and their original
+evidence entries without milestone promotion. Runtime relocation reuses the
+existing fixture and installation identity; workspace retirement follows
+verified ancestry, clean status and process ownership checks. Recoverable
+removal leaves unrelated registered workspaces and their services intact.
+
 Local review delivery qualifies reads/actions separately from portable anchor
 support. Shared reconstruction changes retain native service regressions; new
 local routes and generated schemas require the complete contract response lane.
@@ -7,6 +13,13 @@ Cold filesystem UI tests use disposable state and isolated ports, and visual
 baseline approval remains separate. Native M10 replication remains governed by
 its existing chapter; local repository synchronization is removed from active
 capabilities and backlog. Historical ledger entries are retained unchanged.
+
+Task comment reaction adapters remain repository-owned Community presentation
+with source/license provenance. Extracting each comment's action and reaction
+composition keeps the task Activity orchestrator below the production source
+budget. The new typed target requires domain, pinned native/local service and
+generated contract evidence alongside UI interaction and cold browser checks;
+source menu qualification remains separate from consumer release qualification.
 
 Parent-workspace integration preserves the local-settings M14 tasks and
 evidence. Persistent Threads and Reactions use M15 after rebasing to avoid
@@ -50,6 +63,7 @@ failures and visual approval remain explicit independent gates.
 | JST-GOV-006 | Rust formatting MUST use the pinned toolchain component and tracked rustfmt.toml, and MUST be checked by both normal and specification checks.                                                                                                                                       |
 | JST-GOV-007 | Verification MUST remain within the changed layer and direct consumers by default; full suites require independent cross-layer or multi-consumer impact, shared infrastructure, release qualification, or an explicit user request, with the escalation reason recorded.             |
 | JST-GOV-008 | Community-derived presentation MUST be copied and maintained in this repository with complete source and license provenance; the ui-ownership plugin MUST reject runtime, build, test and type dependencies, external checkout links, substitutions and missing declared provenance. |
+| JST-GOV-009 | Local UI development MUST support source-serving HMR with an existing compiled loopback backend, unchanged API admission and preserved native fixture; owned stop, backend-only restart and full-stack rebuild/restart MUST remain available.                                        |
 
 ## Repository-owned presentation
 
@@ -62,6 +76,13 @@ foundational dependencies. Visual fidelity is established by browser and
 interaction evidence, not by dependency exclusion. Existing Community package
 qualification is historical evidence; new slices copy the necessary source
 closure locally.
+
+Shared repository card surface tokens are maintained locally with their original
+Community graph source and license in the provenance manifest. Pointer hover,
+the Command View keyboard cursor and the selected native bookmark are separate
+presentation states. Browser evidence checks their surfaces against Op Log
+across the complete theme catalog; focused menu/card stories retain blocking
+interaction, accessibility and runtime diagnostics.
 
 ## Change map
 
@@ -156,6 +177,28 @@ cannot widen runtime acceptance without same-change governance review. Upstream
 Community and Design Core changes remain separate source-owned changes with
 consumer acceptance in this repository.
 
+Whole-session agent comments extend the native V1 review anchor surface and are
+jointly governed by `collaboration.md`, `publication.md`, `compatibility.md`,
+`api.md` and `cli.md`; their browser layout and reply presentation are governed
+by `ui.md` and `projects.md`. Qualification includes canonical anchor/dependency
+tests, receipt replay and snapshot-identity rejection after cold WAL reopen, the
+existing admitted LocalTrusted HTTP review fixture and regenerated contract
+conformance. Fake-memory recovery evidence is distinct from real-RustFS
+qualification. Focused controller and cold Storybook consumers cover retained
+drafts, unknown outcomes, independent tool/comment hover actions, thread reply
+indentation, footer placement and Focus/Split layouts. Read-only live UI
+inspection and interaction/accessibility passes do not approve visual baselines
+or qualify the unsupported filesystem-local agent review profile. The milestone
+ledger records these limits and the exact commands.
+
+Repository-owned sidebar thread navigation is jointly governed by `ui.md` and
+`api.md`. It reuses existing bounded authorized Threads reads, without altering
+publication or persisted formats. Its evidence covers repository ownership,
+permission/credential teardown, pagination, stale connections, indented
+children, the Browse threads action and contextual breadcrumbs across desktop,
+mobile and compact navigation. Interaction and accessibility evidence remain
+separate from visual baseline approval.
+
 M10 owns local-first writable replication. Its origin ledger and imported
 publication path are jointly governed by `replication.md` and the existing
 publication requirements. Native head integration is also governed by
@@ -188,6 +231,17 @@ annotation policy. Generic cold browser acceptance opts out by default; the
 exact annotation-policy browser gate explicitly opts in and proves that inline
 helpers render. Strict asset and deployment rejection regressions remain
 separate. API security policy and repository access guards are unchanged.
+
+UI development additionally provides a Vite HMR mode that reuses an existing
+complete fixture and executable without invoking UI, Rust or RustFS builds or
+seed commands. Missing prerequisites fail before stopping a running service.
+Runtime markers identify both owned processes; stop and full-stack restart
+validate their ownership before signaling either. Backend-only restart retains
+Vite. The existing full-stack rebuild/restart and explicit reset remain
+available. Cold development acceptance covers real API admission, streaming,
+HMR, backend restart and state preservation; built-bundle CSP qualification is
+retained separately. No development workflow publishes a package or replaces the
+installed CLI.
 
 The same fresh fixture includes native WorkStore samples through its authorized
 HTTP commands. The additive `dev:seed:work` command checks the matching owned
@@ -383,6 +437,11 @@ overlap failures. The production web manifest includes only flat, regular
 `agent-icons/*.svg` files from the public icon directory; source attribution
 documents and all other public files remain outside the served allowlist.
 
+The owned native agent timeline and grouped tool-call presentation adapt
+Community's adjacent-call grouping and per-call wrapper composition. Their
+source paths, pinned revision and license remain in `docs/ui-provenance.json`;
+native IDs, controller state and review actions stay owned by this repository.
+
 Normal checks also run the Community-derived browser architecture audit. It
 enforces counted-line limits and exact no-growth budgets for existing hotspots,
 rejects production imports from catalog fixtures, and keeps reusable
@@ -416,7 +475,11 @@ Community presentation is copied into this repository. The provenance manifest
 covers recognized Community families, explicitly marked copies and extracted
 presentation components; native helpers are separately identified with reasons.
 The ownership plugin rejects missing coverage as well as every external
-Community dependency. A renamed copy outside recognized families must carry an
+Community dependency. The owned StoreWork task detail, Activity/comment
+composition and task stylesheet record the CommunityProjects source revision and
+Apache-2.0 attribution in this manifest. Their adapted layout retains native
+WorkStore commands, identities and drafts without importing Community runtime or
+fixture state. A renamed copy outside recognized families must carry an
 `@community-copy` source marker so the audit can enforce its provenance. Static
 analysis does not claim to identify arbitrarily renamed unmarked copies. The
 historical M9.5 package consumption is superseded by this owned-source boundary.
@@ -578,11 +641,14 @@ native memory-store, local filesystem, direct-consumer compilation and real
 RustFS/cold acceptance as distinct evidence. Shared authority infrastructure
 justifies the full relevant WAL suite; it does not justify unrelated UI lanes.
 The boundary checker permits the local service's direct jj-collab dependency for
-shared pure command and target policy. A local descriptor/provider slice runs
-its exact filesystem regressions, shared domain tests, direct local Agent/Review
-consumer tests and crate checks. Public transport generation is required when
-HTTP/RPC schemas change, separately from these Rust provider types. Root
-aggregate and unrelated presentation lanes remain out of scope.
+shared pure command and target policy. Exact WorkComment reaction targets permit
+the model-only jj-collab to jj-work dependency; the reverse edge and
+dependencies on publication or upstream JJ remain forbidden and have boundary
+regressions. A local descriptor/provider slice runs its exact filesystem
+regressions, shared domain tests, direct local Agent/Review consumer tests and
+crate checks. Public transport generation is required when HTTP/RPC schemas
+change, separately from these Rust provider types. Root aggregate and unrelated
+presentation lanes remain out of scope.
 
 Contract qualification includes actual filesystem-browser responses from the
 isolated runtime fixture alongside the retained native fixtures. Generated
@@ -610,3 +676,9 @@ Reaction presentation uses the owned Community wrapper and the permitted Design
 Core reaction bar. Removing an owned adapter also removes its provenance entry;
 the remaining Community components retain source attribution and no Community
 package dependency.
+
+Automatic browser refresh is governed by JST-UI-005, JST-UI-012, JST-UI-015,
+JST-WORK-008 and JST-LOCAL-004. It changes client read scheduling, not native
+publication, cursor authority or request identity. Evidence must distinguish
+current-head advancement, historical code pins, independent collaboration roots,
+retained drafts and unknown command intent, reconnect and session cancellation.

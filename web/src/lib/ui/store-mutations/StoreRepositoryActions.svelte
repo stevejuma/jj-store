@@ -49,6 +49,11 @@
     null,
   );
   let dialogOpen = $state(false);
+  const updatePause = `repository-action-${crypto.randomUUID()}`;
+  $effect(() => {
+    controller.actions.setRefreshPaused?.(updatePause, dialogOpen);
+    return () => controller.actions.setRefreshPaused?.(updatePause, false);
+  });
   const openConflictEditor = getContext<OpenConflictEditor | undefined>(
     conflictEditorKey,
   );
@@ -101,6 +106,7 @@
         >{/snippet}
     </DropdownMenu.Trigger>
     <DropdownMenu.Content
+      class="store-repository-actions-menu"
       align="end"
       sideOffset={4}
       preventScroll={false}
@@ -204,3 +210,10 @@
 <Dialog.Root bind:open={dialogOpen}>
   <StoreMutationDialog {controller} {action} open={dialogOpen} />
 </Dialog.Root>
+
+<style>
+  :global(.store-repository-actions-menu) {
+    width: 16rem;
+    max-width: calc(100vw - 2rem);
+  }
+</style>

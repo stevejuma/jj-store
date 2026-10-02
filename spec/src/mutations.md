@@ -17,6 +17,13 @@ automatically. Confirmed actions advance companion display metadata
 independently of code; ordinary review reads stage or publish nothing. Portable
 code/agent anchors stay rejected until their provider evidence gate passes.
 
+Task comment reaction commands use authenticated metadata-home actors and the
+existing exact observed slot preconditions, receipt replay and unknown-outcome
+handling. Admission resolves the visible comment's exact version and task
+membership against the publication base Work root. Reaction publication cannot
+change task versions or grant access to linked code; old edited and tombstoned
+targets fail closed.
+
 Collaboration read optimization does not change publication or receipt behavior.
 Shared data caches retain only validated immutable domain selections and graphs.
 Request authorization and complete captured manifest envelopes remain fresh;

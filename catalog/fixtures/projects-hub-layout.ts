@@ -1,21 +1,21 @@
-import { expect, userEvent, within } from "storybook/test";
+import { expect, userEvent, within, waitFor } from "storybook/test";
 
-export async function expectCommunityDisclosures(
-  detail: HTMLElement,
-  discussion: HTMLElement = detail,
-) {
+export async function expectCommunityDisclosures(detail: HTMLElement) {
+  const subtasks = within(detail).getByRole("button", { name: "Subtasks" });
+  const activity = within(detail).getByRole("button", { name: "Activity" });
+  await expect(
+    subtasks.compareDocumentPosition(activity) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy();
   for (const name of ["Description", "Subtasks", "Activity"]) {
-    const trigger = within(name === "Activity" ? discussion : detail).getByRole(
-      "button",
-      { name },
-    );
+    const trigger = within(detail).getByRole("button", { name });
     const label = trigger.querySelector("span")!;
     const chevron = trigger.querySelector("svg")!;
     await expect(getComputedStyle(trigger).fontWeight).toBe("500");
     await expect(getComputedStyle(trigger).paddingInlineStart).toBe("0px");
     await expect(trigger).toHaveAttribute(
       "aria-expanded",
-      name === "Description" ? "true" : "false",
+      name === "Subtasks" ? "false" : "true",
     );
     await expect(
       chevron.getBoundingClientRect().left -
@@ -24,7 +24,7 @@ export async function expectCommunityDisclosures(
     await userEvent.click(trigger);
     await expect(trigger).toHaveAttribute(
       "aria-expanded",
-      name === "Description" ? "false" : "true",
+      name === "Subtasks" ? "true" : "false",
     );
     await userEvent.click(trigger);
   }
@@ -65,4 +65,46 @@ export async function expectReviewRowUsesWidth(
       fields[index].left - fields[index - 1].right,
     ).toBeGreaterThanOrEqual(7);
   }
+}
+
+export async function playReadOnlyTask({
+  canvasElement,
+}: {
+  canvasElement: HTMLElement;
+}) {
+  const c = within(canvasElement);
+  await waitFor(() =>
+    expect(c.getByRole("article", { name: "Task details" })).toBeVisible(),
+  );
+  const detail = c.getByRole("article", { name: "Task details" });
+  await expectCommunityDisclosures(detail);
+  await expect(
+    c.queryByRole("complementary", { name: "Task discussion" }),
+  ).toBeNull();
+  await expectTaskTitleRow(detail);
+  await expect(c.getByRole("navigation", { name: "breadcrumb" })).toBeVisible();
+  await expect(c.queryByRole("button", { name: "Edit task" })).toBeNull();
+  await expect(c.queryByRole("textbox", { name: "Comment" })).toBeNull();
+  await userEvent.click(
+    c.getByRole("button", { name: "Parent: Storage work" }),
+  );
+  const subtasks = c.getByRole("region", { name: "Subtasks" });
+  await userEvent.click(
+    within(subtasks).getByRole("button", { name: "Subtasks" }),
+  );
+  await waitFor(() =>
+    expect(
+      within(subtasks).getByRole("button", {
+        name: "Open task Browser work",
+      }),
+    ).toBeVisible(),
+  );
+  await expect(
+    within(subtasks).getByRole("list").getBoundingClientRect().left,
+  ).toBeCloseTo(
+    within(subtasks)
+      .getByRole("button", { name: "Subtasks" })
+      .getBoundingClientRect().left,
+    0,
+  );
 }

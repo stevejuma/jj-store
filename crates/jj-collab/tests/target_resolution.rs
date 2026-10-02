@@ -8,6 +8,7 @@ use std::collections::{BTreeMap, BTreeSet};
 #[derive(Default)]
 struct Reader {
     graph: CollabGraphV1,
+    work: Option<jj_work::WorkCommentV1>,
     threads: BTreeMap<ThreadId, CollabObjectRef>,
     messages: BTreeMap<(ThreadId, HumanMessageId), CollabObjectRef>,
     sessions: BTreeMap<a::AgentSessionId, a::AgentObjectRef>,
@@ -18,6 +19,13 @@ struct Reader {
 }
 #[async_trait::async_trait]
 impl ReactionTargetRead for Reader {
+    async fn work_comment(
+        &self,
+        _: jj_work::TaskId,
+        _: jj_work::WorkCommentId,
+    ) -> Result<Option<jj_work::WorkCommentV1>> {
+        Ok(self.work.clone())
+    }
     async fn thread_selection(&self, id: ThreadId) -> Result<Option<CollabObjectRef>> {
         Ok(self.threads.get(&id).copied())
     }
@@ -775,4 +783,91 @@ async fn revision_traversal_is_bounded_and_absent_targets_are_unavailable() {
         resolve_reaction_target(&reader, &human_target(oldest)).await,
         Err(Error::TargetUnavailable)
     ));
+}
+
+#[tokio::test]
+async fn work_comment_requires_exact_visible_identity_task_and_version() {
+    use jj_work::{TaskId, WorkActorV1, WorkCommentId, WorkCommentV1};
+    let mut reader = Reader::default();
+    let task_id = TaskId::new([7; 16]);
+    let comment_id = WorkCommentId::new([8; 16]);
+    let target = ReactionTargetV1::WorkComment {
+        task_id,
+        comment_id,
+        version: 1,
+    };
+    assert!(matches!(
+        resolve_reaction_target(&reader, &target).await,
+        Err(Error::TargetUnavailable)
+    ));
+    let comment = WorkCommentV1 {
+        schema_version: 1,
+        id: comment_id,
+        task: task_id,
+        reply_to: None,
+        body: Some("Visible".into()),
+        version: 1,
+        actor: WorkActorV1 {
+            created_by: actor(),
+            updated_by: actor(),
+            created_at_millis: 0,
+            updated_at_millis: 0,
+        },
+    };
+    reader.work = Some(comment.clone());
+    assert_eq!(
+        resolve_reaction_target(&reader, &target)
+            .await
+            .unwrap()
+            .revision,
+        TargetRevisionV1::Current
+    );
+    assert!(
+        ReactionTargetV1::WorkComment {
+            task_id,
+            comment_id,
+            version: 0
+        }
+        .exact_key()
+        .is_err()
+    );
+    assert_ne!(
+        target.exact_key().unwrap(),
+        ReactionTargetV1::WorkComment {
+            task_id,
+            comment_id,
+            version: 2
+        }
+        .exact_key()
+        .unwrap()
+    );
+    for value in [
+        WorkCommentV1 {
+            version: 2,
+            ..comment.clone()
+        },
+        WorkCommentV1 {
+            id: WorkCommentId::new([9; 16]),
+            ..comment.clone()
+        },
+        WorkCommentV1 {
+            task: TaskId::new([9; 16]),
+            ..comment.clone()
+        },
+        WorkCommentV1 {
+            body: None,
+            ..comment.clone()
+        },
+    ] {
+        reader.work = Some(value);
+        assert!(matches!(
+            resolve_reaction_target(&reader, &target).await,
+            Err(Error::TargetUnavailable)
+        ));
+    }
+    // Existing target JSON and exact-key inputs are unaffected by the additive variant.
+    assert_eq!(
+        serde_json::to_string(&ReactionTargetV1::Thread { thread_id: tid() }).unwrap(),
+        r#"{"type":"thread","thread_id":"01010101010101010101010101010101"}"#
+    );
 }

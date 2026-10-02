@@ -11,7 +11,7 @@ export function dependencyErrors(packages) {
     "jj-work": ["jj-store-model"],
     "jj-agent": ["jj-store-model"],
     "jj-review": ["jj-agent", "jj-store-model"],
-    "jj-collab": ["jj-agent", "jj-review", "jj-store-model"],
+    "jj-collab": ["jj-agent", "jj-review", "jj-work", "jj-store-model"],
     "jj-store-object": ["jj-store-model"],
     "jj-store-wal": [
       "jj-collab",

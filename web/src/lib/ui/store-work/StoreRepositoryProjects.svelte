@@ -6,6 +6,11 @@
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreProjectsDirectory from "./StoreProjectsDirectory.svelte";
+  import StoreProjectsLoading from "./StoreProjectsLoading.svelte";
+  import {
+    projectsBusy,
+    projectsInitialLoading,
+  } from "./projects-initial-loading.js";
   import StoreWorkLayoutControls from "./StoreWorkLayoutControls.svelte";
   import "./community-work-rows.css";
   import "./community-work-layout.css";
@@ -38,7 +43,7 @@
 <section
   class="store-projects community-projects"
   aria-label="Linked repository projects"
-  aria-busy={controller.projects?.loading}
+  aria-busy={projectsBusy(controller)}
 >
   <ScrollArea
     type="hover"
@@ -54,7 +59,7 @@
           size="icon-sm"
           aria-label="Refresh projects"
           title="Refresh projects"
-          disabled={controller.projects?.loading}
+          disabled={projectsBusy(controller)}
           onclick={() => controller.actions.refresh()}
           ><RefreshIcon aria-hidden="true" /></Button
         >
@@ -63,6 +68,10 @@
     {#if controller.projects?.error}<p role="alert">
         {controller.projects.error}
       </p>{/if}
-    <StoreProjectsDirectory {controller} {layout} />
+    {#if projectsInitialLoading(controller)}<StoreProjectsLoading
+        route={controller.projects!.route}
+        {layout}
+      />
+    {:else}<StoreProjectsDirectory {controller} {layout} />{/if}
   </ScrollArea>
 </section>

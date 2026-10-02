@@ -93,6 +93,11 @@ views and supports exact discussions on immutable code, diff and agent
 artifacts. Review task context is explicit and version-bound; replaying or
 reading a comment never dispatches an agent.
 
+Agent session list metrics align at the trailing end of the second row in
+transcript-count, tool-count, duration order. Tool action toolbars remain inside
+their row bounds and accessible by pointer, keyboard and touch; open menus
+retain visibility.
+
 ## Thread presentation alignment
 
 Thread settings and replies occupy the shell's far-right sidebar, with the same
@@ -172,8 +177,17 @@ dependency. Human messages outside sessions have immutable versioned first-party
 records.
 
 Reaction targets distinguish logical Thread/review identities from exact human
-message, agent message, tool invocation/output, review comment/reply and
-checkpoint versions. Agent message targets include validated event/batch and
+message, agent message, tool invocation/output, review comment/reply, WorkStore
+comment and checkpoint versions. WorkStore comment targets are scoped to the
+metadata home and name the task, stable comment identity and exact nonzero
+comment version. The resolver admits only a visible comment at that version in
+the captured WorkStore root, with matching task membership. Edits do not
+transfer reactions to the new version; tombstones, missing membership and stale
+versions are unavailable. Reaction commands keep the existing actor admission,
+observed records, durable receipts and independent Reaction root. They do not
+change task versions or grant access to linked code. Native and local providers
+capture Work and Reaction selections together; existing target variants retain
+their canonical bytes. Agent message targets include validated event/batch and
 content witnesses; outputs use the existing content object identity, never an
 invented ToolResultId. A central resolver validates membership and visibility
 against captured roots. Aggregation does not silently transfer feedback across
@@ -182,17 +196,17 @@ authorized. Hidden targets or actors produce no count, search or identity
 disclosure.
 
 The shared target resolver consumes one authorized, repository-bound selection
-of Thread, Agent and Review roots. Its reader never exposes staged objects. Its
-provider verifies existing repository-bound Agent/Review identities; the domain
-resolver verifies collaboration content IDs and typed entity membership without
-replacing the owning stores' identity codecs. Human and review revisions must be
-reachable from the selected logical message/comment; checkpoint versions must be
-in the selected checkpoint's supersession chain. Tool snapshots require the
-selected session/tool and retained snapshot membership; output content must
-match that exact snapshot. Message event witnesses must belong to the selected
-session's event batches and match the exact message and content IDs. Resolution
-returns only an exact key and a current/earlier distinction, never a target body
-or reaction count.
+of Thread, Agent, Review and Work roots. Its reader never exposes staged
+objects. Its provider verifies existing repository-bound Agent/Review
+identities; the domain resolver verifies collaboration content IDs and typed
+entity membership without replacing the owning stores' identity codecs. Human
+and review revisions must be reachable from the selected logical
+message/comment; checkpoint versions must be in the selected checkpoint's
+supersession chain. Tool snapshots require the selected session/tool and
+retained snapshot membership; output content must match that exact snapshot.
+Message event witnesses must belong to the selected session's event batches and
+match the exact message and content IDs. Resolution returns only an exact key
+and a current/earlier distinction, never a target body or reaction count.
 
 Current tombstones and hidden or conflicted review comment selections suppress
 all earlier-revision reaction disclosure. Absent and inaccessible targets have
@@ -543,14 +557,19 @@ public listener or controller dispatch.
 ## Application presentation
 
 The repository Reviews page opens the Community review detail composition with
-Description, Files changed, Commits and Activity. Its shared native activity
-timeline is also used by Projects and Tasks: native commit rows contain inline
-Agent context disclosures using recorded associations, sanitized messages and
-tool-call primitives. Code and agent roots remain independent. An anchored agent
-snapshot that differs from the available selected session is explicitly
-unavailable; the UI does not represent the latest session as the original
-artifact. Review comments, resolve/reopen, durable unknown requests and inline
-diff/tool threads retain their existing service contracts.
+Description, Files changed, Commits and Activity. Its detail replaces the list
+in the main page from either repository or Projects review navigation,
+independently of the thread discussion layout preference. The fixed header and
+comment composer surround one scrolling body; comments remain under Activity,
+and page comments select no parent until an explicit reply action.
+Draft/edit/reply state and existing native commands are retained. Its shared
+native activity timeline is also used by Projects and Tasks: native commit rows
+contain inline Agent context disclosures using recorded associations, sanitized
+messages and tool-call primitives. Code and agent roots remain independent. An
+anchored agent snapshot that differs from the available selected session is
+explicitly unavailable; the UI does not represent the latest session as the
+original artifact. Review comments, resolve/reopen, durable unknown requests and
+inline diff/tool threads retain their existing service contracts.
 
 The shared Activity timeline and sanitized transcript use Community's measured
 virtual rows in shadcn ScrollArea viewports. Agent association metadata is read
@@ -720,26 +739,36 @@ Stable workflow identities never substitute for immutable version identities.
 All identifiers use canonical lowercase hexadecimal encoding.
 
 `ArtifactAnchorV1` binds one repository and exactly one code text, whole code
-artifact, agent text, whole agent artifact, revision, operation or repository
-target. Code anchors carry full operation and commit IDs, optional change IDs,
-repository-relative paths and the exact native file/object identity. Diff text
-anchors additionally carry an explicit before/after operation, commit and path
-pair; the selected side must equal the anchor's primary identity. Whole native
-artifacts accept matching file or symlink object kinds. External-width gitlink
-identities have no owned native object key and therefore fail closed in v1.
+artifact, agent text, whole agent artifact, whole agent session, revision,
+operation or repository target. Code anchors carry full operation and commit
+IDs, optional change IDs, repository-relative paths and the exact native
+file/object identity. Diff text anchors additionally carry an explicit
+before/after operation, commit and path pair; the selected side must equal the
+anchor's primary identity. Whole native artifacts accept matching file or
+symlink object kinds. External-width gitlink identities have no owned native
+object key and therefore fail closed in v1.
 
 Text selections use canonical decimal-string UTF-8 byte offsets and a SHA-256
 digest of the selected bytes. Empty, reversed, out-of-bounds, non-UTF-8-boundary
 or digest-mismatched selections are invalid. No line number, display text or
 search result can replace this byte-level check.
 
-Agent anchors pin an immutable session snapshot plus the exact tool attempt,
-message or plan owner snapshot. Text targets also pin the block version, content
-object, content part, source coverage and representation, sanitizer and
-normalizer versions. Kind mismatches fail closed. Anchor dependency traversal
-enumerates every native or AgentStore object needed for original-context reads;
-stable entity IDs and optional change IDs remain lookup facts rather than strong
-object edges.
+The additive `agent_session` target binds the stable session identity and one
+exact immutable session-snapshot reference. It retains that snapshot and its
+complete AgentStore closure through existing review dependency traversal. Native
+staging and cold reads verify that the referenced snapshot belongs to that
+session; wrong kinds, missing snapshots and mismatched identities fail closed.
+Existing V1 anchor encodings and hashes remain unchanged. Filesystem-local agent
+targets remain unsupported. Session comments are human ReviewStore comments,
+never agent prompts, capture edits, tool replies or controller dispatch.
+
+Other agent anchors pin an immutable session snapshot plus the exact tool
+attempt, message or plan owner snapshot. Text targets also pin the block
+version, content object, content part, source coverage and representation,
+sanitizer and normalizer versions. Kind mismatches fail closed. Anchor
+dependency traversal enumerates every native or AgentStore object needed for
+original-context reads; stable entity IDs and optional change IDs remain lookup
+facts rather than strong object edges.
 
 The additive portable V2 anchor represents retained AgentStore sessions and tool
 invocations directly. It never invents a tool attempt or message/block identity
@@ -1162,6 +1191,12 @@ fall back to creating a reply. Task edit context also retains the observed task
 version. Agent transcript and tool captures stay immutable; copy menus expose
 only the selected sanitized native presentation records.
 
+Browser transcript presentation groups adjacent tool entries without changing
+their native IDs, order, snapshot pins or immutable records. Other recorded
+events remain group boundaries. Per-tool detail, copy and review actions bind
+the original call. A failed call has its error status in the row and preserves
+the recorded error in expanded details, without a redundant failure caption.
+
 An unresolved review command retains its durable request identity and blocks
 replacement submissions until status proves commitment. Draft and edit/reply
 context remain present on failure or unknown outcome. Late command completions
@@ -1194,3 +1229,20 @@ Local Agents presentation retains selected companion metadata, qualified source
 repository identities, Git commits and immutable evidence. The browser gates
 review controls for local repositories and compares freshness announcements with
 retained selections, including stream reconnects.
+
+Projects Agents directories adapt the existing bounded repository session reads;
+they introduce no cross-repository authority or inferred task association.
+Native and qualified local snapshots remain distinct and independently pinned.
+Permission changes discard retained sessions, unsupported profiles use explicit
+icon Empty states, and opening a session authorizes its repository separately.
+Project and repository response panes respect the device Thread layout. Split
+uses the same full-body AppShell standard right sidebar as Thread replies, with
+shared header, close, resize and mobile lane mechanics. Focus uses the same
+structural discussion sheet, including desktop body/panel coverage and mobile
+root insets. Close, Escape and scrim dismissal restore the selected row focus.
+The independently controlled details rail remains separate. They reuse the
+repository Agent response presentation, including separately authorized
+reactions and tool discussions. They retain the Projects directory and pinned
+continuation rather than navigating to a repository page. Closing, changed scope
+and late reads cannot leak or restore an obsolete response; unknown command
+identities remain retained for recovery.

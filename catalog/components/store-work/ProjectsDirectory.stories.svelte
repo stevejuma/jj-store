@@ -12,6 +12,106 @@
 </script>
 
 <Story
+  name="Project columns align across rows"
+  args={{ variedProjectMetadata: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await c.findByRole("button", { name: "Open project Small project" });
+    const list = c.getByRole("list", { name: "Projects" });
+    for (const width of [980, 620, 300]) {
+      list.style.width = `${width}px`;
+      await waitFor(() => {
+        const rows = [...list.querySelectorAll<HTMLElement>("article")];
+        for (const selector of [
+          ".community-projects__project-description",
+          ".community-projects__project-repositories",
+          ".community-projects__project-counts",
+        ]) {
+          const lefts = rows.map(
+            (row) => row.querySelector(selector)!.getBoundingClientRect().left,
+          );
+          expect(Math.max(...lefts) - Math.min(...lefts)).toBeLessThan(1);
+        }
+        const avatars = rows.map(
+          (row) =>
+            row
+              .querySelector(".community-member-hover-card__trigger")!
+              .getBoundingClientRect().left,
+        );
+        expect(Math.max(...avatars) - Math.min(...avatars)).toBeLessThan(1);
+        for (const row of rows)
+          expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+      });
+    }
+    list.style.width = "";
+    await userEvent.click(c.getByRole("radio", { name: "Grid layout" }));
+    for (const row of list.querySelectorAll<HTMLElement>("article")) {
+      await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+    }
+  }}
+/>
+
+<Story
+  name="Linked repository cards share height and use their width"
+  args={{ projectDetail: true, longRepositoryDescriptions: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await c.findByRole("button", { name: "Edit project" });
+    await userEvent.click(await c.findByRole("tab", { name: "Repositories" }));
+    await waitFor(() =>
+      expect(
+        c.getByText(/Native parsing and storage services with/),
+      ).toBeVisible(),
+    );
+    await userEvent.click(c.getByRole("radio", { name: "Grid layout" }));
+    const list = c.getByRole("list", { name: "Repository links" });
+    const retired = within(list).getByText("Retired");
+    const row = retired.closest("article")!;
+    const title = within(row).getByText("UI repository");
+    const target = within(row).getByRole("button", {
+      name: "Open repository UI repository",
+    });
+    const description = within(row).getByTitle("Latest selected change");
+    const active = c
+      .getByRole("button", { name: "Open repository Parser repository" })
+      .closest("article")!;
+    for (const width of [980, 620, 300]) {
+      list.style.width = `${width}px`;
+      await waitFor(() => {
+        const chip = retired.getBoundingClientRect(),
+          heading = title.getBoundingClientRect();
+        expect(
+          Math.abs(
+            chip.top + chip.height / 2 - heading.top - heading.height / 2,
+          ),
+        ).toBeLessThan(3);
+        expect(target.getBoundingClientRect().right - chip.right).toBeLessThan(
+          2,
+        );
+        expect(
+          target.getBoundingClientRect().width -
+            description.getBoundingClientRect().width,
+        ).toBeLessThan(2);
+        expect(description.getBoundingClientRect().height).toBeLessThanOrEqual(
+          title.getBoundingClientRect().height * 2 + 1,
+        );
+        expect(
+          Math.abs(
+            row.getBoundingClientRect().height -
+              active.getBoundingClientRect().height,
+          ),
+        ).toBeLessThan(1);
+        expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+      });
+    }
+    list.style.width = "";
+    await userEvent.click(c.getByRole("radio", { name: "List layout" }));
+    await expect(target).toBeVisible();
+    await expect(retired).toBeVisible();
+  }}
+/>
+
+<Story
   name="Repository metadata in list and cards"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -113,5 +213,45 @@
     await expect(
       c.getByRole("group", { name: /Loaded activity: 24 commits/ }),
     ).toBeVisible();
+  }}
+/>
+
+<Story
+  name="Repository descriptions align across directory and project rows"
+  args={{ longRepositoryDescriptions: true, readonly: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await c.findByRole("button", { name: "Open project Native release" });
+    async function checkRows(label: string) {
+      await userEvent.click(c.getByRole("radio", { name: "List layout" }));
+      const list = c.getByRole("list", { name: label });
+      await expect(list).toHaveAttribute("data-layout", "list");
+      for (const width of [980, 620, 300]) {
+        list.style.width = `${width}px`;
+        await waitFor(() => {
+          const rows = [...list.querySelectorAll<HTMLElement>("article")];
+          expect(rows.length).toBeGreaterThan(1);
+          const lefts = rows.map(
+            (row) =>
+              row
+                .querySelector(".store-projects__repository-description")!
+                .getBoundingClientRect().left,
+          );
+          expect(Math.max(...lefts) - Math.min(...lefts)).toBeLessThan(1);
+          for (const row of rows)
+            expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+        });
+      }
+      list.style.width = "";
+    }
+    await userEvent.click(c.getByRole("tab", { name: "Repositories" }));
+    await c.findByText(/Native parsing and storage services with/);
+    await checkRows("Other repositories");
+    await userEvent.click(c.getByRole("tab", { name: "Projects" }));
+    await userEvent.click(
+      await c.findByRole("button", { name: "Open project Native release" }),
+    );
+    await userEvent.click(c.getByRole("tab", { name: "Repositories" }));
+    await checkRows("Repository links");
   }}
 />

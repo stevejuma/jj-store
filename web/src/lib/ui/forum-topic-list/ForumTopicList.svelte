@@ -25,6 +25,7 @@
     disabled = false,
     composerStatus,
     viewport,
+    filtered = false,
   }: {
     title?: string;
     topics: CommunityTopicModel[];
@@ -34,10 +35,15 @@
     disabled?: boolean;
     composerStatus?: ComposerStatus;
     viewport?: HTMLElement | null;
+    filtered?: boolean;
   } = $props();
 </script>
 
-<section class="forum-topic-list" aria-label={`${title} listing`}>
+<section
+  class="forum-topic-list"
+  class:forum-topic-list--empty={!topics.length}
+  aria-label={`${title} listing`}
+>
   {#if onCreateTopic}<CommunityTopicComposer
       forumName={title}
       {members}
@@ -49,8 +55,12 @@
       ><Empty.Header
         ><Empty.Media variant="icon"
           ><MessagesSquareIcon aria-hidden="true" /></Empty.Media
-        ><Empty.Title>No threads yet</Empty.Title><Empty.Description
-          >Create a thread to start a conversation.</Empty.Description
+        ><Empty.Title
+          >{filtered ? "No matching threads" : "No threads yet"}</Empty.Title
+        ><Empty.Description
+          >{filtered
+            ? "Try a different search or clear the filter."
+            : "Create a thread to start a conversation."}</Empty.Description
         ></Empty.Header
       ></Empty.Root
     >

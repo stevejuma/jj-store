@@ -104,24 +104,26 @@
       style={`--community-app-shell-header-main-start: ${headerMainStart}px; --community-app-shell-header-main-width: ${headerMainWidth}px`}
     >
       <div class="community-app-shell__header-start">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label={controller.left.collapsed
-            ? "Expand left sidebar"
-            : "Collapse left sidebar"}
-          aria-expanded={!controller.left.collapsed}
-          data-ui-part="sidebar-toggle"
-          data-side="left"
-          data-state={controller.left.collapsed ? "collapsed" : "expanded"}
-          title={controller.left.collapsed
-            ? "Expand left sidebar"
-            : "Collapse left sidebar"}
-          onclick={() => controller.left.toggle()}
-        >
-          <CommunitySidebarToggleIcon expanded={!controller.left.collapsed} />
-        </Button>
+        <span class="community-app-shell__sidebar-action">
+          <Button
+            type="button"
+            variant="default"
+            size="icon-sm"
+            aria-label={controller.left.collapsed
+              ? "Expand left sidebar"
+              : "Collapse left sidebar"}
+            aria-expanded={!controller.left.collapsed}
+            data-ui-part="sidebar-toggle"
+            data-side="left"
+            data-state={controller.left.collapsed ? "collapsed" : "expanded"}
+            title={controller.left.collapsed
+              ? "Expand left sidebar"
+              : "Collapse left sidebar"}
+            onclick={() => controller.left.toggle()}
+          >
+            <CommunitySidebarToggleIcon expanded={!controller.left.collapsed} />
+          </Button>
+        </span>
 
         <div
           class="community-app-shell__history"
@@ -302,26 +304,24 @@
     font-size: var(--community-text-body);
   }
 
+  :global(
+    .community-app-shell__header
+      [data-ui-component="button"]:not(:disabled):is(
+        :focus-visible,
+        [aria-haspopup="menu"][data-state="open"]
+      )
+  ) {
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  }
+
   @media (hover: hover) {
     :global(
       .community-app-shell__header
         [data-ui-component="button"]:not(:disabled):hover
     ) {
-      color: var(--sidebar-accent-foreground, var(--accent-foreground));
-      background: var(--sidebar-accent, var(--accent));
-    }
-
-    @supports (color: color-mix(in oklab, black, white)) {
-      :global(
-        .community-app-shell__header
-          [data-ui-component="button"]:not(:disabled):hover
-      ) {
-        background: color-mix(
-          in oklab,
-          var(--sidebar-accent, var(--accent)) 92%,
-          var(--sidebar-accent-foreground, var(--accent-foreground))
-        );
-      }
+      color: var(--foreground);
+      background: color-mix(in srgb, var(--foreground) 7%, transparent);
     }
   }
 </style>

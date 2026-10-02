@@ -864,3 +864,211 @@ async fn service_deadline_keeps_unknown_request_identity_for_exact_retry() {
         1
     );
 }
+
+#[tokio::test]
+async fn native_work_comment_reactions_pin_versions_authorize_and_survive_cold_sessions() {
+    use jj_store_service::work::{
+        ProjectId, TaskId, WorkCommandService, WorkCommandV1, WorkCommentId,
+    };
+    let f = Fixture::home().await;
+    let writer = f.session(ACTOR, Permission::Write);
+    let reader = f.session(ACTOR, Permission::Read);
+    let task = TaskId::new([90; 16]);
+    let comment = WorkCommentId::new([91; 16]);
+    for (n, command) in [
+        (
+            90,
+            WorkCommandV1::CreateTask {
+                id: task,
+                project: ProjectId::new([99; 16]),
+                expected_project_version: 1,
+                title: "Task".into(),
+                body: String::new(),
+                repository: None,
+                parent: None,
+            },
+        ),
+        (
+            91,
+            WorkCommandV1::AddComment {
+                id: comment,
+                task,
+                expected_task_version: 1,
+                reply_to: None,
+                body: "Visible".into(),
+            },
+        ),
+    ] {
+        WorkCommandService
+            .apply(
+                writer.clone(),
+                &jj_store_service::work::Request {
+                    version: 1,
+                    request_id: m::RequestId::new([n; 16]),
+                    command,
+                },
+            )
+            .await
+            .unwrap();
+    }
+    let target = ReactionTargetV1::WorkComment {
+        task_id: task,
+        comment_id: comment,
+        version: 1,
+    };
+    let set = react(92, target.clone(), ReactionValueV1::Like);
+    let before = writer.snapshot().await.unwrap();
+    assert_eq!(
+        CollabCommandService
+            .apply(reader.clone(), &set)
+            .await
+            .unwrap_err(),
+        Error::Denied
+    );
+    let accepted = apply(writer.clone(), &set).await;
+    assert_eq!(accepted.actor, ACTOR);
+    let after = writer.snapshot().await.unwrap();
+    assert_eq!(before.manifest().work_root, after.manifest().work_root);
+    assert_eq!(
+        before.manifest().work_state_version,
+        after.manifest().work_state_version
+    );
+    let pinned = f.read().await;
+    let page = pinned
+        .reactions(reader.clone(), &target, None, 20)
+        .await
+        .unwrap();
+    assert_eq!(page.reactions[0].count, 1);
+    assert!(page.reactions[0].viewer_reacted);
+    assert_eq!(
+        page.snapshot.work_root,
+        after.manifest().work_root.map(|root| root.digest)
+    );
+    let cold = f.session(ACTOR, Permission::Write);
+    assert_eq!(apply(cold.clone(), &set).await, accepted);
+    assert!(matches!(
+        CollabCommandService
+            .status(cold.clone(), set.request_id)
+            .await
+            .unwrap(),
+        Status::Committed { .. }
+    ));
+    let wrong = ReactionTargetV1::WorkComment {
+        task_id: TaskId::new([89; 16]),
+        comment_id: comment,
+        version: 1,
+    };
+    assert_eq!(
+        CollabCommandService
+            .apply(cold.clone(), &react(93, wrong, ReactionValueV1::Like))
+            .await
+            .unwrap_err(),
+        Error::NotFound
+    );
+    WorkCommandService
+        .apply(
+            writer.clone(),
+            &jj_store_service::work::Request {
+                version: 1,
+                request_id: m::RequestId::new([94; 16]),
+                command: WorkCommandV1::EditComment {
+                    id: comment,
+                    expected_version: 1,
+                    expected_task_version: 2,
+                    body: "Edited".into(),
+                },
+            },
+        )
+        .await
+        .unwrap();
+    // Captured reads still disclose the captured visible version, fresh reads do not.
+    assert_eq!(
+        pinned
+            .reactions(reader.clone(), &target, None, 20)
+            .await
+            .unwrap()
+            .reactions[0]
+            .count,
+        1
+    );
+    assert!(matches!(
+        f.read()
+            .await
+            .reactions(reader.clone(), &target, None, 20)
+            .await,
+        Err(Error::NotFound)
+    ));
+    let current = ReactionTargetV1::WorkComment {
+        task_id: task,
+        comment_id: comment,
+        version: 2,
+    };
+    assert!(
+        f.read()
+            .await
+            .reactions(reader.clone(), &current, None, 20)
+            .await
+            .unwrap()
+            .reactions
+            .is_empty()
+    );
+    assert_eq!(
+        CollabCommandService
+            .apply(writer.clone(), &react(95, target, ReactionValueV1::Like))
+            .await
+            .unwrap_err(),
+        Error::NotFound
+    );
+    let second = react(
+        96,
+        current.clone(),
+        ReactionValueV1::Emoji {
+            sequence: "🎉".into(),
+        },
+    );
+    let result = apply(writer.clone(), &second).await;
+    let CollabCommandResultV1::Reaction { result } = result.result else {
+        panic!()
+    };
+    apply(
+        writer.clone(),
+        &request(
+            97,
+            CollabCommandV1::Reaction {
+                intent: ReactionCommandV1::Clear {
+                    target: current.clone(),
+                    observed: result.active,
+                },
+            },
+        ),
+    )
+    .await;
+    assert!(
+        f.read()
+            .await
+            .reactions(reader.clone(), &current, None, 20)
+            .await
+            .unwrap()
+            .reactions
+            .is_empty()
+    );
+    WorkCommandService
+        .apply(
+            writer.clone(),
+            &jj_store_service::work::Request {
+                version: 1,
+                request_id: m::RequestId::new([98; 16]),
+                command: WorkCommandV1::TombstoneComment {
+                    id: comment,
+                    expected_version: 2,
+                    expected_task_version: 3,
+                },
+            },
+        )
+        .await
+        .unwrap();
+    assert!(matches!(
+        f.read().await.reactions(reader, &current, None, 20).await,
+        Err(Error::NotFound)
+    ));
+}

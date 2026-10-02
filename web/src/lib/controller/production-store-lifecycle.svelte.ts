@@ -15,6 +15,11 @@ import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 type History = ReturnType<typeof createStoreRouteHistory>;
 type Reader = ReturnType<typeof createProductionStoreReader>;
 
+export function requireProductionSource(source: StoreDataSource | null) {
+  if (!source) throw new ApiError("not_connected");
+  return source;
+}
+
 export function reportProductionStoreError(
   data: ProductionStoreState,
   cause: unknown,

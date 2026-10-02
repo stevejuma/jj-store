@@ -1,4 +1,4 @@
-/* Adapted from Lapis Community CommunityProjects.css (Apache-2.0).
+/* @community-copy Lapis Community CommunityProjects.css (Apache-2.0).
  * Native fields and actions retain Community presentation. */
 @import "./community-work-disclosures.css";
 .community-projects__task-list {
@@ -223,6 +223,10 @@
 .community-projects__task-composer {
   --ui-ai-chat-max-content-width: 100%;
   width: 100%;
+}
+
+.community-projects__task-detail .community-projects__task-composer {
+  margin-top: 1rem;
 }
 
 .community-projects__task-empty-activity {

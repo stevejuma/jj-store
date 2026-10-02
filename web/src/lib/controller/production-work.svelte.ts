@@ -1,3 +1,8 @@
+import {
+  acceptWorkPage,
+  cacheWorkView,
+  reloadWorkPages,
+} from "./work-refresh-pages.js";
 import { loadWorkCommentFocus } from "./work-comment-focus.js";
 import { ApiError, pretty } from "../api/client.js";
 import {
@@ -8,7 +13,10 @@ import {
   type WorkTransport,
 } from "./work-types.js";
 import type { Model } from "../api/client.js";
+import { workReactionSession } from "./work-reactions.svelte.js";
 export function createWorkController(context: {
+  repository?(): string;
+  principal?(): string;
   source(): WorkTransport;
   route(): {
     projectId?: string | null;
@@ -19,69 +27,17 @@ export function createWorkController(context: {
   changed(): void;
 }): WorkController {
   const state = $state(emptyWorkState());
+  const reactions = workReactionSession(context);
   let version = 0,
     session = 0;
   let reads = new AbortController();
-  const cached = new Map<string, ReturnType<typeof readView>>();
+  let stale = false;
+  const cached = new Map<string, ReturnType<typeof cacheWorkView>>();
   const key = (project?: string | null, task?: string | null) =>
     `${project ?? ""}:${task ?? ""}`;
-  function readView() {
-    const {
-      projects,
-      project,
-      tasks,
-      task,
-      comments,
-      snapshot,
-      projectCursor,
-      taskCursor,
-      commentCursor,
-    } = state;
-    return {
-      savedPins: [...pins],
-      projects,
-      project,
-      tasks,
-      task,
-      comments,
-      snapshot,
-      projectCursor,
-      taskCursor,
-      commentCursor,
-    };
-  }
   const pins = new Map<string, string>();
   const message = (cause: unknown) =>
     cause instanceof Error ? cause.message : "Request failed";
-  function accept(
-    page: import("./work-types.js").WorkPage,
-    kind: "projects" | "tasks" | "comments",
-    more: boolean,
-  ) {
-    const key = pretty(page.snapshot);
-    if (more && pins.get(kind) !== key) throw new ApiError("snapshot_mismatch");
-    pins.set(kind, key);
-    state.snapshot = page.snapshot;
-    if (kind === "projects") {
-      state.projects = more
-        ? [...state.projects, ...page.projects]
-        : page.projects;
-      state.projectCursor = page.next_cursor;
-    }
-    if (kind === "tasks") {
-      state.project = page.projects[0] ?? null;
-      state.tasks = more ? [...state.tasks, ...page.tasks] : page.tasks;
-      state.taskCursor = page.next_cursor;
-    }
-    if (kind === "comments") {
-      state.project = page.projects[0] ?? null;
-      state.task = page.tasks[0] ?? null;
-      state.comments = more
-        ? [...state.comments, ...page.comments]
-        : page.comments;
-      state.commentCursor = page.next_cursor;
-    }
-  }
   async function read(
     query: WorkQuery,
     kind: "projects" | "tasks" | "comments",
@@ -91,11 +47,30 @@ export function createWorkController(context: {
       ticket = version;
     const result = await source.page({ ...query, limit: 50 }, reads.signal);
     if (ticket !== version || source !== context.source()) return;
-    accept(result, kind, more);
+    acceptWorkPage(state, pins, result, kind, more);
   }
   async function restore(refresh = true) {
-    if (state.snapshot && !state.error && !state.loading) {
-      cached.set(key(state.project?.id, state.task?.id), readView());
+    refresh ||= stale;
+    const selection = context.route();
+    const sameSelection =
+      selection.projectId === state.project?.id &&
+      (selection.taskId ?? null) === (state.task?.id ?? null);
+    const counts = {
+      projects: state.projects.length,
+      tasks: sameSelection ? state.tasks.length : 0,
+      comments: sameSelection ? state.comments.length : 0,
+    };
+    if (
+      !stale &&
+      !refresh &&
+      state.snapshot &&
+      !state.error &&
+      !state.loading
+    ) {
+      cached.set(
+        key(state.project?.id, state.task?.id),
+        cacheWorkView(state, pins),
+      );
       if (cached.size > 16) cached.delete(cached.keys().next().value!);
     }
     reads.abort();
@@ -103,7 +78,6 @@ export function createWorkController(context: {
     const ticket = ++version;
     state.loading = true;
     state.error = "";
-    const selection = context.route();
     state.focusCommentId = selection.commentId ?? null;
     const saved =
       !refresh &&
@@ -138,7 +112,16 @@ export function createWorkController(context: {
           { project: route.projectId ?? undefined, task: route.taskId },
           "comments",
         );
+      if (refresh)
+        await reloadWorkPages(
+          state,
+          route,
+          counts,
+          read,
+          () => ticket === version,
+        );
       await loadWorkCommentFocus(state, route, read, () => ticket === version);
+      if (ticket === version) stale = false;
     } catch (cause) {
       if (ticket === version) {
         if (
@@ -154,12 +137,37 @@ export function createWorkController(context: {
     }
   }
   function reset() {
+    reactions.clear();
     version++;
     session++;
     reads.abort();
     pins.clear();
     cached.clear();
+    stale = false;
     Object.assign(state, emptyWorkState());
+  }
+  function invalidate() {
+    reactions.invalidate();
+    cached.clear();
+    stale = true;
+  }
+  async function refresh() {
+    invalidate();
+    const source = context.source(),
+      ticket = session;
+    await source.refresh?.();
+    if (ticket !== session || source !== context.source()) return;
+    await restore(true);
+  }
+  async function committed() {
+    state.pending = null;
+    state.message = "";
+    try {
+      await refresh();
+    } catch (cause) {
+      state.error = message(cause);
+    }
+    context.changed();
   }
   async function send() {
     const request = state.pending;
@@ -173,9 +181,7 @@ export function createWorkController(context: {
       const result = await source.apply(request);
       if (ticket !== session || source !== context.source()) return;
       if (result.status === "committed") {
-        state.pending = null;
-        state.message = "Saved. Refresh projects to see changes.";
-        context.changed();
+        await committed();
       } else
         state.message = "Outcome unknown. Check status or retry this request.";
     } catch (cause) {
@@ -208,12 +214,13 @@ export function createWorkController(context: {
     }
   }
   return {
+    get reactions() {
+      return reactions.current;
+    },
     state,
     restore,
-    refresh: async () => {
-      await context.source().refresh?.();
-      await restore(true);
-    },
+    refresh,
+    invalidate,
     reset,
     async select(project, task = null) {
       context.select(project, task);
@@ -257,17 +264,16 @@ export function createWorkController(context: {
     retry: send,
     async check() {
       const pending = state.pending,
+        source = context.source(),
         ticket = session;
       if (!pending || state.writing) return;
       state.writing = true;
       state.error = "";
       try {
-        const result = await context.source().status(pending.request_id);
-        if (ticket !== session) return;
+        const result = await source.status(pending.request_id);
+        if (ticket !== session || source !== context.source()) return;
         if (result.status === "committed") {
-          state.pending = null;
-          state.message = "Saved. Refresh projects to see changes.";
-          context.changed();
+          await committed();
         } else
           state.message =
             "No committed receipt yet. Retain this request and retry.";

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sectionDisclosure } from "../disclosure-layout.svelte.js";
   // CommunityProjectsPullRequestReview/DetailSurface, adapted native anchors (Apache-2.0).
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
@@ -12,6 +13,8 @@
   import GitPullRequestIcon from "@lucide/svelte/icons/git-pull-request";
   import UserIcon from "@lucide/svelte/icons/user";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
+  import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
+  import RotateCcwIcon from "@lucide/svelte/icons/rotate-ccw";
   import type { StoreController } from "../../controller/contracts.js";
   import {
     anchorLabel,
@@ -22,6 +25,8 @@
   import StoreIdentityCopy from "./StoreIdentityCopy.svelte";
   import StoreReviewAnchorIdentity from "./StoreReviewAnchorIdentity.svelte";
   import StoreReviewConversation from "./StoreReviewConversation.svelte";
+  import StoreReviewComposer from "./StoreReviewComposer.svelte";
+  import { reviewDraft } from "./review-drafts.svelte.js";
   import StoreRepositoryActivity from "./StoreRepositoryActivity.svelte";
   import StoreNativeAgentContext from "./StoreNativeAgentContext.svelte";
   import StoreReviewFiles from "./StoreReviewFiles.svelte";
@@ -40,10 +45,22 @@
     detail?.thread.presentation?.excerpt?.split("\n")[0] ||
       (detail ? anchorLabel(detail.anchor.value) : "Review"),
   );
-  let descriptionOpen = $state(true),
-    filesOpen = $state(false),
-    commitsOpen = $state(false),
-    activityOpen = $state(true);
+  const draft = $derived(
+    reviewDraft(controller, detail?.thread.thread_id ?? ""),
+  );
+  const writable = $derived(
+    view.repository.permission === "write" ||
+      view.repository.permission === "admin",
+  );
+  const section = (id: string, fallback = true) =>
+    sectionDisclosure(
+      () => ["review", detail?.thread.thread_id ?? "", id],
+      fallback,
+    );
+  const description = section("description"),
+    files = section("files", false),
+    commits = section("commits", false),
+    activity = section("activity");
 </script>
 
 {#snippet chevron(open: boolean)}{#if open}<ChevronDownIcon
@@ -78,7 +95,12 @@
         </p>
       </div>
     </header>
-    <ScrollArea class="store-collaboration__review-scroll" type="hover">
+    <ScrollArea
+      class="store-collaboration__review-scroll"
+      type="hover"
+      role="region"
+      aria-label="Review content"
+    >
       <div class="community-projects__review-body">
         <dl class="community-projects__review-meta">
           <div>
@@ -112,17 +134,21 @@
             </dt>
             <dd>
               {detail.thread.status}<Button
-                variant="ghost"
-                size="sm"
+                variant="secondary"
+                size="xs"
                 disabled={view.status.reviewAction === "refreshing" ||
                   view.status.reviewAction === "loading"}
                 onclick={() =>
                   controller.actions.setReviewResolved(
                     detail.thread.status === "open",
                   )}
-                >{detail.thread.status === "open"
-                  ? "Resolve"
-                  : "Reopen"}</Button
+                >{#if detail.thread.status === "open"}<CircleCheckIcon
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                  />Resolve{:else}<RotateCcwIcon
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                  />Reopen{/if}</Button
               >
             </dd>
           </div>
@@ -156,12 +182,12 @@
           >{/if}
         <Collapsible.Root
           class="community-projects__review-section"
-          bind:open={descriptionOpen}
+          bind:open={description.open}
         >
           <Collapsible.Trigger
             class="community-projects__review-section-trigger"
             ><span>Description</span>{@render chevron(
-              descriptionOpen,
+              description.open,
             )}</Collapsible.Trigger
           >
           <Collapsible.Content
@@ -176,13 +202,13 @@
         </Collapsible.Root>
         <Collapsible.Root
           class="community-projects__review-section community-projects__review-section--files"
-          bind:open={filesOpen}
+          bind:open={files.open}
         >
           <Collapsible.Trigger
             class="community-projects__review-section-trigger community-projects__review-section-trigger--files"
             ><span>Files changed</span>{@render chevron(
-              filesOpen,
-            )}{#if filesOpen && context}<span
+              files.open,
+            )}{#if files.open && context}<span
                 class="community-projects__review-section-count"
                 >{context.files.length}</span
               >{/if}</Collapsible.Trigger
@@ -198,12 +224,12 @@
         </Collapsible.Root>
         <Collapsible.Root
           class="community-projects__review-section"
-          bind:open={commitsOpen}
+          bind:open={commits.open}
         >
           <Collapsible.Trigger
             class="community-projects__review-section-trigger"
             ><span>Commits</span>{@render chevron(
-              commitsOpen,
+              commits.open,
             )}</Collapsible.Trigger
           >
           <Collapsible.Content
@@ -214,12 +240,12 @@
         </Collapsible.Root>
         <Collapsible.Root
           class="community-projects__review-section"
-          bind:open={activityOpen}
+          bind:open={activity.open}
         >
           <Collapsible.Trigger
             class="community-projects__review-section-trigger"
             ><span>Activity</span>{@render chevron(
-              activityOpen,
+              activity.open,
             )}</Collapsible.Trigger
           >
           <Collapsible.Content>
@@ -242,10 +268,27 @@
                   timestamp={Number(event.accepted_at_millis) / 1000}
                 /></Chat.SystemMessage
               >{/each}
-            <StoreReviewConversation {controller} showDiff={false} />
+            <StoreReviewConversation
+              {controller}
+              showDiff={false}
+              composerPlacement="external"
+            />
           </Collapsible.Content>
         </Collapsible.Root>
       </div>
     </ScrollArea>
+    {#if writable && (detail.thread.status === "open" || draft.reply || draft.edit)}
+      <footer
+        class="community-projects__review-footer"
+        aria-label="Review comment composer"
+      >
+        <StoreReviewComposer
+          {controller}
+          inline={false}
+          path={undefined}
+          page
+        />
+      </footer>
+    {/if}
   </article>
 {/if}

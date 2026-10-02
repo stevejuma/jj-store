@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sectionDisclosure } from "../disclosure-layout.svelte.js";
   // CommunityProjectsAgentContextDisclosure (Apache-2.0), native sanitized capture.
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
@@ -20,7 +21,14 @@
     controller: StoreController;
     patches?: Readonly<Record<string, string>>;
   } = $props();
-  let open = $state(false);
+  const disclosure = sectionDisclosure(
+    () => [
+      "review",
+      controller.state.reviewThread?.thread.thread_id ?? "",
+      "agent-context",
+    ],
+    false,
+  );
   let resolved = $state<NativeAgentContext>({ sessions: [], error: "" });
   let loading = $state(false);
   $effect(() => {
@@ -36,7 +44,7 @@
     };
   });
   $effect(() => {
-    const load = open ? resolved.load : undefined;
+    const load = disclosure.open ? resolved.load : undefined;
     if (!load) return;
     let current = true;
     loading = true;
@@ -55,7 +63,7 @@
 
 {#if resolved.sessions.length || resolved.relatedSessionIds?.length || resolved.error}
   <Collapsible.Root
-    bind:open
+    bind:open={disclosure.open}
     class="community-projects-agent-context-disclosure"
     data-ui-component="community-projects-agent-context-disclosure"
   >
@@ -80,7 +88,7 @@
       {/each}
     </div>
     <Collapsible.Content>
-      {#if open}
+      {#if disclosure.open}
         {#if loading}<p role="status">Loading agent context…</p>{/if}
         {#if resolved.error}<p role="status">{resolved.error}</p>{/if}
         {#each resolved.sessions as session (session.session.session_id)}

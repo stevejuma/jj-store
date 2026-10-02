@@ -26,3 +26,18 @@ export function applyComposerAutocompleteSelection(input: {
     keepOpen: isComposerSlashCategory(input.item),
   };
 }
+
+/** Insert toolbar text at the editor selection and restore editor focus. */
+export function insertComposerText(
+  view: EditorView | undefined,
+  text: string,
+): boolean {
+  if (!view) return false;
+  const selection = view.state.selection.main;
+  view.dispatch({
+    changes: { from: selection.from, to: selection.to, insert: text },
+    selection: { anchor: selection.from + text.length },
+  });
+  view.focus();
+  return true;
+}

@@ -57,11 +57,6 @@
   background: color-mix(in srgb, var(--muted) 72%, transparent);
 }
 
-.community-projects__tab-back[data-ui-component="button"] {
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--muted) 38%, transparent);
-}
-
 /* Design Core's tab defaults intentionally form one segmented control. Projects
    follows Buzz's workspace navigation instead: each destination is its own pill. */
 .community-projects .community-projects__tab-list[data-slot="tabs-list"] {

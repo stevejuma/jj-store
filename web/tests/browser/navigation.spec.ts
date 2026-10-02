@@ -36,7 +36,7 @@ test("hash route restores snapshot and file through controls reload and browser 
 
   await expect(
     page.getByRole("button", {
-      name: "Refresh snapshot (new history available)",
+      name: "Refresh snapshot",
     }),
   ).toBeVisible();
   await page.getByRole("button", { name: /Refresh snapshot/ }).click();

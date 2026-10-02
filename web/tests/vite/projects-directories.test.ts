@@ -13,6 +13,76 @@ const repositories = [
   { id: homeA, name: "Home", permission: "write" as const },
   { id: homeB, name: "Code", permission: "read" as const },
 ];
+test("missing review capability never reads transport while supported failures remain retryable", async () => {
+  let calls = 0;
+  const source = fixtureTransport(homeA);
+  const original = source.reviews!;
+  source.reviews = async () => {
+    calls++;
+    if (calls === 1) throw new Error("Temporarily unavailable");
+    return original();
+  };
+  const reviews = createProjectsReviews({
+    source: (id) =>
+      id === homeB
+        ? { ...fixtureTransport(homeB), reviews: undefined }
+        : source,
+    denied: () => {},
+  });
+  const route = { ...initialStoreRoute(), workTab: "reviews" as const };
+  const homes = [
+    repositories[0]!,
+    { ...repositories[1]!, profile: "git_sha1_jj045" as const },
+  ];
+  await reviews.load(route, homes);
+  expect(calls).toBe(1);
+  expect(reviews.homes[0]).toMatchObject({
+    unsupported: false,
+    error: "Temporarily unavailable",
+  });
+  expect(reviews.homes[1]).toMatchObject({
+    unsupported: true,
+    error: "",
+    loading: false,
+    threads: [],
+    snapshot: null,
+    cursor: null,
+  });
+  await reviews.load(route, homes, true);
+  expect(calls).toBe(2);
+  expect(reviews.homes[0]?.threads).toHaveLength(1);
+  expect(reviews.homes[1]?.unsupported).toBe(true);
+});
+test("qualified local reviews load alongside native reviews in the Projects directory", async () => {
+  const calls: string[] = [];
+  const reviews = createProjectsReviews({
+    source: (id) => {
+      const source = fixtureTransport(id);
+      return {
+        ...source,
+        reviews: async () => {
+          calls.push(id);
+          return source.reviews!();
+        },
+      };
+    },
+    denied: () => {},
+  });
+  await reviews.load({ ...initialStoreRoute(), workTab: "reviews" }, [
+    repositories[0]!,
+    { ...repositories[1]!, profile: "git_sha1_jj045" },
+  ]);
+  expect(calls).toEqual([homeA, homeB]);
+  expect(reviews.homes.map((home) => home.unsupported)).toEqual([false, false]);
+  expect(reviews.homes.map((home) => home.threads.length)).toEqual([1, 0]);
+  expect(reviews.homes.map((home) => home.snapshot?.repo_id)).toEqual([
+    homeA,
+    homeB,
+  ]);
+  expect(reviews.homes.every((home) => home.snapshot && !home.error)).toBe(
+    true,
+  );
+});
 test("sidebar uses independent unfiltered snapshots and active repository children", async () => {
   const source = fixtureTransport(homeA),
     queries: unknown[] = [],

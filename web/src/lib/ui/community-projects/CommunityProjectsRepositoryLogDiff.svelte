@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sectionDisclosure } from "../disclosure-layout.svelte.js";
   import {
     FileChangeStats,
     type FileDiffComposerFileContext,
@@ -44,7 +45,7 @@
 
   let viewMode = $state<FileDiffViewMode>("unified");
   let wrap = $state(false);
-  let operationExpanded = $state(true);
+  const operationDisclosure = sectionDisclosure(() => ["oplog", "operation"]);
   const stats = $derived(repositoryLogFileStats(files, path));
   const operationPanelId = $derived(
     operation ? `operation-details-${operation.eventId.slice(0, 16)}` : "",
@@ -83,9 +84,10 @@
             <button
               class="community-projects-repository-log-diff__operation-toggle"
               type="button"
-              aria-expanded={operationExpanded}
+              aria-expanded={operationDisclosure.open}
               aria-controls={operationPanelId}
-              onclick={() => (operationExpanded = !operationExpanded)}
+              onclick={() =>
+                (operationDisclosure.open = !operationDisclosure.open)}
             >
               <ChevronDownIcon aria-hidden="true" />
               <span>{operation.message}</span>
@@ -97,7 +99,7 @@
               />
             </div>
           </header>
-          {#if operationExpanded}
+          {#if operationDisclosure.open}
             <div id={operationPanelId}>
               <CommunityProjectsRepositoryLogRail
                 {operation}

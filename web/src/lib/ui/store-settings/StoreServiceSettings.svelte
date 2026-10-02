@@ -35,8 +35,8 @@
       <dd>{state.status.live}</dd>
     </div>
     <div>
-      <dt>Repository refresh</dt>
-      <dd>{state.status.refreshAvailable ? "Available" : "Current"}</dd>
+      <dt>Live updates</dt>
+      <dd>{state.status.refreshAvailable ? "Updating…" : "Current"}</dd>
     </div>
   </dl>
 </section>

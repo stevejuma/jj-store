@@ -39,18 +39,18 @@ admission, root selection or publication, and no upstream JJ dependency is
 added.
 
 `jj-collab` owns persistent Thread/human-message and Reaction/custom-emoji
-models with independent root types. It depends only on owned model, AgentStore
-and ReviewStore types plus bounded canonical/Unicode/raster libraries. It has no
-publication, upstream JJ, transport, search, UI or runner capability. Its pure
-projectors stage graphs; persistence providers authorize and select roots. The
-async target-reader contract supports both storage profiles without an execution
-runtime dependency. WAL composes existing immutable read facades; the domain
-checks membership and visibility while owning providers verify repository
-envelopes and retain authorization and publication authority. The local service
-consumes jj-collab directly for the same pure commands and uses independent
-canonical Git-blob descriptors plus existing source record and capsule carriers.
-Source closure validation and physical retention remain adapter concerns; the
-domain cannot publish a Git ref or repository manifest.
+models with independent root types. It depends only on owned model, AgentStore,
+ReviewStore and WorkStore types plus bounded canonical/Unicode/raster libraries.
+It has no publication, upstream JJ, transport, search, UI or runner capability.
+Its pure projectors stage graphs; persistence providers authorize and select
+roots. The async target-reader contract supports both storage profiles without
+an execution runtime dependency. WAL composes existing immutable read facades;
+the domain checks membership and visibility while owning providers verify
+repository envelopes and retain authorization and publication authority. The
+local service consumes jj-collab directly for the same pure commands and uses
+independent canonical Git-blob descriptors plus existing source record and
+capsule carriers. Source closure validation and physical retention remain
+adapter concerns; the domain cannot publish a Git ref or repository manifest.
 
 Browser presentation owns the copied Community source closure locally and may
 not resolve the Community package or sibling checkout. Design Core and Mira
@@ -61,7 +61,21 @@ bundles deduplicate Svelte and the released Bits UI overlay runtime shared by
 Mira and Design Core; independent modal managers cannot own the same document
 body lock.
 
+The shared overlay runtime is pinned to released Bits UI 2.19.4. Its deferred
+focus callbacks stop after the owning layer is destroyed, including when a
+successful file save replaces its editor. Runtime diagnostics remain enforced;
+updates to this dependency qualify the complete browser interaction and
+accessibility suites. Automatic data refresh remains a controller concern and
+does not add publication or storage dependencies.
+
 ## Requirements
+
+The local UI development profile separates Vite source serving from the existing
+native backend executable. Vite owns the browser loopback port and proxies
+versioned API requests to a separate literal-loopback backend port. The existing
+fixture remains authoritative and no build is required for UI edits. A
+full-stack rebuild/restart remains an explicit development command; production
+continues to serve the built asset manifest through Rust.
 
 The CLI has one collaboration input-admission module for both providers. Native
 reads and mutations consume only the typed RPC client, while filesystem commands
@@ -451,7 +465,9 @@ The local pnpm hook follows the workspace source-first boundary for Design Core.
 When the sibling source exists it resolves the declared dependency from that
 checkout for development validation; otherwise it leaves the semver range
 intact. It never rewrites peer ranges. The publishable manifest retains registry
-ranges while a locally installed lock records the explicit sibling source.
+ranges. Temporary source validation retains registry resolutions in the tracked
+lockfile and records the exact source revision separately. A source-validation
+pass does not qualify a registry release with missing public APIs.
 
 Agent capture uses MongoDB Kingfisher 2.7.0 in-process at source revision
 `63dccba231b6b01990c84319d25f92f49428a431`. The scanner is compiled without
@@ -538,8 +554,15 @@ The picker also includes the pre-Appearance Design Core semantic palette as the
 static Original light/dark pair. Its historical snapshot remains independent of
 Shiki generation; the generated import index includes both sources. Public
 foundation dialog tokens and the app-owned prose composer's Mira bridge bind
-surface and text roles to the resolved palette. Menus keep popover surfaces, and
-standalone code/file editors retain their own editor surfaces.
+surface and text roles to the resolved palette. The owned palette adapter binds
+the semantic popover background to the app background across all 62 generated
+styles, including search Command View, menu and Popover consumers. Compact
+navigation retains its app-surface binding for the historical Original pair.
+Buzz chrome reveals one viewport-height shell gradient, while glass keeps its
+selected tint and blur. Standalone code/file editors retain their own editor
+surfaces. These bindings stay in owned presentation and generated assets with no
+foundation dependency change. Palette checks regenerate and compare the exact
+source-derived bytes.
 
 Local Appearance acceptance in main uses the existing ignored foundational
 package hook against landed Design Core source. Its chat typography and native
@@ -551,3 +574,19 @@ filesystem operations through rustix. It owns bounded text admission, device
 selection fingerprints and atomic Save; it has no upstream JJ imports and does
 not compose a repository transaction. Local HTTP admission supplies the verified
 folder binding. Native mutation/storage boundaries remain independent.
+
+Tooltip sizing restoration is qualified from the independent Design Core
+repository through the documented local source hook, preserving the standard
+arrow and public sizing tokens without an application override.
+
+The Projects hub delegates Agents scope and collection reads to owned
+UI-controller modules. Scope discovery joins unfiltered project links; sessions
+retain separate repository admission and native/local snapshots. The shared
+agent-session row is owned under web/src/lib and reused by repository and
+project directories. Scoped response controllers reuse the owned repository
+collaboration readers, reactions and tool review actions while keeping their
+data and local response route separate from the global connection and Projects
+scope. Response selection cannot reload its collection, late selections cannot
+replace newer results, and revoked target access clears protected responses.
+Related review/repository collection dispatch remains a separate hub helper;
+production never imports catalog fixtures.

@@ -30,6 +30,7 @@ export class HttpLocalCodeDataSource {
   readonly #reads = createStoreQueryClient();
   protected head: LocalHead | null = null;
   #capture = 0;
+  #accepted = 0;
   #pending: Promise<LocalHead> | null = null;
   constructor(
     readonly repository: string,
@@ -53,12 +54,18 @@ export class HttpLocalCodeDataSource {
     if (this.head && !fresh) return this.head;
     if (this.#pending && !fresh) return this.#pending;
     const ticket = ++this.#capture;
-    const pending = this.read<Model<"LocalRepositorySnapshot">>(
-      "snapshot",
-    ).then((result) => {
+    const pending: Promise<LocalHead> = this.read<
+      Model<"LocalRepositorySnapshot">
+    >("snapshot").then((result) => {
       const value = validateLocalHead(result, this.repository);
-      if (ticket !== this.#capture)
+      if (ticket !== this.#capture) {
+        if (fresh && !this.client.closed.signal.aborted) {
+          if (this.#pending && this.#pending !== pending) return this.#pending;
+          if (this.#accepted === this.#capture && this.head) return this.head;
+        }
         throw new DOMException("Snapshot superseded", "AbortError");
+      }
+      this.#accepted = ticket;
       this.head = value;
       return value;
     });

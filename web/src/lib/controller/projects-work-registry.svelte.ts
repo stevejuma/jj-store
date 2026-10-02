@@ -6,12 +6,19 @@ import type {
   WorkBrowseTransport,
 } from "./projects-hub-types.js";
 import type { WorkController } from "./work-types.js";
-export function createProjectsWorkRegistry(context: ProjectsHubContext) {
+export function createProjectsWorkRegistry(
+  context: ProjectsHubContext,
+  changed = context.changed,
+) {
   const sources = new Map<string, WorkBrowseTransport>();
   const works = new SvelteMap<string, WorkController>();
   const selections = new Map<
     string,
-    { projectId: string | null; taskId: string | null }
+    {
+      projectId: string | null;
+      taskId: string | null;
+      commentId?: string | null;
+    }
   >();
   function transport(home: string) {
     if (!context.repositories().some((r) => r.id === home))
@@ -27,6 +34,9 @@ export function createProjectsWorkRegistry(context: ProjectsHubContext) {
     let controller = works.get(home);
     if (!controller) {
       controller = createWorkController({
+        repository: () => home,
+        principal: () =>
+          context.repositories().find((r) => r.id === home)?.principal ?? "",
         source: () => transport(home),
         route: () => selections.get(home) ?? {},
         select: (projectId, taskId) => {
@@ -40,7 +50,7 @@ export function createProjectsWorkRegistry(context: ProjectsHubContext) {
             projectsHub: true,
           });
         },
-        changed: context.changed,
+        changed,
       });
       works.set(home, controller);
     }

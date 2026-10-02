@@ -63,7 +63,6 @@ export function createProductionReviewActions(context: Context) {
       }
       data.reviewActionRequestId = null;
       data.committedReviewRequestId = requestId;
-      data.status.reviewAction = "ready";
       await context.reloadReviews();
       if (!current() || context.selectedReviewId() !== selectedId) return;
       context.selectReview(result(outcome.receipt).thread_id);
@@ -181,7 +180,7 @@ export function createProductionReviewActions(context: Context) {
     data.reviewActionRequestId = null;
     data.committedReviewRequestId = id;
     data.reviewActionMessage = "Review update committed.";
-    data.status.reviewAction = "ready";
+    data.status.reviewAction = "refreshing";
     await context.reloadReviews();
     if (
       !context.current(ticket, source) ||

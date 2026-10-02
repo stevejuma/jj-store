@@ -4,6 +4,7 @@
   import { playOwnershipLayouts } from "./projects-layout-play.js";
   import ProjectsHubFixture from "../../fixtures/ProjectsHubFixture.svelte";
   import {
+    playReadOnlyTask,
     expectCommunityDisclosures,
     expectReviewRowUsesWidth,
     expectTaskTitleRow,
@@ -15,6 +16,57 @@
     parameters: { layout: "fullscreen" },
   });
 </script>
+
+<Story
+  name="Unsupported reviews empty state"
+  args={{ localReviews: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Reviews" }));
+    const home = await c.findByRole("region", {
+      name: "Reviews in UI repository",
+    });
+    const empty = within(home)
+      .getByText("Reviews unavailable")
+      .closest('[data-slot="empty"]');
+    await expect(empty).toBeVisible();
+    await expect(
+      empty?.querySelector('[data-ui-part="empty-media"] svg'),
+    ).toBeVisible();
+    await expect(empty).toHaveTextContent(
+      "Reviews are not supported for local JJ repositories.",
+    );
+    await expect(within(home).queryByRole("alert")).toBeNull();
+    await expect(
+      within(home).queryByRole("button", { name: "Retry reviews" }),
+    ).toBeNull();
+    await expect(
+      within(
+        c.getByRole("region", { name: "Reviews in Parser repository" }),
+      ).getByRole("list", { name: "Reviews" }).firstChild,
+    ).not.toBeNull();
+  }}
+/>
+<Story
+  name="Review load failure retains retry"
+  args={{ failedReviews: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Reviews" }));
+    const home = await c.findByRole("region", {
+      name: "Reviews in Parser repository",
+    });
+    await expect(within(home).getByRole("alert")).toHaveTextContent(
+      "Reviews temporarily unavailable",
+    );
+    await userEvent.click(
+      within(home).getByRole("button", { name: "Retry reviews" }),
+    );
+    await expect(await within(home).findByRole("alert")).toHaveTextContent(
+      "Reviews temporarily unavailable",
+    );
+  }}
+/>
 
 <Story
   name="Create project selects writable home and retains request"
@@ -90,10 +142,15 @@
     await expect(
       c.getByRole("article", { name: "Task details" }),
     ).toHaveTextContent("Browser work");
-    await userEvent.click(c.getByRole("button", { name: "Activity" }));
     await expect(
-      c.getByRole("region", { name: "Task discussion" }),
+      within(c.getByRole("article", { name: "Task details" })).getByRole(
+        "region",
+        { name: "Task activity" },
+      ),
     ).toHaveTextContent("First discussion");
+    await expect(
+      c.queryByRole("button", { name: "Open task discussion" }),
+    ).toBeNull();
   }}
 />
 <Story
@@ -112,45 +169,7 @@
 <Story
   name="Read only task"
   args={{ detail: true, readonly: true }}
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await waitFor(() =>
-      expect(c.getByRole("article", { name: "Task details" })).toBeVisible(),
-    );
-    const detail = c.getByRole("article", { name: "Task details" });
-    await expectCommunityDisclosures(
-      detail,
-      c.getByRole("complementary", { name: "Task discussion" }),
-    );
-    await expectTaskTitleRow(detail);
-    await expect(
-      c.getByRole("navigation", { name: "breadcrumb" }),
-    ).toBeVisible();
-    await expect(c.queryByRole("button", { name: "Edit task" })).toBeNull();
-    await expect(c.queryByRole("textbox", { name: "Comment" })).toBeNull();
-    await userEvent.click(
-      c.getByRole("button", { name: "Parent: Storage work" }),
-    );
-    const subtasks = c.getByRole("region", { name: "Subtasks" });
-    await userEvent.click(
-      within(subtasks).getByRole("button", { name: "Subtasks" }),
-    );
-    await waitFor(() =>
-      expect(
-        within(subtasks).getByRole("button", {
-          name: "Open task Browser work",
-        }),
-      ).toBeVisible(),
-    );
-    await expect(
-      within(subtasks).getByRole("list").getBoundingClientRect().left,
-    ).toBeCloseTo(
-      within(subtasks)
-        .getByRole("button", { name: "Subtasks" })
-        .getBoundingClientRect().left,
-      0,
-    );
-  }}
+  play={playReadOnlyTask}
 />
 <Story
   name="Task edit and retained unknown request"
@@ -232,7 +251,14 @@
     const view = within(c.getByRole("region", { name: "Projects and tasks" }));
     await expect(
       view.getAllByRole("tab").map((tab) => tab.textContent?.trim()),
-    ).toEqual(["Activity", "Projects", "Tasks", "Reviews", "Repositories"]);
+    ).toEqual([
+      "Activity",
+      "Projects",
+      "Tasks",
+      "Reviews",
+      "Agents",
+      "Repositories",
+    ]);
     const expandProject = c.getByRole("button", {
       name: "Expand Native release",
     });

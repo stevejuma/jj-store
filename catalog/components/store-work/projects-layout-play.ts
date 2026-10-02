@@ -12,23 +12,15 @@ export async function playOwnershipLayouts({
   await waitFor(() =>
     expect(view.getByRole("button", { name: "Mine" })).toBeVisible(),
   );
-  await userEvent.click(
-    view.getByRole("button", { name: "Filters for projects" }),
-  );
-  const filters = within(
-    within(document.body).getByRole("dialog", { name: "Projects filters" }),
-  );
-  const search = filters.getByLabelText("Search projects");
+  await userEvent.click(view.getByRole("button", { name: "Search projects" }));
+  const search = view.getByRole("textbox", { name: "Search projects" });
   await userEvent.click(search);
   const group = search.closest('[data-ui-part="input-group"]')!;
   await expect(getComputedStyle(group).borderTopWidth).toBe("0px");
   await expect(getComputedStyle(group).boxShadow).toBe("none");
   await expect(getComputedStyle(search).boxShadow).toBe("none");
-  await expect(
-    filters.getByRole("button", { name: "Search" }).querySelector("svg"),
-  ).not.toBeNull();
-  await expect(view.queryByLabelText("Search projects")).toBeNull();
-  await userEvent.click(filters.getByRole("button", { name: "Close filters" }));
+  await expect(view.queryByRole("tablist")).toBeNull();
+  await userEvent.click(view.getByRole("button", { name: "Close search" }));
   await userEvent.click(view.getByRole("radio", { name: "Grid layout" }));
   await expect(view.getByRole("list", { name: "Projects" })).toHaveAttribute(
     "data-layout",

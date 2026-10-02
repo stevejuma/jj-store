@@ -87,6 +87,30 @@ test("external browser navigation restores known and newly entered routes", () =
   history.destroy();
 });
 
+test("refreshed repository routes retain Forward after browser Back", () => {
+  const navigation = fakeBrowser(
+    `#/repos/${repository}/branches?at_op=${operation}`,
+  );
+  const history = createStoreRouteHistory(navigation.browser);
+  history.page("files");
+  history.replace({
+    ...history.route,
+    bookmark: "main",
+    commitId: "78".repeat(64),
+  });
+  const files = storeRouteToHash(history.route)!;
+  history.push({ ...history.route, path: "bin" });
+  history.refresh(operation);
+  const preview = storeRouteToHash(history.route)!;
+  navigation.visit(files);
+  expect(history.route.path).toBeNull();
+  expect(history.canForward).toBe(true);
+  navigation.visit(preview);
+  expect(history.route.path).toBe("bin");
+  expect(history.canBack).toBe(true);
+  history.destroy();
+});
+
 test("invalid owned hashes remain explicit and never change selection", () => {
   const navigation = fakeBrowser(`#/repos/${repository}/files`);
   const history = createStoreRouteHistory(navigation.browser);

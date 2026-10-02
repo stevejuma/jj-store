@@ -24,6 +24,13 @@ pub trait ReactionTargetRead: Send + Sync {
     async fn agent_object(&self, reference: AgentObjectRef) -> Result<Option<AgentObjectV1>>;
     async fn review_selection(&self, id: ReviewThreadId) -> Result<Option<ReviewObjectRef>>;
     async fn review_object(&self, reference: ReviewObjectRef) -> Result<Option<ReviewObjectV1>>;
+    async fn work_comment(
+        &self,
+        _task: jj_work::TaskId,
+        _comment: jj_work::WorkCommentId,
+    ) -> Result<Option<jj_work::WorkCommentV1>> {
+        Ok(None)
+    }
 }
 
 #[derive(
@@ -144,6 +151,26 @@ impl Resolver<'_> {
     async fn resolve(&mut self, target: &ReactionTargetV1) -> Result<TargetRevisionV1> {
         use TargetRevisionV1::{Current, Earlier};
         match target {
+            ReactionTargetV1::WorkComment {
+                task_id,
+                comment_id,
+                version,
+            } => {
+                self.admit()?;
+                let comment = self
+                    .reader
+                    .work_comment(*task_id, *comment_id)
+                    .await?
+                    .ok_or(Error::TargetUnavailable)?;
+                if comment.id != *comment_id
+                    || comment.task != *task_id
+                    || comment.version != *version
+                    || comment.body.is_none()
+                {
+                    return Err(Error::TargetUnavailable);
+                }
+                Ok(Current)
+            }
             ReactionTargetV1::Thread { thread_id } => {
                 self.thread(*thread_id).await?;
                 Ok(Current)

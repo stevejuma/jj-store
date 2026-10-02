@@ -312,3 +312,31 @@
 .store-collaboration__empty {
   padding-block: 2rem;
 }
+
+.store-collaboration__row[data-kind="agent"] {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.store-collaboration__row[data-collection] {
+  padding-inline: 0.65rem;
+  border-bottom: 0;
+  border-radius: 0.45rem;
+}
+/* Loaded agent collections and their skeletons share the heading inset. */
+.store-agent-session-list {
+  margin-inline: 1rem;
+  padding-block: 0.45rem;
+}
+.store-collaboration__row[data-kind="agent"] .store-collaboration__row-leading {
+  align-self: center;
+}
+.store-collaboration__row[data-kind="agent"] .store-collaboration__row-actions {
+  align-items: center;
+  flex: none;
+  pointer-events: auto;
+}
+.store-collaboration__agent-metrics {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}

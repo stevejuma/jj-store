@@ -39,16 +39,16 @@ shared-package release qualification does not alter those original Git gates.
 | M4.6        | Done        | M4.5                    | JST-UI-003                                                                                                                                                                              | Native fixture graph/file/diff drill-down and accessibility                                                                    | Visual review; live UI remains deferred                                                        | E-UI-003                                                                                                                                                                                                                                                                                                                                                       |
 | M4.7        | Done        | M4.6                    | JST-UI-004                                                                                                                                                                              | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                                            | E-UI-004,E-UI-029,E-UI-044,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                   |
 | M4.8        | Done        | M4.7                    | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks            | Visual review pending; live UI remains deferred                                                | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                        |
-| M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                                 | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                                            | E-UI-007,E-UI-008                                                                                                                                                                                                                                                                                                                                              |
+| M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                                 | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                                            | E-UI-007,E-UI-008,E-UI-063,E-UI-065,E-UI-066,E-UI-067,E-UI-068                                                                                                                                                                                                                                                                                                 |
 | M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                                     | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                                          | E-M4-018                                                                                                                                                                                                                                                                                                                                                       |
 | M4.11       | Deferred    | M4.10                   | JST-API-004,JST-API-005,JST-UI-005                                                                                                                                                      | Shared authenticated connection and final registry-only browser acceptance                                                     | Future shared/package release                                                                  | E-UI-011                                                                                                                                                                                                                                                                                                                                                       |
 | M4.12       | Deferred    | M4.11                   | JST-API-002,JST-API-003,JST-UI-005                                                                                                                                                      | Shared-deployment route/SSE finalization against registry-only dependencies                                                    | Future shared/package release                                                                  | E-UI-012                                                                                                                                                                                                                                                                                                                                                       |
-| M4.13       | Deferred    | M4.11                   | JST-API-002,JST-UI-006                                                                                                                                                                  | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                                 | Future Design Core release                                                                     | E-UI-013,E-UI-014,E-UI-015                                                                                                                                                                                                                                                                                                                                     |
+| M4.13       | Deferred    | M4.11                   | JST-API-002,JST-UI-006                                                                                                                                                                  | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                                 | Future Design Core release                                                                     | E-UI-013,E-UI-014,E-UI-015,E-UI-083                                                                                                                                                                                                                                                                                                                            |
 | M4.14       | Deferred    | M4.12,M4.13             | JST-API-003,JST-API-004,JST-API-005                                                                                                                                                     | Registry-resolved shared deployment browser acceptance                                                                         | Future shared/package release                                                                  | E-UI-016                                                                                                                                                                                                                                                                                                                                                       |
 | M4.15       | Done        | M4.9,M6.1               | JST-UI-007                                                                                                                                                                              | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes                        | Retain LocalTrusted and authenticated search acceptance                                        | E-UI-017,E-UI-024,E-UI-028                                                                                                                                                                                                                                                                                                                                     |
 | M4.16       | Done        | M4.9,M5.3               | JST-UI-008                                                                                                                                                                              | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                             | Retain mutation acceptance; implement M4.17 conflicts                                          | E-UI-018,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                                                                     |
 | M4.17       | Done        | M4.16,M5.3              | JST-UI-009                                                                                                                                                                              | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening                          | Retain conflict-editor and real-repository acceptance                                          | E-UI-019                                                                                                                                                                                                                                                                                                                                                       |
-| M4.18       | Done        | M4.15,M8a.4             | JST-UI-012                                                                                                                                                                              | Transient Community-styled settings reports existing local, repository and search state and prepares an exact index            | Retain regression coverage; visual review remains separate                                     | E-UI-030,E-UI-031                                                                                                                                                                                                                                                                                                                                              |
+| M4.18       | Done        | M4.15,M8a.4             | JST-UI-012                                                                                                                                                                              | Transient Community-styled settings reports existing local, repository and search state and prepares an exact index            | Retain regression coverage; visual review remains separate                                     | E-UI-030,E-UI-031,E-UI-063                                                                                                                                                                                                                                                                                                                                     |
 | M4.19       | Done        | M4.9,M4.10              | JST-UI-013,JST-API-002,JST-UI-005                                                                                                                                                       | Exact workspace identities, pinned routes, focused interaction/a11y and cold browser acceptance                                | Retain workspace regressions; visual review remains separate                                   | E-UI-032                                                                                                                                                                                                                                                                                                                                                       |
 | M4.20       | Done        | M4.19                   | JST-UI-014,JST-UI-002,JST-UI-003,JST-UI-005                                                                                                                                             | Right-rail destinations, ordered pill tabs, responsive overflow, focused interaction/a11y and cold browser acceptance          | Retain navigation and workspace regressions; visual review remains separate                    | E-UI-033,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                                     |
 | M4.21       | Done        | M4.20                   | JST-UI-003,JST-UI-005,JST-API-002                                                                                                                                                       | Compact workspace-row comparison picker, native Op Log cards, independent copy and focused interaction/a11y/browser acceptance | Retain exact-parent and workspace regressions; visual review remains separate                  | E-UI-034                                                                                                                                                                                                                                                                                                                                                       |
@@ -85,7 +85,7 @@ shared-package release qualification does not alter those original Git gates.
 | M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034                                                                                                                                                                                              |
 | M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                                                                                                                          |
 | M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035                                                                                                                                                                                                                                                                               |
-| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                      |
+| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                            |
 | M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                                          | E-M9-033                                                                                                                                                                                                                                                                                                                                                       |
 | M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013                | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014                                                                                                                                                                                                                    |
 | M10.1       | Done        | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                                  | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                                    | E-M10-001,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051                                                                                                                                                                                                                                                         |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -113,12 +113,12 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                             | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                           | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                             |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                             | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025                                                                                                                                                                                                                              |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023                                                                                                                                                                                                                                                  |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089                                                                                                                                                                                                                                |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | -                                                                                                                                                                                                                                                                                                                                                              |
-| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                            |
+| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060                                                                                                                                                                                                                                                   |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                                              | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049                                                                                                                                                                                                                                                                                                                         |
-| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                                      | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                |
+| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                                      | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-063                                                                                                                                                                                                                                                                       |
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation                       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                            |
 | M14.4       | Done        | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                                  | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild                               | E-M14-009,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                                      | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery                               | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -127,12 +127,12 @@ shared-package release qualification does not alter those original Git gates.
 | M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007 | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032                                                                                                                          |
 | M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                                              | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                                            | E-M15-001,E-M15-005,E-M15-016                                                                                                                                                                                                                                                                                                                                  |
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
-| M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022                                                                                                                                                                                                                    |
+| M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064                                                                                                                                                                                                           |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032                                                                                                                                                                                                                                        |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089                                                                                                                                                                                           |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018                                                                                                                                                                              | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055                                                                                                                                                                                                                                                                                                                            |
+| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -41522,6 +41522,5917 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "Exact local portable agent source validation only. Complete local_agent target qualifies the shared reader and real recorded inputs. HTTP/UI/root aggregates/RustFS/optional inherited Clippy diagnostics outside this read-only leaf; no route, generated contract, startup or UI behavior changed. This proof does not qualify portable review writes, descriptor retention, native capsules or M13 completion.",
     "next": "Implement additive stored portable anchors and typed creation through the shared ReviewStore engine, with complete external selected-record retention, preserved native V1 bytes and receipt/restart proofs before UI enablement. Continue pending code-anchor/native-carrier, search, Snapshot/recorded commands, conversion and M13.6 gates."
+  },
+  {
+    "id": "E-UI-056",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "appearance-workspace-rebase-development-switch",
+    "revision": "enclosing Jujutsu change klylkzvs",
+    "before": "User requests reuse of the Appearance workspace, rebase onto committed main and transfer its development service. Appearance is clean at 1c53e7bd above 68a3dbdc. Main's committed parent is nxoksqrt/faf52a70, while its wtqyykvt working change contains unrelated unfinished Thread UI work. Owned server471/storage561 serves the persistent LocalTrusted demo at port7460. Main concurrently rewrote nxoksqrt to ba74e1ea with a bounded-cache correction and rebuilt its executable; Appearance was refreshed to that final committed parent.",
+    "files": ["spec/src/milestones.md"],
+    "runs": [
+      {
+        "command": "jj --no-pager st (main and appearance); jj --no-pager log -r '(@ | @- | default@ | default@-) | latest(::default@-, 6)' --limit 12; jj rebase -r @ -o nxoksqrt; jj --no-pager st; jj --no-pager diff --from @ --to default@- --summary",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebased only the clean Appearance working change klylkzvs onto committed main faf52a70; resulting tree equals default@-. No conflicts and no unfinished main changes included. Main tracked files and working change are not rewritten."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Appearance workspace production UI builds successfully; existing chunk-size and plugin-timing advisories only. /tmp/jj-appearance-workspace-build.log."
+      },
+      {
+        "command": "jj --no-pager diff --summary -- crates runtime Cargo.toml Cargo.lock (main); node /tmp/jj-appearance-workspace-start.mjs; lsof -nP -iTCP:7460 -sTCP:LISTEN",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main has no uncommitted Rust/runtime changes. Copied its existing qualified executable to ignored Appearance target/debug/jj-store and verified identical SHA256; no Rust rebuild. Owned graceful shutdown and startup switch471->10251/storage10269 with cwd and executable under Appearance,3121ms readiness. Existing main .local/dev-demo state stays in place; its ignored config now serves Appearance web/dist. Snapshot, Thread directory, fixture hash and installation hash are unchanged; search ready. HTTP200 index equals the new build, SHA25605d5ac0be02b14c7a0e7f92d77fe09a9490676a402390d5e0ba58bcecc7e8180."
+      },
+      {
+        "command": "cua.getTab(existing in-app browser URL)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Optional refresh inspection timed out in CDP Emulation.setFocusEmulationEnabled. No browser reload or preference change performed; service readiness and served bytes are independently verified."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:validate (initial attempts)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both checks encountered the stale workspace after concurrent ancestor rewrite. Prettier passed. Refreshed the workspace before rerunning these exact checks; no validator suppression."
+      },
+      {
+        "command": "jj workspace update-stale; jj --no-pager log -r change_id(klylkzvs); jj --no-pager diff --from faf52a70 --to ba74e1ea --summary; jj file show -r e138ae9d spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Automatic ancestor-rewrite resolution left an empty Appearance revision and the evidence edit in a divergent revision. Recovered only E-UI-056 into the fresh ledger, preserving upstream changes. Latest committed parent ba74e1ea changes Rust cache behavior and documentation; no UI changes, so served UI build remains current."
+      },
+      {
+        "command": "node /tmp/jj-appearance-workspace-start.mjs (latest committed backend refresh)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refreshed native executable from main after its committed cache correction/rebuild, using atomic ignored binary replacement. Appearance service10251->13961/storage13973,2931ms readiness. Repeated snapshot/directory/fixture/installation equality, built-index equality and search-ready checks pass. No UI source changed in the concurrent rewrite and no Rust build was run in this slice."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:validate; pnpm exec prettier --check spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Evidence-only ledger formatting and consuming governance checks pass; no product requirements or milestone status change."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "User-authorized JJ workspace rebase and local development service transfer. UI bundle rebuild and read-only cold readiness/state preservation checks are the complete operational surface. Rust builds/tests, root aggregates, unrelated suites, package publication, installed CLI changes and visual baseline approval are out of scope. No fixture reset/reseed or native application mutation. M16 remains Partial with E-UI-055's separate release, registry-only, inherited suite/composer-CSP and visual gates retained.",
+    "versions": "JJ0.45.1; pnpm10.32.1; committed main nxoksqrt/ba74e1ea; existing unchanged development server and embedded RustFS binaries.",
+    "formats": "Existing development runtime PID/resource metadata now records Appearance workspaceRoot/webRoot; asset manifest1 rebuilt. Native state, installation identity, fixture format1 and appearance preference jj-store.appearance.v1 unchanged.",
+    "next": "Use Appearance workspace and refresh http://127.0.0.1:7460/ for subsequent UI changes. Persistent runtime is still main .local/dev-demo; rebuild Appearance web assets when changing the served UI. Keep unrelated main work separate.",
+    "artifacts": "Private /tmp/jj-appearance-workspace-before.json and ready.json; /tmp/jj-appearance-workspace-{build,start}.log; temporary start helper /tmp/jj-appearance-workspace-start.mjs. New Appearance server remains running as requested; previous main server is stopped."
+  },
+  {
+    "id": "E-UI-057",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "vite-hmr-development-and-owned-stack-lifecycle",
+    "revision": "enclosing Jujutsu change nmxuylws",
+    "before": "Appearance workspace is clean above klylkzvs/86083510 and committed main nxoksqrt/ba74e1ea. Its owned built-UI service runs on 7460 against the retained main .local/dev-demo fixture. Main has unrelated unfinished Thread UI work in wtqyykvt. Existing dev:restart rebuilds the UI and native binaries; web:dev has no native proxy or coordinated lifecycle. The exact new development regression fails once with missing dev-ui-config.mjs before implementation.",
+    "files": [
+      ".gitignore",
+      "AGENTS.md",
+      "README.md",
+      "package.json",
+      "web/vite.config.ts",
+      "scripts/dev-demo-services.mjs",
+      "scripts/dev-demo-processes.mjs",
+      "scripts/dev-demo-processes.test.mjs",
+      "scripts/dev-ui-config.mjs",
+      "scripts/dev-ui-services.mjs",
+      "scripts/dev-ui-vite.mjs",
+      "scripts/dev-ui.mjs",
+      "scripts/dev-ui.test.mjs",
+      "scripts/dev-ui-native-fixture.mjs",
+      "scripts/dev-ui.acceptance.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager diff --stat; jj --no-pager diff (Appearance and main inspection)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preserved unrelated unfinished main change. Implementation is confined to the reused Appearance workspace; no landing or rebase onto unfinished main work."
+      },
+      {
+        "command": "node --test scripts/dev-ui.test.mjs (before, then exact rerun)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before: one failing test file, missing new module, /tmp/jj-hmr-before.log. Exact rerun passes4/4 in /tmp/jj-hmr-exact.log; final target now includes occupied-port preservation and passes5/5. No fixture builds or seeding occur in UI startup."
+      },
+      {
+        "command": "node --test scripts/dev-demo*.test.mjs scripts/dev-ui.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final28/28. Covers existing demo fixture/profile behavior, proxy/configuration, invalid ports, occupied-port preflight, two-owner validation, stop preservation and backend-only teardown. /tmp/jj-hmr-dev-tests-qualified.log."
+      },
+      {
+        "command": "pnpm web:check (initial and qualified reruns)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two initial implicit-any diagnostics in the shared JS configuration resolved with JSDoc; final0 errors/warnings. /tmp/jj-hmr-web-check-qualified.log."
+      },
+      {
+        "command": "pnpm web:test; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web70/70; architecture728 modules; ownership boundary passes. Complete direct UI test lane is warranted by shared Vite infrastructure. /tmp/jj-hmr-{web-unit,architecture,ownership}.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production bundle still builds with source-distributed Design Core rune modules excluded from dependency prebundling and supported Mira nested dependencies included, matching existing catalog configuration. Existing large-chunk advisory remains. No dependency aliases, patches or package changes. /tmp/jj-hmr-production-build.log."
+      },
+      {
+        "command": "pnpm test:dev:ui (initial cold attempts and diagnostics)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Development attempts exposed fixture readiness missing Fetch Metadata headers; fixed fixture and launcher requests. Vite optimizer then crashed on source-distributed Design Core .svelte.ts type syntax, including an ECONNREFUSED retry; fixed supported dependency optimization configuration. Two browser waits incorrectly expected a repository label in a collapsed rail; replaced them with actual Local profile and native commit visibility checks. /tmp/jj-hmr-native-{cold,cold-retry,optimizer-fixed,browser-diagnostic}.log. These were separate harness/startup failures, all cleared by the final cold run."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm test:dev:ui",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh isolated native fixture and fresh Vite/Chromium. Application bootstrap and repository UI render; browser POST commits native WorkStore project; native SSE ready and repository-changed stream through proxy; Svelte, TypeScript and CSS HMR retain document marker with zero reloads. Wrong Origin and direct-backend Host rejected; ignored .local sentinel returns403; backend restart retains Vite PID, snapshot and installation/fixture identity; stop ends both processes and preserves data. Browser runtime errors0. Only exact optional Gravatar requests are aborted in the fixture, producing expected network console errors. /tmp/jj-hmr-native-final-qualified.log."
+      },
+      {
+        "command": "JJ_STORE_UI_TEST_FULL_RESTART=1 CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm test:dev:ui",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold native acceptance plus actual pnpm dev:restart transition from active HMR. Uses existing custom JJ copied into ignored Appearance target/debug/jj; package Cargo build and UI build run only for this explicit full-stack qualification. Old Vite/backend PIDs end, served bytes equal built index, native project and installation/fixture identity survive. Disposable services cleaned up. /tmp/jj-hmr-native-full-restart.log."
+      },
+      {
+        "command": "node /tmp/jj-hmr-live-switch.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Authorized interactive switch built->Vite with no UI/Rust/RustFS build or seed. Vite36218/browser7460; backend36217/API7462; storage36219. Appearance sources use persistent main .local/dev-demo. Before/after native snapshots, Thread directory, installation and fixture hashes equal; search ready. /tmp/jj-hmr-live-{before,ready}.json and switch.log. Interactive stack remains running."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed files, initial attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Including .gitignore failed parser inference; formatter rerun omits that non-formatable file. Source/docs formatting subsequently passes. /tmp/jj-hmr-format.log."
+      },
+      {
+        "command": "pnpm check:progress (first ledger validation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Ledger initially listed unrelated outstanding M16 qualification in this passing slice remaining array. Moved that context to scope and retained M16 Partial; no check suppression or milestone status change. Final focused rerun passes."
+      },
+      {
+        "command": "pnpm exec prettier --write (all changed supported files); pnpm exec prettier --check (same files); pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical GOV-009, mapped chapters, verification row and enclosing-change ledger validated. Focused changed-file formatting passes. /tmp/jj-hmr-{format-complete,format-check,spec-first,spec-validate,progress}.log."
+      },
+      {
+        "command": "node --input-type=module (read-only final live readiness/state check and owned disposable cleanup)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both ownership markers valid; Vite client and LocalTrusted bootstrap present. Installation/fixture hashes, native snapshots and Thread directory still equal the captured before state after final cold verification. /tmp/jj-hmr-live-final.json. Removed stopped failed initial OS-temporary fixture FH2UYC."
+      }
+    ],
+    "result": "pass",
+    "scope": "Shared development process lifecycle and Vite startup configuration can affect both source-serving and built-UI modes, warranting the complete direct development harness suite, web unit/check/build lane and cold native HMR plus full-stack transition. No production Rust source or public native contract changes. Root aggregate spec:check/check/test/build, Rust tests, unrelated catalog/story suites, publication, installed CLI changes and visual baseline approval are out of scope under targeted verification policy. The explicit retained full-stack smoke invokes its package Rust build, distinct from build-free dev:ui. M16 remains Partial: prior foundation release, registry-only consumer, inherited suite/composer-CSP and visual baseline gates remain separate. This passing development slice is not production CSP or release qualification.",
+    "versions": "macOS ARM64; Node26.9.0; pnpm10.32.1; Vite8.3.2; Svelte5.57.1; JJ0.45.1; Rust1.98.1. Existing embedded RustFS binary and unchanged foundational package/lockfile versions.",
+    "formats": "Development runtime format2 adds mode=vite, apiOrigin, uiPid and uiRunner while retaining selected fixture paths. Separate ignored ui-server.toml removes web_root and uses public browser origin7460 with private backend7462. Vite preserves Host/Origin/Fetch Metadata/protocol headers without CORS/auth bypass and uses development-only HMR/CSS CSP plus private filesystem denials. Production asset manifest/CSP and native/storage/API/appearance formats are unchanged.",
+    "remaining": [],
+    "next": "Refresh the existing browser once to load the Vite client; then UI edits update live. Set JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo for every Appearance development command. Use dev:backend:build then dev:backend:restart after Rust edits, or dev:restart to rebuild/restart the full stack with built UI.",
+    "artifacts": "/tmp/jj-hmr-*.log; private /tmp/jj-hmr-live-{before,ready}.json. Disposable acceptance roots and probe files removed; interactive Vite/backend/storage remain running. No main landing."
+  },
+  {
+    "id": "E-UI-058",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "repository-card-theme-alignment-and-menu-width",
+    "revision": "enclosing Jujutsu change opznqxqt",
+    "before": "Appearance working copy is clean at opznqxqt/f7dbb1fb above Vite workflow nmxuylws/7d1d8ade. User identifies narrow header Repository actions and mismatched/sticky bookmark card surfaces on Branches. Read-only Chromium baseline on Buzz at 1351x988 measures128px menu, bookmark root rgb235/235/235 from popover versus white log column, and command-active neutral hover background persisting after pointer exit. Three observed presentation defects; no browser runtime errors. Community is inspected before Design Core; Command View intentionally retains a keyboard cursor, so app card interaction is adapted through its public disablePointerSelection option.",
+    "files": [
+      "web/src/lib/ui/community-projects/repository-row-tokens.css",
+      "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte",
+      "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "web/src/lib/ui/community-repository-branch-command/CommunityWorkingCopyCard.svelte",
+      "web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte",
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+      "docs/ui-provenance.json",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md",
+      "spec/src/api.md",
+      "spec/src/spec-governance.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Align Branches cards with repository log themes and widen actions menu\"; jj --no-pager diff --stat; jj --no-pager diff (scoped source review)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reused clean Appearance workspace; main unrelated work is untouched. Owning UI requirements and M16 state reviewed; Community source reference inspected first and Design Core public command/menu/column APIs second."
+      },
+      {
+        "command": "node /tmp/jj-branch-styles-probe.mjs (before and after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh isolated browser context with Buzz preference; read-only pinned native route. Before:128px popup, popover grey list versus white column, retained data-selected shading outside hover. After:256px popup, white matching list/cards, hover returns to white on pointer exit. No runtime errors. Before/after logs/JSON and after.png under /tmp/jj-branch-styles-*; no visual baseline approval."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Branch3/3 passes; actions suite fails import after Vite newly optimizes arrow-up and reloads the test. Exact retry clears import failure but exposes separate existing mutation-dialog ScrollArea teardown diagnostics. No optimizer/diagnostic suppression."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte (retry)",
+        "result": "fail",
+        "failures": 2,
+        "note": "All7 assertions pass; two blocking derived_inert runtime diagnostics originate in Bits UI ScrollAreaScrollbarYState.onResize after DestructiveConfirmation/UnknownOutcomeRecovery teardown. These dialogs and scrollbar ownership are outside the changed menu/card styling surface. /tmp/jj-branch-styles-stories-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryReview.stories.svelte -t \"Shell and graph alignment\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Incorrect human-readable filter skipped3 stories; not claimed as acceptance. Final target uses the generated CamelCase test name and executes the graph alignment story."
+      },
+      {
+        "command": "jj workspace add /private/tmp/jj-store-branch-card-baseline --name branch-card-baseline -r @- -m \"Disposable repository menu diagnostic baseline\"; ln -s /Users/stevejuma/code/lapismd/jj-store-appearance/node_modules /private/tmp/jj-store-branch-card-baseline/node_modules; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreRepositoryActions.stories.svelte (baseline and retry)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Unchanged parent source baseline. Both attempts fail before tests because the symlinked addon setup import is outside the temporary Vite filesystem allow roots. Temporary baseline-only config explicitly allows the existing dependency directory; no tracked build configuration or API admission is changed."
+      },
+      {
+        "command": "pnpm exec vitest run --config .scratch/baseline.vitest.config.ts --project storybook catalog/components/store-mutations/StoreRepositoryActions.stories.svelte (unchanged parent baseline)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Parent source nmxuylws/7d1d8ade executes all4 assertions successfully and reproduces3 derived_inert ScrollArea teardown diagnostics, including the same DestructiveConfirmation/UnknownOutcomeRecovery stacks. Confirms the wider dialog failure predates these styles. Existing pinned Bits UI2.18.1/runed0.35.1 behavior remains a separate upstream qualification gap. /tmp/jj-branch-styles-parent-qualified.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte -t \"BookmarkCards|EmptyBookmarks|EmptyFilterStates|MenuLayout|ShellAndGraphAlignment\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact complete affected style/interaction surface5/5 passes,6 unrelated stories skipped; blocking interaction/accessibility and runtime guard retained. Synthetic pointer events cannot set CSS hover, so branch story verifies unchanged command cursor and no retained shading; real pointer hover is covered by native-browser probe. Menu labels/256px width/Escape close, keyboard exact selection, filter/search/empty states and shared graph/header geometry all pass. /tmp/jj-branch-styles-focused-stories.log."
+      },
+      {
+        "command": "node /tmp/jj-branch-theme-acceptance.mjs (development attempts)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Harness first compared equivalent oklch/oklab foreground serialization; normalized rendered foreground to RGBA. Next compared while shell theme transitions were still running; isolated test disables transition/animation to measure settled token values. Third passes all64 themes and keyboard/desktop menu but wrongly expects desktop Repository actions at390px, where the existing mobile shell omits that control. Narrowed viewport assertion to the requested desktop menu; no product assertion or security policy weakened. /tmp/jj-branch-styles-qualified{,-final,-settled}.log."
+      },
+      {
+        "command": "node /tmp/jj-branch-theme-acceptance.mjs (qualified desktop)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh isolated Chromium pages compare actual native Branches and selected Op Log on all64 themes, including Original light/dark. Column/card/foreground/header/group-heading parity; identical hover/selected surfaces; bookmark and working-copy pointer exit; unchanged keyboard cursor on hover; selected bookmark restores selected shade after hover. Real search ArrowDown/Enter selects exact bookmark;256px menu remains within1351px viewport. Browser runtime errors0. No native writes or changes to the user browser preferences. /tmp/jj-branch-styles-qualified-desktop.log; qualified.json/png."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web and catalog0 errors/warnings; catalog129-module boundary and owned Community provenance pass. New shared tokens record their existing Apache-2.0 Community graph source pin. Production imports stay independent of catalog and Community packages. /tmp/jj-branch-styles-{web-check,catalog-check,ownership}.log."
+      },
+      {
+        "command": "pnpm spec:first (first canonical validation)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Source/provenance change map additionally requires api.md and spec-governance.md. Added exact native identity/capability presentation and owned shared-token provenance/state requirements to those owning chapters; final gate passes without map exceptions. /tmp/jj-branch-styles-spec-first-initial.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported files); pnpm exec prettier --check (same files); pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same-change canonical UI, verification mapping and ledger validation. Focused formatting; no milestone completion status or visual baseline change. /tmp/jj-branch-styles-{format,format-check,spec-first,spec-validate,progress}.log."
+      },
+      {
+        "command": "jj workspace forget branch-card-baseline; trash -v /private/tmp/jj-store-branch-card-baseline",
+        "result": "pass",
+        "failures": 0,
+        "note": "Disposable parent diagnostic workspace forgotten before recoverable directory cleanup. Owned interactive Vite/backend remain running; no backend restart or build."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only repository card/menu presentation and its direct browser/Storybook consumers. Shared row token extraction preserves existing log color recipes and does not alter navigation/controller/native contracts. Exact focused stories, web/catalog type checks, ownership and all-theme native read-only browser comparison are the acceptance surface. Broader dialog stories were tried only for diagnostics and reproduce an upstream ScrollArea lifecycle warning on unchanged parent; they are not a full-suite pass. M16 remains Partial with prior foundation release, registry-only, composer-CSP and visual gates retained. Rust builds/tests, root aggregates, unrelated story suites and production built-CSP qualification are out of scope; Vite HMR applies the UI changes without stack rebuild.",
+    "versions": "Node26.9.0; pnpm10.32.1; Vite8.3.2; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; existing Bits UI2.18.1/runed0.35.1;64 owned theme styles. Foundational dependencies and lockfiles unchanged.",
+    "formats": "No native/API/preference/storage formats change. Cards use the column card surface, foreground and shared foreground7% hover/12% selected recipes. Headers keep jj-store-row-background. Keyboard command cursor remains distinct from exact route selection and pointer hover; public disablePointerSelection prevents hover from changing the cursor. Menu layout uses16rem with viewport maximum.",
+    "next": "Continue UI iteration on the running Appearance Vite service. Wider mutation-dialog ScrollArea teardown qualification remains separately recorded; no release/full-suite or baseline approval claim.",
+    "artifacts": "/tmp/jj-branch-styles-*.log, before/after/qualified JSON and screenshots; /tmp/jj-branch-theme-acceptance.mjs and styles-probe.mjs. Browser contexts and disposable baseline workspace cleaned up; original interactive fixture remains intact."
+  },
+  {
+    "id": "E-UI-059",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "review-empty-task-activity-settings-header",
+    "revision": "enclosing Jujutsu change zmzkuouq",
+    "before": "Clean reused Appearance workspace zmzkuouq above opznqxqt/fd1f28bc. Unsupported local reviews are stored as an error and render retry. Task comments and repository activity are collapsed together in the right panel. Settings header has a return arrow and right-aligned title, while Appearance repeats the title. Owning chapters and milestones reviewed, Community inspected before Design Core Empty; native identities and snapshot policies unchanged.",
+    "files": [
+      "catalog/components/store-appearance/StoreAppearance.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/settings-shell-play.ts",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/fixtures/AppearanceFixture.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "catalog/fixtures/projects-hub-layout.ts",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/projects-reviews.svelte.ts",
+      "web/src/lib/ui/store-appearance/StoreAppearance.svelte",
+      "web/src/lib/ui/store-appearance/appearance.css",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsReviews.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/tests/browser/appearance.spec.ts",
+      "web/tests/browser/local-search-settings.spec.ts",
+      "web/tests/browser/local-sync.spec.ts",
+      "web/tests/browser/local-workspaces.spec.ts",
+      "web/tests/real/local-browser.spec.ts",
+      "web/tests/vite/projects-directories.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Refine reviews empty state, task activity and settings headers\"; jj --no-pager diff --stat; scoped source/spec/reference review",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main unrelated work preserved; clean Appearance workspace reused. Existing Vite HMR and persistent dev fixture retained."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-directories.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 tests pass: unsupported local profiles perform no review reads, native failure can refresh successfully, continuations and permission removal retain their checks. /tmp/jj-ui-polish-unit.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and warnings. /tmp/jj-ui-polish-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "New Storybook role queries incorrectly supplied Playwright-only exact option. Removed options; production check passes."
+      },
+      {
+        "command": "pnpm catalog:check (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and warnings; 129 catalog modules. /tmp/jj-ui-polish-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte -t \"UnsupportedReviewsEmptyState|ReviewLoadFailureRetainsRetry|ProjectsRepositoriesAndTaskNavigation|ReadOnlyTask|HierarchyAndDiscussion|UnknownOutcome|NativeThreadedDiscussion|^Settings$|SettingsCollapsed|SettingsMobile|AllControlsAndLocalLinks\" (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "10 tests pass; new Empty icon assertion used empty-media as data-slot instead of the public data-ui-part. Corrected selector; no implementation workaround."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte -t \"UnsupportedReviewsEmptyState|ReviewLoadFailureRetainsRetry|ProjectsRepositoriesAndTaskNavigation|ReadOnlyTask|HierarchyAndDiscussion|UnknownOutcome|NativeThreadedDiscussion|^Settings$|SettingsCollapsed|SettingsMobile|AllControlsAndLocalLinks\" --reporter verbose",
+        "result": "pass",
+        "failures": 0,
+        "note": "11 exact stories pass with runtime/accessibility guard. Other21 stories intentionally skipped; not a full-suite claim. /tmp/jj-ui-polish-stories-final.log."
+      },
+      {
+        "command": "node /tmp/jj-ui-polish-live.mjs (initial and corrected); node /tmp/jj-ui-polish-contrast.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial live icon selector probe failed for same incorrect data-slot; corrected to public data-ui-part. Isolated read-only Chromium verifies unsupported icon/no retry, Activity after Subtasks, comments/composer in discussion, single title-first Appearance header, description, tab placement and exact route/snapshot retention through desktop/mobile sidebar return. No runtime errors. Supplemental first task axe probe reported2 transient contrast nodes; independent probe and final settled rerun both report0 violations. /tmp/jj-ui-polish-live-final.log and contrast.log. Existing user browser and native data untouched."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 chapters,147 requirements validated; no Community or catalog dependency added."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported files); pnpm exec prettier --check (same); pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical requirements, verification map and same-change ledger. Detailed /tmp/jj-ui-polish-* logs."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only projects reviews/task discussion and Settings presentation. Exact units/stories, web/catalog type checks, ownership and read-only live Vite desktop/mobile acceptance are the complete impact surface. Browser fixtures updated for sidebar return; root aggregate lanes, Rust builds/tests, unrelated story families, fixture resets, native writes and production built-CSP qualification out of scope. M16 remains Partial with prior release/registry-only/composer-CSP/visual gates retained. No baseline approval.",
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vite8.3.2; Vitest4.1.11; Storybook10.5.7; existing Design Core Empty and Collapsible. Dependencies unchanged.",
+    "formats": "No native/API/storage or preference format change. Owned review view distinguishes unsupported boolean from transport error. Section title is the only page heading. Thread drafts, native comment focus, repository activity scope and captured snapshots unchanged.",
+    "next": "Continue the newly requested table-style alignment of Local service, Search and Sync Settings in a separate verified slice.",
+    "artifacts": "/tmp/jj-ui-polish-*.log/json/png and live/contrast probe scripts. Isolated browser contexts closed; persistent Vite/backend fixture retained."
+  },
+  {
+    "id": "E-UI-060",
+    "tasks": ["M14"],
+    "date": "2026-10-02",
+    "kind": "local-service-search-sync-settings-row-alignment",
+    "revision": "enclosing Jujutsu change svtuyuxl",
+    "before": "Clean svtuyuxl above verified header/task/reviews slice zmzkuouq/c370073c. User supplies screenshots of ungrouped Git-backed folder metadata/actions, Search controls below rather than inside its table, descriptions right of action buttons, and raw unsupported Sync guidance. Existing Local service table and Appearance rows provide the intended composition. Community settings Field groups inspected first, then Design Core public Field/Empty/WorkspaceSettings references. Owning UI/API requirements and M14 scope read before implementation.",
+    "files": [
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreSearchSettings.stories.svelte",
+      "catalog/components/store-application/StoreSyncSettings.stories.svelte",
+      "catalog/components/store-application/StoreWorkspaceSettings.stories.svelte",
+      "catalog/fixtures/SearchSettingsFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreLocalFolders.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchHealth.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "web/src/lib/ui/store-settings/StoreSettingsEmpty.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreWorkspaceSettings.svelte",
+      "web/tests/real/settings-layout.spec.ts",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Align Local service, Search and Sync settings rows\"; jj --no-pager diff --stat; scoped source/reference/spec inspection and final diffs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same Appearance workspace and Vite backend retained; main unrelated work untouched. No new Community source copied or foundational dependency changed."
+      },
+      {
+        "command": "pnpm web:check (initial and final); pnpm catalog:check (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both final checks report0 errors/warnings;129 catalog modules. /tmp/jj-settings-rows-{web,catalog}-check{-final}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte -t \"ConfigurationTableControls|SaveThenApply|FailureRetainsDraft|PauseResumeAndProgress|LocalOnly|Unsupported|FailureRequiresRefresh|SettingsDegradedSearch|SettingsUnavailableSearch|UnsupportedConnection\" --reporter verbose (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "11 focused stories pass with runtime/accessibility guard: common bordered Search status/controls, description-left/actions-right, cancellation, save/apply and failed draft retention, sync pause/resume/progress/recovery, local-only and unsupported icon states.15 unrelated stories deliberately skipped. /tmp/jj-settings-rows-stories{-final}.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/settings-layout.spec.ts (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Desktop passes including axe and all layouts. Mobile waits for Open navigation sidebar because navigating to the identical hash retains mounted transient Settings. Corrected test to explicitly reload for a fresh shell; no production lifecycle change or assertion suppression. Failed trace in web/test-results-real."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/settings-layout.spec.ts (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 native read-only browser test passes in10.3s at1351x988 and390x844. Registration rows/actions, Add dialog cancellation, Search table enablement/budget/scopes and draft cancellation, Sync local-only table/icon, action placement, overflow and settled WCAG axe checks pass. No runtime errors, native mutation, registration removal, indexing or sync control action invoked. /tmp/jj-settings-rows-browser-final.log and6 desktop/mobile screenshots; native fixture unchanged."
+      },
+      {
+        "command": "node /tmp/jj-settings-rows-probe.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Supplemental isolated live Local service source rendering and enabled Add/Refresh/Reconnect/Remove controls. Screenshot inspected along with Search/Sync desktop/mobile acceptance images. Not baseline approval."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 chapters/147 requirements validated. New Settings Empty wrapper composes released Design Core; no Community/catalog runtime or type dependency added."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreSearchSettings.stories.svelte -t \"ConfigurationTableControls|SaveThenApply\"; JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/settings-layout.spec.ts (mobile toggle refinement)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Switches stay to the right of their descriptions on mobile while budget/scopes/actions stack.2 affected Search stories and final native desktop/mobile browser pass; settled axe checks have0 violations, with0 runtime errors. /tmp/jj-settings-rows-toggle-stories.log and browser-final2.log (11.9s)."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported files); pnpm exec prettier --check (same); pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same-change canonical UI/API, verification mapping and ledger; focused formatting. /tmp/jj-settings-rows-{format*,spec-first,spec-validate,progress}.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only Settings composition and direct consumers. Exact Search/Sync/unsupported stories, web/catalog type checks, ownership and read-only live native desktop/mobile browser regression qualify this presentation slice. Existing shared status rows retain their palette/grid recipe; Field controls and action rows now share borders and responsive layout. Native/API contracts, workers and process lifecycle unchanged. Rust builds/tests, root aggregates, unrelated stories, destructive/native writes, backend restarts, publication and production built-CSP/release qualification out of scope. M14 and M16 delivery states unchanged; other local-management, registry-only and visual gates remain separate.",
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vite8.3.2; Playwright1.63.0; Storybook10.5.7; Vitest4.1.11; existing Design Core public Field, Empty, Switch, Input and Button. Dependencies unchanged.",
+    "formats": "No native/API/storage/preference format changes. Registration names, full wrapping folder paths, readiness and exact Add/Reconnect/Remove callbacks retained. Search desired/effective revisions, dirty drafts, Save/Apply separation and worker controls unchanged. Availability Empty icons are decorative with descriptive text; recoverable errors remain alerts. Responsive rows stack actions below guidance on mobile.",
+    "next": "Continue UI iteration on the running Appearance Vite service; landing onto main and visual baseline approval remain separate user actions.",
+    "artifacts": "/tmp/jj-settings-rows-*.log/png and service probe; committed web/tests/real/settings-layout.spec.ts. Isolated browsers closed and persistent main fixture preserved."
+  },
+  {
+    "id": "E-UI-061",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "appearance-circular-accent-selection-ring",
+    "revision": "enclosing Jujutsu change xvyrtsyt",
+    "before": "Clean Appearance workspace xvyrtsyt above svtuyuxl/3e788232; main unrelated work preserved. User reports an oval Neutral selection ring. Live geometry reproduces a 34x24 ring inside its 36x36 button, centered but stretched horizontally. Selected span set height only. Community settings inspected first, then Design Core styling and owned Appearance source/provenance; owning UI/API and M16 reviewed.",
+    "files": [
+      "web/src/lib/ui/store-appearance/appearance.css",
+      "catalog/components/store-appearance/StoreAppearance.stories.svelte",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Keep Appearance accent selection rings circular\"; scoped source/spec/reference inspection; jj --no-pager diff --stat",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reused clean Appearance workspace with live Vite HMR. No foundation or Community source/dependency changes. Exploratory lookups of spec/verification-map.json and scripts/spec-first.mjs were absent; repository package scripts and canonical verification.md supplied the actual gate/ledger mapping."
+      },
+      {
+        "command": "node /tmp/jj-accent-ring-probe.mjs before",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact live Neutral regression fails: ring34x24, button36x36, center offsets0. No runtime errors. /tmp/jj-accent-ring-before.json/png."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/StoreAppearance.stories.svelte -t AllControlsAndLocalLinks (before CSS fix)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New rendered geometry regression reproduces10px aspect mismatch.1 failed story,3 unrelated stories skipped. /tmp/jj-accent-ring-story-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/StoreAppearance.stories.svelte -t AllControlsAndLocalLinks (after CSS fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 focused story passes with existing interaction/accessibility guards;3 unrelated stories skipped. Blue, Neutral and Green rings are square/centered; selection changes, saved Green accent and all existing controls retained. /tmp/jj-accent-ring-story-after.log."
+      },
+      {
+        "command": "node /tmp/jj-accent-ring-probe.mjs after",
+        "result": "pass",
+        "failures": 0,
+        "note": "All10 accent buttons select exclusively and render centered24x24 rings inside36x36 swatches. Actual hover retains circular geometry and centering; keyboard focus remains visible; light/dark desktop1351x988 and mobile390x844 pass. Settled scoped WCAG axe:0 violations;0 runtime errors. Isolated browser context closed; native fixture and user device preferences unchanged. Desktop/mobile screenshots inspected. /tmp/jj-accent-ring-after.json/png and after-mobile.png."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web/catalog report0 errors and0 warnings;129 catalog modules. Ownership validates21 chapters/147 requirements. /tmp/jj-accent-ring-{web-check,catalog-check,ownership}.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "SPEC-FIRST-MISSING mapped api.md chapter. Added browser accent presentation contract without changing API or preference formats; corrected gate is rerun below."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-appearance/appearance.css catalog/components/store-appearance/StoreAppearance.stories.svelte spec/src/ui.md spec/src/api.md spec/src/verification.md spec/src/milestones.md; pnpm exec prettier --check (same files); pnpm spec:first; pnpm spec:validate; pnpm check:progress (including final ledger update)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused formatting passes. Corrected spec-first passes2 protected files/3 mapped chapters; canonical validation passes5 validators/21 chapters/147 requirements; progress bookkeeping passes120 tasks. Same-change evidence and verification mapping updated with M16 Partial retained. /tmp/jj-accent-ring-{format,format-check,spec-first,spec-validate,progress}.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only private Appearance accent geometry and its directly affected story/browser presentation. Source-owned buttons use zero padding and centered grid; selected rings set equal width/height. Rust builds/tests, backend restarts, root aggregates, unrelated stories, native writes, fixture resets, publication, production built-CSP qualification and visual baseline approval are out of scope. M16 remains Partial with existing source-release, registry-only, inherited-suite/composer-CSP and visual gates separate. Vite HMR applies this fix without rebuilding the stack.",
+    "versions": "Node26.9.0; pnpm10.32.1; Vitest4.1.11. Existing Svelte, Vite, Storybook, Playwright and foundation dependencies unchanged.",
+    "formats": "No native/API/storage/preference changes. jj-store.appearance.v1 and the10 named accent values are retained. Swatch and ring color tokens, selection callbacks, hover scale and independent focus-visible outline unchanged.",
+    "next": "Continue UI iteration on the running Appearance Vite workspace; main landing and visual baseline approval remain separate user actions.",
+    "artifacts": "/tmp/jj-accent-ring-*.log/json/png and isolated live probe script. Persistent development fixture preserved."
+  },
+  {
+    "id": "E-UI-062",
+    "tasks": ["M11.4", "M16"],
+    "date": "2026-10-02",
+    "kind": "community-task-activity-comments-and-main-composer",
+    "revision": "enclosing Jujutsu change mqppsqku",
+    "before": "Clean Appearance workspace mqppsqku above xvyrtsyt/7fa3f2a4. Task details use Focus/Split discussion side panel with an Open task discussion button; main Activity shows repository commits. User requests Community task comments under Activity and composer at the bottom of the main page, and explicitly removes the opener. Inspected CommunityProjects selectedTask Activity/comment/composer source at741b8285e2081f1c9af58afe5a9b72f538fad781 first, then Design Core public Collapsible. Owning UI/API/projects/governance and M11.4/M16 reviewed. Exact layout regression records the existing side panel failure.",
+    "files": [
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/community-work-tasks.css",
+      "web/src/lib/controller/production-projects-hub.svelte.ts",
+      "web/src/lib/controller/projects-work-registry.svelte.ts",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/fixtures/projects-hub-layout.ts",
+      "web/tests/vite/projects-hub.test.ts",
+      "web/tests/real/task-activity-layout.spec.ts",
+      "docs/ui-provenance.json",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/projects.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Match Community task comments and composer layout\"; scoped source/spec/reference inspection; jj --no-pager log -r @ --no-graph -T commit_id (Community); jj --no-pager diff --stat/git and final review",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reused Appearance workspace and existing Vite/backend. Main unrelated source work preserved. Native fixture read only; live user writes are independent. Exploratory wrong work/spec/helper paths were corrected from scoped file inventories. First guarded parent rewrite had a missing exact substring and wrote nothing; corrected rewrite succeeds."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t HierarchyAndDiscussion (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New exact regression finds the Task discussion side panel.1 failed,4 skipped. /tmp/jj-task-activity-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t HierarchyAndDiscussion (first after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Layout assertions pass; immediate hidden-content assertion races Collapsible transition. Added waitFor for actual invisibility, preserving collapse/composer assertions. /tmp/jj-task-activity-regression.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t HierarchyAndDiscussion (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 story passes,4 skipped: comments in main Activity, composer below, no side panel, reply context/editor instance/draft survive collapse. /tmp/jj-task-activity-regression-final.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 JJ_STORE_REAL_TASK=c8a8573c0204be10644dcd77d16df2b8 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/task-activity-layout.spec.ts (initial and final through final4)",
+        "result": "fail",
+        "failures": 5,
+        "note": "Each of5 preliminary runs has1 failed browser test. Initial locator assumed a direct Collapsible content child; next used task-activity class shared by Subtasks. Scoped to Task activity region. Third reveals actual dropped commentId in Projects registry; exact unit added and production forwarding fixed. Fourth selected both comment wrapper and nested message; narrowed to role=listitem. Fifth passes functionality/focus but flags color contrast in the initially retained repository ID feed. Final composition matches Community task scope (comments only); repository commit feed remains in project Activity tab. No axe exclusion, ignored rule or token override. /tmp/jj-task-activity-browser{,-final,-final2,-final3,-final4}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config web/vitest.config.ts web/tests/vite/projects-hub.test.ts -t \"task comment links retain\" (two attempts)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two startup errors: nonexistent config. Read actual catalog config and reran the named regression under catalog-unit. No tests ran in these attempts. /tmp/jj-task-activity-focus-before{,2}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts -t \"task comment links retain\" (before forwarding fix)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact regression receives null focusCommentId instead of the bound task comment.1 failed,10 skipped. /tmp/jj-task-activity-focus-before3.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts -t \"task comment links retain\"; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts web/tests/vite/production-work.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression passes, then16 direct Projects hub/WorkStore controller units pass. Comment ID forwarding, unavailable identity, clearing focus, snapshots/caches, authorization, receipt/request and draft preservation remain covered. /tmp/jj-task-activity-focus-after.log and units-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte -t \"HierarchyAndDiscussion|UnknownOutcome|NativeThreadedDiscussion|ProjectsRepositoriesAndTaskNavigation|ReadOnlyTask|TaskEditAndRetainedUnknownRequest|MobileTaskDetail\" --reporter verbose (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "7 directly affected stories pass with interaction/accessibility/runtime guards;9 unrelated stories skipped. Fresh Vitest Vite/browser provider qualifies cold source mounting. Threaded/tombstoned/missing-parent comments, reply/edit, retained unknown request, hierarchy, read-only access and mobile detail preserved. Final rerun follows comment forwarding and Community Activity scope correction. /tmp/jj-task-activity-stories{,-final}.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 JJ_STORE_REAL_TASK=c8a8573c0204be10644dcd77d16df2b8 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/task-activity-layout.spec.ts (final5)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 live read-only browser test passes in12s:1351x988 light/Focus and390x844 dark/Split; main comments below Activity after Subtasks; no panel/opener; full-width bottom composer; keyboard disclosure collapse preserves draft; comment link reopens and focuses exact identity. Whole-page settled WCAG axe0 violations,0 runtime errors and no horizontal overflow. Desktop/mobile screenshots inspected. No native mutation or fixture reset. /tmp/jj-task-activity-browser-final5.log and desktop/mobile.png."
+      },
+      {
+        "command": "pnpm web:check (initial, final, final2); pnpm catalog:check (initial, final, final2); pnpm check:ui-ownership (initial and after provenance/source markers)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All web/catalog runs report0 errors/warnings;129 catalog modules. Ownership validates21 chapters/147 requirements. Three maintained task adaptations now carry enforced source markers and pinned Apache-2.0 provenance. /tmp/jj-task-activity-{web*,catalog*,ownership*}.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped spec-governance.md required for provenance manifest. Added actual task adaptation ownership contract; corrected gate passes. /tmp/jj-task-activity-spec-first.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed source/docs files); pnpm spec:first (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting commands pass; final spec-first passes12 protected files/4 mapped chapters. /tmp/jj-task-activity-format{,-final,-scope}.log and spec-first-final.log. Final ledger/document gates recorded after completion."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md spec/src/verification.md; pnpm exec prettier --check (all18 changed supported files); pnpm spec:validate; pnpm check:progress (initial and final ledger checks)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting passes; canonical validation passes5 validators/21 chapters/147 requirements including UI ownership; progress passes120 tasks. Same-change ledger and verification map preserve M11.4 In progress and M16 Partial. /tmp/jj-task-activity-{format-ledger,format-check,spec-validate,progress}.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "One UI task presentation and exact comment route handoff surface, including its direct Projects/WorkStore controller consumers. Tasks match Community same-task comment Activity and no longer embed a project repository commit feed; project Activity retains that feed unchanged. All functional/accessibility assertions on the final task surface pass. Initial repository-feed contrast observations belong to the unchanged project/repository feed and are not a qualification claim for that surface. Rust builds/tests, backend restarts, root aggregates, unrelated stories, native writes, fixture resets, public contract generation, package publication, production built-CSP/release qualification and visual baseline approval are out of scope. M11.4 remains In progress and M16 Partial; existing qualification gates remain separate.",
+    "versions": "Node26.9.0; pnpm10.32.1; Vitest4.1.11. Dependencies unchanged; public Design Core Collapsible and owned Community-derived composer/message rendering retained.",
+    "formats": "No native/API/storage/preference formats changed. WorkStore add_comment/reply_to, edit/remove, version guards, bounded pagination, immutable snapshots, retained request identities and memory-only drafts unchanged. Projects registry now forwards existing route.commentId alongside project/task selection; no new URL field or authority. Focus/Split conversation preference no longer creates a task discussion side panel.",
+    "next": "Continue UI iteration in the running Appearance Vite workspace; main landing and visual baseline approval remain separate user actions.",
+    "artifacts": "Committed web/tests/real/task-activity-layout.spec.ts; /tmp/jj-task-activity-*.log/png. Isolated browser contexts closed. Existing development fixture and servers retained."
+  },
+  {
+    "id": "E-UI-063",
+    "tasks": ["M4.9", "M4.18", "M11.4", "M13.4", "M14.2", "M15.5", "M16"],
+    "date": "2026-10-02",
+    "kind": "automatic-application-data-refresh-and-retained-edit-preconditions",
+    "revision": "enclosing Jujutsu change pyvwmoqz",
+    "before": "Clean reused Appearance workspace pyvwmoqz above mqppsqku/da0387d4. Confirmed WorkStore saves displayed Saved. Refresh projects to see changes; SSE only marked freshness and new-data banners required manual capture. User explicitly replaces that contract with automatic updates across the app. Owning UI/API/projects/local-JJ/governance chapters and ledger reviewed; Community first and released Design Core second inspected for presentation. Main unrelated work, existing Vite port7460/backend7462 and persistent main .local/dev-demo retained.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Refresh application data automatically after saves and live updates\"; scoped requirements/source/UI reference inspection; jj --no-pager diff --summary/stat/git",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reuse existing Appearance workspace; preserve main and fixture. No Community dependency/provenance changes. Exploratory missing source/spec/config paths and a no-write git status attempt were corrected to scoped inventories/Jujutsu; one guarded helper extraction substring mismatch was repaired before validation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit (automatic refresh, WorkStore, Projects, events, sync/search, Threads, collaboration, repository directory and native/local consumers; units1, units2, units3, units-final and units-complete)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 24/24, two78/78,97/97 and98/98 pass. Focused queue coalescing/races, keyed pauses, session cancellation, periodic/reconnect checks, own save/status reload, draft/pending identities and current-head/historical guards. /tmp/jj-auto-refresh-units*.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/automatic-refresh.test.ts web/tests/vite/production-automatic-refresh.test.ts web/tests/vite/automatic-work-refresh.test.ts web/tests/vite/automatic-store-refresh.test.ts web/tests/vite/production-work.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/production-store-events.test.ts web/tests/vite/production-sync-settings.test.ts web/tests/vite/production-search-settings.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/local-browser-merge.test.ts web/tests/vite/store-route-history.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-store-evolution.test.ts web/tests/vite/production-store-workspaces.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final151/151 in20 direct controller test files. Adds fresh-cursor sidebar replay, canonical browser navigation and dirty Search draft revision retention/cancel adoption to existing request/session/authorization protections. /tmp/jj-auto-refresh-units-final-qualified.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte -t 'HierarchyAndDiscussion|UnknownOutcome|NativeThreadedDiscussion|ProjectsRepositoriesAndTaskNavigation|ReadOnlyTask|TaskEditAndRetainedUnknownRequest|MobileTaskDetail|RepositoryLinks'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two runs:8 directly affected stories pass,8 unrelated skipped. Actual interaction/accessibility/runtime checks retained. /tmp/jj-auto-refresh-stories1.log and stories-complete.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte -t 'Settings|Default|Native|Local'; same four files without title filter",
+        "result": "pass",
+        "failures": 0,
+        "note": "First9/9 selected pass with17 skipped; complete directly affected Settings families26/26 pass. Optional recovery controls, dirty drafts, unsupported/failed status, mobile/collapsed navigation remain qualified. /tmp/jj-auto-refresh-settings-stories.log and settings-verified.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 JJ_STORE_REAL_TASK=c8a8573c0204be10644dcd77d16df2b8 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/automatic-updates.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial own/external update test1/1 and final2/2 pass against real native backend and HMR UI. Two clients observe committed comments without refresh; observer draft survives; stale banners absent; whole-page WCAG axe0 violations and0 runtime errors. Test comments are tombstoned in finally; historical receipts remain. Second case only intercepts GET metadata/version advances and refuses captured POST with stale_work: proves task/project forms retain original versions/drafts without real metadata writes. No fixture reset/backend rebuild. /tmp/jj-auto-refresh-live1.log and live-final.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-auto-refresh-browser.config.mjs web/tests/browser/automatic-refresh.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "First cold run cannot import non-exported referencesPage; no product test executes. Exported existing fixture helper and reran. /tmp/jj-auto-refresh-cold1.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-auto-refresh-browser.config.mjs web/tests/browser/automatic-refresh.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 built-UI/mock boundary cases pass: current head advances automatically, historical operation remains pinned while fresh reads occur. Fresh isolated preview7458; no Rust fixture/build. /tmp/jj-auto-refresh-cold2.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-auto-refresh-browser.config.mjs web/tests/browser/automatic-refresh.spec.ts web/tests/browser/navigation.spec.ts web/tests/browser/reads.spec.ts -g 'new repository data|hash route restores|multiple_heads_require_choice|event_reconnect_resumes'",
+        "result": "fail",
+        "failures": 1,
+        "note": "First broadened5-case run has4 pass/1 fail: repository Back fails to recognize internal optional route fields in its URL-restored destination, disables Forward. Added exact unit before changing canonical route matching. /tmp/jj-auto-refresh-cold-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-route-history.test.ts -t 'refreshed repository routes retain Forward' (before and after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before1 failure/10 skipped: canForward=false after browser Back. After canonical URL comparison1 pass/10 skipped. Full11 route-history cases pass in direct/final lanes. /tmp/jj-auto-refresh-navigation-{before,after}.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-auto-refresh-browser.config.mjs web/tests/browser/navigation.spec.ts -g 'hash route restores'; pnpm exec playwright test --config /tmp/jj-auto-refresh-browser.config.mjs web/tests/browser/automatic-refresh.spec.ts web/tests/browser/navigation.spec.ts web/tests/browser/reads.spec.ts -g 'new repository data|hash route restores|multiple_heads_require_choice|event_reconnect_resumes'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact repaired navigation1/1 passes, then fresh built UI5/5 pass: new current/history updates, hash/back/forward/reload, multiple-head choice and reconnect cursor/reset automatic recapture. /tmp/jj-auto-refresh-navigation-cold-after.log and cold-complete.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/automatic-work-refresh.test.ts -t 'sidebar refresh retains' (before and after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before1 failure/4 skipped: refresh dropped second loaded project page. After reloadProjectHomeWindow reuse1 pass/4 skipped, fresh-root cursor and retained project window verified. Final unit lane passes all. /tmp/jj-auto-refresh-sidebar-{before,after}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-search-settings.test.ts -t 'automatic status reads retain' (before); pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-search-settings.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-store-workspaces.test.ts (after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before1 failure/4 skipped: new status revision b replaces dirty draft base a. Private draftRevision retains original precondition until accepted Save/Cancel. After20/20 direct settings/workspace units pass; final151-unit lane includes them. /tmp/jj-auto-refresh-search-draft-{before,after}.log."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts web/tests/production-store-loaders.test.ts; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-route-history.test.ts web/tests/vite/store-route-codec.test.ts web/tests/vite/projects-route.test.ts web/tests/vite/automatic-store-refresh.test.ts web/tests/vite/production-automatic-refresh.test.ts; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-code-navigation.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-store-evolution.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "20 route/loaders,17 actual matching unit cases and31 direct code navigation/data/settings/evolution cases pass. Two nonexistent extra Vitest filter paths matched no files; three real selected files ran17 tests. Final lane uses actual files only. /tmp/jj-auto-refresh-route-codec.log, navigation-consumers.log and route-direct-consumers.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership (initial and final source rounds)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All actual web/catalog checks report0 errors/warnings and129 catalog modules. Ownership passes1 validator,21 chapters/147 requirements. Final source web/catalog logs /tmp/jj-auto-refresh-{web,catalog}-final-qualified.log; ownership-{,complete}.log."
+      },
+      {
+        "command": "pnpm check:architecture (initial unredirected check, architecture.log, architecture2.log and architecture4.log)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Module limits caught root/Work/Hub growth and inherited401-line story, then311-line collaboration module. Extracted automatic refresh, Work page/cache helpers, home-window replay and exact collaboration matching; moved existing read-only story play helper. No limit or assertion relaxation. Three recorded failed logs plus first unredirected attempt."
+      },
+      {
+        "command": "pnpm check:architecture (architecture3, architecture5, final, complete, verified and final-qualified); pnpm web:build (build, build-final, build-final2, build-complete, build-verified and build-final-qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Architecture passes final735 modules. Fresh Vite assets and existing manifest generated successfully on each build; existing >500k chunk advisory remains. Latest final-qualified build6.08s; no Rust build/restart. /tmp/jj-auto-refresh-{architecture*,build*}.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported source/docs files, initial through format-final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed-file formatting only. Final source paths are from jj diff --name-only. Canonical ledger/map gates are recorded after this evidence insertion. /tmp/jj-auto-refresh-format*.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check (66 changed supported files)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Spec-first passes59 protected files/6 chapters; canonical5 validators/21 chapters/147 requirements and changed-file formatting pass. Initial progress gate finds10 references to5 renamed manual-refresh tests and rejects out-of-scope wider qualification notes in remaining for a passing focused slice. Added explicit retired-test entries without rewriting historical evidence; broader gates stay in scope/next, milestone statuses unchanged. /tmp/jj-auto-refresh-{spec-first,spec-validate,progress,format-check}.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-auto-refresh-browser.config.mjs web/tests/browser/automatic-refresh.spec.ts web/tests/browser/navigation.spec.ts web/tests/browser/reads.spec.ts -g 'new repository data|hash route restores|multiple_heads_require_choice|event_reconnect_resumes' (latest built source)",
+        "result": "pass",
+        "failures": 0,
+        "note": "5/5 pass18.6s on final-qualified built source; preview stops automatically. /tmp/jj-auto-refresh-cold-final-qualified.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-application/StoreApplication.svelte spec/src/ui.md; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "File/conflict editors now share the existing editing guard as a keyed refresh pause; drafts/target base remain stable until editing finishes. Formatting passes. First file-editor story provider loses browser WebSocket connection before any tests run; no assertion suppression. Fresh exact retry recorded separately. /tmp/jj-auto-refresh-format-file-editor.log and file-editor-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte; repeat exact EditAndRename with settled-dialog assertion and app focus experiment",
+        "result": "fail",
+        "failures": 3,
+        "note": "Three fresh runs reproduce one Svelte derived_inert runtime error each despite interaction assertions passing: 2/2 stories then 1/1 selected twice. Bits UI 2.18.1 dismissible-layer deferred focus callback reads disposed derived state. Waiting for Save dialog removal and app focus workaround do not fix it; app workaround fully restored with JJ, no StoreFileEditor production diff retained. Logs file-editor-stories-final, file-editor-settled and file-editor-focus-after. Runtime diagnostics remain enforced."
+      },
+      {
+        "command": "pnpm add -D bits-ui@2.19.4; restore pnpm-lock.yaml with JJ; pnpm install --ignore-pnpmfile --lockfile-only; pnpm install --ignore-pnpmfile --frozen-lockfile",
+        "result": "pass",
+        "failures": 0,
+        "note": "Inspected released 2.19.4 destroyed-layer guard before upgrading direct Bits UI 2.18.1 and nested 2.19.3. Initial private local Design Core hook leaked a local resolution into lockfile; restored parent lock then generated and installed clean registry-only lock ignoring the hook. Final tracked lock has six line replacements, no local paths or pnpmfile checksum. No node_modules edits or dependency patches. Logs bits-update and registry-install."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Released Bits UI 2.19.4 fixes exact failure: 2/2 stories pass, zero runtime warnings/errors; preserved settled-dialog assertion. 12.94s. /tmp/jj-auto-refresh-file-editor-released.log."
+      },
+      {
+        "command": "pnpm web:check (clean registry-only dependency install)",
+        "result": "fail",
+        "failures": 6,
+        "note": "Six type errors in five unchanged production consumers reproduce existing Design Core 0.2.0 API gaps: ToolCallStatus unknown, FileListingDirectory/directories/virtualize, AppShell element and OverlaySheet mobilePlacement. Source remains owner; no consumer shims/overrides or source publication. /tmp/jj-auto-refresh-web-released.log. M16 registry-only release qualification remains pending."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit; pnpm web:test; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook (clean registry-only install)",
+        "result": "fail",
+        "failures": 9,
+        "note": "Units 238/238 in40 files and web tests70/70 pass. Full released UI stories:187 pass/9 fail in53 files/196 tests,194.65s. Seven failures depend on missing Design Core APIs; two stale Back to app selectors corrected separately. Logs all-units-released, all-web-tests-released and all-stories-released. This is a recorded registry limitation, not a released-only acceptance pass."
+      },
+      {
+        "command": "cp pnpm-lock.yaml /tmp/jj-auto-refresh-registry-lock.yaml; pnpm install --no-frozen-lockfile; cp /tmp/jj-auto-refresh-registry-lock.yaml pnpm-lock.yaml",
+        "result": "pass",
+        "failures": 0,
+        "note": "Restored existing private Design Core local-source validation setup without changing tracked registry ranges/lock. Source package0.1.2 at immutable 59f25e0792875f99ba57d60c7da14cf5070166ce, clean owning workspace; source inspected read-only and not modified/published. Released Bits UI2.19.4 retained. /tmp/jj-auto-refresh-validation-install.log. All following UI validation uses this explicitly temporary source setup."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook (restored local-source validation setup)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Full run completes only32 of53 files:143 tests pass/2 fail, plus1 browser-provider WebSocket closure at RepositorySearch. Two failures are stale Back to app return selectors inherited from earlier settings header change. Assertions/diagnostics not disabled; changed selectors to existing Back to jj-store. Fresh sequential sharding used to complete all files without provider pressure. /tmp/jj-auto-refresh-all-stories-validation.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte -t 'AppearanceFocusPreservesChannelAndReplyDrafts|FocusAndSplitPreserveToolDiscussionDrafts'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact two repaired settings return/draft cases pass with6 unrelated skipped,14.34s. Both draft assertions preserved. /tmp/jj-auto-refresh-settings-return-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit; pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm web:build (restored validation setup)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Full catalog units238/238 in40 files pass; web/catalog report0 errors/warnings and129 catalog modules; architecture735 modules; fresh UI build12.93s with existing chunk-size advisory. Logs all-units-validation, web-validation, catalog-validation, architecture-validation and build-validation. Root aggregate/Rust commands not run."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-auto-refresh-browser.config.mjs web/tests/browser/automatic-refresh.spec.ts web/tests/browser/navigation.spec.ts web/tests/browser/reads.spec.ts -g 'new repository data|hash route restores|multiple_heads_require_choice|event_reconnect_resumes'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Latest built UI/local-source validation5/5 pass27.2s: automatic current-head/historical behavior, hash/back/forward/reload, multiple-head choice and reconnect/reset. Fresh isolated preview7458 stops automatically. /tmp/jj-auto-refresh-cold-validation.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 JJ_STORE_REAL_TASK=c8a8573c0204be10644dcd77d16df2b8 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/automatic-updates.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Latest live native/HMR2/2 pass27s, actual own/external comments update and observer draft retained; WCAG axe0 violations/runtime0 errors. Test comments tombstoned in finally. Stale metadata case intercepts reads and refuses captured writes, no real task/project metadata change. /tmp/jj-auto-refresh-live-validation.log."
+      },
+      {
+        "command": "node /tmp/jj-auto-refresh-restart-ui.mjs (two UI-only dependency refreshes)",
+        "result": "pass",
+        "failures": 0,
+        "note": "UI PID36218 to50285 to52247 after dependency installs; backend PID36217 unchanged, fixture retained. Explicit process/root checks and bootstrap readiness before atomic runtime metadata update. Logs ui-restart and ui-restart-validation. No Rust rebuild/backend restart/reset."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard 1/3; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard 2/3",
+        "result": "pass",
+        "failures": 0,
+        "note": "Sequential fresh-browser runs pass62/62 in18 files49.80s and69/69 in18 files73.04s. No browser/build jobs run concurrently. /tmp/jj-auto-refresh-stories-shard-{1,2}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard 3/3",
+        "result": "fail",
+        "failures": 1,
+        "note": "17 files complete:64 pass/1 fail,79.38s. Appearance tool-discussion helper synchronously looks for Appearance before profile-menu onOpenChangeComplete finishes its close animation. Exact same story alone passes1/1 in9.63s, showing a timing race. No product/runtime diagnostic failure. /tmp/jj-auto-refresh-stories-shard-3.log and appearance-open-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte -t 'AppearanceFocusPreservesChannelAndReplyDrafts|FocusAndSplitPreserveToolDiscussionDrafts'",
+        "result": "pass",
+        "failures": 0,
+        "note": "After awaiting the accessible Appearance control in both directly affected stories,2/2 pass with6 unrelated skipped12.98s. Existing Focus/Split draft assertions remain unchanged. /tmp/jj-auto-refresh-settings-await-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard 3/3",
+        "result": "pass",
+        "failures": 0,
+        "note": "Repaired final shard65/65 in17 files79.52s. Combined three completed shards account for all53 files/196 stories, all passing interaction/accessibility/runtime acceptance. No provider error or skipped tests in shard inventory. Existing Design Core source-validation setup used; registry-only qualification remains separate. /tmp/jj-auto-refresh-stories-shard-3-after.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/appearance-tool-discussion-play.ts catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte spec/src/milestones.md; pnpm exec prettier --check (71 changed files; lockfile ignored by existing policy); pnpm catalog:check; pnpm check:ui-ownership; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting passes; catalog0 errors/warnings129 modules; ownership1 validator and canonical5 validators/21 chapters/147 requirements; progress120 tasks. Logs format-suite-final, format-all-final-check, catalog-all-final, ownership-final-complete, spec-validate-all-final and progress-all-final. Registry lock audit passes after narrowing an overbroad substring probe that matched vfile/link package names; history evidence bytes unchanged. Read-only source/installed dependency inspection confirms clean Design Core source pin and its actual runtime Bits UI2.19.4; first two introspection scripts assumed unsupported package.json export/location and were corrected, not product failures."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Shared package/lockfile change requires mapped spec/src/architecture.md, which was missing from this slice. Added released overlay version/teardown requirement and separate source-validation versus registry-release handling; no gate relaxation. /tmp/jj-auto-refresh-spec-first-all-final.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/architecture.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owning dependency chapter formatted; final spec-first/ledger/formatter checks follow. /tmp/jj-auto-refresh-format-architecture-final.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check (72 changed supported files, existing lockfile ignore)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final mapped canonical chapters, evidence bookkeeping and formatting pass after dependency architecture entry; see spec-first-complete-final, spec-validate-complete-final, progress-complete-final and format-complete-final-check logs. Historical evidence bytes retained. Browser functional/a11y suites use explicitly recorded source-validation setup; registry-only gate remains pending. Ledger-only final result insertion rechecks progress and formatting before commit."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI read scheduling across WorkStore, Projects, repository, Threads, Agents, Reviews and Settings. Shared Bits UI dependency update escalates to complete UI unit/web test and Storybook interaction/accessibility suites; sequential fresh-browser shards complete the full story inventory. Cold built-UI/mock acceptance is independent from two-client live native/HMR acceptance. Task/project stale-edit browser case simulates read-boundary changes and refuses writes; it is not native mutation concurrency qualification. Existing private Design Core source validation is explicitly temporary: registry-only web check and UI story failures reproduce existing missing public APIs, and M16 source/release qualification remains pending. Tracked manifests/lock remain registry-only. Root aggregate pnpm spec:check/check/test/build, Rust builds/tests, full native/local/Git-bridge suites, production CSP/release qualification, main landing/publication and visual baselines remain out of scope. Maintained native/Git bridge specs are not newly executed qualifications. Retired manual-only test names map to automatic-refresh regressions; historical evidence stays unchanged.",
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Vite8.3.2; Playwright1.63.0; Storybook10.5.7. Released Bits UI2.19.4 replaces direct2.18.1/nested2.19.3. Design Core tracked range remains registry ^0.2.0; clean released0.2.0 qualification fails existing APIs. Temporary private validation uses clean Design Core source package0.1.2, immutable59f25e0792875f99ba57d60c7da14cf5070166ce. Mira dependency unchanged.",
+    "formats": "No native, HTTP/schema, storage, asset-manifest, URL or preference formats changed. Optional StoreController.actions.setRefreshPaused is UI-only. Serial150ms coalescing and5s visible-page checks use bounded directory/home reads with at most2 concurrent probes. Fresh opaque cursors replay retained bounded windows. Current-head code may advance; explicit historical operations/commits remain selected while independent collaboration roots update. Drafts, exact unknown requests/preconditions, task/project form opening versions and dirty Search configuration revisions remain memory-only. Browser reads cannot publish or reconcile native state.",
+    "next": "Use running Appearance Vite app for UI iteration. M16 registry-only Design Core/source-release qualification remains pending; source owner has existing API additions not present in released0.2.0. Preserve backend/fixture and main unrelated work; main landing, dependency publication and visual baseline approval remain separate.",
+    "artifacts": "Committed unit/web, story and browser regressions; /tmp/jj-auto-refresh-*.log. Complete Storybook inventory196/196 in53 files; catalog units238/238 and web tests70/70; cold built UI5/5 and live native/HMR2/2. Temporary preview7458 stopped and test browser contexts closed. Existing Vite7460 PID52247/backend7462 PID36217 and persistent fixture retained.",
+    "files": [
+      "AGENTS.md",
+      "catalog/components/store-application/StoreFileEditor.stories.svelte",
+      "catalog/components/store-application/StoreSyncSettings.stories.svelte",
+      "catalog/components/store-application/appearance-tool-discussion-play.ts",
+      "catalog/components/store-threads/StoreThreads.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/fixtures/StoreWorkFixture.svelte",
+      "catalog/fixtures/SyncSettingsFixture.svelte",
+      "catalog/fixtures/projects-hub-layout.ts",
+      "package.json",
+      "pnpm-lock.yaml",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/automatic-refresh.ts",
+      "web/src/lib/controller/collaboration-refresh.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-automatic-refresh.ts",
+      "web/src/lib/controller/production-projects-hub.svelte.ts",
+      "web/src/lib/controller/production-projects-integration.ts",
+      "web/src/lib/controller/production-search-settings.ts",
+      "web/src/lib/controller/production-store-collaboration.svelte.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-events.ts",
+      "web/src/lib/controller/production-store-refresh.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/production-sync-settings.ts",
+      "web/src/lib/controller/production-work-integration.ts",
+      "web/src/lib/controller/production-work.svelte.ts",
+      "web/src/lib/controller/production-workspace-links.ts",
+      "web/src/lib/controller/projects-activity.svelte.ts",
+      "web/src/lib/controller/projects-home-read.ts",
+      "web/src/lib/controller/projects-navigation.svelte.ts",
+      "web/src/lib/controller/projects-reviews.svelte.ts",
+      "web/src/lib/controller/projects-work-registry.svelte.ts",
+      "web/src/lib/controller/store-refresh-pages.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/controller/work-refresh-pages.ts",
+      "web/src/lib/controller/work-types.ts",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreApplicationHeaderActions.svelte",
+      "web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte",
+      "web/src/lib/ui/store-settings/StoreLocalFolders.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchHealth.svelte",
+      "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreWorkProjectForm.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskForm.svelte",
+      "web/tests/browser/automatic-refresh.spec.ts",
+      "web/tests/browser/native-browser-fixture.ts",
+      "web/tests/browser/navigation.spec.ts",
+      "web/tests/browser/reads.spec.ts",
+      "web/tests/real/automatic-updates.spec.ts",
+      "web/tests/real/git-bridge.spec.ts",
+      "web/tests/real/native-repository.spec.ts",
+      "web/tests/real/work-store.spec.ts",
+      "web/tests/vite/automatic-refresh.test.ts",
+      "web/tests/vite/automatic-store-refresh.test.ts",
+      "web/tests/vite/automatic-work-refresh.test.ts",
+      "web/tests/vite/production-automatic-refresh.test.ts",
+      "web/tests/vite/production-search-settings.test.ts",
+      "web/tests/vite/production-store-events.test.ts",
+      "web/tests/vite/production-sync-settings.test.ts",
+      "web/tests/vite/store-route-history.test.ts"
+    ],
+    "removed_tests": [
+      "web/tests/browser/reads.spec.ts#event_reconnect_resumes_and_reset_requires_explicit_refresh",
+      "web/tests/real/native-repository.spec.ts#external publication waits for explicit refresh and preserves selection",
+      "web/tests/vite/production-store-events.test.ts#collaboration publication events announce freshness without mixing snapshots",
+      "web/tests/real/work-store.spec.ts#native projects tasks and discussion persist on RustFS and refresh explicitly",
+      "web/tests/real/git-bridge.spec.ts#Git import waits for refresh"
+    ]
+  },
+  {
+    "id": "E-UI-064",
+    "tasks": ["M11.4", "M15.3", "M15.5"],
+    "date": "2026-10-02",
+    "kind": "cross-layer task reaction and menu acceptance",
+    "revision": "Enclosing Jujutsu change lwxwqzum; Design Core source change kupxxqyt (b3eb19e7)",
+    "requirements": [
+      "JST-WORK-008",
+      "JST-COLLAB-010",
+      "JST-COLLAB-013",
+      "JST-COLLAB-014",
+      "JST-COLLAB-016",
+      "JST-API-006",
+      "JST-UI-015",
+      "JST-ARCH-002",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Functional native task reaction, UI and direct provider acceptance passed. Inherited broad Rust lint failures, released-registry Design Core qualification, local browser collaboration transport and visual baselines remain separate pending gates; canonical visual comparison blocked by published tool cache EACCES. Unsharded Storybook browser lifetime failures are recorded; all 53 families pass in the same suite split into three sequential shards."
+    ],
+    "scope": "Metadata-home task comment reactions, leading Copy submenu alignment and visible task Edit/Add subtask surfaces. Cross-layer escalation: additive jj-collab target, native/local pinned provider, read materialization, generated HTTP/RPC contract and browser consumers. Direct service, resolver, WAL, RPC and UI regressions; Design Core guide separately requires full source checks. No root aggregate app pnpm check/test/build/spec:check. Native storage formats and installed CLI unchanged. Local provider support does not qualify the still-gated local browser collaboration transport. Source validation uses the existing private dependency hook; tracked manifests/lock remain registry-only. Publication, main landing and visual baseline updates are out of scope. Shared hover-helper escalation: focus loss after removing a focused reaction chip must preserve a toolbar under the pointer; conversation, thread, review and agent consumers require the full Storybook lane. Boundary-policy escalation: admit only the owned jj-collab to jj-work model edge, with positive and reverse/publication/upstream negative tests; full owning governance test file and actual 16-package metadata check selected, not unrelated Rust suites.",
+    "versions": "Rust1.98.1; jj-lib0.45.1; Git2.55.0; Node26.9.0; pnpm10.32.1; BitsUI2.19.4; DesignCore source0.1.2, tracked registry range^0.2.0; Svelte5.57.1; Vite8.3.2; Vitest4.1.11; Playwright1.63.0. Source Design Core Storybook10.5.2 and Playwright1.61.1.",
+    "formats": "Additive work_comment target: task_id, comment_id, exact nonzero u64 version, scoped by repository request. Existing target canonical bytes preserved. Optional Work root in CollabReadSnapshotV1; absent roots omitted. Existing native manifest/WAL, companionv2, durable receipts, actor/slot preconditions and work versions unchanged. No synthetic Threads or new credentials. Original pending WorkComment target remains recoverable in the same comment metadata after version changes and tombstones; counts/pickers use only the current visible target. Background WorkStore read refresh never disables or silently drops a reaction selection; exact target validation remains server-owned.",
+    "next": "Review the verified native task-comment slice in the current development workspace. Qualify a compatible Design Core registry release and visual comparison/baselines separately; local-browser collaboration transport and inherited broad lint remain outside this slice.",
+    "artifacts": "/tmp/jj-task-*.log; /tmp/jj-task-actions.jpg. Vite7460 PID88268; backend7462 PID91193, persistent main fixture preserved without reset. Cold test uses a separate disposable root/port7484.",
+    "files": [
+      "Cargo.lock",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/fixtures/StoreWorkFixture.svelte",
+      "crates/jj-collab/Cargo.toml",
+      "crates/jj-collab/src/resolver.rs",
+      "crates/jj-collab/src/targets.rs",
+      "crates/jj-collab/tests/target_resolution.rs",
+      "crates/jj-store-rpc/src/collab/codec_tests.rs",
+      "crates/jj-store-service/src/collab_reads/materialization.rs",
+      "crates/jj-store-service/src/collab_reads.rs",
+      "crates/jj-store-service/src/local_repository/collab_commands.rs",
+      "crates/jj-store-service/src/local_repository/collab_store.rs",
+      "crates/jj-store-service/tests/local_collab.rs",
+      "crates/jj-store-service/tests/native_collab.rs",
+      "crates/jj-store-wal/src/publication/collab_commands.rs",
+      "crates/jj-store-wal/src/publication/collab_targets.rs",
+      "crates/jj-store-wal/src/publication/work.rs",
+      "docs/ui-provenance.json",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/mutations.md",
+      "spec/src/projects.md",
+      "spec/src/publication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/http-work-data-source.ts",
+      "web/src/lib/controller/production-work-integration.ts",
+      "web/src/lib/controller/production-work.svelte.ts",
+      "web/src/lib/controller/projects-work-registry.svelte.ts",
+      "web/src/lib/controller/thread-types.ts",
+      "web/src/lib/controller/work-reactions.svelte.ts",
+      "web/src/lib/controller/work-types.ts",
+      "web/src/lib/ui/store-collaboration/StoreMessageActions.svelte",
+      "web/src/lib/ui/store-threads/StoreMessageReactions.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComment.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/tests/real/task-reactions.spec.ts",
+      "web/tests/vite/work-reactions.test.ts",
+      "spec/src/milestones.md",
+      "web/src/lib/ui/community-message-actions/message-action-hover.svelte.ts",
+      "scripts/check-boundaries.mjs",
+      "scripts/governance.test.mjs"
+    ],
+    "tests": [
+      "crates/jj-collab/tests/target_resolution.rs#work_comment_requires_exact_visible_identity_task_and_version",
+      "crates/jj-store-service/tests/native_collab.rs#native_work_comment_reactions_pin_versions_authorize_and_survive_cold_sessions",
+      "crates/jj-store-service/tests/local_collab.rs#local_work_comment_reactions_share_companion_pin_and_survive_gc_and_reopen",
+      "web/tests/vite/work-reactions.test.ts#Work comment reactions use each home's source, exact versions and observed slots",
+      "web/tests/vite/work-reactions.test.ts#automatic invalidation preserves the original unknown reaction and confirmed retry",
+      "web/tests/vite/work-reactions.test.ts#late reaction reads cannot repopulate a cleared home session",
+      "web/tests/real/task-reactions.spec.ts#task reaction picker persists exact comments and refreshes a second client",
+      "scripts/governance.test.mjs#collaboration_targets_use_owned_work_types_without_reverse_or_runtime_edges"
+    ],
+    "runs": [
+      {
+        "command": "cargo check -p jj-store-service -p jj-collab -p jj-store-rpc",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial affected Rust check; source/domain changes compile."
+      },
+      {
+        "command": "cargo test -p jj-collab --test target_resolution --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "10/10, exact target versions/identity/task/tombstone and existing Thread JSON."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test native_collab --test local_collab --test collab_pagination --locked",
+        "result": "fail",
+        "failures": 3,
+        "note": "New test fixture used private error path and wrong receipt field; corrected to the public mutation Error and actor. No production workaround."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test native_collab --test local_collab --test collab_pagination --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "35/35: native10, local10, pagination15. Includes Work versions, visibility, pinning, home write admission, receipt replay, cold reopen/GitGC and clear without changing Work selection."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "OpenAPI and TypeScript generated; no handwritten type shim."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 4,
+        "note": "Started before generated contract completed; work_comment type absent in old DTO."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "After generated contracts: 0 errors/warnings."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/work-reactions.test.ts web/tests/vite/reaction-feedback.test.ts web/tests/vite/production-work.test.ts web/tests/vite/automatic-work-refresh.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "15/15. Extended direct lifecycle consumer run with production-automatic-refresh.test.ts passed18/18 after lazy disconnected transport construction."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "New story used Testing Library unsupported exact option; replaced with exact name regex."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings, catalog129 modules."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Task Activity exceeded300 counted lines; extracted native per-comment adapter, preserving callbacks/drafts."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "737 modules after extraction."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Extracted leaf imported Model from work-types; fixed to public API type import."
+      },
+      {
+        "command": "pnpm dev:backend:build; JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Explicit development binaries; existing fixture preserved, Vite remains running."
+      },
+      {
+        "command": "pnpm install --no-frozen-lockfile; node /tmp/jj-auto-refresh-restart-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing temporary private source validation. Restored tracked registry lock exactly; UI oldPID52247/newPID88268, backend36217 initially preserved before authorized backend rebuild/restart."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold built bundle prepared; normal chunk-size advisory only."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal -p jj-store-service -p jj-store-rpc --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Inherited redundant local in jj-store-jj/local_browser/operations.rs:202. No change there."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal -p jj-store-service -p jj-store-rpc --all-targets --no-deps --locked -- -D warnings",
+        "result": "fail",
+        "failures": 5,
+        "note": "Inherited collapsible_if in unchanged materialization cache eviction and content_search/extract.rs, and items_after_test_module in content_search/cursors.rs. Production/new test compile and focused service tests pass; full lint lane remains unresolved."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 5,
+        "note": "Mapped canonical compatibility, JJ/RPC, mutations, publication and provenance chapters missing; added precise additive target and unchanged authority requirements."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "34 protected files,11 canonical chapters before final ledger insertion."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 validators,21 chapters,147 requirements; local Community source/license provenance."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported source, story and canonical files); cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused format commands in /tmp/jj-task-*-format*.log; no baseline writes."
+      },
+      {
+        "command": "Design Core: pnpm exec vitest run --project storybook src/shared/shadcn/dropdown-menu/DropdownMenuConsumer.stories.svelte -t SubmenuLeadingIconAlignment",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before selector fix: leading Copy offset54.84375px."
+      },
+      {
+        "command": "Design Core: pnpm exec vitest run --project storybook src/shared/shadcn/dropdown-menu/DropdownMenuConsumer.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "After selector fix2/2, leading icons align and trailing chevron stays right."
+      },
+      {
+        "command": "Design Core: pnpm spec:first; pnpm spec:validate",
+        "result": "fail",
+        "failures": 2,
+        "note": "Source acceptance exceeded4 bullets and new bullet combined sentences; corrected without relaxing governance."
+      },
+      {
+        "command": "Design Core: pnpm checks",
+        "result": "fail",
+        "failures": 1,
+        "note": "New story TypeScript used unsupported exact role option; fixed to /^Copy$/."
+      },
+      {
+        "command": "Design Core: pnpm checks",
+        "result": "fail",
+        "failures": 1,
+        "note": "Types,unit715/715,Storybook642/642,static build and audit passed. Workspace pointer13/14 with one timeout under concurrent build load."
+      },
+      {
+        "command": "Design Core: pnpm test:workspace:pointer --grep bottom panel height resizes from its top rail",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact retry1/1, no code/test changes. Full source checks resumed to finish remaining browser lanes."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated contracts match;138 actual HTTP/SSE captures conform;7 contract unit tests and TypeScript contracts pass."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_commands --test collab_persistence --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "21/21: commands8, persistence13."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --lib --locked collab",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 exact binary identity/metadata carrier test."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal --all-targets --no-deps --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected domain and WAL lint clean; wider service lint remains blocked by inherited issues recorded above."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final checks after extracted leaf and feedback reload changes:0 errors/warnings, catalog129 modules."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/work-reactions.test.ts web/tests/vite/reaction-feedback.test.ts web/tests/vite/production-work.test.ts web/tests/vite/automatic-work-refresh.test.ts web/tests/vite/production-automatic-refresh.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final direct lifecycle run18/18."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "New evidence linked Planned reducer task with -,E-UI-064; removed erroneous reducer task link. Reducer remains unchanged/unqualified."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "120 tasks; evidence bookkeeping only."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/real/task-reactions.spec.ts spec/src/milestones.md; cargo fmt --all --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting and Rust format checks pass."
+      },
+      {
+        "command": "Design Core: pnpm checks",
+        "result": "fail",
+        "failures": 2,
+        "note": "Final full source run passed14 workspace pointers and shell lane;2 AI story readiness timeouts. Exact AI lane retry follows, no production/test changes."
+      },
+      {
+        "command": "Design Core: pnpm test:ai-chat-browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 after cold restart; previous2 readiness failures resolved without code/test changes."
+      },
+      {
+        "command": "Design Core: pnpm test:shadcn:pointer",
+        "result": "pass",
+        "failures": 0,
+        "note": "35 passed,1 existing skipped; remaining full source browser lane completed."
+      },
+      {
+        "command": "Design Core: pnpm exec prettier --write spec/src/verification.md; pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical verification row names leading-icon story; validate/mdbook/spec-first3 lanes pass."
+      },
+      {
+        "command": "Design Core: pnpm visual-delta test --help",
+        "result": "fail",
+        "failures": 1,
+        "note": "CLI requires exactly one affected/all/story-id selector; targeted visual test used instead, no baseline writes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "25 passed; new task story clicked the delayed hover toolbar before interactive. Added the existing visible-state wait."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t TaskCommentReactionsAndActionSurfaces",
+        "result": "fail",
+        "failures": 1,
+        "note": "Toolbar alignment/reactions passed; synthetic userEvent.hover does not set native CSS :hover. Preserved both real hover assertions in the cold Playwright target."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t TaskCommentReactionsAndActionSurfaces",
+        "result": "fail",
+        "failures": 1,
+        "note": "Legacy StoreWork catalog host only supplies Edit; ProjectsHub supplies Add subtask. Kept both button assertions in the actual page cold test."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t TaskCommentReactionsAndActionSurfaces",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact final retry1/1, other6 excluded."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final affected interaction/accessibility families26/26 in7 files; task emoji set/clear, tombstone and readonly controls, leading Copy alignment and visible Edit rest background."
+      },
+      {
+        "command": "Design Core: pnpm visual-delta test --story-id shadcn-overlays-dropdown-menu--open-menu --story-id shadcn-overlays-dropdown-menu--submenu-leading-icon-alignment --baseline-path-mode nested-import --fresh",
+        "result": "fail",
+        "failures": 1,
+        "note": "Canonical Linux/ARM64 container static build passed (5m44); capture stopped at EACCES copying storybook-static into mounted canonical-build-cache. No comparison or baseline writes; visual-pending."
+      },
+      {
+        "command": "Design Core: pnpm exec prettier --write spec/src/verification.md; pnpm spec:check; jj commit -m Keep dropdown submenu leading icons aligned with menu items",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 spec lanes passed. Source committed as b3eb19e7/kupxxqyt with a fresh empty change; no package publication."
+      },
+      {
+        "command": "CUA: inspect task page, open comment menu, save screenshot and Escape",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live7460 shows themed outline task actions, aligned Copy and reaction picker. Read-only inspection, no comment/reaction writes. /tmp/jj-task-actions.jpg."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported files); pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm check:architecture; pnpm check:ui-ownership; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused final governance before retained-status refinement:34 protected files/12 chapters;5 validators/21 chapters/147 requirements;120 tasks;737 architecture modules;129 catalog modules;0 type errors/warnings. No app root aggregate lanes."
+      },
+      {
+        "command": "pnpm web:check; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte; pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Retained original status target after comment edit/removal:0 errors/warnings,7/7 task stories and spec-first pass. Picker/counts remain absent on tombstones; only original pending request recovery stays visible."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7484 JJ_STORE_REAL_TEST=task-reactions.spec.ts pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Setup intentionally stopped while rebuilding unchanged RustFS; no browser tests ran. Retried using the existing explicit development runtime executable. No persistent user fixture touched."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_DEV_PORT=7484 JJ_STORE_REAL_TEST=task-reactions.spec.ts pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cold stack:1091ms startup,882ms restart,177504KiB resident,405325ms fixture preparation. Real saving/reload persistence, two-client updates, count clear, both button backgrounds/hover and Copy alignment passed. Test then clicked an opacity-hidden hover toolbar after clear and timed out at first lost-acknowledgement setup. Added the same data-actions-visible wait used by existing real WorkStore test; no force click or assertion relaxation. Isolated stack/root cleaned. Exact fresh retry follows."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/real/task-reactions.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native hover helper waits for visible toolbar state; per-action timeout15s, total test120s. Lost committed responses now cover both external edit and tombstone before status recovery."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_DEV_PORT=7484 JJ_STORE_REAL_TEST=task-reactions.spec.ts JJ_STORE_REAL_KEEP=1 pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fresh isolated fixture: 1035 ms startup, 870 ms restart, 178368 KiB resident, 423992 ms preparation. Reproduced real hover bug after removing focused reaction chip: focusout hid toolbar while pointer remained over the message. Fixed owned shared hover helper; fixture preserved for exact retries."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "After shared hover fix: both 0 errors/warnings; catalog 129 modules. Logs jj-task-reactions-hover-*-check.log."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "fail",
+        "failures": 1,
+        "note": "Shared helper consumer escalation. 37/53 files and 158 tests passed, then StoreConnection browser WebSocket/birpc connection closed. No assertion failure; remaining families did not execute. Exact StoreConnection retry and sequential full lane follow."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_DEV_PORT=7484 pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebuilt final UI/development binaries and restarted isolated server with preserved fixture: 4013 ms restart, 165360 KiB RSS. User 7460/7462 stack untouched."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "cold-final.log: second-client count missed the 5 second expectation under simultaneous full Storybook load. Exact retry without production/assertion changes follows; suites thereafter sequential."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "cold-final2.log: status locator ambiguous between clipboard sr-only status and reaction status. Scoped status/check controls to Message reactions group; no product change."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "cold-final3.log: lost-response fixture raced external comment edit before intercepted write committed; status lookup correctly retained unknown request. Network trace proved intercepted write was 404 and receipt unknown. Added explicit successful committed response assertion before abort/edit/removal, and wait for pending status to disappear on recovery. This strengthens lost-committed-response proof."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "cold-final4.log: committed lost-response recovery after external edit passed. Second picker selection was silently suppressed when automatic WorkStore refresh set loading between opening and selecting. Decoupled reactions from background read disable state while retaining writable, own busy/pending and exact server validation guards. Added deterministic Task reactions during background reads story."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-collaboration/StoreMessageActions.svelte web/src/lib/ui/store-work/StoreWorkComment.svelte catalog/fixtures/StoreWorkFixture.svelte catalog/components/store-work/StoreWork.stories.svelte spec/src/ui.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused formatting after background-read fix."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_DEV_PORT=7484 pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final background-read fix in built UI; preserved isolated fixture and explicit binaries; 4768 ms restart, 162592 KiB RSS. User HMR stack unchanged."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreConnection.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact previously interrupted connection family plus final task family: 14/14 in 2 files, including background-read picker acceptance."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm spec:first; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "After final production edits: both type checks 0 errors/warnings, catalog 129 modules; 35 protected files/12 canonical chapters; architecture 737 modules."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "cold-final5.log: final built-stack regression 1/1 in 15.2 seconds. Native persisted emoji picker/counts, reload, second-client automatic set/clear, exact Work root query, actual committed response loss, original receipt status after external edit/tombstone, no tombstone picker, leading Copy alignment, both task buttons rest/real hover, zero targeted Axe violations and zero page errors. Final built server cold-restarted with preserved isolated fixture before retry."
+      },
+      {
+        "command": "pnpm check:ui-ownership; cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final production ownership validator and affected Rust formatting pass."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_DEV_PORT=7484 pnpm dev:stop; python3 disposable-fixture cleanup; curl --max-time 10 http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "Stopped only isolated acceptance stack, verified port closed and exact fixture identity, removed temporary root. User Vite returned 200; persistent development data and 7460/7462 processes preserved."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "fail",
+        "failures": 1,
+        "note": "Final unsharded run: 40/53 files and 172 tests passed; NavigationPersistence browser WebSocket/birpc connection closed at 171.34 seconds. No assertion failures. Exact interrupted-family retry, then same full suite split into 3 sequential fresh-session shards; no tests skipped or changed for this infrastructure interruption."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm exec prettier --check (all changed supported paths from jj diff --name-only)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All matched changed source, generated contracts, story and canonical document files formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final canonical spec and provenance validation passed; no app root aggregate commands."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Interrupted family exact retry 1/1 in 10.76 seconds, no production/story changes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard=1/3",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same full suite, first fresh-session shard: 18/18 files, 65/65 tests, 45.45 seconds. No exclusions or baseline writes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard=2/3",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same full suite, second fresh-session shard: 18/18 files, 69/69 tests, 68.07 seconds. No exclusions or baseline writes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard=3/3",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same full suite, final fresh-session shard: 17/17 files, 65/65 tests, 74.00 seconds. Combined sequential shards cover every 53/53 files and 199/199 tests; no exclusions, skipped tests or baseline writes. Unsharded lifetime interruptions remain recorded above."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "fail",
+        "failures": 1,
+        "note": "Actual workspace metadata detected missing allowlist edge jj-collab to jj-work. Canonical architecture already permits owned WorkStore model types; updated precise boundary rule and negative coverage."
+      },
+      {
+        "command": "node --test --test-name-pattern collaboration_targets_use_owned_work_types_without_reverse_or_runtime_edges scripts/governance.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before narrow edge update: 1 exact regression failed on invalid layer dependency jj-work."
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/check-boundaries.mjs scripts/governance.test.mjs spec/src/spec-governance.md; node --test scripts/governance.test.mjs; pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owning governance file 25/25; actual Cargo metadata 16 packages passes. Reverse jj-work to jj-collab and jj-collab publication/upstream JJ imports still rejected. No UI/Rust implementation change after final passing browser run."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final boundary/ledger changes: 37 protected files, 12 canonical chapters; 5 validators, 21 chapters, 147 requirements."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Ledger tests array only recognizes fn/def/test definitions; new Story name cannot use that named-test field. Story remains recorded in changed files and executed Storybook runs. Removed unsupported Story fragment without changing the validator or product tests."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final corrected ledger: 120 tasks; named Rust/Node/browser regressions resolve. Story evidence retained in files and actual run results. Functional acceptance complete; separate gaps preserved and milestone statuses unchanged."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-065",
+    "tasks": ["M4.9", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "focused repository card layout and branch loading regression",
+    "revision": "Enclosing Jujutsu change konqzwkq",
+    "requirements": [
+      "JST-UI-003",
+      "JST-UI-005",
+      "JST-UI-015",
+      "JST-API-005",
+      "JST-WORK-008",
+      "JST-ARCH-004",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Functional checks pass. Visual baseline approval and released-registry Design Core qualification remain separate existing gates; no visual approval or registry-only qualification is claimed."
+    ],
+    "scope": "UI-only repository directory and Branches loading presentation in the same web package. Verification covers exact regressions, web/catalog typing, production branch actions and history/automatic-refresh consumers, affected Storybook interaction/accessibility families, and a cold UI tab. No route cache or storage contract is introduced. Rust builds/tests, root aggregate check/test/build/spec:check, full unrelated Storybook suite, native publications, fixture reset, backend restart, package publication, main landing and production built-bundle CSP/release qualification are out of scope under the targeted UI policy. Existing milestone statuses are unchanged.",
+    "versions": "Node26.9.0; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; Playwright1.63.0. Existing private Design Core source hook retained; tracked registry range^0.2.0 unchanged.",
+    "formats": "No API, manifest, WAL, code operation, WorkStore, cursor or permission format changes. Reference loading is separate from graph loading; selection continues existing operation-pinned scoped reads. Native directory metadata and full bound identities are unchanged.",
+    "next": "Review this committed UI slice in the Appearance HMR workspace; keep registry qualification and visual baseline approval separate.",
+    "artifacts": "/tmp/jj-repository-layout-*.log; /tmp/jj-repository-cards-before*.log; /tmp/jj-repository-cards-final.jpg. Interactive Vite7460/backend7462 and persistent main fixture preserved.",
+    "files": [
+      "catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte",
+      "catalog/components/store-work/ProjectsDirectory.stories.svelte",
+      "catalog/controller/loading-store-controller.ts",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "catalog/fixtures/RepositoryFixture.svelte",
+      "catalog/fixtures/StoreRepositoryApplicationFixture.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-work/StoreRepositoryDirectoryRow.svelte",
+      "web/src/lib/ui/store-work/community-work-directory.css",
+      "web/tests/vite/store-workspaces.test.ts",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/projects.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/vite/store-workspaces.test.ts#branch selections preserve loaded references and paging while reading only scoped history",
+      "web/tests/vite/production-automatic-refresh.test.ts#a missed repository publication reloads without an SSE or a manual action"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Use repository card width and preserve branches while loading scoped history\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean konqzwkq above lwxwqzum/709855c2 in reused Appearance workspace. Inspected canonical UI/API/projects and milestone scope. Community repositoryListRow and CommunityProjects.css inspected first; Design Core public Card and ColumnCanvas inspected second. Before: native status chip lives in access row; intrinsic-width grid target and listitem wrappers leave descriptions narrow and card heights unequal. Production branch actions already avoid reference reads; shared graph/bookmark loading and graph-empty skeleton unmount the loaded first column."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte -t 'LinkedRepositoryCardsShareHeightAndUseTheirWidth|BranchSelectionRetainsTheLoadedFirstColumn'",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before production edits: delayed graph read removes the retained bookmark DOM node. Card fixture first attempt races initial project restore; corrected to wait for Edit project. Log /tmp/jj-repository-layout-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte -t LinkedRepositoryCardsShareHeightAndUseTheirWidth",
+        "result": "fail",
+        "failures": 3,
+        "note": "Three fixture/before runs: nonexistent project heading, duplicate Retired label in sidebar, then corrected linked-list scope reaches geometric assertion. Before chip/name vertical center difference69.375px exceeds3px. Logs /tmp/jj-repository-cards-before{,-final,-geometry}.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (14 changed supported source/spec files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted changed sources and canonical chapters. /tmp/jj-repository-layout-format.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte -t 'LinkedRepositoryCardsShareHeightAndUseTheirWidth|BranchSelectionRetainsTheLoadedFirstColumn'",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 regressions pass;4 stories skipped. Wide/narrow linked-card widths980/620/300 and retained bookmark DOM during deferred graph read. /tmp/jj-repository-layout-after.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings. /tmp/jj-repository-layout-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Catalog delayed-graph fixture widens loading literal to string; fixed with const assertion. Production check is clean. /tmp/jj-repository-layout-catalog-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "After fixture type repair:0 errors/warnings;129 catalog modules. /tmp/jj-repository-layout-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-workspaces.test.ts web/tests/vite/production-automatic-refresh.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "22/22. Branch/workspace selections retain reference array identities, exact operation and next-page cursor, only scoped graph/detail reads. Existing refresh/new-operation and external history regressions retained. /tmp/jj-repository-layout-unit.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "40/40 in6 direct consumer families; fresh browser. Includes project directory, linked cards, work forms, branch actions, graph/diff and connected application. /tmp/jj-repository-layout-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte catalog/components/store-application/RepositoryApplication.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "22/22 in6 direct families after strengthened regressions: bookmark and working-copy graph loading retains original DOM and typed query; card descriptions remain two visible lines. Cold pending reference skeletons, repository layout and branch filters remain supported. /tmp/jj-repository-layout-stories-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "737 modules within source limits. /tmp/jj-repository-layout-architecture.log."
+      },
+      {
+        "command": "cua_repl: navigate linked project repositories, select Grid, open local repository Branches and main; create fresh hidden branch tab, await scoped graph, close temporary tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live HMR card measurements: both heights166.515625px, description/content widths460.90625px, Retired chip right gap0px. Local branch selection preserves first column and opens scoped JJ Log; fresh tab restores exact operation and bookmark main. Read-only UI checks; no fixture publications, resets or backend restart. Screenshot /tmp/jj-repository-cards-final.jpg."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm check:ui-ownership; pnpm check:architecture; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-source checks:11 protected files/4 canonical chapters;5 validators/21 chapters/147 requirements;120 tasks;ownership1 validator;737 architecture and129 catalog modules;0 type errors/warnings. Logs /tmp/jj-repository-layout-{spec-first,spec-validate,progress,ownership,architecture-final,catalog-check-post-format}.log. No root aggregate lanes."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/controller/loading-store-controller.ts catalog/fixtures/ProjectsHubFixture.svelte catalog/fixtures/RepositoryFixture.svelte catalog/fixtures/StoreRepositoryApplicationFixture.svelte spec/src/api.md spec/src/milestones.md spec/src/projects.md spec/src/ui.md web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte web/src/lib/ui/store-application/StoreRepositoryApplication.svelte web/src/lib/ui/store-work/StoreRepositoryDirectoryRow.svelte web/src/lib/ui/store-work/community-work-directory.css web/tests/vite/store-workspaces.test.ts; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "All15 changed files formatted; updated ledger passes120-task bookkeeping. Logs /tmp/jj-repository-layout-{format-check,progress-final}.log. Final evidence-only formatting/check repeats use pnpm exec prettier --write spec/src/milestones.md and pnpm check:progress."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-066",
+    "tasks": ["M4.9", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "focused initial loading skeleton and project avatar regression",
+    "revision": "Enclosing Jujutsu change upskknvy",
+    "requirements": [
+      "JST-UI-003",
+      "JST-UI-005",
+      "JST-UI-015",
+      "JST-API-005",
+      "JST-WORK-008",
+      "JST-ARCH-004",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Functional checks pass. Visual baseline approval and existing released-registry Design Core qualification remain separate gates."
+    ],
+    "scope": "UI-only Projects and repository initial-load presentation within the existing web package. Inspect Community first and Design Core second; retain public Skeleton primitive and owned Community copies. Focused interaction/accessibility stories cover early bootstrap/discovery, all five Projects tabs, repository Overview/Branches/JJ Log/Op Log/Agents/Reviews, selected task/review details, retained refresh lists/drafts, varied counts/dates and responsive avatar columns. Repository Projects uses the same initial gate. Production async reads, API contracts, snapshots and mutation policy are unchanged. Rust builds/tests, root aggregate spec:check/check/test/build, unrelated full Storybook suite, built-bundle/CSP release qualification, visual baseline updates, main landing, package publication, fixture reset/reseed and backend restart are out of scope under the targeted UI policy.",
+    "versions": "Node26.9.0; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; Playwright1.63.0. Existing private Design Core source hook and tracked registry range^0.2.0 retained.",
+    "formats": "No API, operation pin, WorkStore, native identity, WAL, manifest, cursor or permission changes. Skeletons include initial connection/discovery; background reads retain accepted content. Avatars reserve a metadata column independent of counts and relative-date width.",
+    "next": "Review the committed slice through existing Vite HMR7460 in the Appearance workspace; visual baselines and registry qualification remain separate.",
+    "artifacts": "/tmp/jj-loading-*.log; /tmp/jj-project-avatars-final.png. Main persistent fixture and HMR/backend preserved.",
+    "files": [
+      "catalog/components/store-application/RepositoryLoading.stories.svelte",
+      "catalog/components/store-work/ProjectsActivity.stories.svelte",
+      "catalog/components/store-work/ProjectsDirectory.stories.svelte",
+      "catalog/controller/loading-store-controller.ts",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "catalog/fixtures/StoreRepositoryApplicationFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreCollaborationSkeleton.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsDirectory.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsLoading.svelte",
+      "web/src/lib/ui/store-work/StoreRepositoryProjects.svelte",
+      "web/src/lib/ui/store-work/StoreWorkProjectRows.svelte",
+      "web/src/lib/ui/store-work/community-work-rows.css",
+      "web/src/lib/ui/store-work/projects-initial-loading.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "fail",
+        "failures": 7,
+        "note": "Initial before run: dynamic Svelte CSF story name rejected by the story parser (one suite could not load) and six product regression failures in the other families. Replaced dynamic Story declarations with literal story names; no product edits. /tmp/jj-loading-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "fail",
+        "failures": 13,
+        "note": "Corrected before reproduction:13 failures,14 passes/27; missing discovery/bootstrap/connection and task skeletons, loading banner during retained refresh, and varied project avatars. /tmp/jj-loading-before-corrected.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "First repair:27/27. /tmp/jj-loading-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryLoading.stories.svelte -t ReviewDetailBeforeListRead",
+        "result": "fail",
+        "failures": 1,
+        "note": "Additional early selected-review stage reproduced an unavailable notice before the list read completes. /tmp/jj-loading-review-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final strengthened regressions:29/29 across three families on a fresh Vitest browser/Vite process. Five main tabs retain loaded lists during deferred refresh; task detail keeps composer DOM/draft, repository tabs and selected reviews show skeletons during initial connection/list reads; avatars align at980/620/300px without overflow. /tmp/jj-loading-regressions-final.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final production checks:0 errors/warnings. /tmp/jj-loading-web-check.log; /tmp/jj-loading-web-check-final.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "New avatar story incorrectly used the Playwright exact option on Testing Library getByRole. Removed unsupported option without changing the assertion. /tmp/jj-loading-catalog-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Corrected catalog:0 errors/warnings;129 modules. /tmp/jj-loading-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/NavigationPersistence.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/RepositoryApplication.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositorySearch.stories.svelte catalog/components/store-application/StoreWorkspaces.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "67/67 in17 direct repository/Projects consumer families. The navigation story path in this command did not exist and was subsequently corrected in the next command. /tmp/jj-loading-consumer-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "11/11 in three additional direct families:correct navigation persistence, graph and repository directory. /tmp/jj-loading-navigation-stories.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "739 modules within limits, before and after stronger fixtures. /tmp/jj-loading-architecture-pre.log; /tmp/jj-loading-architecture.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "18 protected files/3 canonical chapters. /tmp/jj-loading-spec-first-pre.log."
+      },
+      {
+        "command": "cua_repl: fresh hidden Projects and task-detail pages; measure project avatar positions; capture Projects screenshot; await task content and close both temporary tabs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production HMR cold pages expose Loading projects and Loading task details before accepted data; task settles to comments/composer. All three live project avatar left positions1109.40625px, each row scrollWidth=clientWidth=970px. /tmp/jj-project-avatars-final.png. User tab/fixture preserved; no publications or service restarts."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final ledger included:18 protected files/4 canonical chapters. /tmp/jj-loading-spec-first.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 validators/21 chapters/147 requirements. /tmp/jj-loading-spec-validate.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "120 tasks; evidence bookkeeping only. /tmp/jj-loading-progress.log. Final evidence-only formatting/check repeat follows without milestone status changes."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned presentation boundary passes. /tmp/jj-loading-ownership.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final formatted739 modules pass. /tmp/jj-loading-architecture-final.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/RepositoryLoading.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/controller/loading-store-controller.ts catalog/fixtures/ProjectsHubFixture.svelte catalog/fixtures/StoreRepositoryApplicationFixture.svelte spec/src/api.md spec/src/projects.md spec/src/ui.md web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte web/src/lib/ui/store-application/StoreRepositoryApplication.svelte web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte web/src/lib/ui/store-collaboration/StoreCollaborationSkeleton.svelte web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreProjectsDirectory.svelte web/src/lib/ui/store-work/StoreProjectsLoading.svelte web/src/lib/ui/store-work/StoreRepositoryProjects.svelte web/src/lib/ui/store-work/StoreWorkProjectRows.svelte web/src/lib/ui/store-work/community-work-rows.css web/src/lib/ui/store-work/projects-initial-loading.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 changed source/spec/fixture files formatted. /tmp/jj-loading-format.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "New E-UI-066 evidence formatted. /tmp/jj-loading-ledger-format.log. Final evidence-only format repeat uses the same command."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/store-application/RepositoryLoading.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/controller/loading-store-controller.ts catalog/fixtures/ProjectsHubFixture.svelte catalog/fixtures/StoreRepositoryApplicationFixture.svelte spec/src/api.md spec/src/milestones.md spec/src/projects.md spec/src/ui.md web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte web/src/lib/ui/store-application/StoreRepositoryApplication.svelte web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte web/src/lib/ui/store-collaboration/StoreCollaborationSkeleton.svelte web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreProjectsDirectory.svelte web/src/lib/ui/store-work/StoreProjectsLoading.svelte web/src/lib/ui/store-work/StoreRepositoryProjects.svelte web/src/lib/ui/store-work/StoreWorkProjectRows.svelte web/src/lib/ui/store-work/community-work-rows.css web/src/lib/ui/store-work/projects-initial-loading.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All22 changed files pass. /tmp/jj-loading-format-check.log."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-067",
+    "tasks": ["M4.9", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "focused task detail fixed header and composer regression",
+    "revision": "Enclosing Jujutsu change kzzwpwsz",
+    "requirements": [
+      "JST-UI-005",
+      "JST-UI-015",
+      "JST-API-005",
+      "JST-WORK-008",
+      "JST-ARCH-004",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Functional checks pass. Visual baseline approval and existing released-registry Design Core qualification remain separate gates."
+    ],
+    "scope": "UI-only task-detail layout within the existing web package. Community task detail inspected first, Design Core public ScrollArea second. Keep the title/header and writable composer in fixed grid rows, with one intervening ScrollArea for metadata, description, subtasks and Activity/comments. StoreWorkComments retains draft/reply/edit state while supplying activity/composer snippets to the page layout. The Projects hub omits its outer page scroller for accepted task detail and binds the content viewport to the existing per-route scroll cache; the legacy shared WorkStore host uses the same fixed rows. Focused direct interaction/accessibility stories and a fresh live HMR task page verify desktop/narrow/read-only behavior and retained comments/drafts. Rust builds/tests, root aggregate spec:check/check/test/build, unrelated Storybook families, built-bundle release qualification, visual baseline updates, main landing, package publication, fixture reset/reseed and backend restart are out of scope under the targeted UI policy.",
+    "versions": "Node26.9.0; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; Playwright1.63.0. Existing private Design Core source hook and tracked registry range^0.2.0 retained.",
+    "formats": "No API, operation pin, WorkStore identity, WAL, manifest, cursor, command, version or permission changes. Comment ownership, reply/edit context and drafts remain in the same native adapter. Read-only task detail has a fixed header and content scroll without a composer. Task navigation restores content scroll from the existing bounded in-session map; no browser-storage persistence is added.",
+    "next": "Review the committed slice through existing Vite HMR7460 in the Appearance workspace; visual baselines and registry qualification remain separate.",
+    "artifacts": "/tmp/jj-task-scroll-*.log; /tmp/jj-task-scroll-final.png. Main persistent fixture and HMR/backend preserved.",
+    "files": [
+      "catalog/components/store-work/TaskScroll.stories.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsViewport.svelte",
+      "web/src/lib/ui/store-work/StoreWork.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/src/lib/ui/store-work/task-detail-layout.css",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before regression:3/3 fail because the original task detail has no separate Task content scroll region. /tmp/jj-task-scroll-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial repair:3/3 desktop950px, narrow380px and read-only380px. Fixed title/composer measurements, Activity collapse and draft retention. /tmp/jj-task-scroll-after.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-work/TaskScroll.stories.svelte catalog/fixtures/ProjectsHubFixture.svelte spec/src/api.md spec/src/projects.md spec/src/ui.md web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreWork.svelte web/src/lib/ui/store-work/StoreWorkComments.svelte web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte web/src/lib/ui/store-work/task-detail-layout.css",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial10 changed source, fixture, story and canonical files formatted."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final checks:0 errors/warnings. /tmp/jj-task-scroll-web-check.log; /tmp/jj-task-scroll-web-check-final.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final checks:0 errors/warnings;130 catalog modules. /tmp/jj-task-scroll-catalog-check.log; /tmp/jj-task-scroll-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial formatted StoreProjects orchestration exceeded300 counted lines at305. Extracted the conditional page-scroll wrapper to StoreProjectsViewport; no limit weakened."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreProjectsViewport.svelte; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Extracted wrapper formatted;742 modules within architecture limits."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "39 pass/40. Existing read-only title-row check caught refresh-button alignment versus newly padded header bounds. Moved spacing to header margins to preserve its content edge; assertion retained. /tmp/jj-task-scroll-consumers.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pre-restoration40/40 in8 direct families on a fresh Vitest browser/Vite process, with blocking accessibility checks. Fixed desktop/narrow/read-only scroll, title-row alignment, reply/edit/reactions/unknown outcomes, retained refresh drafts and navigation. /tmp/jj-task-scroll-consumers-final.log."
+      },
+      {
+        "command": "jj --version; node --version; pnpm --version",
+        "result": "pass",
+        "failures": 0,
+        "note": "JJ0.45.1;Node26.9.0;pnpm10.32.1."
+      },
+      {
+        "command": "cua_repl: fresh hidden task detail; inspect and measure fixed rows; scroll content; capture screenshot; close temporary tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live HMR cold page settles from task skeleton. Content scrollTop0 to588.5px (scrollHeight1033/clientHeight445); header top67.3984375/bottom111.7890625 and footer top570/bottom711 unchanged. Task width=scrollWidth=1079px. AX scroll target was covered by a button; retargeted to the visible content at900,450. Read-only UI verification; no fixture publications. /tmp/jj-task-scroll-final.png."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte -t TaskContentScrollSurvivesReturning",
+        "result": "fail",
+        "failures": 1,
+        "note": "Additional navigation regression:restored task content scroll0px versus saved400px after moving the scroller. Bound the task viewport to the existing Projects scroll owner and captured the route key per listener. /tmp/jj-task-scroll-return-before.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-work/TaskScroll.stories.svelte web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final4/4 task-scroll regressions include400px restored content scroll and retained draft after navigating to the task list and returning. /tmp/jj-task-scroll-return-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final41/41 in8 direct families after restored-scroll binding, with blocking accessibility checks. /tmp/jj-task-scroll-stories-final.log. Final web/catalog/architecture repeats also pass with0 errors/warnings and742 production/catalog modules."
+      },
+      {
+        "command": "cua_repl: fresh hidden final task page; measure and scroll content; Back to tasks; reopen selected task; capture screenshot; close temporary tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final live HMR page:header top67.3984375/bottom111.7890625 and footer top570/bottom711 unchanged; scrollTop0 to588.5 and restored588.5 after navigating away and back. Task width=scrollWidth=1028px. Final screenshot /tmp/jj-task-scroll-final.png. User tab and fixture preserved; no publications."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm check:ui-ownership; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 protected files/4 canonical chapters;5 validators/21 chapters/147 requirements;120 tasks;ownership1 validator;742 modules. /tmp/jj-task-scroll-{spec-first,spec-validate,progress,ownership,architecture-final}.log. Repeated after final binding and ledger update without wider lanes."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "E-UI-067 ledger formatted; repeated for final evidence-only update."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/store-work/TaskScroll.stories.svelte catalog/fixtures/ProjectsHubFixture.svelte spec/src/api.md spec/src/projects.md spec/src/ui.md web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreProjectsViewport.svelte web/src/lib/ui/store-work/StoreWork.svelte web/src/lib/ui/store-work/StoreWorkComments.svelte web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte web/src/lib/ui/store-work/task-detail-layout.css spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All12 changed files formatted. /tmp/jj-task-scroll-format-check.log. Repeated with pnpm exec prettier --write spec/src/ui.md spec/src/milestones.md and pnpm check:progress after final evidence update."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-068",
+    "tasks": ["M4.9", "M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "focused full-page review navigation, representative loading and aligned message actions",
+    "revision": "Enclosing Jujutsu change pprvmqwv",
+    "requirements": [
+      "JST-UI-005",
+      "JST-UI-015",
+      "JST-COLLAB-005",
+      "JST-API-005",
+      "JST-WORK-008",
+      "JST-ARCH-004",
+      "JST-GOV-007",
+      "JST-UI-017"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Functional checks pass. Visual baseline approval and existing released-registry Design Core qualification remain separate gates."
+    ],
+    "scope": "UI-only review composition in the existing web package. Community review composition inspected first and Design Core public ScrollArea/Skeleton second. Repository, Projects directory and selected-project review selection replace the list with the same full page, independent of thread Focus/Split preferences. Header and writable comment composer remain fixed around one scrolling content body; comments stay under Activity, draft/reply/edit context survives Activity collapse and returning to the list, and default comments select no implicit parent. Initial connection/list/detail reads use the same representative full-page skeleton. Header/composer wrapper separators are removed to match task detail. Focused direct consumer stories, production navigation unit tests and cold live HMR verification cover this surface. Rust builds/tests, root aggregate spec:check/check/test/build, unrelated Storybook families, built-bundle release qualification, visual baseline updates, main landing, package publication, fixture reset/reseed and backend restart are out of scope under the targeted UI policy. Additional user steering aligns Add reaction with hover/focus message actions for native reviews and captured agent messages; task/channel/reply messages already use that placement. Existing counts remain below content, with target-keyed feedback and native pending/permission gating retained. Resolve/Reopen now use the public secondary button variant with leading check/rotate icons, preserving status commands and disabled behavior; the previous ghost button had no visible background or icon at rest. Final user steering selects the public compact xs size: status-button labels decrease from14px to12px with coordinated icon and spacing, without custom typography overrides.",
+    "versions": "Node26.9.0; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; Playwright1.63.0. Existing private Design Core source hook and tracked registry range^0.2.0 retained.",
+    "formats": "No API, anchor, operation pin, ReviewStore identity, WAL, manifest, cursor, command, version or permission changes. The existing draft owner and native commands retain explicit reply/edit IDs and unknown requests. Inline diff/tool discussions retain their composer placement and Focus/Split behavior. Review detail skeleton placeholders are hidden and the decorative scroll region is inert; read-only access has no composer placeholder.",
+    "next": "Review the committed slice through Vite HMR7460 in the Appearance workspace; visual baselines and released-registry qualification remain separate.",
+    "artifacts": "/tmp/jj-review-page-*.log; /tmp/jj-review-page-final.png; /tmp/jj-review-page-skeleton.png. Main persistent fixture, backend7462 and HMR7460 preserved.",
+    "files": [
+      "catalog/components/store-application/NativeReviewDetail.stories.svelte",
+      "catalog/components/store-application/RepositoryLoading.stories.svelte",
+      "catalog/components/store-application/StoreCollaboration.stories.svelte",
+      "catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+      "catalog/components/store-work/ProjectsReviewDetail.stories.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "catalog/fixtures/StoreCapturedReactionsFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewComposer.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewDetail.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewDetailSkeleton.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte",
+      "web/src/lib/ui/store-collaboration/community-native-review.css"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before:1 pass/3 fail. Repository and directory checks expose retained list/side-panel composition; selected-project fixture also exposed an initialization race. /tmp/jj-review-page-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial repair:2 pass/2 fail. Corrected the test that chained getByRole on HTMLElement and waited for the selected-project fixture to initialize before changing tabs; retained all layout assertions. /tmp/jj-review-page-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Corrected4/4; strengthened5/5 adds fixed header/footer measurements, draft retention and Focus/Split independence. /tmp/jj-review-page-regressions.log; /tmp/jj-review-page-regressions-final.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial/final/qualified source rounds:0 errors/warnings. Logs web-check, web-final and web-qualified under /tmp/jj-review-page-*.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial new story typing error from HTMLElement.getByRole; fixed the test query. /tmp/jj-review-page-catalog-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Corrected final/skeleton/qualified rounds:0 errors/warnings;131 catalog modules. Logs catalog-final, catalog-skeleton and catalog-qualified."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial743 modules. /tmp/jj-review-page-architecture.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Added default-comment depth assertion pushed StoreCollaboration story to403 counted lines versus400. Reused its located message without removing assertions or changing limits. /tmp/jj-review-page-architecture-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Repaired744 modules within limits. /tmp/jj-review-page-architecture-repaired.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "67/68 pass. Existing page-comment test expected Reply to review thread; updated to Review comment/Add comment and asserted native thread depth0. /tmp/jj-review-page-consumers.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "68/68 after label correction;69/69 after representative skeleton and narrow-layout story, on fresh Vitest browser/Vite processes with blocking accessibility checks. Reply/edit/reactions/unknown requests, inline tool/diff discussions, Focus/Split, all ProjectsHubFixture direct families and task layout pass. /tmp/jj-review-page-consumers-final.log; /tmp/jj-review-page-all-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-code-navigation.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "7/7 existing production boundary tests:authorized repository selection, anchor operation, Back and stale navigation. /tmp/jj-review-page-navigation.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryLoading.stories.svelte -t ReviewDetail",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before skeleton repair:3/3 selected-detail cases fail the representative page layout assertion. /tmp/jj-review-page-skeleton-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial skeleton:14 pass/3 accessibility failures. Hidden decorative ScrollArea retained a focusable viewport. Marked that region inert using the existing public DOM prop. /tmp/jj-review-page-skeleton-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "After inert repair:17/18 pass; new narrow test selected a nonexistent shell class. Corrected to the real body-regions host;380px detail width and overflow assertions retained. /tmp/jj-review-page-skeleton-final.log. Final69/69 direct-consumer run covers all18 loading stories."
+      },
+      {
+        "command": "jj --version; node --version; pnpm --version",
+        "result": "pass",
+        "failures": 0,
+        "note": "JJ0.45.1;Node26.9.0;pnpm10.32.1."
+      },
+      {
+        "command": "cua_repl: cold hidden repository reviews; select detail; measure and scroll; Back; Projects Reviews; select detail; capture screenshots",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both live entry points replace lists with the same page and no discussion panel. At1280x720, header top49/bottom120.7890625 and footer top569/bottom711 unchanged while scrollTop0 to353.5px (802/448px content). No comments submitted or fixture data reset. /tmp/jj-review-page-final.png."
+      },
+      {
+        "command": "cua_repl: temporarily delay network in the verification tab; capture selected-review loading skeleton; restore normal network",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live skeleton occupies full main width with title/date, metadata, four disclosures, Activity and bottom composer. DOM exposes one named busy status and no placeholder controls. First cold-module reload at3000ms latency timed out the browser helper; reconnected and restored latency0. Final warmed selection at8000ms captured the skeleton in under1s and restored latency0 immediately. /tmp/jj-review-page-skeleton.png. Temporary browser network settings restored; no server changes."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed source, stories and canonical chapters)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual focused formatting rounds include NativeReviewDetail, ProjectsReviewDetail, ProjectsHubFixture, RepositoryLoading, StoreCollaboration, all changed review components/CSS and the four canonical chapters. New skeleton and later border changes formatted separately. /tmp/jj-review-page-{actions,skeleton,repair,skeleton-test,border}-format.log. Read-only diagnostic searches with nonexistent source paths/globs were corrected through rg --files; one patch was retried against its formatted context."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final border styling round:23/23 in3 direct page/loading families. Header bottom separator and composer-wrapper top divider removed; rounded composer outline retained. /tmp/jj-review-page-border-final.log."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production ownership boundary passes1 validator/21 chapters/147 requirements. /tmp/jj-review-page-ownership.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before reaction layout repair:2/2 fail because Add reaction is outside the hover toolbar. /tmp/jj-review-page-reactions-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial reaction repair:placement assertions pass, but pointer input arrives before the shared delayed hover actions enable pointer events. Retained real pointer click and added waitFor for the existing hover transition; no production hover changes. /tmp/jj-review-page-reactions-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 native review/agent custom-emoji add, count, actor tooltip, toggle and popover retention while unhovered pass. /tmp/jj-review-page-reactions-qualified.log. Added separate read-only stories for final direct-consumer qualification."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reaction source rounds:0 errors/warnings;131 catalog modules;744 architecture modules. /tmp/jj-review-page-reactions-{web,catalog,architecture}.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte spec/src/ui.md; pnpm exec prettier --write catalog/fixtures/StoreCapturedReactionsFixture.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reaction source and read-only fixture/story formatting pass, including the separate waitFor story formatting round. Logs reactions-format, reactions-story-format and reactions-readonly-format."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/NativeActivity.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final87/87 in16 directly affected and alignment families on a fresh Vitest browser/Vite process with blocking accessibility. Includes read-only review/agent reactions, custom emoji add/count/tooltip/toggle, task/channel/reply alignment and existing inline discussions. /tmp/jj-review-page-reactions-consumers.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "New read-only fixture getter inferred permission as string; added the existing StoreController state return type without changing fixture behavior. /tmp/jj-review-page-catalog-complete.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/fixtures/StoreCapturedReactionsFixture.svelte; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final fixture annotation formatting and typing pass0 errors/warnings,131 catalog modules. /tmp/jj-review-page-reactions-fixture-format.log; /tmp/jj-review-page-catalog-final-complete.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "14 protected files/5 canonical chapters;5 validators/21 chapters/147 requirements;120 tasks;744 modules. /tmp/jj-review-page-{spec-first,spec-validate,progress,architecture-complete}.log."
+      },
+      {
+        "command": "cua_repl: final native review; inspect DOM and borders; focus message actions by keyboard; capture screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live full-page detail retains Activity comments. Header bottom border0px and composer-wrapper top border0px. Exactly one Add reaction button in the visible message, contained in the native hover actions alongside Reply/menu. Keyboard focus reveals the toolbar; deleted comments expose no reaction picker. /tmp/jj-review-page-final.png. No reaction or comment submitted; temporary network throttle restored and user tab preserved."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial E-UI-068 ledger and reaction evidence extension formatted. /tmp/jj-review-page-ledger-format.log; /tmp/jj-review-page-ledger-reactions-format.log. Final evidence-only updates use the same command. Final ledger formatting completed in /tmp/jj-review-page-ledger-final-format.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-collaboration/StoreReviewDetail.svelte spec/src/ui.md spec/src/milestones.md; pnpm exec prettier --write web/src/lib/ui/store-collaboration/StoreReviewDetail.svelte spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Status button icon/variant and subsequent compact-size rounds pass. /tmp/jj-review-page-resolve-format.log; /tmp/jj-review-page-resolve-compact-format.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "After filled/icon round and final compact-size round:0 errors/warnings. /tmp/jj-review-page-resolve-web.log; /tmp/jj-review-page-resolve-compact-web.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "13/13 in3 direct review/action families after icons;13/13 after compact sizing, each on a fresh Vitest browser/Vite process with blocking accessibility. Existing Resolve command, unknown recovery, page navigation, fixed composer and draft checks pass. /tmp/jj-review-page-resolve-actions.log; /tmp/jj-review-page-resolve-compact-actions.log."
+      },
+      {
+        "command": "pnpm check:ui-ownership; pnpm check:architecture; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source/governance round passes1 ownership validator;744 architecture modules;14 protected files/5 canonical chapters;5 validators/21 chapters/147 requirements;120 tasks. /tmp/jj-review-page-final-{ownership,architecture,spec-first,spec-validate,progress}.log."
+      },
+      {
+        "command": "python3 subprocess: jj --no-pager diff --name-only; pnpm exec prettier --check <all19 changed files>",
+        "result": "pass",
+        "failures": 0,
+        "note": "All19 changed source, story, fixture and canonical files pass formatting. /tmp/jj-review-page-final-format-check.log."
+      },
+      {
+        "command": "cua_repl: inspect live Resolve DOM/computed styles; capture screenshot; close temporary verification tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Resolve at rest is secondary with visible theme-token background and decorative check-circle icon; final xs label is12px, neither hovered nor focused. /tmp/jj-review-page-final.png updated after compact sizing. Temporary tab12 closed, user tab7 preserved. No comments/reactions/status commands submitted; network latency remains restored. HMR7460/backend7462 continue unchanged."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-069",
+    "tasks": ["M11.4", "M15.5"],
+    "date": "2026-10-02",
+    "kind": "focused empty Threads alignment and task action presentation",
+    "revision": "Enclosing Jujutsu change qkppqmpx",
+    "requirements": [
+      "JST-UI-017",
+      "JST-UI-015",
+      "JST-WORK-008",
+      "JST-ARCH-004",
+      "JST-GOV-007",
+      "JST-API-005"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Functional checks pass. Visual baseline approval and existing released-registry qualification remain separate."
+    ],
+    "scope": "UI-only changes in the existing web package. Inspected Community forum empty layout and task presentation first, Design Core Empty/Button and ScrollArea second. Empty Threads now fills the content viewport and uses the public Empty centering below the new-post control; populated forum rows remain unchanged. Task Open target repository/Edit task/Add subtask use public secondary buttons and decorative leading icons. Permissions, callbacks, disabled behavior, drafts and native IDs are retained. Existing focused Threads and task direct-consumer stories plus live HMR geometry checks cover the change. No new mirror tests for this reversible styling slice. Rust builds/tests, aggregate root lanes, unrelated Storybook families, release/built-asset qualification, visual baseline updates, fixture reset/reseed, backend restart, main landing and publication are out of scope under the targeted UI policy. Final user steering adds0.5rem inline-end margin to the repository action before its name.",
+    "versions": "Node26.9.0; pnpm10.32.1; JJ0.45.1; existing Svelte5.57.1, Storybook10.5.7, Vitest4.1.11 and Design Core public Empty/Button/ScrollArea retained.",
+    "formats": "No API, native identity, command, permission or persistence format changes. Empty-only layout modifier; public secondary sm buttons with aria-hidden icons and data-icon inline-start.",
+    "next": "Review the committed slice through the preserved Vite HMR7460 workspace; visual baseline approval and released-registry qualification remain separate.",
+    "artifacts": "/tmp/jj-empty-task-actions-*.log; /tmp/jj-empty-threads-centered.png; /tmp/jj-task-actions-filled.png. Existing HMR7460, backend7462 and persistent fixture preserved.",
+    "files": [
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/projects.md",
+      "web/src/lib/ui/forum-topic-list/ForumTopicList.svelte",
+      "web/src/lib/ui/forum-topic-list/forum-topic-list.css",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/src/lib/ui/store-work/task-detail-layout.css"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/forum-topic-list/ForumTopicList.svelte web/src/lib/ui/forum-topic-list/forum-topic-list.css web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte spec/src/ui.md spec/src/projects.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "/tmp/jj-empty-task-actions-format.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm check:ui-ownership; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings;1 ownership validator/21 chapters/147 requirements;744 architecture modules. /tmp/jj-empty-task-actions-{web,ownership,architecture}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "30 task tests passed in4 families; Threads suite failed before collecting tests when Vite/Tailwind loaded virtual Design Core CSS as Svelte source (Invalid declaration). /tmp/jj-empty-task-actions-stories.log. No product/assertion changes were made for this import failure."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact failed family retry on fresh Vitest browser/Vite process:7/7 pass with blocking accessibility. /tmp/jj-empty-task-actions-threads-retry.log. Final combined direct-consumer round follows."
+      },
+      {
+        "command": "cua_repl: open temporary empty Threads/task detail tabs, measure Empty header centering, inspect task action background/icons, capture screenshots",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before:empty width576 vs viewport1028, left-aligned in a355.98px list within623px viewport. After:header center differs by0.004px horizontally and0px vertically from the remaining Empty area; list fills891px viewport at818px width, no scroll overflow. Task buttons use secondary theme fill with repository/edit/subtask icons, aria-hidden, enabled and unhovered. No writes submitted. /tmp/jj-empty-threads-centered.png; /tmp/jj-task-actions-filled.png."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final37/37 in5 direct-consumer families, fresh Vitest browser/Vite process with blocking accessibility. Thread creation/navigation/replies/reactions and task actions/desktop/narrow/read-only scrolling/drafts pass. /tmp/jj-empty-task-actions-stories-final.log. Initial virtual stylesheet import failure does not recur."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial gate identified missing mapped spec/src/api.md chapter for protected UI changes. Added explicit retained callback/access/list/create-contract wording; no API implementation change. /tmp/jj-empty-task-actions-spec-first-initial.log."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check web/src/lib/ui/forum-topic-list/ForumTopicList.svelte web/src/lib/ui/forum-topic-list/forum-topic-list.css web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte spec/src/ui.md spec/src/projects.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial5 validators/21 chapters/147 requirements;120 tasks;6 changed files formatted. /tmp/jj-empty-task-actions-{spec-validate,progress,format-check}.log. Final gate repeats after mapped API wording and evidence update."
+      },
+      {
+        "command": "cua_repl: close temporary tabs14 and15",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both verification tabs closed; original user tab preserved. HMR/backend/fixture remain unchanged."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte web/src/lib/ui/store-work/task-detail-layout.css spec/src/projects.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "/tmp/jj-empty-task-actions-gap-format.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "12/12 after repository action spacing, fresh Vitest browser/Vite with blocking accessibility. /tmp/jj-empty-task-actions-gap-stories.log."
+      },
+      {
+        "command": "cua_repl: open temporary task tab; inspect repository button margin and adjacent text gap; capture screenshot; close tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual margin-inline-end and adjacent name gap both8px; secondary background and repository icon retained. /tmp/jj-task-actions-filled.png updated. Temporary tab17 closed, user tab preserved."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm exec prettier --write spec/src/api.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Ledger/evidence and mapped API wording formatted. /tmp/jj-empty-task-actions-ledger-format.log; /tmp/jj-empty-task-actions-ledger-final-format.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check web/src/lib/ui/forum-topic-list/ForumTopicList.svelte web/src/lib/ui/forum-topic-list/forum-topic-list.css web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte web/src/lib/ui/store-work/task-detail-layout.css spec/src/ui.md spec/src/projects.md spec/src/api.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final spacing source and corrected mapped chapters:0 errors/warnings;4 protected files/4 canonical chapters;5 validators/21 chapters/147 requirements;120 tasks;all8 changed files formatted. /tmp/jj-empty-task-actions-web-final.log and /tmp/jj-empty-task-actions-{spec-first,spec-validate,progress,format-check}.log. Evidence formatting and consuming governance checks repeated before commit."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-070",
+    "tasks": ["M11.4", "M15.5"],
+    "date": "2026-10-02",
+    "kind": "focused project add menu and Settings-style repository dialogs",
+    "revision": "Enclosing Jujutsu change xztvslzk",
+    "requirements": [
+      "JST-UI-015",
+      "JST-WORK-008",
+      "JST-API-005",
+      "JST-ARCH-004",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval and existing released-registry qualification remain separate. Native full-flow write tests have updated selectors but were not run against the persistent fixture."
+    ],
+    "scope": "UI-only existing web surface. Community repository/project dialogs inspected first, public Design Core DialogFrame/DropdownMenu/Field/Button second. One Add menu dispatches task creation and local registration using ClipboardPlus/GitBranchPlus icons. A link-icon control opens repository linking in a Settings-style dialog, retaining picker, manual native ID, draft, permission/version/pending gates and exact set_repository semantics. Local Add/Reconnect share divided Folder/Name/Inspection rows; the registration manager remains mounted outside menu content. Committed metadata refresh closes linking and registration dialogs; unknown outcomes preserve intent and support recovery. Toolbar and dialog extracted to respect300-line architecture limit. Relevant web/catalog checks, all direct Projects/StoreWork/navigation stories, mocked registration/picker browser tests and live read-only previews cover this slice. Rust, root aggregates, unrelated stories, built-asset qualification, baseline updates, fixture reset/reseed, backend restart, main landing and publication are out of scope.",
+    "versions": "Node26.9.0;pnpm10.32.1;JJ0.45.1;existing Svelte5.57.1,Storybook10.5.7,Vitest4.1.11 and Design Core public components retained.",
+    "formats": "No schema, API, native identity, request/receipt, permission or persistence format change.",
+    "next": "Review through preserved HMR7460/backend7462. Continue the user-requested layout/search/focus-sheet/project-column/agent-row follow-ups as separate verified slices.",
+    "artifacts": "/tmp/jj-project-repository-*.log; /tmp/jj-project-repository-{menu,folder,link}-live.png; desktop/mobile mocked folder screenshots. Temporary CUA tab18 closed; user tab and persistent fixture retained.",
+    "files": [
+      "web/src/lib/ui/store-settings/StoreLocalFolders.svelte",
+      "web/src/lib/ui/store-settings/StoreLocalFolderDialog.svelte",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsActions.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAddMenu.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilterControls.svelte",
+      "web/src/lib/ui/store-work/StoreWork.svelte",
+      "web/src/lib/ui/store-work/StoreWorkRepositories.svelte",
+      "catalog/components/store-work/ProjectsRepositoryActions.stories.svelte",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/fixtures/StoreWorkFixture.svelte",
+      "web/tests/real/project-repository-actions.spec.ts",
+      "web/tests/real/local-browser.spec.ts",
+      "web/tests/real/work-store.spec.ts",
+      "spec/src/api.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t Repository links",
+        "result": "pass",
+        "failures": 0,
+        "note": "Name filter skipped8 stories; not acceptance. Retried the exact family without filter."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before:1 expected modal regression fails,7 pass. Inline Repository ID present before dialog opens. /tmp/jj-project-repository-dialog-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial new tests:wrong expected fixture ID in2 stories and stale dialog node after reopen in1. Corrected fixtures/selectors without changing assertions. /tmp/jj-project-repository-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "12/12 focused stories including unknown link recovery/read-only access pass in a fresh Vitest browser/Vite process with blocking accessibility. /tmp/jj-project-repository-stories-retry.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/project-repository-actions.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial desktop/mobile tests clicked Add while project details were still loading, so only repository item was available. Added a settled project readiness assertion. /tmp/jj-project-repository-browser.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/project-repository-actions.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Desktop contrast audit sampled enabled Buttons during their disabled-opacity transition; mobile used an ambiguous status locator. Waited for public component animations to settle, retained the contrast rule and selected the unknown-registration status. /tmp/jj-project-repository-browser-retry.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 31,
+        "note": "New story byRole exact option is unsupported by Testing Library typings; fixture version is number|bigint. Removed unsupported options without widening matching, incremented native version as bigint. /tmp/jj-project-repository-catalog.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 2,
+        "note": "LocalFolders320 and StoreProjects321 counted lines exceeded300. Extracted owned toolbar and folder-dialog presentation. /tmp/jj-project-repository-architecture.log."
+      },
+      {
+        "command": "python3 UI component extraction",
+        "result": "fail",
+        "failures": 1,
+        "note": "First scripted extraction stopped on an indentation-sensitive substring after the parent rewrite; restored the dialog through the new component and completed extraction before any acceptance. No unrelated files affected."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "46/46 in9 direct-consumer families with blocking accessibility. Final extraction/navigation rerun follows. /tmp/jj-project-repository-direct-stories.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/project-repository-actions.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 final desktop/mobile mock registration tests then3/3 including Settings Add/Reconnect rows. Normal axe rules, no overflow, keyboard focus return and identical request retry pass. All registration/picker writes intercepted; persistent fixture unchanged. /tmp/jj-project-repository-browser-{final,settings}.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Relevant checks run separately. Final extracted source:0 web errors/warnings;0 catalog errors/warnings and132 catalog modules;1 ownership validator;748 architecture modules. /tmp/jj-project-repository-{web-extracted,catalog-final,ownership,architecture-final}.log. Initial and final web checks also passed."
+      },
+      {
+        "command": "pnpm exec prettier --write changed source, stories, fixtures, browser tests and canonical chapters",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting passes recorded in /tmp/jj-project-repository-{format,story-format,story-fix-format,browser-format,browser-fix-format,extract-format,settled-format,settings-format}.log. Final changed-file check follows."
+      },
+      {
+        "command": "cua_repl: temporary project tab18; open Add menu, local folder and Link repository dialogs; inspect geometry/focus; save screenshots; close tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live Settings rows have no horizontal overflow. Menu includes both dedicated icons; local-folder and linking dialogs open and restore focus on Cancel. No persistent requests submitted. User tab preserved."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "47/47 in10 direct-consumer families after final extraction, fresh Vitest browser/Vite process with blocking accessibility. /tmp/jj-project-repository-direct-stories-final.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 3,
+        "note": "Ledger tests entries initially used plain paths instead of path#literal_test_name; moved story/dynamic browser evidence to runs as in existing UI entries. /tmp/jj-project-repository-progress.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check all18 changed files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Consuming governance/format lanes completed before commit:14 protected files/4 chapters;5 validators/21 chapters/147 requirements;120 tasks;all changed files formatted. Evidence bookkeeping rerun after correction. /tmp/jj-project-repository-{spec-first,spec-validate,progress-final,format-check}.log."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-071",
+    "tasks": ["M11.4", "M9.5"],
+    "date": "2026-10-02",
+    "kind": "focused mandatory layout selection and aligned project/agent rows",
+    "revision": "Enclosing Jujutsu change nyovpkun",
+    "requirements": [
+      "JST-UI-015",
+      "JST-UI-006",
+      "JST-COLLAB-005",
+      "JST-WORK-008",
+      "JST-API-005"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. Root aggregate, Rust and unrelated UI lanes are out of scope under targeted verification policy."
+    ],
+    "scope": "UI-only existing presentation. Shared card/list function binding rejects empty selection. Stable project copy/count columns preserve avatar and responsive alignment. Agent transcript/tool counts and duration align at the trailing second row with duration last. Tool actions remain within the tool row for visibility and continuous pointer access. Community and public Design Core sources inspected. No backend build, restart, fixture writes, main landing, release or publication.",
+    "versions": "Node26.9.0;pnpm10.32.1;JJ0.45.1;existing Svelte5.57.1,Storybook10.5.7,Vitest4.1.11 retained.",
+    "formats": "No API, native record, permission, route or persistence format changes.",
+    "next": "Continue authorized search, structural focus sheet and scoped Projects Agents tabs.",
+    "artifacts": "/tmp/jj-layout-toggle-{before,after}.log; /tmp/jj-row-*.log",
+    "files": [
+      "catalog/components/store-application/NativeAgentMenus.stories.svelte",
+      "catalog/components/store-work/LayoutControls.stories.svelte",
+      "catalog/components/store-work/ProjectsDirectory.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/store-collaboration.css",
+      "web/src/lib/ui/store-work/StoreWorkLayoutControls.svelte",
+      "web/src/lib/ui/store-work/StoreWorkProjectRows.svelte",
+      "web/src/lib/ui/store-work/community-work-rows.css"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/LayoutControls.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before:2/2 fail when selected layout clears. Function binding fixes pointer checks; initial keyboard token {Space} was corrected to the actual space key without weakening selection assertions."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before:project aligned description span absent and agent duration is not trailing.4 other stories pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/LayoutControls.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "8/8 focused stories including repeated pointer/keyboard selection, responsive column coordinates and clickable tool copy menu."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "59/60 pass. TaskScroll returning-scroll assertion sampled0 instead of400 in this batch; exact unmodified TaskScroll family rerun passes4/4. No assertion or product change was needed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 unmodified TaskScroll stories pass in fresh process, including retained400px scroll and draft."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings;749 production modules;133 catalog modules;ownership validator passes."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped API chapter initially missing. Added presentation-only contract note; final gate rerun follows."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --write changed source, stories and canonical chapters",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final mapped gate10 protected files/5 chapters;5 validators/21 chapters/147 requirements;120 tasks;changed source/stories/spec formatted. All reads/checks and exact focused results recorded; broader lanes are out of scope."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-072",
+    "tasks": ["M11.4", "M9.5"],
+    "date": "2026-10-02",
+    "kind": "scoped Projects Agents directories and inline authorized responses",
+    "revision": "Enclosing Jujutsu change rqpmklxo",
+    "requirements": [
+      "JST-UI-005",
+      "JST-UI-015",
+      "JST-COLLAB-005",
+      "JST-WORK-008",
+      "JST-API-005",
+      "JST-ARCH-004"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual approval remains separate. Root aggregate, Rust, unrelated UI lanes and persistent fixture writes are out of scope."
+    ],
+    "scope": "Existing browser/controller surface only. Selected-project Agents covers independently authorized linked repositories, including retained retired links; landing Agents drains unfiltered project links with two readers and at most 80 continuations per home/action, deduplicates scope and reports inaccessible links and incomplete/failed scope. Independent AgentStore snapshot paging, bounded refresh windows and generation guards remain. Selection opens the shared response in the body right pane without directory reload or global connection change; close, Back/Forward and cold hash restoration retain the scoped directory. Cached responses obtain the current authorized source after rediscovery. Shared owned row uses collection inset and no separators. No backend build/restart, native encoding/API changes, persistent fixture writes, main landing, publication or baseline update. Former evidence source StoreProjectsAgentResponse.svelte was retired in E-UI-075; file pointer now names its shared standard-sidebar replacement.",
+    "versions": "Node26.9.0;pnpm10.32.1;JJ0.45.1;Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;existing Design Core public components.",
+    "formats": "Projects hash accepts tab=agents and paired full agent_repository/session IDs only on Agents. Repository routes, AgentStore captures and native/local identities remain unchanged.",
+    "next": "Continue authorized top-row search and Community structural Focus sheet.",
+    "artifacts": "/tmp/jj-project-agents-*.log; /tmp/jj-agents-*.log; /tmp/jj-project-agents-inline.png; live read-only temporary tab19.",
+    "files": [
+      "catalog/components/store-work/ProjectsAgents.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "catalog/fixtures/projects-hub-fixture.ts",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-local-work-data-source.ts",
+      "web/src/lib/controller/http-work-data-source.ts",
+      "web/src/lib/controller/production-projects-hub.svelte.ts",
+      "web/src/lib/controller/production-projects-integration.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/project-agent-response.svelte.ts",
+      "web/src/lib/controller/projects-agent-scope.ts",
+      "web/src/lib/controller/projects-agent-selection.svelte.ts",
+      "web/src/lib/controller/projects-agents.svelte.ts",
+      "web/src/lib/controller/projects-hub-homes.ts",
+      "web/src/lib/controller/projects-hub-types.ts",
+      "web/src/lib/controller/projects-navigation.svelte.ts",
+      "web/src/lib/controller/projects-related-views.ts",
+      "web/src/lib/controller/projects-route-actions.ts",
+      "web/src/lib/controller/projects-route-codec.ts",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessionRow.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/store-collaboration.css",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsActions.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAgentDirectory.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSidebar.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAgents.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsViewport.svelte",
+      "web/src/lib/ui/store-work/projects-initial-loading.ts",
+      "web/src/lib/ui/store-work/store-projects.css",
+      "web/tests/vite/projects-agent-response.test.ts",
+      "web/tests/vite/projects-agents.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/projects-agents.test.ts#Agents reads only deduplicated project repositories and retains pinned continuations",
+      "web/tests/vite/projects-agents.test.ts#Selected project scope never falls back to all repositories",
+      "web/tests/vite/projects-agents.test.ts#Denied reads and rediscovery clear retained agent sessions",
+      "web/tests/vite/projects-agents.test.ts#Agent scope includes repositories linked on later project pages",
+      "web/tests/vite/projects-agents.test.ts#Agent pane selection retains the scoped directory and exact route identities",
+      "web/tests/vite/projects-agent-response.test.ts#Agent response rejects late selection and clears protected data on revocation",
+      "web/tests/vite/projects-agent-response.test.ts#Agent response verifies session identity and reports denied reads",
+      "web/tests/vite/projects-agent-response.test.ts#Cached agent response uses the current source after access is restored"
+    ],
+    "runs": [
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Ledger pass conflicts with explicitly deferred visual approval. Evidence remains pending with passing functional runs; no milestone status changed."
+      },
+      {
+        "command": "pnpm exec prettier --write changed files; pnpm web:check; pnpm catalog:check; pnpm spec:first; pnpm spec:validate; pnpm check:architecture; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final collection inset: web/catalog zero errors/warnings;25 protected files/6 chapters;5 validators/21 chapters/147 requirements;756 architecture modules. Corrected ledger then repeated its formatter/checker before commit."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "User follow-up before state: row separator and full-width row fail collection geometry assertion;2/3 stories pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "12/12 stories including exact no-separator and heading-aligned row geometry; collection presentation uses heading inset while repository rows retain their composition."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-agents.test.ts",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before:3/3 regressions fail because Agents collection and scope are absent. Initial implementation1 failure corrected by invalidating the fixture project view before injecting its new links."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-agents.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-repositories.test.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Historical intermediate redirect implementation, superseded by inline response follow-up. New mismatch test expected raw code instead of readable API message. Collection helper awaited an unrelated empty dispatch and delayed browse start; narrowed dispatch to relevant tabs. Source behavior preserved."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-agents.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-repositories.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Historical intermediate redirect implementation, superseded by inline response follow-up. 31/31 exact/direct controller tests after corrections; repeated after final extraction/navigation changes. Includes scope pagination, snapshot mismatch, denial, refresh window, history and late connection."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 new landing, selected-project and loading-skeleton stories with blocking accessibility."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/RepositoryProjects.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "62/63 pass; existing landing-tab assertion still expected5 tabs. Updated exact expected list to include Agents; rerun14/14 focused Hub/Agents passes. Final direct lane63/63 passed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "14/14 final Hub and Agents stories pass with blocking accessibility."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm spec:first; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web/catalog0 errors/warnings;756 production modules;134 catalog modules;24 protected files/5 chapters;UI ownership passes. Initial nullable association and hub line limit repaired via typed nullable prop and owned helper extraction."
+      },
+      {
+        "command": "CUA live read-only Agents landing/project/navigation check on HMR7460",
+        "result": "pass",
+        "failures": 0,
+        "note": "Historical intermediate redirect implementation, superseded by inline response follow-up. Captured landing/project scopes with actual native sessions and local empty state. Initial session action connection retained the hub; fixed route-first connection and verified exact native Agents URL/transcript. Stable live Back restores the originating Projects Agents route. No fixture writes or service changes."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/projects-agent-response.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "New current-source regression: 1 failed, 2 passed before accessor implementation."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/projects-agent-response.test.ts web/tests/vite/projects-agents.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "8/8 source lifecycle, late selection, denial and scoped directory tests."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/projects-agent-response.test.ts web/tests/vite/projects-agents.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "61/61 directly affected controller/history/collaboration tests; root aggregates remain out of scope."
+      },
+      {
+        "command": "pnpm exec prettier --write changed files using rg-filtered command substitution",
+        "result": "fail",
+        "failures": 1,
+        "note": "Local rg configuration added numeric prefixes to filenames. Repaired command uses Python subprocess paths directly; no source formatting occurred in failed invocation."
+      },
+      {
+        "command": "Python subprocess pnpm exec prettier --write all changed ts/svelte/css/md files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed files formatted without shell interpolation."
+      },
+      {
+        "command": "pnpm web:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web zero errors/warnings; 760 production modules."
+      },
+      {
+        "command": "CUA read-only live inline Agents on HMR 7460",
+        "result": "pass",
+        "failures": 0,
+        "note": "Landing session switch, cold reload restoring exact paired IDs, close/opener focus and Back/Forward pass. Selected-project response stays beside the scoped list. Screenshot /tmp/jj-project-agents-inline.png. Locator incorrectly requested region for transcript log and was corrected from DOM evidence; no fixture mutation."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/RepositoryProjects.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "64/64 directly affected stories pass, including all project tabs, inline response, layout alignment, discussions and native agent menus, with blocking accessibility."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web/catalog zero errors/warnings;134 catalog/760 production modules;35 protected files/6 chapters;5 validators/21 chapters/147 requirements. Repository Agents also verified live retains original response column beside session list."
+      },
+      {
+        "command": "pnpm check:progress; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final corrected ledger and repository-owned presentation pass. Visual baseline approval remains separate."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-073",
+    "tasks": ["M11.4"],
+    "date": "2026-10-02",
+    "kind": "aligned repository directory description columns",
+    "revision": "Enclosing Jujutsu change rqpmklxo",
+    "requirements": ["JST-UI-015", "JST-WORK-008"],
+    "result": "pending",
+    "remaining": [
+      "Visual approval remains separate. Root aggregates and Rust lanes are out of scope for owned UI layout."
+    ],
+    "scope": "Shared repository list rows in landing and selected-project directories reserve a consistent name column and remaining description width. Narrow list rows stack copy and metadata without overflow; equal-height card layout and full-width descriptions remain. Community source inspected first and Design Core public Button second; no upstream dependency defect or new copied source.",
+    "files": [
+      "web/src/lib/ui/store-work/community-work-directory.css",
+      "catalog/components/store-work/ProjectsDirectory.stories.svelte",
+      "spec/src/ui.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;existing Design Core registry primitives.",
+    "formats": "CSS layout only; no routes, object/receipt encodings or storage contracts changed.",
+    "next": "Continue authorized top-row search and Community structural Focus sheets.",
+    "artifacts": "/tmp/jj-repository-description-*.log; /tmp/jj-repository-description-aligned.png.",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsDirectory.stories.svelte -t Repository descriptions align",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial spaced title filter skipped all 6 stories; not acceptance evidence."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsDirectory.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Two preliminary harness failures: incorrect list label Repositories and readonly New project trigger. Corrected against existing source; other 5 stories pass."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsDirectory.stories.svelte -t RepositoryDescriptionsAlign",
+        "result": "fail",
+        "failures": 1,
+        "note": "Final before regression: narrow row overflow 283px in269px. Mandatory List selection and exact alignment assertions preserved."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "6/6 after including directory/project alignment at980/620/300px, overflow, equal-height cards and retained metadata."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Unsupported Testing Library getByRole exact option removed; name strings already match exactly. No product error."
+      },
+      {
+        "command": "CUA live read-only repository directory geometry",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three description left positions equal517.7578125px. Screenshot /tmp/jj-repository-description-aligned.png."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Invalid run result pending for the skipped preliminary filter command. Corrected to pass with explicit skipped/nonacceptance note; evidence overall remains pending for separate visual approval."
+      },
+      {
+        "command": "pnpm check:progress; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final corrected ledger and repository-owned presentation pass. Visual baseline approval remains separate."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-074",
+    "tasks": ["M11.4"],
+    "date": "2026-10-02",
+    "kind": "Projects tab-row search and trailing filters",
+    "revision": "Enclosing Jujutsu change yywsxtqq",
+    "requirements": ["JST-UI-015", "JST-WORK-008"],
+    "result": "pending",
+    "remaining": [
+      "Visual approval remains separate. Rust, root aggregates and built production browser fixtures are out of scope for source UI composition."
+    ],
+    "scope": "Owned Projects navigation composes leading search, horizontally scrolling tabs and trailing supported filters. Open search replaces tabs with a full-row borderless labelled input. Enter submits existing512-byte-bounded route query; Close clears query and restores tabs/opener focus. Hover, input text or keyboard focus exposes Close. Background reads and filter popovers retain unsent drafts. Header settings/search trigger removed; Reviews retains repository filter without unsupported search; Repositories has no empty additional-filter popup. Community tabs and user screenshots inspected first, Design Core InputGroup/Button/Tabs/ScrollArea source and official docs second.",
+    "files": [
+      "catalog/components/store-work/ProjectsActivity.stories.svelte",
+      "catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+      "catalog/components/store-work/ProjectsFilters.stories.svelte",
+      "catalog/components/store-work/projects-layout-play.ts",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsActions.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilterControls.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilters.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsNavigation.svelte"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;released Design Core0.2.0.",
+    "formats": "No storage/object/API contract changes. Existing Projects hash q and UTF-8 query limit retained.",
+    "next": "Apply standard Thread-reply sidebar to Agents and complete Community Focus structural sheets.",
+    "artifacts": "/tmp/jj-tab-search-*.log; /tmp/jj-tab-search.png.",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before2/2 new desktop/mobile top-tab search contracts fail against old header/popover controls."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "After1/2 passes; noninteractive form keyboard warning moved onto input. Close visibility assertion ran before Svelte DOM flush; retained assertion waits for visible state."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsLayouts.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "8/9 selected stories pass; existing close visibility assertion repaired as above. ProjectsLayouts filename is absent; actual ownership-layout story resides in ProjectsHub and is covered by full direct store-work family."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 desktop/mobile top-row search, border/ring, tabs restoration, focus and additional filter checks pass."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings;134 catalog modules."
+      },
+      {
+        "command": "CUA read-only live search Enter/reload/Close on HMR7460",
+        "result": "pass",
+        "failures": 0,
+        "note": "Recovery filters Projects and exact q restores on cold reload. Input computed border0px/shadownone. Close clears q, restores tabs and focuses Search projects. Screenshot /tmp/jj-tab-search.png."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work",
+        "result": "fail",
+        "failures": 2,
+        "note": "52/54 stories pass. Two Activity filter stories still asserted old section-header placement; updated their exact geometry parent to tab row."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 repaired direct Activity control stories pass; final combined direct suite follows."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Generic web protected-path map requires API chapter. Added existing q submission/clear/admission semantics to api.md; no API/schema change."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work",
+        "result": "pass",
+        "failures": 0,
+        "note": "54/54 directly affected Projects story/interaction/accessibility scenarios pass after placement updates."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:architecture; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Corrected mapped API gate9 protected files/3 chapters;5 validators/21chapters/147requirements;761production modules;120task bookkeeping. Changed files formatted."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-075",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Thread-reply shell sidebar for repository and Projects agent responses",
+    "revision": "Enclosing Jujutsu change tvzlkoyt",
+    "requirements": ["JST-UI-002", "JST-UI-005", "JST-UI-006", "JST-WORK-008"],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. Root aggregate lanes, Rust builds/tests and production built-CSP qualification are out of scope."
+    ],
+    "scope": "Owned UI-only application sidebar composition. Community standard right sidebar inspected first, public Design Core AppShell sidebar/header/body/close and mobile controller second. Repository and Projects Agents retain independently scoped directory controllers and exact routes while responses use the same full-body standard sidebar as Thread replies. Avatar sits beside shell title; no duplicate identity card. Context no longer fills spare height, so recorded activity stays at top. Copy identifiers remain in header menu. Close clears route and returns row focus; standard width resize and separate outer rail retained. Fresh targeted Storybook processes supply cold lifecycle interaction/accessibility evidence; live read-only HMR acceptance uses an isolated tab and existing fixture. No source-dependency or runtime fixture changes.",
+    "files": [
+      "catalog/components/store-application/StoreCollaboration.stories.svelte",
+      "catalog/components/store-application/agent-sidebar-play.ts",
+      "catalog/components/store-work/ProjectsAgents.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-application/StoreApplicationRightPanels.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentContext.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessionMenu.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSidebar.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAgents.svelte"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;existing public Design Core AppShell primitives.",
+    "formats": "No object/receipt/API changes. Existing Projects agent_repository/session hash and repository session route retained; standard right panel persistence reused.",
+    "next": "Complete authorized Community structural Focus sheets.",
+    "artifacts": "/tmp/jj-agent-sidebar-*.log; /tmp/jj-agent-standard-sidebar.png.",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2failed/2passed: project and mobile responses lack standard data-ui-part sidebar and full-body geometry."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte (first after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2failed/2passed: geometry compared sidebar chrome with its one-pixel-inset inner body, corrected to matching main chrome; mobile Close assertion preceded shell lane activation, now waits for accessible Close. Assertions retain full-body geometry and focus."
+      },
+      {
+        "command": "pnpm web:check (first after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Removed obsolete layoutStorage prop on directory-only StoreAgentSessions consumer."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte (second after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 desktop/mobile standard pane, geometry, retained directory, Close and row focus pass."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads",
+        "result": "pass",
+        "failures": 0,
+        "note": "24/24 direct repository, native menu, tool discussion and Thread scenarios pass before subsequent avatar/top-alignment refinement."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte -t LandingAgentsAndNativeSessionNavigation (top/header before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failure/3skipped: duplicate detail header remains. Added no-card and first-message geometry contract before refinement."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte (top/header after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 after no-card/top-alignment refinement. Avatar-next-to-title contract added in final combined run."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads",
+        "result": "pass",
+        "failures": 0,
+        "note": "28/28 final combined scenarios including avatar, no duplicate identity card, top-aligned activity, Copy IDs, resize, independent rail, Close/focus and Threads regression. Supplemental repository mobile scenario follows."
+      },
+      {
+        "command": "CUA isolated read-only HMR Projects/repository agent selection, cold reload and pointer Close",
+        "result": "pass",
+        "failures": 0,
+        "note": "Project and repository main/sidebar bounds match top48px/bottom712px. Cold selection restores exact IDs; empty list spacer0px; avatar in header/no identity card. Close clears route and focuses selected row. No runtime errors. Prior tab19 pointer attempts conflicted with active user navigation; stopped controlling it and used separate tab for acceptance."
+      },
+      {
+        "command": "pnpm check:architecture (first)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Expanded Collaboration story exceeded400line budget and shared collaboration CSS exceeded300line budget. Extracted agent sidebar play helper and moved own context min-height rule to component style. Final architecture763modules passes."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreCollaboration.stories.svelte -t MobileAgentResponsePreservesItsDirectory (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New mobile scenario queried initial row before async fixture populated. Now waits for exact visible row; no production change."
+      },
+      {
+        "command": "pnpm check:progress (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Deleted obsolete custom response component remained in historical evidence file pointer. Repointed to shared sidebar replacement with explicit retirement note; original recorded results retained."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreCollaboration.stories.svelte -t AgentResponseActivity (tool inset before/first after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before49.59375px extra inset; removing41.6px margin leaves8px owned message hover bleed. Final geometry compares tool calls with actual message avatar/content inset, preserving exact alignment. Tool width uses available row width."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final zero errors/warnings;134catalog modules."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "11protected files/5chapters;5validators/21chapters/147requirements;owned Community closure accepted."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads (qualified final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "29/29 final direct interaction/accessibility scenarios after helper extraction, mobile async fixture wait, avatar/title/top alignment and tool-content inset correction. /tmp/jj-agent-sidebar-qualified-stories.log."
+      },
+      {
+        "command": "CUA isolated repository agent tool geometry",
+        "result": "pass",
+        "failures": 0,
+        "note": "Message avatar and tool root both start at983px, chat spacer0px. /tmp/jj-agent-standard-sidebar.png updated."
+      },
+      {
+        "command": "pnpm check:progress; pnpm check:architecture (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "120tasks bookkeeping;763production modules accepted. No budget exceptions."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm spec:first; pnpm spec:validate; pnpm check:progress (qualified final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings;135catalog modules;12protected files/5chapters;5validators/21chapters/147requirements;120task bookkeeping."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-076",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Community structural Focus sheets for Thread replies and tool discussions",
+    "revision": "Enclosing Jujutsu change sykxvszs",
+    "requirements": ["JST-UI-002", "JST-UI-005", "JST-UI-018"],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. Root aggregate lanes, Rust builds/tests and production built-CSP qualification are out of scope."
+    ],
+    "scope": "Owned UI-only Focus/Split presentation. Inspected Community structural surface-layer composition and released Design Core AppShell.SurfaceLayer. Focus covers the main body, standard right sidebar and independent outer details rail, leaving 7rem of desktop main content visible; mobile uses the root surface with 0.5rem insets. Uses the public controlled open API so mobile reparented content closes cleanly. Escape, scrim and Close use shell dismissal/focus restoration. One application-owned focused tool discussion; multiple Split drafts retain values across layout changes and latest-open ownership. Closing it restores the previous open draft. No backend restart/build, demo reset, fixture mutation, main landing, source dependency or release.",
+    "files": [
+      "catalog/components/store-application/DiscussionSheets.stories.svelte",
+      "catalog/components/store-application/appearance-tool-discussion-play.ts",
+      "catalog/components/store-threads/StoreThreads.stories.svelte",
+      "catalog/fixtures/DiscussionSheetFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-discussion/StoreDiscussionSheet.svelte",
+      "web/src/lib/ui/store-discussion/StoreDiscussionWorkspace.svelte",
+      "web/src/lib/ui/store-discussion/StoreFocusedDiscussion.svelte",
+      "web/src/lib/ui/store-discussion/discussion-focus.svelte.ts",
+      "web/src/lib/ui/store-threads/StoreThreadFocus.svelte"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;existing released Design Core AppShell.SurfaceLayer.",
+    "formats": "Existing native Thread reply and tool-call review target identities, memory-only draft ownership, permissions and Focus/Split preferences retained. No server/API/schema changes.",
+    "next": "Complete adjacent tool-call grouping and remove redundant resting failure label.",
+    "artifacts": "/tmp/jj-focus-sheet-*.log",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte -t 'FocusAndSplit|AppearanceFocus' (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2failures/6skipped: centered Dialog instead of labelled structural region. /tmp/jj-focus-sheet-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte -t 'FocusAndSplit|AppearanceFocus' (first after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2interactions passed,2runtime cleanup errors from destroyed active returnFocus getter. Captured returnFocus locally. /tmp/jj-focus-sheet-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte -t 'FocusAndSplit|AppearanceFocus' (after2 and3)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Each2passed/6skipped. Final effect captures focusKey for cleanup. /tmp/jj-focus-sheet-after-2.log; /tmp/jj-focus-sheet-after-3.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte (expanded first)",
+        "result": "fail",
+        "failures": 2,
+        "note": "8pass/2fail: hidden inert rail has no accessible name; mobile conditional sheet unmount leaves duplicate teleported surface on reopen. Read public rail DOM id and use controlled open composition, matching existing conflict sheet. /tmp/jj-focus-sheet-qualified.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte -t MobileFocus (before controlled open)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1fail/1skip independently reproduces duplicate mobile surface after close/reopen. /tmp/jj-focus-sheet-mobile.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte (controlled open)",
+        "result": "pass",
+        "failures": 0,
+        "note": "10/10 pass with blocking accessibility. Desktop covers both rails; mobile root8px insets, close/reopen, Escape/scrim/focus restoration and two retained Split drafts. Fresh Vitest browser/Vite process. /tmp/jj-focus-sheet-controlled.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final zero errors/warnings;137catalog modules. /tmp/jj-focus-sheet-final-web.log; /tmp/jj-focus-sheet-final-catalog.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "768production modules accepted. /tmp/jj-focus-sheet-architecture.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "11protected files/2chapters;5validators/21chapters/147requirements. /tmp/jj-focus-sheet-spec-first.log; /tmp/jj-focus-sheet-spec-validate.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed source and scenario files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted shared sheet, manager, application, Thread consumer, two-draft fixture and scenarios."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-threads catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "31interactions passed but two standalone read-only captured-agent fixtures have no application focus provider. Made optional provider lookup explicit; standalone Split consumers remain usable. /tmp/jj-focus-sheet-consumers.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 exact inline diff/tool review consumers. /tmp/jj-focus-sheet-tool-review.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-threads catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final34/34 directly affected interactions/accessibility, no runtime errors; fresh cold browser/Vite. /tmp/jj-focus-sheet-final-consumers.log."
+      },
+      {
+        "command": "pnpm web:check (optional standalone provider)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings. /tmp/jj-focus-sheet-leaf-web.log."
+      },
+      {
+        "command": "pnpm check:progress; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "120task bookkeeping and owned source closure accepted."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-077",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Adjacent native agent tool groups and concise failed-call rows",
+    "revision": "Enclosing Jujutsu change vrulsuxu",
+    "requirements": ["JST-UI-002", "JST-UI-005", "JST-UI-006"],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. Root aggregate lanes, Rust builds/tests and production built-CSP qualification are out of scope."
+    ],
+    "scope": "Owned UI-only agent transcript presentation for repository, project and installation Agents. Inspected Community model adjacent grouping and transcript callWrapper composition first, released Design Core ToolCalls second. Native timeline groups adjacent recorded tools while preserving original records/order and every non-tool boundary. Group virtualization identity uses the first exact sequence, including bigint. Per-call wrappers retain details, hover/focus toolbar, Copy IDs, review anchors and independent reply drafts. Failed row status remains; redundant resting Tool failed alert removed. Actual failure output remains in expanded detail. Multiple open drafts reopen their group after Settings remount and retain one Focus sheet. Native service already deduplicates tool observations to one stable tool_call_id; no server change. No backend rebuild/restart, fixture reset/write, native mutation, main landing, dependency substitution, release or baseline update.",
+    "files": [
+      "catalog/components/store-application/AgentToolGroups.stories.svelte",
+      "catalog/components/store-application/agent-sidebar-play.ts",
+      "catalog/fixtures/AgentToolGroupsFixture.svelte",
+      "catalog/fixtures/agent-tool-groups.ts",
+      "docs/ui-provenance.json",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/collaboration/agent-timeline.ts",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTools.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/tests/vite/agent-timeline.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/vite/agent-timeline.test.ts#groups adjacent calls in recorded order without changing native records",
+      "web/tests/vite/agent-timeline.test.ts#never groups across capture gaps, permissions or recorded metadata",
+      "web/tests/vite/agent-timeline.test.ts#keeps group identity stable when an adjacent continuation is appended"
+    ],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;released Design Core ToolCalls;Community source741b8285e2081f1c9af58afe5a9b72f538fad781 Apache-2.0.",
+    "formats": "No API/schema, native identity, immutable data, AgentStore/ReviewStore roots, request, review anchor, authorization or mutation changes. Existing session-scoped memory-only drafts preserved.",
+    "next": "Review the live HMR UI; visual approval remains separate.",
+    "artifacts": "/tmp/jj-agent-tool-groups-*.log; /tmp/jj-agent-tools-before.png; /tmp/jj-agent-tool-groups.png; /tmp/jj-agent-tool-groups-projects.png",
+    "runs": [
+      {
+        "command": "CUA isolated live repository agent transcript before",
+        "result": "pass",
+        "failures": 0,
+        "note": "Recorded3adjacent tools rendered as separate ToolCalls roots and Bash resting Tool failed alert. /tmp/jj-agent-tools-before.png. No user tab navigation or native writes."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both regressions fail because Expand3tool calls disclosure is absent. /tmp/jj-agent-tool-groups-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte (first after)",
+        "result": "fail",
+        "failures": 4,
+        "note": "2failed scenarios plus2runtime errors from optional review anchor passed to required anchor resolver. Guarded missing review selection. /tmp/jj-agent-tool-groups-after.log."
+      },
+      {
+        "command": "pnpm web:check (first after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Optional review anchor and group sequence number-only type rejected. Guarded anchor; group preserves AgentActivity sequence number|bigint. /tmp/jj-agent-tool-groups-web.log."
+      },
+      {
+        "command": "pnpm catalog:check (first after)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Same2source errors plus readonly fixture activity assigned to mutable controller detail. Fixture now clones its array. /tmp/jj-agent-tool-groups-catalog.log."
+      },
+      {
+        "command": "pnpm catalog:check (second)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Type check clean; catalog source audit rejected API client type import. Fixture uses production controller-state presentation type. /tmp/jj-agent-tool-groups-catalog-2.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte (second after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1pass/1fail: whole-page error-output query matches hidden details from other synthetic calls. Scoped to the selected Bash wrapper without weakening actual-error visibility. /tmp/jj-agent-tool-groups-after-2.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte (third after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 group expansion/collapse, ordered per-call rows, concise failure, exact error output, retained detail disclosure, exact native Copy ID and two independent Split-to-Focus drafts. /tmp/jj-agent-tool-groups-after-3.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/agent-timeline.test.ts (initial, second and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Each3/3. Final covers immutable original record references/native IDs, order, every non-tool boundary including gaps and permissions, empty input, stable continuation identity and lossless bigint sequence. /tmp/jj-agent-tool-groups-unit-final.log."
+      },
+      {
+        "command": "pnpm web:check (second); pnpm catalog:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings;140catalog modules. /tmp/jj-agent-tool-groups-web-2.log; /tmp/jj-agent-tool-groups-catalog-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "24/24 directly affected agent transcript, standard sidebar, native menus, tool/diff reviews, standalone read-only reactions, project agents and Focus/Split scenarios pass with blocking accessibility on a fresh Vitest browser/Vite process. /tmp/jj-agent-tool-groups-consumers.log."
+      },
+      {
+        "command": "pnpm spec:first (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Added provenance requires spec-governance chapter; documented owned grouping source/identity boundary. /tmp/jj-agent-tool-groups-spec-first.log."
+      },
+      {
+        "command": "pnpm spec:first (final); pnpm spec:validate; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "10protected files/4chapters;5validators/21chapters/147requirements;773production modules. /tmp/jj-agent-tool-groups-spec-first-final.log; /tmp/jj-agent-tool-groups-spec-validate.log; /tmp/jj-agent-tool-groups-architecture.log."
+      },
+      {
+        "command": "CUA isolated cold live repository agent transcript grouping and Bash detail",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh load restores selected session; one Expand/Collapse3tool group. All individual calls/actions remain. Bash Error details show recorded exit_code1/stderr test failed; no resting failure caption. Group root983px aligns with message avatar983px. /tmp/jj-agent-tool-groups.png. HMR had retained failed component before cold reload; fresh result accepted. No fixture mutations or preference changes."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed production, fixture, story, unit, provenance and canonical files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed files formatted."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned source attribution/dependency boundary passes. /tmp/jj-agent-tool-groups-ownership.log."
+      },
+      {
+        "command": "CUA isolated Projects landing requested OpenCode session grouping",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact user-selected0547515e2a5c7b4e3db180b50813f9a2session restored in Projects Agents body sidebar. One3tool group, no failure caption, per-call error/complete statuses and actions retained. Group root and message avatar both983px. /tmp/jj-agent-tool-groups-projects.png."
+      },
+      {
+        "command": "pnpm check:progress (initial and repeat)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Each rejects bare test file reference. Added exact named-test anchors to evidence references without changing tests. /tmp/jj-agent-tool-groups-progress.log."
+      },
+      {
+        "command": "pnpm check:progress (named anchors)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Checker accepts named test declarations but not Vitest it alias. Changed these3declarations to equivalent test API; assertions unchanged."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/agent-timeline.test.ts (named declarations); pnpm check:progress (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 equivalent named regressions and120task evidence bookkeeping pass. /tmp/jj-agent-tool-groups-unit-named.log; /tmp/jj-agent-tool-groups-progress-final.log."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-078",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Unclipped agent tool actions, contiguous groups and message-edge alignment",
+    "revision": "Enclosing Jujutsu change mwtxzwry",
+    "requirements": ["JST-UI-002", "JST-UI-005", "JST-UI-006"],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. Root aggregate lanes, Rust builds/tests and production built-CSP qualification are out of scope for this owned UI-only change."
+    ],
+    "scope": "Inspected Community TranscriptTools and TranscriptComments before released Design Core ToolCalls. The owned per-call discussion wrapper incorrectly created a 24px scrolling context around a 38px toolbar and forced full-height sizing. Removed that inner viewport and full-height constraint; desktop contexts retain their intrinsic height and narrow stacked contexts stretch horizontally. Compact grouped calls stay contiguous, with details consuming only their own row. Owned transcript tool rows now share the visible message edge, including the message's 8px bleed, rather than comparing against its avatar. Native IDs, review actions, menus, independent reply drafts and Focus/Split sheets remain unchanged. Reused appearance workspace and existing Vite HMR on7460/backend7462; no Rust restart, fixture mutation, reseed, main landing or dependency change.",
+    "files": [
+      "web/src/lib/ui/store-discussion/StoreDiscussionWorkspace.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "catalog/components/store-application/AgentToolGroups.stories.svelte",
+      "catalog/components/store-application/agent-sidebar-play.ts",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;released Design Core ToolCalls;existing Community source provenance retained.",
+    "formats": "Presentation-only. No AgentStore/ReviewStore encoding, API/schema, native identity, request, authorization or review anchor changes.",
+    "artifacts": "/tmp/jj-agent-tool-layout-*.log; /tmp/jj-agent-tools-layout-before.png; /tmp/jj-agent-tool-layout-fixed.png; /tmp/jj-agent-tool-layout-menu-fixed.png",
+    "next": "Review the live HMR UI; visual baseline approval remains separate.",
+    "runs": [
+      {
+        "command": "CUA isolated live agent transcript geometry and hover before",
+        "result": "fail",
+        "failures": 2,
+        "note": "Tool root983px versus visible message edge975px:8px inset. Each context clientHeight24/scrollHeight38 with overflow:auto; lower menu-button edge hits the next call instead of the toolbar. Reference screenshot has contiguous grouped rows and aligned heading/status icons. /tmp/jj-agent-tools-layout-before.png."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t GroupedRowsAlignWithMessagesAndKeepHoverActionsClickable (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failed/2skipped: exact visible-edge alignment reports8px. /tmp/jj-agent-tool-layout-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t GroupedRowsAlignWithMessagesAndKeepHoverActionsClickable (alignment fixed, clipping before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failed/2skipped: alignment passes, pointer hit test at the toolbar button edge is false. /tmp/jj-agent-tool-layout-hover-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 including exact message-edge alignment, compact contiguous rows before/after detail disclosure, heading/status alignment, every toolbar button's upper/lower pointer hit tests, no per-call scroll viewport, menus, native Copy ID and independent Split-to-Focus drafts. /tmp/jj-agent-tool-layout-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Each25/25 direct consumer interaction/accessibility scenarios on fresh Vitest browser/Vite processes. Final also retains narrow stacked-context horizontal stretch. /tmp/jj-agent-tool-layout-consumers.log; /tmp/jj-agent-tool-layout-consumers-final.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero type errors/warnings;140catalog modules;773production modules. /tmp/jj-agent-tool-layout-web.log; /tmp/jj-agent-tool-layout-catalog.log; /tmp/jj-agent-tool-layout-architecture.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t GroupedRowsAlignWithMessagesAndKeepHoverActionsClickable --browser.viewport.width=390 --browser.viewport.height=844",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/2skipped. Not accepted as narrow-screen qualification: the existing browser instance explicitly selects1280px, overriding the top-level viewport. A disposable instance configuration follows. /tmp/jj-agent-tool-layout-narrow.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config /tmp/jj-agent-tool-layout-narrow.vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t GroupedRowsAlignWithMessagesAndKeepHoverActionsClickable",
+        "result": "fail",
+        "failures": 1,
+        "note": "Disposable /tmp TypeScript config loaded as CommonJS and failed Tailwind ESM interop at startup. Retried the same configuration with .mts; no product change. /tmp/jj-agent-tool-layout-narrow-qualified.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config /tmp/jj-agent-tool-layout-narrow.vitest.config.mts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t GroupedRowsAlignWithMessagesAndKeepHoverActionsClickable",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/2skipped with explicit390x844 browser instance. Alignment, contiguous rows, expanded detail spacing and full upper/lower toolbar hit tests pass at the narrow breakpoint. Disposable config only; tracked test infrastructure unchanged. /tmp/jj-agent-tool-layout-narrow-qualified-esm.log."
+      },
+      {
+        "command": "CUA cold live Projects agent transcript geometry and lower-edge native pointer menu click",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final message/group/heading/call left edges1046px; closed call top positions277/301/325px and heights24px; contexts overflow:visible. Native pointer moving onto and clicking the formerly clipped lower edge opens the exact apply_patch menu. Initial earlier click encountered active session navigation and hit Bash; repeated with fresh hovered-button geometry confirms exact call selection. /tmp/jj-agent-tool-layout-menu-fixed.png. No live data writes or user-tab navigation."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte web/src/lib/ui/store-discussion/StoreDiscussionWorkspace.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/agent-sidebar-play.ts spec/src/ui.md spec/src/api.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed production, regression and canonical files formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-discussion/StoreDiscussionWorkspace.svelte spec/src/milestones.md; pnpm exec prettier --check web/src/lib/ui/store-discussion/StoreDiscussionWorkspace.svelte web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/agent-sidebar-play.ts spec/src/ui.md spec/src/api.md spec/src/milestones.md; pnpm spec:first; pnpm spec:validate; pnpm check:ui-ownership; pnpm check:progress (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting passes;4protected files/3canonical chapters;5validators/21chapters/147requirements;Community ownership boundary and120task evidence bookkeeping pass. /tmp/jj-agent-tool-layout-spec-first.log; /tmp/jj-agent-tool-layout-spec-validate.log; /tmp/jj-agent-tool-layout-ownership.log; /tmp/jj-agent-tool-layout-progress.log; /tmp/jj-agent-tool-layout-progress-final.log."
+      },
+      {
+        "command": "jj --no-pager diff --check",
+        "result": "fail",
+        "failures": 1,
+        "note": "CLI rejected unsupported --check flag before execution. Native targeted diff was reviewed separately; the seven-file Prettier check is the passing formatting gate. No source or repository-state mutation."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-079",
+    "tasks": ["M11.4"],
+    "date": "2026-10-02",
+    "kind": "Stable circular search controls and a single Activity filter",
+    "revision": "Enclosing Jujutsu change pynomxls",
+    "requirements": ["JST-UI-015", "JST-WORK-008", "JST-UI-001"],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. App root aggregate lanes, Rust builds/tests, production built-CSP qualification and package publication are out of scope.",
+      "Design Core broad qualification is tracked independently in its verification chapter; cold AI preview readiness and visual cache permissions required additional investigation. No release or visual approval is claimed."
+    ],
+    "scope": "Reused appearance workspace. Inspected Community Projects and Design Core InputGroup before editing. Leading Search/Close action remains mounted at the same position and 32px size across expansion, retaining its original outline and subtle background. Search changes to Close on hover/keyboard focus; the trailing 24px circular Clear exists only for nonempty input, clears both draft and submitted query, and keeps the input open/focused. Enter, Escape, route restoration and filter-popup draft retention remain. Activity combines scope and native category filters in one top-row popover. Source-first InputGroup size forwarding repair in sibling Design Core; consumed through the already governed local pnpm hook, with registry manifest/lockfile preserved. Restarted only owned Vite after package refresh; backend PID91193 and fixture data retained. No main landing, Rust restart, reseed or live mutation. Broader story execution exposed shared browser storage: a prior outer details rail made agent selection constrain and occlude the main region. ProjectsHubFixture now uses fresh per-instance memory storage by default and retains explicitly supplied storage. Original agent assertions are restored; no waits, assertions or production shell policy changed.",
+    "files": [
+      "web/src/lib/ui/store-work/StoreProjectsNavigation.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilterControls.svelte",
+      "web/src/lib/ui/store-work/StoreActivityFilter.svelte",
+      "catalog/components/store-work/ProjectsFilters.stories.svelte",
+      "catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;pnpm10.32.1;local Design Core0.1.2 sibling source;portable app dependency range remains^0.2.0.",
+    "formats": "Presentation-only. Existing bounded q and activity filters; no API/schema, authorization, native identity or persistence-format changes.",
+    "artifacts": "/tmp/jj-search-controls-*.log; /tmp/dc-input-group-*.log; /tmp/design-core-input-group-fix.tgz",
+    "next": "Retain visual-pending; follow source package qualification separately. Next requested slice: agent row spacing and Focus sheets.",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Desktop/mobile circle regression:38px width vs36px height. /tmp/jj-search-controls-before-tests.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (initial after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Geometry corrected; newly authored keyboard assertion used Shift-Tab despite leading addon following input in DOM. Corrected to Tab, then reverted to Shift-Tab when leading button became a persistent header sibling before input. No production failure masked. /tmp/jj-search-controls-after-tests.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (after keyboard correction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 before additional user requests: hover glyphs, keyboard focus, borderless row, drafts, submitted and draft Clear, Close and Escape. /tmp/jj-search-controls-after-keyboard.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (position before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "4px horizontal displacement on expansion; exact x/y/width/height regression added. /tmp/jj-search-controls-position-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (position after and restored outline)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Each2/2: stable position/size, 32px leading and24px Clear, outline border and background. /tmp/jj-search-controls-position-after.log; /tmp/jj-search-controls-final-tests.log. Separate processes overlapped while user refinements arrived; Vitest selected a free browser port. Final serialized combined run follows."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsActivityControls.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2failed/1passed: both hub/project Activity headers expose2filter buttons instead of1. /tmp/jj-search-controls-activity-before.log."
+      },
+      {
+        "command": "pnpm install --offline --force --no-frozen-lockfile; jj restore -- pnpm-lock.yaml",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refreshed pre-existing guarded local Design Core dependency without downloads; restored registry lockfile. No node_modules edits or new dependency alias/patch/substitution. /tmp/jj-search-controls-package-refresh.log."
+      },
+      {
+        "command": "Owner-verified UI-only restart using scripts/dev-ui-services.mjs start/ready",
+        "result": "pass",
+        "failures": 0,
+        "note": "Vite PID88268 replaced by68050; backend91193 remains alive on7462. Existing fixture/runtime root retained; no server or RustFS restart."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors/0warnings;140catalog module boundaries. Final checks follow last filter refinement. /tmp/jj-search-controls-web-check.log; /tmp/jj-search-controls-catalog-check.log."
+      },
+      {
+        "command": "Design Core: pnpm test:storybook src/shared/shadcn/input-group/InputGroup.sizing.stories.svelte (before); pnpm test:storybook src/shared/shadcn/input-group (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source regression1failed before (xs became default),12/12 after forwarding size as a real Button prop. All4sizes/default/square icons and Clear action. Separate source canonical/verification update and qualification logs /tmp/dc-input-group-size-before.log and /tmp/dc-input-group-size-after.log."
+      },
+      {
+        "command": "Design Core: pnpm spec:first; pnpm packages:pack; pnpm pack --out /tmp/design-core-input-group-fix.tgz",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first3protected/2canonical chapters. packages:pack no-ops for already published0.1.2, so explicit pnpm pack creates source-distributed validation artifact; no publication."
+      },
+      {
+        "command": "Discovery: pnpm exec visual-delta test --help in app/source; interrupted source help process",
+        "result": "fail",
+        "failures": 1,
+        "note": "App has no visual-delta CLI; source test subcommand does not recognize --help and began execution. SIGTERM stopped only that agent-owned process; subsequent source compare uses supported exact story IDs. A guessed search path also did not exist; discovery corrected with rg."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "5/5 pass. /tmp/jj-search-controls-combined-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (initial and final-before-isolation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Each54passed/1failed: LandingAgentsAndNativeSessionNavigation could not access Projects and tasks after session selection. Exact isolated rerun1passed/3skipped. /tmp/jj-search-controls-consumers.log; /tmp/jj-search-controls-consumers-final.log; /tmp/jj-search-controls-agents-rerun.log. Temporary wait assertion did not resolve the full lane and was reverted."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (diagnostic wait run)",
+        "result": "pass",
+        "failures": 0,
+        "note": "55/55 passed with temporary diagnostic catch. Not used as a substitute for restoring original assertions. /tmp/jj-search-controls-consumer-diagnostics.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (restored assertions)",
+        "result": "fail",
+        "failures": 3,
+        "note": "52passed/3failed: agent main region and both repository Add task keyboard stories. /tmp/jj-search-controls-consumers-restored-story.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte (diagnostic)",
+        "result": "pass",
+        "failures": 0,
+        "note": "7/7 passed in isolation. /tmp/jj-search-controls-agent-action-diagnostics.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (visibility diagnostics)",
+        "result": "fail",
+        "failures": 1,
+        "note": "54passed/1failed. DOM proved main ancestor aria-hidden=true and inert=true with retained collapsed left sidebar and open outer details rail. This is the shell constrained replacement policy under leaked fixture layout, not a missing Projects region. Diagnostic removed. /tmp/jj-search-controls-consumers-visibility-diagnostics.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (per-instance storage)",
+        "result": "pass",
+        "failures": 0,
+        "note": "55/55 pass with original assertions and isolated fixture storage. /tmp/jj-search-controls-consumers-isolated-storage.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm spec:first; pnpm spec:validate; pnpm check:progress (initial final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0typeerrors/0warnings;140module boundaries. All focused governance lanes passed. Final fixture/evidence checks follow."
+      },
+      {
+        "command": "Live browser: Activity filter and search controls",
+        "result": "pass",
+        "failures": 0,
+        "note": "One Filters for activity button; one dialog combines scope and native categories. Search control x251/y59/32x32 before/after, Clear24x24, original themed outline; Clear retains focused open input. Inspected /tmp/jj-search-controls-fixed.png and /tmp/jj-search-controls-activity-final.png. No data mutations."
+      },
+      {
+        "command": "Design Core wider checks and compare (independent source)",
+        "result": "fail",
+        "failures": 1,
+        "note": "InputGroup12/12;715unit;643Storybook;14workspace;35Shadcn pass with1configured skip. Initial checks shell10pass/1readinessfailure; fresh dev/static exact retries also failed. AI1pass/2readiness failures plus overlapping output artifact loss. Subsequent shell11/11 and AI3/3 pass against owned9259preview; complete checks retry passed cold shell11/11 but failed cold AI1pass/2readinesstimeouts. Visual compare of5InputGroupstories failed canonical cacheEACCES before screenshots. No baseline changed. Source verification retains exact logs and later outcomes."
+      },
+      {
+        "command": "Temporary source preview cleanup",
+        "result": "pass",
+        "failures": 0,
+        "note": "Stopped only owned Python9259server and later owned Storybook9259preview; closed temporary source browser tab. Vite7460/backend7462 retained."
+      },
+      {
+        "command": "Read-only discovery and unsupported guessed paths",
+        "result": "fail",
+        "failures": 1,
+        "note": "Some rg/cat discovery used absent paths or a zsh glob with no matches. Retried using rg --files. No source state changed by failed reads."
+      },
+      {
+        "command": "pnpm check:progress (initial final evidence)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Rejected three descriptive tests references and pass with remaining qualification gaps. Removed descriptive references from tests and retained them in run notes; entry remains pending for separate visual/source qualification. Checker and assertions unchanged."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm spec:first; pnpm spec:validate; pnpm check:progress; targeted Prettier (fixture and final evidence)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web/catalog0errors0warnings,140catalog boundaries; ownership/spec-first/spec-validate/progress120tasks pass. All nine changed files formatted and format-checked. Logs /tmp/jj-search-controls-web-final.log; /tmp/jj-search-controls-catalog-final.log; /tmp/jj-search-controls-governance-final.log; /tmp/jj-search-controls-progress-final.log; /tmp/jj-search-controls-format-final.log."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-080",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Agent layout, inline threaded tool comments and session comment footer",
+    "revision": "Enclosing Jujutsu change lkytrwtt",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-005",
+      "JST-UI-006",
+      "JST-UI-015",
+      "JST-UI-018",
+      "JST-WORK-008",
+      "JST-COLLAB-003",
+      "JST-COLLAB-004",
+      "JST-COLLAB-005",
+      "JST-COLLAB-007",
+      "JST-API-006",
+      "JST-PUB-007",
+      "JST-PUB-009",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007",
+      "JST-GOV-008"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. Filesystem-local agent review/session comments remain deferred. Root aggregates, real-RustFS fault qualification, production built-CSP qualification, publication, main landing and fixture reset are out of scope."
+    ],
+    "scope": "Appearance workspace native/UI slice. Community inspected first, Design Core sheet/sidebar and footer contracts second. Directory rows retain 4px separation; repository, selected-project and hub responses honor Focus sheets or Split body sidebars, with retained selections and opener focus. A mounted controlled sheet clears mobile teleported content. Independently read tool comments and full-row reply composers stay below each exact call, avoiding nested Focus layers. Tool row hover/focus excludes comment descendants. Agent tools/sessions are conversation roots: top comments depth1, replies depth2 with the existing Thread 2.25rem indentation, capped depth and curved connectors. Reply/Edit activates the exact retained review. Session comments use a fixed footer outside the transcript scroll body, an exact native session snapshot anchor and existing ReviewStore publication. Drafts and exact unknown requests survive Close/Settings/layout; all inline composers offer receipt-status recovery. Late reads are target-guarded. The shared composer stops async binding reads after successful submission removes it. Owned loader/reader, reply-tree, fixture mutation and story helpers satisfy module limits without raising architecture budgets. Shared shell/conversation/composer/fixture consumers justify store-work, store-application, store-threads and AppearanceComposer; the additive native anchor also requires focused model/WAL/HTTP/generated-contract lanes. No root aggregate qualification.",
+    "files": [
+      "catalog/components/store-application/AgentComments.stories.svelte",
+      "catalog/components/store-application/AgentLayout.stories.svelte",
+      "catalog/components/store-application/AgentToolGroups.stories.svelte",
+      "catalog/components/store-application/NativeAgentMenus.stories.svelte",
+      "catalog/components/store-application/agent-comment-replies-play.ts",
+      "catalog/components/store-application/appearance-tool-discussion-play.ts",
+      "catalog/controller/in-memory-review-comments.ts",
+      "catalog/controller/in-memory-store-collaboration.svelte.ts",
+      "catalog/fixtures/AgentLayoutFixture.svelte",
+      "catalog/fixtures/StoreRepositoryApplicationFixture.svelte",
+      "crates/jj-review/src/anchors.rs",
+      "crates/jj-review/src/dependencies.rs",
+      "crates/jj-review/src/validation.rs",
+      "crates/jj-review/tests/anchors.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_collaboration_reviews.rs",
+      "crates/jj-store-wal/src/publication/review.rs",
+      "crates/jj-store-wal/tests/review_commands.rs",
+      "docs/ui-provenance.json",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/publication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/appearance/drafts.svelte.ts",
+      "web/src/lib/collaboration/presentation.ts",
+      "web/src/lib/collaboration/review-comment-rows.ts",
+      "web/src/lib/collaboration/revision-collaboration.ts",
+      "web/src/lib/controller/agent-review-reader.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/native-agent-context.ts",
+      "web/src/lib/controller/native-review-context.ts",
+      "web/src/lib/controller/production-agent-loaders.ts",
+      "web/src/lib/controller/production-inline-review-actions.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-collaboration.svelte.ts",
+      "web/src/lib/controller/project-agent-response.svelte.ts",
+      "web/src/lib/controller/review-comment-anchor.ts",
+      "web/src/lib/ui/community-chat-composer/CommunityChatComposer.svelte",
+      "web/src/lib/ui/community-chat-composer/composer-autocomplete-apply.ts",
+      "web/src/lib/ui/store-application/StoreApplicationRightPanels.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentComments.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessionRow.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSidebar.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolDiscussion.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTools.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewComposer.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte",
+      "web/src/lib/ui/store-discussion/StoreDiscussionSheet.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAgentDirectory.svelte",
+      "web/tests/vite/production-store-collaboration.test.ts"
+    ],
+    "tests": [
+      "crates/jj-review/tests/anchors.rs#session_anchor_retains_only_the_exact_session_snapshot",
+      "crates/jj-store-wal/tests/review_commands.rs#session_comments_retain_the_snapshot_and_reject_identity_mismatch_after_cold_open",
+      "crates/jj-store-cli/tests/native_lifecycle/http_collaboration_reviews.rs#local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail"
+    ],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;pnpm10.32.1;Rust1.98.1;existing governed local Design Core source (InputGroup fix zukowoxl/4922feea);portable dependency ranges unchanged.",
+    "formats": "Additive ArtifactTargetV1 agent_session JSON variant with stable session_id and exact session_snapshot reference. Existing V1 anchor bytes/hashes, manifest/WAL/request/receipt formats and publication authority unchanged. Kind/presence/identity checked during staging and cold reads; complete AgentStore dependency closure retained. OpenAPI and TypeScript regenerated. Filesystem-local agent review targets remain unsupported.",
+    "artifacts": "/tmp/jj-agent-layout-*.log; /tmp/jj-agent-comments-*.log; /tmp/jj-agent-session-*.log; /tmp/jj-agent-comment-*.log; /tmp/jj-agent-comments-live.png",
+    "next": "Retain visual-pending; filesystem-local agent review/session comments require a separate governed slice. Main landing and publication remain outside this slice.",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentLayout.stories.svelte (initial before)",
+        "result": "fail",
+        "failures": 7,
+        "note": "7failed/1passed. Two selected-project setup races: clicked Agents before route initialization. /tmp/jj-agent-layout-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentLayout.stories.svelte (corrected before)",
+        "result": "fail",
+        "failures": 6,
+        "note": "6failed/2passed: five Focus scenarios rendered sidebar; repository row gap0.03125px. Waited for Edit project before switching its tab and settled virtual row frames. /tmp/jj-agent-layout-before-corrected.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentLayout.stories.svelte (first after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "6passed/2failed: mobile teleported sheet stayed after Close when conditionally destroyed while open. /tmp/jj-agent-layout-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentLayout.stories.svelte (controlled open)",
+        "result": "pass",
+        "failures": 0,
+        "note": "8/8. Persistent controlled-open sheet clears mobile reparented content. /tmp/jj-agent-layout-after-controlled.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentLayout.stories.svelte (strengthened)",
+        "result": "fail",
+        "failures": 2,
+        "note": "8passed/2failed: new Settings layout-switch assertions queried selected rows through the covering sheet accessible tree. Replaced only the new selection lookup with exact retained DOM row identity; behavioral assertions retained. /tmp/jj-agent-layout-final-regression.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentLayout.stories.svelte (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "10/10: spacing with neighboring selected/hovered rows; repository/project/hub desktop and mobile Focus, sheet bounds, Close/Escape/scrim, retained directory, focus restoration and selected session across Settings Focus/Split. /tmp/jj-agent-layout-qualified-regression.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture; pnpm spec:first; pnpm spec:validate (focused checks)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final web/catalog0errors0warnings;142catalog modules. Other focused gates passed; final formatted ledger gates follow. Logs /tmp/jj-agent-layout-*.log."
+      },
+      {
+        "command": "Live browser read-only Focus deep link and row geometry",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold selected Projects session restores sheet. Main left242px, sheet left354px, both bottom712px and right1272px;112px desktop allowance. Gaps4.015625px. Screenshot inspected /tmp/jj-agent-layout-focus.png. Later browser setting changed to Split while user continued interacting; cold reload honors sidebar. No live data writes."
+      },
+      {
+        "command": "Read-only discovery and live verification errors",
+        "result": "fail",
+        "failures": 1,
+        "note": "Some guessed source paths/globs were absent, corrected using rg --files. Live Close locator no longer matched after page changed to Split; inspected fresh state. Restricted DOM evaluate did not expose localStorage; used UI/cold reload instead. No state mutation."
+      },
+      {
+        "command": "Design Core: final formatting/spec gates and jj commit",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed prior InputGroup source repair qualification: final pnpm checks passed /tmp/dc-input-group-checks-qualified.log; final spec-first/check pass; committed zukowoxl/4922feea. Earlier readiness and visual-cache failures remain documented upstream. No publication."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work catalog/components/store-application catalog/components/store-threads (initial consumer run)",
+        "result": "fail",
+        "failures": 4,
+        "note": "192passed/1failed and3runtime errors: nested agent/tool Focus sheets collided. Inline tool discussion replaces nested layers. /tmp/jj-agent-layout-consumers.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t ToolAndCommentHover (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failed/4skipped: parent tool toolbar remained visible on comment hover. /tmp/jj-agent-tool-hover-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t AgentCommentReplies (before/first after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before1failed/5skipped: depths0,1,2. First after geometry passed but Reply click raced toolbar opacity. Wait for actual visibility; geometry retained. Logs indent-before/after."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t AgentCommentReplies (qualified/lifecycle diagnosis)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1interaction passed/5skipped but derived_inert warning remained. Reproduced warning-stack/warning-caught; stack2 run had no warning. Temporary guard stack capture proved shared composer submit read removed StoreReviewComposer binding. Instrumentation fully removed; no diagnostic suppression. /tmp/jj-agent-comment-runtime-stack.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t AgentCommentReplies (lifecycle repaired)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1passed/5skipped, no derived_inert warning. /tmp/jj-agent-comment-lifecycle-qualified.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentComments.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Missing session footer;2failed. /tmp/jj-agent-session-footer-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AgentComments.stories.svelte (first after)",
+        "result": "fail",
+        "failures": 3,
+        "note": "3failed/3passed: placeholder counted as editor text; footer made textbox lookup ambiguous. Scoped editor and asserted cleared submitted text/disabled submit. /tmp/jj-agent-comments-stories-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte (qualification attempt)",
+        "result": "fail",
+        "failures": 5,
+        "note": "12passed/5failed: hover targeted old outer wrapper, and conditional composer wrapper destruction orphaned mobile sheet. Fixed true tool-row hover and always-mounted optional-controller wrapper. /tmp/jj-agent-comments-stories-qualified.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte (19-check pass)",
+        "result": "pass",
+        "failures": 0,
+        "note": "19/19 before final indentation/recovery cases. /tmp/jj-agent-comments-stories-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte (20-check attempt)",
+        "result": "fail",
+        "failures": 2,
+        "note": "18passed/2failed: exact repository draft key omitted grouped-tools reader; fixture tool append did not advance committed request ID. Fixed key consumer and receipt-aware fixture publishing. /tmp/jj-agent-comments-exact-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte (complete exact run)",
+        "result": "pass",
+        "failures": 0,
+        "note": "21/21:10layout,6tool/grouping/hover/indentation,5footer and pending tool/nested reply recovery. Footer geometry asserts actual scrollTop>0. /tmp/jj-agent-comments-exact-qualified.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/production-store-collaboration.test.ts catalog/controller/store-controller.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "26/26. /tmp/jj-agent-comments-controller-tests.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/production-store-collaboration.test.ts web/tests/vite/projects-agent-response.test.ts web/tests/vite/projects-agents.test.ts catalog/controller/store-controller.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "34/34 before and after helper extraction: independent exact-target reads, mismatches, unknown identity and session switch. Logs controller-consumers/complete."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/collaboration-presentation.test.ts web/tests/review-comment-anchor.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "8/8 before and after helper extraction. Logs presentation-tests/complete."
+      },
+      {
+        "command": "cargo test -p jj-review --test anchors session_anchor_retains_only_the_exact_session_snapshot --locked -- --exact (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Unknown agent_session variant. /tmp/jj-agent-session-anchor-before.log."
+      },
+      {
+        "command": "cargo test -p jj-review --test anchors session_anchor_retains_only_the_exact_session_snapshot --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 exact dependency, canonical roundtrip and wrong kind. /tmp/jj-agent-session-anchor-after.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test review_commands session_comments_retain_the_snapshot_and_reject_identity_mismatch_after_cold_open --locked -- --exact (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Test omitted recover(128) argument; corrected compile failure. /tmp/jj-agent-session-wal-test.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test review_commands session_comments_retain_the_snapshot_and_reject_identity_mismatch_after_cold_open --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 receipt replay, missing/mismatched rejection, exact retained dependency after cold reopen and append after recovery. Fake-memory evidence, not real RustFS. /tmp/jj-agent-session-wal-test-qualified.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle http_collaboration_review_acceptance::local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 admitted HTTP session anchor roundtrip, read-only rejection, receipt replay and actual contract capture. /tmp/jj-agent-session-http-test.log."
+      },
+      {
+        "command": "cargo test -p jj-review --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "19model tests. /tmp/jj-agent-session-review-suite.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test review_commands --test review_projector --test review_catalog --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "15/15. /tmp/jj-agent-session-wal-suite.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test review_provider --test review_relations --test collab_persistence --test native_copy --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "16/16 direct persistence/copy/provider/relation consumers. /tmp/jj-agent-comments-wal-consumers.log."
+      },
+      {
+        "command": "cargo clippy -p jj-review -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean. /tmp/jj-agent-comments-rust-check.log."
+      },
+      {
+        "command": "pnpm contracts:generate; pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated contracts match;140actual HTTP/SSE samples including session anchors conform;7contract tests and TypeScript request checks pass. /tmp/jj-agent-comments-contracts-check.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 15,
+        "note": "Web1error owner possibly undefined; catalog14unsupported exact selector options/HTMLElement narrowing errors. Corrected. Logs web-check/catalog-check."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (module extraction)",
+        "result": "fail",
+        "failures": 5,
+        "note": "Web clean; catalog4implicit params and native-only type used for native/local session state. Use owned StoreControllerState. /tmp/jj-agent-comments-catalog-check-complete.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (verified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings;145catalog modules. Logs web-check-complete/catalog-check-verified."
+      },
+      {
+        "command": "pnpm check:architecture (initial/extraction attempts)",
+        "result": "fail",
+        "failures": 5,
+        "note": "Initial5file budgets, then2, then1 exceeded. Split models/readers/loaders, fixture mutations and story helpers without raising budgets. Logs architecture/qualified/final."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "782source modules,16packages; owned provenance. Final gates follow. Logs architecture-complete/boundaries/ui-ownership."
+      },
+      {
+        "command": "cargo fmt --all; pnpm exec prettier --write (changed source/spec/JSON files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Named changed files formatted; format/modules-format/recovery-format/fixture-format/final-types-format logs."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Appearance workspace native binaries rebuilt. /tmp/jj-agent-comments-backend-build.log."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-appearance/target/debug/jj-store pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned backend91193->42374 on7462; Vite68050 stays7460. Fixture/storage/search preserved, no reset/reseed or unrelated restart. /tmp/jj-agent-comments-backend-restart.log."
+      },
+      {
+        "command": "CUA cold native agent/tool-review deep link, hover and footer inspection",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live depths1,2; comment toolbar opacity1 and tool toolbar0. Screenshot inspected /tmp/jj-agent-comments-live.png. Initial loading wait timed out; captured200API responses settled into exact selected session. No live writes/user tab interaction."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work catalog/components/store-application catalog/components/store-threads catalog/components/store-appearance/AppearanceComposer.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "158assertions passed in28/45files before browser WebSocket closed. Incomplete; rerun same surface in two fresh shards, no diagnostics suppressed. /tmp/jj-agent-comments-consumers-final.log."
+      },
+      {
+        "command": "python3 inline ledger update (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "JSON raw_decode rejected leading whitespace before any write; corrected parse starts at opening brace."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work catalog/components/store-application catalog/components/store-threads catalog/components/store-appearance/AppearanceComposer.stories.svelte --shard=1/2 (first shard attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "91passed/1failed: NativeAgentMenus hovered the outer tool/comment wrapper, whose center is now a comment. Updated hover/unhover to the inner tool row; preserved open-menu toolbar visibility and exact native identifier assertions. /tmp/jj-agent-comments-consumers-shard1.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 after correcting the hover target. /tmp/jj-agent-comments-native-menus-qualified.log."
+      },
+      {
+        "command": "pnpm spec:first (first final attempt)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Four protected-file mapped chapters missing: cli, compatibility, publication and spec-governance. Added narrow session-anchor transport, compatibility, identity/dependency retention and qualification guidance. /tmp/jj-agent-comments-spec-first.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/NativeAgentMenus.stories.svelte spec/src/cli.md spec/src/compatibility.md spec/src/publication.md spec/src/spec-governance.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Direct-consumer story and mapped canonical chapter additions formatted. /tmp/jj-agent-comments-final-docs-format.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "49protected files/9mapped chapters. /tmp/jj-agent-comments-spec-first-qualified.log."
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "No formatting changes required. /tmp/jj-agent-comments-rust-format-qualified.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "782modules; provenance/ownership validator passed. Logs architecture-qualified/ownership-qualified."
+      },
+      {
+        "command": "sed -n 1,210p scripts/test-storybook.mjs (discovery)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Guessed script does not exist; package.json confirms test:storybook invokes Vitest directly. No test runner changes."
+      },
+      {
+        "command": "CUA temporary verification tab cleanup",
+        "result": "pass",
+        "failures": 0,
+        "note": "Closed only agent-created tab25; confirmed user tab24 remains on exact native session/tool-review deep link."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work catalog/components/store-application catalog/components/store-threads catalog/components/store-appearance/AppearanceComposer.stories.svelte --shard=1/2 (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "23files/92tests passed in a fresh browser. Includes repaired NativeAgentMenus hover assertions. /tmp/jj-agent-comments-consumers-shard1-qualified.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work catalog/components/store-application catalog/components/store-threads catalog/components/store-appearance/AppearanceComposer.stories.svelte --shard=2/2 (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "22files/110tests passed in a fresh browser. Combined direct-consumer surface:45files/202tests; no browser closure/runtime errors. /tmp/jj-agent-comments-consumers-shard2-qualified.log."
+      },
+      {
+        "command": "pnpm exec prettier --check (51 changed presentation, generated contract and canonical files; initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Only milestones.md needed formatting after evidence insertion. /tmp/jj-agent-comments-format-qualified.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted ledger after evidence update. /tmp/jj-agent-comments-ledger-format-qualified.log."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress (after mapped chapter/evidence updates)",
+        "result": "pass",
+        "failures": 0,
+        "note": "5validators/21chapters/147requirements;120tasks. Logs spec-validate-qualified/progress-qualified."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm exec prettier --check (51 changed files); pnpm spec:first; pnpm spec:validate; pnpm check:progress (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "51files formatted; spec-first49protected files/9chapters;5validators/21chapters/147requirements;120tasks. Final ledger run insertion is formatted and checked again before standing JJ commit. Logs ledger-format-final/format-final/spec-first-final/spec-validate-final/progress-final."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-081",
+    "tasks": ["M15.5"],
+    "date": "2026-10-02",
+    "kind": "Repository-owned sidebar threads and contextual breadcrumbs",
+    "revision": "Enclosing Jujutsu change rsnmqnln",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-005",
+      "JST-UI-006",
+      "JST-UI-017",
+      "JST-API-006",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007",
+      "JST-GOV-008"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. No milestone status promotion. Rust and root aggregate lanes, built production CSP qualification, backend rebuild/reset/restart, main landing and publication are out of scope for this UI-only slice."
+    ],
+    "scope": "Reuse the appearance workspace and existing Vite HMR. Community navigation and Projects breadcrumbs inspected first, Design Core Collapsible/Command View/Breadcrumb second. Remove the standalone Threads section; native repositories disclose indented Browse threads and exact thread children. Browse threads label omits the redundant repository name. Group icon-only action and compact Actions entry use the connected native owner or authorized native fallback. Independent memory-only bounded list readers load up to two repositories concurrently, retain loaded windows on refresh, validate repository/epoch/thread root and clear protected data on session teardown. Selection binds the explicit owner, guards late connections and omits unsupported local folders. Repository/Threads/selected-thread breadcrumbs reuse Projects header/mobile placement and preserve available code context. Owned picker/action/lifecycle extraction and shared controller callbacks keep existing architecture budgets. Directly affected thread/navigation/project persistence stories and production bootstrap/refresh tests are the complete focused impact surface; root aggregates do not apply.",
+    "files": [
+      "catalog/components/store-threads/StoreThreadNavigation.stories.svelte",
+      "catalog/components/store-threads/StoreThreads.stories.svelte",
+      "catalog/fixtures/StoreThreadsFixture.svelte",
+      "docs/ui-provenance.json",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-refresh.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/production-threads-integration.ts",
+      "web/src/lib/controller/repository-thread-navigation.svelte.ts",
+      "web/src/lib/ui/community-navigation/CommunityNavigation.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigationAction.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigationSectionPicker.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigationTree.css",
+      "web/src/lib/ui/community-navigation/icons.ts",
+      "web/src/lib/ui/community-navigation/model.ts",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/store-navigation.ts",
+      "web/src/lib/ui/store-threads/StoreThreadsBreadcrumb.svelte",
+      "web/src/lib/ui/store-threads/thread-navigation-binding.svelte.ts",
+      "web/src/lib/ui/store-threads/thread-navigation.ts",
+      "web/tests/vite/automatic-store-refresh.test.ts",
+      "web/tests/vite/repository-thread-navigation.test.ts",
+      "web/tests/vite/thread-navigation-integration.test.ts",
+      "web/tests/vite/thread-navigation.test.ts"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; existing Design Core ^0.2.0 and owned Community provenance retained. No dependency changes.",
+    "formats": "Existing bounded Threads HTTP reads, native thread IDs, route/hash, code operation pins, native object/manifest/WAL/receipt and OpenAPI formats unchanged. Optional controller navigation and repository owner fields are presentation-only. Disclosure flags retain existing versioned browser layout storage; sidebar thread data and credentials stay memory-only.",
+    "artifacts": "/tmp/jj-thread-navigation-*.log; /tmp/jj-thread-navigation-live.jpg",
+    "next": "Retain visual-pending; use the verified committed workspace for further UI changes. Main landing and publication require a separate request.",
+    "runs": [
+      {
+        "command": "pnpm catalog:test web/tests/vite/thread-navigation.test.ts (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Standalone section and missing owner forwarding reproduced. /tmp/jj-thread-navigation-before.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/thread-navigation.test.ts web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "25passed. /tmp/jj-thread-navigation-unit-first.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/repository-thread-navigation.test.ts web/tests/vite/thread-navigation.test.ts web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "28passed: independent native owners, paging/window retention, late credential teardown and foreign/denied reads. /tmp/jj-thread-navigation-unit-qualified.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadNavigation.stories.svelte (initial)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Test setup expected a custom label on Breadcrumb, while the public primitive uses breadcrumb; mobile sidebar starts closed. Corrected selectors and opened the accessible mobile sidebar. /tmp/jj-thread-navigation-story-first.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 11,
+        "note": "Web0errors0warnings; catalog11errors0warnings from unsupported Testing Library exact role option. Removed invalid options; exact string matching retained. Logs web-first/catalog-first."
+      },
+      {
+        "command": "pnpm check:architecture (initial/second/third)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial controller313/300, navigation368/364, shell323/320; formatting then left controller311/300 and navigation378/364; final intermediate controller302/300. Extracted reader factory, effect binding and picker/action, reused lifecycle callbacks/source accessor. No budget changes. Logs architecture-first/second/third."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadNavigation.stories.svelte (second)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Assertions omitted normal breadcrumb whitespace. Corrected to anchored whitespace-tolerant directory text; repository, thread, links, icon-only action and indentation assertions retained. /tmp/jj-thread-navigation-story-second.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadNavigation.stories.svelte (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3passed including desktop/mobile/compact owner switching, Browse action, directory breadcrumbs, no standalone section and child icon indentation greater than16px. /tmp/jj-thread-navigation-story-third.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (after picker extraction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings;146catalog modules. Logs web-final/catalog-final."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/repository-thread-navigation.test.ts web/tests/vite/thread-navigation.test.ts web/tests/vite/thread-navigation-integration.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/automatic-store-refresh.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-automatic-refresh.test.ts (first extended)",
+        "result": "fail",
+        "failures": 1,
+        "note": "41passed/1failed: optional cleared replyId was undefined, test expected literal null. Normalize optional absence with ?? null while retaining exact owner, thread and cleared reply assertions. /tmp/jj-thread-navigation-unit-final.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/repository-thread-navigation.test.ts web/tests/vite/thread-navigation.test.ts web/tests/vite/thread-navigation-integration.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/automatic-store-refresh.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-automatic-refresh.test.ts (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "42passed across7files; exact owner connection, authorized native fallback, unsupported/unauthorized rejection, stale navigation guard and independent sidebar freshness included. /tmp/jj-thread-navigation-unit-qualified-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "47passed across8files, interaction/accessibility. Fresh Vitest browser process. /tmp/jj-thread-navigation-consumers.log."
+      },
+      {
+        "command": "pnpm check:architecture (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "788modules, no module budget or ownership violations. /tmp/jj-thread-navigation-architecture-final.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Mapped api.md and spec-governance.md missing from current change. Added bounded authorization/teardown and UI qualification contract. /tmp/jj-thread-navigation-spec-first.log."
+      },
+      {
+        "command": "Targeted pnpm exec prettier --write (changed files; subsequent extraction and integration-test paths)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted all changed production/test/fixture/provenance/UI chapter files; final canonical ledger/chapter formatting and checks follow."
+      },
+      {
+        "command": "Cold live browser sidebar selection, thread context and Browse threads action (CUA temporary background tab)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Projects hub lists thread children under their owner. Selecting test connects jj-store demo and restores its exact thread. Breadcrumb shows owner/Threads/test; group Browse threads returns directory with owner/Threads and retained operation. Child icon left42.59375px vs repository23px. Screenshot inspected and saved; tab closed, user tab unchanged. No live data writes or service resets."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check (30 changed files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web/catalog0errors0warnings;146catalog modules; ownership1validator; spec-first26protected files/4chapters; spec validation5validators/21chapters/147requirements; progress120tasks; all changed files formatted. Logs web-qualified/catalog-qualified/ownership/spec-first-qualified/spec-validate/progress/format. Final evidence insertion is formatted and rechecked before committing."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-082",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Aligned agent session rows and loading insets",
+    "revision": "Enclosing Jujutsu change mkopqqvt",
+    "requirements": [
+      "JST-UI-005",
+      "JST-UI-006",
+      "JST-UI-015",
+      "JST-API-006",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. No milestone status promotion. Rust, root aggregate lanes, production bundle builds, backend rebuild/reset/restart, main landing and publication are out of scope for this UI-only row and skeleton slice."
+    ],
+    "scope": "Reuse the clean appearance workspace and existing Vite HMR. Community avatar/layout source inspected first, Design Core button/skeleton second. Repository and Projects agent lists share heading-relative horizontal inset and borderless collection rows. Initial Projects and per-repository skeletons share that inset, row gap and horizontal padding; the agent-specific variant preserves other collaboration skeletons. Agent avatars align to row center. Actions and optional code association controls participate in the title row with their full existing button target and independent pointer interaction, leaving duration below. Existing directly affected stories gain geometry and menu assertions; no new test family or foundational dependency change.",
+    "files": [
+      "catalog/components/store-application/AgentLayout.stories.svelte",
+      "catalog/components/store-application/StoreCollaboration.stories.svelte",
+      "catalog/components/store-work/ProjectsAgents.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessionRow.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreCollaborationSkeleton.svelte",
+      "web/src/lib/ui/store-collaboration/store-collaboration.css",
+      "web/src/lib/ui/store-work/StoreProjectsAgentDirectory.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsLoading.svelte"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; existing Design Core ^0.2.0 and owned Community provenance retained. No dependency changes.",
+    "formats": "AgentStore summaries, pagination, native session/snapshot IDs, route/hash, HTTP/OpenAPI, local object/manifest/WAL/receipt formats unchanged. New skeleton prop and CSS inset are presentation only.",
+    "artifacts": "/tmp/jj-agent-row-*.log; /tmp/jj-agent-row-live.jpg",
+    "next": "Retain visual-pending and the committed workspace for further UI changes.",
+    "runs": [
+      {
+        "command": "Read-only live Projects agent row geometry (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Avatar center was7.296875px above row center; actions button bottom258.1796875px overlapped duration top252.7734375px by5.40625px. Exact shared row layout regression."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped api.md missing from the protected change. Added presentation-only session contract statement; no API changes."
+      },
+      {
+        "command": "pnpm exec prettier --write (11 changed production/story/chapter files); pnpm exec prettier --write catalog/components/store-application/AgentLayout.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted changed files; format and format-story logs."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings. /tmp/jj-agent-row-web.log."
+      },
+      {
+        "command": "pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Storybook Testing Library ByRoleOptions rejects exact:true. Replaced with anchored /^Copy$/ accessible name; same runtime matching semantics. /tmp/jj-agent-row-catalog.log."
+      },
+      {
+        "command": "pnpm catalog:check (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings;146catalog modules. /tmp/jj-agent-row-catalog-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "41passed across4files in fresh Vitest browser process. Projects/selected-project/repository row gap, avatar centers, menu opening and duration clearance, header insets/no separators, initial Projects and repository skeleton geometry, loading/reviews and Focus/Split/mobile direct consumers. /tmp/jj-agent-row-stories.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "788modules within unchanged budgets; ownership1validator/21chapters/147requirements."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "9protected files/2canonical chapters;5validators/21chapters/147requirements. spec-first/spec-validate logs."
+      },
+      {
+        "command": "Read-only live Projects and repository Agents verification (CUA temporary background tab)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both avatar center offsets0px and action/duration gap5.59375px. Repository row left/right match heading exactly, border0px and inner padding10.4px; row height79.984375px. Projects actions menu opens; repository initial loading observed. Saved and inspected full viewport screenshot. Temporary tab closed; user tab untouched. No data writes or service resets."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm exec prettier --check (12 changed files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "120tasks;9protected files/3canonical chapters;5validators/21chapters/147requirements;all changed files formatted. Final progress/spec-first/spec-validate/format logs. This evidence insertion is formatted and checked before standing JJ commit."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-083",
+    "tasks": ["M4.13", "M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Persisted page disclosures and transparent sidebar toggles",
+    "revision": "Enclosing Jujutsu change zqzuymro",
+    "requirements": [
+      "JST-UI-005",
+      "JST-UI-006",
+      "JST-UI-015",
+      "JST-API-006",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. No milestone status promotion. Rust, root aggregates, production bundle builds, backend rebuild/reset/restart, main landing, dependency changes and publication are out of scope for this UI-only slice."
+    ],
+    "scope": "Reuse the appearance workspace and existing Vite HMR. Community shell/disclosure persistence inspected first, released Design Core Button tokens and Collapsible API second. Expanded ghost buttons previously acquired a muted background; header sidebar actions now use public transparent Button tokens with unchanged expansion semantics, size, icons, hover and focus. Projects collection groups, repository Agent sessions, task Description/Subtasks/Activity, review Description/Files/Commits/Activity/agent context and Op Log operation summary retain choices across tab switches, remount and reload. Owned context uses stable scope/entity/section identities, omits filters and operation pins, and persists bounded opaque SHA256 keys plus booleans only. Corrupt or unavailable storage falls back safely. Explicit task-comment navigation opens Activity; independently mounted composers and existing drafts remain intact. Native helpers and fixtures add no Community dependency. Directly affected UI story families and focused storage tests form the complete verification surface.",
+    "files": [
+      "catalog/components/store-work/DisclosurePersistence.stories.svelte",
+      "catalog/fixtures/DisclosurePersistenceFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      "web/src/lib/ui/community-app-shell/right-sidebar.css",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogDiff.svelte",
+      "web/src/lib/ui/disclosure-layout.svelte.ts",
+      "web/src/lib/ui/disclosure-storage.ts",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreApplicationHeaderActions.svelte",
+      "web/src/lib/ui/store-application/entity-context.ts",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreNativeAgentContext.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewDetail.svelte",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAgentDirectory.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsDirectory.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsRepositories.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsReviews.svelte",
+      "web/src/lib/ui/store-work/StoreWorkCollection.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkOwnershipGroups.svelte",
+      "web/src/lib/ui/store-work/StoreWorkSubtasks.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/tests/vite/disclosure-layout.test.ts"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; existing Design Core ^0.2.0 and @noble/hashes ^2.4.0. Dependencies and owned Community provenance unchanged.",
+    "formats": "New device-local jj-store/layout/v1/disclosures JSON version1 with at most1024 opaque64hex keys and boolean flags. No credentials, display names, repository IDs, selections, snapshots, cursors, drafts or command data stored. Native API/OpenAPI, routes, storage objects, manifest, WAL and receipts unchanged.",
+    "artifacts": "/tmp/jj-disclosures-*.log; /tmp/jj-disclosures-live.jpg",
+    "next": "Retain visual-pending and the committed appearance workspace for further UI changes.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager diff; inspect Community and released Design Core Button/Collapsible source",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean working change after committed row/skeleton slice. Collections used local state and reset on remount; expanded ghost buttons used muted background. Narrow acceptance is persisted choices and identical transparent resting sidebar actions."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed production/story/test/chapter files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial formatting, subsequent missed-open/snippet fixes, test selectors and Op Log scenario formatted. /tmp/jj-disclosures-format.log; /tmp/jj-disclosures-format-story.log."
+      },
+      {
+        "command": "pnpm web:check (initial)",
+        "result": "fail",
+        "failures": 7,
+        "note": "Seven diagnostics in two files: Activity state collided with existing snippet and one NativeAgentContext open reference remained. Fixed naming and reference; no assertion changes. /tmp/jj-disclosures-web.log."
+      },
+      {
+        "command": "pnpm web:check (after fixes and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings. /tmp/jj-disclosures-web-final.log; /tmp/jj-disclosures-web-qualified.log."
+      },
+      {
+        "command": "pnpm catalog:check (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings;148catalog modules. /tmp/jj-disclosures-catalog.log; /tmp/jj-disclosures-catalog-qualified.log."
+      },
+      {
+        "command": "pnpm check:architecture (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "CommunityAppShell305counted lines exceeded unchanged300line budget. Moved public token boundary to existing owned right-sidebar.css, without increasing any budget."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "792modules; ownership1validator/21chapters/147requirements. /tmp/jj-disclosures-architecture-qualified.log; /tmp/jj-disclosures-ownership-qualified.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "19protected files/2canonical chapters. /tmp/jj-disclosures-spec-first.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/disclosure-layout.test.ts web/tests/vite/store-shell-layout.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "9/9 across2files: restore open/closed, owner/task/group/project isolation, stable filter/operation keys, malformed storage, blocked/quota fallback and opaque1024entry bound. /tmp/jj-disclosures-unit.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/DisclosurePersistence.stories.svelte (initial cold run)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1suite/0tests: newly imported SHA256 module caused Vite dependency optimization and reload during import. Prepared optimizer cache reused for the next fresh browser process; no infrastructure changes. /tmp/jj-disclosures-regression.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/DisclosurePersistence.stories.svelte (second)",
+        "result": "fail",
+        "failures": 2,
+        "note": "3passed/2failed. Agent context was queried after collapsing its parent Activity; synthetic Testing Library hover does not activate CSS :hover. Test now opens context before Activity and uses Vitest native pointer for CSS hover. /tmp/jj-disclosures-regression-second.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/DisclosurePersistence.stories.svelte (third)",
+        "result": "fail",
+        "failures": 1,
+        "note": "5passed/1failed: restored Files changed includes its count in the accessible name. Count-aware anchored selector retains the expansion assertion. /tmp/jj-disclosures-regression-third.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/DisclosurePersistence.stories.svelte (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "6/6 in fresh browser/Vite process: Projects and Repository groups across tab/remount; task sections and retained composer; review sections including nested agent context; Op Log summary; both sidebar states and native CSS hover. /tmp/jj-disclosures-regression-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "82/82 across13 directly affected files in a fresh Vitest browser/Vite process. Shell/application, collection, task/review, agent and Op Log interaction/accessibility consumers. /tmp/jj-disclosures-consumers.log."
+      },
+      {
+        "command": "Live reload verification through CUA temporary background tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Projects agent repository group and Repository Agent sessions stay aria-expanded=false after reload; restored original expanded choices. Both sidebar actions background rgba(0,0,0,0), including expanded Details; left button32x32. Screenshot saved and inspected. Restored initial closed Details preference and closed temporary tab; user tab untouched. No repository data writes or service restart."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (initial ledger)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Spec-first24protected files/3chapters and specification5validators/21chapters/147requirements passed. Progress checker rejects a temporary pending run result; replaced it with the completed82/82consumer pass. No product change. /tmp/jj-disclosures-spec-first-qualified.log; /tmp/jj-disclosures-spec-validate.log; /tmp/jj-disclosures-progress.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check (27 changed files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "24protected files/3canonical chapters;5validators/21chapters/147requirements;120tasks;all changed files formatted. /tmp/jj-disclosures-spec-first-final.log; /tmp/jj-disclosures-spec-validate-final.log; /tmp/jj-disclosures-progress-final.log; /tmp/jj-disclosures-format-check.log. This evidence insertion is formatted and rechecked before the standing JJ commit."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-084",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Shared Threads directory search and borderless toolbar",
+    "revision": "Enclosing Jujutsu change tlnzznzu",
+    "requirements": [
+      "JST-UI-005",
+      "JST-UI-006",
+      "JST-UI-015",
+      "JST-API-006",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. No milestone status promotion. Rust, root aggregates, production bundle builds, backend rebuild/reset/restart, main landing, dependency changes and publication are out of scope under the targeted UI verification policy."
+    ],
+    "scope": "Reuse the appearance workspace and existing Vite HMR. Inspect Community first, then released Design Core and official shadcn-svelte Input Group/Button guidance. Extract the existing Projects search into one owned toolbar component and reuse it for the repository Threads directory. Preserve the circular outlined trigger size/position, themed resting background, hover Close, conditional smaller Clear, borderless input, Escape and focus restoration. Remove the Threads toolbar bottom border. Enter filters already loaded authorized thread titles and directory previews case-insensitively; continuation remains available and later pages join the filter. Preserve the query through thread selection and returning to the directory; clear on repository switch. No-match copy differs from an empty repository. Projects retains its existing search behavior. Remove obsolete Projects search CSS. Production remains independent of catalog and Community. Direct Threads and Projects navigation consumers are one UI verification surface.",
+    "files": [
+      "catalog/components/store-threads/StoreThreadSearch.stories.svelte",
+      "catalog/components/store-work/ProjectsFilters.stories.svelte",
+      "catalog/fixtures/StoreThreadsFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/StoreToolbarSearch.svelte",
+      "web/src/lib/ui/forum-topic-list/ForumTopicList.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadHeader.svelte",
+      "web/src/lib/ui/store-threads/StoreThreads.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsNavigation.svelte",
+      "web/src/lib/ui/store-work/community-work-layout.css",
+      "web/src/lib/ui/store-work/store-projects.css"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; existing Design Core ^0.2.0. Dependencies and owned Community provenance unchanged.",
+    "formats": "No persistence or protocol changes. Threads query stays in memory; no new query parameter, indexed-search/API contract, native objects, manifest, WAL or receipts. Exact native thread selection and posting permissions unchanged.",
+    "artifacts": "/tmp/jj-thread-search-*.log; /tmp/jj-thread-search-live.jpg",
+    "next": "Retain visual-pending and the committed appearance workspace for further UI changes.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager diff; inspect Community and released Design Core InputGroup/Button; read official shadcn-svelte component docs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean tlnzznzu above zqzuymro/19a7bf96 before implementation. Threads had no toolbar search and a1px bottom border. Acceptance target is shared search geometry/interaction, loaded title/preview filtering and a0px toolbar border."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadSearch.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two exact regression failures: Search threads button absent. /tmp/jj-thread-search-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadSearch.stories.svelte (first implementation)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Returning to the directory reset the query because the effect tracked a reconstructed route object. Derived the repository identity separately before resetting, preserving the query for same-owner selection. /tmp/jj-thread-search-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadSearch.stories.svelte (second)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 desktop/mobile search stories passed after owner-scoped reset fix. /tmp/jj-thread-search-after-second.log."
+      },
+      {
+        "command": "pnpm web:check (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings. /tmp/jj-thread-search-web.log."
+      },
+      {
+        "command": "pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New fixture directory summary lacked required message_count. Added message_count:1; no product contract or assertion changes. /tmp/jj-thread-search-catalog.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed files and subsequent fixture/story/header/chapter updates)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed source, regression, fixture and canonical prose formatted. /tmp/jj-thread-search-format.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm spec:first (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "794modules with unchanged budgets;9protected files/2canonical chapters. /tmp/jj-thread-search-architecture.log; /tmp/jj-thread-search-spec-first.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadSearch.stories.svelte (final regression)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 in a fresh browser/Vite process: desktop/mobile geometry, Clear/Close/Escape/focus, title/preview filtering, retained query through selection, no-match copy, filtered pagination, repository switch reset and0px toolbar border. /tmp/jj-thread-search-final-regression.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/LayoutControls.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "49/49 across12 directly affected story files in a fresh browser/Vite process. /tmp/jj-thread-search-consumers.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm spec:first (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both Svelte checks0errors0warnings;149catalog modules; ownership1validator/21chapters/147requirements;9protected files/2chapters. /tmp/jj-thread-search-web-final.log; /tmp/jj-thread-search-catalog-final.log; /tmp/jj-thread-search-ownership.log; /tmp/jj-thread-search-spec-first.log."
+      },
+      {
+        "command": "Read-only live Threads toolbar verification through CUA temporary background tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded and collapsed trigger both x263,y52.5,width32,height32; toolbar border0px. Submitted test and observed only matching title/preview. Saved and inspected full viewport screenshot. Temporary tab closed; user tab untouched. No repository data writes or service restart. One generic-role selector timed out; verified the labeled toolbar through its accessible label."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm spec:first; pnpm spec:validate; pnpm exec prettier --check (13 changed files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source and initial ledger checks:794modules, unchanged budgets; ownership1validator;10protected files/3chapters; specification5validators/21chapters/147requirements;13changed files formatted. /tmp/jj-thread-search-{architecture-final,ownership-final,spec-first-final,spec-validate,format-check}.log."
+      },
+      {
+        "command": "pnpm check:progress (initial ledger)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two invalid test references: Storybook file paths need function names in the test-reference schema. Story evidence remains in files and completed runs; removed the unsupported test references. No test assertions or product behavior changed. /tmp/jj-thread-search-progress.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Ledger formatted;120tasks pass after removing unsupported Storybook test references. /tmp/jj-thread-search-ledger-format-final.log; /tmp/jj-thread-search-progress-qualified.log. This evidence insertion is checked again before the standing JJ commit."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-085",
+    "tasks": ["M9.5", "M11.4", "M16"],
+    "date": "2026-10-02",
+    "kind": "Continuous Buzz chrome and compact navigation popup surfaces",
+    "revision": "Enclosing Jujutsu change osvzspxk",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-018",
+      "JST-ARCH-004",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007",
+      "JST-GOV-008",
+      "JST-GOV-009"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. No milestone promotion. Existing M16 release/registry qualification remains separate. Rust builds/tests, root aggregates, production bundle builds, service rebuild/reset/restart, dependency changes, main landing and publication are out of scope under the targeted UI policy."
+    ],
+    "scope": "Reuse the appearance workspace and existing Vite HMR. Inspect Community shell/navigation first and released Design Core Popover/Command View public tokens/props second. Live light Buzz header repeated the whole yellow-to-blue gradient within40px; compact picker used235grey and its left edge touched the48px rail. Paint one gradient across the viewport-height app shell; transparent Buzz light/dark chrome reveals it while glass keeps its tint/opacity/blur. Other theme chrome and generated palette assets stay unchanged. Set both compact section-picker public background tokens to the resolved app background, white in light Buzz and opaque with glass enabled. Increase right sideOffset to16px to leave8px beyond the rail, retaining8px collision padding. Native navigation, search, focus restoration and authorization remain unchanged. One owned UI surface includes Projects/repository shell and compact-menu consumers; no foundation patches, sibling imports or new provenance source copies.",
+    "files": [
+      "catalog/components/store-appearance/AppearanceShell.stories.svelte",
+      "catalog/fixtures/AppearanceShellFixture.svelte",
+      "docs/reference/appearance-provenance.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/appearance/appearance.css",
+      "web/src/lib/ui/community-navigation/CommunityNavigation.css",
+      "web/src/lib/ui/community-navigation/CommunityNavigation.svelte"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; Design Core ^0.2.0. Dependencies, generated Shiki4.0.2 palette bytes, stored preferences and owned Community source provenance unchanged.",
+    "formats": "No native/API/route or persistence format changes. jj-store.appearance.v1 fields and glass preference remain unchanged; presentation-only public token bindings and Popover spacing.",
+    "artifacts": "/tmp/jj-shell-chrome-*.log; /tmp/jj-shell-chrome-live.jpg",
+    "next": "Retain visual-pending and the committed appearance workspace for UI iteration.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; inspect owning UI/API/architecture/governance and milestone chapters; inspect Community first and released Design Core second; read-only CUA shell/picker inspection",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean osvzspxk above tlnzznzu/19446858. Narrow acceptance is continuous Buzz chrome plus themed opaque compact menus with8px rail clearance. Live before: header linear gradient; popup and Command View rgb235,235,235; popup left48px equals rail right48px, gap0; trigger gap8px."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/fixtures/AppearanceShellFixture.svelte catalog/components/store-appearance/AppearanceShell.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial regression/fixture formatting. /tmp/jj-shell-chrome-format.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte (before)",
+        "result": "fail",
+        "failures": 6,
+        "note": "2header-gradient assertions and2rail-clearance assertions fail at the requested behavior.2Projects cases also expose an expanded-fixture assumption, so their absent compact input is fixture setup evidence. /tmp/jj-shell-chrome-before.log."
+      },
+      {
+        "command": "pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Testing Library ByRoleOptions does not accept the browser-style exact property. Removed it in favor of actual rendered compact triggers. /tmp/jj-shell-chrome-catalog.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (3 production files, UI chapter and appearance provenance)",
+        "result": "pass",
+        "failures": 0,
+        "note": "App-owned public token, viewport gradient and16px Popover offset changes formatted. /tmp/jj-shell-chrome-format-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte (after production fix)",
+        "result": "fail",
+        "failures": 4,
+        "note": "2header stories passed.4picker cases reached fixture assumptions: Projects starts expanded; repository fixtures omit Your projects. Helper now collapses the rail and verifies every rendered compact section trigger, with unchanged geometry and colour assertions. /tmp/jj-shell-chrome-after.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-appearance/AppearanceShell.stories.svelte; pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "6/6 in fresh browser/Vite process: Buzz light/dark continuous gradient; all rendered compact pickers in Projects/repository scope; app/Command backgrounds,8px rail/viewport clearance and Escape focus under Buzz, dark glass, GitHub Light Default and Original. /tmp/jj-shell-chrome-format-story.log; /tmp/jj-shell-chrome-qualified.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both type checks0errors0warnings;151catalog modules;796architecture modules with unchanged budgets; ownership1validator/21chapters/147requirements. /tmp/jj-shell-chrome-{web,catalog-qualified,architecture,ownership}.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-threads/StoreThreadNavigation.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "43/43 across7directly affected consumer files in a fresh browser/Vite process. Shell desktop/mobile, compact selection/search, Projects, repository/thread navigation and Appearance settings/discussion behavior. /tmp/jj-shell-chrome-consumers.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Missing mapped API and architecture chapter updates for appearance presentation CSS. Added the owned CSS/unchanged preference-contract boundary and compact-menu exception to the existing appearance chapters. /tmp/jj-shell-chrome-spec-first.log."
+      },
+      {
+        "command": "Read-only CUA live HMR verification in temporary background Projects tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Header backgroundImage none and backgroundColor transparent, full-height shell gradient retained. Popup left56px against48px rail, gap8px; Popover and Command View both rgb255,255,255. Saved and inspected full viewport screenshot, then closed temporary tab. User tab untouched; no data writes, preference changes or service restart."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/architecture.md spec/src/ui.md spec/src/milestones.md; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check (10 changed files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final evidence checks:6protected files/4canonical chapters;5validators/21chapters/147requirements;120tasks;all10changed files formatted. /tmp/jj-shell-chrome-{ledger-format,spec-first-qualified,spec-validate,progress,format-check}.log. This evidence insertion is checked again before the standing JJ commit."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-086",
+    "tasks": ["M9.5", "M11.4", "M16"],
+    "date": "2026-10-03",
+    "kind": "Shared palette popup surfaces and softer workspace search scope action",
+    "revision": "Enclosing Jujutsu change nnrtvymn",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-018",
+      "JST-ARCH-004",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007",
+      "JST-GOV-008",
+      "JST-GOV-009"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. M11.4 remains In progress and M16 Partial; existing release and registry qualification stays separate. No milestone promotion."
+    ],
+    "before": "Reuse the Appearance workspace nnrtvymn above osvzspxk/211f4205 and existing Vite7460/backend7462. Live Buzz Dialog was white while its inner Command View used the generated grey popover role, rgb235,235,235. Section-search markup omitted its existing scope-action class; unselected row was transparent. Community inspected first and released Design Core Command View public tokens/selectors second. Exact acceptance: generated popup/app surfaces match across62 palettes; scope action has a softer resting tint and stronger native hover and keyboard selection in light and dark.",
+    "scope": "One UI appearance/search presentation surface with direct popup/search consumers. The owned adapter maps generated popover background to app background for all62 Buzz-derived palettes; regenerate62CSS files and retain historical Original light/dark snapshots. Restore owned section-action class, use30% muted over background at rest and55% for hover/keyboard through the public selected-background token; match foundation data-selected and aria-selected states. Source foreground, hover, border, focus, accent, syntax and other palette roles remain unchanged. Search behavior, native authority, APIs, routes, credentials and preferences remain unchanged. No new source copies or sibling imports. Rust checks/builds, root aggregates, backend or UI restart/reset, native writes, production built-CSP qualification, dependency publication, main landing and visual approval are out of scope under the targeted UI policy.",
+    "files": [
+      "catalog/components/store-appearance/AppearanceOverlay.stories.svelte",
+      "catalog/fixtures/AppearanceOverlayFixture.svelte",
+      "docs/reference/appearance-provenance.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/appearance/adaptive-theme.ts",
+      "web/src/lib/appearance/palettes/andromeeda.css",
+      "web/src/lib/appearance/palettes/aurora-x.css",
+      "web/src/lib/appearance/palettes/ayu-dark.css",
+      "web/src/lib/appearance/palettes/buzz-dark.css",
+      "web/src/lib/appearance/palettes/buzz.css",
+      "web/src/lib/appearance/palettes/catppuccin-frappe.css",
+      "web/src/lib/appearance/palettes/catppuccin-latte.css",
+      "web/src/lib/appearance/palettes/catppuccin-macchiato.css",
+      "web/src/lib/appearance/palettes/catppuccin-mocha.css",
+      "web/src/lib/appearance/palettes/dark-plus.css",
+      "web/src/lib/appearance/palettes/dracula-soft.css",
+      "web/src/lib/appearance/palettes/dracula.css",
+      "web/src/lib/appearance/palettes/everforest-dark.css",
+      "web/src/lib/appearance/palettes/everforest-light.css",
+      "web/src/lib/appearance/palettes/github-dark-default.css",
+      "web/src/lib/appearance/palettes/github-dark-dimmed.css",
+      "web/src/lib/appearance/palettes/github-dark-high-contrast.css",
+      "web/src/lib/appearance/palettes/github-dark.css",
+      "web/src/lib/appearance/palettes/github-light-default.css",
+      "web/src/lib/appearance/palettes/github-light-high-contrast.css",
+      "web/src/lib/appearance/palettes/github-light.css",
+      "web/src/lib/appearance/palettes/gruvbox-dark-hard.css",
+      "web/src/lib/appearance/palettes/gruvbox-dark-medium.css",
+      "web/src/lib/appearance/palettes/gruvbox-dark-soft.css",
+      "web/src/lib/appearance/palettes/gruvbox-light-hard.css",
+      "web/src/lib/appearance/palettes/gruvbox-light-medium.css",
+      "web/src/lib/appearance/palettes/gruvbox-light-soft.css",
+      "web/src/lib/appearance/palettes/houston.css",
+      "web/src/lib/appearance/palettes/kanagawa-dragon.css",
+      "web/src/lib/appearance/palettes/kanagawa-lotus.css",
+      "web/src/lib/appearance/palettes/kanagawa-wave.css",
+      "web/src/lib/appearance/palettes/laserwave.css",
+      "web/src/lib/appearance/palettes/light-plus.css",
+      "web/src/lib/appearance/palettes/material-theme-darker.css",
+      "web/src/lib/appearance/palettes/material-theme-lighter.css",
+      "web/src/lib/appearance/palettes/material-theme-ocean.css",
+      "web/src/lib/appearance/palettes/material-theme-palenight.css",
+      "web/src/lib/appearance/palettes/material-theme.css",
+      "web/src/lib/appearance/palettes/min-dark.css",
+      "web/src/lib/appearance/palettes/min-light.css",
+      "web/src/lib/appearance/palettes/monokai.css",
+      "web/src/lib/appearance/palettes/night-owl.css",
+      "web/src/lib/appearance/palettes/nord.css",
+      "web/src/lib/appearance/palettes/one-dark-pro.css",
+      "web/src/lib/appearance/palettes/one-light.css",
+      "web/src/lib/appearance/palettes/plastic.css",
+      "web/src/lib/appearance/palettes/poimandres.css",
+      "web/src/lib/appearance/palettes/red.css",
+      "web/src/lib/appearance/palettes/rose-pine-dawn.css",
+      "web/src/lib/appearance/palettes/rose-pine-moon.css",
+      "web/src/lib/appearance/palettes/rose-pine.css",
+      "web/src/lib/appearance/palettes/slack-dark.css",
+      "web/src/lib/appearance/palettes/slack-ochin.css",
+      "web/src/lib/appearance/palettes/snazzy-light.css",
+      "web/src/lib/appearance/palettes/solarized-dark.css",
+      "web/src/lib/appearance/palettes/solarized-light.css",
+      "web/src/lib/appearance/palettes/synthwave-84.css",
+      "web/src/lib/appearance/palettes/tokyo-night.css",
+      "web/src/lib/appearance/palettes/vesper.css",
+      "web/src/lib/appearance/palettes/vitesse-black.css",
+      "web/src/lib/appearance/palettes/vitesse-dark.css",
+      "web/src/lib/appearance/palettes/vitesse-light.css",
+      "web/src/lib/ui/community-search-command/CommunitySearchCommand.svelte",
+      "web/src/lib/ui/community-search-command/search-command.css",
+      "web/tests/vite/appearance.test.ts"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; Shiki4.0.2; Design Core ^0.2.0. Dependency manifests and lockfile unchanged.",
+    "formats": "No native, API, route or stored-preference format changes. jj-store.appearance.v1 unchanged; generated semantic CSS bytes change only popover backgrounds.",
+    "artifacts": "/tmp/jj-overlay-token-*.log; /tmp/jj-overlay-token-live-final.jpg",
+    "next": "Retain focused regressions and visual-pending in the committed Appearance workspace.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; inspect owning chapters, milestone ledger, Community first and released Design Core second; read-only live CUA inspection",
+        "result": "pass",
+        "failures": 0,
+        "note": "Shared popover role and absent scope-action class explain both requested behaviors; existing workspace/backend/fixture retained."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/fixtures/AppearanceOverlayFixture.svelte catalog/components/store-appearance/AppearanceOverlay.stories.svelte (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial overlay regression formatting. /tmp/jj-overlay-token-format-before.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/appearance.test.ts (before)",
+        "result": "fail",
+        "failures": 3,
+        "note": "3 new white/GitHub dark/Dracula app-surface assertions fail;8existing tests pass. /tmp/jj-overlay-token-unit-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceOverlay.stories.svelte (before shared-token fix)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Expected white app surface, received grey rgb235 popup. /tmp/jj-overlay-token-story-before.log."
+      },
+      {
+        "command": "pnpm exec tsx scripts/appearance-palettes.mts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Regenerated62Buzz-derived palette CSS files after shared adapter change. /tmp/jj-overlay-token-generate.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (adapter, regression, provenance and canonical chapter files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Shared-token implementation formatted. /tmp/jj-overlay-token-format-after.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/appearance.test.ts (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "11/11 exact appearance tests. /tmp/jj-overlay-token-unit-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceOverlay.stories.svelte (after shared-token fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 fresh browser story checks Dialog/Command/Menu equality for all62generated palettes, retaining query and result. /tmp/jj-overlay-token-story-after.log."
+      },
+      {
+        "command": "pnpm exec tsx scripts/appearance-palettes.mts --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact source-derived generated asset comparison. /tmp/jj-overlay-token-palette-check.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership (shared-token fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web/catalog0errors0warnings;153catalog modules;798architecture modules;ownership1validator/21chapters/147requirements. Logs web/catalog/architecture/ownership."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/fixtures/AppearanceOverlayFixture.svelte catalog/components/store-appearance/AppearanceOverlay.stories.svelte (scope regression)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Light/dark native-pointer and keyboard regressions formatted. /tmp/jj-overlay-token-scope-format-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceOverlay.stories.svelte (before scope-row fix)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2/2 new scope rows are transparent at rest;1all-palette overlay story passes. /tmp/jj-overlay-token-scope-before.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/community-search-command/CommunitySearchCommand.svelte web/src/lib/ui/community-search-command/search-command.css spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned class, theme-derived resting/selected token and supported selected selectors formatted. /tmp/jj-overlay-token-scope-format-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceOverlay.stories.svelte (after scope-row fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 in fresh browser: light/dark softer resting, real CSS hover, keyboard selection/reset; all62generated popup palettes. /tmp/jj-overlay-token-scope-after.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership (final production)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web/catalog0errors0warnings;153catalog modules;798architecture modules with unchanged budgets;ownership1validator/21chapters/147requirements. /tmp/jj-overlay-token-{web,catalog,architecture,ownership}-final.log."
+      },
+      {
+        "command": "Read-only CUA live HMR workspace search verification and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "White Dialog/Command in Buzz. Scope action selected rgb246.7 equivalent, resting rgb250.5 equivalent: color(srgb0.96755...) vs color(srgb0.9823...). Saved final full-viewport screenshot with resting row; closed temporary tab32. User tab untouched; no preferences/data writes or restart."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-search catalog/components/store-appearance catalog/components/store-application/StoreRepositorySearch.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-application/StoreComparisonParentPicker.stories.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte catalog/components/store-threads/StoreThreadSearch.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "35/35 across13direct overlay/search/picker/reaction consumer files in a fresh browser/Vite process. /tmp/jj-overlay-token-consumers.log."
+      },
+      {
+        "command": "python3 inline milestone evidence update; pnpm exec prettier --write spec/src/milestones.md; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "E-UI-086 preserves milestone statuses. 69protected files/4canonical chapters;5validators/21chapters/147requirements;120tasks;73changed files formatted. Final evidence insertion and changed-file formatting checked again before commit. /tmp/jj-overlay-token-{spec-first,spec-validate,progress,format-final,progress-final}.log."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-087",
+    "tasks": ["M9.5", "M11.4", "M16"],
+    "date": "2026-10-03",
+    "kind": "Restore foundation tooltip sizing and qualify local navigation consumers",
+    "revision": "Enclosing Jujutsu change wovknnpw; foundation change quoystmy",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-018",
+      "JST-ARCH-004",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007",
+      "JST-GOV-008",
+      "JST-GOV-009"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate and stories stay visual-pending. M11.4 In progress and M16 Partial remain unchanged; source release and registry-only qualification remain pending.",
+      "The earlier compare-only capture stopped at generated-cache EACCES before screenshot comparison. The user subsequently instructed us to ignore Design Core visual tests; further visual testing is out of scope, and no visual pass or baseline approval is claimed."
+    ],
+    "scope": "User requests undoing earlier Design Core tooltip compaction. Inspect Community navigation first, foundation source/history second. Foundation change42a125503632 reduced theme small text to11px and padding from12px/6px to10px/4px. In a reused clean Design Core Appearance workspace rebased onto current clean main parent4922feea, restore theme small-text defaults and12px inline/6px block padding; retain public sizing tokens and unchanged arrow/portal behavior. No consumer tooltip workaround. Consume source via the already documented temporary /tmp/jj-appearance-pnpm.cjs hook with lockfile disabled; verify installed tooltip bytes match source. Restart only owned VitePID68050 to33733, retaining backendPID42374 and persistent main fixture. Source package full checks and compare-only visual target run because shared foundation behavior spans consumers; jj-store runs only focused direct navigation/shell interaction and type checks. Root jj-store aggregates, Rust, fixture reset, native writes, source main landing, publication and visual baseline updates are out of scope. Source acceptance is linked from DC-SHA-050 to spec/records/tooltip-sizing-restoration.md. Latest user instruction excludes further Design Core visual tests; finish with the passing nonvisual lanes and retain the earlier capture failure as historical evidence.",
+    "files": [
+      "docs/reference/appearance-provenance.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "spec/src/architecture.md"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1. Foundation local source0.1.2; its Svelte5.56.6, Storybook10.5.2 and Vitest4.1.11 remain unchanged. Consumer Svelte5.57.1 and Storybook10.5.7. Manifest/lockfile registry ranges unchanged.",
+    "formats": "No native/API/route/preference or public token name changes. Existing jj-store.appearance.v1 and fixture retained. Source checkout remains independently owned.",
+    "artifacts": "/tmp/dc-tooltip-restore-*.log; /tmp/jj-tooltip-restore-*.log; /tmp/jj-tooltip-restore-live.jpg; /tmp/dc-tooltip-restore-pack/lapismd-design-core-0.1.2.tgz",
+    "next": "Retain local source validation; further Design Core visual testing is excluded by the user. Complete separate foundation release/registry qualification only when authorized; no milestone promotion.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; inspect Community navigation, Design Core tracked guidance/owning DC-SHA-050 chapter/history42a125503632; jj rebase -r @ -d4922feea",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both source workspaces clean; reuse quoystmy with current main parent so InputGroup and menu repairs remain available. No main source modifications."
+      },
+      {
+        "command": "pnpm spec:search -- tooltip (Design Core)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Documented command forwards unsupported -- to installed spec-validator; retry without separator."
+      },
+      {
+        "command": "pnpm spec:search tooltip (Design Core)",
+        "result": "fail",
+        "failures": 1,
+        "note": "QMD native modules unavailable; use printed rg fallback and open owning overlays chapter."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/shadcn/tooltip/Tooltip.stories.svelte (source before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact restored-default regression fails11px vs12px;1existing story passes. /tmp/dc-tooltip-restore-before.log."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/shadcn/tooltip/Tooltip.stories.svelte (source after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 default28px height, restored padding, hover and retained custom sizing. /tmp/dc-tooltip-restore-after.log."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/shadcn/tooltip/Tooltip.stories.svelte src/shared/shadcn/tooltip/Tooltip.variations.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 across2tooltip files, including upstream preview. /tmp/dc-tooltip-restore-story-final.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (foundation source/story/owning chapters); pnpm spec:check; pnpm checks (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Canonical new default/token acceptance bullet contains2sentences. Split into atomic bullets; aggregate stops at governance before qualification. Logs format/spec-check/checks."
+      },
+      {
+        "command": "pnpm spec:check (after atomic bullet fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Validation, mdBook and spec-first3lanes pass. /tmp/dc-tooltip-restore-spec-check-final.log."
+      },
+      {
+        "command": "pnpm checks; pnpm check:types (after atomic bullet fix)",
+        "result": "fail",
+        "failures": 2,
+        "note": "New inline consumer source example is parsed as another script by svelte-check, yielding2duplicate Tooltip identifiers. Moved example to colocated Tooltip.sizing.example-sources.ts; production tooltip unchanged. Logs checks-final/types."
+      },
+      {
+        "command": "pnpm pack --pack-destination /tmp/dc-tooltip-restore-pack",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source package tarball created without publication. /tmp/dc-tooltip-restore-pack.log."
+      },
+      {
+        "command": "npm_config_pnpmfile=/tmp/jj-appearance-pnpm.cjs pnpm install --no-frozen-lockfile --lockfile=false; cmp foundation/consumer tooltip-content.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Explicit documented local source refresh; installed production tooltip bytes match. Consumer registry manifest/lockfile remain unchanged. /tmp/jj-tooltip-restore-install.log."
+      },
+      {
+        "command": "node inline ownership-checked Vite-only restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Verified active owner/workspace and exact PID before stopping68050; start33733 with same runtime root, preserve runtime fields and backendPID42374. No backend restart or fixture reset."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (consumer)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both0errors0warnings;153catalog modules. /tmp/jj-tooltip-restore-{web,catalog}.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/components/store-work/DisclosurePersistence.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-threads/StoreThreadNavigation.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "50/50 across7direct navigation/shell/Projects/repository consumers with a fresh browser after source refresh. /tmp/jj-tooltip-restore-consumers.log."
+      },
+      {
+        "command": "Read-only CUA live cold temporary thread tab, keyboard-focus Projects tooltip, computed style and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Buzz tooltip now30px tall with12px text/18px inherited line and6px/12px padding; existing rotated arrow14.14px. Saved full viewport screenshot and closed temporary tab33. User tab unchanged; no data/preference writes."
+      },
+      {
+        "command": "pnpm spec:first (consumer initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Appearance provenance requires its mapped architecture chapter; added the explicit foundation-source validation boundary. /tmp/jj-tooltip-restore-spec-first.log."
+      },
+      {
+        "command": "pnpm visual-delta test --help (source)",
+        "result": "fail",
+        "failures": 1,
+        "note": "No test selection mode specified; canonical Docker dependency bootstrap completed but argument validation refused comparison. Source edited during that bootstrap, so artifact guard also reported the changed story. No baseline update."
+      },
+      {
+        "command": "pnpm visual-delta test --story-id shadcn-overlays-tooltip--open-tooltip --baseline-path-mode nested-import --external 'vendor/shadcn-svelte-docs/static/**'",
+        "result": "fail",
+        "failures": 1,
+        "note": "Canonical container Storybook build passed in5m;1selected story/524total. Capture blocked before comparison by EACCES on /visual-delta/canonical-build-cache/entries temporary tree. Artifact guard also noted the story example edit during the build. No screenshot comparison or baseline approval claimed. /tmp/dc-tooltip-restore-visual.log."
+      },
+      {
+        "command": "pnpm check:types (source qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Root and shell/filter/source consumer Svelte checks all0errors0warnings after relocating the example. /tmp/dc-tooltip-restore-types-final.log."
+      },
+      {
+        "command": "pnpm checks (source qualified attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Governance/quality pass;715unit tests/111files and3Turbo unit tests pass; static build and visual metadata audit pass. Whole catalog643passes/1emoji-grid focus failure across208files/644tests. It expects heart focus but receives Search emoji. /tmp/dc-tooltip-restore-checks-qualified.log. No unrelated source edits."
+      },
+      {
+        "command": "pnpm ci:browser-workspace; pnpm ci:browser-shell; pnpm ci:browser-ai; pnpm ci:browser-shadcn (sequential source lanes)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Complete remaining aggregate browser lanes after its Storybook stop:14workspace,11shell,3AI,35shadcn pass;1shadcn skip. Fresh owned services cleaned up by Playwright. /tmp/dc-tooltip-restore-browser-*.log."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/ai/experimental/emoji-picker/EmojiPicker.stories.svelte (clean main baseline)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 on clean parent4922feea. Installed main uses Bits2.19.3/Svelte5.57.1 while source workspace uses locked Bits2.18.1/Svelte5.56.6; this is not a same-runtime baseline. /tmp/dc-tooltip-restore-emoji-baseline.log."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/ai/experimental/emoji-picker/EmojiPicker.stories.svelte (source isolated initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Same focus failure,1pass/1fail. /tmp/dc-tooltip-restore-emoji-after.log."
+      },
+      {
+        "command": "jj new @- (temporary baseline); pnpm test:storybook src/shared/ai/experimental/emoji-picker/EmojiPicker.stories.svelte (twice); jj edit quoystmy; jj abandon empty baseline; same isolated story after restoration",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 each on2unchanged parent runs with the same installed dependencies, and2/2 after restoring the tooltip slice. Temporary baseline oplrtkvt removed; source patch preserved. Failure is intermittent; no pre-existing deterministic failure claim. Logs emoji-same-deps-before/repeat and emoji-after-repeat."
+      },
+      {
+        "command": "pnpm spec:check (source); pnpm spec:first; pnpm spec:validate; pnpm check:progress (consumer qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source validation/mdBook/spec-first3lanes; consumer1protected file/3canonical chapters,5validators/21chapters/147requirements and120tasks. Final evidence formatting/validation is repeated before commit. Logs spec-qualified/spec-first-final/spec-validate-final/progress-final."
+      },
+      {
+        "command": "pnpm ci:storybook-interaction (source full rerun)",
+        "result": "pass",
+        "failures": 0,
+        "note": "644/644 tests across208files in69.43s. All required nonvisual source lanes now pass through recorded separate runs; initial pnpm checks wrapper failures remain retained and no uninterrupted wrapper pass is claimed. /tmp/dc-tooltip-restore-stories-rerun.log."
+      },
+      {
+        "command": "pnpm exec prettier --write src/shared/shadcn/tooltip/tooltip-content.svelte src/shared/shadcn/tooltip/Tooltip.stories.svelte src/shared/shadcn/tooltip/Tooltip.sizing.example-sources.ts spec/src/shadcn/overlays.md spec/src/verification.md spec/records/tooltip-sizing-restoration.md (source); pnpm exec prettier --write docs/reference/appearance-provenance.md spec/src/ui.md spec/src/architecture.md spec/src/milestones.md (consumer); pnpm spec:check (source); pnpm spec:first; pnpm spec:validate; pnpm check:progress (consumer)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final evidence and changed files formatted. Source3lanes pass; consumer1protected file/3canonical chapters,5validators/21chapters/147requirements and120tasks pass. Logs /tmp/dc-tooltip-restore-evidence-{format,spec}.log and /tmp/jj-tooltip-restore-evidence-{format,spec-first,spec-validate,progress}.log. Source record links full644test rerun while preserving intermittent failure history and visual EACCES gap. No functional changes after the final passing source and consumer suites."
+      },
+      {
+        "command": "pnpm exec prettier --check src/shared/shadcn/tooltip/tooltip-content.svelte src/shared/shadcn/tooltip/Tooltip.stories.svelte src/shared/shadcn/tooltip/Tooltip.sizing.example-sources.ts spec/src/shadcn/overlays.md spec/src/verification.md spec/records/tooltip-sizing-restoration.md (source); pnpm spec:check (source); pnpm exec prettier --check docs/reference/appearance-provenance.md spec/src/ui.md spec/src/architecture.md spec/src/milestones.md (consumer); pnpm spec:first; pnpm spec:validate; pnpm check:progress (consumer); pnpm exec prettier --write spec/src/milestones.md (final ledger insertion)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed-file formatting and documentation gates pass. Latest user instruction to ignore further Design Core visual tests is recorded; earlier visual failure retained as history. No further visual run or baseline changes. Logs /tmp/dc-tooltip-restore-evidence-{format-check,spec-final}.log and /tmp/jj-tooltip-restore-evidence-{format-check,spec-first-final,spec-validate-final,progress-final,ledger-format}.log. Final ledger validation is repeated after this insertion."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-088",
+    "tasks": ["M9.5", "M11.4", "M16"],
+    "date": "2026-10-03",
+    "kind": "Align shell header, collapsed search and open menu paint with sidebar hover",
+    "revision": "Enclosing Jujutsu change kltumumn",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-018",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-005",
+      "JST-GOV-007",
+      "JST-GOV-008",
+      "JST-GOV-009"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Stories retain visual-pending and existing milestone statuses remain unchanged; baseline approval remains separate. Further Design Core visual tests are excluded by the user."
+    ],
+    "scope": "User requests matching left-sidebar hover for header details, snapshot refresh, repository actions, sidebar toggle, history controls and collapsed search; subsequent request includes the open kebab state. Inspect Community shell/navigation source first, then public Design Core Button styles/tokens. This is an owned presentation adaptation: replace the inherited opaque sidebar-accent header mix with the existing sidebar-item 7% foreground tint. Apply the same theme-relative paint to keyboard focus, collapsed search and open header menu triggers; preserve disabled controls, neutral resting toggle states, size, icons, routes and focus rings. No foundation source fix, palette rewrite or consumer dependency refresh is needed. Add native-pointer and open-menu interaction evidence in the existing Appearance shell stories and calibrate the private resting-state helper to blur and assert no hover/focus before checking transparency. Wider jj-store root aggregates, Rust, native writes, backend restart/reset, publication and baseline updates are out of scope under the targeted policy.",
+    "files": [
+      "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigation.css",
+      "catalog/components/store-appearance/AppearanceShell.stories.svelte",
+      "catalog/components/store-work/DisclosurePersistence.stories.svelte",
+      "catalog/fixtures/AppearanceShellFixture.svelte",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "spec/src/api.md"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; consumer Svelte5.57.1, Storybook10.5.7 and Vitest4.1.11. Existing installed foundation source and portable registry manifests/lockfiles unchanged.",
+    "formats": "No native/API/route/preference/public-token format changes. CSS only scopes app chrome; existing jj-store.appearance.v1 and persistent fixture retained.",
+    "artifacts": "/tmp/jj-chrome-hover-*.log; /tmp/jj-chrome-hover-live-final.png; /tmp/jj-chrome-menu-open-live-final.png",
+    "next": "Retain focused interaction and accessibility evidence; no milestone promotion or additional Design Core visual test run.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; inspect CommunityAppShell.svelte and CommunityNavigation.css in Community; inspect Design Core button.svelte/button.tokens.ts; inspect JST-UI-002/JST-UI-018 and existing Appearance shell fixtures",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean Appearance working copy after separately committing tooltip source quoystmy/bb40d39d and consumer evidence wovknnpw/e61af022. Existing copied-source provenance remains unchanged; header/compact search styling is app-owned."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-appearance/AppearanceShell.stories.svelte; pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte (initial before)",
+        "result": "fail",
+        "failures": 4,
+        "note": "6existing stories pass. New4fail:3repository fixtures have no inactive compact group and1hover mismatch. Calibrate reference/sample selection and wait for theme paint rather than reading an in-flight transition. /tmp/jj-chrome-hover-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte (settled reference and fallback iterations)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Each attempt6pass/4fail;3missing-reference errors and1actual mismatch. Logs before-settled/before-final. No production changes yet."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/fixtures/AppearanceShellFixture.svelte catalog/components/store-appearance/AppearanceShell.stories.svelte; pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte (qualified before)",
+        "result": "fail",
+        "failures": 4,
+        "note": "6pass/4real computed-style failures after adding a theme-derived sample when sidebar groups are already active. Header opaque oklab differs from sidebar foreground/0.07 in light and dark. /tmp/jj-chrome-hover-before-qualified.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/community-app-shell/CommunityAppShell.svelte web/src/lib/ui/community-navigation/CommunityNavigation.css catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/fixtures/AppearanceShellFixture.svelte spec/src/ui.md; pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "10/10 in a fresh browser: repository/project Buzz, Buzz dark and neutral hover/focus plus existing gradient/picker coverage. Logs format/after."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership (initial impact checks)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Web0errors0warnings; architecture798modules and ownership pass. Catalog2type errors: Testing Library does not accept Playwright exact option. Replace with anchored accessible-name regex; runtime assertions remain identical. Logs web/catalog/architecture/ownership."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-appearance/AppearanceShell.stories.svelte; pnpm catalog:check; pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte (after story typing fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Catalog0errors0warnings/153modules; exact10/10 again. Concurrent test process selected a free fallback port; neither unrelated service was stopped. Logs story-format-final/catalog-final/after-final."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/DisclosurePersistence.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-threads/StoreThreadNavigation.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "43pass/1failure across6files. The resting-toggle helper retained keyboard focus after a synthetic click, so received the new focus tint. Preserve transparency assertion, clear native hover/focus and assert true resting state; separate new stories prove keyboard focus tint. Five other files pass all38tests. /tmp/jj-chrome-hover-consumers.log."
+      },
+      {
+        "command": "Read-only CUA temporary tab34: native-pointer hover for inactive Projects reference and all marked controls, navigate Branches/Back to enable both history buttons, compare live colors, inspect open menu trigger",
+        "result": "pass",
+        "failures": 0,
+        "note": "All7marked/header/history/search controls equal sidebar color(srgb0.1413580.1610.180642/0.07), foreground rgb36,41,46. Initial compact-selector lookup had no inactive groups; used the actual inactive Projects button. Menu-open before fix: rgb240,240,240 with pointer in menu; after fix: identical0.07tint while not hovered. Screenshots saved. Temporary tab closed; user tab, preferences and native data untouched; no restart."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/community-app-shell/CommunityAppShell.svelte catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/components/store-work/DisclosurePersistence.stories.svelte spec/src/ui.md; pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/components/store-work/DisclosurePersistence.stories.svelte (final menu/resting checks)",
+        "result": "pass",
+        "failures": 0,
+        "note": "16/16 across2files, including light/dark open-menu paint after native pointer leaves the trigger, Escape clearing and transparent toggles in both expansion states. Together with38passing direct-consumer stories:54qualified stories across7files, not a full-suite claim. /tmp/jj-chrome-hover-final-stories.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership (after menu-state addition)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Web/catalog0errors0warnings,153catalog modules; ownership passes. Architecture reports shell301counted lines against300limit. Consolidate equivalent open/focus selectors with :is rather than changing the limit. Logs web-final/catalog-qualified/architecture-final/ownership-final."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check web/src/lib/ui/community-app-shell/CommunityAppShell.svelte web/src/lib/ui/community-navigation/CommunityNavigation.css catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/components/store-work/DisclosurePersistence.stories.svelte catalog/fixtures/AppearanceShellFixture.svelte spec/src/ui.md spec/src/milestones.md (initial final gates)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Formatting,5validators/21chapters/147requirements and120task bookkeeping pass. Spec-first requires api.md under the existing broad web path map. Add controller-contract preservation note in that canonical chapter. Logs ledger-format/spec-first/spec-validate/progress/format-final."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/community-app-shell/CommunityAppShell.svelte spec/src/api.md; pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/components/store-work/DisclosurePersistence.stories.svelte (qualified final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "16/16 across2files after consolidating the equivalent open/focus selector with :is. Fresh browser152.84s; no assertion, timeout or baseline weakening. Full direct impact remains54stories across7files including the earlier38passing consumer tests. Logs gates-format/qualified-stories."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:architecture; pnpm web:check; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check web/src/lib/ui/community-app-shell/CommunityAppShell.svelte web/src/lib/ui/community-navigation/CommunityNavigation.css catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/components/store-work/DisclosurePersistence.stories.svelte catalog/fixtures/AppearanceShellFixture.svelte spec/src/api.md spec/src/ui.md spec/src/milestones.md (qualified final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Architecture798modules with unchanged300line limit; web0errors0warnings. Existing final catalog check0errors0warnings/153modules and ownership pass. Spec-first5protected files/3canonical chapters;5validators/21chapters/147requirements;120tasks; all8changed files formatted. Logs ledger-format-final/architecture-qualified/web-qualified/spec-first-final/spec-validate-final/progress-final/format-qualified. Final evidence insertion is formatted and ledger gates repeated before commit. Wider root aggregates/Rust and further Design Core visual tests remain out of scope."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-089",
+    "tasks": ["M9.5", "M11.4", "M13.4", "M15.5", "M16"],
+    "date": "2026-10-03",
+    "kind": "Integrate Appearance history into main and retire its temporary workspaces",
+    "revision": "Enclosing Jujutsu change wpmoyoqz",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-015",
+      "JST-UI-018",
+      "JST-API-009",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-005",
+      "JST-GOV-007",
+      "JST-GOV-008",
+      "JST-GOV-009"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Source release and registry-only qualification remain separate. Stories retain visual-pending; baseline approval and milestone promotion are not part of workspace integration. Further Design Core visual tests are excluded by the user."
+    ],
+    "scope": "Explicit user request to merge the complete Appearance workspace into main, then remove its temporary checkout. Merge yyknxszk and kltumumn, retaining main physical working-copy Save and local/portable review work plus all Appearance changes. Land the unchanged Design Core tooltip change quoystmy into its clean default workspace. Resolve 11 merge-conflicted files, combine both ledger histories by stable evidence/task identity and keep milestone statuses. Preserve native review creation alongside the new full-page review detail. Qualify local Project review reads by transport capability instead of rejecting the entire local profile. Integrate exact-target Work reaction refresh with main collaboration action recovery. The combined UI controller surface justifies complete web and catalog unit lanes; selected review/agent/task/loading/shell interaction families cover the resolved presentation. Generated contract checking and rebuilding the CLI qualify the combined main and Appearance native types before relocating the owned persistent app. Root aggregate check/test/spec-check and the full Rust workspace are out of scope; no fixture reset, package publication, installed CLI replacement, unrelated daemon restart or visual baseline changes. Cold filesystem acceptance exposed legacy grouped-tool/composer/save-status locators and fixture removal leakage, plus a real race between post-save and automatic local snapshot capture. Keep obsolete ordinary reads cancelled; fresh captures follow the newest accepted capture without returning an older pin after failed/closed replacement. Qualify both completion orders and repeat the complete catalog unit lane because the local adapter feeds code, work, reviews and agent readers. Confirmed WorkStore writes refresh their own read model before notifying other displayed collections. Qualify the unchanged automatic refresh behavior with notification-order regressions. BrowserAssets loads the built bundle at server startup; rebuild and restart the owned isolated server before claiming cold verification of the final correction. Final current-bundle acceptance exposed a separate review confirmation race: early ready status allowed automatic refresh to invalidate post-receipt reads, leaving a committed comment draft pending. Keep review commands refreshing through list/detail reloads and defer global updates for loading/refreshing review actions. Native/local reviews, inline comments and agent comments share this boundary, so run the complete catalog/controller unit lane again plus the exact real-review scenario and complete five-test browser file.",
+    "files": [
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/projects-reviews.svelte.ts",
+      "web/src/lib/controller/work-reactions.svelte.ts",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte",
+      "web/tests/vite/projects-directories.test.ts",
+      "web/tests/vite/local-browser-merge.test.ts",
+      "web/tests/vite/work-reactions.test.ts",
+      "web/src/lib/controller/production-inline-review-actions.ts",
+      "web/src/lib/controller/repository-thread-navigation.svelte.ts",
+      "web/src/lib/ui/disclosure-layout.svelte.ts",
+      "web/src/lib/ui/store-collaboration/StoreAgentComments.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolDiscussion.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewComposer.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte",
+      "web/tests/vite/repository-thread-navigation.test.ts",
+      "schemas/openapi.json",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/http-local-code-data-source.ts",
+      "web/tests/vite/local-browser.test.ts",
+      "web/tests/real/local-browser.spec.ts",
+      "web/src/lib/controller/production-work.svelte.ts",
+      "web/tests/vite/automatic-work-refresh.test.ts",
+      "web/src/lib/controller/production-review-actions.ts",
+      "web/src/lib/controller/production-automatic-refresh.ts",
+      "web/tests/vite/production-store-collaboration.test.ts",
+      "web/tests/vite/production-automatic-refresh.test.ts"
+    ],
+    "tests": [],
+    "versions": "Integration shell Node24.10.0, pnpm10.32.1, JJ0.45.1, Rust1.98.1; consumer Svelte5.57.1, Storybook10.5.7, Vitest4.1.11 and Bits UI2.19.4. Earlier source/consumer evidence retains its original Node26.9.0 version.",
+    "formats": "Native API, WAL, manifest, companion, request and device preference formats retain both qualified parent histories. Existing main .local/dev-demo fixture, repository identities and storage are reused. Portable package manifest and lockfile remain unchanged by local dependency refresh.",
+    "artifacts": "/tmp/jj-appearance-land-*.log; retained parent E-UI-087/E-UI-088 source and browser evidence.",
+    "next": "Workspace integration and retirement complete. Retain separate source release, registry-only consumer qualification and visual-pending/baseline gates; milestone statuses remain unchanged.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj workspace list; jj log and diff for main/Appearance ancestry in both repositories; inspect parent/repository guides, runtime ownership/configuration and local package hook",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both main/temporary workspace pairs clean. jj-store common base nxoksqrt/ba74e1ea; complete Appearance history has 389 changed paths, main 96, with 29 overlapping paths. Unrelated registered workspaces and active source/consumer checks left intact."
+      },
+      {
+        "command": "jj new yyknxszk kltumumn -m \"Merge Appearance UI into the main workspace\"; jj rebase -r ltrkpyzt -d quoystmy (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two-parent consumer merge preserves the full stack; 11 committed merge conflicts resolved explicitly. Source default now descends unchanged tooltip fix bb40d39d. No source implementation rewrite or extra source visual test."
+      },
+      {
+        "command": "python3 /tmp/jj-land-resolve.py; jj resolve --list; pnpm exec prettier --write (11 resolved files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main\u2019s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
+      },
+      {
+        "command": "pnpm install --no-frozen-lockfile --lockfile=false; compare installed tooltip-content.svelte to landed Design Core source",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing ignored .pnpmfile.cjs consumes main Design Core. No manifest/lockfile edits. Tooltip bytes identical, SHA256 385eef907e223c778f2d7941b16d4ddaa3481159dcf51f39b7de0dc573c88757; Bits UI2.19.4 from Appearance portable manifest retained. Registry requests warned about17s latency but install completed25.8s."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-directories.test.ts (initial integration)",
+        "result": "fail",
+        "failures": 1,
+        "note": "3pass/1failure: old test treated local profile as unsupported even when it exposed qualified review reads. Update capability-missing fixture and add local/native capability regression."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-directories.test.ts (first new regression)",
+        "result": "fail",
+        "failures": 1,
+        "note": "4pass/1fixture calibration failure: homeB intentionally has zero reviews; assert exact per-home [1,0] rows and repository snapshots rather than inventing a review."
+      },
+      {
+        "command": "pnpm web:test; pnpm catalog:test (initial combined UI unit lanes)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Web70pass. Catalog289pass/4fail across52files: review fixture count, missing native permission in navigation fixture, confirmed Work reactions discarded before UI reload, and storage-cap test exceeded5s under parallel machine load. Exact serial regressions subsequently20pass with no timeout/assertion weakening; complete serial catalog rerun follows."
+      },
+      {
+        "command": "pnpm check:architecture (initial merged contracts)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Combined controller contract301 counted lines against300. Reuse one private ReviewDetail type alias, preserving both actions and the unchanged source budget."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=1 --no-file-parallelism web/tests/vite/projects-directories.test.ts web/tests/vite/local-browser-merge.test.ts web/tests/vite/work-reactions.test.ts web/tests/vite/disclosure-layout.test.ts; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "20/20 exact regressions across4files;808production modules under unchanged budget;ownership1validator/21chapters/147requirements. Final strengthened unrelated reaction-cache assertion is included in the next complete catalog rerun."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh integrated production bundle generated for cold local-browser acceptance; existing chunk-size warning retained."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial merged types)",
+        "result": "fail",
+        "failures": 9,
+        "note": "Web9errors/7files, catalog5errors/5files: new sidebar HTTP source constructor and native-only review-detail types. Retain repository-owned native/local ReviewDetail union in agent and review composition; initialize and close independent query scopes."
+      },
+      {
+        "command": "pnpm web:check (first type correction)",
+        "result": "fail",
+        "failures": 4,
+        "note": "4errors/2files remained: inline review-action context still native-only, and generic Thread/Reaction command union required exact command discriminator. Fixed both with owned union type and existing set/clear/resolve_conflict discriminators."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:first --base kltumumn --head @",
+        "result": "fail",
+        "failures": 2,
+        "note": "Default @- is ambiguous on a two-parent merge; explicit CI ranges use Git commit IDs rather than JJ change IDs. Both parent ranges subsequently pass using actual commit hashes. No VCS or gate weakening."
+      },
+      {
+        "command": "pnpm catalog:test --maxWorkers=1 --no-file-parallelism (first serial rerun)",
+        "result": "fail",
+        "failures": 1,
+        "note": "292pass/1failure across52files: bounded disclosure storage exceeded5s under machine load. Immutable replacement now uses $state.raw, removing redundant deep-proxy traversals; exact storage contract unchanged and full rerun293pass. No timeout changes."
+      },
+      {
+        "command": "pnpm test:storybook (9 direct families, first main run)",
+        "result": "fail",
+        "failures": 6,
+        "note": "53pass/6fail with6runtime errors across9files. DisclosurePersistence failed on effect_orphan while rendering refreshed dependency modules; other8families passed. Clear only the owned generated Storybook optimizer cache and run DisclosurePersistence in a fresh process. No source baseline or assertion updates."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=1 --no-file-parallelism web/tests/vite/work-reactions.test.ts web/tests/vite/repository-thread-navigation.test.ts web/tests/vite/disclosure-layout.test.ts (new HTTP regression)",
+        "result": "fail",
+        "failures": 1,
+        "note": "14pass/1fixture failure: Response default text/plain was rejected by Client. Add the real application/json response header; keep strict decoder checks."
+      },
+      {
+        "command": "pnpm contracts:check (first merged contract)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Generated OpenAPI artifact drift after automatic merge; regenerate from combined owning Rust source then qualify full contract response capture."
+      },
+      {
+        "command": "python3 inline fixture/bootstrap/runtime inspection; pnpm dev:ui",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two optional header-incomplete urllib bootstrap attempts received403 and made no mutations. Existing fixture SHA256 retained. Owned app now runs from main: server95351/ui95352, same7460/7462ports. Runtime webRoot/uiRunner/workspaceRoot use main. Only old owned33733/42374 processes stopped; RustFS volume and installation identities retained."
+      },
+      {
+        "command": "pnpm spec:first --base 1b2dbc2f --head <actual merge commit>; pnpm spec:first --base 36c92787 --head <actual merge commit>; pnpm spec:validate; pnpm check:progress; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both explicit parent ranges pass:96protected files/10chapters and376protected files/13chapters.5validators/21chapters/147requirements;120tasks;808modules. Final ledger/type/generated changes trigger the same gates before commit."
+      },
+      {
+        "command": "cargo build -p jj-store-cli --bin jj-store --locked; cargo build -p jj-store-cli --bins --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Integrated backend built7m53s; both development CLI bins built2m37s including build-lock wait. Explicit main target/debug paths only; installed CLI unchanged."
+      },
+      {
+        "command": "pnpm catalog:test --maxWorkers=1 --no-file-parallelism (after immutable flags)",
+        "result": "pass",
+        "failures": 0,
+        "note": "293/293 across52files in55.81s. Later added production HTTP reader test qualifies in the final complete rerun."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=1 --no-file-parallelism web/tests/vite/work-reactions.test.ts web/tests/vite/repository-thread-navigation.test.ts web/tests/vite/disclosure-layout.test.ts (final added regressions)",
+        "result": "pass",
+        "failures": 0,
+        "note": "15/15 across3files, including independent production QueryClient creation/teardown, exact reaction transport invalidation and retained unrelated reactions. JSON media-type fixture corrected without relaxing Client admission."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (qualified merged types)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both0errors/0warnings;153catalog modules. Shared review snapshots retain their actual native/local identities, with no synthetic epochs or casts."
+      },
+      {
+        "command": "trash -v node_modules/.cache/storybook/10.5.7; pnpm test:storybook catalog/components/store-work/DisclosurePersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned generated optimizer cache recoverably cleared; fresh process6/6stories42.59s. Together with other8passing files:59qualified stories across9files. No source code/cache alias workaround, test timeout changes or visual comparisons. Full final transcript/tool-comment consumer coverage follows."
+      },
+      {
+        "command": "pnpm catalog:test --maxWorkers=1 --no-file-parallelism (complete final UI units); pnpm web:build (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "294/294 across52files, including the new production repository sidebar transport regression. Final production bundle45.95s; minifier :global and large-chunk warnings retained as diagnostics, not hidden. Web node-test lane70/70 passed earlier."
+      },
+      {
+        "command": "python3 parent evidence and main dependency/runtime metadata audit",
+        "result": "pass",
+        "failures": 0,
+        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main\u2019s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "22/22 interaction/accessibility tests across4additional agent families in114.07s. Together with the9qualified direct families:81stories across13files. No Design Core visual comparisons or baseline updates."
+      },
+      {
+        "command": "pnpm contracts:check (regenerated final merged contract)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI and TypeScript match combined Rust contracts;147actual HTTP/SSE responses conform. Contract node tests7/7 and consumer contract type check pass. Exact capture fixtures include local/native browsing, management, mutations, search, collaboration and WorkStore."
+      },
+      {
+        "command": "Codex browser fresh main-app tab: pinned repository Files, Agents, recorded Codex session and Focus sheet; inspect browser error logs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original files and3agent sessions present from retained fixture. Recorded response shows Update the parser, Expand3tool calls and agent-session comment footer. Focus sheet preserves listing; browser error log empty. User tab untouched; temporary acceptance tab35 will be closed after final checks."
+      },
+      {
+        "command": "python3 subprocess argument-array changed-file prettier check",
+        "result": "fail",
+        "failures": 1,
+        "note": "All source/generated files formatted; final evidence update requires reformatting spec/src/milestones.md. Final documented formatting and ledger gates follow."
+      },
+      {
+        "command": "node scripts/local-browser-acceptance.mjs (initial integrated cold filesystem profile)",
+        "result": "fail",
+        "failures": 4,
+        "note": "1/5 passed. Failures: old ungrouped-tool locator, retired Saved status (with genuine Snapshot superseded race), old review reply-composer label, and physical Save test following fixture registration removal. Fresh recorded fixture and server isolated from the persistent app; code/registration lifecycle test passed. First fixture was automatically cleaned. No assertion/timeouts weakened."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=1 --no-file-parallelism web/tests/vite/local-browser.test.ts (fresh-capture regression before fix)",
+        "result": "fail",
+        "failures": 2,
+        "note": "13/15 passed; both newest-first and oldest-first refresh completions reproduced Snapshot superseded. Existing ordinary-read cancellation and metadata pin checks retained."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=1 --no-file-parallelism web/tests/vite/local-browser.test.ts web/tests/vite/production-work.test.ts web/tests/vite/automatic-refresh.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "24/24 across3files. Concurrent fresh requests receive the newest accepted pin; original ordinary-read supersession, independent metadata pinning, unknown intent recovery and coalesced automatic refresh remain qualified."
+      },
+      {
+        "command": "pnpm catalog:test --maxWorkers=1 --no-file-parallelism (local adapter final consumers); pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "296/296 across52files. Both type checks0errors/0warnings, catalog153modules and architecture808modules; rebuilt production bundle6.61s. Existing chunk-size diagnostics retained. Rust/public schemas unchanged by local adapter correction; qualified147-response contract evidence still applies."
+      },
+      {
+        "command": "Inspect lsof cwd and exact command for4temporary Design Core http.server previews; send SIGTERM to43790,45057,46017,46681; close owned Codex browser tab35",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only obsolete previews rooted in design-core-jj-store-appearance stopped. Unrelated source/consumer processes untouched. User browser tab preserved; verification tab closed. Proof /tmp/jj-appearance-land-preview-retirement.json."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7478/ JJ_STORE_LOCAL_BROWSER_FIXTURE=<retained isolated fixture>/browser-fixture.json pnpm exec playwright test --config web/playwright.real.config.ts local-browser.spec.ts (retained fixture reruns)",
+        "result": "fail",
+        "failures": 2,
+        "note": "First retained run3pass/2fail: task-list refresh and folder-removal leakage into physical Save. Restore removed registration in finally using a fresh request ID. Next run4pass/1fail in48.9s: task still absent while Create task dialog open. Trace confirms committed command and refreshed work/page data but unchanged work/browse listing. These servers retained older built assets and cannot qualify the later notification-order fix."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=1 --no-file-parallelism web/tests/vite/automatic-work-refresh.test.ts (notification order before fix)",
+        "result": "fail",
+        "failures": 2,
+        "note": "5pass/2fail for normal save and receipt-status recovery: changed callback observed the old cursor before post-commit reads. Move notification after refresh while retaining exact request identity and independent drafts."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=1 --no-file-parallelism web/tests/vite/automatic-work-refresh.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/production-work.test.ts web/tests/vite/automatic-refresh.test.ts; pnpm catalog:test --maxWorkers=1 --no-file-parallelism; pnpm web:check; pnpm catalog:check; pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "31/31 focused regressions across4files and298/298 complete catalog/controller tests across52files. Both type checks0errors/0warnings and153catalog modules. Latest source notification ordering and concurrent capture completion orders included. Production build passes; unchanged minifier/chunk-size warnings remain. Logs work-order-qualified/catalog-tests-complete-final/web-check-complete-final/catalog-check-complete-final/web-build-work-final."
+      },
+      {
+        "command": "Temporary refresh-condition console probe; pnpm web:build; exact local_projects_tasks_comments_match_cli_and_recover_unknown_outcomes browser test against retained server",
+        "result": "fail",
+        "failures": 1,
+        "note": "0pass/1fail. No new probe reached browser. Compare served and on-disk index: running server cached pre-build assets. Remove all temporary diagnostic source/test edits, rebuild production UI, SIGTERM only owned isolated server14065 and restart explicit target/debug/jj-store with the same disposable configuration. No assertion or timeout changes."
+      },
+      {
+        "command": "pnpm web:build; target/debug/jj-store run --config <retained isolated fixture>/state/server.toml --format=json; compare served index with web/dist/index.html; JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7478/ JJ_STORE_LOCAL_BROWSER_FIXTURE=<retained isolated fixture>/browser-fixture.json pnpm exec playwright test --config web/playwright.real.config.ts local-browser.spec.ts -g local_projects_tasks_comments_match_cli_and_recover_unknown_outcomes --output .scratch/test-results-local-browser-cold-focused",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh server serves byte-identical latest built index; exact browser regression1/1 in15.3s. New task appears automatically while dialog remains open; unknown-outcome comment recovers without manual refresh. Logs web-build-cold-final/browser-cold-focused."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7478/ JJ_STORE_LOCAL_BROWSER_FIXTURE=<retained isolated fixture>/browser-fixture.json pnpm exec playwright test --config web/playwright.real.config.ts local-browser.spec.ts --output .scratch/test-results-local-browser-qualified",
+        "result": "fail",
+        "failures": 1,
+        "note": "4pass/1failure in50.0s on the current bundle. Task automatic refresh passes. Review reply appears in Activity but composer reports not confirmed and retains draft. Early ready status clears the global update gate before post-receipt reads finish; automatic refresh invalidates the command completion. Keep this failure explicit and qualify the exact scenario after correction."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=1 --no-file-parallelism web/tests/vite/production-store-collaboration.test.ts web/tests/vite/production-automatic-refresh.test.ts (review read race before fix)",
+        "result": "fail",
+        "failures": 4,
+        "note": "23pass/4fail: normal and recovered receipts become ready before list reads complete; automatic refresh runs during refreshing/loading review reads. Exact controlled-read/fake-timer regressions reproduce both boundaries."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/controller/production-review-actions.ts web/src/lib/controller/production-automatic-refresh.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/production-automatic-refresh.test.ts spec/src/ui.md; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=1 --no-file-parallelism web/tests/vite/production-store-collaboration.test.ts web/tests/vite/production-automatic-refresh.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "27/27 across2files in0.818s. Four before-fix failures resolved without changing request identities, assertions or timeouts. Busy lifecycle spans accepted receipt to final reads; queued updates resume automatically after ready."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm web:build (final review correction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both0errors/0warnings and153catalog modules. Latest production bundle built and isolated server restarted before the exact real-review scenario. Existing CSS minifier/chunk-size diagnostics retained; no new Rust or public schema changes."
+      },
+      {
+        "command": "pnpm catalog:test --maxWorkers=1 --no-file-parallelism (final review race consumers)",
+        "result": "pass",
+        "failures": 0,
+        "note": "302/302 across52files in22.39s, including4new production collaboration/automatic-refresh regressions. Wider root aggregate lanes and unrelated Rust workspace lanes remain out of scope."
+      },
+      {
+        "command": "target/debug/jj-store run --config <retained isolated fixture>/state/server.toml --format=json after final build; compare served and built index; JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7478/ JJ_STORE_LOCAL_BROWSER_FIXTURE=<retained isolated fixture>/browser-fixture.json pnpm exec playwright test --config web/playwright.real.config.ts local-browser.spec.ts -g \"filesystem reviews create and reply\" --output .scratch/test-results-local-browser-review-focused",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact cold real-review regression1/1 in22.7s; confirmed comment renders and clears composer without manual refresh, and remains visible after reload. Native/local pinned historical reads, unknown-request recovery and CLI parity retained."
+      },
+      {
+        "command": "python3 parent-ledger identity/equality audit, dependency/runtime path audit and changed-file prettier check; jj ancestry/status checks in both default workspaces; lsof cwd audit",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main262historical entries exact; Appearance290historical entries exact except shared E-M15-031 using main newer runs. Main runtime/dependency metadata has no temporary paths; persistent fixture SHA256 remains cd4739ec7ede822b24c2682f043d6f8afd48122596b5c0902bd3d96bb0140075. Both parent histories and source tooltip quoystmy retained. All changed files formatted; no process depends on either temporary checkout. Temporary .local is empty after owned demo relocation."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7478/ JJ_STORE_LOCAL_BROWSER_FIXTURE=<retained isolated fixture>/browser-fixture.json pnpm exec playwright test --config web/playwright.real.config.ts local-browser.spec.ts --output .scratch/test-results-local-browser-qualified-final",
+        "result": "pass",
+        "failures": 0,
+        "note": "5/5 in58.5s on final freshly built/current served bundle. Qualified local browsing/agents/settings/accessibility; projects/tasks/comments and automatic refresh; review create/reply/CLI parity/historical pins; registration reconnect/removal cleanup; physical Save/unknown outcomes/stale draft retention. Persistent main app and user browser untouched."
+      },
+      {
+        "command": "SIGTERM owned isolated jj-store server16526; await session13708 exit; trash -v <retained isolated fixture root>",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned disposable server stopped cleanly and fixture recoverably removed. No unrelated daemon or persistent storage touched. Final browser traces and logs retained under .scratch and /tmp."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm spec:first --base 1b2dbc2f --head <actual merge hash>; pnpm spec:first --base 36c92787 --head <actual merge hash>; pnpm spec:validate; pnpm check:progress; changed-file pnpm exec prettier --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source gates before commit:808production modules, ownership pass,104protected files/10chapters versus Appearance and379/13 versus main.5validators/21chapters/147requirements,120tasks and all35changed paths formatted. No conflicts. Root aggregate/Rust workspace and further Design Core visual lanes remain out of scope."
+      },
+      {
+        "command": "jj commit -m \"Integrate Appearance UI into main and retire temporary workspaces\"; jj st in both temporary checkouts; lsof cwd audit; jj workspace forget appearance (consumer main); jj workspace forget jj-store-appearance (Design Core main); trash -v /Users/stevejuma/code/lapismd/jj-store-appearance /Users/stevejuma/code/lapismd/design-core-jj-store-appearance",
+        "result": "pass",
+        "failures": 0,
+        "note": "Verified merge committed as enclosing change wpmoyoqz with yyknxszk/kltumumn parents and full Appearance ancestry. Both temporary working copies clean; no active process depended on them. Only the requested Appearance registrations removed. Checkouts recoverably moved to ~/.Trash/jj-store-appearance and ~/.Trash/design-core-jj-store-appearance. Other registered workspaces untouched."
+      },
+      {
+        "command": "jj st/workspace list/retained ancestor checks in consumer and source main; fixture SHA256/runtime/PID/HTTP checks after retirement",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both main working copies clean; temporary paths absent and registrations removed. Source default retains tooltip quoystmy/bb40d39d. Persistent server95351/UI95352 stay alive,7460returns200 and fixture SHA256 unchanged. Final retirement evidence is folded into the enclosing verified merge as a ledger-only update; repeat document governance before squash."
+      }
+    ]
   }
 ]
 ```

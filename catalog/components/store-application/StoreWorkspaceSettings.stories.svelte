@@ -45,6 +45,9 @@
       ),
     ).toBeVisible();
     await expect(
+      canvasElement.querySelector('[data-ui-part="empty-media"] svg'),
+    ).toBeVisible();
+    await expect(
       canvas.queryByRole("button", { name: "Link folder" }),
     ).not.toBeInTheDocument();
   }}

@@ -1,5 +1,12 @@
 # Publication and recovery
 
+Task comment reaction publication reads the Work root from the same captured
+manifest base as ReactionStore and selects only the existing Reaction
+transition. The shared authorized target reader validates Work state and
+repository scope before resolving exact comment membership and visibility.
+Root-keyed read reuse accounts for Work object and byte bounds; it cannot
+introduce credentials, staged data or new publication authority.
+
 Validated Agent and Review read selections may be detached from a coordinator as
 immutable repository-bound root and membership data. Shared read caches and
 collaboration pins retain these data-only selections, never a request guard or
@@ -225,6 +232,15 @@ snapshot in every direct relation and status index in the same review-domain
 candidate; resolve and reopen remove the old status selection and add the new
 one. Generated pages and roots are internal candidates rather than
 client-controlled publication inputs.
+
+Whole-session review anchors retain the exact immutable AgentStore session
+snapshot and its complete dependency closure, even when that session later
+advances. Staging and cold selected reads verify that the reference has the
+session-snapshot kind, exists and names the anchored stable session. A missing
+or substituted snapshot fails closed. Creating or replying to a session comment
+uses the existing authorized, receipt-backed ReviewStore publication; only the
+manifest CAS selects its candidate and only the review state version advances.
+The additive anchor does not change manifest, WAL, request or receipt formats.
 
 Read services may retain an audited `ReviewStoreSnapshot` only within bounded
 process-local cursor limits. The snapshot reports its selected closure-object

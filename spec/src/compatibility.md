@@ -7,6 +7,12 @@ positions. Native and local CLI continuation selectors remain disjoint. The
 unused local synchronization capability is removed; native M10 controls retain
 their contracts.
 
+WorkStore comment reactions add one typed target containing task identity,
+comment identity and exact nonzero version. Existing target tags and canonical
+bytes remain unchanged, as do native manifest/WAL and companion formats. The
+collaboration read DTO adds an optional captured Work root; absent roots retain
+older response framing. Generated OpenAPI and TypeScript qualify the addition.
+
 The additive application content-search endpoint exposes V1 results with full
 native source identities, current revisions, bounded excerpts and opaque
 expiring cursors. Generated OpenAPI/TypeScript and actual HTTP response captures
@@ -458,6 +464,16 @@ retain the exact request, derived publication, intent digest, accepted snapshot
 and immutable ReviewStore result identities. Captured LocalTrusted responses
 validate all four handlers, replay and `not_known` status without changing WAL,
 manifest or ReviewStore object formats.
+
+`ArtifactTargetV1` additively accepts `agent_session`, whose value contains the
+stable `session_id` and exact `session_snapshot` AgentStore reference. Existing
+V1 target encodings and anchor hashes remain byte-for-byte unchanged. The new
+variant uses the existing canonical anchor envelope, dependency traversal and
+ReviewStore commands; it changes no manifest, WAL, request or receipt format.
+OpenAPI and generated TypeScript include the variant, with an actual admitted
+HTTP response captured for conformance. Native staging and cold reads reject
+missing snapshots, wrong kinds and mismatched stable session identities.
+Filesystem-local agent review targets remain unsupported.
 
 The collaboration presentation extension is additive to the version-1 HTTP
 schemas: agent session summaries may expose nullable first and last captured

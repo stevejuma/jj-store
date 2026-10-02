@@ -21,6 +21,22 @@ impl OperatorPolicies for NoReviewOperators {
     }
 }
 
+struct ReviewAnchorStaging;
+#[async_trait::async_trait]
+impl PublicationGuard for ReviewAnchorStaging {
+    async fn authorize(&self, _: &ManifestSnapshot, _: &Request) -> wal::Result<()> {
+        panic!("Session anchor staging attempted publication")
+    }
+    async fn validate_transition(
+        &self,
+        _: &ManifestSnapshot,
+        _: &Request,
+        _: &Snapshot,
+    ) -> wal::Result<()> {
+        panic!("Session anchor staging attempted publication")
+    }
+}
+
 fn body(text: &str) -> ReviewCommentBodyV1 {
     ReviewCommentBodyV1 {
         schema_version: 1,
@@ -223,9 +239,82 @@ async fn local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail
         before_denied
     );
 
+    // An exact session target flows through the same admitted, receipt-aware API.
+    use jj_agent as a;
+    let staging = Coordinator::new(
+        fixture.store.clone(),
+        REPO,
+        fixture.objects.clone(),
+        Arc::new(ReviewAnchorStaging),
+        Limits::default(),
+    )
+    .unwrap();
+    let session_id = a::AgentSessionId::new([130; 16]);
+    let session_snapshot = staging
+        .stage_agent_object(&a::AgentObjectV1::SessionSnapshot(
+            a::AgentSessionSnapshotV1 {
+                schema_version: 1,
+                session_id,
+                integration: a::IntegrationId::Codex,
+                state: a::SessionState::Ended,
+                parent_session_id: None,
+                evidence: vec![],
+                event_batches: vec![],
+                transcripts: vec![],
+                tools: std::collections::BTreeMap::new(),
+                coverage: a::CoverageV1 {
+                    completeness: a::CompletenessV1::Complete,
+                    gaps: 0,
+                    redacted_fields: 0,
+                    truncated: false,
+                },
+            },
+        ))
+        .await
+        .unwrap();
+    let mut session_request = create(131, "A comment about the recorded session");
+    session_request["command"]["anchor"]["target"] = value!({"target": "agent_session", "value": {"session_id": session_id, "session_snapshot": session_snapshot}});
+    assert_eq!(
+        json(&reader, "reviews/commands", Some(&session_request))
+            .await
+            .0,
+        StatusCode::FORBIDDEN
+    );
+    let (status, session_accepted) =
+        json(&restarted, "reviews/commands", Some(&session_request)).await;
+    assert_eq!(status, StatusCode::OK, "{session_accepted}");
+    let session_thread = session_accepted["receipt"]["result"]["thread_id"]
+        .as_str()
+        .unwrap();
+    let (status, session_detail) = json(
+        &restarted,
+        &format!("reviews/threads/{session_thread}"),
+        None,
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK, "{session_detail}");
+    assert_eq!(
+        session_detail["anchor"]["value"]["target"],
+        session_request["command"]["anchor"]["target"]
+    );
+    let (status, session_replay) =
+        json(&restarted, "reviews/commands", Some(&session_request)).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(session_accepted, session_replay);
+
     if let Some(path) = std::env::var_os("JJ_STORE_REVIEW_CONTRACT_CAPTURE") {
         let samples = [
             ("/v1/repos/{repo}/reviews/threads", "get", first_page),
+            (
+                "/v1/repos/{repo}/reviews/threads/{thread}",
+                "get",
+                session_detail,
+            ),
+            (
+                "/v1/repos/{repo}/reviews/commands",
+                "post",
+                session_accepted,
+            ),
             ("/v1/repos/{repo}/reviews/threads", "get", second_page),
             ("/v1/repos/{repo}/reviews/threads/{thread}", "get", detail),
             ("/v1/repos/{repo}/reviews/commands", "post", accepted),

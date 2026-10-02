@@ -18,7 +18,12 @@ function fixture(unknownFirst = false) {
     data: {
       repositories: [
         { id: local, profile: "git_sha1_jj045" },
-        { id: ids.repo, profile: "native", principal: ids.actor },
+        {
+          id: ids.repo,
+          profile: "native",
+          principal: ids.actor,
+          permission: "write",
+        },
       ],
     } as any,
     history: {

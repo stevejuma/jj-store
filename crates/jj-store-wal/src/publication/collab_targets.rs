@@ -18,6 +18,8 @@ use std::collections::BTreeSet;
 /// Callers authorize the repository and capture every input root from one read
 /// snapshot before constructing this facade. No object staging is exposed.
 pub struct CollabTargetReaderV1<'a> {
+    repository: RepositoryId,
+    work: Option<&'a jj_work::WorkStateV1>,
     thread: Option<(ThreadStateV1, &'a CollabGraphV1, BTreeSet<CollabObjectRef>)>,
     agent: Option<&'a dyn AgentSnapshotRead>,
     review: Option<&'a dyn ReviewSnapshotRead>,
@@ -45,10 +47,25 @@ impl<'a> CollabTargetReaderV1<'a> {
             })
             .transpose()?;
         Ok(Self {
+            repository,
+            work: None,
             thread,
             agent,
             review,
         })
+    }
+    pub fn with_work(
+        mut self,
+        repository: RepositoryId,
+        work: &'a jj_work::WorkStateV1,
+    ) -> Result<Self> {
+        if repository != self.repository {
+            return Err(Error::Corrupt("work target reader repository"));
+        }
+        work.validate()
+            .map_err(|_| Error::Corrupt("work target reader state"))?;
+        self.work = Some(work);
+        Ok(self)
     }
 }
 fn read_error(error: Error) -> jj_collab::Error {
@@ -71,6 +88,17 @@ fn read_result<T>(result: Result<T>) -> jj_collab::Result<Option<T>> {
 }
 #[async_trait::async_trait]
 impl ReactionTargetRead for CollabTargetReaderV1<'_> {
+    async fn work_comment(
+        &self,
+        task: jj_work::TaskId,
+        comment: jj_work::WorkCommentId,
+    ) -> jj_collab::Result<Option<jj_work::WorkCommentV1>> {
+        Ok(self
+            .work
+            .and_then(|state| state.comments.get(&comment))
+            .filter(|value| value.task == task)
+            .cloned())
+    }
     async fn thread_selection(&self, id: ThreadId) -> jj_collab::Result<Option<CollabObjectRef>> {
         Ok(self
             .thread

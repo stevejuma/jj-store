@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 // The owning Rust fixture starts a fresh actual RustFS/native server and creates
 // an external Git merge before this browser starts. No synthetic controller.
-test("Git import waits for refresh", async ({ page }) => {
+test("Git import refreshes automatically", async ({ page }) => {
   const workspace = process.env.JJ_STORE_GIT_CYCLE_WORKSPACE!;
   const root = process.env.JJ_STORE_REAL_ROOT!;
   await page.goto("/");
@@ -24,15 +24,6 @@ test("Git import waits for refresh", async ({ page }) => {
     ["--no-pager", "-R", workspace, "git", "fetch"],
     { env: process.env, stdio: "pipe" },
   );
-  const refresh = page.getByRole("button", {
-    name: "Refresh snapshot (new history available)",
-  });
-  await expect(refresh).toBeVisible();
-  expect(new URL(page.url()).hash).toBe(frozen);
-  await expect(
-    page.getByRole("button", { name: "External Git merge", exact: true }),
-  ).toHaveCount(0);
-  await refresh.click();
   await expect(
     page.getByRole("button", { name: "External Git merge", exact: true }),
   ).toBeVisible();

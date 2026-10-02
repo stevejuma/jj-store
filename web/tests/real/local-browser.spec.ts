@@ -77,9 +77,15 @@ test("local_repository_opens_files_history_agents_and_accessible_folder_controls
   await expect(
     page.getByRole("log", { name: "Agent conversation activity" }),
   ).toBeVisible();
+  const toolGroup = page.getByRole("button", {
+    name: "Expand 3 tool calls",
+    exact: true,
+  });
+  await expect(toolGroup).toHaveAttribute("aria-expanded", "false");
+  await toolGroup.click();
   await expect(
-    page.getByRole("group", { name: /tool call$/ }).first(),
-  ).toBeVisible();
+    page.getByRole("group", { name: /^(Read|apply_patch|Bash) tool call$/ }),
+  ).toHaveCount(3);
   await page.goto(`/#/repos/${fixture.repository}/files`);
   await page
     .getByRole("button", { name: "Open profile menu for Local" })
@@ -105,15 +111,20 @@ test("local_repository_opens_files_history_agents_and_accessible_folder_controls
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
   expect(a11y.violations).toEqual([]);
-  await page.getByRole("button", { name: "Back to app", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Back to jj-store", exact: true })
+    .click();
   await page.goto("/#/projects?tab=repositories");
   const add = page.getByRole("button", {
-    name: "Add local repository",
+    name: "Add",
     exact: true,
   });
   await expect(add).toBeEnabled();
   await add.focus();
   await add.press("Enter");
+  await page
+    .getByRole("menuitem", { name: "Add local repository", exact: true })
+    .click();
   await expect(
     page.getByRole("dialog", { name: "Add local JJ folder" }),
   ).toBeVisible();
@@ -148,39 +159,51 @@ test("local_projects_tasks_comments_match_cli_and_recover_unknown_outcomes", asy
   await dialog
     .getByRole("button", { name: "Create project", exact: true })
     .click();
+  const createdProject = view.getByRole("button", {
+    name: `Open project ${title}`,
+    exact: true,
+  });
+  await expect(createdProject).toBeVisible();
+  await expect(
+    dialog.getByRole("button", { name: "Create project", exact: true }),
+  ).toBeEnabled();
+  await expect(dialog.getByRole("alert")).toHaveCount(0);
   await expect(
     dialog.getByRole("status", { name: "Work command status" }),
-  ).toContainText("Saved");
+  ).toHaveCount(0);
   await dialog.getByRole("button", { name: "Done", exact: true }).click();
-  await view
-    .getByRole("button", { name: "Refresh projects", exact: true })
-    .click();
-  await view
-    .getByRole("button", { name: `Open project ${title}`, exact: true })
-    .click();
+  await createdProject.click();
   const project = new URLSearchParams(
     new URL(page.url()).hash.split("?")[1],
   ).get("project")!;
-  await view.getByRole("button", { name: "New task", exact: true }).click();
+  await view.getByRole("tab", { name: "Tasks", exact: true }).click();
+  await view.getByRole("button", { name: "Add", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Add task", exact: true }).click();
   const taskDialog = page.getByRole("dialog", { name: "Create task" });
   await taskDialog.getByLabel("Task title", { exact: true }).fill("Local task");
   await taskDialog
     .getByRole("button", { name: "Create task", exact: true })
     .click();
   await expect(
+    view.getByRole("button", { name: "Open task Local task", exact: true }),
+  ).toBeVisible();
+  await expect(
+    taskDialog.getByRole("button", { name: "Create task", exact: true }),
+  ).toBeEnabled();
+  await expect(taskDialog.getByRole("alert")).toHaveCount(0);
+  await expect(
     taskDialog.getByRole("status", { name: "Work command status" }),
-  ).toContainText("Saved");
+  ).toHaveCount(0);
   await taskDialog.getByRole("button", { name: "Done", exact: true }).click();
-  await view
-    .getByRole("button", { name: "Refresh projects", exact: true })
-    .click();
   await view
     .getByRole("button", { name: "Open task Local task", exact: true })
     .click();
   const taskId = new URLSearchParams(
     new URL(page.url()).hash.split("?")[1],
   ).get("task")!;
-  await view.getByRole("button", { name: "Activity", exact: true }).click();
+  await expect(
+    view.getByRole("button", { name: "Activity", exact: true }),
+  ).toHaveAttribute("aria-expanded", "true");
   await page.route(
     "**/v1/local/repos/*/work/commands",
     async (route) => {
@@ -198,14 +221,11 @@ test("local_projects_tasks_comments_match_cli_and_recover_unknown_outcomes", asy
     .getByRole("button", { name: "Check task command", exact: true })
     .click();
   await expect(
-    view.getByRole("status", { name: "Work command status" }),
-  ).toContainText("Saved");
-  await view
-    .getByRole("button", { name: "Refresh projects", exact: true })
-    .click();
-  await expect(
     view.getByText("Local unknown outcome comment", { exact: true }),
   ).toBeVisible();
+  await expect(
+    view.getByRole("status", { name: "Work command status" }),
+  ).toHaveCount(0);
   const cli = (args: string[]) =>
     JSON.parse(
       execFileSync(
@@ -334,16 +354,14 @@ test("filesystem reviews create and reply with CLI parity and pinned historical 
   );
   expect(cli).toEqual(current);
   const reply = page
-    .getByRole("group", { name: "Reply to review thread", exact: true })
+    .getByRole("group", { name: "Review comment", exact: true })
     .getByRole("textbox");
   await reply.fill("Reply from browser");
-  await page.getByRole("button", { name: "Reply", exact: true }).last().click();
+  await page.getByRole("button", { name: "Add comment", exact: true }).click();
   await expect(
     page.getByText("Reply from browser", { exact: true }).first(),
   ).toBeVisible();
-  await expect(reply.locator(".cm-placeholder")).toHaveText(
-    "Reply with Markdown",
-  );
+  await expect(reply.locator(".cm-placeholder")).toHaveText("Add a comment…");
   await page.reload();
   await expect(
     page.getByText("Reply from browser", { exact: true }).first(),
@@ -390,7 +408,7 @@ test("local_folder_reconnect_and_removal_preserve_code_and_collaboration", async
     await expect(page.locator("body")).not.toHaveCSS("pointer-events", "none");
     await expect(page.getByText("ready", { exact: true })).toBeVisible();
     await page
-      .getByRole("button", { name: "Back to app", exact: true })
+      .getByRole("button", { name: "Back to jj-store", exact: true })
       .click();
     await page.reload();
     await expect(
@@ -412,6 +430,34 @@ test("local_folder_reconnect_and_removal_preserve_code_and_collaboration", async
   } finally {
     renameSync(moved, original);
     fixture.folder = original;
+    const headers = {
+      "x-jj-store-protocol": "1",
+      Origin: new URL(fixture.origin).origin,
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-origin",
+    };
+    const bindings = await (
+      await page.request.get("/v1/local/repositories", { headers })
+    ).json();
+    if (
+      !bindings.bindings.some(
+        (binding: any) => binding.repository === fixture.repository,
+      )
+    ) {
+      const registered = await page.request.post("/v1/local/repositories", {
+        headers,
+        data: {
+          version: 1,
+          request_id: crypto.randomUUID().replaceAll("-", ""),
+          expected_revision: bindings.revision,
+          path: original,
+          name: "Local Git-backed JJ",
+        },
+      });
+      expect(registered.ok()).toBe(true);
+      expect((await registered.json()).status).toBe("committed");
+    }
   }
 });
 

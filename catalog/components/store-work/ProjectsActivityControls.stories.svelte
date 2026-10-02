@@ -18,11 +18,20 @@
         "true",
       ),
     );
-    const filter = await c.findByRole("button", { name: "Filter activity" });
     await expect(
-      filter.closest(".community-projects__surface-header"),
-    ).not.toBeNull();
+      c.getAllByRole("button", {
+        name: /^(Filter activity|Filters for activity)$/,
+      }),
+    ).toHaveLength(1);
+    const filter = await c.findByRole("button", {
+      name: /^(Filter activity|Filters for activity)$/,
+    });
+    await expect(filter.closest(".community-projects__tabs")).not.toBeNull();
     await userEvent.click(filter);
+    const panel = body.getByRole("dialog", { name: "Activity filters" });
+    await expect(
+      within(panel).getByRole("combobox", { name: "Repository filter" }),
+    ).toBeVisible();
     await userEvent.type(
       body.getByPlaceholderText("Find an activity type..."),
       "Without",
@@ -30,9 +39,7 @@
     await userEvent.click(
       body.getByRole("option", { name: /Without agent context/ }),
     );
-    await userEvent.click(
-      body.getByRole("button", { name: "Close activity filter" }),
-    );
+    await userEvent.click(body.getByRole("button", { name: "Close filters" }));
     await waitFor(() =>
       expect(c.getByText("No matching activity")).toBeVisible(),
     );
@@ -41,9 +48,7 @@
     await userEvent.click(
       body.getByRole("option", { name: /With agent context/ }),
     );
-    await userEvent.click(
-      body.getByRole("button", { name: "Close activity filter" }),
-    );
+    await userEvent.click(body.getByRole("button", { name: "Close filters" }));
     await waitFor(() =>
       expect(
         c.getByRole("list", { name: "Repository activity" }),
@@ -54,9 +59,7 @@
     ).toBeGreaterThan(0);
     await userEvent.click(filter);
     await userEvent.click(body.getByRole("option", { name: /All commits/ }));
-    await userEvent.click(
-      body.getByRole("button", { name: "Close activity filter" }),
-    );
+    await userEvent.click(body.getByRole("button", { name: "Close filters" }));
     await expect(filter).toHaveAttribute("aria-pressed", "false");
   }
 </script>

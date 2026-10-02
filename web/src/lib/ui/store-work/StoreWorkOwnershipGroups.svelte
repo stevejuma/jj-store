@@ -6,12 +6,14 @@
     principal,
     isMine,
     kind,
+    home = "",
     Icon,
     children,
   }: {
     rows: readonly T[];
     principal?: string;
     kind: "projects" | "tasks";
+    home?: string;
     isMine?: (row: T) => boolean;
     Icon: Component;
     children: Snippet<[readonly T[]]>;
@@ -25,10 +27,14 @@
 </script>
 
 <div class="community-projects__collection-groups">
-  {#if mine.length}<StoreWorkCollection title="Mine" count={mine.length} {Icon}
-      >{@render children(mine)}</StoreWorkCollection
+  {#if mine.length}<StoreWorkCollection
+      id={`${kind}:${home}:mine`}
+      title="Mine"
+      count={mine.length}
+      {Icon}>{@render children(mine)}</StoreWorkCollection
     >{/if}
   {#if other.length}<StoreWorkCollection
+      id={`${kind}:${home}:other`}
       title={`Other ${kind}`}
       count={other.length}
       {Icon}>{@render children(other)}</StoreWorkCollection

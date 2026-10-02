@@ -23,7 +23,218 @@
       status.querySelector('[data-ui-component="skeleton"]'),
     ).not.toBeNull();
   }
+
+  async function expectReviewDetailSkeleton(canvasElement: HTMLElement) {
+    await expectSkeleton(
+      canvasElement,
+      "Loading review details",
+      "review-detail",
+    );
+    const status = within(canvasElement).getByRole("status", {
+      name: "Loading review details",
+    });
+    const header = status.querySelector<HTMLElement>(
+      ".community-projects__review-header",
+    )!;
+    const body = status.querySelector<HTMLElement>(
+      ".community-projects__review-body",
+    )!;
+    const footer = status.querySelector<HTMLElement>(
+      ".community-projects__review-footer",
+    )!;
+    await expect(header).not.toBeNull();
+    await expect(
+      body.querySelector(".community-projects__review-meta"),
+    ).not.toBeNull();
+    await expect(
+      body.querySelectorAll(".community-projects__review-section"),
+    ).toHaveLength(4);
+    await expect(footer).not.toBeNull();
+    const scroll = status.querySelector<HTMLElement>(
+      '[data-ui-part="scroll-area-viewport"]',
+    )!;
+    await expect(scroll.contains(header)).toBe(false);
+    await expect(scroll.contains(footer)).toBe(false);
+    await expect(status.getBoundingClientRect().width).toBeGreaterThan(
+      canvasElement
+        .querySelector(".store-application__body-regions")!
+        .getBoundingClientRect().width * 0.95,
+    );
+    await expect(header.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      scroll.getBoundingClientRect().top,
+    );
+    await expect(scroll.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      footer.getBoundingClientRect().top,
+    );
+    await expect(within(status).queryByRole("textbox")).toBeNull();
+    await expect(
+      within(canvasElement).queryByText("Review unavailable"),
+    ).toBeNull();
+  }
 </script>
+
+<Story
+  name="Connection loading branches"
+  args={{ initialPage: "branches", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading log"
+  args={{ initialPage: "log", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading oplog"
+  args={{ initialPage: "oplog", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading files"
+  args={{ initialPage: "files", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading agents"
+  args={{ initialPage: "agents", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading reviews"
+  args={{ initialPage: "reviews", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Reviews"
+  args={{ initialPage: "reviews" }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole("status", {
+        name: "Loading review threads",
+      }),
+    ).toBeVisible();
+  }}
+/>
+
+<Story
+  name="Review detail"
+  args={{ initialPage: "reviews", loading: false, detailLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expectReviewDetailSkeleton(canvasElement);
+  }}
+/>
+
+<Story
+  name="Review detail before list read"
+  args={{ initialPage: "reviews", detailLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expectReviewDetailSkeleton(canvasElement);
+  }}
+/>
+
+<Story
+  name="Review detail before connection"
+  args={{
+    initialPage: "reviews",
+    connectionLoading: true,
+    detailLoading: true,
+  }}
+  play={async ({ canvasElement }) => {
+    await expectReviewDetailSkeleton(canvasElement);
+  }}
+/>
+
+<Story
+  name="Narrow review detail"
+  args={{
+    initialPage: "reviews",
+    detailLoading: true,
+    initiallyCollapsed: true,
+  }}
+  play={async ({ canvasElement }) => {
+    const host = canvasElement.querySelector<HTMLElement>(
+      ".store-application__body-regions",
+    )!;
+    host.style.width = "380px";
+    host.style.height = "640px";
+    await expectReviewDetailSkeleton(canvasElement);
+    const status = within(canvasElement).getByRole("status", {
+      name: "Loading review details",
+    });
+    await expect(status.scrollWidth).toBeLessThanOrEqual(status.clientWidth);
+  }}
+/>
 
 <Story
   name="Branches"

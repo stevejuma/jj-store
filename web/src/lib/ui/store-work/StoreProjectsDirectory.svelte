@@ -44,6 +44,7 @@
   <div class="community-projects__collection-groups">
     {#each [true, false] as mine}
       {#if count(mine)}<StoreWorkCollection
+          id={`${kind}:${mine ? "mine" : "other"}`}
           title={mine ? "Mine" : `Other ${kind}`}
           count={count(mine)}
           Icon={kind === "tasks" ? ListTodoIcon : FolderKanbanIcon}
@@ -115,9 +116,6 @@
         : `No ${kind} yet`}
       description="Create an item or change the filters to see work across your repositories."
     />{/if}
-  {#if hub.loading}<p role="status">
-      Checking home repositories… Results are still loading.
-    </p>{/if}
   {#if hub.homes.some((home) => home.error)}<p>
       Some homes are unavailable. Results cover the homes shown above.
     </p>{/if}

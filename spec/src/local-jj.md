@@ -1,5 +1,12 @@
 # Local Git-backed JJ collaboration
 
+Local task comment reactions resolve only visible exact comment versions in the
+same committed companion selection as ReactionStore, with matching task
+membership. Reaction writes retain other domain selections and task versions;
+edits and tombstones reject old targets. Cold reopen, Git GC, receipt replay and
+exact observed clear use the shared typed domain without synthetic Threads. The
+local browser's existing collaboration capability gate remains separate.
+
 The companion retains exact human reply parent revisions in the owned Git
 closure; absent reply fields preserve existing canonical message and intent
 bytes.
@@ -22,14 +29,14 @@ and presentation.
 
 ## Requirements
 
-| ID            | Requirement                                                                                                                                                                                                                                                                                                                                                                     |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-LOCAL-001 | Local collaboration MUST use immutable Git objects selected only by expected-old-value publication of `refs/lapis/state/v1`. First metadata write initializes identity atomically; reads do not initialize. Independent domain versions, original request receipts and selected history MUST survive restart.                                                                   |
-| JST-LOCAL-002 | Selected metadata and exact code evidence MUST have real Git reachability, including nonstandard JJ dependencies and archived operation/view/extra data. Upstream GC and loss of derived indexes MUST NOT invalidate retained anchors. Unknown formats and incomplete closures MUST fail closed.                                                                                |
-| JST-LOCAL-003 | Server-free CLI and local UI MUST share owned domain commands, validation, limits, sanitization and stale-version semantics with the native profile. Native codecs and identities MUST retain their existing interpretation. Git identities MUST use explicit profile-aware types.                                                                                              |
-| JST-LOCAL-004 | LocalTrusted serving MUST open explicitly registered folders without requiring RustFS, pin explicit operation and metadata snapshots, and expose versioned capabilities, queries and existing applicable code mutations. Reads MUST NOT reconcile heads; displayed snapshots change only on explicit refresh.                                                                   |
-| JST-LOCAL-005 | UI code commands MUST journal the exact unpublished JJ operation before upstream head publication, retain stable request identities and unknown outcomes, preserve concurrent siblings, and never resurrect undone or abandoned operations. Checkout files remain under foreground JJ handling.                                                                                 |
-| JST-LOCAL-006 | Local import/export MUST create independent destinations, preserve all collaboration history and exact referenced evidence, report identity mappings, initialize a fresh destination operation log, and verify complete bounded closures before final publication. Source state and existing destinations MUST remain untouched; unsupported active projections fail preflight. |
+| ID            | Requirement                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-LOCAL-001 | Local collaboration MUST use immutable Git objects selected only by expected-old-value publication of `refs/lapis/state/v1`. First metadata write initializes identity atomically; reads do not initialize. Independent domain versions, original request receipts and selected history MUST survive restart.                                                                                         |
+| JST-LOCAL-002 | Selected metadata and exact code evidence MUST have real Git reachability, including nonstandard JJ dependencies and archived operation/view/extra data. Upstream GC and loss of derived indexes MUST NOT invalidate retained anchors. Unknown formats and incomplete closures MUST fail closed.                                                                                                      |
+| JST-LOCAL-003 | Server-free CLI and local UI MUST share owned domain commands, validation, limits, sanitization and stale-version semantics with the native profile. Native codecs and identities MUST retain their existing interpretation. Git identities MUST use explicit profile-aware types.                                                                                                                    |
+| JST-LOCAL-004 | LocalTrusted serving MUST open explicitly registered folders without requiring RustFS, pin explicit operation and metadata snapshots, and expose versioned capabilities, queries and existing applicable code mutations. Reads MUST NOT reconcile heads; active browser snapshots refresh automatically after committed saves, events and periodic checks while retaining historical code selections. |
+| JST-LOCAL-005 | UI code commands MUST journal the exact unpublished JJ operation before upstream head publication, retain stable request identities and unknown outcomes, preserve concurrent siblings, and never resurrect undone or abandoned operations. Checkout files remain under foreground JJ handling.                                                                                                       |
+| JST-LOCAL-006 | Local import/export MUST create independent destinations, preserve all collaboration history and exact referenced evidence, report identity mappings, initialize a fresh destination operation log, and verify complete bounded closures before final publication. Source state and existing destinations MUST remain untouched; unsupported active projections fail preflight.                       |
 
 ## Publication profile
 
@@ -189,7 +196,7 @@ validation and retention qualify. GETs never initialize identity or actor state.
 | --------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M13.3     | Portable code and agent review anchors, backend-aware review CLI, bounded review detail/pagination and durable retry | Validate exact selected capsules and retained Git closures; preserve stale semantics and original receipts across restart, unknown outcomes and ref races; reject missing or unsupported evidence.                                                                                                                                  |
 | M13.3     | Automatic hook code-causality associations and native portable capsule carrier                                       | Associate original sanitized captures with observed explicit code operations without inventing causality; qualify native retained capsule publication and replay. Native providers continue rejecting portable records until that carrier passes.                                                                                   |
-| M13.4     | Indexed local code search                                                                                            | Build bounded rebuildable local search over explicit operation and companion selections; preserve independent code access, native search contracts and refresh-only snapshot advancement.                                                                                                                                           |
+| M13.4     | Indexed local code search                                                                                            | Build bounded rebuildable local search over explicit operation and companion selections; preserve independent code access, native search contracts and automatic browser snapshot advancement.                                                                                                                                      |
 | M13.4     | Recoverable local code mutations                                                                                     | Durably journal the exact unpublished JJ operation before publishing heads; prove stable unknown/retry outcomes, concurrent sibling preservation, undo/abandon safety and protection of dirty unsnapshotted checkout files.                                                                                                         |
 | M13.5     | Bounded durable local/native conversion and identity mapping reports                                                 | Create an independent destination with a fresh operation log, selected code state/ancestry, complete collaboration history and exact evidence archives. Reject unsupported active representations in preflight, verify bounded closures, publish native manifests last, export only to a new folder and leave the source untouched. |
 | M13.6     | Cold full-flow qualification and retained native regressions                                                         | Exercise the completed local CLI, filesystem server/UI, recovery and conversion in fresh processes; retain native identity, publication, collaboration and browser regression evidence. Focused provider tests alone do not satisfy this gate.                                                                                      |
@@ -261,9 +268,10 @@ folders are never exposed through authenticated shared deployments.
 
 Mixed and filesystem-only startup use the same device registry and browser. The
 filesystem mode requires no object-store runtime or native RPC. Local freshness
-notifications announce changed operation heads or companion refs; only explicit
-refresh advances displayed snapshots. An unavailable folder, changed identity or
-unsupported capability is distinguished from denied access.
+notifications announce changed operation heads or companion refs; the browser
+automatically recaptures active selections without moving explicit historical
+code pins. An unavailable folder, changed identity or unsupported capability is
+distinguished from denied access.
 
 Format-2 server configuration selects filesystem storage explicitly; native
 storage remains the default. Filesystem startup requires literal-loopback
@@ -315,15 +323,16 @@ or record agents.
 
 Local freshness streams revalidate device bindings and perform bounded checks of
 operation heads and the selected companion ref. They announce current selections
-without reconciling heads, changing working files or moving displayed snapshots.
-A reconnect must compare the announced selections against the retained browser
-pin, so changes while disconnected remain visible until explicit refresh.
+without reconciling heads or changing working files. The browser compares
+reconnect announcements against its retained selections and automatically
+reloads new committed data, including changes missed while disconnected.
 
 The browser selects transports by discovered profile and availability. Folder
 controls persist the exact pending Add request in device browser storage before
 dispatch. Reload checks its outcome; retry reuses the same intent. Removal and
-reconnect retain repository and project identities. Displayed code and
-collaboration selections remain pinned until explicit refresh.
+reconnect retain repository and project identities. Browser collaboration roots
+and current-head views refresh automatically; explicit historical code
+selections remain pinned.
 
 Local browser read transports reuse the existing bounded busy-retry policy for
 shared read-worker admission. A retry retains the exact operation, companion

@@ -13,19 +13,20 @@ pub enum ReadScope {
     Reactions(ReactionTargetV1),
 }
 impl ReadScope {
-    pub(super) fn domains(&self) -> [bool; 4] {
+    pub(super) fn domains(&self) -> [bool; 5] {
         match self {
-            Self::All => [true; 4],
-            Self::Threads => [true, false, false, false],
-            Self::Emojis => [false, true, false, false],
+            Self::All => [true; 5],
+            Self::Threads => [true, false, false, false, false],
+            Self::Emojis => [false, true, false, false, false],
             Self::Reactions(target) => match target {
                 ReactionTargetV1::Thread { .. } | ReactionTargetV1::HumanMessage { .. } => {
-                    [true, true, false, false]
+                    [true, true, false, false, false]
                 }
                 ReactionTargetV1::ReviewThread { .. } | ReactionTargetV1::ReviewComment { .. } => {
-                    [false, true, false, true]
+                    [false, true, false, true, false]
                 }
-                _ => [false, true, true, false],
+                ReactionTargetV1::WorkComment { .. } => [false, true, false, false, true],
+                _ => [false, true, true, false, false],
             },
         }
     }
@@ -67,6 +68,12 @@ pub(super) enum Data {
     Reaction(Arc<ReactionData>),
     Agent(Arc<wal::publication::AgentStoreSelection>),
     Review(Arc<wal::publication::ReviewStoreSelection>),
+    Work(Arc<WorkData>),
+}
+pub(super) struct WorkData {
+    pub state: wal::publication::WorkStateV1,
+    pub objects: usize,
+    pub bytes: usize,
 }
 impl Data {
     fn size(&self) -> (usize, usize) {
@@ -75,6 +82,7 @@ impl Data {
             Self::Reaction(d) => (d.graph.objects.len(), d.bytes),
             Self::Agent(d) => (d.object_count(), 0),
             Self::Review(d) => (d.object_count(), 0),
+            Self::Work(d) => (d.objects, d.bytes),
         }
     }
 }
@@ -128,6 +136,18 @@ pub(super) async fn load(session: &NativeSession, root: RecordRef) -> Result<Arc
         RecordKind::ReviewRoot => Data::Review(Arc::new(
             session.coordinator.review_store(root).await?.selection(),
         )),
+        RecordKind::WorkRoot => {
+            let store = session.coordinator.work_store(root).await?;
+            let state = store.state();
+            let bytes = serde_json::to_vec(&(&state.projects, &state.tasks, &state.comments))
+                .map_err(|_| Error::Corrupt)?
+                .len();
+            Data::Work(Arc::new(WorkData {
+                state: state.clone(),
+                objects: store.object_count(),
+                bytes,
+            }))
+        }
         _ => return Err(Error::Corrupt),
     };
     if data.size().0 > session.limits.inventory_nodes {

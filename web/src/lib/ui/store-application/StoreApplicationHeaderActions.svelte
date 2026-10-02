@@ -23,22 +23,22 @@
     {disabled}
   />
   <Button
-    variant={controller.state.status.refreshAvailable ? "outline" : "ghost"}
+    variant="ghost"
     size="icon-sm"
-    aria-label={controller.state.status.refreshAvailable
-      ? "Refresh snapshot (new history available)"
-      : "Refresh snapshot"}
+    aria-label="Refresh snapshot"
     title="Refresh snapshot"
     disabled={disabled || controller.state.status.connection !== "connected"}
     onclick={() => controller.actions.refresh()}
     ><RefreshCwIcon aria-hidden="true" /></Button
   >{/if}
-<Button
-  variant="ghost"
-  size="icon-sm"
-  aria-label="Toggle details"
-  {disabled}
-  aria-expanded={detailsOpen}
-  onclick={toggleDetails}
-  ><CommunitySidebarToggleIcon side="right" expanded={detailsOpen} /></Button
->
+<span class="community-app-shell__sidebar-action">
+  <Button
+    variant="default"
+    size="icon-sm"
+    aria-label="Toggle details"
+    {disabled}
+    aria-expanded={detailsOpen}
+    onclick={toggleDetails}
+    ><CommunitySidebarToggleIcon side="right" expanded={detailsOpen} /></Button
+  >
+</span>

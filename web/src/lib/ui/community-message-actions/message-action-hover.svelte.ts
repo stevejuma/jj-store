@@ -7,6 +7,7 @@ export function createMessageActionHover() {
   let actionCloseTimer: ReturnType<typeof setTimeout> | undefined;
   let actionsVisible = $state(false);
   let hasFocusWithin = false;
+  let hasPointerWithin = false;
 
   function clearActionOpenTimer(): void {
     if (actionOpenTimer === undefined) return;
@@ -57,6 +58,10 @@ export function createMessageActionHover() {
       if (event.currentTarget.contains(next)) return;
     }
     hasFocusWithin = false;
+    if (hasPointerWithin) {
+      keepActionsVisible();
+      return;
+    }
     clearActionCloseTimer();
     actionsVisible = false;
   }
@@ -71,8 +76,14 @@ export function createMessageActionHover() {
       return actionsVisible;
     },
     handlers: {
-      onpointerenter: scheduleActions,
-      onpointerleave: scheduleActionsHide,
+      onpointerenter: () => {
+        hasPointerWithin = true;
+        scheduleActions();
+      },
+      onpointerleave: () => {
+        hasPointerWithin = false;
+        scheduleActionsHide();
+      },
       onfocusin: focusActions,
       onfocusout: blurActions,
       onpointerdown: (event: PointerEvent) => {

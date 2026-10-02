@@ -1,15 +1,14 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import * as Dialog from "@lapismd/design-core/shadcn/dialog";
-  import * as ButtonGroup from "@lapismd/design-core/shadcn/button-group";
+  import { onMount, type Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { Input } from "@lapismd/design-core/shadcn/input";
-  import { DialogFrame } from "@lapismd/design-core/forms/dialog";
+  import StoreLocalFolderDialog from "./StoreLocalFolderDialog.svelte";
+  import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
+  import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+  import GitBranchPlusIcon from "@lucide/svelte/icons/git-branch-plus";
   import PlusIcon from "@lucide/svelte/icons/plus";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import UnlinkIcon from "@lucide/svelte/icons/unlink";
-  import XIcon from "@lucide/svelte/icons/x";
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import { LocalFolderManager } from "../../controller/local-folder-manager.js";
@@ -18,10 +17,12 @@
     controller,
     repository,
     mode = "settings",
+    trigger,
   }: {
     controller: StoreController;
     repository?: string;
     mode?: "settings" | "add";
+    trigger?: Snippet<[add: () => void, disabled: boolean]>;
   } = $props();
   let manager = $state<LocalFolderManager>();
   let bindings = $state<Model<"LocalBinding">[]>([]);
@@ -33,6 +34,11 @@
     pending = $state(false),
     busy = $state(false),
     message = $state("");
+  const visibleBindings = $derived(
+    bindings.filter(
+      (binding) => !repository || binding.repository === repository,
+    ),
+  );
   async function run(action: () => Promise<void>) {
     if (busy) return;
     busy = true;
@@ -71,7 +77,20 @@
     } catch (cause) {
       message = storeErrorMessage(cause);
     }
-    return () => manager?.close();
+    const timer = setInterval(() => {
+      if (
+        !document.hidden &&
+        manager &&
+        !busy &&
+        !pending &&
+        (mode === "settings" || open)
+      )
+        void run(list);
+    }, 5000);
+    return () => {
+      clearInterval(timer);
+      manager?.close();
+    };
   });
   function edit(id: string | null) {
     reconnect = id;
@@ -99,146 +118,127 @@
 </script>
 
 {#if mode === "add"}
-  <Button
-    variant="ghost"
-    size="icon-sm"
-    aria-label="Add local repository"
-    title="Add local repository"
-    disabled={busy || !manager}
-    onclick={() => edit(null)}><PlusIcon aria-hidden="true" /></Button
-  >
+  {#if trigger}{@render trigger(
+      () => edit(null),
+      busy || !manager,
+    )}{:else}<Button
+      variant="ghost"
+      size="icon-sm"
+      aria-label="Add local repository"
+      title="Add local repository"
+      disabled={busy || !manager}
+      onclick={() => edit(null)}
+      ><GitBranchPlusIcon aria-hidden="true" /></Button
+    >{/if}
 {:else}
   <section
     class="store-settings__section"
     aria-labelledby="local-folders-heading"
   >
     <header><h2 id="local-folders-heading">Git-backed JJ folders</h2></header>
-    <p>
-      Register an existing JJ folder for browsing and projects. Add initializes
-      companion metadata when it is missing. Search, code edits, reviews,
-      conversion and sync are unavailable.
-    </p>
-    <div class="store-settings__actions">
-      <Button
-        variant="outline"
-        disabled={busy || !manager}
-        onclick={() => edit(null)}
-        ><PlusIcon aria-hidden="true" />{pending
-          ? "Resume Add"
-          : "Add folder"}</Button
-      >
-      <Button
-        variant="outline"
-        disabled={busy || !manager}
-        onclick={() => run(list)}
-        ><RefreshCwIcon aria-hidden="true" />Refresh folders</Button
-      >
-      {#if pending}<Button
+    <div class="store-settings__action-row">
+      <div>
+        <strong>Register a folder</strong>
+        <p>
+          Register an existing JJ folder for browsing and projects. Add
+          initializes companion metadata when it is missing. Search, code edits,
+          reviews, conversion and sync are unavailable.
+        </p>
+      </div>
+      <div class="store-settings__actions">
+        <Button
           variant="outline"
-          disabled={busy}
-          onclick={() =>
-            run(async () => {
-              const result = await manager!.status();
-              message = result?.status ?? "No pending registration";
-              if (result?.status === "committed") await changed();
-            })}>Check registration</Button
-        >{/if}
-    </div>
-    {#each bindings.filter((b) => !repository || b.repository === repository) as binding (binding.repository)}
-      <div class="store-settings__section">
-        <strong>{binding.name}</strong>
-        <p>{binding.path}</p>
-        <p>{binding.availability.replaceAll("_", " ")}</p>
-        <div class="store-settings__actions">
-          <Button
+          disabled={busy || !manager}
+          onclick={() => edit(null)}
+          ><PlusIcon aria-hidden="true" />{pending
+            ? "Resume Add"
+            : "Add folder"}</Button
+        >
+        <Button
+          variant="outline"
+          disabled={busy || !manager}
+          onclick={() => run(list)}
+          ><RefreshCwIcon aria-hidden="true" />Refresh folders</Button
+        >
+        {#if pending}<Button
             variant="outline"
-            disabled={busy || pending}
-            onclick={() => edit(binding.repository)}
-            ><GitBranchIcon aria-hidden="true" />Reconnect folder</Button
-          >
-          <Button
-            variant="outline"
-            disabled={busy || pending}
+            disabled={busy}
             onclick={() =>
               run(async () => {
-                await manager!.remove(binding.repository);
-                if (controller.state.repository.id === binding.repository)
-                  controller.actions.disconnect();
-                await changed();
-              })}><UnlinkIcon aria-hidden="true" />Remove registration</Button
-          >
-        </div>
+                const result = await manager!.status();
+                message = result?.status ?? "No pending registration";
+                if (result?.status === "committed") await changed();
+              })}>Check registration</Button
+          >{/if}
       </div>
-    {/each}
-    <p>Removing a registration preserves the folder and project links.</p>
+    </div>
+    {#if visibleBindings.length}<dl
+        class="store-settings__rows store-settings__rows--controls"
+      >
+        {#each visibleBindings as binding (binding.repository)}
+          <div>
+            <dt>
+              <strong>{binding.name}</strong>
+              <p class="store-settings__row-description">{binding.path}</p>
+              <p class="store-settings__row-description">
+                {binding.availability.replaceAll("_", " ")}
+              </p>
+            </dt>
+            <dd class="store-settings__actions">
+              <Button
+                variant="outline"
+                disabled={busy || pending}
+                onclick={() => edit(binding.repository)}
+                ><GitBranchIcon aria-hidden="true" />Reconnect folder</Button
+              >
+              <Button
+                variant="outline"
+                disabled={busy || pending}
+                onclick={() =>
+                  run(async () => {
+                    await manager!.remove(binding.repository);
+                    if (controller.state.repository.id === binding.repository)
+                      controller.actions.disconnect();
+                    await changed();
+                  })}
+                ><UnlinkIcon aria-hidden="true" />Remove registration</Button
+              >
+            </dd>
+          </div>
+        {/each}
+      </dl>
+    {:else if !busy && !message}<StoreSettingsEmpty
+        Icon={FolderGitIcon}
+        title="No Git-backed JJ folders"
+        description="Add an existing JJ folder to browse its code and projects."
+      />{/if}
+    <p class="store-settings__empty">
+      Removing a registration preserves the folder and project links.
+    </p>
     {#if message}<p role="status">{message}</p>{/if}
   </section>
 {/if}
-<Dialog.Root bind:open>
-  <DialogFrame
-    {busy}
-    title={reconnect ? "Reconnect local folder" : "Add local JJ folder"}
-    description={reconnect
-      ? "Select the original repository at its new location."
-      : "Inspect an existing folder, then explicitly add it to this installation."}
-  >
-    <label for="local-jj-path">Folder</label>
-    <ButtonGroup.Root class="store-settings__folder-picker">
-      <Input
-        id="local-jj-path"
-        value={path}
-        disabled={busy || pending}
-        oninput={(e) => {
-          path = e.currentTarget.value;
-          inspected = null;
-        }}
-      />
-      <Button
-        variant="outline"
-        disabled={busy || pending}
-        onclick={() =>
-          run(async () => {
-            const value = await manager!.pick();
-            if (value.path) {
-              path = value.path;
-              inspected = null;
-            }
-          })}><GitBranchIcon aria-hidden="true" />Browse</Button
-      >
-    </ButtonGroup.Root>
-    {#if !reconnect}<label for="local-jj-name">Name</label><Input
-        id="local-jj-name"
-        bind:value={name}
-        disabled={busy || pending}
-      />{/if}
-    <Button
-      variant="outline"
-      disabled={busy || pending || !path}
-      onclick={() =>
-        run(async () => {
-          inspected = await manager!.inspect(path);
-        })}>Inspect folder</Button
-    >
-    {#if inspected}<p role="status">
-        Supported Git-backed JJ folder. {inspected.repository
-          ? `Repository ${inspected.repository}`
-          : "Companion metadata will be initialized on Add."}
-      </p>{/if}
-    {#if message}<p role="status">{message}</p>{/if}
-    {#snippet footer()}<Button
-        variant="outline"
-        disabled={busy}
-        onclick={() => (open = false)}
-        ><XIcon aria-hidden="true" />Cancel</Button
-      ><Button
-        disabled={busy ||
-          (!pending && (!inspected || (!reconnect && !name.trim())))}
-        onclick={() => run(save)}
-        ><PlusIcon aria-hidden="true" />{pending
-          ? "Retry Add"
-          : reconnect
-            ? "Reconnect"
-            : "Add folder"}</Button
-      >{/snippet}
-  </DialogFrame>
-</Dialog.Root>
+<StoreLocalFolderDialog
+  bind:open
+  bind:path
+  bind:name
+  {busy}
+  {pending}
+  {inspected}
+  {message}
+  reconnect={!!reconnect}
+  onPathChange={() => (inspected = null)}
+  onBrowse={() =>
+    run(async () => {
+      const value = await manager!.pick();
+      if (value.path) {
+        path = value.path;
+        inspected = null;
+      }
+    })}
+  onInspect={() =>
+    run(async () => {
+      inspected = await manager!.inspect(path);
+    })}
+  onSave={() => run(save)}
+/>

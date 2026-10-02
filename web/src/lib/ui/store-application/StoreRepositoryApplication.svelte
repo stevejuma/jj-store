@@ -25,6 +25,10 @@
     layoutStorage?: Storage;
   } = $props();
   const state = $derived(controller.state);
+  const preparing = $derived(
+    state.status.connection === "connecting" ||
+      state.status.navigation === "loading",
+  );
   const selectedId = $derived(
     state.route.page === "oplog"
       ? state.route.inspectedOperationId
@@ -90,10 +94,7 @@
           >
         </Alert.Root>
       </section>
-    {:else if page === "agents"}<StoreAgentSessions
-        {controller}
-        {layoutStorage}
-      />
+    {:else if page === "agents"}<StoreAgentSessions {controller} />
     {:else if page === "reviews"}<StoreReviewThreads
         {controller}
         {layoutStorage}
@@ -126,8 +127,10 @@
         unavailableComparisonCount={state.unavailableComparisonCount}
         loading={state.status.graph === "loading" ||
           state.status.graph === "refreshing" ||
-          state.status.bookmarks === "loading" ||
-          state.status.bookmarks === "refreshing"}
+          preparing}
+        referencesLoading={state.status.bookmarks === "loading" ||
+          state.status.bookmarks === "refreshing" ||
+          preparing}
         detailLoading={state.status.detail === "loading"}
         filesLoading={state.status.detail === "refreshing"}
         now={state.now}

@@ -50,8 +50,13 @@ function browserNavigation(): StoreRouteBrowser | undefined {
   };
 }
 
-const same = (left: StoreRoute, right: StoreRoute) =>
-  JSON.stringify(left) === JSON.stringify(right);
+function same(left: StoreRoute, right: StoreRoute) {
+  const leftHash = storeRouteToHash(left),
+    rightHash = storeRouteToHash(right);
+  return leftHash && rightHash
+    ? leftHash === rightHash
+    : JSON.stringify(left) === JSON.stringify(right);
+}
 
 export function createStoreRouteHistory(
   browser: StoreRouteBrowser | undefined = browserNavigation(),

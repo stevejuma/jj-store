@@ -74,8 +74,8 @@ test("local folder settings preserve drafts and link without changing repository
   await page.getByRole("menuitem", { name: "Settings" }).click();
   await expect(
     page
-      .getByRole("navigation", { name: "Settings page navigation" })
-      .getByRole("button", { name: "Back to app" }),
+      .getByRole("navigation", { name: "Settings navigation" })
+      .getByRole("button", { name: "Back to jj-store" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Repository", exact: true }).click();
   await expect(
@@ -103,24 +103,15 @@ test("local folder settings preserve drafts and link without changing repository
     .getByRole("heading", { name: "Repository", level: 1 })
     .boundingBox())!;
   expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(tabBounds.x + tabBounds.width).toBeLessThan(headingBounds.x);
+  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
   const navigationBounds = (await navigation.boundingBox())!;
-  expect(
-    navigationBounds.x +
-      navigationBounds.width -
-      headingBounds.x -
-      headingBounds.width,
-  ).toBeLessThan(24);
-  const back = navigation.getByRole("button", { name: "Back to app" });
-  await expect(back).toHaveText("");
-  const backBounds = (await back.boundingBox())!;
-  expect(backBounds.x - navigationBounds.x).toBeLessThanOrEqual(8);
-  expect(backBounds.width).toBe(backBounds.height);
-  expect(
-    await back.evaluate((button) =>
-      Number.parseFloat(getComputedStyle(button).borderRadius),
-    ),
-  ).toBeGreaterThanOrEqual(backBounds.width / 2);
+  expect(headingBounds.x - navigationBounds.x).toBeLessThan(24);
+  await expect(navigation.locator(":scope > :first-child")).toHaveRole(
+    "heading",
+  );
+  await expect(
+    navigation.getByRole("button", { name: "Back to app" }),
+  ).toHaveCount(0);
   await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
   await expect(page.locator(".store-settings h1")).toHaveCount(0);
   expect(
@@ -179,7 +170,7 @@ test("local folder settings preserve drafts and link without changing repository
     violations: [],
   });
   await page.setViewportSize({ width: 1400, height: 1000 });
-  await page.getByRole("button", { name: "Back to app" }).click();
+  await page.getByRole("button", { name: "Back to jj-store" }).click();
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();

@@ -41,16 +41,32 @@ For the browser UI, `pnpm dev:restart` rebuilds the UI, embedded RustFS helper
 and development binaries, then starts the private LocalTrusted installation in
 `.local/dev-demo`. It initializes and seeds the native demo repository only when
 that ignored directory is empty. `pnpm dev:stop` stops the owned processes while
-preserving the repository, installation identity and embedded RustFS volume;
-`pnpm dev:reset` replaces them with the deterministic sample fixture. The reset
-publishes representative Codex, Cursor and OpenCode sessions and creates open
-and resolved reviews across all seven repository, operation, revision, code and
-agent anchor types. No repository token or Docker service is required.
-`pnpm web:test:real` uses its own OS-temporary fixture, publishes a change
-through a separate native CLI process, verifies SSE notification and explicit
-browser refresh through the built UI, then removes that isolated fixture. The
-local demo configures its search worker and reports ready only after the
-complete seeded repository position is indexed.
+preserving the repository, installation identity and embedded RustFS volume.
+
+For daily UI development, initialize once with `pnpm dev:restart`, then run
+`pnpm dev:ui`. Vite serves the current workspace at `http://127.0.0.1:7460/`
+with HMR and proxies `/v1` to the compiled backend on port 7462. Svelte,
+TypeScript and CSS edits need no build or backend restart. The UI command
+requires existing binaries and a complete fixture; it never builds or seeds.
+After changing Rust, use `pnpm dev:backend:build` followed by
+`pnpm dev:backend:restart`, which keeps Vite running. `pnpm dev:restart` still
+rebuilds/restarts the whole stack and returns to built UI serving;
+`pnpm dev:stop` stops either mode without deleting data. To reuse a fixture from
+another workspace, set `JJ_STORE_DEV_ROOT` to its absolute `.local/dev-demo`
+path for every command. `JJ_STORE_DEV_SERVER` selects an existing server binary;
+the UI and backend ports can be selected with `JJ_STORE_DEV_PORT` and
+`JJ_STORE_DEV_BACKEND_PORT`. Production CSP verification uses the built UI; Vite
+has a separate loopback-only HMR document policy.
+
+`pnpm dev:reset` replaces the demo state with the deterministic sample fixture.
+The reset publishes representative Codex, Cursor and OpenCode sessions and
+creates open and resolved reviews across all seven repository, operation,
+revision, code and agent anchor types. No repository token or Docker service is
+required. `pnpm web:test:real` uses its own OS-temporary fixture, publishes a
+change through a separate native CLI process, verifies SSE notification and
+explicit browser refresh through the built UI, then removes that isolated
+fixture. The local demo configures its search worker and reports ready only
+after the complete seeded repository position is indexed.
 
 On macOS with Xcode license prompts, prefix checks with
 `DEVELOPER_DIR=/Library/Developer/CommandLineTools` to use the installed Command

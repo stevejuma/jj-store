@@ -1,6 +1,7 @@
 import { getContext, setContext } from "svelte";
 export interface ConversationDraft {
   value: string;
+  pendingRequestId?: string | null;
   editing?: string;
   replying?: string;
   open?: boolean;

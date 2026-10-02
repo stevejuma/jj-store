@@ -13,6 +13,40 @@
 </script>
 
 <Story
+  name="Branch selection retains the loaded first column"
+  args={{ deferredBranchSelection: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const search = c.getByPlaceholderText("Search branches");
+    await userEvent.type(search, "a");
+    const first = c.getByRole("option", { name: "feature/native-objects" });
+    const other = c.getByRole("option", { name: "main" });
+    const workingCopy = c.getByRole("button", {
+      name: "Working copy · default",
+    });
+    for (const option of [first, other, workingCopy]) {
+      await userEvent.click(option);
+      await expect(c.getByLabelText("Loading JJ log")).toBeVisible();
+      await expect(first).toBeVisible();
+      await expect(other).toBeVisible();
+      await expect(c.getByRole("option", { name: "main" })).toBe(other);
+      await expect(
+        c.queryByLabelText("Loading branches"),
+      ).not.toBeInTheDocument();
+      await expect(search).toHaveValue("a");
+      await expect(c.getByPlaceholderText("Search branches")).toBe(search);
+      await expect(workingCopy).toBeVisible();
+      await userEvent.click(
+        c.getByRole("button", { name: "Finish branch load" }),
+      );
+      await waitFor(() =>
+        expect(c.queryByLabelText("Loading JJ log")).not.toBeInTheDocument(),
+      );
+    }
+  }}
+/>
+
+<Story
   name="Actions"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);

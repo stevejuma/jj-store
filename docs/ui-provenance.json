@@ -1800,6 +1800,86 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/community-projects/repository-row-tokens.css",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjectsRevisionGraph.svelte",
+          "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjects.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjects.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-work/community-work-tasks.css",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjects.css",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-collaboration/StoreMessageActions.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-message-actions/CommunityMessageActions.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkComment.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjects.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/collaboration/agent-timeline.ts",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/model.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-collaboration/StoreAgentTools.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/CommunityAgentTranscriptTools.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [
@@ -1854,6 +1934,42 @@
     {
       "local": "web/src/lib/ui/community-markdown-content/CommunityLinkCard.svelte",
       "reason": "Native device appearance link cards use existing message text and HTTP addresses without remote metadata."
+    },
+    {
+      "local": "web/src/lib/ui/store-collaboration/StoreAgentComments.svelte",
+      "reason": "Native session-comment integration composing owned ReviewStore conversation and composer components; locally authored, not copied from Community."
+    },
+    {
+      "local": "web/src/lib/collaboration/review-comment-rows.ts",
+      "reason": "Native ReviewStore reply-tree presentation helper; locally authored."
+    },
+    {
+      "local": "web/src/lib/controller/agent-review-reader.ts",
+      "reason": "Native independent bounded AgentStore review reader; locally authored."
+    },
+    {
+      "local": "web/src/lib/controller/production-agent-loaders.ts",
+      "reason": "Native operation-pinned AgentStore loading integration; locally authored."
+    },
+    {
+      "local": "web/src/lib/controller/repository-thread-navigation.svelte.ts",
+      "reason": "Locally authored bounded, authorized native repository thread sidebar reader; no Community dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-threads/StoreThreadsBreadcrumb.svelte",
+      "reason": "Locally authored native repository/thread route breadcrumb using public Design Core primitives and existing owned breadcrumb styles."
+    },
+    {
+      "local": "web/src/lib/ui/store-threads/thread-navigation-binding.svelte.ts",
+      "reason": "Locally authored sidebar reader lifecycle binding; no Community dependency."
+    },
+    {
+      "local": "web/src/lib/ui/community-navigation/CommunityNavigationAction.svelte",
+      "reason": "Locally authored optional native sidebar section action using public Design Core primitives."
+    },
+    {
+      "local": "web/src/lib/ui/community-navigation/CommunityNavigationSectionPicker.svelte",
+      "reason": "Locally authored sidebar Command View integration extracted from the maintained owned navigation copy."
     }
   ]
 }

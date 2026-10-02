@@ -8,7 +8,8 @@
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
-  import StoreAgentToolReview from "./StoreAgentToolReview.svelte";
+  import StoreAgentTools from "./StoreAgentTools.svelte";
+  import { agentTimeline } from "../../collaboration/agent-timeline.js";
   import StoreMessageActions from "./StoreMessageActions.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
 
@@ -31,6 +32,14 @@
   } = $props();
 
   const members = $derived([agent, member]);
+  const timeline = $derived(agentTimeline(activity));
+  const canReact = $derived(
+    interactive &&
+      ["write", "admin"].includes(controller.state.repository.permission ?? ""),
+  );
+  const reactionDisabled = $derived(
+    !canReact || !!controller.threads?.busy || !!controller.threads?.pending,
+  );
 
   function message(
     entry: Extract<Model<"AgentActivity">, { type: "message" }>,
@@ -50,6 +59,9 @@
       authorId: author.id,
       content,
       timestamp: `#${Number(entry.sequence) + 1}`,
+      reactions: entry.reaction_target
+        ? controller.threads?.reactionModels(entry.reaction_target)
+        : [],
     };
   }
 </script>
@@ -60,9 +72,9 @@
   aria-label="Agent conversation activity"
 >
   <CommunityProjectsVirtualRows
-    rows={activity}
+    rows={timeline}
     getKey={(entry) => `${entry.type}:${entry.sequence}`}
-    estimateSize={(entry) => (entry?.type === "tool" ? 180 : 118)}
+    estimateSize={(entry) => (entry?.type === "tools" ? 42 : 118)}
   >
     {#snippet row(entry)}
       {#if entry.type === "message"}
@@ -73,15 +85,32 @@
           {author}
           {members}
           highlighted={entry.role === "user"}
-          >{#snippet supplement()}{#if controller.threads && entry.reaction_target}<StoreMessageReactions
-                threads={controller.threads}
-                target={entry.reaction_target}
-                showFeedback={false}
-                disabled={!interactive ||
-                  !["write", "admin"].includes(
-                    controller.state.repository.permission ?? "",
-                  )}
-              />{/if}<StoreMessageActions
+          onToggleReaction={canReact &&
+          controller.threads &&
+          entry.reaction_target
+            ? (_id, emoji, custom) => {
+                if (!reactionDisabled)
+                  void controller
+                    .threads!.toggle(
+                      entry.reaction_target!,
+                      emoji,
+                      custom,
+                      true,
+                    )
+                    .catch(() => {});
+              }
+            : undefined}
+          >{#snippet supplement()}<StoreMessageActions
+              {reactionDisabled}
+              communityEmojis={controller.threads?.emojis ?? []}
+              onReact={canReact && controller.threads && entry.reaction_target
+                ? (emoji, custom) => {
+                    if (!reactionDisabled)
+                      void controller
+                        .threads!.toggle(entry.reaction_target!, emoji, custom)
+                        .catch(() => {});
+                  }
+                : undefined}
               authorName={author.name}
               items={[
                 { label: "Copy message", value: entry.content.content },
@@ -97,14 +126,16 @@
                 showControls={false}
               />{/if}{/snippet}</CommunityMessage
         >
-      {:else if entry.type === "tool"}
-        <StoreAgentToolReview
-          tool={entry.tool}
-          {patches}
-          {controller}
-          interactive={interactive &&
-            controller.state.repository.profile !== "git_sha1_jj045"}
-        />
+      {:else if entry.type === "tools"}
+        <div class="store-agent-transcript__tools">
+          <StoreAgentTools
+            items={entry.items}
+            {patches}
+            {controller}
+            interactive={interactive &&
+              controller.state.repository.profile !== "git_sha1_jj045"}
+          />
+        </div>
       {:else if entry.type === "capture_gap"}
         <Chat.SystemMessage>
           Capture gap from {entry.missing_from} to {entry.missing_to}
@@ -117,6 +148,12 @@
 </Chat.MessageList>
 
 <style>
+  .store-agent-transcript__tools {
+    width: 100%;
+    min-width: 0;
+    margin-inline: -0.5rem;
+  }
+
   :global([data-ui-component="ai-chat-message-list"]) {
     min-height: 0;
     padding: 0.75rem;
@@ -124,8 +161,8 @@
 
   :global([data-ui-component="ai-chat-tool-calls"]) {
     box-sizing: border-box;
-    width: calc(100% - 2.85rem);
+    width: 100%;
     max-width: 42rem;
-    margin-inline: 2.6rem 0.25rem;
+    margin-inline: 0;
   }
 </style>

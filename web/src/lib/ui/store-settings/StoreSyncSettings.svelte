@@ -3,6 +3,8 @@
   import PauseIcon from "@lucide/svelte/icons/pause";
   import PlayIcon from "@lucide/svelte/icons/play";
   import RotateCwIcon from "@lucide/svelte/icons/rotate-cw";
+  import CloudOffIcon from "@lucide/svelte/icons/cloud-off";
+  import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
@@ -15,13 +17,11 @@
   let {
     settings,
     supported,
-    onClose,
     onRefresh,
     onControl,
   }: {
     settings: SyncSettings;
     supported: boolean;
-    onClose?: () => void;
     onRefresh: () => Promise<void>;
     onControl: (action: SyncAction) => Promise<void>;
   } = $props();
@@ -37,7 +37,6 @@
 
 <StoreSettingsPage
   section="sync"
-  {onClose}
   value="overview"
   tabs={supported
     ? [
@@ -47,16 +46,18 @@
     : []}
 >
   {#if !supported}
-    <p class="store-settings__empty">
-      Sync management is not available for this connection.
-    </p>
+    <StoreSettingsEmpty
+      Icon={CloudOffIcon}
+      title="Sync unavailable"
+      description="Sync management is not available for this connection."
+    />
   {:else}
     <Tabs.Content value="overview">
       <section class="store-settings__section" aria-labelledby="sync-overview">
         <header class="store-settings__section-heading">
           <div>
             <h2 id="sync-overview">Upstream sync</h2>
-            <p>Status changes only when refreshed or a control completes.</p>
+            <p>Status updates automatically.</p>
           </div>
           <Button
             variant="outline"
@@ -72,8 +73,17 @@
             {settings.changing ? "Updating sync…" : "Loading sync status…"}
           </p>{/if}
         {#if settings.value && !settings.value.configured}
-          <p>No upstream is configured. Repository work remains local.</p>
-          <p class="store-settings__empty">WorkStore sync is not supported.</p>
+          <dl class="store-settings__rows">
+            <div>
+              <dt>Upstream</dt>
+              <dd>No upstream is configured. Repository work remains local.</dd>
+            </div>
+          </dl>
+          <StoreSettingsEmpty
+            Icon={CloudOffIcon}
+            title="WorkStore sync unavailable"
+            description="WorkStore sync is not supported."
+          />
         {:else if worker}
           <dl class="store-settings__rows">
             <div>
@@ -103,6 +113,13 @@
           </dl>
           <div class="store-settings__action-row">
             <div>
+              <strong>Sync controls</strong>
+              <p>
+                Pause lasts until resumed or the service restarts. Local
+                repository work stays available.
+              </p>
+            </div>
+            <div class="store-settings__actions">
               <Button
                 variant="outline"
                 disabled={busy || settings.state !== "ready"}
@@ -132,10 +149,6 @@
                 />Retry sync</Button
               >
             </div>
-            <p>
-              Pause lasts until resumed or the service restarts. Local
-              repository work stays available.
-            </p>
           </div>
         {/if}
       </section>

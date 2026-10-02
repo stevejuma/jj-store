@@ -81,6 +81,58 @@ function fixture(fail = false, discover?: () => Promise<void>) {
     },
   };
 }
+test("task comment links retain the selected comment through the Projects registry", async () => {
+  const { hub, sources, setRoute } = fixture();
+  await hub.openHub();
+  const work = hub.work(a);
+  const comment = "55".repeat(16);
+  const actor = {
+    created_by: a,
+    updated_by: a,
+    created_at_millis: 1000,
+    updated_at_millis: 1000,
+  };
+  sources.get(a)!.page = async () => ({
+    version: 1,
+    snapshot: snapshot(a),
+    projects: [],
+    tasks: [],
+    comments: [
+      {
+        schema_version: 1,
+        id: comment,
+        task: b,
+        reply_to: null,
+        body: "Selected task comment",
+        version: 1,
+        actor,
+      },
+    ],
+    next_cursor: null,
+  });
+  const selected = {
+    ...initialStoreRoute(),
+    page: "projects" as const,
+    projectsHub: true,
+    repository: a,
+    projectId: id,
+    taskId: b,
+    commentId: comment,
+    workTab: "tasks" as const,
+  };
+  setRoute(selected);
+  await hub.restore();
+  expect(work.state.focusCommentId).toBe(comment);
+  expect(work.state.comments[0]?.body).toBe("Selected task comment");
+  expect(work.state.error).toBe("");
+  setRoute({ ...selected, commentId: "66".repeat(16) });
+  await hub.restore();
+  expect(work.state.focusCommentId).toBe("66".repeat(16));
+  expect(work.state.error).toBe("This comment is unavailable.");
+  setRoute({ ...selected, commentId: null });
+  await hub.restore();
+  expect(work.state.focusCommentId).toBeNull();
+});
 test("hub reads homes independently and keeps failed homes visible", async () => {
   const { hub, calls } = fixture(true);
   await hub.openHub("tasks");

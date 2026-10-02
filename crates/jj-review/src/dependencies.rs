@@ -63,6 +63,11 @@ impl ArtifactAnchorV1 {
             ArtifactTargetV1::AgentArtifact(value) => {
                 values.extend([value.session_snapshot, owner_snapshot(&value.owner)]);
             }
+            ArtifactTargetV1::AgentSession {
+                session_snapshot, ..
+            } => {
+                values.insert(*session_snapshot);
+            }
             _ => {}
         }
         Ok(values)

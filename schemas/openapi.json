@@ -5967,6 +5967,68 @@
                                     "properties": {
                                       "target": {
                                         "type": "string",
+                                        "const": "agent_session"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "session_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "session_snapshot": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          }
+                                        },
+                                        "required": [
+                                          "session_id",
+                                          "session_snapshot"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
                                         "const": "revision"
                                       },
                                       "value": {
@@ -9301,6 +9363,31 @@
                       {
                         "type": "object",
                         "properties": {
+                          "task_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "comment_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "version": {
+                            "type": "integer",
+                            "format": "uint64",
+                            "minimum": 0
+                          },
+                          "type": { "type": "string", "const": "work_comment" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["type", "task_id", "comment_id", "version"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
                           "session_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -9960,6 +10047,39 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "task_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "version": {
+                                    "type": "integer",
+                                    "format": "uint64",
+                                    "minimum": 0
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "task_id",
+                                  "comment_id",
+                                  "version"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -10570,6 +10690,39 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "task_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "version": {
+                                    "type": "integer",
+                                    "format": "uint64",
+                                    "minimum": 0
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "task_id",
+                                  "comment_id",
+                                  "version"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -11098,6 +11251,39 @@
                                   "thread_id",
                                   "comment_id",
                                   "revision"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "task_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "version": {
+                                    "type": "integer",
+                                    "format": "uint64",
+                                    "minimum": 0
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "task_id",
+                                  "comment_id",
+                                  "version"
                                 ]
                               },
                               {
@@ -26518,6 +26704,68 @@
                                     "properties": {
                                       "target": {
                                         "type": "string",
+                                        "const": "agent_session"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "session_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "session_snapshot": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          }
+                                        },
+                                        "required": [
+                                          "session_id",
+                                          "session_snapshot"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
                                         "const": "revision"
                                       },
                                       "value": {
@@ -29045,6 +29293,21 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+              "task_id": { "$ref": "#/components/schemas/TaskId" },
+              "comment_id": { "$ref": "#/components/schemas/WorkCommentId" },
+              "version": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0
+              },
+              "type": { "type": "string", "const": "work_comment" }
+            },
+            "required": ["type", "task_id", "comment_id", "version"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
               "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
               "checkpoint_id": {
                 "$ref": "#/components/schemas/AgentCheckpointId"
@@ -29178,6 +29441,18 @@
         "pattern": "^[0-9a-f]{64}$",
         "minLength": 64,
         "maxLength": 64
+      },
+      "TaskId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "WorkCommentId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
       },
       "AgentCheckpointId": {
         "type": "string",
@@ -29824,6 +30099,25 @@
             "properties": {
               "target": { "type": "string", "const": "agent_artifact" },
               "value": { "$ref": "#/components/schemas/AgentArtifactAnchorV1" }
+            },
+            "required": ["target", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "target": { "type": "string", "const": "agent_session" },
+              "value": {
+                "type": "object",
+                "properties": {
+                  "session_id": {
+                    "$ref": "#/components/schemas/AgentSessionId"
+                  },
+                  "session_snapshot": {
+                    "$ref": "#/components/schemas/AgentObjectRef"
+                  }
+                },
+                "required": ["session_id", "session_snapshot"]
+              }
             },
             "required": ["target", "value"]
           },
@@ -30717,6 +31011,12 @@
             ]
           },
           "review_root": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/RecordDigest" },
+              { "type": "null" }
+            ]
+          },
+          "work_root": {
             "anyOf": [
               { "$ref": "#/components/schemas/RecordDigest" },
               { "type": "null" }
@@ -31638,18 +31938,6 @@
         "enum": ["thread", "message", "project", "task", "comment"]
       },
       "ProjectId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{32}$",
-        "minLength": 32,
-        "maxLength": 32
-      },
-      "TaskId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{32}$",
-        "minLength": 32,
-        "maxLength": 32
-      },
-      "WorkCommentId": {
         "type": "string",
         "pattern": "^[0-9a-f]{32}$",
         "minLength": 32,

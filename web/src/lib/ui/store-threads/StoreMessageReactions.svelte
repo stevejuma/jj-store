@@ -12,7 +12,7 @@
   import { untrack } from "svelte";
   import type {
     ReactionTarget,
-    ThreadsController,
+    ReactionsController,
   } from "../../controller/thread-types.js";
   let {
     threads,
@@ -21,7 +21,7 @@
     showControls = true,
     showFeedback = true,
   }: {
-    threads: ThreadsController;
+    threads: ReactionsController;
     target: ReactionTarget;
     disabled?: boolean;
     showControls?: boolean;
@@ -42,6 +42,7 @@
     threads.reactionRevision;
     let live = true;
     untrack(() => {
+      error = "";
       void threads.loadReactions(captured).catch((e) => {
         if (live) error = e instanceof Error ? e.message : String(e);
       });

@@ -3795,6 +3795,7 @@ dependencies = [
  "jj-agent",
  "jj-review",
  "jj-store-model",
+ "jj-work",
  "schemars",
  "serde",
  "serde_json",

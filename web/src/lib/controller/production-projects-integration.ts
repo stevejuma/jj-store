@@ -1,6 +1,6 @@
 import { repositories as loadRepositories } from "../api/repositories.js";
 import { followProductionStoreEvents } from "./production-store-events.js";
-import { ApiError } from "../api/client.js";
+import { pretty, ApiError } from "../api/client.js";
 import {
   repositorySource,
   captureRepositoryActor,
@@ -9,6 +9,8 @@ import type { StoreDataSource } from "./native-data-source.js";
 import { createStoreQueryClient } from "./store-query-client.js";
 import { createProjectsHub } from "./production-projects-hub.svelte.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
+import type { StoreController } from "./contracts.js";
+import { createProjectAgentResponse } from "./project-agent-response.svelte.js";
 export function createProductionProjects(
   data: ProductionStoreState,
   history: ReturnType<
@@ -18,6 +20,8 @@ export function createProductionProjects(
   session: () => number,
   pauseCodeEvents: () => void,
   fetcher?: typeof fetch,
+  changed: () => void = () => {},
+  base?: () => StoreController,
 ) {
   const context = {
     data,
@@ -29,9 +33,19 @@ export function createProductionProjects(
     fetcher,
   };
   const sources = new Map<string, StoreDataSource>();
+  const observed = new Map<string, string>();
+  let selectedHome: string | null = null;
   let feed = new AbortController(),
     discovery = new AbortController();
   const projects = createProjectsHub({
+    agentResponse: (home) => {
+      projects.transport(home);
+      if (!base) throw new Error("Agent response unavailable");
+      return createProjectAgentResponse(() => {
+        projects.transport(home);
+        return sources.get(home)!;
+      }, base);
+    },
     repositories: () => context.data.repositories,
     discover: async () => {
       discovery.abort();
@@ -57,6 +71,7 @@ export function createProductionProjects(
     push: context.push,
     changed: () => {
       context.data.status.refreshAvailable = true;
+      changed();
     },
     source: (home) => {
       if (!context.data.repositories.some((r) => r.id === home))
@@ -87,6 +102,8 @@ export function createProductionProjects(
     },
     activate: (home) => {
       context.pauseCodeEvents();
+      if (selectedHome === home && !feed.signal.aborted) return;
+      selectedHome = home;
       feed.abort();
       feed = new AbortController();
       const active = home ? sources.get(home) : undefined;
@@ -95,15 +112,61 @@ export function createProductionProjects(
           active,
           () =>
             context.route().page === "projects" &&
-            context.route().repository === active.repository,
+            context.route().repository === active.repository &&
+            sources.get(active.repository) === active,
           context.data,
           feed.signal,
+          changed,
         );
     },
   });
   return {
     projects,
+    async poll() {
+      const ticket = context.session(),
+        credential = context.token();
+      const repositories = await loadRepositories(credential, context.fetcher);
+      if (ticket !== context.session() || credential !== context.token())
+        return false;
+      let dirty = pretty(repositories) !== pretty(context.data.repositories);
+      if (dirty) {
+        context.data.repositories = repositories.map((repo) => ({ ...repo }));
+        for (const [id, active] of sources)
+          if (!repositories.some((repo) => repo.id === id)) {
+            active.close();
+            sources.delete(id);
+            observed.delete(id);
+          }
+      }
+      let index = 0;
+      await Promise.all(
+        Array.from({ length: Math.min(2, repositories.length) }, async () => {
+          while (index < repositories.length) {
+            const repo = repositories[index++]!;
+            if (!context.data.repositories.some((r) => r.id === repo.id))
+              continue;
+            projects.transport(repo.id);
+            const active = sources.get(repo.id)!;
+            try {
+              const head = await active.snapshot(true);
+              if (
+                ticket !== context.session() ||
+                sources.get(repo.id) !== active
+              )
+                return;
+              const value = pretty(head);
+              if (observed.get(repo.id) !== value) dirty = true;
+              observed.set(repo.id, value);
+            } catch {
+              dirty = true;
+            }
+          }
+        }),
+      );
+      return ticket === context.session() && dirty;
+    },
     stopEvents() {
+      selectedHome = null;
       feed.abort();
     },
     clear() {
@@ -112,6 +175,8 @@ export function createProductionProjects(
       projects.reset();
       for (const source of sources.values()) source.close();
       sources.clear();
+      observed.clear();
+      selectedHome = null;
     },
   };
 }

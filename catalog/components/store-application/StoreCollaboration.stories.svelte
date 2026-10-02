@@ -7,6 +7,7 @@
     waitFor,
     within,
   } from "storybook/test";
+  import { agentSidebarPlay } from "./agent-sidebar-play.js";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   import { expectSelectionSurfaceCoversRow } from "./collaboration-story-assertions.js";
 
@@ -26,113 +27,7 @@
 <Story
   name="Agent response activity"
   args={{ initialPage: "agents" }}
-  play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await waitFor(() =>
-      expect(
-        canvas.getByRole("list", { name: "Agent sessions" }),
-      ).toBeVisible(),
-    );
-    const sessionSelection = canvas.getByRole("button", {
-      name: /Codex ended/u,
-    });
-    const sessionCard = await expectSelectionSurfaceCoversRow(sessionSelection);
-    const avatar = sessionCard.querySelector(
-      '[data-ui-component="community-member-avatar"]',
-    );
-    if (!avatar) throw new Error("Agent session card avatar was not rendered");
-    await expect(avatar).toBeVisible();
-    await expect(avatar.querySelector("img")).toHaveAttribute(
-      "src",
-      "/agent-icons/codex.svg",
-    );
-    await expect(sessionCard).toHaveTextContent("Started");
-    await expect(sessionCard).toHaveTextContent("5m");
-    await expect(
-      within(sessionCard).getByLabelText("1 transcripts"),
-    ).toBeVisible();
-    await expect(within(sessionCard).getByLabelText("3 tools")).toBeVisible();
-    await userEvent.click(sessionSelection);
-    await expect(sessionCard).toHaveAttribute("data-selected", "true");
-    await expect(
-      canvas.getByRole("log", { name: "Agent conversation activity" }),
-    ).toBeVisible();
-    await expect(
-      canvas.queryByRole("button", { name: /Copy full agent root/u }),
-    ).toBeNull();
-    await expect(sessionCard).toHaveAttribute("data-selected", "true");
-    await expect(
-      canvas.getByText(
-        "Update the native parser and keep its review anchors exact.",
-      ),
-    ).toBeVisible();
-    await expect(
-      canvas.getByText("Updated the parser and verified the focused contract."),
-    ).toBeVisible();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Show details for apply_patch" }),
-    );
-    await expect(
-      canvas.getByRole("region", { name: "Changed file src/lib.rs" }),
-    ).toBeVisible();
-    await expect(
-      canvas.queryByRole("button", { name: /Copy full tool call ID/u }),
-    ).toBeNull();
-    const transcript = canvas.getByRole("log", {
-      name: "Agent conversation activity",
-    });
-    const expandedTool = canvas
-      .getByRole("button", { name: "Hide details for apply_patch" })
-      .closest<HTMLElement>('[data-ui-component="ai-chat-tool-calls"]');
-    if (!expandedTool) throw new Error("Expanded tool row was not rendered");
-    await expect(
-      expandedTool.getBoundingClientRect().right,
-    ).toBeLessThanOrEqual(transcript.getBoundingClientRect().right);
-    const toolReview = expandedTool.closest<HTMLElement>(
-      '[data-ui-part="agent-tool-review"]',
-    );
-    if (!toolReview) throw new Error("Tool review surface was not rendered");
-    await fireEvent.pointerEnter(toolReview);
-    const replyToTool = canvas.getByRole("button", {
-      name: "Reply to apply_patch tool call",
-    });
-    const toolActions = canvas.getByRole("group", {
-      name: "Actions for apply_patch tool call",
-    });
-    await expect(toolActions).toHaveAttribute("data-visible", "");
-    await waitFor(() =>
-      expect(getComputedStyle(toolActions).opacity).toBe("1"),
-    );
-    await fireEvent.click(replyToTool);
-    let toolComposer: HTMLElement | null = null;
-    await waitFor(() => {
-      toolComposer = canvasElement.querySelector<HTMLElement>(
-        '[data-ui-part="agent-tool-reply-composer"]',
-      );
-      expect(toolComposer).not.toBeNull();
-    });
-    if (!toolComposer) throw new Error("Tool reply composer was not rendered");
-    const toolEditor = within(toolComposer).getByRole("textbox", {
-      name: "Markdown editor",
-    });
-    await userEvent.type(toolEditor, "Keep this tool result pinned.");
-    await expect(toolEditor).toHaveFocus();
-    await expect(getComputedStyle(toolEditor).outlineStyle).toBe("none");
-    await userEvent.click(
-      within(toolComposer).getByRole("button", { name: "Reply" }),
-    );
-    await expect(
-      canvas.getByText("Keep this tool result pinned."),
-    ).toBeVisible();
-    const resize = canvas.getByRole("separator", {
-      name: "Resize Agent sessions and Agent response columns",
-    });
-    const width = resize.getAttribute("aria-valuenow");
-    await fireEvent.keyDown(resize, { key: "ArrowRight" });
-    await waitFor(() =>
-      expect(resize).not.toHaveAttribute("aria-valuenow", width),
-    );
-  }}
+  play={agentSidebarPlay}
 >
   {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
 </Story>
@@ -247,9 +142,34 @@
   args={{ initialPage: "agents", collaborationState: "loading" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const status = canvas.getByRole("status", {
+      name: "Loading agent sessions",
+    });
+    await expect(status).toBeVisible();
+    const heading = status
+      .closest(".community-projects__collection-group")!
+      .querySelector<HTMLElement>(".community-projects__list-group-heading")!;
+    const row = status.querySelector<HTMLElement>(
+      ".store-collaboration-skeleton__row",
+    )!;
     await expect(
-      canvas.getByRole("status", { name: "Loading agent sessions" }),
-    ).toBeVisible();
+      Math.abs(
+        status.getBoundingClientRect().left -
+          heading.getBoundingClientRect().left,
+      ),
+    ).toBeLessThan(1);
+    await expect(
+      Math.abs(
+        status.getBoundingClientRect().right -
+          heading.getBoundingClientRect().right,
+      ),
+    ).toBeLessThan(1);
+    await expect(
+      row
+        .querySelector("[data-ui-component='skeleton']")!
+        .getBoundingClientRect().left - heading.getBoundingClientRect().left,
+    ).toBeCloseTo(10.4, 0);
+    await expect(getComputedStyle(row).borderBottomWidth).toBe("0px");
   }}
 >
   {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
@@ -365,13 +285,16 @@
     await expect(editor).toHaveFocus();
     await expect(getComputedStyle(editor).outlineStyle).toBe("none");
     await userEvent.click(
-      within(
-        canvas.getByRole("group", { name: "Reply to review thread" }),
-      ).getByRole("button", { name: "Reply" }),
+      within(canvas.getByRole("group", { name: "Review comment" })).getByRole(
+        "button",
+        { name: "Add comment" },
+      ),
     );
+    const newComment = canvas.getByText("The pinned root remains exact.");
+    await expect(newComment).toBeVisible();
     await expect(
-      canvas.getByText("The pinned root remains exact."),
-    ).toBeVisible();
+      newComment.closest(".store-collaboration__message"),
+    ).toHaveAttribute("data-thread-depth", "0");
     await userEvent.click(canvas.getByRole("button", { name: "Resolve" }));
     await expect(
       canvas.getAllByText("resolved", { exact: true }).at(-1),
@@ -404,3 +327,26 @@
 >
   {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
 </Story>
+
+<Story
+  name="Mobile agent response preserves its directory"
+  args={{ initialPage: "agents", displayMode: "mobile" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const row = await c.findByRole("button", { name: /Open Codex ended/ });
+    await userEvent.click(row);
+    const close = await c.findByRole("button", {
+      name: "Close agent response",
+    });
+    const response = c.getByRole("complementary", { name: "Agent response" });
+    await expect(response).toHaveAttribute("data-ui-part", "sidebar");
+    await expect(
+      within(response).getByRole("log", {
+        name: "Agent conversation activity",
+      }),
+    ).toBeVisible();
+    await userEvent.click(close);
+    await waitFor(() => expect(row).toBeVisible());
+    await expect(row).toHaveFocus();
+  }}
+/>

@@ -206,3 +206,41 @@ export function createAgentToolReviewAnchor(
     sensitivity: "repository",
   };
 }
+
+export function createAgentSessionReviewAnchor(
+  source: StoreDataSource,
+  data: ProductionStoreState,
+): Model<"ArtifactAnchorV1"> | undefined {
+  const detail = data.agentSession;
+  if (!detail || source.profile === "git_sha1_jj045") return;
+  if (
+    detail.snapshot.repo_id !== source.repository ||
+    !("published_seq" in detail.snapshot)
+  )
+    throw new Error(
+      "Session comments require the selected native repository capture.",
+    );
+  return {
+    schema_version: 1,
+    repository_id: source.repository,
+    target: {
+      target: "agent_session",
+      value: {
+        session_id: detail.session.session_id,
+        session_snapshot: {
+          kind: "session_snapshot",
+          id: detail.session.snapshot_id,
+        },
+      },
+    },
+    created_context: {
+      publication_position: detail.snapshot.published_seq,
+      code_state_version:
+        data.head && "code_state_version" in data.head
+          ? data.head.code_state_version
+          : null,
+      agent_root: detail.snapshot.agent_root,
+    },
+    sensitivity: "repository",
+  };
+}

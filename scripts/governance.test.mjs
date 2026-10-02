@@ -263,6 +263,25 @@ test("accepts_owned_dependencies", () =>
     [],
   ));
 
+test("collaboration_targets_use_owned_work_types_without_reverse_or_runtime_edges", () => {
+  assert.deepEqual(
+    dependencyErrors([
+      { name: "jj-collab", dependencies: [{ name: "jj-work" }] },
+    ]),
+    [],
+  );
+  assert.equal(
+    dependencyErrors([
+      { name: "jj-work", dependencies: [{ name: "jj-collab" }] },
+      {
+        name: "jj-collab",
+        dependencies: [{ name: "jj-store-wal" }, { name: "jj-lib" }],
+      },
+    ]).length,
+    3,
+  );
+});
+
 test("agent_models_stay_below_publication_and_native_layers", () => {
   assert.deepEqual(
     dependencyErrors([

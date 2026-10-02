@@ -8,6 +8,7 @@ export interface ProjectReviewHome {
   snapshot: import("./repository-read-types.js").ReviewSnapshot | null;
   cursor: string | null;
   loading: boolean;
+  unsupported: boolean;
   error: string;
 }
 export function createProjectsReviews(context: {
@@ -27,6 +28,7 @@ export function createProjectsReviews(context: {
     if (views.size > 16) views.delete(views.keys().next().value!);
   }
   async function read(home: ProjectReviewHome, ticket: number, more = false) {
+    if (home.unsupported) return;
     home.loading = true;
     home.error = "";
     try {
@@ -90,6 +92,9 @@ export function createProjectsReviews(context: {
         }));
         return;
       }
+      const counts = new Map(
+        homes.map((home) => [home.repository.id, home.threads.length]),
+      );
       homes = repositories
         .filter(
           (repo) => !route.workRepository || repo.id === route.workRepository,
@@ -100,13 +105,30 @@ export function createProjectsReviews(context: {
           snapshot: null,
           cursor: null,
           loading: false,
+          unsupported: !context.source(repository.id).reviews,
           error: "",
         }));
       let index = 0;
       await Promise.all(
         Array.from({ length: Math.min(2, homes.length) }, async () => {
-          while (index < homes.length && ticket === generation)
-            await read(homes[index++]!, ticket);
+          while (index < homes.length && ticket === generation) {
+            const home = homes[index++]!;
+            await read(home, ticket);
+            const count = Math.min(counts.get(home.repository.id) ?? 0, 4096),
+              seen = new Set<string>();
+            while (
+              refresh &&
+              home.cursor &&
+              !home.error &&
+              ticket === generation &&
+              home.threads.length < count
+            ) {
+              if (seen.has(home.cursor))
+                throw new Error("Repeated review cursor.");
+              seen.add(home.cursor);
+              await read(home, ticket, true);
+            }
+          }
         }),
       );
       if (ticket === generation) save(route);

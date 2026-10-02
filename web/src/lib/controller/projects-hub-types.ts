@@ -2,7 +2,7 @@ import type { Model } from "../api/client.js";
 import type { StoreRepositorySummary, StoreRoute } from "./contracts.js";
 import type { WorkController, WorkTransport } from "./work-types.js";
 export type ProjectsTab =
-  "projects" | "tasks" | "reviews" | "repositories" | "activity";
+  "projects" | "tasks" | "reviews" | "repositories" | "activity" | "agents";
 export type WorkBrowseQuery = {
   kind?: "projects" | "tasks";
   project?: string;
@@ -14,6 +14,10 @@ export type WorkBrowseQuery = {
   limit?: number;
 };
 export interface WorkBrowseTransport extends WorkTransport {
+  agents?(
+    cursor?: string,
+    signal?: AbortSignal,
+  ): Promise<import("./repository-read-types.js").AgentPage>;
   activity?(
     query: import("./native-activity-types.js").NativeActivityQuery,
     signal?: AbortSignal,
@@ -43,6 +47,9 @@ export interface ProjectHome {
   error: string;
 }
 export interface ProjectsHubController {
+  readonly agents: ReturnType<
+    typeof import("./projects-agents.svelte.js").createProjectsAgents
+  >;
   readonly activity: ReturnType<
     typeof import("./projects-activity.svelte.js").createProjectsActivity
   >;
@@ -90,6 +97,7 @@ export interface ProjectsHubController {
 }
 
 export interface ProjectsHubContext {
+  agentResponse?(home: string): ProjectAgentResponse;
   repositories(): readonly StoreRepositorySummary[];
   route(): StoreRoute;
   push(route: StoreRoute): void;
@@ -97,4 +105,9 @@ export interface ProjectsHubContext {
   changed(): void;
   activate?(home: string | null): void;
   discover?(): Promise<void>;
+}
+export interface ProjectAgentResponse {
+  controller: import("./contracts.js").StoreController;
+  load(session: string): Promise<void>;
+  reset(): void;
 }

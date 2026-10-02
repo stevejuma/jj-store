@@ -62,19 +62,17 @@
     border-bottom: 1px solid var(--border);
     border-radius: 0;
     color: var(--foreground);
-    background: var(--background);
+    background: var(--jj-store-repository-row-background);
     font: inherit;
     text-align: start;
     cursor: pointer;
   }
+  .community-working-copy-card[data-current="true"] {
+    background: var(--jj-store-repository-row-selected-background);
+  }
   .community-working-copy-card:hover,
   .community-working-copy-card:focus-visible {
-    background: color-mix(in srgb, var(--foreground) 7%, var(--background));
-  }
-  .community-working-copy-card[data-current="true"],
-  .community-working-copy-card[data-current="true"]:hover,
-  .community-working-copy-card[data-current="true"]:focus-visible {
-    background: var(--accent);
+    background: var(--jj-store-repository-row-hover-background);
   }
   .community-working-copy-card:focus-visible {
     outline: 2px solid var(--ring);

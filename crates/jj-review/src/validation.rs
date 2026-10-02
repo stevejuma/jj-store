@@ -18,6 +18,15 @@ impl ArtifactAnchorV1 {
             ArtifactTargetV1::AgentArtifact(value) => {
                 validate_agent_owner(value.session_snapshot, &value.owner)
             }
+            ArtifactTargetV1::AgentSession {
+                session_snapshot, ..
+            } => {
+                if session_snapshot.kind == AgentObjectKind::SessionSnapshot {
+                    Ok(())
+                } else {
+                    Err(Error::Invalid("agent session snapshot"))
+                }
+            }
             ArtifactTargetV1::Revision { .. }
             | ArtifactTargetV1::Operation { .. }
             | ArtifactTargetV1::Repository => Ok(()),

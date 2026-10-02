@@ -76,6 +76,16 @@
   color: var(--muted-foreground);
 }
 
+.lc-community-navigation__compact-search[data-ui-component="button"]:not(
+    :disabled
+  ):hover,
+.lc-community-navigation__compact-search[data-ui-component="button"]:not(
+    :disabled
+  ):focus-visible {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+}
+
 .lc-community-navigation__body nav {
   display: flex;
   min-height: 100%;
@@ -320,6 +330,8 @@
 }
 
 .lc-community-navigation__section-picker {
+  --ui-popover-background: var(--background);
+  --ui-command-view-background: var(--background);
   --ui-popover-gap: 0;
   --ui-popover-padding: 0;
   --ui-popover-width: min(22rem, calc(100vw - 5rem));

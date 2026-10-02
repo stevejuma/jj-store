@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   // CommunityProjectsActivityFilter composition, adapted to native recorded facts.
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as CommandView from "@lapismd/design-core/shadcn/command-view";
@@ -15,9 +16,13 @@
   let {
     value = "all",
     onChange,
+    scopeFiltered = false,
+    children,
   }: {
     value?: NativeActivityFilter;
     onChange: (value: NativeActivityFilter) => void;
+    scopeFiltered?: boolean;
+    children?: Snippet;
   } = $props();
   let open = $state(false),
     query = $state("");
@@ -35,11 +40,11 @@
       <Button
         {...props}
         type="button"
-        variant={value === "all" ? "ghost" : "default"}
+        variant={value === "all" && !scopeFiltered ? "ghost" : "default"}
         size="icon-sm"
-        aria-label="Filter activity"
-        title="Filter activity"
-        aria-pressed={value !== "all"}
+        aria-label="Filters for activity"
+        title="Filters for activity"
+        aria-pressed={value !== "all" || scopeFiltered}
       >
         <ListFilterIcon aria-hidden="true" />
       </Button>
@@ -47,24 +52,26 @@
   </Popover.Trigger>
   <Popover.Content
     align="end"
+    role="dialog"
+    aria-label="Activity filters"
     style="--ui-popover-width: 22rem; --ui-popover-padding: 0.5rem 0.75rem 0.625rem; --ui-popover-gap: 0.25rem"
   >
     <Popover.Header
       style="flex-direction: row; align-items: center; justify-content: space-between; gap: 0.25rem; padding: 0; margin: 0;"
     >
       <Popover.Title role="heading" aria-level={2}
-        >Filter activity</Popover.Title
+        >Activity filters</Popover.Title
       >
       <Popover.Close
         >{#snippet child({ props })}<Button
             {...props}
             variant="ghost"
             size="icon-sm"
-            aria-label="Close activity filter"
-            ><XIcon aria-hidden="true" /></Button
+            aria-label="Close filters"><XIcon aria-hidden="true" /></Button
           >{/snippet}</Popover.Close
       >
     </Popover.Header>
+    {@render children?.()}
     <CommandView.Root label="Filter activity">
       <CommandView.Input
         bind:value={query}

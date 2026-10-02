@@ -18,10 +18,12 @@ impl Coordinator {
             return Err(Error::Corrupt("review object kind"));
         }
         object.validate().map_err(review_error)?;
+        self.validate_review_session_anchor(&object).await?;
         Ok(object)
     }
 
     pub async fn stage_review_object(&self, object: &ReviewObjectV1) -> Result<ReviewObjectRef> {
+        self.validate_review_session_anchor(object).await?;
         let review = object.review_dependencies().map_err(review_error)?;
         let mut native = object.native_dependencies().map_err(review_error)?;
         let agent = object.agent_dependencies().map_err(review_error)?;
@@ -36,6 +38,22 @@ impl Coordinator {
             object.kind(),
             ReviewObjectId::new(*reference.digest.as_bytes()),
         ))
+    }
+
+    async fn validate_review_session_anchor(&self, object: &ReviewObjectV1) -> Result<()> {
+        if let ReviewObjectV1::Anchor(anchor) = object
+            && let jj_review::ArtifactTargetV1::AgentSession {
+                session_id,
+                session_snapshot,
+            } = &anchor.target
+        {
+            let object = self.read_agent_object(*session_snapshot).await?;
+            if !matches!(object, jj_agent::AgentObjectV1::SessionSnapshot(value) if value.session_id == *session_id)
+            {
+                return Err(Error::Corrupt("review session snapshot identity"));
+            }
+        }
+        Ok(())
     }
 
     pub async fn stage_review_root(&self, root: &ReviewRootV1) -> Result<RecordRef> {

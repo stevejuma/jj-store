@@ -96,7 +96,9 @@
     const c = within(canvasElement),
       body = within(document.body);
     await expect(
-      await c.findByRole("button", { name: "Browse threads" }),
+      (await c.findAllByRole("button", { name: "Browse threads" })).find(
+        (button) => button.closest(".lc-community-navigation__section-header"),
+      )!,
     ).toBeVisible();
     await userEvent.click(
       (await c.findAllByRole("button", { name: "general" }))[0]!,
@@ -343,11 +345,11 @@
       c.getByRole("button", { name: /Open profile menu for/ }),
     );
     await userEvent.click(body.getByRole("menuitem", { name: "Settings" }));
-    await userEvent.click(c.getByRole("button", { name: "Appearance" }));
+    await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
     await userEvent.click(c.getByRole("radio", { name: "Focus" }));
     await userEvent.click(c.getByRole("radio", { name: "Larger" }));
-    await userEvent.click(c.getByRole("button", { name: "Back to app" }));
-    const dialog = await body.findByRole("dialog", { name: "Replies" });
+    await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
+    const dialog = await body.findByRole("region", { name: "Replies" });
     await expect(within(dialog).getByRole("textbox")).toHaveTextContent(
       "Unsent reply draft",
     );
@@ -357,10 +359,10 @@
       ),
     ).toBeNull();
     await userEvent.click(
-      within(dialog).getByRole("button", { name: "Close" }),
+      within(dialog).getByRole("button", { name: "Close Replies" }),
     );
     await waitFor(() =>
-      expect(body.queryByRole("dialog", { name: "Replies" })).toBeNull(),
+      expect(body.queryByRole("region", { name: "Replies" })).toBeNull(),
     );
     await waitFor(() =>
       expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
@@ -384,12 +386,12 @@
         c.getByText("Welcome to the channel").closest("article")!,
       ).getByRole("button", { name: "Reply in thread" }),
     );
-    const reopened = await body.findByRole("dialog", { name: "Replies" });
+    const reopened = await body.findByRole("region", { name: "Replies" });
     await expect(within(reopened).getByRole("textbox")).toHaveTextContent(
       "Unsent reply draft",
     );
     await userEvent.click(
-      within(reopened).getByRole("button", { name: "Close" }),
+      within(reopened).getByRole("button", { name: "Close Replies" }),
     );
     await waitFor(() =>
       expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),

@@ -16,6 +16,7 @@ import type { WorkspaceLinkSettings } from "./workspace-link-types.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import type { FileDiffLineContext } from "@lapismd/design-core/diff";
 import type { Model } from "../api/client.js";
+import type { ReviewDetail } from "./repository-read-types.js";
 export type StoreConflictDescriptor =
   import("./repository-read-types.js").CodeConflict;
 export type StoreConflictUpload = Model<"ConflictUpload">;
@@ -60,6 +61,7 @@ export interface StoreRoute {
   workState?: "active" | "all" | "open" | "in_progress" | "blocked" | "done";
   workRepository?: string;
   workHome?: string;
+  workAgentRepository?: string | null;
   page: StorePage;
   repository: string;
   bookmark: string;
@@ -198,6 +200,7 @@ export interface StoreController {
   readonly referenceSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly globalSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly threads?: import("./thread-types.js").ThreadsController;
+  readonly threadNavigation?: import("./repository-thread-navigation.svelte.js").RepositoryThreadNavigation;
   readonly projects?: import("./projects-hub-types.js").ProjectsHubController;
   readonly work?: import("./work-types.js").WorkController;
   readonly state: StoreControllerState;
@@ -209,6 +212,7 @@ export interface StoreController {
     selectOperation(id: string): Promise<void>;
     selectComparisonParent(id: string): Promise<void>;
     refreshSettings(): Promise<void>;
+    setRefreshPaused?(key: string, paused: boolean): void;
     refreshWorkspaceLinks(): Promise<void>;
     setWorkspacePath(path: string): void;
     linkWorkspace(): Promise<void>;
@@ -259,7 +263,7 @@ export interface StoreController {
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
     openRoute?(route: StoreRoute): Promise<void>;
-    openThreads?(id?: string | null): Promise<void>;
+    openThreads?(id?: string | null, repository?: string): Promise<void>;
     openReview?(repository: string, thread: string): Promise<void>;
     openRepository(id: string): void | Promise<void>;
     selectPage(page: StorePage): void | Promise<void>;
@@ -274,6 +278,7 @@ export interface StoreController {
     selectAgentSession(id: string | null): void | Promise<void>;
     selectReviewThread(id: string | null): void | Promise<void>;
     createRepositoryReview?(text: string): Promise<void>;
+    readAgentToolReview?(toolCallId: string): Promise<ReviewDetail | undefined>;
     replyToReview(text: string, parentCommentId?: string): Promise<void>;
     editReviewComment(
       commentId: string,
@@ -285,6 +290,8 @@ export interface StoreController {
       text: string,
     ): Promise<void>;
     commentOnAgentTool(toolCallId: string, text: string): Promise<void>;
+    readAgentSessionReview?(): Promise<ReviewDetail | undefined>;
+    commentOnAgentSession?(text: string): Promise<void>;
     setReviewResolved(resolved: boolean): Promise<void>;
     checkReviewAction(): Promise<void>;
     selectRef(value: string): void | Promise<void>;

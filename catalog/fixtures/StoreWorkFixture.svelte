@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { untrack } from "svelte";
+  import { untrack, onDestroy } from "svelte";
+  import { createThreadTransport, THREAD_IDS } from "./thread-transport.js";
+  import { createWorkReactions } from "../../web/src/lib/controller/work-reactions.svelte.js";
   import StoreWork from "../../web/src/lib/ui/store-work/StoreWork.svelte";
   import {
     emptyWorkState,
@@ -12,14 +14,17 @@
     initialTab = "tasks",
     selectTask = true,
     threadFragments = false,
+    backgroundRead = false,
   }: {
     writable?: boolean;
     unknown?: boolean;
     initialTab?: string;
     selectTask?: boolean;
     threadFragments?: boolean;
+    backgroundRead?: boolean;
   } = $props();
   const view = $state(emptyWorkState());
+  view.loading = untrack(() => backgroundRead);
   const actor = {
     created_by: "01".repeat(16),
     updated_by: "01".repeat(16),
@@ -103,7 +108,16 @@
       },
     );
   let pending: WorkRequest | null = null;
+  const transport = createThreadTransport();
+  const reactions = createWorkReactions({
+    source: () => transport.transport,
+    repository: () => THREAD_IDS.repo,
+    principal: () => THREAD_IDS.actor,
+    changed: () => {},
+  });
+  onDestroy(reactions.clear);
   const work: WorkController = {
+    reactions,
     state: view,
     async restore() {},
     async refresh() {},
@@ -118,11 +132,32 @@
       view.pending = unknown ? pending : null;
       view.message = unknown
         ? "Outcome unknown. Check status or retry this request."
-        : "Saved. Refresh projects to see changes.";
+        : "";
+      if (!unknown && command.command === "set_repository") {
+        view.project = {
+          ...view.project!,
+          version: BigInt(view.project!.version) + 1n,
+          repositories: {
+            ...view.project!.repositories,
+            [command.repository]: command.active,
+          },
+        };
+      }
     },
     async check() {
+      if (pending?.command.command === "set_repository") {
+        const command = pending.command;
+        view.project = {
+          ...view.project!,
+          version: BigInt(view.project!.version) + 1n,
+          repositories: {
+            ...view.project!.repositories,
+            [command.repository]: command.active,
+          },
+        };
+      }
       view.pending = null;
-      view.message = "Saved. Refresh projects to see changes.";
+      view.message = "";
     },
     async retry() {
       view.pending = pending;

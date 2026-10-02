@@ -44,7 +44,7 @@ export function createProductionSyncSettings(options: {
     } catch (cause) {
       if (!options.current(ticket, source) || token !== generation) return;
       state.state = "failed";
-      state.error = `${storeErrorMessage(cause)}. Refresh sync status before retrying.`;
+      state.error = `${storeErrorMessage(cause)}. Status will retry automatically.`;
     } finally {
       if (options.current(ticket, source) && token === generation)
         state.changing = false;

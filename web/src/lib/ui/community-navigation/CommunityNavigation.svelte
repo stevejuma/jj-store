@@ -2,13 +2,14 @@
   import "./CommunityNavigation.css";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
-  import * as CommandView from "@lapismd/design-core/shadcn/command-view";
   import * as Popover from "@lapismd/design-core/shadcn/popover";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { AppShell } from "@lapismd/design-core/shell";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
   import { type Snippet } from "svelte";
   import CommunityNavigationSearch from "./CommunityNavigationSearch.svelte";
+  import CommunityNavigationAction from "./CommunityNavigationAction.svelte";
+  import CommunityNavigationSectionPicker from "./CommunityNavigationSectionPicker.svelte";
   import {
     type CommunityNavigationItemModel,
     type CommunityNavigationModel,
@@ -37,14 +38,8 @@
   } = $props();
   let compactSectionId = $state("");
   let compactTooltipId = $state("");
-  let compactSectionQuery = $state("");
-  let compactSectionSearchInput = $state<HTMLInputElement | null>(null);
   let compactSectionTrigger: HTMLButtonElement | undefined;
   let compactSectionTriggerId = "";
-  $effect(() => {
-    if (compactSectionId && compactSectionSearchInput)
-      compactSectionSearchInput.focus();
-  });
   function sectionContainsActive(
     section: CommunityNavigationSectionModel,
   ): boolean {
@@ -68,24 +63,10 @@
     itemOpen = { ...itemOpen, [itemId]: open };
   }
 
-  function compactItems(
-    section: CommunityNavigationSectionModel,
-  ): readonly CommunityNavigationItemModel[] {
-    if (section.id === "projects") return section.items;
-    return [
-      ...new Map(
-        section.items
-          .flatMap((item) => [item, ...(item.children ?? [])])
-          .map((item) => [item.id, item]),
-      ).values(),
-    ];
-  }
-
   function setCompactSectionOpen(sectionId: string, open: boolean): void {
     if (open) {
       compactSectionId = sectionId;
       compactTooltipId = "";
-      compactSectionQuery = "";
     } else if (compactSectionId === sectionId) {
       compactSectionId = "";
       const trigger =
@@ -224,49 +205,18 @@
               <Popover.Content
                 side="right"
                 align="start"
-                sideOffset={8}
+                sideOffset={16}
                 collisionPadding={8}
                 class="lc-community-navigation__section-picker"
               >
                 <Popover.Title class="lc-community-navigation__sr-only"
                   >{section.label}</Popover.Title
                 >
-                <CommandView.Root label={`${section.label} navigation`} loop>
-                  <CommandView.Input
-                    bind:ref={compactSectionSearchInput}
-                    value={compactSectionQuery}
-                    placeholder={`Search ${section.label.toLocaleLowerCase()}`}
-                    aria-label={`Search ${section.label}`}
-                    oninput={(event) => {
-                      compactSectionQuery = event.currentTarget.value;
-                    }}
-                  />
-                  <CommandView.List>
-                    <CommandView.Empty
-                      >No matching {section.label.toLocaleLowerCase()}</CommandView.Empty
-                    >
-                    {#if section.items.length}
-                      <CommandView.Group heading={section.label}>
-                        {#each compactItems(section) as item (item.id)}
-                          <CommandView.Item
-                            value={`${item.label} ${item.id}`}
-                            data-active={activeItemId === item.id
-                              ? ""
-                              : undefined}
-                            onSelect={() => selectCompactItem(item)}
-                          >
-                            <CommandView.ItemIcon>
-                              {@render itemIcon(item)}
-                            </CommandView.ItemIcon>
-                            <CommandView.ItemLabel
-                              >{item.label}</CommandView.ItemLabel
-                            >
-                          </CommandView.Item>
-                        {/each}
-                      </CommandView.Group>
-                    {/if}
-                  </CommandView.List>
-                </CommandView.Root>
+                <CommunityNavigationSectionPicker
+                  {section}
+                  {activeItemId}
+                  onSelect={selectCompactItem}
+                />
               </Popover.Content>
             </Popover.Root>
           </div>
@@ -289,6 +239,10 @@
                   <span>{section.label}</span>
                 </Collapsible.Trigger>
               </h2>
+              {#if section.action}<CommunityNavigationAction
+                  item={section.action}
+                  {onSelect}
+                />{/if}
             </div>
             <Collapsible.Content>
               <div class="lc-community-navigation__items">

@@ -38,6 +38,7 @@
     hasMoreFiles = false,
     unavailableComparisonCount = 0,
     loading = false,
+    referencesLoading = loading,
     detailLoading = false,
     filesLoading = false,
     error = "",
@@ -66,6 +67,7 @@
     hasMoreFiles?: boolean;
     unavailableComparisonCount?: number;
     loading?: boolean;
+    referencesLoading?: boolean;
     detailLoading?: boolean;
     filesLoading?: boolean;
     error?: string;
@@ -100,6 +102,9 @@
     bookmarks.find((b) => b.name === selectedBranch),
   );
   const showInitialSkeleton = $derived(loading && graph.revisions.length === 0);
+  const showReferenceSkeleton = $derived(
+    referencesLoading && bookmarks.length === 0 && workingCopies.length === 0,
+  );
   $effect(() => {
     canvas.layoutReady;
     const branch = selectedBranch,
@@ -137,7 +142,7 @@
 <section
   class="community-projects-repository-log"
   aria-label="Repository log"
-  aria-busy={loading}
+  aria-busy={loading || referencesLoading}
 >
   {#if error}<CommunityProjectsColumnAlert
       title="History unavailable"
@@ -151,7 +156,7 @@
         count={bookmarks.length}
       >
         <ColumnCanvas.Body>
-          {#if showInitialSkeleton}<CommunityProjectsRepositorySkeleton
+          {#if showReferenceSkeleton}<CommunityProjectsRepositorySkeleton
               layout="bookmarks"
               label="Loading branches"
             />{:else}<CommunityRepositoryBranchCommand
@@ -162,7 +167,7 @@
               selectedCommit={selectedBranch ? null : selectedId}
               selectedWorkspace={controller?.state.route.workspace}
               hasMore={hasMoreBookmarks}
-              {loading}
+              loading={referencesLoading}
               onSelect={onSelectBranch}
               {onSelectWorkingCopy}
               onLoadMore={() => void onLoadMoreBookmarks()}

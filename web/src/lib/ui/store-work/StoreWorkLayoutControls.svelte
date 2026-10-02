@@ -8,10 +8,12 @@
 
 <ToggleGroup.Root
   type="single"
-  {value}
-  onValueChange={(next) => {
-    if (next === "grid" || next === "list") value = next;
-  }}
+  bind:value={
+    () => value,
+    (next) => {
+      if (next === "grid" || next === "list") value = next;
+    }
+  }
   size="sm"
   spacing={1}
   class="community-projects__layout-controls"

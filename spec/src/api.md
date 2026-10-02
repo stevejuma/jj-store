@@ -5,21 +5,21 @@ repository/session/profile query cache. Navigation cancels obsolete reads;
 confirmed reactions invalidate and reload only their exact target, retaining
 other reactions, messages, reply context, emoji definitions and raster URLs.
 Unknown outcomes keep the original intent and receipt identity. Explicit refresh
-invalidates displayed collections; SSE still only offers refresh. Reaction reads
-are deduplicated across main/reply views and limited to four concurrent
-requests. Reply counts and descendants use indexed passes without changing
-loaded-history, exact revision, draft or scroll semantics. Unneeded JJ
+invalidates displayed collections; SSE queues automatic active-view refresh.
+Reaction reads are deduplicated across main/reply views and limited to four
+concurrent requests. Reply counts and descendants use indexed passes without
+changing loaded-history, exact revision, draft or scroll semantics. Unneeded JJ
 log/reference reads do not run when restoring Threads. Cached reads retain
 current repository-session isolation and cursor-reset behavior; no batch API or
 durable read index is added.
 
 Thread/Reaction HTTP reads share bounded validated immutable root data with
 native RPC. Directory/detail/history load Thread state; library/image reads load
-Reaction state; reaction queries load the exact target's owning selection too.
-Complete response snapshots and current authorization remain request-bound.
-Root-keyed data reuse and exact-target reaction indexes do not retain
-credentials or viewer-filtered results and never replace cursor pinning or cold
-validation.
+Reaction state; reaction queries load the exact target's owning selection too,
+including the captured WorkStore root for task comments. Complete response
+snapshots and current authorization remain request-bound. Root-keyed data reuse
+and exact-target reaction indexes do not retain credentials or viewer-filtered
+results and never replace cursor pinning or cold validation.
 
 Thread event pages include their own human revisions from the captured graph.
 Emoji pages include exact definition version references, and retained previews
@@ -29,8 +29,8 @@ The browser composes owned CommunityWorkspaceSurface, CommunityThreadPanel,
 CommunityDetails and CommunityReactions contracts. Threads have a channel
 section in the left sidebar, bounded history, exact persisted replies, visible
 actor-derived participants and reactions on existing review comments and
-supported Agent messages. It preserves explicit refresh and durable request
-identities for unknown outcomes.
+supported Agent messages. It preserves automatic browser refresh and durable
+request identities for unknown outcomes.
 
 UI refresh preserves loaded conversation history at one captured Thread root,
 and focused replies load their exact-revision ancestor closure within bounded
@@ -67,7 +67,8 @@ selects Agent plus Thread roots atomically through the existing manifest.
 
 Persistent Threads use Community channels as their presentation template, with
 shared conversation/composer/message/reaction semantics. The browser adapter
-retains jj-store authorization, exact revisions, receipts and explicit refresh.
+retains jj-store authorization, exact revisions, receipts and automatic browser
+refresh.
 
 HTTP exposes typed Thread/reaction command bodies without actor fields, signed
 Thread/event/emoji GET pages and an exact-target Reaction query POST. Exact
@@ -77,6 +78,10 @@ JSON. Retained images return verified raster bytes with snapshot/content
 headers, nosniff and no-store; SVG, external URLs and byte ranges are
 unsupported. All routes share current repository admission, including status and
 assets.
+
+Header chrome uses the sidebar's theme-relative tint for hover, keyboard focus
+and open menu triggers. Its native command admission, snapshot refresh and
+navigation actions retain their existing controller contracts.
 
 The served browser and Storybook consume the same production-owned shell,
 repository views, presentation models and styles under `web/src/lib`. Catalog
@@ -89,11 +94,49 @@ finalization remain deferred. Snapshot operation, inspected operation, commit,
 change and comparison identities are distinct fields and must not be substituted
 for one another.
 
+The Vite development listener serves UI modules and HMR on the browser origin,
+proxying all `/v1` routes, including local administration and SSE, to the
+existing compiled loopback backend. The backend public origin stays equal to the
+Vite origin; Host, Origin, Fetch Metadata and protocol headers are forwarded
+unchanged, without adding CORS or credentials. Development CSS and the exact HMR
+WebSocket origin have a separate local-only document CSP. Production built
+assets and backend API security keep their existing strict policies. Vite file
+serving rejects development state, JJ/Git metadata, private key/env files and
+generated native build directories.
+
 Appearance uses the device-local `jj-store.appearance.v1` preference record. The
 Original light/dark pair and Buzz-derived palettes change browser presentation
 only. Theme, composer and modal changes retain the current route, captured
 snapshot, conversation draft and native request identities; selecting a theme
 sends no repository mutation and adds no HTTP/RPC contract fields.
+
+Projects review presentation distinguishes unsupported local JJ capability from
+recoverable native review read failures: unsupported repositories perform no
+review read and offer no retry, while native failures retain explicit retry.
+Task Activity belongs after Subtasks in the main detail and contains threaded
+comments; repository commit activity remains in the project's Activity tab.
+Native comment focus opens the disclosure; the composer and retained drafts
+remain below it in the same page. Collapsing Activity does not unmount the
+composer. There is no task discussion side panel or Open task discussion action;
+existing WorkStore commands, snapshots and pending identities remain unchanged.
+The themed repository/edit/subtask buttons retain those callbacks and access
+checks. Centering an empty Threads listing changes no list read, native identity
+or create capability. Settings content navigation begins with one section title
+and leaves return navigation to the existing sidebar, preserving the repository
+route and snapshot.
+
+Local Settings present registration, Search configuration and Sync information
+in bordered rows with labels/descriptions before controls. Unsupported
+capabilities use icon Empty states, while loading and recoverable failures
+retain status and alerts. This presentation does not change advertised
+capabilities, exact folder registration intent, saved/effective Search revisions
+or Sync control semantics.
+
+Repository cards resolve their resting, hover and selected surfaces against the
+same palette in Branches, JJ Log and Op Log. Pointer hover leaves the bookmark
+selection and captured operation intact. Keyboard Enter and repository menu
+commands continue to use the controller's exact native identities and advertised
+capabilities.
 
 Use tonic/protobuf for native RPC and Axum JSON/SSE for browser/agent APIs.
 Generate OpenAPI and client types. Full IDs are authoritative; shortened IDs are
@@ -187,6 +230,15 @@ present, otherwise the explicitly selected snapshot operation; concurrent
 unselected heads cannot start a task. Repository switching, disconnection and
 revocation close the source session, abort outstanding requests and clear this
 settings projection. This UI adds no server route, schema or generated contract.
+
+Projects header Add-menu dispatch and repository dialogs reuse the existing
+local-folder registration and WorkStore set_repository contracts. The local
+registration manager remains alive outside the transient menu. Moving link
+selection into a dialog retains picker/manual full-ID selection, permission and
+version gates, pending request identity and receipt recovery; accepted metadata
+refresh closes a successfully linked dialog. Settings-style form composition
+changes presentation only and adds no request or persistence format.
+
 The transient destination consumes the shell's existing compact state so a
 collapsed desktop rail exposes Back and each settings section as labelled icon
 controls while keeping section selection and repository authority unchanged.
@@ -709,8 +761,9 @@ on the application origin and omit cookies.
 Commit, operation and evolution graphs render server-provided edges without
 inferring ancestry. Multiple heads require an explicit choice; revset context
 and pagination retain an exact selected operation and time anchor. Live events
-indicate newer history without replacing the displayed snapshot. Reconnect
-resumes only fully parsed SSE IDs, while reset asks for explicit refresh.
+refresh current-head views while retaining historical selections. Reconnect
+resumes only fully parsed SSE IDs; ready/reset announcements compare against the
+retained head and queue automatic browser refresh.
 
 Branch graph navigation resolves the selected bookmark or working-copy target
 from the captured reference response before issuing the log request. One target
@@ -755,9 +808,10 @@ TypeScript consumer checks operation-diff narrowing across every status.
 
 The snapshot bar identifies the loaded operation independently of editable query
 fields. Query retries and pages retain original inputs; index preparation must
-not reset the time anchor. Explicit refresh after an event reset starts a new
-subscription. Browser graph rendering admits at most 1000 nodes and 4096 edges;
-exceeding the display budget fails explicitly before layout.
+not reset the time anchor. Event resets queue a snapshot recapture
+automatically; manual refresh remains available. Browser graph rendering admits
+at most 1000 nodes and 4096 edges; exceeding the display budget fails explicitly
+before layout.
 
 Collection controllers retain server cursors independently for every bounded
 resource. Directory navigation requests only the selected directory until a tree
@@ -771,11 +825,17 @@ Agent sessions, selected session detail, transcript chunks, review threads and
 selected review detail use the same repository-session query cache and bounded
 HTTP client. Their keys include the active access-session identity, repository
 and exact stable resource identity; server continuations remain opaque and
-memory-only. A committed review command invalidates the repository-session scope
-before refetching its list and exact thread. A durable unknown outcome retains
-the complete request ID for the status route. Repository SSE changes only set
-the shared freshness flag. Explicit snapshot refresh invalidates the same scope
-before collaboration reads can expose a newer AgentStore or ReviewStore root.
+memory-only. Review list selection opens the same main-page detail from
+repositories and Projects. Fixed page composition and default comment labels
+change no root, anchor, permission, command or version precondition; explicit
+Reply actions retain their stable parent comment ID.
+
+A committed review command invalidates the repository-session scope before
+refetching its list and exact thread. A durable unknown outcome retains the
+complete request ID for the status route. Repository SSE queues automatic
+refresh. Snapshot recapture invalidates the same scope before collaboration
+reads expose a newer AgentStore or ReviewStore root, including for historical
+code selections.
 
 Revision context lookup follows opaque association and review continuations
 until it finds the exact selected commit; path context likewise requires an
@@ -805,6 +865,23 @@ routes survive hash/history restoration. Native commit links from Projects
 authorize a code connection even when no code source is active, retain the exact
 operation and restore the Projects scope with Back. Task sections initially
 expand only Description and main-tab skeletons use a page inset.
+
+Initial browser placeholders cover connection and repository discovery as well
+as the individual Projects, repository-tab and task/review detail reads. These
+are presentation states over the existing asynchronous controller; they add no
+requests or read authority. Previously displayed snapshots remain visible during
+background refresh, with empty/error/unsupported states shown after reads
+settle.
+
+Repository sidebar Threads use the existing authorized, bounded Threads list
+endpoint independently from the selected code source. Each entry retains its own
+native repository and stable thread ID; selecting it connects that owner before
+opening the thread. Memory-only directories are cleared with the credential
+session, discard late or foreign-repository pages, retain loaded windows on
+refresh and omit unsupported local folders. This presentation adds no endpoint
+or persisted contract. Browse threads uses the connected native repository or an
+authorized native fallback; repository/Threads breadcrumbs preserve the
+available code-operation context.
 
 A selected JJ Log or Branches change exposes a read-only Evo Log action in the
 right-rail Actions section. Its separate resizable column reads the existing
@@ -1085,19 +1162,34 @@ WorkStore HTTP exposes bounded project/task/comment pages and typed command
 apply/status under /v1/repos/{repo}/work. Continuations retain one selected
 WorkStore root, repeat the query and page size, reauthorize each page, and reset
 after expiry or serving restart. The browser keeps code pins separate and
-refreshes task metadata explicitly.
+refreshes task metadata automatically after saves and new data.
 
 WorkStore browser reads use an independent pinned root per paged collection. The
 page-header filter controls reuse the existing Projects controller filter action
 and native route values. Moving their presentation from the details rail adds no
 requests or contracts; search submission and field selection retain the existing
-bounded snapshot reads and explicit refresh semantics. The Projects destination
-does not require a selected code operation. Stable project/task route selections
-reload on explicit refresh. A saved receipt marks freshness; ambiguous outcomes
-keep the complete request, including exact version preconditions and entity IDs.
-Status and retry share that identity, even after refresh. Linked repository
-navigation uses the normal target session and token checks, never the home
-metadata grant.
+bounded snapshot reads and automatic browser refresh semantics. The Projects
+destination does not require a selected code operation. Stable project/task
+route selections reload automatically after live events and bounded periodic
+checks. A saved receipt immediately reloads the WorkStore view; ambiguous
+outcomes keep the complete request, including exact version preconditions and
+entity IDs. Status and retry share that identity, even after refresh. Linked
+repository navigation uses the normal target session and token checks, never the
+home metadata grant.
+
+Project list rows reserve aligned title, description, count, creator-avatar and
+date columns. Card/list selection always retains one layout. Agent row metric
+placement and tool toolbar bounds change presentation only; native records,
+snapshots and clipboard values retain their existing contracts.
+
+Project list rows reserve aligned creator-avatar and date columns regardless of
+count or date-text length, including narrow lists. They retain the existing
+native actor, count and timestamp values.
+
+Task-detail presentation keeps its header and composer outside the content
+scroller. Moving the composer changes no comment command, version precondition,
+permission or draft owner; Activity and reply/edit actions keep the same native
+records and retained draft state.
 
 The development seed exercises these same commands for linked sample projects,
 all task states, subtasks and threaded comments. Its cold browser gate reads the
@@ -1110,10 +1202,11 @@ preserving the full code operation pin; Back, Forward and reload restore the
 selected destination without publishing repository state.
 
 Cold Git bridge browser acceptance uses actual LocalTrusted RustFS publication
-and an external merge imported by the custom CLI. SSE announces new history; the
-displayed graph and operation route remain pinned until explicit refresh. The
-refreshed graph exposes the imported merge without synthetic agent history. The
-same cold fixture verifies the native search adapter catches up to that import.
+and an external merge imported by the custom CLI. SSE automatically reloads the
+active current-head graph and operation route while retaining selected commits.
+The refreshed graph exposes the imported merge without synthetic agent history.
+The same cold fixture verifies the native search adapter catches up to that
+import.
 
 ## WorkStore browse summaries
 
@@ -1134,6 +1227,14 @@ not add an HTTP schema variant or accept client author/time fields. Reply menus
 pass the stable parent through `append_reply`. Unknown command outcomes retain
 the request ID and prevent a new command from replacing the pending identity;
 receipt processing checks the owning connection before refreshing or navigating.
+
+Browser branch/working-copy selection within one pinned repository operation
+reuses the loaded reference collection and paging cursor. Only scoped graph and
+detail reads run for that selection; their loading state cannot replace the
+Branches column. Cold restoration, operation changes and automatic updates
+continue to load operation-pinned references through the existing read contract.
+Repository cards use full-width content and right-aligned name-row status chips
+without changing metadata or permission contracts.
 
 ## Local workspace links
 
@@ -1232,8 +1333,9 @@ Local repository AgentStore POST endpoints `/agents/sessions`,
 `/agents/session`, `/agents/transcript` and `/agents/relations` require an
 independent committed `metadata_commit`. Signed continuations bind the complete
 query, repository and binding generation. GET `/events` announces bounded local
-head/ref freshness with local-profile event DTOs and never advances a display
-pin.
+head/ref freshness with local-profile event DTOs. The browser automatically
+recaptures active collaboration/current-head views while retaining historical
+code pins. GET remains read-only.
 
 POST `/v1/local/repositories/{repo}/reconnect` requires the current device
 registry revision and an inspected folder path with the original companion
@@ -1256,6 +1358,11 @@ admission performs no folder work.
 Device appearance is browser-owned presentation state under JST-UI-018. It is
 independent of server settings revisions, repository operations and receipts.
 Appearance changes make no repository mutation or website metadata requests.
+Merge qualification retains physical working-copy actions, native tool review
+reads and local repository review creation in the shared controller contract.
+Confirmed WorkStore reactions reload only their exact target through existing
+authorized reads; request identities and observed slot preconditions are
+unchanged.
 
 Local POST `/v1/local/repos/{repo}/working-copy/read` takes a relative file
 path. It returns `WorkingFile` with a device selection and bounded physical
@@ -1266,3 +1373,76 @@ Save revalidates the selected physical identity before replacement. Stale file
 selections use `stale_working_file`; invalid, unsupported, unavailable and
 oversized files retain separate responses. Physical Save has no native operation
 or companion selection in its result and requires no RustFS runtime.
+
+Buzz shell gradient continuity and compact navigation picker surfaces are owned
+CSS presentation. The picker retains native repository/thread selection and
+keyboard navigation, with app-background surface tokens and spacing independent
+of browser glass. The generated palette's shared popover role supplies the same
+app surface to search commands, menus and popovers, without per-component search
+overrides. These adjustments add no preference fields or API requests.
+
+The saved accent selects one circular swatch indicator in Appearance. Its ring
+stays centered and circular across color modes, hover and responsive layouts;
+keyboard focus uses its own visible outline. This presentation does not change
+the preference format or native API.
+
+Projects Agents tabs compose existing agent session reads from independently
+authorized native/local transports. Main scope derives from unfiltered project
+links with bounded project continuations, never installation membership alone.
+Session pages validate their repository identity and exact retained AgentStore
+snapshot. No server API or canonical record changes. The Projects route admits
+`tab=agents` for both landing and selected-project views, with paired
+`agent_repository` and `session` native IDs for an inline response. These keys
+are valid only on Agents and retain scope through navigation history. Repository
+Agents and Projects responses follow the device Thread layout: Split occupies
+the standard body right sidebar and Focus uses the structural discussion sheet.
+Selection, Close and layout switching preserve the loaded session directory and
+the same native selected session; no request or route identity changes. The
+response composes existing separately authorized session/transcript reads and
+reaction/tool-review commands without switching the global code connection.
+Session list and skeleton insets, centered avatars and title-row actions are
+presentation only: they preserve pagination, selection identities, independently
+operable code association controls and existing agent read/command contracts.
+
+The Projects tab-row search submits the existing `q` filter explicitly on Enter.
+Close clears that filter through the same route action and restores the tabs.
+Clear removes draft and submitted text through the existing filter action while
+retaining the open input in its current scope. The 512 UTF-8 byte bound,
+independent home/repository admission and unsupported Review text-search
+capability remain unchanged; displaying search controls grants no extra access.
+
+The Threads directory shares that toolbar control while filtering its already
+authorized, bounded ThreadSummary titles and directory excerpts. It retains the
+existing continuation action and exact native thread selection, without a new
+query parameter, indexed-search dependency, API contract or persisted query.
+
+Focus/Split reply presentation preserves the existing native conversation, reply
+and tool-call target IDs. Agent tool discussion remains in a full-width inline
+row under the exact call, with independently read existing comments and retained
+drafts inside either response layout. Bounded review context/detail reads never
+change the selected review or route. Comment Reply/Edit selects that exact
+review before activating its retained composer; native permission and unknown
+request guards remain in force. Other Focus discussions use one
+application-owned structural sheet. These choices do not alter API authorization
+or mutation identities.
+
+Adjacent tool-call grouping is presentation-only. AgentActivity order and exact
+tool-call, event, snapshot and turn IDs remain unchanged; grouped actions still
+use the selected individual native call and existing authorized review commands.
+Grouped rows and their hover controls share the transcript scroll viewport;
+inline call sizing and message-edge alignment do not change those command
+targets or retained Focus/Split drafts.
+
+Session comments reuse typed ReviewStore creation and reply commands with the
+additive `agent_session` anchor target. It names the exact captured session
+snapshot and stable session, retains the full AgentStore closure, and fails
+closed on mismatched identity. Independent bounded reads for session and tool
+comments do not replace the route or another selected review. Existing request,
+receipt, authorization and unknown-outcome semantics apply unchanged.
+
+Page section disclosure preferences use versioned, bounded device-local layout
+storage with opaque scope/section keys and boolean flags. They restore only
+presentation and do not restore repository access, entity selection, code pins,
+read snapshots, drafts or commands. Rename/filter/operation changes do not reset
+saved sections; native task/review identities isolate detail choices. Shell
+toggle styling retains the existing accessible expansion and action contracts.

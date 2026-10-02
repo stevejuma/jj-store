@@ -33,6 +33,7 @@
       (repo) => (repo.permission === "admin") === mine,
     )}
     {#if rows.length}<StoreWorkCollection
+        id={`repositories:${mine ? "mine" : "other"}`}
         title={mine ? "Mine" : "Other repositories"}
         count={rows.length}
         Icon={GitBranchIcon}

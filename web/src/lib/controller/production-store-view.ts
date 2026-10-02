@@ -197,17 +197,20 @@ export function productionControllerSurface(
       "available" | "threads"
     >;
     projects: StoreController["projects"];
+    threadNavigation?: StoreController["threadNavigation"];
     now?: () => number;
     actions: StoreController["actions"];
     globalSearch?: StoreController["globalSearch"];
     referenceSearch?: StoreController["referenceSearch"];
   },
+  pause?: StoreController["actions"]["setRefreshPaused"],
 ): StoreController {
   return {
     get threads() {
       return options.threads.available() ? options.threads.threads : undefined;
     },
     projects: options.projects,
+    threadNavigation: options.threadNavigation,
     globalSearch: options.globalSearch,
     referenceSearch: options.referenceSearch,
     get state() {
@@ -219,6 +222,6 @@ export function productionControllerSurface(
         options.now,
       );
     },
-    actions: options.actions,
+    actions: { ...options.actions, setRefreshPaused: pause },
   };
 }

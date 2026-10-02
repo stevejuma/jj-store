@@ -1,8 +1,9 @@
 import { ApiError, pretty } from "../api/client.js";
+import { reloadProjectHomeWindow } from "./projects-home-read.js";
 import type { StoreRepositorySummary } from "./contracts.js";
 import type { ProjectHome, WorkBrowseTransport } from "./projects-hub-types.js";
 
-/** The sidebar keeps its own unfiltered, explicitly refreshed home snapshots. */
+/** The sidebar keeps its own unfiltered home snapshots and loaded window. */
 export function createProjectsNavigation(context: {
   repositories(): readonly StoreRepositorySummary[];
   transport(home: string): WorkBrowseTransport;
@@ -51,7 +52,8 @@ export function createProjectsNavigation(context: {
       if (ticket === generation) home.loading = false;
     }
   }
-  async function load(refresh = false) {
+  let pendingLoad: Promise<void> | null = null;
+  async function loadPages(refresh = false) {
     if (!refresh && (loaded || loading)) return;
     reads.abort();
     reads = new AbortController();
@@ -74,13 +76,31 @@ export function createProjectsNavigation(context: {
     try {
       await Promise.all(
         Array.from({ length: Math.min(2, homes.length) }, async () => {
-          while (index < homes.length && ticket === generation)
-            await read(homes[index++]!, ticket);
+          while (index < homes.length && ticket === generation) {
+            const home = homes[index++]!;
+            await reloadProjectHomeWindow(
+              home,
+              (more) => read(home, ticket, more),
+              refresh,
+              () => ticket === generation,
+            );
+          }
         }),
       );
     } finally {
       if (ticket === generation) loading = false;
     }
+  }
+  function load(refresh = false) {
+    if (!refresh && pendingLoad) return pendingLoad;
+    const request = loadPages(refresh);
+    pendingLoad = request;
+    void request
+      .finally(() => {
+        if (pendingLoad === request) pendingLoad = null;
+      })
+      .catch(() => {});
+    return request;
   }
   return {
     get homes() {
@@ -98,6 +118,7 @@ export function createProjectsNavigation(context: {
       generation++;
       reads.abort();
       homes = [];
+      pendingLoad = null;
       loaded = false;
       loading = false;
     },

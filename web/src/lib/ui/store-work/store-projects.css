@@ -33,19 +33,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.store-projects__search-field {
-  min-height: 0;
-  padding-block: 0.25rem;
-  --ui-input-group-border-color: transparent;
-  --ui-input-group-focus-ring-color: transparent;
-}
-.store-projects__search-field [data-ui-part="input-group"],
-.store-projects__search-field [data-ui-part="input-group-input"] {
-  border: 0;
-  outline: none;
-  background: transparent;
-  box-shadow: none;
-}
 .store-projects select,
 .store-projects__rail select,
 .store-work__form select,
@@ -103,4 +90,17 @@
   flex-direction: column;
   gap: 0;
   min-width: 0;
+}
+.store-projects[data-agents-view],
+.store-projects[data-agents-view] > .store-projects__tab-root,
+.store-projects[data-agents-view] [data-ui-part="tabs-content"] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.store-projects[data-agents-view] .community-projects__tabs,
+.store-projects[data-agents-view] .community-projects__surface-header {
+  flex-shrink: 0;
 }

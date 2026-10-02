@@ -53,3 +53,25 @@ export async function readProjectHome(
     if (context.current()) home.loading = false;
   }
 }
+
+export async function reloadProjectHomeWindow(
+  home: ProjectHome,
+  read: (more?: boolean) => Promise<void>,
+  refresh: boolean,
+  current: () => boolean,
+) {
+  const count = Math.min(home.projects.length + home.tasks.length, 4096);
+  await read();
+  const seen = new Set<string>();
+  while (
+    refresh &&
+    home.cursor &&
+    !home.error &&
+    current() &&
+    home.projects.length + home.tasks.length < count
+  ) {
+    if (seen.has(home.cursor)) throw new Error("Repeated WorkStore cursor.");
+    seen.add(home.cursor);
+    await read(true);
+  }
+}

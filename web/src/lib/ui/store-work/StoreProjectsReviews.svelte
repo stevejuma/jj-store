@@ -32,11 +32,17 @@
       aria-busy={home.loading}
     >
       <StoreWorkCollection
+        id={`reviews:${home.repository.id}`}
         title={home.repository.name}
         count={home.threads.length}
         Icon={GitBranchIcon}
       >
-        {#if home.error}<p role="alert">{home.error}</p>
+        {#if home.unsupported}<StoreWorkEmpty
+            kind="reviews"
+            title="Reviews unavailable"
+            description="Reviews are not supported for local JJ repositories."
+          />
+        {:else if home.error}<p role="alert">{home.error}</p>
           <Button variant="outline" onclick={() => hub.refresh()}
             >Retry reviews</Button
           >{/if}
@@ -45,7 +51,7 @@
           >
             <CommunitySkeleton layout="timeline" label="Loading reviews" />
           </div>
-        {:else if !home.threads.length && !home.error}<StoreWorkEmpty
+        {:else if !home.threads.length && !home.error && !home.unsupported}<StoreWorkEmpty
             kind="reviews"
             title="No reviews yet"
             description="Native code discussions in this repository will appear here."

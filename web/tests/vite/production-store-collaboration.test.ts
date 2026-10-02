@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import type { Model } from "../../src/lib/api/client.js";
 import type {
   StoreDataSource,
@@ -515,6 +515,43 @@ test("review replies send exact workflow preconditions and refresh detail", asyn
   expect(data.reviewActionRequestId).toBeNull();
 });
 
+for (const recover of [false, true]) {
+  test(`committed_review_remains_busy_until_its_reads_finish_${recover}`, async () => {
+    const { controller, data, source, commands } = harness();
+    await controller.selectReviewThread(thread.thread_id);
+    if (recover) {
+      const apply = source.applyReviewCommand.bind(source);
+      source.applyReviewCommand = async (request) => {
+        commands.push(request);
+        return { status: "outcome_unknown", request_id: request.request_id };
+      };
+      source.reviewCommandStatus = () => apply(commands[0]!);
+      await controller.reply("Preserve the draft until confirmed");
+    }
+    let finish!: () => void;
+    const read = source.reviewThreads.bind(source);
+    const entered = vi.fn();
+    source.reviewThreads = async () => {
+      entered();
+      await new Promise<void>((resolve) => (finish = resolve));
+      return read();
+    };
+    const pending = recover
+      ? controller.checkAction()
+      : controller.reply("Preserve the draft until confirmed");
+    await vi.waitFor(() => expect(entered).toHaveBeenCalled());
+    try {
+      expect(data.reviewActionRequestId).toBeNull();
+      expect(data.committedReviewRequestId).toBe(id16("51"));
+      expect(data.status.reviewAction).toBe("refreshing");
+    } finally {
+      finish();
+      await pending;
+    }
+    expect(data.status.reviewAction).toBe("ready");
+  });
+}
+
 test("review edits preserve the edit-start revision and native body contract", async () => {
   const { controller, data, commands, source } = harness();
   const comment = {
@@ -874,4 +911,149 @@ test("a stale review patch failure cannot clear newer state", async () => {
   await read;
 
   expect(data.reviewPatch).toEqual({ path: "newer.rs", patch: "newer" });
+});
+
+test("session comments create an exact session target without masquerading as a tool", async () => {
+  const { controller, data, source, commands } = harness();
+  data.repositories = [
+    { id: source.repository, name: "Native", permission: "write" },
+  ];
+  await controller.selectAgentSession(session.session_id);
+  await controller.commentOnAgentSession("Session comment");
+  expect(commands[0]?.command).toMatchObject({
+    command: "create_thread",
+    anchor: {
+      repository_id: source.repository,
+      target: {
+        target: "agent_session",
+        value: {
+          session_id: session.session_id,
+          session_snapshot: {
+            kind: "session_snapshot",
+            id: session.snapshot_id,
+          },
+        },
+      },
+      created_context: { agent_root: agentDetail().snapshot.agent_root },
+    },
+    body: { text: "Session comment" },
+  });
+});
+
+test("independent tool reads leave selected route and review untouched", async () => {
+  const { controller, data, history, source } = harness();
+  await controller.selectAgentSession(session.session_id);
+  await controller.selectReviewThread(thread.thread_id);
+  const selected = data.reviewThread,
+    route = { ...history.route };
+  const toolReview: Model<"ReviewThreadSummary"> = {
+    ...thread,
+    thread_id: id16("81"),
+    anchor: {
+      ...thread.anchor,
+      target: {
+        target: "agent_artifact",
+        value: {
+          session_id: session.session_id,
+          session_snapshot: {
+            kind: "session_snapshot",
+            id: session.snapshot_id,
+          },
+          owner: {
+            kind: "tool",
+            tool_call_id: toolCallId,
+            attempt_id: toolCallId,
+            snapshot: { kind: "tool_snapshot", id: toolSnapshotId },
+          },
+        },
+      },
+    },
+  };
+  data.reviewThreads = [thread];
+  data.reviewCursor = "tools-next";
+  source.reviewThreads = async () => ({
+    version: 1,
+    snapshot: reviewDetail().snapshot,
+    threads: [toolReview],
+    next_cursor: null,
+  });
+  source.reviewThread = async () => reviewDetailFor(toolReview);
+  const detail = await controller.readAgentToolReview(toolCallId);
+  expect(detail?.thread.thread_id).toBe(toolReview.thread_id);
+  expect(history.route).toEqual(route);
+  expect(data.reviewThread).toBe(selected);
+  source.reviewThread = async () => reviewDetailFor(thread);
+  await expect(controller.readAgentToolReview(toolCallId)).rejects.toThrow(
+    "selected captured agent target",
+  );
+});
+
+test("session comments append to the exact existing session review and retain unknown requests", async () => {
+  const { controller, data, source, commands } = harness("unknown");
+  data.repositories = [
+    { id: source.repository, name: "Native", permission: "write" },
+  ];
+  await controller.selectAgentSession(session.session_id);
+  const sessionReview: Model<"ReviewThreadSummary"> = {
+    ...thread,
+    thread_id: id16("82"),
+    anchor: {
+      ...thread.anchor,
+      target: {
+        target: "agent_session",
+        value: {
+          session_id: session.session_id,
+          session_snapshot: {
+            kind: "session_snapshot",
+            id: session.snapshot_id,
+          },
+        },
+      },
+    },
+  };
+  source.reviewThreads = async () => ({
+    version: 1,
+    snapshot: reviewDetail().snapshot,
+    threads: [sessionReview],
+    next_cursor: null,
+  });
+  source.reviewThread = async () => reviewDetailFor(sessionReview);
+  await controller.commentOnAgentSession("Retained comment");
+  await controller.commentOnAgentSession("Must not replace pending");
+  expect(commands).toHaveLength(1);
+  expect(commands[0]?.command).toMatchObject({
+    command: "append_reply",
+    thread_id: sessionReview.thread_id,
+    expected_workflow_version: 3,
+    body: { text: "Retained comment" },
+  });
+  expect(data.reviewActionRequestId).toBe(id16("51"));
+  expect(data.status.reviewAction).toBe("unavailable");
+});
+
+test("late session comment discovery cannot send to a newly selected session", async () => {
+  const { controller, data, source, commands } = harness();
+  data.repositories = [
+    { id: source.repository, name: "Native", permission: "write" },
+  ];
+  await controller.selectAgentSession(session.session_id);
+  let finish!: () => void;
+  source.reviewThreads = () =>
+    new Promise((resolve) => {
+      finish = () =>
+        resolve({
+          version: 1,
+          snapshot: reviewDetail().snapshot,
+          threads: [],
+          next_cursor: null,
+        });
+    });
+  const sending = controller.commentOnAgentSession("Stale target");
+  data.agentSession = {
+    ...agentDetail(),
+    session: { ...session, session_id: id16("83") },
+  };
+  finish();
+  await sending;
+  expect(commands).toHaveLength(0);
 });

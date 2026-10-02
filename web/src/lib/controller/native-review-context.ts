@@ -26,7 +26,11 @@ export async function readNativeReviewContext(
   if (anchor.repository_id !== source.repository)
     throw new Error("Review repository mismatch.");
   const target = anchor.target;
-  if (target.target === "agent_text" || target.target === "agent_artifact") {
+  if (
+    target.target === "agent_text" ||
+    target.target === "agent_artifact" ||
+    target.target === "agent_session"
+  ) {
     result.agents = await readAnchoredAgentContext(source, anchor);
     return result;
   }

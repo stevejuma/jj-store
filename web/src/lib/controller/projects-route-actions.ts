@@ -46,6 +46,9 @@ export function projectsRouteActions(
       context.push({
         ...context.route(),
         ...fields,
+        ...(fields.workTab && fields.workTab !== "agents"
+          ? { workAgentRepository: null, agentSessionId: null }
+          : {}),
         ...(fields.workTab ||
         fields.workState ||
         fields.workQuery !== undefined ||

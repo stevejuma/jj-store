@@ -1,3 +1,4 @@
+import { createProductionAutomaticRefresh } from "./production-automatic-refresh.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
 import { createEntitySearch } from "./production-entity-search.js";
 import { createProductionRefresh } from "./production-store-refresh.js";
@@ -6,11 +7,10 @@ import { createProfileRouteRestorer } from "./production-profile-route.js";
 import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
 
-import { ApiError } from "../api/client.js";
+import { createProductionRepositoryThreadNavigation } from "./repository-thread-navigation.svelte.js";
 import type { StoreController } from "./contracts.js";
 
 import type { StoreDataSource } from "./native-data-source.js";
-import { followProductionStoreEvents } from "./production-store-events.js";
 import { createProductionStoreReader } from "./production-store-reader.svelte.js";
 import { createProductionStoreState } from "./production-store-state.svelte.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
@@ -21,6 +21,7 @@ import { createProductionStoreConflicts } from "./production-store-conflicts.js"
 import { createProductionStoreSettings } from "./production-store-index.js";
 import {
   createProductionRevisionSelector,
+  requireProductionSource,
   reportProductionStoreError,
   resetConnectionView,
   startProductionStoreLifecycle,
@@ -37,14 +38,21 @@ export function createProductionStoreController(
   let source: StoreDataSource | null = null,
     sessionToken: string | null = null;
   let session = 0;
+  const threadNavigation = createProductionRepositoryThreadNavigation(
+    () => data.repositories,
+    () => sessionToken,
+    options.fetcher,
+  );
   let version = 0,
     feed = new AbortController(),
     discovery = new AbortController(),
     lifecycle = new AbortController();
-  const activeSource = () => {
-    if (!source) throw new ApiError("not_connected");
-    return source;
-  };
+  const invalidate = () => ++version;
+  function follow(active: StoreDataSource) {
+    feed = new AbortController();
+    automatic.follow(active, feed.signal);
+  }
+  const activeSource = () => requireProductionSource(source);
   const current = (ticket: number, active: StoreDataSource) =>
     ticket === version && active === source;
   const reader = createProductionStoreReader({
@@ -63,6 +71,7 @@ export function createProductionStoreController(
     projects,
     clear: clearProjects,
     stopEvents: stopProjectEvents,
+    poll: pollProjects,
   } = createProductionProjects(
     data,
     history,
@@ -70,6 +79,8 @@ export function createProductionStoreController(
     () => session,
     () => feed.abort(),
     options.fetcher,
+    () => automatic.request(),
+    () => controller,
   );
   const threadsIntegration = createThreadsIntegration({
     source: () => source,
@@ -86,9 +97,7 @@ export function createProductionStoreController(
     connect: connectRepository,
     token: () => sessionToken,
     restoreThreads: threadsIntegration.restore,
-    invalidate: () => {
-      version += 1;
-    },
+    invalidate,
     restore: reader.restorePage,
   });
 
@@ -122,10 +131,14 @@ export function createProductionStoreController(
   function disconnect(message = "", denied = false, preserveSession = false) {
     const repositoryStatus = data.status.repositories;
     version += 1;
+    automatic.reset();
     feed.abort();
     stopProjectEvents();
     discovery.abort();
-    if (!preserveSession) clearProjects();
+    if (!preserveSession) {
+      clearProjects();
+      threadNavigation.clear();
+    }
     threads.clear(preserveSession);
     source?.close();
     source = null;
@@ -161,15 +174,7 @@ export function createProductionStoreController(
         current,
         disconnect,
         configure: mutations.configure,
-        follow: (active) => {
-          feed = new AbortController();
-          void followProductionStoreEvents(
-            active,
-            () => active === source,
-            data,
-            feed.signal,
-          );
-        },
+        follow,
         connected: threadsIntegration.connected,
         projects,
         reader,
@@ -202,19 +207,10 @@ export function createProductionStoreController(
     threads: threadsIntegration,
     search,
     reader,
+    refreshThreadNavigation: () => threadNavigation.load(true),
     stopFeed: () => feed.abort(),
-    invalidate: () => {
-      version += 1;
-    },
-    follow: (active) => {
-      feed = new AbortController();
-      void followProductionStoreEvents(
-        active,
-        () => active === source,
-        data,
-        feed.signal,
-      );
-    },
+    invalidate,
+    follow,
   });
   const mutations = createProductionStoreMutations({
     state: data.mutation,
@@ -238,9 +234,7 @@ export function createProductionStoreController(
     data,
     history,
     reader,
-    invalidate: () => {
-      version += 1;
-    },
+    invalidate,
   });
 
   const actions = createProductionStoreActions({
@@ -267,9 +261,22 @@ export function createProductionStoreController(
     restoreRoute,
     activeRepository: () =>
       data.status.connection === "connected" ? source?.repository : undefined,
-    invalidate: () => {
-      version += 1;
-    },
+    invalidate,
+  });
+
+  const automatic = createProductionAutomaticRefresh({
+    data,
+    projects,
+    threads,
+    pollProjects,
+    route: () => history.route,
+    source: () => source,
+    signal: lifecycle.signal,
+    active: () =>
+      data.storageReady &&
+      (data.accessMode === "local_trusted" || sessionToken !== null),
+    refresh: () => refresh(true),
+    report: (cause) => reportProductionStoreError(data, cause),
   });
 
   startProductionStoreLifecycle({
@@ -283,7 +290,7 @@ export function createProductionStoreController(
     signal: lifecycle.signal,
   });
 
-  return productionControllerSurface(
+  const controller: StoreController = productionControllerSurface(
     data,
     history,
     () => source,
@@ -291,10 +298,13 @@ export function createProductionStoreController(
     {
       threads: threadsIntegration,
       projects,
+      threadNavigation,
       now: options.now,
       globalSearch,
       referenceSearch,
       actions: { ...actions, openThreads, openRoute },
     },
+    automatic.pause,
   );
+  return controller;
 }

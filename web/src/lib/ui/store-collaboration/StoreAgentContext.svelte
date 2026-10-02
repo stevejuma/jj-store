@@ -15,10 +15,13 @@
   import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import StoreAgentTranscript from "./StoreAgentTranscript.svelte";
-  import StoreRecordMenu from "./StoreRecordMenu.svelte";
+  import StoreAgentSessionMenu from "./StoreAgentSessionMenu.svelte";
   import StoreMessageActions from "./StoreMessageActions.svelte";
 
-  let { controller }: { controller: StoreController } = $props();
+  let {
+    controller,
+    showHeader = true,
+  }: { controller: StoreController; showHeader?: boolean } = $props();
   const state = $derived(controller.state);
   const selected = $derived(state.agentSession);
   const agent = $derived(selected ? agentMember(selected.session) : undefined);
@@ -78,66 +81,53 @@
 </script>
 
 {#if selected && agent}
-  <div class="store-agent-context">
-    <header class="store-collaboration__detail-header">
-      {#if localAssociation}<p>
-          Source repositories: {localAssociation.source_repositories.join(", ")}
-        </p>{/if}
-      <div class="store-collaboration__detail-title-row">
-        <span class="store-collaboration__detail-identity">
-          <CommunityMemberAvatar
-            member={agent}
-            size="small"
-            showPresence
-            decorative
-          />
-          <span class="store-collaboration__detail-title">{agent.name}</span>
-        </span>
-        <StoreRecordMenu
-          label="Agent details actions"
-          items={[
-            { label: "Copy session ID", value: selected.session.session_id },
-            { label: "Copy snapshot ID", value: selected.session.snapshot_id },
-            { label: "Copy agent root", value: selected.snapshot.agent_root },
-            { label: "Copy repository ID", value: selected.snapshot.repo_id },
-            {
-              label: "Copy epoch ID",
-              value:
-                "epoch" in selected.snapshot
-                  ? selected.snapshot.epoch
-                  : selected.snapshot.metadata_commit,
-            },
-          ]}
-        />
-      </div>
-      <div class="store-collaboration__detail-meta">
-        <CommunityChip
-          tone={selected.session.state === "active" ? "success" : "neutral"}
-        >
-          {selected.session.state}
-        </CommunityChip>
+  <div class="store-agent-context" data-header={showHeader}>
+    {#if showHeader}<header class="store-collaboration__detail-header">
+        {#if localAssociation}<p>
+            Source repositories: {localAssociation.source_repositories.join(
+              ", ",
+            )}
+          </p>{/if}
+        <div class="store-collaboration__detail-title-row">
+          <span class="store-collaboration__detail-identity">
+            <CommunityMemberAvatar
+              member={agent}
+              size="small"
+              showPresence
+              decorative
+            />
+            <span class="store-collaboration__detail-title">{agent.name}</span>
+          </span>
+          <StoreAgentSessionMenu {controller} />
+        </div>
+        <div class="store-collaboration__detail-meta">
+          <CommunityChip
+            tone={selected.session.state === "active" ? "success" : "neutral"}
+          >
+            {selected.session.state}
+          </CommunityChip>
 
-        {#if changeId || commitId}
-          <CommunityProjectsRevisionGraphIds
-            commitId={commitId ?? ""}
-            {changeId}
-            placement="inline"
-          />
+          {#if changeId || commitId}
+            <CommunityProjectsRevisionGraphIds
+              commitId={commitId ?? ""}
+              {changeId}
+              placement="inline"
+            />
+          {/if}
+          {#if changeHref}
+            <a class="store-collaboration__context-link" href={changeHref}>
+              Open related change <ExternalLinkIcon aria-hidden="true" />
+            </a>
+          {/if}
+        </div>
+        {#if selected.activity_truncated || selected.code_truncated}
+          <p class="store-collaboration__coverage" role="status">
+            This bounded view omits older {selected.activity_truncated
+              ? "activity"
+              : "code associations"}.
+          </p>
         {/if}
-        {#if changeHref}
-          <a class="store-collaboration__context-link" href={changeHref}>
-            Open related change <ExternalLinkIcon aria-hidden="true" />
-          </a>
-        {/if}
-      </div>
-      {#if selected.activity_truncated || selected.code_truncated}
-        <p class="store-collaboration__coverage" role="status">
-          This bounded view omits older {selected.activity_truncated
-            ? "activity"
-            : "code associations"}.
-        </p>
-      {/if}
-    </header>
+      </header>{/if}
     {#if selected.activity.length}
       <StoreAgentTranscript
         {controller}
@@ -218,3 +208,9 @@
     </Empty.Header>
   </Empty.Root>
 {/if}
+
+<style>
+  .store-agent-context[data-header="false"] {
+    min-height: 0;
+  }
+</style>

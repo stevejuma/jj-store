@@ -10,6 +10,10 @@ export function createWorkReader(
   restoreCode: () => Promise<void>,
 ) {
   const work = createWorkController({
+    repository: () => source().repository,
+    principal: () =>
+      data.repositories.find((r) => r.id === source().repository)?.principal ??
+      "",
     source: () => {
       const transport = source().work;
       if (!transport) throw new ApiError("work_unavailable");
@@ -19,7 +23,7 @@ export function createWorkReader(
     select: (projectId, taskId) =>
       history.push({ ...history.route, page: "projects", projectId, taskId }),
     changed: () => {
-      data.status.refreshAvailable = true;
+      data.status.refreshAvailable = false;
     },
   });
   return {

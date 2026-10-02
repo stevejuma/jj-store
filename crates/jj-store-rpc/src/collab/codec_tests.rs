@@ -10,6 +10,7 @@ fn fixture() -> (CollabObjectRef, wire::CollabAssetReply) {
         .unwrap();
     let image = std::mem::take(&mut asset.bytes);
     let snapshot = CollabReadSnapshotV1 {
+        work_root: None,
         version: 1,
         repo_id: m::RepositoryId::new([1; 16]),
         epoch: m::EpochId::new([2; 16]),

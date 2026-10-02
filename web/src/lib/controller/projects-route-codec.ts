@@ -1,6 +1,13 @@
 import type { StoreRoute } from "./contracts.js";
 const id = /^[0-9a-f]{32}$/u;
-const tabs = ["projects", "tasks", "reviews", "repositories", "activity"];
+const tabs = [
+  "projects",
+  "tasks",
+  "reviews",
+  "repositories",
+  "activity",
+  "agents",
+];
 const states = ["active", "all", "open", "in_progress", "blocked", "done"];
 const fields = [
   "comment",
@@ -14,6 +21,8 @@ const fields = [
   "scope",
   "at_op",
   "activity",
+  "agent_repository",
+  "session",
 ];
 export function projectsRouteToHash(route: StoreRoute): string | null {
   const query = new URLSearchParams();
@@ -29,6 +38,9 @@ export function projectsRouteToHash(route: StoreRoute): string | null {
     scope: route.workHome,
     activity: route.workActivity === "all" ? undefined : route.workActivity,
     at_op: route.projectId ? route.snapshotOperationId : undefined,
+    agent_repository:
+      route.workTab === "agents" ? route.workAgentRepository : undefined,
+    session: route.workTab === "agents" ? route.agentSessionId : undefined,
   };
   for (const [key, value] of Object.entries(pairs))
     if (value) query.set(key, value);
@@ -52,11 +64,15 @@ export function projectsRouteFromHash(hash: string): StoreRoute | null {
     "comment",
     "repository",
     "scope",
+    "agent_repository",
+    "session",
   ])
     if (query.has(key) && !id.test(query.get(key)!)) return null;
   if (
-    query.has("at_op") &&
-    (!query.has("home") || !/^[0-9a-f]{128}$/.test(query.get("at_op")!))
+    query.has("agent_repository") !== query.has("session") ||
+    (query.has("session") && query.get("tab") !== "agents") ||
+    (query.has("at_op") &&
+      (!query.has("home") || !/^[0-9a-f]{128}$/.test(query.get("at_op")!)))
   )
     return null;
   const activity = query.get("activity");
@@ -104,7 +120,8 @@ export function projectsRouteFromHash(hash: string): StoreRoute | null {
     comparisonGroupId: null,
     path: null,
     directory: "",
-    agentSessionId: null,
+    agentSessionId: query.get("session"),
+    workAgentRepository: query.get("agent_repository"),
     reviewThreadId: null,
   };
 }

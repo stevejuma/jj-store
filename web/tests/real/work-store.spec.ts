@@ -37,7 +37,7 @@ function target(name: string) {
     ]),
   ).repository as string;
 }
-test("native projects tasks and discussion persist on RustFS and refresh explicitly", async ({
+test("native projects tasks and discussion persist on RustFS and refresh automatically", async ({
   page,
   request,
 }) => {
@@ -56,12 +56,6 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
     scope.getByRole("status", { name: "Work command status" });
   const editor = (label: string, scope = view) =>
     scope.getByRole("group", { name: label, exact: true }).getByRole("textbox");
-  async function refresh() {
-    await view.getByRole("button", { name: "Refresh projects" }).click();
-    await expect(view).toHaveAttribute("aria-busy", "false", {
-      timeout: 30000,
-    });
-  }
   const headers = {
     Origin: new URL(page.url()).origin,
     "Sec-Fetch-Dest": "empty",
@@ -101,7 +95,6 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
     await expect(
       view.getByRole("button", { name: `Open project ${name}`, exact: true }),
     ).toHaveCount(0);
-    await refresh();
     await expect(
       view.getByRole("button", { name: `Open project ${name}`, exact: true }),
     ).toBeVisible();
@@ -133,7 +126,6 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   await editProject.getByRole("button", { name: "Save project" }).click();
   await expect(status(editProject)).toContainText("Saved");
   await editProject.getByRole("button", { name: "Done", exact: true }).click();
-  await refresh();
   await view.getByRole("button", { name: "Edit project" }).click();
   await expect(editor("Project description", editProject)).toHaveText(
     "Edited **native** description",
@@ -142,12 +134,17 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   await view.getByRole("tab", { name: "Repositories", exact: true }).click();
   const links = view.getByRole("region", { name: "Linked repositories" });
   for (const id of [a, b]) {
-    await chooseRepository(links, "Repository", id);
-    await links
+    await view
       .getByRole("button", { name: "Link repository", exact: true })
       .click();
-    await expect(status()).toContainText("Saved");
-    await refresh();
+    const linkDialog = page.getByRole("dialog", {
+      name: "Link repository",
+      exact: true,
+    });
+    await chooseRepository(linkDialog, "Repository", id);
+    await linkDialog
+      .getByRole("button", { name: "Link repository", exact: true })
+      .click();
     await expect(
       links.getByRole("button", { name: "Retire link" }),
     ).toHaveCount(id === a ? 1 : 2);
@@ -172,7 +169,8 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   ).toHaveCount(2);
   await view.getByRole("tab", { name: "Tasks", exact: true }).click();
   async function createTask(name: string, repository: string, parent?: string) {
-    await view.getByRole("button", { name: "New task", exact: true }).click();
+    await view.getByRole("button", { name: "Add", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Add task", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Create task" });
     await dialog.getByLabel("Task title", { exact: true }).fill(name);
     await editor("Task description", dialog).fill(`${name} body`);
@@ -194,7 +192,6 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
       .click();
     await expect(status(dialog)).toContainText("Saved");
     await dialog.getByRole("button", { name: "Done", exact: true }).click();
-    await refresh();
   }
   await createTask("Parent task", a);
   await createTask("Child task", b, "Parent task");
@@ -226,7 +223,6 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
     .click();
   await expect(status(editTask)).toContainText("Saved");
   await editTask.getByRole("button", { name: "Done", exact: true }).click();
-  await refresh();
   await expect(
     view.getByRole("article", { name: "Task details" }),
   ).toContainText("In progress");
@@ -256,20 +252,11 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   });
   expect(external.ok()).toBe(true);
   await expect(
-    view.getByText("Updates available. Refresh projects to view them."),
-  ).toBeVisible();
-  await expect(
-    view.getByText("External discussion update", { exact: true }),
-  ).toHaveCount(0);
-  await refresh();
-  await expect(
     view.getByText("External discussion update", { exact: true }),
   ).toBeVisible();
   async function comment(body: string, action = "Add comment") {
     await editor("Comment").fill(body);
     await view.getByRole("button", { name: action, exact: true }).click();
-    await expect(status()).toContainText("Saved");
-    await refresh();
   }
   await comment("Original comment");
   const original = view
@@ -311,8 +298,6 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
     .getByRole("alertdialog", { name: "Remove comment?" })
     .getByRole("button", { name: "Remove comment", exact: true })
     .click();
-  await expect(status()).toContainText("Saved");
-  await refresh();
   await expect(
     view.getByText("Comment removed", { exact: true }),
   ).toBeVisible();
@@ -342,7 +327,6 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   await view.getByRole("button", { name: "Activity", exact: true }).click();
   await expect(editor("Comment")).toHaveText("Unknown outcome comment");
   await view.getByRole("button", { name: "Check task command" }).click();
-  await expect(status()).toContainText("Saved");
   const taskId = (command as { command: { task: string } }).command.task;
   const response = await request.get(`/v1/repos/${home}/work?task=${taskId}`, {
     headers,
@@ -353,7 +337,6 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
       (c: { body: string }) => c.body === "Unknown outcome comment",
     ),
   ).toHaveLength(1);
-  await refresh();
   const path = new URL(page.url()).hash;
   await page.reload();
   await view.getByRole("button", { name: "Activity", exact: true }).click();
@@ -373,8 +356,6 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
     .getByRole("listitem")
     .filter({ hasText: `work/code-b-${run}` });
   await row.getByRole("button", { name: "Retire link" }).click();
-  await expect(status()).toContainText("Saved");
-  await refresh();
   await expect(row).toContainText("Retired");
   const projectPath = new URL(page.url()).hash;
   await row.getByRole("button", { name: "Open repository" }).click();

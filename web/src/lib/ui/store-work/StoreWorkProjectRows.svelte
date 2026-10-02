@@ -27,14 +27,14 @@
 </script>
 
 <div
-  class="community-projects__grid"
+  class="community-projects__grid community-projects__project-list"
   data-layout={layout}
   role="list"
   aria-label="Projects"
 >
   {#each projects as project (project.id)}
     <div role="listitem">
-      <article class="community-projects__card">
+      <article class="community-projects__card community-projects__project-row">
         <button
           type="button"
           class="community-projects__card-target"
@@ -46,20 +46,24 @@
         >
         <span class="community-projects__card-copy"
           ><span
-            ><strong>{project.title}</strong>{project.excerpt ??
-              project.body ??
-              "No project description"}</span
+            ><strong>{project.title}</strong><span
+              class="community-projects__project-description"
+              >{project.excerpt ??
+                project.body ??
+                "No project description"}</span
+            ></span
           ></span
         >
         <span class="community-projects__card-meta">
           <span
-            class="community-projects__row-count"
+            class="community-projects__row-count community-projects__project-repositories"
             aria-label={`${Object.values(project.repositories).filter(Boolean).length} repositories`}
             ><GitBranchIcon aria-hidden="true" />{Object.values(
               project.repositories,
             ).filter(Boolean).length}</span
           >
-          {#if project.task_counts}<span class="community-projects__row-count"
+          {#if project.task_counts}<span
+              class="community-projects__row-count community-projects__project-counts"
               >{project.task_counts.active} active · {project.task_counts.done} done</span
             >{/if}
           <CommunityMemberHoverCard

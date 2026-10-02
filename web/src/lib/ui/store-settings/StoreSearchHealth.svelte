@@ -1,5 +1,7 @@
 <script lang="ts">
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import SearchXIcon from "@lucide/svelte/icons/search-x";
+  import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -18,7 +20,7 @@
   <header class="store-settings__section-heading">
     <div>
       <h2 id="search-health">Text-search health</h2>
-      <p>Positions update only when status is explicitly refreshed.</p>
+      <p>Positions update automatically while Settings is open.</p>
     </div>
     {#if capabilities?.search}
       <Button
@@ -32,9 +34,11 @@
     {/if}
   </header>
   {#if !capabilities?.search}
-    <p class="store-settings__empty">
-      Search is not configured for this repository.
-    </p>
+    <StoreSettingsEmpty
+      Icon={SearchXIcon}
+      title="Search unavailable"
+      description="Search is not configured for this repository."
+    />
   {:else if settings.searchStatusState === "loading" && !search}
     <p class="store-settings__empty" role="status">Loading search status…</p>
   {:else}

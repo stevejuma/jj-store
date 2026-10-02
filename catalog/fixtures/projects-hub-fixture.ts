@@ -1,3 +1,4 @@
+import { agentSessions } from "./collaboration.js";
 import { reviewThreads } from "./collaboration-review.js";
 import { activityCommit } from "./native-activity.js";
 import type { WorkBrowseTransport } from "../../web/src/lib/controller/projects-hub-types.js";
@@ -56,6 +57,21 @@ export function fixtureTransport(
     work_state_version: 1,
   };
   return {
+    async agents() {
+      return {
+        version: 1,
+        snapshot: {
+          repo_id: home,
+          epoch: snapshot.epoch,
+          published_seq: 1,
+          manifest_revision: 1,
+          agent_root: "56".repeat(32),
+          agent_state_version: 1,
+        },
+        sessions: [agentSessions[home === homeA ? 0 : 1]!],
+        next_cursor: null,
+      };
+    },
     async activity() {
       const commit = activityCommit(home);
       return {

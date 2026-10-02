@@ -20,6 +20,7 @@
     onSaved?: () => void;
   } = $props();
   const formId = $props.id();
+  const projectVersion = untrack(() => project?.version);
   const draft = untrack(() =>
     workDraft(work, `project:${project?.id ?? "new"}`, {
       title: project?.title ?? "",
@@ -33,7 +34,7 @@
         ? {
             command: "update_project",
             id: project.id,
-            expected_version: project.version,
+            expected_version: projectVersion!,
             title: draft.title,
             body: draft.body,
           }

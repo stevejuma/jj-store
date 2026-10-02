@@ -54,7 +54,9 @@
   const view = $derived(controller.state);
   const initialLoading = $derived(
     !view.snapshot &&
-      (view.status.navigation === "loading" || view.status.files === "loading"),
+      (view.status.connection === "connecting" ||
+        view.status.navigation === "loading" ||
+        view.status.files === "loading"),
   );
   const fileTreeStyle = $derived(
     `--ui-shell-body-sidebar-width: ${fileTreeWidth}px`,

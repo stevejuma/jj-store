@@ -37,7 +37,8 @@ export function createThreadsIntegration(options: {
   });
   const nativeHome = () =>
     data.repositories.find(
-      (repository) => (repository.profile ?? "native") === "native",
+      (repository) =>
+        (repository.profile ?? "native") === "native" && repository.permission,
     );
   return {
     threads,
@@ -66,10 +67,18 @@ export function createThreadsIntegration(options: {
       if (history.route.page === "threads") await threads.restore();
       else await threads.list();
     },
-    async openThreads(id: string | null = null) {
-      if (!options.source()) {
-        const repo = nativeHome();
-        if (!repo) return;
+    async openThreads(id: string | null = null, repository?: string) {
+      const active = options.source();
+      const target =
+        repository ?? (active?.threads ? active.repository : nativeHome()?.id);
+      const repo = data.repositories.find(
+        (candidate) =>
+          candidate.id === target &&
+          (candidate.profile ?? "native") === "native" &&
+          candidate.permission,
+      );
+      if (!repo) throw new ApiError("threads_unavailable");
+      if (active?.repository !== repo.id || !active.threads) {
         history.push({
           ...initialStoreRoute(),
           repository: repo.id,
@@ -77,7 +86,14 @@ export function createThreadsIntegration(options: {
           threadId: id,
         });
         await options.connectRepository(repo.id, null);
+        if (
+          history.route.repository !== repo.id ||
+          history.route.page !== "threads" ||
+          history.route.threadId !== id
+        )
+          return;
       }
+      if (options.source()?.repository !== repo.id) return;
       if (!options.source()?.threads) throw new ApiError("threads_unavailable");
       await threads.open(id);
     },

@@ -208,5 +208,10 @@
     await expect(
       canvas.getByRole("list", { name: "Repository breadcrumb" }),
     ).toHaveTextContent("NOTES.md");
+    await waitFor(() =>
+      expect(
+        body.queryByRole("dialog", { name: "Save changes" }),
+      ).not.toBeInTheDocument(),
+    );
   }}
 />

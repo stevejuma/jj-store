@@ -4,6 +4,7 @@ import { readFile, rm } from "node:fs/promises";
 import { request } from "node:http";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { stopRuntimeProcesses } from "./dev-demo-processes.mjs";
 
 const execFileAsync = promisify(execFile);
 
@@ -96,42 +97,7 @@ export async function stopPrevious({ owner, runtimeFile, runtimeRoot }) {
   try {
     const runtime = JSON.parse(await readFile(runtimeFile, "utf8"));
     containerName = runtime.containerName;
-    if (Number.isInteger(runtime.serverPid)) {
-      try {
-        const { stdout } = await execute(
-          "ps",
-          ["-p", String(runtime.serverPid), "-o", "command="],
-          { cwd: owner },
-        );
-        const expectedConfig = runtime.serverConfig;
-        const owned = expectedConfig
-          ? stdout.includes(expectedConfig)
-          : stdout.includes(runtimeRoot) &&
-            stdout.includes("server.toml") &&
-            stdout.includes("jj-store");
-        if (!owned) {
-          throw new Error(
-            `refusing to stop unrelated process ${runtime.serverPid}`,
-          );
-        }
-        process.kill(runtime.serverPid, "SIGTERM");
-        for (let attempt = 0; attempt < 50; attempt += 1) {
-          try {
-            process.kill(runtime.serverPid, 0);
-            await new Promise((resolve) => setTimeout(resolve, 100));
-          } catch {
-            break;
-          }
-        }
-      } catch (error) {
-        if (
-          !String(error.stderr ?? error.message)
-            .toLowerCase()
-            .includes("no such process")
-        )
-          throw error;
-      }
-    }
+    await stopRuntimeProcesses(runtime, { owner, runtimeRoot });
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }

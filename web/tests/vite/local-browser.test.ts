@@ -181,6 +181,40 @@ test("local_refresh_does_not_reuse_an_older_in_flight_capture", async () => {
   }
 });
 
+for (const newerFirst of [false, true]) {
+  test(`superseded_local_fresh_refresh_uses_latest_capture_${newerFirst}`, async () => {
+    const pending: ((response: Response) => void)[] = [];
+    const source = new HttpLocalStoreDataSource(
+      repository,
+      () => new Promise<Response>((resolve) => pending.push(resolve)),
+    );
+    const original = source.snapshot(true);
+    void original.catch(() => {});
+    const replacement = source.snapshot(true);
+    const latest = { ...head, metadata_commit: "66".repeat(20) };
+    try {
+      assert.equal(pending.length, 2);
+      if (newerFirst) {
+        pending[1](json(latest));
+        await replacement;
+        pending[0](json(head));
+      } else {
+        pending[0](json(head));
+        pending[1](json(latest));
+      }
+      const [first, second] = await Promise.all([original, replacement]);
+      assert.deepEqual(first, second);
+      assert.equal(first.metadata_commit, latest.metadata_commit);
+      assert.equal(
+        (await source.snapshot()).metadata_commit,
+        latest.metadata_commit,
+      );
+    } finally {
+      source.close();
+    }
+  });
+}
+
 test("history_restoration_reconnects_repository_before_validating_profile_specific_ids", async () => {
   const parsed = storeRouteFromHash(
     `#/repos/${repository}/files?at_op=${operation}&commit=${commit}`,

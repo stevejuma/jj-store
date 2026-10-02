@@ -6,6 +6,7 @@
 /.local/
 /web/node_modules/
 /web/dist/
+/web/.dev-ui-acceptance/
 /web/.svelte-kit/
 .env
 .env.*

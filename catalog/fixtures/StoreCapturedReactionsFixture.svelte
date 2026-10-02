@@ -8,7 +8,13 @@
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { agentDetail, reviewThreads } from "./collaboration.js";
   import { createThreadTransport, THREAD_IDS } from "./thread-transport.js";
-  let { surface = "agents" }: { surface?: "agents" | "reviews" } = $props();
+  let {
+    surface = "agents",
+    writable = true,
+  }: {
+    surface?: "agents" | "reviews";
+    writable?: boolean;
+  } = $props();
   const base = untrack(() => createInMemoryStoreController(surface));
   untrack(() => base.actions.selectReviewThread(reviewThreads[0]!.thread_id));
   const f = createThreadTransport();
@@ -21,10 +27,14 @@
   });
   const controller: StoreController = {
     threads,
-    get state() {
+    get state(): StoreController["state"] {
       return {
         ...base.state,
-        repository: { ...base.state.repository, principal: THREAD_IDS.actor },
+        repository: {
+          ...base.state.repository,
+          principal: THREAD_IDS.actor,
+          permission: writable ? "write" : "read",
+        },
       };
     },
     actions: base.actions,

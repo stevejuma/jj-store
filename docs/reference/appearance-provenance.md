@@ -40,6 +40,12 @@ Publishable package and lockfile ranges remain registry-based. A foundation
 release and registry-only qualification are separate gates; this validation
 setup is not publication evidence.
 
+The tooltip sizing restoration is developed in that same foundation workspace:
+it restores the theme's small text and 12px inline / 6px block padding from
+before `42a125503632`, while retaining all public sizing tokens and the existing
+arrow. The Appearance workspace validates it through the temporary hook above;
+no tooltip override or copied foundation component is added to jj-store.
+
 Local main landing is recorded in E-UI-053. The default Design Core workspace
 contains `yovkqwtu`; jj-store main uses its existing ignored `.pnpmfile.cjs`
 source hook with `pnpm install --no-frozen-lockfile --lockfile=false`. Installed
@@ -62,7 +68,7 @@ GitHub Light Default palette and Buzz's component bindings:
 | Role or surface           | Previous light theme                                          | Buzz-derived GitHub Light Default                                | App binding                                                  |
 | ------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
 | App background            | `oklch(100% 0 0)` (white)                                     | `#fff`                                                           | `--background`                                               |
-| Popover background        | `oklch(100% 0 0)` (white)                                     | `#ebebeb`                                                        | Menus retain `--popover`                                     |
+| Popover background        | `oklch(100% 0 0)` (white)                                     | `#fff` (owned app-surface adaptation)                            | Search and menus inherit `--popover`                         |
 | Main text                 | `oklch(15% 0.05 295)`                                         | `#1f2328`                                                        | Values, headings and actions use `--foreground`              |
 | Secondary text            | `oklch(50% 0.05 295)`                                         | `hsl(212 7.94% 37.1%)`                                           | Helpers and placeholders use `--muted-foreground`            |
 | Composer                  | Foundation composer uses `--popover`; editor has its own fill | Buzz uses `bg-background`, `border-border/50`, no resting shadow | App background and transparent Mira editor                   |
@@ -75,3 +81,13 @@ The composer passes the existing foundation send-button part to preserve its
 circular geometry. The Mira bridge captures palette roles on the composer
 ancestor before Mira defines reverse aliases. Standalone file/code editor
 surfaces and palette generation remain independent of these app bindings.
+
+The app shell paints the Buzz gradient once across its viewport. Header and
+left-navigation chrome reveal the same image, with glass opacity/blur applied
+above it when enabled. Compact navigation section pickers bind public Popover
+and Command View background tokens to the app background, following the user's
+requested white light-Buzz surface. The owned adapter also maps the generated
+popover role to the app background for all 62 derived palettes, rather than
+Buzz's elevated grey. Search commands and menus inherit that role directly;
+other roles and the historical Original snapshot retain their existing values.
+These are app-owned presentation adaptations.

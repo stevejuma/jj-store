@@ -10,11 +10,13 @@
   import { provideStoreEntityContext } from "./entity-context.js";
   import { projectsSidebarModel } from "../store-work/projects-sidebar-model.js";
   import { withThreadNavigation } from "../store-threads/thread-navigation.js";
+  import { observeRepositoryThreadNavigation } from "../store-threads/thread-navigation-binding.svelte.js";
   import {
     selectStoreNavigation,
     activeStoreNavigation,
   } from "./store-navigation.js";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
+  import StoreThreadsBreadcrumb from "../store-threads/StoreThreadsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreThreadFocus from "../store-threads/StoreThreadFocus.svelte";
   import { createApplicationThreadPanel as ownThreadPanel } from "../store-threads/thread-panel.svelte.js";
@@ -39,6 +41,8 @@
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
+  import { provideDiscussionFocus } from "../store-discussion/discussion-focus.svelte.js";
+  import StoreFocusedDiscussion from "../store-discussion/StoreFocusedDiscussion.svelte";
   import StoreConflictEditor from "../store-conflicts/StoreConflictEditor.svelte";
   import { conflictEditorKey } from "../store-conflicts/conflict-editor.js";
   import { resolveLayoutStorage } from "../layout-storage.js";
@@ -78,9 +82,17 @@
   onDestroy(() => void shell.dispose());
   const detailsRail = shell.getPanel(repositoryDetailsPanelId)!;
   const threadPanel = ownThreadPanel(() => controller, shell, appearance);
+  provideDiscussionFocus();
   const workspaceGuard = $state({ editing: false });
   setContext(workspaceNavigationKey, workspaceGuard);
   let conflictOpen = $state(false);
+  $effect(() => {
+    controller.actions.setRefreshPaused?.(
+      "code-editor",
+      conflictOpen || workspaceGuard.editing,
+    );
+    return () => controller.actions.setRefreshPaused?.("code-editor", false);
+  });
   let conflictReturnFocus = $state<HTMLElement | null>(null);
   setContext(conflictEditorKey, () => {
     conflictReturnFocus =
@@ -99,10 +111,15 @@
   provideStoreEntityContext(
     () => controller,
     () => workspaceBlocked,
+    storage,
   );
   const current = $derived(controller.state.route);
   let searchOpen = $state(false);
   let settingsOpen = $state(false);
+  $effect(() => {
+    controller.actions.setRefreshPaused?.("settings", settingsOpen);
+    return () => controller.actions.setRefreshPaused?.("settings", false);
+  });
   let settingsSection = $state<StoreSettingsSection>("service");
   const canNavigateBack = $derived(controller.state.canNavigateBack);
   const canNavigateForward = $derived(controller.state.canNavigateForward);
@@ -122,6 +139,7 @@
     ),
   );
   const activeNavigationItem = $derived(activeStoreNavigation(current));
+  observeRepositoryThreadNavigation(() => controller);
   const title = $derived(
     repositorySections.find((section) => section.page === current.page)
       ?.label ?? "Repository",
@@ -166,6 +184,8 @@
   onNavigateForward={() => navigate(1)}
 >
   {#snippet headerCenter()}{#if !settingsOpen && current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
+        {controller}
+      />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
         {controller}
       />{/if}{/snippet}
   {#snippet headerEnd()}{#if !settingsOpen}<StoreApplicationHeaderActions
@@ -218,11 +238,7 @@
           <AppShell.Sidebar.Toggle side="left" sidebarName="settings" />
         </AppShell.Toolbar>
       {/if}
-      <StoreSettings
-        {controller}
-        section={settingsSection}
-        onClose={closeSettings}
-      />
+      <StoreSettings {controller} section={settingsSection} />
     {:else}
       {#if shell.mobile.resolvedMode === "mobile"}
         <AppShell.Toolbar>
@@ -230,6 +246,8 @@
             model={{ canNavigateBack, canNavigateForward, navigate }}
           />
           {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
+              {controller}
+            />{:else if current.page === "threads"}<StoreThreadsBreadcrumb
               {controller}
             />{/if}
           <div class="store-application__details-toggle">
@@ -282,9 +300,13 @@
       onSelectPage={selectPage}
       threadFocused={threadPanel.focused}
     />{/if}
-  {#if !settingsOpen && threadPanel.focused}<StoreThreadFocus
-      {controller}
-    />{/if}
+  <StoreFocusedDiscussion
+    open={!settingsOpen && !conflictOpen && !threadPanel.focused}
+  />
+  <StoreThreadFocus
+    open={!settingsOpen && !conflictOpen && threadPanel.focused}
+    {controller}
+  />
   <StoreConflictEditor
     {controller}
     open={conflictOpen}
