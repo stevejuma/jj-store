@@ -5,15 +5,11 @@
   import StoreSearchConfiguration from "./StoreSearchConfiguration.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   let active = $state("configuration");
-  let {
-    controller,
-    onClose,
-  }: { controller: StoreController; onClose?: () => void } = $props();
+  let { controller }: { controller: StoreController } = $props();
 </script>
 
 <StoreSettingsPage
   section="search"
-  {onClose}
   bind:value={active}
   tabs={[
     { value: "configuration", label: "Configuration" },

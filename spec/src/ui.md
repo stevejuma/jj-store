@@ -162,11 +162,15 @@ restoration. Choosing it retains the saved accent for other themes.
 
 Settings opens from the existing profile menu and replaces the repository
 navigation and body with a jj-store-owned settings sidebar and selected section.
-The sidebar contains Appearance, Local service, Repository, Search and Sync.
-Repository tabs, header actions and the details sidebar are absent until Back to
-jj-store restores the same repository route and selected snapshot. Settings
-never writes its destination or section to the hash, browser history or storage.
-A fresh component starts on Local service; section selection lasts only for that
+The sidebar contains Appearance, Local service, Repository, Search and Sync. The
+content navigation begins with its section icon and single page title, followed
+by section tabs when present. It has no return button; Back to jj-store remains
+in the settings sidebar, including the mobile navigation stage. Appearance keeps
+its descriptive introduction without a duplicate page heading. Repository tabs,
+header actions and the details sidebar are absent until Back to jj-store
+restores the same repository route and selected snapshot. Settings never writes
+its destination or section to the hash, browser history or storage. A fresh
+component starts on Local service; section selection lasts only for that
 component lifetime. Mobile selection returns to the content stage and retains a
 control that reopens settings navigation. On desktop, collapsing the settings
 sidebar retains Back, Local service, Repository and Search as labelled icon
@@ -885,11 +889,14 @@ Repositories. Search and task state, linked-repository and home filters apply
 before server pagination. Project rows show linked repositories and active/done
 task counts. Task rows show their project, state, target, parent, current
 comment count and update time. Task details present Markdown, parent navigation,
-independently paged subtasks and threaded discussion. Project/task prose and
-comments compose the owned Community-derived Markdown editor and renderer;
-dialogs and tombstone confirmation use public Design Core controls. Native state
-names remain open, in_progress, blocked and done. A board, assignments and
-dispatch remain deferred.
+independently paged subtasks and threaded discussion. Repository Activity is a
+collapsed disclosure immediately after Subtasks in the main task detail. The
+separate Task discussion panel exposes threaded comments and its composer
+without an Activity disclosure. Project/task prose and comments compose the
+owned Community-derived Markdown editor and renderer; dialogs and tombstone
+confirmation use public Design Core controls. Native state names remain open,
+in_progress, blocked and done. A board, assignments and dispatch remain
+deferred.
 
 Hub routes use `#/projects` with validated tab, home/project/task identities and
 query/filter fields. Legacy repository Projects routes remain readable. Back,
@@ -930,6 +937,12 @@ another row or a newer capture. Native commit links retain the exact originating
 Projects route, filters and scroll position for the application's Back/Forward
 controls. Repository-wide Reviews omit the workspace picker row, placing the
 review heading at the top of the body.
+
+Unsupported local JJ review capability uses the public shadcn Empty composition
+with a review icon and an explanation, without an error alert or retry action.
+Recoverable review read failures retain their error and explicit Retry reviews
+action. Mixed directories preserve supported native repositories and their
+pinned reviews alongside the unsupported state.
 
 Reviews use the same full-width Community review rows as the Projects directory,
 with measured virtual rows and cursor-edge continuation. Selecting a row opens a

@@ -8,6 +8,7 @@ export interface ProjectReviewHome {
   snapshot: Model<"ReviewReadSnapshot"> | null;
   cursor: string | null;
   loading: boolean;
+  unsupported: boolean;
   error: string;
 }
 export function createProjectsReviews(context: {
@@ -27,10 +28,7 @@ export function createProjectsReviews(context: {
     if (views.size > 16) views.delete(views.keys().next().value!);
   }
   async function read(home: ProjectReviewHome, ticket: number, more = false) {
-    if (home.repository.profile === "git_sha1_jj045") {
-      home.error = "Reviews are not supported for local JJ repositories.";
-      return;
-    }
+    if (home.unsupported) return;
     home.loading = true;
     home.error = "";
     try {
@@ -104,6 +102,7 @@ export function createProjectsReviews(context: {
           snapshot: null,
           cursor: null,
           loading: false,
+          unsupported: repository.profile === "git_sha1_jj045",
           error: "",
         }));
       let index = 0;

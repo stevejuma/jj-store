@@ -7,10 +7,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import StoreWorkspaceSettings from "./StoreWorkspaceSettings.svelte";
   import StoreGraphIndexSettings from "./StoreGraphIndexSettings.svelte";
-  let {
-    controller,
-    onClose,
-  }: { controller: StoreController; onClose?: () => void } = $props();
+  let { controller }: { controller: StoreController } = $props();
   const state = $derived(controller.state);
   const settings = $derived(state.settings);
   const capabilities = $derived(settings.capabilities);
@@ -49,7 +46,6 @@
 
 <StoreSettingsPage
   section="repository"
-  {onClose}
   value="general"
   tabs={[
     { value: "general", label: "General" },

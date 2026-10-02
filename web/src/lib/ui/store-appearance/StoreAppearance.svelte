@@ -13,7 +13,6 @@
 
 <section class="store-appearance" aria-label="Appearance settings">
   <header>
-    <h1>Appearance</h1>
     <p>Choose how jj-store looks and feels.</p>
   </header>
   <div class="appearance-groups">

@@ -95,7 +95,9 @@ test("cold device appearance restores under the production CSP and propagates ac
     zoom: getComputedStyle(document.documentElement).zoom,
   }));
   expect(beforeZoom).toEqual({ root: "16px", zoom: "1" });
-  await page.getByRole("button", { name: "Back to app", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Back to jj-store", exact: true })
+    .click();
   expect(await page.evaluate(() => location.hash)).toBe(route);
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute(

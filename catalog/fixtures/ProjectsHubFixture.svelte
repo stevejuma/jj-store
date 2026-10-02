@@ -19,6 +19,8 @@
     layoutStorage,
     detail = false,
     failedHome = false,
+    localReviews = false,
+    failedReviews = false,
     readonly = false,
     mobile = false,
     sharedRepository = false,
@@ -28,6 +30,8 @@
     layoutStorage?: Storage;
     detail?: boolean;
     failedHome?: boolean;
+    localReviews?: boolean;
+    failedReviews?: boolean;
     readonly?: boolean;
     mobile?: boolean;
     sharedRepository?: boolean;
@@ -51,7 +55,12 @@
       permission: readonly ? ("read" as const) : ("admin" as const),
       principal: "01".repeat(16),
     },
-    { id: homeB, name: "UI repository", permission: "read" as const },
+    {
+      id: homeB,
+      name: "UI repository",
+      permission: "read" as const,
+      profile: localReviews ? ("git_sha1_jj045" as const) : undefined,
+    },
   ]);
   const hub = createProjectsHub({
     repositories: () => repositories,
@@ -59,6 +68,10 @@
     push: (next) => (route = next),
     source: (home) => {
       const source = fixtureTransport(home, failedHome, sharedRepository);
+      if (failedReviews)
+        source.reviews = async () => {
+          throw new Error("Reviews temporarily unavailable");
+        };
       if (!loading) return source;
       const pending = () => new Promise<never>(() => {});
       return {

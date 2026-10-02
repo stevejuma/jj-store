@@ -8,6 +8,7 @@
     type AppearancePreferences,
   } from "../../web/src/lib/appearance/preferences.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
+  import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
   import StoreAppearance from "../../web/src/lib/ui/store-appearance/StoreAppearance.svelte";
   import CommunityMarkdownContent from "../../web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte";
   let { preferences = {} }: { preferences?: Partial<AppearancePreferences> } =
@@ -22,7 +23,8 @@
 </script>
 
 <div class="appearance-fixture" data-saved={JSON.stringify(appearance.saved)}>
-  <StoreAppearance />
+  <StoreSettingsPage section="appearance"><StoreAppearance /></StoreSettingsPage
+  >
   <button type="button" onclick={() => (mounted = !mounted)}
     >Toggle message mount</button
   >

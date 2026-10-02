@@ -17,6 +17,57 @@
 </script>
 
 <Story
+  name="Unsupported reviews empty state"
+  args={{ localReviews: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Reviews" }));
+    const home = await c.findByRole("region", {
+      name: "Reviews in UI repository",
+    });
+    const empty = within(home)
+      .getByText("Reviews unavailable")
+      .closest('[data-slot="empty"]');
+    await expect(empty).toBeVisible();
+    await expect(
+      empty?.querySelector('[data-ui-part="empty-media"] svg'),
+    ).toBeVisible();
+    await expect(empty).toHaveTextContent(
+      "Reviews are not supported for local JJ repositories.",
+    );
+    await expect(within(home).queryByRole("alert")).toBeNull();
+    await expect(
+      within(home).queryByRole("button", { name: "Retry reviews" }),
+    ).toBeNull();
+    await expect(
+      within(
+        c.getByRole("region", { name: "Reviews in Parser repository" }),
+      ).getByRole("list", { name: "Reviews" }).firstChild,
+    ).not.toBeNull();
+  }}
+/>
+<Story
+  name="Review load failure retains retry"
+  args={{ failedReviews: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Reviews" }));
+    const home = await c.findByRole("region", {
+      name: "Reviews in Parser repository",
+    });
+    await expect(within(home).getByRole("alert")).toHaveTextContent(
+      "Reviews temporarily unavailable",
+    );
+    await userEvent.click(
+      within(home).getByRole("button", { name: "Retry reviews" }),
+    );
+    await expect(await within(home).findByRole("alert")).toHaveTextContent(
+      "Reviews temporarily unavailable",
+    );
+  }}
+/>
+
+<Story
   name="Create project selects writable home and retains request"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
@@ -118,10 +169,12 @@
       expect(c.getByRole("article", { name: "Task details" })).toBeVisible(),
     );
     const detail = c.getByRole("article", { name: "Task details" });
-    await expectCommunityDisclosures(
-      detail,
-      c.getByRole("complementary", { name: "Task discussion" }),
-    );
+    await expectCommunityDisclosures(detail);
+    await expect(
+      within(
+        c.getByRole("complementary", { name: "Task discussion" }),
+      ).queryByRole("button", { name: "Activity" }),
+    ).toBeNull();
     await expectTaskTitleRow(detail);
     await expect(
       c.getByRole("navigation", { name: "breadcrumb" }),

@@ -1,14 +1,14 @@
 import { expect, userEvent, within } from "storybook/test";
 
-export async function expectCommunityDisclosures(
-  detail: HTMLElement,
-  discussion: HTMLElement = detail,
-) {
+export async function expectCommunityDisclosures(detail: HTMLElement) {
+  const subtasks = within(detail).getByRole("button", { name: "Subtasks" });
+  const activity = within(detail).getByRole("button", { name: "Activity" });
+  await expect(
+    subtasks.compareDocumentPosition(activity) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy();
   for (const name of ["Description", "Subtasks", "Activity"]) {
-    const trigger = within(name === "Activity" ? discussion : detail).getByRole(
-      "button",
-      { name },
-    );
+    const trigger = within(detail).getByRole("button", { name });
     const label = trigger.querySelector("span")!;
     const chevron = trigger.querySelector("svg")!;
     await expect(getComputedStyle(trigger).fontWeight).toBe("500");

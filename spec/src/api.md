@@ -92,6 +92,14 @@ only. Theme, composer and modal changes retain the current route, captured
 snapshot, conversation draft and native request identities; selecting a theme
 sends no repository mutation and adds no HTTP/RPC contract fields.
 
+Projects review presentation distinguishes unsupported local JJ capability from
+recoverable native review read failures: unsupported repositories perform no
+review read and offer no retry, while native failures retain explicit retry.
+Task repository Activity belongs after Subtasks in the main detail; comment
+focus and retained drafts continue in the separate discussion panel. Settings
+content navigation begins with one section title and leaves return navigation to
+the existing sidebar, preserving the repository route and snapshot.
+
 Repository cards resolve their resting, hover and selected surfaces against the
 same palette in Branches, JJ Log and Op Log. Pointer hover leaves the bookmark
 selection and captured operation intact. Keyboard Enter and repository menu

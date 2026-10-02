@@ -43,8 +43,8 @@ test("local sync controls and grouped progress preserve repository context", asy
   await page.getByRole("menuitem", { name: "Settings" }).click();
   await expect(
     page
-      .getByRole("navigation", { name: "Settings page navigation" })
-      .getByRole("button", { name: "Back to app" }),
+      .getByRole("navigation", { name: "Settings navigation" })
+      .getByRole("button", { name: "Back to jj-store" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Sync", exact: true }).click();
   const tabs = page.getByRole("tablist", { name: "Sync settings sections" });
@@ -59,7 +59,7 @@ test("local sync controls and grouped progress preserve repository context", asy
     .getByRole("heading", { name: "Sync", level: 1 })
     .boundingBox())!;
   expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(tabBounds.x + tabBounds.width).toBeLessThan(headingBounds.x);
+  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
   await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
   await expect(page.locator(".store-settings h1")).toHaveCount(0);
   await page.getByRole("button", { name: "Pause sync", exact: true }).click();
@@ -85,6 +85,6 @@ test("local sync controls and grouped progress preserve repository context", asy
     violations: [],
   });
   await page.setViewportSize({ width: 1400, height: 1000 });
-  await page.getByRole("button", { name: "Back to app" }).click();
+  await page.getByRole("button", { name: "Back to jj-store" }).click();
   expect(await page.evaluate(() => location.hash)).toBe(original);
 });

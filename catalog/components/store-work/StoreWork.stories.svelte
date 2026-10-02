@@ -46,7 +46,6 @@
       taskHeader.firstElementChild!.getBoundingClientRect().left -
         task.getBoundingClientRect().left,
     ).toBeLessThanOrEqual(8);
-    await userEvent.click(canvas.getByRole("button", { name: "Activity" }));
     await expect(
       canvas.getByText("Threaded reply", { exact: true }),
     ).toBeVisible();
@@ -88,7 +87,6 @@
   args={{ unknown: true }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole("button", { name: "Activity" }));
     await userEvent.type(
       within(canvas.getByRole("group", { name: /^Comment$/ })).getByRole(
         "textbox",
@@ -134,7 +132,6 @@
   args={{ threadFragments: true }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole("button", { name: "Activity" }));
     const comments = canvas.getByRole("list", { name: "Task comments" });
     await expect(
       within(comments).getByText("Reply survives removal"),

@@ -218,11 +218,7 @@
           <AppShell.Sidebar.Toggle side="left" sidebarName="settings" />
         </AppShell.Toolbar>
       {/if}
-      <StoreSettings
-        {controller}
-        section={settingsSection}
-        onClose={closeSettings}
-      />
+      <StoreSettings {controller} section={settingsSection} />
     {:else}
       {#if shell.mobile.resolvedMode === "mobile"}
         <AppShell.Toolbar>

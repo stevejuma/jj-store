@@ -132,7 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031                                                                                                                                                                                                                                                  |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058                                                                                                                                                                                                                                                                                                 |
+| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059                                                                                                                                                                                                                                                                                        |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -40936,6 +40936,116 @@ and named tests are checked by the progress gate.
     "formats": "No native/API/preference/storage formats change. Cards use the column card surface, foreground and shared foreground7% hover/12% selected recipes. Headers keep jj-store-row-background. Keyboard command cursor remains distinct from exact route selection and pointer hover; public disablePointerSelection prevents hover from changing the cursor. Menu layout uses16rem with viewport maximum.",
     "next": "Continue UI iteration on the running Appearance Vite service. Wider mutation-dialog ScrollArea teardown qualification remains separately recorded; no release/full-suite or baseline approval claim.",
     "artifacts": "/tmp/jj-branch-styles-*.log, before/after/qualified JSON and screenshots; /tmp/jj-branch-theme-acceptance.mjs and styles-probe.mjs. Browser contexts and disposable baseline workspace cleaned up; original interactive fixture remains intact."
+  },
+  {
+    "id": "E-UI-059",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "review-empty-task-activity-settings-header",
+    "revision": "enclosing Jujutsu change zmzkuouq",
+    "before": "Clean reused Appearance workspace zmzkuouq above opznqxqt/fd1f28bc. Unsupported local reviews are stored as an error and render retry. Task comments and repository activity are collapsed together in the right panel. Settings header has a return arrow and right-aligned title, while Appearance repeats the title. Owning chapters and milestones reviewed, Community inspected before Design Core Empty; native identities and snapshot policies unchanged.",
+    "files": [
+      "catalog/components/store-appearance/StoreAppearance.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/settings-shell-play.ts",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/fixtures/AppearanceFixture.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "catalog/fixtures/projects-hub-layout.ts",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/projects-reviews.svelte.ts",
+      "web/src/lib/ui/store-appearance/StoreAppearance.svelte",
+      "web/src/lib/ui/store-appearance/appearance.css",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsReviews.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/tests/browser/appearance.spec.ts",
+      "web/tests/browser/local-search-settings.spec.ts",
+      "web/tests/browser/local-sync.spec.ts",
+      "web/tests/browser/local-workspaces.spec.ts",
+      "web/tests/real/local-browser.spec.ts",
+      "web/tests/vite/projects-directories.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Refine reviews empty state, task activity and settings headers\"; jj --no-pager diff --stat; scoped source/spec/reference review",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main unrelated work preserved; clean Appearance workspace reused. Existing Vite HMR and persistent dev fixture retained."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-directories.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 tests pass: unsupported local profiles perform no review reads, native failure can refresh successfully, continuations and permission removal retain their checks. /tmp/jj-ui-polish-unit.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and warnings. /tmp/jj-ui-polish-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "New Storybook role queries incorrectly supplied Playwright-only exact option. Removed options; production check passes."
+      },
+      {
+        "command": "pnpm catalog:check (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and warnings; 129 catalog modules. /tmp/jj-ui-polish-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte -t \"UnsupportedReviewsEmptyState|ReviewLoadFailureRetainsRetry|ProjectsRepositoriesAndTaskNavigation|ReadOnlyTask|HierarchyAndDiscussion|UnknownOutcome|NativeThreadedDiscussion|^Settings$|SettingsCollapsed|SettingsMobile|AllControlsAndLocalLinks\" (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "10 tests pass; new Empty icon assertion used empty-media as data-slot instead of the public data-ui-part. Corrected selector; no implementation workaround."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte -t \"UnsupportedReviewsEmptyState|ReviewLoadFailureRetainsRetry|ProjectsRepositoriesAndTaskNavigation|ReadOnlyTask|HierarchyAndDiscussion|UnknownOutcome|NativeThreadedDiscussion|^Settings$|SettingsCollapsed|SettingsMobile|AllControlsAndLocalLinks\" --reporter verbose",
+        "result": "pass",
+        "failures": 0,
+        "note": "11 exact stories pass with runtime/accessibility guard. Other21 stories intentionally skipped; not a full-suite claim. /tmp/jj-ui-polish-stories-final.log."
+      },
+      {
+        "command": "node /tmp/jj-ui-polish-live.mjs (initial and corrected); node /tmp/jj-ui-polish-contrast.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial live icon selector probe failed for same incorrect data-slot; corrected to public data-ui-part. Isolated read-only Chromium verifies unsupported icon/no retry, Activity after Subtasks, comments/composer in discussion, single title-first Appearance header, description, tab placement and exact route/snapshot retention through desktop/mobile sidebar return. No runtime errors. Supplemental first task axe probe reported2 transient contrast nodes; independent probe and final settled rerun both report0 violations. /tmp/jj-ui-polish-live-final.log and contrast.log. Existing user browser and native data untouched."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 chapters,147 requirements validated; no Community or catalog dependency added."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported files); pnpm exec prettier --check (same); pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical requirements, verification map and same-change ledger. Detailed /tmp/jj-ui-polish-* logs."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only projects reviews/task discussion and Settings presentation. Exact units/stories, web/catalog type checks, ownership and read-only live Vite desktop/mobile acceptance are the complete impact surface. Browser fixtures updated for sidebar return; root aggregate lanes, Rust builds/tests, unrelated story families, fixture resets, native writes and production built-CSP qualification out of scope. M16 remains Partial with prior release/registry-only/composer-CSP/visual gates retained. No baseline approval.",
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vite8.3.2; Vitest4.1.11; Storybook10.5.7; existing Design Core Empty and Collapsible. Dependencies unchanged.",
+    "formats": "No native/API/storage or preference format change. Owned review view distinguishes unsupported boolean from transport error. Section title is the only page heading. Thread drafts, native comment focus, repository activity scope and captured snapshots unchanged.",
+    "next": "Continue the newly requested table-style alignment of Local service, Search and Sync Settings in a separate verified slice.",
+    "artifacts": "/tmp/jj-ui-polish-*.log/json/png and live/contrast probe scripts. Isolated browser contexts closed; persistent Vite/backend fixture retained."
   }
 ]
 ```

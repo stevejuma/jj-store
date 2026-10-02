@@ -9,12 +9,7 @@
   padding-inline: 1rem;
   margin-bottom: 2rem;
 }
-.store-appearance h1 {
-  margin: 0;
-  font-size: var(--community-text-page);
-  font-weight: 650;
-  letter-spacing: -0.025em;
-}
+
 .store-appearance header p {
   margin: 0.5rem 0 0;
   color: var(--muted-foreground);

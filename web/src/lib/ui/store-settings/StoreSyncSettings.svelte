@@ -15,13 +15,11 @@
   let {
     settings,
     supported,
-    onClose,
     onRefresh,
     onControl,
   }: {
     settings: SyncSettings;
     supported: boolean;
-    onClose?: () => void;
     onRefresh: () => Promise<void>;
     onControl: (action: SyncAction) => Promise<void>;
   } = $props();
@@ -37,7 +35,6 @@
 
 <StoreSettingsPage
   section="sync"
-  {onClose}
   value="overview"
   tabs={supported
     ? [

@@ -77,6 +77,17 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await expect(c.getByRole("heading", { name: "Appearance" })).toBeVisible();
+    await expect(
+      c.getAllByRole("heading", { name: "Appearance", level: 1 }),
+    ).toHaveLength(1);
+    await expect(
+      c.getByText("Choose how jj-store looks and feels."),
+    ).toBeVisible();
+    await expect(
+      c.getByRole("navigation", { name: "Settings page navigation" })
+        .firstElementChild,
+    ).toBe(c.getByRole("heading", { name: "Appearance", level: 1 }));
+    await expect(c.queryByRole("button", { name: "Back to app" })).toBeNull();
     await userEvent.click(c.getByRole("button", { name: /Theme style,/ }));
     await expect(
       c.getAllByRole("button", { name: /Use .* theme/ }),

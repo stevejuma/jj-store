@@ -61,6 +61,7 @@
     busy || work.state.loading || work.state.writing || !!work.state.pending,
   );
   let descriptionOpen = $state(true);
+  let activityOpen = $state(false);
   const target = $derived(repositories.find((r) => r.id === task?.repository));
 </script>
 
@@ -174,6 +175,24 @@
           >Open task discussion</Button
         >
         {@render subtasks?.()}
+        {#if activity}<Collapsible.Root
+            class="community-projects__task-activity"
+            bind:open={activityOpen}
+          >
+            <Collapsible.Trigger
+              class="community-projects__task-section-trigger"
+            >
+              <span>Activity</span>
+              {#if activityOpen}<ChevronDownIcon
+                  class="community-projects__task-section-chevron"
+                  aria-hidden="true"
+                />{:else}<ChevronRightIcon
+                  class="community-projects__task-section-chevron"
+                  aria-hidden="true"
+                />{/if}
+            </Collapsible.Trigger>
+            <Collapsible.Content>{@render activity()}</Collapsible.Content>
+          </Collapsible.Root>{/if}
       </article>{/snippet}
     {#snippet discussion()}
       {#key task.id}<StoreWorkComments
@@ -181,7 +200,6 @@
           {writable}
           {principal}
           {busy}
-          {activity}
         />{/key}
     {/snippet}
   </StoreDiscussionWorkspace>{/if}

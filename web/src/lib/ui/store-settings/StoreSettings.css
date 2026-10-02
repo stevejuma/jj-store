@@ -150,7 +150,6 @@
   align-items: center;
   gap: 0.45rem;
   padding: 0.55rem 1rem;
-  padding-inline-start: 0.5rem;
   background: color-mix(in srgb, var(--background) 96%, transparent);
   backdrop-filter: blur(12px);
 }
@@ -191,8 +190,4 @@
 .store-settings__tab-bar [data-slot="tabs-trigger"]:hover:not(:disabled) {
   color: var(--foreground);
   background: color-mix(in srgb, var(--muted) 72%, transparent);
-}
-
-.store-settings__back {
-  flex: none;
 }

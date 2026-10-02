@@ -13,6 +13,43 @@ const repositories = [
   { id: homeA, name: "Home", permission: "write" as const },
   { id: homeB, name: "Code", permission: "read" as const },
 ];
+test("unsupported local reviews never read transport while native failures remain retryable", async () => {
+  let calls = 0;
+  const source = fixtureTransport(homeA);
+  const original = source.reviews!;
+  source.reviews = async () => {
+    calls++;
+    if (calls === 1) throw new Error("Temporarily unavailable");
+    return original();
+  };
+  const reviews = createProjectsReviews({
+    source: () => source,
+    denied: () => {},
+  });
+  const route = { ...initialStoreRoute(), workTab: "reviews" as const };
+  const homes = [
+    repositories[0]!,
+    { ...repositories[1]!, profile: "git_sha1_jj045" as const },
+  ];
+  await reviews.load(route, homes);
+  expect(calls).toBe(1);
+  expect(reviews.homes[0]).toMatchObject({
+    unsupported: false,
+    error: "Temporarily unavailable",
+  });
+  expect(reviews.homes[1]).toMatchObject({
+    unsupported: true,
+    error: "",
+    loading: false,
+    threads: [],
+    snapshot: null,
+    cursor: null,
+  });
+  await reviews.load(route, homes, true);
+  expect(calls).toBe(2);
+  expect(reviews.homes[0]?.threads).toHaveLength(1);
+  expect(reviews.homes[1]?.unsupported).toBe(true);
+});
 test("sidebar uses independent unfiltered snapshots and active repository children", async () => {
   const source = fixtureTransport(homeA),
     queries: unknown[] = [],

@@ -32,22 +32,12 @@ export async function playMobileSettings({
   await expect(
     navigation.querySelector("h1 svg[aria-hidden='true']"),
   ).toBeVisible();
-  await expect(navigation.querySelector("button")).toHaveAccessibleName(
-    "Back to app",
+  await expect(navigation.firstElementChild).toBe(
+    within(navigation).getByRole("heading", { level: 1 }),
   );
-  const back = within(navigation).getByRole("button", { name: "Back to app" });
-  await expect(back.textContent?.trim()).toBe("");
-  const bounds = back.getBoundingClientRect();
-  await expect(bounds.width).toBe(bounds.height);
   await expect(
-    Number.parseFloat(getComputedStyle(back).borderRadius),
-  ).toBeGreaterThanOrEqual(bounds.width / 2);
-  const titleBounds = within(navigation)
-    .getByRole("heading", { level: 1 })
-    .getBoundingClientRect();
-  await expect(
-    navigation.getBoundingClientRect().right - titleBounds.right,
-  ).toBeLessThan(24);
+    within(navigation).queryByRole("button", { name: "Back to app" }),
+  ).toBeNull();
   await expect(
     canvas.queryByText(
       "Connection and storage state for this jj-store installation.",
@@ -67,7 +57,12 @@ export async function playMobileSettings({
     ).getByRole("heading", { name: "Search", level: 1 }),
   ).toBeVisible();
   await expect(canvas.getByText("Fresh")).toBeVisible();
-  await userEvent.click(canvas.getByRole("button", { name: "Back to app" }));
+  await userEvent.click(
+    canvas.getByRole("button", { name: "Open settings sidebar" }),
+  );
+  await userEvent.click(
+    canvas.getByRole("button", { name: "Back to jj-store" }),
+  );
   await expect(
     canvas.getByText("jj-store · Branches", { exact: true }),
   ).toBeVisible();

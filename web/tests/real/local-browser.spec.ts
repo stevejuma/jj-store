@@ -105,7 +105,9 @@ test("local_repository_opens_files_history_agents_and_accessible_folder_controls
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
   expect(a11y.violations).toEqual([]);
-  await page.getByRole("button", { name: "Back to app", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Back to jj-store", exact: true })
+    .click();
   await page.goto("/#/projects?tab=repositories");
   const add = page.getByRole("button", {
     name: "Add local repository",
@@ -273,7 +275,7 @@ test("local_folder_reconnect_and_removal_preserve_code_and_collaboration", async
     await expect(page.locator("body")).not.toHaveCSS("pointer-events", "none");
     await expect(page.getByText("ready", { exact: true })).toBeVisible();
     await page
-      .getByRole("button", { name: "Back to app", exact: true })
+      .getByRole("button", { name: "Back to jj-store", exact: true })
       .click();
     await page.reload();
     await expect(
