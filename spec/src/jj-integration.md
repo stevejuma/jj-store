@@ -1,5 +1,10 @@
 # Native JJ integration
 
+Native collaboration RPC pages and direct Thread/message/image reads share the
+bounded scoped materialization service with HTTP. Current admission and epoch
+are rechecked for each response; cache reuse never changes wire DTOs, signed
+cursor bindings, native persistence or publication authority.
+
 The collaboration transport carries optional immutable human reply parents
 without changing native operation or runner authority.
 

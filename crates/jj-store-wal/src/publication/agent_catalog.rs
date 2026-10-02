@@ -3,15 +3,38 @@ use super::agent::agent_error;
 use super::*;
 use jj_agent::{AgentCatalogKey, AgentCatalogKind, AgentIndexPageV1};
 
+/// Validated immutable selection with no coordinator, guard or credentials.
+#[derive(Clone)]
+pub struct AgentStoreSelection {
+    repository: RepositoryId,
+    reference: RecordRef,
+    root: AgentRootV1,
+    objects: Arc<BTreeSet<AgentObjectRef>>,
+}
+impl AgentStoreSelection {
+    pub fn object_count(&self) -> usize {
+        self.objects.len()
+    }
+}
+
 #[derive(Clone)]
 pub struct AgentStoreSnapshot {
     coordinator: Coordinator,
     repository: RepositoryId,
     reference: RecordRef,
     root: AgentRootV1,
-    objects: BTreeSet<AgentObjectRef>,
+    objects: Arc<BTreeSet<AgentObjectRef>>,
 }
 impl AgentStoreSnapshot {
+    pub fn selection(&self) -> AgentStoreSelection {
+        AgentStoreSelection {
+            repository: self.repository,
+            reference: self.reference,
+            root: self.root.clone(),
+            objects: self.objects.clone(),
+        }
+    }
+
     pub fn repository_id(&self) -> RepositoryId {
         self.repository
     }
@@ -78,6 +101,23 @@ impl AgentStoreSnapshot {
 }
 
 impl Coordinator {
+    /// Attach the current request reader; this does not authorize disclosure.
+    pub fn selected_agent_reader(
+        &self,
+        selection: &AgentStoreSelection,
+    ) -> Result<AgentStoreSnapshot> {
+        if selection.repository != self.records.repository {
+            return Err(Error::Denied);
+        }
+        Ok(AgentStoreSnapshot {
+            coordinator: self.clone(),
+            repository: selection.repository,
+            reference: selection.reference,
+            root: selection.root.clone(),
+            objects: selection.objects.clone(),
+        })
+    }
+
     pub async fn agent_store(&self, reference: RecordRef) -> Result<AgentStoreSnapshot> {
         let (root, native, objects) = self.read_agent_root_closure(reference).await?;
         self.verify_delta(None, native).await?;
@@ -86,7 +126,7 @@ impl Coordinator {
             repository: self.records.repository,
             reference,
             root,
-            objects,
+            objects: Arc::new(objects),
         })
     }
 

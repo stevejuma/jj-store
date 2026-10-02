@@ -48,7 +48,7 @@ pub(crate) async fn define(
     .await
 }
 pub(crate) async fn image(
-    ExtractState(_state): ExtractState<Arc<State>>,
+    ExtractState(state): ExtractState<Arc<State>>,
     context: Context,
     args: routes::Input<routes::Empty>,
 ) -> Result<Response> {
@@ -60,7 +60,10 @@ pub(crate) async fn image(
         kind: CollabObjectKind::ImageAsset,
         id: context.id("asset")?,
     };
-    let pin = pin(context.session.clone()).await?;
+    let pin = state
+        .collab
+        .pin(context.session.clone(), reads::ReadScope::Emojis)
+        .await?;
     let asset = pin.image(context.session, reference).await?;
     let media = match asset.media_type {
         ImageMediaTypeV1::Png => "image/png",

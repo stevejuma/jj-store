@@ -1,5 +1,20 @@
 # Agent activity, repository reviews, Threads and Reactions
 
+Collaboration reads share validated immutable materializations keyed by
+repository, authority epoch and exact domain root references. Each request
+independently captures its complete manifest envelope and rechecks current
+viewer admission before disclosure. Thread directory/history/detail reads
+materialize Thread state only; emoji/assets materialize Reaction state only;
+reaction queries also load the owning target domain. Retained external
+dependencies still undergo the provider's complete closure validation. Directory
+metadata and exact-target slot indexes are derived once per root and never
+become authority. Shared entries contain no request session, credentials or
+viewer-filtered results, coalesce concurrent loads and obey fixed expiry, count,
+object and encoded-byte bounds. Failed validation is never admitted;
+expiry/eviction/restart rematerialize and validate from selected immutable
+records. Signed cursor pins preserve their original complete snapshots
+independently of cache eviction.
+
 Human messages optionally retain an exact same-Thread parent revision for
 replies. The parent is an immutable closure dependency; self-links, foreign
 Thread parents and changing reply identity during edits are rejected. An absent

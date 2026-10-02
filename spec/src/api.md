@@ -1,5 +1,13 @@
 # Read APIs and browser
 
+Thread/Reaction HTTP reads share bounded validated immutable root data with
+native RPC. Directory/detail/history load Thread state; library/image reads load
+Reaction state; reaction queries load the exact target's owning selection too.
+Complete response snapshots and current authorization remain request-bound.
+Root-keyed data reuse and exact-target reaction indexes do not retain
+credentials or viewer-filtered results and never replace cursor pinning or cold
+validation.
+
 Thread event pages include their own human revisions from the captured graph.
 Emoji pages include exact definition version references, and retained previews
 are fetched through the credential-bound client into revocable memory-only URLs.

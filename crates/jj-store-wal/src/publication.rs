@@ -52,7 +52,7 @@ mod review_reads;
 mod review_resolver;
 mod work;
 mod work_commands;
-pub use agent_catalog::AgentStoreSnapshot;
+pub use agent_catalog::{AgentStoreSelection, AgentStoreSnapshot};
 pub use agent_catalog_engine::AgentCatalogEditor;
 pub use agent_delta::AgentDeltaRequest;
 pub use agent_io::{AgentObjectIo, AgentProjector, AgentSnapshotRead};
@@ -125,7 +125,7 @@ pub use replication_seed::{
 pub use replication_transfer::{
     OriginClosureV1, OriginFeedItemV1, OriginFeedPageV1, OriginOfferResultV1, OriginOfferV1,
 };
-pub use review_catalog::ReviewStoreSnapshot;
+pub use review_catalog::{ReviewStoreSelection, ReviewStoreSnapshot};
 pub use review_catalog_engine::ReviewCatalogEditor;
 pub use review_commands::AppliedReviewCommand;
 pub use review_commands::{ReviewCommandError, ReviewCommandRequest};

@@ -1,5 +1,14 @@
 # Typed mutations
 
+Collaboration read optimization does not change publication or receipt behavior.
+Shared data caches retain only validated immutable domain selections and graphs.
+Request authorization and complete captured manifest envelopes remain fresh;
+scoped reads still validate all retained dependencies of their selected domain.
+Saturated retention may validate an extra root request-locally under existing
+per-pin and concurrency budgets; a small cache cannot disable a valid query.
+Neither warm reads nor derived directory/reaction indexes stage or publish
+state.
+
 Application content search is an authorized read facade over one selected
 Thread/WorkStore snapshot. The service checks source inventory bounds before
 filtering and reauthorizes retained query pages. Thread directory metadata is

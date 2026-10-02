@@ -1,5 +1,12 @@
 # Publication and recovery
 
+Validated Agent and Review read selections may be detached from a coordinator as
+immutable repository-bound root and membership data. Shared read caches and
+collaboration pins retain these data-only selections, never a request guard or
+credential. Resolving bodies attaches the current request's coordinator to the
+validated selection after checking repository identity. Cold materialization
+still performs the existing complete closure and native dependency audit.
+
 Human reply parent revisions are retained as collaboration closure dependencies
 through native publication, cold recovery and manifest-last copy; a UI reply
 never substitutes a display position for this reference.

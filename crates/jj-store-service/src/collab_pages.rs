@@ -127,6 +127,7 @@ pub struct Page {
 pub struct CollabPager {
     registry: cursors::Registry,
     actors: Arc<dyn ReactionActorVisibility>,
+    cache: crate::collab_reads::Cache,
 }
 impl CollabPager {
     pub fn new(
@@ -135,9 +136,27 @@ impl CollabPager {
         actors: Arc<dyn ReactionActorVisibility>,
     ) -> Result<Self> {
         Ok(Self {
-            registry: cursors::Registry::new(limits, clock)?,
+            registry: cursors::Registry::new(limits, clock.clone())?,
+            cache: crate::collab_reads::Cache::new(limits, clock),
             actors,
         })
+    }
+    /// Direct reads use the same bounded cache/admission path as first pages.
+    pub async fn pin(
+        &self,
+        session: Arc<NativeSession>,
+        scope: ReadScope,
+    ) -> Result<PinnedCollabRead> {
+        let _permit = self.registry.acquire()?;
+        let timeout = self.registry.timeout().min(session.limits.timeout);
+        let pin = tokio::time::timeout(
+            timeout,
+            PinnedCollabRead::open_scoped(session, self.actors.clone(), scope, Some(&self.cache)),
+        )
+        .await
+        .map_err(|_| Error::Limit)??;
+        self.registry.validate_pin(&pin)?;
+        Ok(pin)
     }
     pub async fn page(
         &self,
@@ -179,7 +198,27 @@ impl CollabPager {
                 .lookup(session.repository, viewer, &query, token)?;
             (pin, Some(claims.after.clone()), Some(claims))
         } else {
-            let pin = Arc::new(PinnedCollabRead::open(session.clone(), self.actors.clone()).await?);
+            let scope = match &query {
+                Query::Threads { .. } | Query::Events { .. } => ReadScope::Threads,
+                Query::Emojis { .. } => ReadScope::Emojis,
+                Query::Reactions { target, .. } => ReadScope::Reactions(target.clone()),
+            };
+            let pin = Arc::new(
+                PinnedCollabRead::open_scoped(
+                    session.clone(),
+                    self.actors.clone(),
+                    scope,
+                    Some(&self.cache),
+                )
+                .await
+                .map_err(|e| {
+                    if e == collab_mutations::Error::Limit {
+                        Error::Limit
+                    } else {
+                        e.into()
+                    }
+                })?,
+            );
             self.registry.validate_pin(&pin)?;
             (pin, None, None)
         };

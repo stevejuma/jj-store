@@ -30,12 +30,6 @@ pub(super) struct ReactionQuery {
     pub limit: u32,
     pub cursor: Option<String>,
 }
-async fn pin(session: Arc<NativeSession>) -> Result<reads::PinnedCollabRead> {
-    Ok(
-        reads::PinnedCollabRead::open(session, Arc::new(reads::RepositoryMemberReactionActors))
-            .await?,
-    )
-}
 pub(super) async fn threads(
     ExtractState(state): ExtractState<Arc<State>>,
     context: Context,
@@ -120,7 +114,10 @@ pub(super) async fn thread(
 ) -> Result<Response> {
     routes::input(args)?;
     let id = context.id("thread_id")?;
-    let pin = pin(context.session.clone()).await?;
+    let pin = state
+        .collab
+        .pin(context.session.clone(), reads::ReadScope::Threads)
+        .await?;
     state.json(&reads::ThreadDetailV1 {
         snapshot: pin.snapshot().clone(),
         thread: pin.thread(context.session, id).await?,
@@ -140,7 +137,10 @@ pub(super) async fn message(
             id: context.id("message_revision")?,
         },
     };
-    let pin = pin(context.session.clone()).await?;
+    let pin = state
+        .collab
+        .pin(context.session.clone(), reads::ReadScope::Threads)
+        .await?;
     let message = pin.message(context.session, &target).await?;
     state.json(&reads::HumanMessageDetailV1 {
         snapshot: pin.snapshot().clone(),

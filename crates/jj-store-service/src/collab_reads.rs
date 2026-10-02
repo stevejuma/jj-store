@@ -1,4 +1,5 @@
 //! Credential-free collaboration pins; every query reauthorizes its current viewer.
+mod materialization;
 use crate::{
     auth::Permission,
     collab_mutations::{Error, Result},
@@ -8,8 +9,11 @@ use jj_collab::*;
 use jj_store_model as m;
 use jj_store_wal::{
     self as wal,
-    publication::{AgentStoreSnapshot, CollabTargetReaderV1, ReviewStoreSnapshot},
+    publication::{AgentStoreSelection, CollabTargetReaderV1, ReviewStoreSelection},
 };
+pub(crate) use materialization::Cache;
+pub use materialization::ReadScope;
+use materialization::{Data, ReactionData, ThreadData};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -157,19 +161,24 @@ pub struct EmojiPageV1 {
 pub struct PinnedCollabRead {
     snapshot: CollabReadSnapshotV1,
     viewer: m::PrincipalId,
-    threads: ThreadStateV1,
-    thread_graph: CollabGraphV1,
-    directory: BTreeMap<ThreadId, ThreadDirectoryMetadata>,
-    reactions: ReactionStateV1,
-    reaction_graph: CollabGraphV1,
-    agents: Option<AgentStoreSnapshot>,
-    reviews: Option<ReviewStoreSnapshot>,
+    thread: Arc<ThreadData>,
+    reaction: Arc<ReactionData>,
+    agents: Option<Arc<AgentStoreSelection>>,
+    reviews: Option<Arc<ReviewStoreSelection>>,
     actors: Arc<dyn ReactionActorVisibility>,
 }
 impl PinnedCollabRead {
     pub async fn open(
         session: Arc<NativeSession>,
         actors: Arc<dyn ReactionActorVisibility>,
+    ) -> Result<Self> {
+        Self::open_scoped(session, actors, ReadScope::All, None).await
+    }
+    pub(crate) async fn open_scoped(
+        session: Arc<NativeSession>,
+        actors: Arc<dyn ReactionActorVisibility>,
+        scope: ReadScope,
+        cache: Option<&Cache>,
     ) -> Result<Self> {
         query(session.limits.timeout, async {
             let viewer = session.principal(Permission::Read).await?.id();
@@ -190,39 +199,51 @@ impl PinnedCollabRead {
                 agent_root: manifest.agent_root.map(|r| r.digest),
                 review_root: manifest.review_root.map(|r| r.digest),
             };
-            let (threads, thread_graph) = if let Some(root) = manifest.thread_root {
-                let store = session.coordinator.native_thread_store(root).await?;
-                (store.state, store.graph)
-            } else {
-                (ThreadStateV1::empty(), CollabGraphV1::default())
+            let domains = scope.domains();
+            let roots = [
+                manifest.thread_root,
+                manifest.reaction_root,
+                manifest.agent_root,
+                manifest.review_root,
+            ];
+            let session_ref = session.as_ref();
+            let epoch = manifest.epoch;
+            let read = |index: usize| async move {
+                match roots[index].filter(|_| domains[index]) {
+                    Some(root) => match cache {
+                        Some(cache) => cache.get(session_ref, epoch, root).await.map(Some),
+                        None => materialization::load(session_ref, root).await.map(Some),
+                    },
+                    None => Ok(None),
+                }
             };
-            let (reactions, reaction_graph) = if let Some(root) = manifest.reaction_root {
-                let store = session.coordinator.native_reaction_store(root).await?;
-                (
-                    ReactionStateV1::read(session.repository, store.root, &store.graph)
-                        .map_err(model)?,
-                    store.graph,
-                )
-            } else {
-                (ReactionStateV1::empty(), CollabGraphV1::default())
+            let (threads, reactions, agents, reviews) =
+                tokio::try_join!(read(0), read(1), read(2), read(3))?;
+            let thread = match threads.as_deref() {
+                Some(Data::Thread(d)) => d.clone(),
+                None => Arc::new(ThreadData::empty()),
+                _ => return Err(Error::Corrupt),
             };
-            let agents = match manifest.agent_root {
-                Some(root) => Some(session.coordinator.agent_store(root).await?),
+            let reaction = match reactions.as_deref() {
+                Some(Data::Reaction(d)) => d.clone(),
+                None => Arc::new(ReactionData::empty()),
+                _ => return Err(Error::Corrupt),
+            };
+            let agents = match agents.as_deref() {
+                Some(Data::Agent(d)) => Some(d.clone()),
                 None => None,
+                _ => return Err(Error::Corrupt),
             };
-            let reviews = match manifest.review_root {
-                Some(root) => Some(session.coordinator.review_store(root).await?),
+            let reviews = match reviews.as_deref() {
+                Some(Data::Review(d)) => Some(d.clone()),
                 None => None,
+                _ => return Err(Error::Corrupt),
             };
-            let directory = crate::thread_directory::project(&threads, &thread_graph)?;
             let result = Self {
                 snapshot,
                 viewer,
-                threads,
-                thread_graph,
-                directory,
-                reactions,
-                reaction_graph,
+                thread,
+                reaction,
                 agents,
                 reviews,
                 actors,
@@ -236,24 +257,20 @@ impl PinnedCollabRead {
         .await
     }
     pub fn object_count(&self) -> usize {
-        self.thread_graph.objects.len()
-            + self.reaction_graph.objects.len()
+        self.thread.graph.objects.len()
+            + self.reaction.graph.objects.len()
             + self.agents.as_ref().map_or(0, |s| s.object_count())
             + self.reviews.as_ref().map_or(0, |s| s.object_count())
     }
     /// Encoded owned collaboration graphs retained in memory. Agent/Review pins
     /// retain membership references and load bodies through their owned reader.
     pub fn encoded_collab_bytes(&self) -> Result<usize> {
-        self.thread_graph
-            .objects
-            .values()
-            .chain(self.reaction_graph.objects.values())
-            .try_fold(0usize, |total, object| {
-                total
-                    .checked_add(encode_object(object).map_err(model)?.len())
-                    .ok_or(Error::Limit)
-            })
+        self.thread
+            .bytes
+            .checked_add(self.reaction.bytes)
+            .ok_or(Error::Limit)
     }
+
     pub(crate) async fn authorize(&self, session: &NativeSession) -> Result<()> {
         if session.repository != self.snapshot.repo_id
             || session.principal(Permission::Read).await?.id() != self.viewer
@@ -269,9 +286,9 @@ impl PinnedCollabRead {
         Ok(())
     }
     fn thread_value(&self, id: ThreadId) -> Result<ThreadSummaryV1> {
-        let reference = *self.threads.threads.get(&id).ok_or(Error::NotFound)?;
+        let reference = *self.thread.state.threads.get(&id).ok_or(Error::NotFound)?;
         let CollabObjectV1::ThreadVersion(value) =
-            self.thread_graph.get(reference).map_err(model)?
+            self.thread.graph.get(reference).map_err(model)?
         else {
             return Err(Error::Corrupt);
         };
@@ -281,7 +298,7 @@ impl PinnedCollabRead {
         Ok(ThreadSummaryV1 {
             reference,
             value: value.clone(),
-            directory: self.directory.get(&id).cloned(),
+            directory: self.thread.directory.get(&id).cloned(),
         })
     }
     async fn threads_inner(
@@ -293,7 +310,7 @@ impl PinnedCollabRead {
         limit_check(limit)?;
         self.authorize(&session).await?;
         let mut values = Vec::new();
-        for id in self.threads.threads.keys() {
+        for id in self.thread.state.threads.keys() {
             if after.is_some_and(|a| *id <= a) {
                 continue;
             }
@@ -347,7 +364,7 @@ impl PinnedCollabRead {
                 return Err(Error::Limit);
             }
             let CollabObjectV1::ThreadEvent(event) =
-                self.thread_graph.get(reference).map_err(model)?
+                self.thread.graph.get(reference).map_err(model)?
             else {
                 return Err(Error::Corrupt);
             };
@@ -365,7 +382,7 @@ impl PinnedCollabRead {
                 return Err(Error::Corrupt);
             }
             let CollabObjectV1::ThreadEvent(value) =
-                self.thread_graph.get(reference).map_err(model)?
+                self.thread.graph.get(reference).map_err(model)?
             else {
                 return Err(Error::Corrupt);
             };
@@ -374,7 +391,7 @@ impl PinnedCollabRead {
             }
             let message = if let ThreadEventKindV1::Message { revision } = value.event {
                 let CollabObjectV1::HumanMessageRevision(message) =
-                    self.thread_graph.get(revision).map_err(model)?
+                    self.thread.graph.get(revision).map_err(model)?
                 else {
                     return Err(Error::Corrupt);
                 };
@@ -387,7 +404,7 @@ impl PinnedCollabRead {
             };
             let link = if let ThreadEventKindV1::Link { version } = value.event {
                 let CollabObjectV1::ThreadLink(link) =
-                    self.thread_graph.get(version).map_err(|_| Error::Corrupt)?
+                    self.thread.graph.get(version).map_err(|_| Error::Corrupt)?
                 else {
                     return Err(Error::Corrupt);
                 };
@@ -425,9 +442,9 @@ impl PinnedCollabRead {
         let ReactionTargetV1::HumanMessage { revision, .. } = target else {
             return Err(Error::Invalid);
         };
-        self.resolve(target).await?;
+        self.resolve(&session, target).await?;
         let CollabObjectV1::HumanMessageRevision(value) =
-            self.thread_graph.get(*revision).map_err(model)?
+            self.thread.graph.get(*revision).map_err(model)?
         else {
             return Err(Error::Corrupt);
         };
@@ -435,14 +452,28 @@ impl PinnedCollabRead {
         self.authorize(&session).await?;
         Ok(value)
     }
-    async fn resolve(&self, target: &ReactionTargetV1) -> Result<ResolvedReactionTargetV1> {
+    async fn resolve(
+        &self,
+        session: &NativeSession,
+        target: &ReactionTargetV1,
+    ) -> Result<ResolvedReactionTargetV1> {
+        let agents = self
+            .agents
+            .as_ref()
+            .map(|s| session.coordinator.selected_agent_reader(s))
+            .transpose()?;
+        let reviews = self
+            .reviews
+            .as_ref()
+            .map(|s| session.coordinator.selected_review_reader(s))
+            .transpose()?;
         let reader = CollabTargetReaderV1::new(
             self.snapshot.repo_id,
-            Some((self.threads.root.clone(), &self.thread_graph)),
-            self.agents
+            Some((self.thread.state.root.clone(), &self.thread.graph)),
+            agents
                 .as_ref()
                 .map(|s| s as &dyn wal::publication::AgentSnapshotRead),
-            self.reviews
+            reviews
                 .as_ref()
                 .map(|s| s as &dyn wal::publication::ReviewSnapshotRead),
         )?;
@@ -459,24 +490,29 @@ impl PinnedCollabRead {
     ) -> Result<ReactionPageV1> {
         limit_check(limit)?;
         self.authorize(&session).await?;
-        let resolved = self.resolve(target).await?;
+        let resolved = self.resolve(&session, target).await?;
         let mut rows = BTreeMap::new();
         let mut aggregates = BTreeMap::<ReactionValueV1, (u32, bool)>::new();
         let mut conflicts = 0u32;
-        for reference in self.reactions.slots.values() {
+        for reference in self
+            .reaction
+            .targets
+            .get(&resolved.exact_key)
+            .into_iter()
+            .flatten()
+        {
             let CollabObjectV1::ReactionSlot(slot) =
-                self.reaction_graph.get(*reference).map_err(model)?
+                self.reaction.graph.get(*reference).map_err(model)?
             else {
                 return Err(Error::Corrupt);
             };
-            if slot.target.exact_key().map_err(model)? != resolved.exact_key
-                || !self
-                    .actors
-                    .can_disclose(self.snapshot.repo_id, self.viewer, slot.actor)
+            if !self
+                .actors
+                .can_disclose(self.snapshot.repo_id, self.viewer, slot.actor)
             {
                 continue;
             }
-            let selected = slot.resolve(&self.reaction_graph.objects).map_err(model)?;
+            let selected = slot.resolve(&self.reaction.graph.objects).map_err(model)?;
             if selected.active.is_empty() {
                 continue;
             }
@@ -551,12 +587,12 @@ impl PinnedCollabRead {
         limit_check(limit)?;
         self.authorize(&session).await?;
         let mut definitions = Vec::new();
-        for (id, reference) in &self.reactions.emojis {
+        for (id, reference) in &self.reaction.state.emojis {
             if after.is_some_and(|a| *id <= a) {
                 continue;
             }
             let CollabObjectV1::CustomEmojiVersion(value) =
-                self.reaction_graph.get(*reference).map_err(model)?
+                self.reaction.graph.get(*reference).map_err(model)?
             else {
                 return Err(Error::Corrupt);
             };
@@ -569,7 +605,7 @@ impl PinnedCollabRead {
         definitions.truncate(limit as usize);
         let versions = definitions
             .iter()
-            .map(|value| (value.emoji_id, self.reactions.emojis[&value.emoji_id]))
+            .map(|value| (value.emoji_id, self.reaction.state.emojis[&value.emoji_id]))
             .collect();
         let page = EmojiPageV1 {
             versions,
@@ -591,7 +627,8 @@ impl PinnedCollabRead {
             return Err(Error::Invalid);
         }
         let CollabObjectV1::ImageAsset(value) = self
-            .reaction_graph
+            .reaction
+            .graph
             .objects
             .get(&reference)
             .ok_or(Error::NotFound)?

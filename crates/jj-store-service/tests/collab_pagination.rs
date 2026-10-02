@@ -5,6 +5,8 @@ use jj_collab::{
 use jj_store_jj::{objects::NativeObjects, policy::Protection};
 use jj_store_model as m;
 use jj_store_object::memory::MemoryStore;
+#[path = "collab_pagination/materialization.rs"]
+mod materialization;
 use jj_store_service::{
     auth::{self, Clock, Permission, SystemClock},
     collab_mutations::{CollabCommandService, Request},
@@ -12,6 +14,7 @@ use jj_store_service::{
     collab_reads::{ReactionActorVisibility, RepositoryReactionActors},
     native::{NativeSession, SessionLimits, create_repository_local_trusted},
 };
+use materialization::CountingStore;
 use std::{
     collections::BTreeSet,
     sync::{
@@ -34,13 +37,13 @@ impl Clock for Time {
     }
 }
 struct Fixture {
-    store: Arc<MemoryStore>,
+    store: Arc<CountingStore>,
     objects: Arc<NativeObjects>,
     clock: Arc<Time>,
 }
 impl Fixture {
     async fn new() -> Self {
-        let store = Arc::new(MemoryStore::default());
+        let store = Arc::new(CountingStore::default());
         let objects = Arc::new(NativeObjects::new(store.clone(), REPO, 8 * 1024 * 1024).unwrap());
         create_repository_local_trusted(
             store.clone(),

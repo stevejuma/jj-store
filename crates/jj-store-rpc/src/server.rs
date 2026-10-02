@@ -801,13 +801,15 @@ impl NativeStore for NativeRpc {
         let id = jj_store_service::collab_model::ThreadId::from_slice(&body.thread_id)
             .map_err(|_| Status::invalid_argument("Thread ID"))?;
         let session = self.bind(&body.repository, access)?.into_session();
+        let pager = self.collab.clone();
         self.bounded(async move {
-            let pin = jj_store_service::collab_reads::PinnedCollabRead::open(
-                session.clone(),
-                Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
-            )
-            .await
-            .map_err(collab::command_error)?;
+            let pin = pager
+                .pin(
+                    session.clone(),
+                    jj_store_service::collab_reads::ReadScope::Threads,
+                )
+                .await
+                .map_err(collab::read_error)?;
             let thread = pin
                 .thread(session, id)
                 .await
@@ -827,13 +829,15 @@ impl NativeStore for NativeRpc {
         let body = request.into_inner();
         let target = collab::decode(&body.target_json)?;
         let session = self.bind(&body.repository, access)?.into_session();
+        let pager = self.collab.clone();
         self.bounded(async move {
-            let pin = jj_store_service::collab_reads::PinnedCollabRead::open(
-                session.clone(),
-                Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
-            )
-            .await
-            .map_err(collab::command_error)?;
+            let pin = pager
+                .pin(
+                    session.clone(),
+                    jj_store_service::collab_reads::ReadScope::Threads,
+                )
+                .await
+                .map_err(collab::read_error)?;
             let message = pin
                 .message(session, &target)
                 .await
@@ -859,13 +863,15 @@ impl NativeStore for NativeRpc {
             id,
         };
         let session = self.bind(&body.repository, access)?.into_session();
+        let pager = self.collab.clone();
         self.bounded(async move {
-            let pin = jj_store_service::collab_reads::PinnedCollabRead::open(
-                session.clone(),
-                Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
-            )
-            .await
-            .map_err(collab::command_error)?;
+            let pin = pager
+                .pin(
+                    session.clone(),
+                    jj_store_service::collab_reads::ReadScope::Emojis,
+                )
+                .await
+                .map_err(collab::read_error)?;
             let asset = pin
                 .image(session, reference)
                 .await

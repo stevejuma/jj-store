@@ -2,15 +2,38 @@
 use super::*;
 use jj_review::{ReviewCatalogKey, ReviewCatalogKind, ReviewIndexPageV1};
 
+/// Validated immutable selection with no coordinator, guard or credentials.
+#[derive(Clone)]
+pub struct ReviewStoreSelection {
+    repository: RepositoryId,
+    reference: RecordRef,
+    root: ReviewRootV1,
+    objects: Arc<BTreeSet<ReviewObjectRef>>,
+}
+impl ReviewStoreSelection {
+    pub fn object_count(&self) -> usize {
+        self.objects.len()
+    }
+}
+
 #[derive(Clone)]
 pub struct ReviewStoreSnapshot {
     coordinator: Coordinator,
     repository: RepositoryId,
     reference: RecordRef,
     root: ReviewRootV1,
-    objects: BTreeSet<ReviewObjectRef>,
+    objects: Arc<BTreeSet<ReviewObjectRef>>,
 }
 impl ReviewStoreSnapshot {
+    pub fn selection(&self) -> ReviewStoreSelection {
+        ReviewStoreSelection {
+            repository: self.repository,
+            reference: self.reference,
+            root: self.root.clone(),
+            objects: self.objects.clone(),
+        }
+    }
+
     pub fn repository_id(&self) -> RepositoryId {
         self.repository
     }
@@ -77,6 +100,23 @@ impl ReviewStoreSnapshot {
 }
 
 impl Coordinator {
+    /// Attach the current request reader; this does not authorize disclosure.
+    pub fn selected_review_reader(
+        &self,
+        selection: &ReviewStoreSelection,
+    ) -> Result<ReviewStoreSnapshot> {
+        if selection.repository != self.records.repository {
+            return Err(Error::Denied);
+        }
+        Ok(ReviewStoreSnapshot {
+            coordinator: self.clone(),
+            repository: selection.repository,
+            reference: selection.reference,
+            root: selection.root.clone(),
+            objects: selection.objects.clone(),
+        })
+    }
+
     pub async fn review_store(&self, reference: RecordRef) -> Result<ReviewStoreSnapshot> {
         let (root, closure) = self.read_review_root_closure(reference).await?;
         self.verify_delta(None, closure.native).await?;
@@ -85,7 +125,7 @@ impl Coordinator {
             repository: self.records.repository,
             reference,
             root,
-            objects: closure.objects,
+            objects: Arc::new(closure.objects),
         })
     }
 
