@@ -133,6 +133,7 @@
       <CommandView.List id="community-search-command-results">
         {#if !activeScopeLabel && scopeLabel && onScope}<CommandView.Group
             ><CommandView.Item
+              class="community-search-command__scope-action"
               value="scope:context"
               onSelect={() => focusAfter(onScope)}
               ><CommandView.ItemIcon

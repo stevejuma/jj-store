@@ -260,7 +260,7 @@ export function createThemeVars(
       // Backgrounds
       "--background": hexToHsl(primaryBg),
       "--card": hexToHsl(primaryBg),
-      "--popover": hexToHsl(elevate(0.08)),
+      "--popover": hexToHsl(primaryBg),
       "--muted": hexToHsl(hoverBg),
       "--accent": hexToHsl(hoverBg),
       "--secondary": hexToHsl(hoverBg),

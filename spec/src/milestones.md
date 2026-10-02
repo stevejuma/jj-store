@@ -85,7 +85,7 @@ shared-package release qualification does not alter those original Git gates.
 | M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034                                                                                                                                                                                              |
 | M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                                                                                                                          |
 | M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035                                                                                                                                                                                                                                                                               |
-| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085                                                                                                                                                                                                                |
+| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086                                                                                                                                                                                                       |
 | M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                                          | E-M9-033                                                                                                                                                                                                                                                                                                                                                       |
 | M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013                | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014                                                                                                                                                                                                                    |
 | M10.1       | Done        | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                                  | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                                    | E-M10-001,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085                                                                                                                                    |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086                                                                                                                           |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -132,7 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-UI-063,E-UI-064,E-UI-069,E-UI-081                                                                                                                                                                                                              |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085                                                                                                                                                                                                                                                    |
+| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086                                                                                                                                                                                                                                           |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -25396,7 +25396,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
+        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -37330,7 +37330,7 @@ and named tests are checked by the progress gate.
         "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
         "result": "pass",
         "failures": 0,
-        "note": "Fresh served app on 7460 displays 87e1cd5d\u20268fb9 and 20d6c008\u2026ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
       },
       {
         "command": "pnpm check:progress",
@@ -45620,6 +45620,219 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "Final evidence checks:6protected files/4canonical chapters;5validators/21chapters/147requirements;120tasks;all10changed files formatted. /tmp/jj-shell-chrome-{ledger-format,spec-first-qualified,spec-validate,progress,format-check}.log. This evidence insertion is checked again before the standing JJ commit."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-086",
+    "tasks": ["M9.5", "M11.4", "M16"],
+    "date": "2026-10-03",
+    "kind": "Shared palette popup surfaces and softer workspace search scope action",
+    "revision": "Enclosing Jujutsu change nnrtvymn",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-018",
+      "JST-ARCH-004",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007",
+      "JST-GOV-008",
+      "JST-GOV-009"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. M11.4 remains In progress and M16 Partial; existing release and registry qualification stays separate. No milestone promotion."
+    ],
+    "before": "Reuse the Appearance workspace nnrtvymn above osvzspxk/211f4205 and existing Vite7460/backend7462. Live Buzz Dialog was white while its inner Command View used the generated grey popover role, rgb235,235,235. Section-search markup omitted its existing scope-action class; unselected row was transparent. Community inspected first and released Design Core Command View public tokens/selectors second. Exact acceptance: generated popup/app surfaces match across62 palettes; scope action has a softer resting tint and stronger native hover and keyboard selection in light and dark.",
+    "scope": "One UI appearance/search presentation surface with direct popup/search consumers. The owned adapter maps generated popover background to app background for all62 Buzz-derived palettes; regenerate62CSS files and retain historical Original light/dark snapshots. Restore owned section-action class, use30% muted over background at rest and55% for hover/keyboard through the public selected-background token; match foundation data-selected and aria-selected states. Source foreground, hover, border, focus, accent, syntax and other palette roles remain unchanged. Search behavior, native authority, APIs, routes, credentials and preferences remain unchanged. No new source copies or sibling imports. Rust checks/builds, root aggregates, backend or UI restart/reset, native writes, production built-CSP qualification, dependency publication, main landing and visual approval are out of scope under the targeted UI policy.",
+    "files": [
+      "catalog/components/store-appearance/AppearanceOverlay.stories.svelte",
+      "catalog/fixtures/AppearanceOverlayFixture.svelte",
+      "docs/reference/appearance-provenance.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/appearance/adaptive-theme.ts",
+      "web/src/lib/appearance/palettes/andromeeda.css",
+      "web/src/lib/appearance/palettes/aurora-x.css",
+      "web/src/lib/appearance/palettes/ayu-dark.css",
+      "web/src/lib/appearance/palettes/buzz-dark.css",
+      "web/src/lib/appearance/palettes/buzz.css",
+      "web/src/lib/appearance/palettes/catppuccin-frappe.css",
+      "web/src/lib/appearance/palettes/catppuccin-latte.css",
+      "web/src/lib/appearance/palettes/catppuccin-macchiato.css",
+      "web/src/lib/appearance/palettes/catppuccin-mocha.css",
+      "web/src/lib/appearance/palettes/dark-plus.css",
+      "web/src/lib/appearance/palettes/dracula-soft.css",
+      "web/src/lib/appearance/palettes/dracula.css",
+      "web/src/lib/appearance/palettes/everforest-dark.css",
+      "web/src/lib/appearance/palettes/everforest-light.css",
+      "web/src/lib/appearance/palettes/github-dark-default.css",
+      "web/src/lib/appearance/palettes/github-dark-dimmed.css",
+      "web/src/lib/appearance/palettes/github-dark-high-contrast.css",
+      "web/src/lib/appearance/palettes/github-dark.css",
+      "web/src/lib/appearance/palettes/github-light-default.css",
+      "web/src/lib/appearance/palettes/github-light-high-contrast.css",
+      "web/src/lib/appearance/palettes/github-light.css",
+      "web/src/lib/appearance/palettes/gruvbox-dark-hard.css",
+      "web/src/lib/appearance/palettes/gruvbox-dark-medium.css",
+      "web/src/lib/appearance/palettes/gruvbox-dark-soft.css",
+      "web/src/lib/appearance/palettes/gruvbox-light-hard.css",
+      "web/src/lib/appearance/palettes/gruvbox-light-medium.css",
+      "web/src/lib/appearance/palettes/gruvbox-light-soft.css",
+      "web/src/lib/appearance/palettes/houston.css",
+      "web/src/lib/appearance/palettes/kanagawa-dragon.css",
+      "web/src/lib/appearance/palettes/kanagawa-lotus.css",
+      "web/src/lib/appearance/palettes/kanagawa-wave.css",
+      "web/src/lib/appearance/palettes/laserwave.css",
+      "web/src/lib/appearance/palettes/light-plus.css",
+      "web/src/lib/appearance/palettes/material-theme-darker.css",
+      "web/src/lib/appearance/palettes/material-theme-lighter.css",
+      "web/src/lib/appearance/palettes/material-theme-ocean.css",
+      "web/src/lib/appearance/palettes/material-theme-palenight.css",
+      "web/src/lib/appearance/palettes/material-theme.css",
+      "web/src/lib/appearance/palettes/min-dark.css",
+      "web/src/lib/appearance/palettes/min-light.css",
+      "web/src/lib/appearance/palettes/monokai.css",
+      "web/src/lib/appearance/palettes/night-owl.css",
+      "web/src/lib/appearance/palettes/nord.css",
+      "web/src/lib/appearance/palettes/one-dark-pro.css",
+      "web/src/lib/appearance/palettes/one-light.css",
+      "web/src/lib/appearance/palettes/plastic.css",
+      "web/src/lib/appearance/palettes/poimandres.css",
+      "web/src/lib/appearance/palettes/red.css",
+      "web/src/lib/appearance/palettes/rose-pine-dawn.css",
+      "web/src/lib/appearance/palettes/rose-pine-moon.css",
+      "web/src/lib/appearance/palettes/rose-pine.css",
+      "web/src/lib/appearance/palettes/slack-dark.css",
+      "web/src/lib/appearance/palettes/slack-ochin.css",
+      "web/src/lib/appearance/palettes/snazzy-light.css",
+      "web/src/lib/appearance/palettes/solarized-dark.css",
+      "web/src/lib/appearance/palettes/solarized-light.css",
+      "web/src/lib/appearance/palettes/synthwave-84.css",
+      "web/src/lib/appearance/palettes/tokyo-night.css",
+      "web/src/lib/appearance/palettes/vesper.css",
+      "web/src/lib/appearance/palettes/vitesse-black.css",
+      "web/src/lib/appearance/palettes/vitesse-dark.css",
+      "web/src/lib/appearance/palettes/vitesse-light.css",
+      "web/src/lib/ui/community-search-command/CommunitySearchCommand.svelte",
+      "web/src/lib/ui/community-search-command/search-command.css",
+      "web/tests/vite/appearance.test.ts"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; Shiki4.0.2; Design Core ^0.2.0. Dependency manifests and lockfile unchanged.",
+    "formats": "No native, API, route or stored-preference format changes. jj-store.appearance.v1 unchanged; generated semantic CSS bytes change only popover backgrounds.",
+    "artifacts": "/tmp/jj-overlay-token-*.log; /tmp/jj-overlay-token-live-final.jpg",
+    "next": "Retain focused regressions and visual-pending in the committed Appearance workspace.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; inspect owning chapters, milestone ledger, Community first and released Design Core second; read-only live CUA inspection",
+        "result": "pass",
+        "failures": 0,
+        "note": "Shared popover role and absent scope-action class explain both requested behaviors; existing workspace/backend/fixture retained."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/fixtures/AppearanceOverlayFixture.svelte catalog/components/store-appearance/AppearanceOverlay.stories.svelte (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial overlay regression formatting. /tmp/jj-overlay-token-format-before.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/appearance.test.ts (before)",
+        "result": "fail",
+        "failures": 3,
+        "note": "3 new white/GitHub dark/Dracula app-surface assertions fail;8existing tests pass. /tmp/jj-overlay-token-unit-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceOverlay.stories.svelte (before shared-token fix)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Expected white app surface, received grey rgb235 popup. /tmp/jj-overlay-token-story-before.log."
+      },
+      {
+        "command": "pnpm exec tsx scripts/appearance-palettes.mts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Regenerated62Buzz-derived palette CSS files after shared adapter change. /tmp/jj-overlay-token-generate.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (adapter, regression, provenance and canonical chapter files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Shared-token implementation formatted. /tmp/jj-overlay-token-format-after.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/appearance.test.ts (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "11/11 exact appearance tests. /tmp/jj-overlay-token-unit-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceOverlay.stories.svelte (after shared-token fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 fresh browser story checks Dialog/Command/Menu equality for all62generated palettes, retaining query and result. /tmp/jj-overlay-token-story-after.log."
+      },
+      {
+        "command": "pnpm exec tsx scripts/appearance-palettes.mts --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact source-derived generated asset comparison. /tmp/jj-overlay-token-palette-check.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership (shared-token fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web/catalog0errors0warnings;153catalog modules;798architecture modules;ownership1validator/21chapters/147requirements. Logs web/catalog/architecture/ownership."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/fixtures/AppearanceOverlayFixture.svelte catalog/components/store-appearance/AppearanceOverlay.stories.svelte (scope regression)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Light/dark native-pointer and keyboard regressions formatted. /tmp/jj-overlay-token-scope-format-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceOverlay.stories.svelte (before scope-row fix)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2/2 new scope rows are transparent at rest;1all-palette overlay story passes. /tmp/jj-overlay-token-scope-before.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/community-search-command/CommunitySearchCommand.svelte web/src/lib/ui/community-search-command/search-command.css spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned class, theme-derived resting/selected token and supported selected selectors formatted. /tmp/jj-overlay-token-scope-format-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceOverlay.stories.svelte (after scope-row fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 in fresh browser: light/dark softer resting, real CSS hover, keyboard selection/reset; all62generated popup palettes. /tmp/jj-overlay-token-scope-after.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership (final production)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web/catalog0errors0warnings;153catalog modules;798architecture modules with unchanged budgets;ownership1validator/21chapters/147requirements. /tmp/jj-overlay-token-{web,catalog,architecture,ownership}-final.log."
+      },
+      {
+        "command": "Read-only CUA live HMR workspace search verification and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "White Dialog/Command in Buzz. Scope action selected rgb246.7 equivalent, resting rgb250.5 equivalent: color(srgb0.96755...) vs color(srgb0.9823...). Saved final full-viewport screenshot with resting row; closed temporary tab32. User tab untouched; no preferences/data writes or restart."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-search catalog/components/store-appearance catalog/components/store-application/StoreRepositorySearch.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-application/StoreComparisonParentPicker.stories.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte catalog/components/store-threads/StoreThreadSearch.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "35/35 across13direct overlay/search/picker/reaction consumer files in a fresh browser/Vite process. /tmp/jj-overlay-token-consumers.log."
+      },
+      {
+        "command": "python3 inline milestone evidence update; pnpm exec prettier --write spec/src/milestones.md; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "E-UI-086 preserves milestone statuses. 69protected files/4canonical chapters;5validators/21chapters/147requirements;120tasks;73changed files formatted. Final evidence insertion and changed-file formatting checked again before commit. /tmp/jj-overlay-token-{spec-first,spec-validate,progress,format-final,progress-final}.log."
       }
     ]
   }

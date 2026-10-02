@@ -1332,7 +1332,9 @@ Appearance changes make no repository mutation or website metadata requests.
 Buzz shell gradient continuity and compact navigation picker surfaces are owned
 CSS presentation. The picker retains native repository/thread selection and
 keyboard navigation, with app-background surface tokens and spacing independent
-of browser glass. These adjustments add no preference fields or API requests.
+of browser glass. The generated palette's shared popover role supplies the same
+app surface to search commands, menus and popovers, without per-component search
+overrides. These adjustments add no preference fields or API requests.
 
 The saved accent selects one circular swatch indicator in Appearance. Its ring
 stays centered and circular across color modes, hover and responsive layouts;

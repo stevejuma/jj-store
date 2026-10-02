@@ -201,9 +201,18 @@ gradient within each region. Glass retains its selected opacity and blur above
 the shared backdrop; other themes retain their existing chrome surfaces.
 Collapsed left-navigation section pickers leave an 8px gap from the rail edge
 and retain 8px viewport collision clearance. Both the portalled Popover and its
-Command View bind their public background tokens to the resolved app background
-(white in light Buzz), keeping the picker opaque even when browser glass is on.
-Search, keyboard selection, Escape and trigger focus restoration are unchanged.
+Command View follow the shared popover surface, keeping the picker opaque even
+when browser glass is on. Every Buzz-derived palette binds the semantic popover
+background to its app background (white in light Buzz), so search commands,
+menus and other portalled popovers inherit the same surface. Foreground,
+selected-row, hover, border and focus roles retain their existing tokens. The
+Original light/dark pair retains its historical palette snapshot. Search,
+keyboard selection, Escape and trigger focus restoration are unchanged.
+
+The workspace search's section action uses a soft muted tint at rest (30% muted
+over the app background) and the same stronger tint for pointer hover and
+keyboard selection (55% muted). The treatment follows the active palette and
+keeps its label and description visible without changing search scope behavior.
 
 Accent swatches keep circular selected rings centered inside their circular
 buttons, including after changing accents, on hover and at mobile widths in

@@ -64,21 +64,27 @@
 }
 
 :is(.community-search-command__scope-action[data-ui-part="item"]) {
+  --ui-command-view-item-selected-background: color-mix(
+    in srgb,
+    var(--muted) 55%,
+    var(--background)
+  );
   margin: 0.35rem 0.25rem 0.5rem;
   min-height: 3.25rem;
   border: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
   border-radius: 0.65rem;
-  background: color-mix(in srgb, var(--muted) 30%, transparent);
+  background: color-mix(in srgb, var(--muted) 30%, var(--background));
   padding-inline: 0.75rem;
 }
 
 :is(
   .community-search-command__scope-action[data-ui-part="item"]:is(
       :hover,
-      [data-selected="true"]
+      [data-selected],
+      [aria-selected="true"]
     )
 ) {
-  background: color-mix(in srgb, var(--muted) 55%, transparent);
+  background: var(--ui-command-view-item-selected-background);
 }
 
 :is(

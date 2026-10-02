@@ -21,8 +21,18 @@ import {
   type CommunityMarkdownHastNode,
 } from "../../src/lib/ui/community-markdown-content/syntax-hast.js";
 import { createMemoryStoryStorage } from "../../../catalog/fixtures/memory-storage.js";
+import { createThemeVars } from "../../src/lib/appearance/adaptive-theme.js";
 
 describe("device appearance", () => {
+  it.each([
+    ["#ffffff", "#24292e", "#6a737d"],
+    ["#0d1117", "#c9d1d9", "#8b949e"],
+    ["#282a36", "#f8f8f2", "#6272a4"],
+  ])("uses the app surface for popovers derived from %s", (bg, fg, comment) => {
+    const { vars } = createThemeVars(bg, fg, comment);
+    expect(vars["--popover"]).toBe(vars["--background"]);
+    expect(vars["--popover-foreground"]).toBe(vars["--foreground"]);
+  });
   it("restores the original theme and follows its light and dark pair", () => {
     const prefs = parseAppearance(
       '{"version":1,"mode":"system","theme":"original"}',

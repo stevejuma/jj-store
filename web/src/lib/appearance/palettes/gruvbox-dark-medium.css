@@ -2,7 +2,7 @@
 [data-store-theme="gruvbox-dark-medium"] {
   --background: hsl(0 0% 15.7%);
   --card: hsl(0 0% 15.7%);
-  --popover: hsl(0 0% 22.4%);
+  --popover: hsl(0 0% 15.7%);
   --muted: hsl(0 0% 20.8%);
   --accent: hsl(0 0% 20.8%);
   --secondary: hsl(0 0% 20.8%);

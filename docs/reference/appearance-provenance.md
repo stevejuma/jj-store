@@ -62,7 +62,7 @@ GitHub Light Default palette and Buzz's component bindings:
 | Role or surface           | Previous light theme                                          | Buzz-derived GitHub Light Default                                | App binding                                                  |
 | ------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
 | App background            | `oklch(100% 0 0)` (white)                                     | `#fff`                                                           | `--background`                                               |
-| Popover background        | `oklch(100% 0 0)` (white)                                     | `#ebebeb`                                                        | Menus retain `--popover`                                     |
+| Popover background        | `oklch(100% 0 0)` (white)                                     | `#fff` (owned app-surface adaptation)                            | Search and menus inherit `--popover`                         |
 | Main text                 | `oklch(15% 0.05 295)`                                         | `#1f2328`                                                        | Values, headings and actions use `--foreground`              |
 | Secondary text            | `oklch(50% 0.05 295)`                                         | `hsl(212 7.94% 37.1%)`                                           | Helpers and placeholders use `--muted-foreground`            |
 | Composer                  | Foundation composer uses `--popover`; editor has its own fill | Buzz uses `bg-background`, `border-border/50`, no resting shadow | App background and transparent Mira editor                   |
@@ -80,5 +80,8 @@ The app shell paints the Buzz gradient once across its viewport. Header and
 left-navigation chrome reveal the same image, with glass opacity/blur applied
 above it when enabled. Compact navigation section pickers bind public Popover
 and Command View background tokens to the app background, following the user's
-requested white light-Buzz surface; the generated popover palette and other
-menus retain their existing roles. These are app-owned presentation adaptations.
+requested white light-Buzz surface. The owned adapter also maps the generated
+popover role to the app background for all 62 derived palettes, rather than
+Buzz's elevated grey. Search commands and menus inherit that role directly;
+other roles and the historical Original snapshot retain their existing values.
+These are app-owned presentation adaptations.

@@ -2,7 +2,7 @@
 [data-store-theme="material-theme-darker"] {
   --background: hsl(0 0% 12.9%);
   --card: hsl(0 0% 12.9%);
-  --popover: hsl(0 0% 20%);
+  --popover: hsl(0 0% 12.9%);
   --muted: hsl(0 0% 18%);
   --accent: hsl(0 0% 18%);
   --secondary: hsl(0 0% 18%);

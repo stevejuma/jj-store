@@ -2,7 +2,7 @@
 [data-store-theme="slack-dark"] {
   --background: hsl(0 0% 13.3%);
   --card: hsl(0 0% 13.3%);
-  --popover: hsl(0 0% 20.4%);
+  --popover: hsl(0 0% 13.3%);
   --muted: hsl(0 0% 18.4%);
   --accent: hsl(0 0% 18.4%);
   --secondary: hsl(0 0% 18.4%);
