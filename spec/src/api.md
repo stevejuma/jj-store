@@ -1331,9 +1331,11 @@ Session pages validate their repository identity and exact retained AgentStore
 snapshot. No server API or canonical record changes. The Projects route admits
 `tab=agents` for both landing and selected-project views, with paired
 `agent_repository` and `session` native IDs for an inline response. These keys
-are valid only on Agents and retain scope through navigation history. The
-response composes existing separately authorized session/transcript reads and
-reaction/tool-review commands without switching the global code connection.
+are valid only on Agents and retain scope through navigation history. Repository
+Agents and Projects responses occupy the same standard body right sidebar as
+Thread replies, preserving the loaded session directory on selection and Close.
+The response composes existing separately authorized session/transcript reads
+and reaction/tool-review commands without switching the global code connection.
 
 The Projects tab-row search submits the existing `q` filter explicitly on Enter.
 Close clears that filter through the same route action. The 512 UTF-8 byte

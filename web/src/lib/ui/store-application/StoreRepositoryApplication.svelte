@@ -94,10 +94,7 @@
           >
         </Alert.Root>
       </section>
-    {:else if page === "agents"}<StoreAgentSessions
-        {controller}
-        {layoutStorage}
-      />
+    {:else if page === "agents"}<StoreAgentSessions {controller} />
     {:else if page === "reviews" && state.repository.profile === "git_sha1_jj045"}<p
         class="store-repository-application__state"
       >

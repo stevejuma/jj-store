@@ -1177,8 +1177,11 @@ they introduce no cross-repository authority or inferred task association.
 Native and qualified local snapshots remain distinct and independently pinned.
 Permission changes discard retained sessions, unsupported profiles use explicit
 icon Empty states, and opening a session authorizes its repository separately.
-Project response panes reuse the repository Agent response presentation,
-including separately authorized reactions and tool discussions. They retain the
-Projects directory and pinned continuation rather than navigating to a
-repository page. Closing, changed scope and late reads cannot leak or restore an
-obsolete response; unknown command identities remain retained for recovery.
+Project and repository response panes use the same full-body AppShell standard
+right sidebar as Thread replies, with shared header, close, resize and mobile
+lane mechanics. The independently controlled details rail remains separate. They
+reuse the repository Agent response presentation, including separately
+authorized reactions and tool discussions. They retain the Projects directory
+and pinned continuation rather than navigating to a repository page. Closing,
+changed scope and late reads cannot leak or restore an obsolete response;
+unknown command identities remain retained for recovery.

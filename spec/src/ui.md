@@ -76,6 +76,14 @@ while disabling redundant document scroll locking through the public
 `preventScroll` option. Cold built-asset acceptance checks that closing them
 restores pointer interaction under the served strict asset policy.
 
+Repository and Projects agent responses use that same standard body right
+sidebar as Thread replies, rather than a column inside tab content. The
+full-height pane shares the public header, Close, scroll body, mobile lane and
+resize mechanics; its widths persist under the standard panel identity.
+Selecting a session leaves the loaded directory mounted, and Close returns focus
+to its selected row. The outer details rail stays independently controlled.
+Admitted deep links restore the pane after a cold page load.
+
 Threads use the forum's full-width inline post composer above
 Topic/Replies/Activity rows, preserving post content in native messages. The
 empty Threads listing fills its available viewport and centers the public shadcn
@@ -1290,15 +1298,15 @@ AgentStore collection has its own authorized snapshot and continuation. Refresh
 replays the loaded window, revocation clears protected results, and late
 responses cannot replace a newer scope. Native and qualified local recorded
 agents share the existing session row and response presentation. Selecting a
-session opens the agent response in the body's right pane, preserving the scoped
-listing, its loaded pages and scroll position. Repository Agents retains its
-existing response column. Project routes bind the full target repository and
-session identities, with Back/Forward and cold route restoration retaining the
-scope and response. Response reads, reactions and tool discussions use separate
-target authorization and cannot borrow the project home's access. Loading uses
-busy skeletons; unsupported profiles use icon Empty states. Project Agents
-collection rows share their collapsible heading's horizontal inset and have no
-row separators.
+session opens the agent response in the standard AppShell body right sidebar,
+preserving the scoped listing, its loaded pages and scroll position. Repository
+Agents uses the same sidebar as Projects Agents and Thread replies. Project
+routes bind the full target repository and session identities, with Back/Forward
+and cold route restoration retaining the scope and response. Response reads,
+reactions and tool discussions use separate target authorization and cannot
+borrow the project home's access. Loading uses busy skeletons; unsupported
+profiles use icon Empty states. Project Agents collection rows share their
+collapsible heading's horizontal inset and have no row separators.
 
 Repository list rows reserve a consistent name column, so descriptions begin at
 the same horizontal position across both the installation directory and selected

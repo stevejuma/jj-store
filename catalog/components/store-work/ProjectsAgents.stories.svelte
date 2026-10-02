@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import ProjectsHubFixture from "../../fixtures/ProjectsHubFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Projects agents",
@@ -50,6 +50,44 @@
       c.getByRole("complementary", { name: "Agent response" }),
     ).toBeVisible();
     await c.findByRole("log", { name: "Agent conversation activity" });
+    const response = c.getByRole("complementary", { name: "Agent response" });
+    await expect(response).toHaveAttribute("data-ui-part", "sidebar");
+    await expect(
+      response.querySelector(".store-collaboration__detail-header"),
+    ).toBeNull();
+    const avatar = response.querySelector(
+      '[data-ui-part="sidebar-header"] [data-ui-component="community-member-avatar"]',
+    );
+    await expect(avatar).toBeVisible();
+    await expect(avatar?.querySelector("img")).toHaveAttribute(
+      "src",
+      "/agent-icons/codex.svg",
+    );
+    const transcriptRow = within(response).getAllByRole("article")[0]!;
+    const viewport = response.querySelector(
+      '[data-ui-part="scroll-area-viewport"]',
+    )!;
+    await waitFor(() =>
+      expect(
+        transcriptRow.getBoundingClientRect().top -
+          viewport.getBoundingClientRect().top,
+      ).toBeLessThan(48),
+    );
+    const body = canvasElement.querySelector('[data-ui-part="main"]')!;
+    await waitFor(() => {
+      expect(
+        Math.abs(
+          response.getBoundingClientRect().top -
+            body.getBoundingClientRect().top,
+        ),
+      ).toBeLessThan(1);
+      expect(
+        Math.abs(
+          response.getBoundingClientRect().bottom -
+            body.getBoundingClientRect().bottom,
+        ),
+      ).toBeLessThan(1);
+    });
     await userEvent.click(
       c.getByRole("button", { name: "Close agent response" }),
     );
@@ -57,6 +95,9 @@
       c.queryByRole("complementary", { name: "Agent response" }),
     ).toBeNull();
     await expect(row.isConnected).toBe(true);
+    await expect(
+      within(row).getByRole("button", { name: /Open Codex ended/ }),
+    ).toHaveFocus();
   }}
 />
 <Story
@@ -79,5 +120,28 @@
     const c = within(canvasElement);
     await expect(await c.findByLabelText("Loading agents")).toBeVisible();
     await expect(c.queryByText("No agent sessions")).toBeNull();
+  }}
+/>
+
+<Story
+  name="Mobile agent response uses the standard right lane"
+  args={{ agents: true, mobile: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const row = await c.findByRole("button", { name: /Open Codex ended/ });
+    await userEvent.click(row);
+    const response = await c.findByRole("complementary", {
+      name: "Agent response",
+    });
+    await expect(response).toHaveAttribute("data-ui-part", "sidebar");
+    await expect(response).toBeVisible();
+    await userEvent.click(
+      await within(response).findByRole("button", {
+        name: "Close agent response",
+      }),
+    );
+    await waitFor(() => expect(row).toBeVisible());
+    await expect(row.isConnected).toBe(true);
+    await expect(row).toHaveFocus();
   }}
 />

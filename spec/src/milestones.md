@@ -43385,7 +43385,7 @@ and named tests are checked by the progress gate.
     "remaining": [
       "Visual approval remains separate. Root aggregate, Rust, unrelated UI lanes and persistent fixture writes are out of scope."
     ],
-    "scope": "Existing browser/controller surface only. Selected-project Agents covers independently authorized linked repositories, including retained retired links; landing Agents drains unfiltered project links with two readers and at most 80 continuations per home/action, deduplicates scope and reports inaccessible links and incomplete/failed scope. Independent AgentStore snapshot paging, bounded refresh windows and generation guards remain. Selection opens the shared response in the body right pane without directory reload or global connection change; close, Back/Forward and cold hash restoration retain the scoped directory. Cached responses obtain the current authorized source after rediscovery. Shared owned row uses collection inset and no separators. No backend build/restart, native encoding/API changes, persistent fixture writes, main landing, publication or baseline update.",
+    "scope": "Existing browser/controller surface only. Selected-project Agents covers independently authorized linked repositories, including retained retired links; landing Agents drains unfiltered project links with two readers and at most 80 continuations per home/action, deduplicates scope and reports inaccessible links and incomplete/failed scope. Independent AgentStore snapshot paging, bounded refresh windows and generation guards remain. Selection opens the shared response in the body right pane without directory reload or global connection change; close, Back/Forward and cold hash restoration retain the scoped directory. Cached responses obtain the current authorized source after rediscovery. Shared owned row uses collection inset and no separators. No backend build/restart, native encoding/API changes, persistent fixture writes, main landing, publication or baseline update. Former evidence source StoreProjectsAgentResponse.svelte was retired in E-UI-075; file pointer now names its shared standard-sidebar replacement.",
     "versions": "Node26.9.0;pnpm10.32.1;JJ0.45.1;Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;existing Design Core public components.",
     "formats": "Projects hash accepts tab=agents and paired full agent_repository/session IDs only on Agents. Repository routes, AgentStore captures and native/local identities remain unchanged.",
     "next": "Continue authorized top-row search and Community structural Focus sheet.",
@@ -43423,7 +43423,7 @@ and named tests are checked by the progress gate.
       "web/src/lib/ui/store-work/StoreProjects.svelte",
       "web/src/lib/ui/store-work/StoreProjectsActions.svelte",
       "web/src/lib/ui/store-work/StoreProjectsAgentDirectory.svelte",
-      "web/src/lib/ui/store-work/StoreProjectsAgentResponse.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSidebar.svelte",
       "web/src/lib/ui/store-work/StoreProjectsAgents.svelte",
       "web/src/lib/ui/store-work/StoreProjectsViewport.svelte",
       "web/src/lib/ui/store-work/projects-initial-loading.ts",
@@ -43747,6 +43747,158 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "Corrected mapped API gate9 protected files/3 chapters;5 validators/21chapters/147requirements;761production modules;120task bookkeeping. Changed files formatted."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-075",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Thread-reply shell sidebar for repository and Projects agent responses",
+    "revision": "Enclosing Jujutsu change tvzlkoyt",
+    "requirements": ["JST-UI-002", "JST-UI-005", "JST-UI-006", "JST-WORK-008"],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. Root aggregate lanes, Rust builds/tests and production built-CSP qualification are out of scope."
+    ],
+    "scope": "Owned UI-only application sidebar composition. Community standard right sidebar inspected first, public Design Core AppShell sidebar/header/body/close and mobile controller second. Repository and Projects Agents retain independently scoped directory controllers and exact routes while responses use the same full-body standard sidebar as Thread replies. Avatar sits beside shell title; no duplicate identity card. Context no longer fills spare height, so recorded activity stays at top. Copy identifiers remain in header menu. Close clears route and returns row focus; standard width resize and separate outer rail retained. Fresh targeted Storybook processes supply cold lifecycle interaction/accessibility evidence; live read-only HMR acceptance uses an isolated tab and existing fixture. No source-dependency or runtime fixture changes.",
+    "files": [
+      "catalog/components/store-application/StoreCollaboration.stories.svelte",
+      "catalog/components/store-application/agent-sidebar-play.ts",
+      "catalog/components/store-work/ProjectsAgents.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-application/StoreApplicationRightPanels.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentContext.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessionMenu.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSidebar.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAgents.svelte"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;existing public Design Core AppShell primitives.",
+    "formats": "No object/receipt/API changes. Existing Projects agent_repository/session hash and repository session route retained; standard right panel persistence reused.",
+    "next": "Complete authorized Community structural Focus sheets.",
+    "artifacts": "/tmp/jj-agent-sidebar-*.log; /tmp/jj-agent-standard-sidebar.png.",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2failed/2passed: project and mobile responses lack standard data-ui-part sidebar and full-body geometry."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte (first after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2failed/2passed: geometry compared sidebar chrome with its one-pixel-inset inner body, corrected to matching main chrome; mobile Close assertion preceded shell lane activation, now waits for accessible Close. Assertions retain full-body geometry and focus."
+      },
+      {
+        "command": "pnpm web:check (first after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Removed obsolete layoutStorage prop on directory-only StoreAgentSessions consumer."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte (second after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 desktop/mobile standard pane, geometry, retained directory, Close and row focus pass."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads",
+        "result": "pass",
+        "failures": 0,
+        "note": "24/24 direct repository, native menu, tool discussion and Thread scenarios pass before subsequent avatar/top-alignment refinement."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte -t LandingAgentsAndNativeSessionNavigation (top/header before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failure/3skipped: duplicate detail header remains. Added no-card and first-message geometry contract before refinement."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte (top/header after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 after no-card/top-alignment refinement. Avatar-next-to-title contract added in final combined run."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads",
+        "result": "pass",
+        "failures": 0,
+        "note": "28/28 final combined scenarios including avatar, no duplicate identity card, top-aligned activity, Copy IDs, resize, independent rail, Close/focus and Threads regression. Supplemental repository mobile scenario follows."
+      },
+      {
+        "command": "CUA isolated read-only HMR Projects/repository agent selection, cold reload and pointer Close",
+        "result": "pass",
+        "failures": 0,
+        "note": "Project and repository main/sidebar bounds match top48px/bottom712px. Cold selection restores exact IDs; empty list spacer0px; avatar in header/no identity card. Close clears route and focuses selected row. No runtime errors. Prior tab19 pointer attempts conflicted with active user navigation; stopped controlling it and used separate tab for acceptance."
+      },
+      {
+        "command": "pnpm check:architecture (first)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Expanded Collaboration story exceeded400line budget and shared collaboration CSS exceeded300line budget. Extracted agent sidebar play helper and moved own context min-height rule to component style. Final architecture763modules passes."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreCollaboration.stories.svelte -t MobileAgentResponsePreservesItsDirectory (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New mobile scenario queried initial row before async fixture populated. Now waits for exact visible row; no production change."
+      },
+      {
+        "command": "pnpm check:progress (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Deleted obsolete custom response component remained in historical evidence file pointer. Repointed to shared sidebar replacement with explicit retirement note; original recorded results retained."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreCollaboration.stories.svelte -t AgentResponseActivity (tool inset before/first after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before49.59375px extra inset; removing41.6px margin leaves8px owned message hover bleed. Final geometry compares tool calls with actual message avatar/content inset, preserving exact alignment. Tool width uses available row width."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final zero errors/warnings;134catalog modules."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "11protected files/5chapters;5validators/21chapters/147requirements;owned Community closure accepted."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads (qualified final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "29/29 final direct interaction/accessibility scenarios after helper extraction, mobile async fixture wait, avatar/title/top alignment and tool-content inset correction. /tmp/jj-agent-sidebar-qualified-stories.log."
+      },
+      {
+        "command": "CUA isolated repository agent tool geometry",
+        "result": "pass",
+        "failures": 0,
+        "note": "Message avatar and tool root both start at983px, chat spacer0px. /tmp/jj-agent-standard-sidebar.png updated."
+      },
+      {
+        "command": "pnpm check:progress; pnpm check:architecture (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "120tasks bookkeeping;763production modules accepted. No budget exceptions."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm spec:first; pnpm spec:validate; pnpm check:progress (qualified final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings;135catalog modules;12protected files/5chapters;5validators/21chapters/147requirements;120task bookkeeping."
       }
     ]
   }

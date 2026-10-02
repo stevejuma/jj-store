@@ -233,5 +233,9 @@ scope continuations remain explicit. Agent pagination validates the exact
 repository snapshot and never mixes captures. Refresh preserves loaded windows,
 while access loss and teardown clear protected rows. Selecting a row uses the
 full native repository and session IDs and opens the shared agent response in a
-body right pane without replacing or reloading the scoped list. Closing restores
-the full list; navigation and reload retain an admitted response selection.
+standard AppShell right sidebar beside the main body, exactly as Thread replies,
+without replacing or reloading the scoped list. Its header, Close action and
+keyboard/pointer resize use the shell primitives, span the full body height and
+remain independent of the outer details rail. Mobile uses the shell right lane.
+Closing restores the selected row focus; navigation and reload retain an
+admitted response selection.
