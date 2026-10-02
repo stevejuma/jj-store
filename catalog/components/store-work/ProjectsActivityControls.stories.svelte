@@ -19,9 +19,7 @@
       ),
     );
     const filter = await c.findByRole("button", { name: "Filter activity" });
-    await expect(
-      filter.closest(".community-projects__surface-header"),
-    ).not.toBeNull();
+    await expect(filter.closest(".community-projects__tabs")).not.toBeNull();
     await userEvent.click(filter);
     await userEvent.type(
       body.getByPlaceholderText("Find an activity type..."),

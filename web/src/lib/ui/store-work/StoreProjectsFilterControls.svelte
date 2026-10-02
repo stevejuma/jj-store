@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Popover from "@lapismd/design-core/shadcn/popover";
-  import SlidersHorizontalIcon from "@lucide/svelte/icons/sliders-horizontal";
+  import ListFilterIcon from "@lucide/svelte/icons/list-filter";
   import XIcon from "@lucide/svelte/icons/x";
   import StoreProjectsFilters from "./StoreProjectsFilters.svelte";
   import StoreActivityFilter from "./StoreActivityFilter.svelte";
@@ -20,7 +20,6 @@
   const title = $derived(`${tab[0]!.toUpperCase() + tab.slice(1)} filters`);
   const filtered = $derived(
     Boolean(
-      (tab !== "reviews" && route.workQuery) ||
       (tab !== "repositories" && route.workRepository) ||
       (!project &&
         tab !== "repositories" &&
@@ -29,11 +28,7 @@
       (tab === "tasks" && (route.workState ?? "active") !== "active"),
     ),
   );
-  let open = $state(false),
-    search = $state("");
-  $effect(() => {
-    search = route.workQuery ?? "";
-  });
+  let open = $state(false);
 </script>
 
 {#if tab === "activity"}<StoreActivityFilter
@@ -53,7 +48,7 @@
         title={`Filters for ${tab}`}
         aria-pressed={filtered}
       >
-        <SlidersHorizontalIcon aria-hidden="true" />
+        <ListFilterIcon aria-hidden="true" />
       </Button>
     {/snippet}
   </Popover.Trigger>
@@ -80,6 +75,6 @@
         {/snippet}</Popover.Close
       >
     </Popover.Header>
-    <StoreProjectsFilters {controller} {project} bind:search />
+    <StoreProjectsFilters {controller} {project} />
   </Popover.Content>
 </Popover.Root>

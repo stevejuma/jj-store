@@ -1334,3 +1334,8 @@ snapshot. No server API or canonical record changes. The Projects route admits
 are valid only on Agents and retain scope through navigation history. The
 response composes existing separately authorized session/transcript reads and
 reaction/tool-review commands without switching the global code connection.
+
+The Projects tab-row search submits the existing `q` filter explicitly on Enter.
+Close clears that filter through the same route action. The 512 UTF-8 byte
+bound, independent home/repository admission and unsupported Review text-search
+capability remain unchanged; displaying search controls grants no extra access.

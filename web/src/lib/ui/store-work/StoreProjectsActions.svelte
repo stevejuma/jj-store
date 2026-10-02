@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreWorkLayoutControls from "./StoreWorkLayoutControls.svelte";
-  import StoreProjectsFilterControls from "./StoreProjectsFilterControls.svelte";
   import StoreProjectsAddMenu from "./StoreProjectsAddMenu.svelte";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
   import PlusIcon from "@lucide/svelte/icons/plus";
@@ -40,9 +39,6 @@
   {#if tab !== "activity" && tab !== "agents"}<StoreWorkLayoutControls
       bind:value={layout}
     />{/if}
-  {#key `${project?.id ?? "hub"}:${tab}`}
-    <StoreProjectsFilterControls {controller} {project} />
-  {/key}
   <Button
     variant="ghost"
     size="icon-sm"

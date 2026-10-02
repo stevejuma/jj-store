@@ -29,6 +29,7 @@
   import "./community-work-rows.css";
   import "./community-work-layout.css";
   import HistoryIcon from "@lucide/svelte/icons/history";
+  import StoreProjectsNavigation from "./StoreProjectsNavigation.svelte";
   import StoreProjectsActions from "./StoreProjectsActions.svelte";
   import StoreWorkDialog from "./StoreWorkDialog.svelte";
   import StoreWorkStatus from "./StoreWorkStatus.svelte";
@@ -133,17 +134,12 @@
       onValueChange={(value) => changeTab(value as ProjectsTab)}
       class="store-projects__tab-root"
     >
-      {#if !task}<div class="community-projects__tabs">
-          <Tabs.List
-            class="community-projects__tab-list"
-            aria-label={project ? "Project views" : "Projects views"}
-          >
-            {#each tabs as value}<Tabs.Trigger
-                class="community-projects__tab-trigger"
-                {value}>{value[0]!.toUpperCase() + value.slice(1)}</Tabs.Trigger
-              >{/each}
-          </Tabs.List>
-        </div>{/if}
+      {#if !task}<StoreProjectsNavigation
+          {controller}
+          {project}
+          {tabs}
+          {tab}
+        />{/if}
       {#if !task}<header class="community-projects__surface-header">
           <div>
             {#if tab === "tasks"}<ListTodo

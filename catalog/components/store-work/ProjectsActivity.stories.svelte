@@ -221,19 +221,10 @@
     await expect(
       c.getByRole("log", { name: "Agent conversation activity" }),
     ).toHaveTextContent("Updated the parser");
-    await userEvent.click(
-      c.getByRole("button", { name: "Filters for activity" }),
-    );
-    const filters = within(
-      within(document.body).getByRole("dialog", { name: "Activity filters" }),
-    );
+    await userEvent.click(c.getByRole("button", { name: "Search activity" }));
     await userEvent.type(
-      filters.getByRole("textbox", { name: "Search activity" }),
-      "no matching revision",
-    );
-    await userEvent.click(filters.getByRole("button", { name: /^Search$/ }));
-    await userEvent.click(
-      filters.getByRole("button", { name: "Close filters" }),
+      c.getByRole("textbox", { name: "Search activity" }),
+      "no matching revision{Enter}",
     );
     await expect(await c.findByText("No matching activity")).toBeVisible();
   }}

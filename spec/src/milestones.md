@@ -43649,6 +43649,106 @@ and named tests are checked by the progress gate.
         "note": "Final corrected ledger and repository-owned presentation pass. Visual baseline approval remains separate."
       }
     ]
+  },
+  {
+    "id": "E-UI-074",
+    "tasks": ["M11.4"],
+    "date": "2026-10-02",
+    "kind": "Projects tab-row search and trailing filters",
+    "revision": "Enclosing Jujutsu change yywsxtqq",
+    "requirements": ["JST-UI-015", "JST-WORK-008"],
+    "result": "pending",
+    "remaining": [
+      "Visual approval remains separate. Rust, root aggregates and built production browser fixtures are out of scope for source UI composition."
+    ],
+    "scope": "Owned Projects navigation composes leading search, horizontally scrolling tabs and trailing supported filters. Open search replaces tabs with a full-row borderless labelled input. Enter submits existing512-byte-bounded route query; Close clears query and restores tabs/opener focus. Hover, input text or keyboard focus exposes Close. Background reads and filter popovers retain unsent drafts. Header settings/search trigger removed; Reviews retains repository filter without unsupported search; Repositories has no empty additional-filter popup. Community tabs and user screenshots inspected first, Design Core InputGroup/Button/Tabs/ScrollArea source and official docs second.",
+    "files": [
+      "catalog/components/store-work/ProjectsActivity.stories.svelte",
+      "catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+      "catalog/components/store-work/ProjectsFilters.stories.svelte",
+      "catalog/components/store-work/projects-layout-play.ts",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsActions.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilterControls.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilters.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsNavigation.svelte"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;released Design Core0.2.0.",
+    "formats": "No storage/object/API contract changes. Existing Projects hash q and UTF-8 query limit retained.",
+    "next": "Apply standard Thread-reply sidebar to Agents and complete Community Focus structural sheets.",
+    "artifacts": "/tmp/jj-tab-search-*.log; /tmp/jj-tab-search.png.",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before2/2 new desktop/mobile top-tab search contracts fail against old header/popover controls."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "After1/2 passes; noninteractive form keyboard warning moved onto input. Close visibility assertion ran before Svelte DOM flush; retained assertion waits for visible state."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsLayouts.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "8/9 selected stories pass; existing close visibility assertion repaired as above. ProjectsLayouts filename is absent; actual ownership-layout story resides in ProjectsHub and is covered by full direct store-work family."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 desktop/mobile top-row search, border/ring, tabs restoration, focus and additional filter checks pass."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings;134 catalog modules."
+      },
+      {
+        "command": "CUA read-only live search Enter/reload/Close on HMR7460",
+        "result": "pass",
+        "failures": 0,
+        "note": "Recovery filters Projects and exact q restores on cold reload. Input computed border0px/shadownone. Close clears q, restores tabs and focuses Search projects. Screenshot /tmp/jj-tab-search.png."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work",
+        "result": "fail",
+        "failures": 2,
+        "note": "52/54 stories pass. Two Activity filter stories still asserted old section-header placement; updated their exact geometry parent to tab row."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 repaired direct Activity control stories pass; final combined direct suite follows."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Generic web protected-path map requires API chapter. Added existing q submission/clear/admission semantics to api.md; no API/schema change."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work",
+        "result": "pass",
+        "failures": 0,
+        "note": "54/54 directly affected Projects story/interaction/accessibility scenarios pass after placement updates."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:architecture; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Corrected mapped API gate9 protected files/3 chapters;5 validators/21chapters/147requirements;761production modules;120task bookkeeping. Changed files formatted."
+      }
+    ]
   }
 ]
 ```
