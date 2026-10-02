@@ -1,4 +1,5 @@
-import { collabRequestId } from "./collab-actions.svelte.js";
+import { refreshCommittedThreadAction } from "./thread-committed-refresh.js";
+import { createThreadCommands } from "./thread-commands.js";
 import { createCollabActions } from "./collab-actions.svelte.js";
 import { retainThreadHistory, replyContextLoaded } from "./thread-history.js";
 import { createThreadPost } from "./thread-post.svelte.js";
@@ -22,13 +23,22 @@ export function createThreadsController(options: {
   let events = $state<Model<"ThreadEventItemV1">[]>([]);
   let listCursor = $state<string | null>(null),
     eventCursor = $state<string | null>(null);
+  let directoryLoading = $state(false),
+    conversationLoading = $state(false);
+  let directoryError = $state("");
   let status = $state("idle"),
     error = $state("");
   const actions = createCollabActions({
     ...options,
     generation: () => generation,
     valid,
-    refresh,
+    refresh: (intent) =>
+      refreshCommittedThreadAction(
+        intent,
+        options.source(),
+        richReactions,
+        restore,
+      ),
     onCommitted: (id) => post.committed(id),
   });
   const richReactions = createMessageReactions({
@@ -54,6 +64,7 @@ export function createThreadsController(options: {
   }
   function clear(preservePending = false) {
     generation++;
+    directoryLoading = conversationLoading = false;
     actions.reset(preservePending);
     threads = [];
     detail = undefined;
@@ -61,13 +72,14 @@ export function createThreadsController(options: {
     listCursor = null;
     eventCursor = null;
     status = "idle";
-    error = "";
+    directoryError = error = "";
     richReactions.clear();
     if (!preservePending) post.clear();
   }
   async function list(more = false) {
     const transport = options.source(),
       ticket = generation;
+    directoryLoading = true;
     status = threads.length ? "refreshing" : "loading";
     try {
       const p = await transport.list(
@@ -78,17 +90,20 @@ export function createThreadsController(options: {
       threads = more ? [...threads, ...p.items.threads] : p.items.threads;
       listCursor = p.next_cursor;
       status = "ready";
-      error = "";
+      directoryError = "";
     } catch (e) {
       if (valid(ticket, transport)) {
         status = "failed";
-        error = String(e instanceof Error ? e.message : e);
+        directoryError = String(e instanceof Error ? e.message : e);
       }
+    } finally {
+      if (valid(ticket, transport)) directoryLoading = false;
     }
   }
   async function read(id: string, more = false) {
     const transport = options.source(),
       ticket = generation;
+    conversationLoading = true;
     status = detail ? "refreshing" : "loading";
     try {
       const retained = more ? [] : projection.messages.map((m) => m.id);
@@ -117,6 +132,8 @@ export function createThreadsController(options: {
         status = "failed";
         error = String(e instanceof Error ? e.message : e);
       }
+    } finally {
+      if (valid(ticket, transport)) conversationLoading = false;
     }
   }
   async function focusReply(id: string) {
@@ -150,91 +167,48 @@ export function createThreadsController(options: {
   }
   async function restore() {
     generation++;
+    directoryLoading = conversationLoading = false;
     if (detail?.thread.value.thread_id !== options.route().threadId) {
       detail = undefined;
       events = [];
       eventCursor = null;
     }
     const ticket = generation;
-    await list();
-    if (ticket !== generation) return;
     const id = options.route().threadId;
-    if (id) {
-      await read(id);
-      await focusReply(id);
-    }
+    if (options.source().cancelReads) await options.source().cancelReads!();
+    if (ticket !== generation) return;
+    await Promise.all([list(), id ? read(id) : Promise.resolve()]);
+    if (ticket === generation && id && !error) await focusReply(id);
   }
   async function open(id: string | null) {
     generation++;
+    directoryLoading = conversationLoading = false;
     detail = undefined;
     events = [];
     eventCursor = null;
     error = "";
     options.select(id);
+    const ticket = generation;
+    if (options.source().cancelReads) await options.source().cancelReads!();
+    if (ticket !== generation) return;
     if (id) {
       await read(id);
       await focusReply(id);
     } else await list();
   }
   async function refresh() {
+    await options.source().invalidate?.("all");
     richReactions.invalidate();
     await restore();
   }
-  async function send(body: string, parentId?: string, editId?: string) {
-    if (!detail) throw new ApiError("select_thread_first");
-    const existing = editId ? projection.targets[editId] : undefined;
-    const parent = parentId ? projection.targets[parentId] : undefined;
-    const old = editId
-      ? events.find((e) => e.message?.message_id === editId)?.message
-      : undefined;
-    if (parentId && parent?.type !== "human_message")
-      throw new ApiError("reply_parent_unavailable");
-    await actions.execute("threads", {
-      version: 1,
-      request_id: collabRequestId(),
-      command: {
-        type: "message",
-        thread_id: detail.thread.value.thread_id,
-        expected_thread: detail.thread.reference,
-        message_id: editId ?? collabRequestId(),
-        expected_revision:
-          existing?.type === "human_message" ? existing.revision : null,
-        reply_to:
-          old?.reply_to ??
-          (parent?.type === "human_message" ? parent.revision : null),
-        body,
-      },
-    });
-  }
-  async function rename(title: string) {
-    if (!detail) throw new ApiError("select_thread_first");
-    await actions.execute("threads", {
-      version: 1,
-      request_id: collabRequestId(),
-      command: {
-        type: "rename",
-        thread_id: detail.thread.value.thread_id,
-        expected: detail.thread.reference,
-        title: title.trim(),
-      },
-    });
-  }
-  async function lifecycle(action: Model<"ThreadActionV1">) {
-    if (!detail) throw new ApiError("select_thread_first");
-    await actions.execute("threads", {
-      version: 1,
-      request_id: collabRequestId(),
-      command: {
-        type: "lifecycle",
-        thread_id: detail.thread.value.thread_id,
-        expected: detail.thread.reference,
-        action,
-      },
-    });
-  }
+  const commands = createThreadCommands({
+    detail: () => detail,
+    projection: () => projection,
+    events: () => events,
+    execute: actions.execute,
+  });
   return {
-    rename,
-    lifecycle,
+    ...commands,
     get threads() {
       return threads;
     },
@@ -248,10 +222,20 @@ export function createThreadsController(options: {
       return projection;
     },
     get status() {
-      return status;
+      return directoryError || error || status === "failed"
+        ? "failed"
+        : directoryLoading || conversationLoading
+          ? detail || threads.length
+            ? "refreshing"
+            : "loading"
+          : status;
     },
     get error() {
-      return actions.errorKind === "reactions" ? error : actions.error || error;
+      return (
+        (actions.errorKind === "reactions" ? "" : actions.error) ||
+        error ||
+        directoryError
+      );
     },
     get busy() {
       return actions.busy;
@@ -281,7 +265,6 @@ export function createThreadsController(options: {
     open,
     refresh,
     create: post.create,
-    send,
     checkPending: async () => {
       await actions.checkPending();
       await post.resume();

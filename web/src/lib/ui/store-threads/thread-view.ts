@@ -45,3 +45,26 @@ export function threadDisabled(controller: StoreController) {
     )
   );
 }
+
+/** Index parent edges once, then visit each loaded descendant at most once. */
+export function threadDescendants(
+  messages: readonly CommunityMessageModel[],
+  root: string,
+) {
+  const children = new Map<string, string[]>();
+  for (const message of messages) {
+    if (!message.parentMessageId) continue;
+    const ids = children.get(message.parentMessageId) ?? [];
+    ids.push(message.id);
+    children.set(message.parentMessageId, ids);
+  }
+  const included = new Set<string>(),
+    pending = [root];
+  while (pending.length) {
+    const id = pending.pop()!;
+    if (included.has(id)) continue;
+    included.add(id);
+    pending.push(...(children.get(id) ?? []));
+  }
+  return messages.filter((message) => included.has(message.id));
+}

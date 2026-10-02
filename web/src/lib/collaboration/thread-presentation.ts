@@ -54,13 +54,18 @@ export function channelMessages(events: readonly Model<"ThreadEventItemV1">[]) {
         : {}),
     });
   }
-  for (const m of messages) {
-    const replies = messages.filter((r) => r.parentMessageId === m.id);
-    if (replies.length) {
-      m.replyCount = replies.length;
-      m.replyParticipantIds = [...new Set(replies.map((r) => r.authorId))];
-    }
+  const parents = new Map(messages.map((message) => [message.id, message]));
+  const participants = new Map<string, Set<string>>();
+  for (const reply of messages) {
+    const parent = reply.parentMessageId && parents.get(reply.parentMessageId);
+    if (!parent) continue;
+    parent.replyCount = (parent.replyCount ?? 0) + 1;
+    const actors = participants.get(parent.id) ?? new Set<string>();
+    actors.add(reply.authorId);
+    participants.set(parent.id, actors);
   }
+  for (const [id, actors] of participants)
+    parents.get(id)!.replyParticipantIds = [...actors];
   return { messages, members: [...members.values()], targets };
 }
 export function reactionModels(

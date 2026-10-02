@@ -1,5 +1,18 @@
 # Read APIs and browser
 
+Thread directory and selected conversation reads start concurrently through the
+repository/session/profile query cache. Navigation cancels obsolete reads;
+confirmed reactions invalidate and reload only their exact target, retaining
+other reactions, messages, reply context, emoji definitions and raster URLs.
+Unknown outcomes keep the original intent and receipt identity. Explicit refresh
+invalidates displayed collections; SSE still only offers refresh. Reaction reads
+are deduplicated across main/reply views and limited to four concurrent
+requests. Reply counts and descendants use indexed passes without changing
+loaded-history, exact revision, draft or scroll semantics. Unneeded JJ
+log/reference reads do not run when restoring Threads. Cached reads retain
+current repository-session isolation and cursor-reset behavior; no batch API or
+durable read index is added.
+
 Thread/Reaction HTTP reads share bounded validated immutable root data with
 native RPC. Directory/detail/history load Thread state; library/image reads load
 Reaction state; reaction queries load the exact target's owning selection too.

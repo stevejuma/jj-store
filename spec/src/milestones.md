@@ -124,12 +124,12 @@ shared-package release qualification does not alter those original Git gates.
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                                      | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery                               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                                 | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing                  | E-M14-008,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                                  | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities                        | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007 | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031                                                                                                                                    |
+| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007 | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032                                                                                                                          |
 | M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                                              | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                                            | E-M15-001,E-M15-005,E-M15-016                                                                                                                                                                                                                                                                                                                                  |
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
 | M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022                                                                                                                                                                                                                    |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031                                                                                                                                                                                                                                                  |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032                                                                                                                                                                                                                                        |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018                                                                                                                                                                              | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055                                                                                                                                                                                                                                                                                                                            |
@@ -25396,7 +25396,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
+        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -37330,7 +37330,7 @@ and named tests are checked by the progress gate.
         "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
         "result": "pass",
         "failures": 0,
-        "note": "Fresh served app on 7460 displays 87e1cd5d\u20268fb9 and 20d6c008\u2026ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
       },
       {
         "command": "pnpm check:progress",
@@ -40615,22 +40615,164 @@ and named tests are checked by the progress gate.
         "note": "Mapped canonical chapters and ledger checks pass; focused document formatting. /tmp/jj-collab-perf-{spec-first,spec-validate,progress,ledger-format}.log."
       },
       {
+        "command": "cargo test -p jj-store-service --test collab_pagination one_entry_cache_still_serves_queries_that_need_two_domain_roots --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before capacity correction: one retention slot with two initializing target domains returned Limit. /tmp/jj-collab-perf-capacity-before.log."
+      },
+      {
         "command": "cargo test -p jj-store-service --test collab_pagination one_entry_cache_still_serves_queries_that_need_two_domain_roots --locked; cargo test -p jj-store-service --test collab_pagination --locked; cargo check -p jj-store-service --lib --locked",
         "result": "pass",
         "failures": 0,
-        "note": "Additional capacity boundary regression fails1/1 before fix: one retention slot with two initializing target domains returned Limit. Extra roots now validate request-locally without entering a saturated cache, retaining existing per-pin/admission bounds. Final15/15 and service check pass. /tmp/jj-collab-perf-capacity-{before,after,check}.log. No format/transport changes."
+        "note": "Extra roots now validate request-locally without entering a saturated cache, retaining existing per-pin/admission bounds. Exact capacity regression and final15/15 pagination pass; service check passes. /tmp/jj-collab-perf-capacity-{after,check}.log. No format/transport changes."
       }
     ],
     "result": "pending",
     "remaining": [
-      "Frontend parallel loading, targeted refresh, query caching/cancellation, bounded reaction reads and indexed replies follow in a separate slice.",
+      "Frontend parallel loading, targeted refresh, query caching/cancellation, bounded reaction reads and indexed replies are implemented in E-M15-032; final live rebuilt-main UI timing awaits the shared development runtime choice.",
       "Clippy parent diagnostics remain explicit; package checks and focused behavior gates pass. No full-suite qualification or visual baseline approval."
     ],
     "scope": "Rust read materialization service plus direct HTTP/RPC and data-only WAL selections. The WAL selection readers and both transport consumers justify their focused direct-consumer checks. Root aggregates, full workspace/lifecycle suites, publication format changes and unrelated UI story suites are out of scope.",
     "formats": "Immutable source graphs and directory/exact-target indexes are shared by repository+epoch+exact RecordRef. Bounded single-flight OnceCells contain no sessions, credentials or viewer results. Agent/Review membership selections detach from coordinators and reattach the current reader. Complete snapshot envelopes/auth remain fresh. Existing signed cursor, WAL/native/HTTP/RPC formats unchanged.",
     "versions": "JJ0.45.1; Rust1.98.1; unchanged Cargo.lock, Tokio1 and native manifest5/collaborationV1.",
-    "next": "Retain cache correctness and narrow browser refresh/loading; measure rebuilt served app against baseline.",
+    "next": "Retain cache correctness and E-M15-032 frontend evidence; complete live rebuilt-main UI timing after resolving the shared runtime choice.",
     "artifacts": "/tmp/jj-collab-perf-*.log; /tmp/jj-thread-perf-server-main-{before,ready}.json; /tmp/jj-thread-perf-server-benchmark.json."
+  },
+  {
+    "id": "E-M15-032",
+    "tasks": ["M15", "M15.5"],
+    "date": "2026-10-02",
+    "kind": "parallel-thread-loading-and-targeted-reaction-refresh",
+    "revision": "enclosing Jujutsu change wtqyykvt",
+    "before": "Backend E-M15-031 is committed in main. Existing UI serializes directory before conversation, reloads the whole conversation/library after confirmed reactions and admits12 concurrent reaction reads. Live baseline before both slices: messages~2.3s, reactions~3.5s and explicit refresh~3.2s. Scope is existing Community-owned presentation with preserved request/receipt identities.",
+    "files": [
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/collaboration/thread-presentation.ts",
+      "web/src/lib/controller/bounded-reads.ts",
+      "web/src/lib/controller/collab-actions.svelte.ts",
+      "web/src/lib/controller/http-query.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/http-threads-data-source.ts",
+      "web/src/lib/controller/message-reactions.svelte.ts",
+      "web/src/lib/controller/production-repository-connect.ts",
+      "web/src/lib/controller/production-threads.svelte.ts",
+      "web/src/lib/controller/reaction-library.svelte.ts",
+      "web/src/lib/controller/thread-commands.ts",
+      "web/src/lib/controller/thread-committed-refresh.ts",
+      "web/src/lib/controller/thread-types.ts",
+      "web/src/lib/ui/store-threads/StoreThreadReplies.svelte",
+      "web/src/lib/ui/store-threads/thread-view.ts",
+      "web/tests/browser/thread-performance.spec.ts",
+      "web/tests/vite/reaction-library.test.ts",
+      "web/tests/vite/thread-indexes.test.ts",
+      "web/tests/vite/thread-performance.test.ts",
+      "web/tests/vite/thread-query-cache.test.ts"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/thread-performance.test.ts",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before implementation: directory-first waterfall, full reaction-triggered reload and12 simultaneous target reads. /tmp/jj-thread-perf-ui-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/thread-performance.test.ts -t 'parallel directory failure'",
+        "result": "fail",
+        "failures": 1,
+        "note": "Additional concurrency regression: successful conversation overwrote the directory failure. Separate directory/conversation loading and error state now preserves it. /tmp/jj-thread-perf-parallel-error-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/thread-performance.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/reaction-feedback.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "First implementation run:27 pass/1 failure; an extra queue microtask deferred preview admission and broke the existing disconnect test. Admitted reads now start synchronously. Exact three-file rerun28/28 passes; /tmp/jj-thread-perf-ui-{after,after2}.log. Assertions unchanged."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial helper integration exceeded300 counted lines: HTTP store305 and Threads controller309. Extracted owned query/command/refresh helpers. /tmp/jj-thread-perf-architecture.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/reaction-library.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Parallel preview cleanup regression exposed forEach passing extra arguments to revokeObjectURL; explicit lambda now calls it with the URL only. Initial1 pass/1 fail, followed by33/33 library/direct-controller qualification. /tmp/jj-thread-perf-library-{regression,qualified}.log. All settled previews finish before newly created URLs are revoked."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/reaction-library.test.ts web/tests/vite/thread-performance.test.ts web/tests/vite/thread-query-cache.test.ts web/tests/vite/thread-indexes.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/reaction-feedback.test.ts web/tests/vite/production-store-*.test.ts web/tests/vite/http-workspace-links.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final100/100 across15 files. Covers exact-target refresh and retained event/other-reaction identities, emoji URL reuse/cleanup, four-read bound, duplicate main/reply coalescing, obsolete queued reads, cancellation without cache admission, session isolation, parallel error preservation,1200 replies and5000-deep/cyclic descendant fixtures. /tmp/jj-thread-perf-final-unit2.log. Earlier incremental complete-impact runs28/63/64/58/33/99 pass at their stages; logs ui-after2/ui-final/query-consumers/ui-qualified/library-qualified/final-unit, not additional final tests."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "24/25 pass; unchanged NativeCopyReplyAndOwnAuthorEdit cannot find Copy comment ID submenu, parent-proven in E-M15-030. No story assertion/source changed. /tmp/jj-thread-perf-stories.log. This broader lane remains incomplete."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final Threads-only interaction/axe lane12/12 across3 files after directory-error and preview-cleanup fixes. /tmp/jj-thread-perf-final-thread-stories.log. Visual-pending, no baseline approval."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source: zero Svelte errors/warnings;129 catalog modules and724 architecture modules; owned Community independence passes. /tmp/jj-thread-perf-final-{web-check,catalog-check,architecture,ownership}.log. Earlier incremental checks also passed after extraction."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh main production bundle and asset manifest pass after final UI changes. Rebuilt at initial, revoke-cleanup, final and last stages; /tmp/jj-thread-perf-build*.log. Existing large-bundle/minifier advisories retained."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-thread-main-slices-playwright.config.mjs thread-performance.spec.ts reaction-metadata.spec.ts threads-alignment.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial cold run3 pass/1 failure: test used the wrong custom reaction accessible label. Inspected the actual label and corrected to1 reaction with Lapis; fixture preview lookup corrected to its actual definition. /tmp/jj-thread-perf-cold.log. No production behavior or assertion requirement weakened."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-thread-main-slices-playwright.config.mjs thread-performance.spec.ts reaction-metadata.spec.ts threads-alignment.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final cold built-bundle4/4: held directory does not block conversation, one confirmed reply reaction rereads exactly one target, no thread/library/asset reload or JJ refs/log fetch, main/reply unknown-action metadata retains original identity, settings/search/reply geometry and accessibility pass. /tmp/jj-thread-perf-cold-{final,last}.log. Isolated port7458 uses production static router and deterministic API fixtures; browser/service cleaned up. This is not live native timing."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/collaboration.md spec/src/milestones.md spec/src/ui.md web/src/lib/collaboration/thread-presentation.ts web/src/lib/controller/bounded-reads.ts web/src/lib/controller/collab-actions.svelte.ts web/src/lib/controller/http-query.ts web/src/lib/controller/http-store-data-source.ts web/src/lib/controller/http-threads-data-source.ts web/src/lib/controller/message-reactions.svelte.ts web/src/lib/controller/production-repository-connect.ts web/src/lib/controller/production-threads.svelte.ts web/src/lib/controller/reaction-library.svelte.ts web/src/lib/controller/thread-commands.ts web/src/lib/controller/thread-committed-refresh.ts web/src/lib/controller/thread-types.ts web/src/lib/ui/store-threads/StoreThreadReplies.svelte web/src/lib/ui/store-threads/thread-view.ts web/tests/browser/thread-performance.spec.ts web/tests/vite/reaction-library.test.ts web/tests/vite/thread-indexes.test.ts web/tests/vite/thread-performance.test.ts web/tests/vite/thread-query-cache.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final targeted24-file formatting passes: /tmp/jj-thread-perf-final-format.log. Earlier targeted formatting at each extraction/regression repair is recorded in /tmp/jj-thread-perf-{ui,ui-helper,ui-helper2,tests,extra,browser,library,revoke,error}-format.log. No whole-repository formatting."
+      },
+      {
+        "command": "JJ_THREAD_SLICE_EVIDENCE_PREFIX=/tmp/jj-thread-perf-final-main node /tmp/jj-thread-perf-restart.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Runtime guard stopped before stopping any process or changing config: another run redirected7460 to jj-store-appearance/web/dist. /tmp/jj-thread-perf-restart-final.log. Asked user whether to restore main on7460 or preserve Appearance and verify separately; answer pending. Later read-only inspection still shows Appearance web_root and live PID13961. Shared runtime preserved."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check spec/src/milestones.md spec/src/api.md spec/src/ui.md spec/src/collaboration.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical/protected-file mapping, five validators/21 chapters/146 requirements and120-task evidence checks pass. /tmp/jj-thread-perf-final-{spec-first,spec-validate,progress}.log. Final evidence annotation is consumed again with targeted formatting before commit; product lanes are not repeated."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Final live main UI timing and shared-port rebuild/restart await the pending runtime choice. The under1s complete browser data goal is not yet verified; only E-M15-031 endpoint medians and cold mocked UI acceptance are confirmed.",
+      "Known parent Copy comment ID story and Rust clippy diagnostics remain explicit. Wider M15 native/local/full-flow and visual baseline qualification remain separate."
+    ],
+    "scope": "UI controller/read-cache/lifecycle and direct presentation adapters, preserving existing Community-derived UI. Complete focused unit/Thread story/cold browser consumers qualify this slice. No shared test infrastructure, public wire/persistence format or package dependency changes. Root aggregates, unrelated Rust reruns, full Storybook and independent native/runner/registry/visual lanes are out of scope under targeted policy. Backend evidence is E-M15-031. No native fixture mutations, reset/reseed, package publication, installed CLI replacement or shared runtime overwrite.",
+    "formats": "Existing collaborationV1/native manifest5/WAL/receipt/cursor formats unchanged. Repository/session/profile query keys and targeted invalidation use the existing bounded-lifetime TanStack cache. Four concurrent reaction reads and four emoji preview reads; obsolete queued work skips execution. Unknown receipts preserve original identities; confirmed reaction refresh preserves conversation/event objects, other reactions and unchanged immutable raster URLs. Reply counts/descendants use indexed passes with loaded-order semantics.",
+    "versions": "JJ0.45.1; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Playwright1.63.0; existing TanStack query6.3.0 and Design Core/Mira installation unchanged. No manifest/lock/provenance changes.",
+    "next": "Resolve shared7460 runtime choice and measure complete live main/reply data loading against the original browser baseline. Keep M15/M15.5 In progress and all qualification gaps explicit.",
+    "artifacts": "/tmp/jj-thread-perf-*.log; isolated Playwright config /tmp/jj-thread-main-slices-playwright.config.mjs; temporary browser results /tmp/jj-thread-main-slices-browser-results. Backend live medians in /tmp/jj-thread-perf-server-benchmark.json. Existing persistent .local/dev-demo preserved."
   }
 ]
 ```

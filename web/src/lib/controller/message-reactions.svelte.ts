@@ -10,6 +10,8 @@ import type {
   ThreadRequest,
   ThreadTransport,
 } from "./thread-types.js";
+import { boundedReads } from "./bounded-reads.js";
+import { createReactionLibrary } from "./reaction-library.svelte.js";
 import { collabRequestId } from "./collab-actions.svelte.js";
 export function createMessageReactions(options: {
   source: () => ThreadTransport;
@@ -23,80 +25,31 @@ export function createMessageReactions(options: {
 }) {
   let reactions = $state<Record<string, ReactionItems>>({});
   let errors = $state<Record<string, string>>({});
-  let emojiDefinitions = $state<Model<"CustomEmojiVersionV1">[]>([]);
-  let emojiVersions = $state<Record<string, Model<"CollabObjectRef">>>({});
-  let emojiUrls = $state<Record<string, string>>({});
   let revision = $state(0),
     epoch = 0;
-  let emojiLoad: { ticket: number; promise: Promise<void> } | undefined;
-  let loaded = false;
+  const library = createReactionLibrary(options);
+  const queue = boundedReads(4);
   const loads = new Map<string, Promise<void>>();
-  const revoke = (urls: Record<string, string>) =>
-    Object.values(urls).forEach(URL.revokeObjectURL);
-  async function loadLibrary() {
-    const transport = options.source(),
-      ticket = options.generation(),
-      stamp = epoch;
-    const definitions: Model<"CustomEmojiVersionV1">[] = [],
-      versions: Record<string, Model<"CollabObjectRef">> = {},
-      urls: Record<string, string> = {};
-    let cursor: string | undefined,
-      pin: string | undefined,
-      admitted = false;
-    try {
-      for (let page = 0; page < 16; page++) {
-        const p = await transport.emojis(cursor);
-        if (!options.valid(ticket, transport) || stamp !== epoch) return;
-        if (p.items.type !== "emojis") throw new ApiError("invalid_emoji_page");
-        if (pin && pin !== pretty(p.snapshot))
-          throw new ApiError("emoji_snapshot_changed");
-        pin = pretty(p.snapshot);
-        definitions.push(...p.items.definitions);
-        Object.assign(versions, p.items.versions);
-        for (const d of p.items.definitions) {
-          const asset = await transport.asset(d.preview.id);
-          if (!options.valid(ticket, transport) || stamp !== epoch) return;
-          urls[d.emoji_id] = URL.createObjectURL(
-            new Blob([new Uint8Array(asset.bytes)], { type: asset.type }),
-          );
-        }
-        if (!p.next_cursor) {
-          revoke(emojiUrls);
-          emojiDefinitions = definitions;
-          emojiVersions = versions;
-          emojiUrls = urls;
-          admitted = true;
-          loaded = true;
-          return;
-        }
-        cursor = p.next_cursor;
-      }
-      throw new ApiError("emoji_library_limit");
-    } finally {
-      if (!admitted) revoke(urls);
-    }
-  }
-  function loadEmojis() {
-    if (loaded) return Promise.resolve();
-    const ticket = options.generation();
-    if (emojiLoad?.ticket === ticket) return emojiLoad.promise;
-    const promise = loadLibrary().finally(() => {
-      if (emojiLoad?.promise === promise) emojiLoad = undefined;
-    });
-    emojiLoad = { ticket, promise };
-    return promise;
-  }
-  async function readReactions(target: ReactionTarget) {
-    const key = targetKey(target),
-      transport = options.source(),
-      ticket = options.generation(),
-      stamp = epoch;
+  const targetEpoch = new Map<string, number>();
+  async function readReactions(
+    target: ReactionTarget,
+    transport: ThreadTransport,
+    ticket: number,
+    stamp: number,
+    targetStamp: number,
+  ) {
+    const key = targetKey(target);
+    const valid = () =>
+      options.valid(ticket, transport) &&
+      stamp === epoch &&
+      targetStamp === (targetEpoch.get(key) ?? 0);
+    if (!valid()) return;
     let cursor: string | undefined,
       combined: ReactionItems | undefined,
       pin: string | undefined;
     for (let page = 0; page < 32; page++) {
       const p = await transport.reactions(target, cursor);
-      if (!options.valid(ticket, transport) || stamp !== epoch) return;
+      if (!valid()) return;
       if (p.items.type !== "reactions" || targetKey(p.items.target) !== key)
         throw new ApiError("invalid_reaction_page");
       if (pin && pin !== pretty(p.snapshot))
@@ -116,9 +69,19 @@ export function createMessageReactions(options: {
   function loadReactions(target: ReactionTarget, force = false) {
     const key = targetKey(target);
     if (reactions[key] && !force) return Promise.resolve();
-    const loadKey = `${epoch}:${options.generation()}:${key}`;
+    if (force) {
+      targetEpoch.set(key, (targetEpoch.get(key) ?? 0) + 1);
+      errors = { ...errors, [key]: "" };
+    }
+    const ticket = options.generation(),
+      stamp = epoch,
+      targetStamp = targetEpoch.get(key) ?? 0,
+      transport = options.source();
+    const loadKey = `${epoch}:${ticket}:${key}:${targetStamp}`;
     if (loads.has(loadKey)) return loads.get(loadKey)!;
-    const promise = readReactions(target).finally(() => {
+    const promise = queue(() =>
+      readReactions(target, transport, ticket, stamp, targetStamp),
+    ).finally(() => {
       loads.delete(loadKey);
     });
     loads.set(loadKey, promise);
@@ -127,13 +90,13 @@ export function createMessageReactions(options: {
   const custom = (
     value: Extract<Model<"ReactionValueV1">, { type: "custom" }>,
   ) => {
-    const d = emojiDefinitions.find(
+    const d = library.definitions.find(
       (d) =>
         d.emoji_id === value.emoji_id &&
-        emojiVersions[d.emoji_id]?.id === value.version.id,
+        library.versions[d.emoji_id]?.id === value.version.id,
     );
     return d
-      ? { emoji: d.shortcode, url: emojiUrls[d.emoji_id], label: d.label }
+      ? { emoji: d.shortcode, url: library.urls[d.emoji_id], label: d.label }
       : { emoji: ":custom:", label: "Retained custom reaction" };
   };
   const glyph = (v: Model<"ReactionValueV1">) =>
@@ -160,10 +123,10 @@ export function createMessageReactions(options: {
     if (actor?.conflict)
       throw new ApiError("reaction_conflict_requires_resolution");
     const d = customEmoji
-      ? emojiDefinitions.find(
+      ? library.definitions.find(
           (d) =>
             d.shortcode === customEmoji.shortcode &&
-            emojiUrls[d.emoji_id] === customEmoji.url &&
+            library.urls[d.emoji_id] === customEmoji.url &&
             !d.retired,
         )
       : undefined;
@@ -180,7 +143,7 @@ export function createMessageReactions(options: {
         ? {
             type: "custom",
             emoji_id: d.emoji_id,
-            version: emojiVersions[d.emoji_id]!,
+            version: library.versions[d.emoji_id]!,
           }
         : emoji === "👍"
           ? { type: "like" }
@@ -196,7 +159,6 @@ export function createMessageReactions(options: {
       request_id: collabRequestId(),
       command,
     });
-    if (options.valid(ticket, transport)) await loadReactions(target, true);
   }
   async function toggle(...args: Parameters<typeof performToggle>) {
     const key = targetKey(args[0]),
@@ -220,23 +182,15 @@ export function createMessageReactions(options: {
     revision++;
     reactions = {};
     errors = {};
-    loaded = false;
-    emojiLoad = undefined;
+    targetEpoch.clear();
+    library.invalidate();
   }
   return {
     get revision() {
       return revision;
     },
     get emojis() {
-      return emojiDefinitions
-        .filter((d) => !d.retired && emojiUrls[d.emoji_id])
-        .map((d) => ({
-          shortcode: d.shortcode,
-          url: emojiUrls[d.emoji_id]!,
-          name: d.label,
-          ownerPubkey: d.actor,
-          owned: d.actor === options.principal(),
-        }));
+      return library.emojis;
     },
     getError(target: ReactionTarget) {
       return errors[targetKey(target)] ?? "";
@@ -248,16 +202,14 @@ export function createMessageReactions(options: {
       const items = reactions[targetKey(target)];
       return items ? reactionModels(items, custom) : [];
     },
-    loadEmojis,
+    loadEmojis: library.load,
+    refresh: (target: ReactionTarget) => loadReactions(target, true),
     loadReactions,
     toggle,
     invalidate,
     clear() {
       invalidate();
-      emojiDefinitions = [];
-      emojiVersions = {};
-      revoke(emojiUrls);
-      emojiUrls = {};
+      library.clear();
     },
   };
 }

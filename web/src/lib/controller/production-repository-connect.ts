@@ -86,7 +86,10 @@ export async function connectRepositorySource(
     await options.connected();
     if (options.history.route.page === "projects")
       await options.projects.restore();
-    else if (options.history.route.snapshotOperationId)
+    else if (
+      options.history.route.page !== "threads" &&
+      options.history.route.snapshotOperationId
+    )
       await options.reader.restorePage();
   } catch (cause) {
     if (ticket !== options.version()) return;

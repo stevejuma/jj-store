@@ -1,5 +1,18 @@
 # Agent activity, repository reviews, Threads and Reactions
 
+Thread directory and selected conversation reads start concurrently through the
+repository/session/profile query cache. Navigation cancels obsolete reads;
+confirmed reactions invalidate and reload only their exact target, retaining
+other reactions, messages, reply context, emoji definitions and raster URLs.
+Unknown outcomes keep the original intent and receipt identity. Explicit refresh
+invalidates displayed collections; SSE still only offers refresh. Reaction reads
+are deduplicated across main/reply views and limited to four concurrent
+requests. Reply counts and descendants use indexed passes without changing
+loaded-history, exact revision, draft or scroll semantics. Unneeded JJ
+log/reference reads do not run when restoring Threads. Cached reads retain
+current repository-session isolation and cursor-reset behavior; no batch API or
+durable read index is added.
+
 Collaboration reads share validated immutable materializations keyed by
 repository, authority epoch and exact domain root references. Each request
 independently captures its complete manifest envelope and rechecks current
@@ -10,7 +23,10 @@ dependencies still undergo the provider's complete closure validation. Directory
 metadata and exact-target slot indexes are derived once per root and never
 become authority. Shared entries contain no request session, credentials or
 viewer-filtered results, coalesce concurrent loads and obey fixed expiry, count,
-object and encoded-byte bounds. Failed validation is never admitted;
+object and encoded-byte bounds. When all retention slots are initializing, extra
+query roots are validated request-locally under the existing per-pin and
+concurrency budgets without entering the cache. Small retention capacity cannot
+disable a valid query. Failed validation is never admitted;
 expiry/eviction/restart rematerialize and validate from selected immutable
 records. Signed cursor pins preserve their original complete snapshots
 independently of cache eviction.

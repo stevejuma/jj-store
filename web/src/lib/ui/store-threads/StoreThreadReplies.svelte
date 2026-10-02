@@ -6,7 +6,7 @@
   } from "../../community/workspace-model.js";
   import StoreMessageReactions from "./StoreMessageReactions.svelte";
   import type { ThreadsController } from "../../controller/thread-types.js";
-  import { replyRoot } from "./thread-view.js";
+  import { replyRoot, threadDescendants } from "./thread-view.js";
   let {
     threads,
     rootId,
@@ -24,17 +24,12 @@
     replyRoot(threads.projection.messages, rootId),
   );
   const messages = $derived.by(() => {
-    const all = threads.projection.messages,
-      ids = new Set([conversationRoot]);
-    for (let i = 0; i < all.length; i++)
-      for (const m of all)
-        if (m.parentMessageId && ids.has(m.parentMessageId)) ids.add(m.id);
-    return all
-      .filter((m) => ids.has(m.id))
-      .map((m): CommunityMessageModel => ({
+    return threadDescendants(threads.projection.messages, conversationRoot).map(
+      (m): CommunityMessageModel => ({
         ...m,
         reactions: threads.reactionModels(threads.projection.targets[m.id]!),
-      }));
+      }),
+    );
   });
 </script>
 

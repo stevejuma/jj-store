@@ -5,7 +5,7 @@ import type {
   ThreadTransport,
 } from "./thread-types.js";
 export const collabRequestId = () => crypto.randomUUID().replaceAll("-", "");
-type Intent = {
+export type CollabIntent = {
   kind: "threads" | "reactions";
   request: ThreadRequest | ReactionRequest;
 };
@@ -23,21 +23,21 @@ export function createCollabActions(options: {
   principal: () => string;
   generation: () => number;
   valid: (ticket: number, transport: ThreadTransport) => boolean;
-  refresh: () => Promise<void>;
+  refresh: (intent: CollabIntent) => Promise<void>;
   onCommitted?: (id: string) => void;
 }) {
   const identity = () => `${options.repository()}:${options.principal()}`;
   let epoch = 0;
-  let intents = $state<Record<string, Intent>>({});
+  let intents = $state<Record<string, CollabIntent>>({});
   let active = $state<Record<string, boolean>>({});
   let errors = $state<Record<string, string>>({});
-  let errorKinds = $state<Record<string, Intent["kind"]>>({});
+  let errorKinds = $state<Record<string, CollabIntent["kind"]>>({});
   const remove = (repo: string) => {
     const next = { ...intents };
     delete next[repo];
     intents = next;
   };
-  async function run(intent: Intent) {
+  async function run(intent: CollabIntent) {
     const repo = identity(),
       transport = options.source(),
       ticket = options.generation(),
@@ -56,7 +56,7 @@ export function createCollabActions(options: {
         throw new ApiError("receipt_identity_mismatch");
       remove(repo);
       options.onCommitted?.(intent.request.request_id);
-      if (options.valid(ticket, transport)) await options.refresh();
+      if (options.valid(ticket, transport)) await options.refresh(intent);
     } catch (cause) {
       if (stamp !== epoch) return;
       if (cause instanceof ApiError && rejected.has(cause.code)) remove(repo);
@@ -101,7 +101,10 @@ export function createCollabActions(options: {
           : "")
       );
     },
-    async execute(kind: Intent["kind"], request: Intent["request"]) {
+    async execute(
+      kind: CollabIntent["kind"],
+      request: CollabIntent["request"],
+    ) {
       if (active[identity()] || intents[identity()])
         throw new ApiError("check_pending_action_first");
       await run({ kind, request });
@@ -126,7 +129,7 @@ export function createCollabActions(options: {
           remove(repo);
           options.onCommitted?.(intent.request.request_id);
           errors = { ...errors, [repo]: "" };
-          if (options.valid(ticket, transport)) await options.refresh();
+          if (options.valid(ticket, transport)) await options.refresh(intent);
         } else
           errors = {
             ...errors,

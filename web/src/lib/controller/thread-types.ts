@@ -17,6 +17,11 @@ export type ReactionItems = Extract<
   { type: "reactions" }
 >;
 export interface ThreadTransport {
+  invalidate?(
+    scope: "all" | "threads" | "reactions" | "emojis",
+    target?: ReactionTarget,
+  ): Promise<void>;
+  cancelReads?(): Promise<void>;
   list(cursor?: string): Promise<Model<"CollabPage">>;
   thread(id: string): Promise<Model<"ThreadDetailV1">>;
   events(id: string, cursor?: string): Promise<Model<"CollabPage">>;

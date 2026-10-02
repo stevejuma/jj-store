@@ -1,3 +1,4 @@
+import { createHttpQuery } from "./http-query.js";
 import { HttpRepositoryTransports } from "./http-repository-transports.js";
 import type { QueryClient } from "@tanstack/svelte-query";
 import {
@@ -34,6 +35,7 @@ export class HttpStoreDataSource
   readonly work: HttpWorkDataSource;
   readonly threads: HttpThreadsDataSource;
   #active = true;
+  readonly #query: ReturnType<typeof createHttpQuery>;
 
   constructor(
     readonly repository: string,
@@ -47,7 +49,13 @@ export class HttpStoreDataSource
     super(client);
     this.#client = client;
     this.#scope = { repository, session, profile: this.profile };
-    this.threads = new HttpThreadsDataSource(client);
+    this.#query = createHttpQuery(queryClient, this.#scope, () => this.#active);
+    this.threads = new HttpThreadsDataSource(
+      client,
+      queryClient,
+      this.#scope,
+      () => this.#active,
+    );
     this.work = new HttpWorkDataSource(this.#client, this);
     this.#writes = new HttpStoreWriteDataSource(this.#client);
     this.#collaboration = new HttpCollaborationDataSource(
@@ -56,22 +64,6 @@ export class HttpStoreDataSource
       this.#scope,
       () => this.#active,
     );
-  }
-
-  #query<T>(
-    kind: string,
-    snapshot: string | null,
-    query: Record<string, string | number | bigint | boolean | undefined>,
-    read: (signal: AbortSignal) => Promise<T>,
-  ): Promise<T> {
-    return this.queryClient.fetchQuery({
-      queryKey: storeQueryKeys.resource(this.#scope, kind, snapshot, query),
-      queryFn: async ({ signal }) => {
-        const value = await read(signal);
-        if (!this.#active) throw new DOMException("Closed", "AbortError");
-        return value;
-      },
-    });
   }
 
   capabilities() {
