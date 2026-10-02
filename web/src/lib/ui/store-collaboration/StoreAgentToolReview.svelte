@@ -224,13 +224,13 @@
     transition:
       opacity 120ms ease,
       transform 120ms ease;
-    transform: translateY(calc(-100% + 0.15rem));
+    transform: none;
   }
 
   .store-agent-tool-review__actions[data-visible] {
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(calc(-100% + 0.3rem));
+    transform: none;
   }
 
   .store-agent-tool-review__count {

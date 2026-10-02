@@ -1090,9 +1090,12 @@ creation actor and last accepted event date. Their list fields spread across the
 row; narrower panels retain the title, identity and count, and cards retain the
 complete metadata. Both directories provide the existing list/card controls.
 
-Project listing avatars occupy one aligned metadata column across rows,
-independent of repository/task counts and relative-date text. Narrow lists keep
-that avatar column while wrapping the project copy and counts without overflow.
+Project listing titles, descriptions, repository counts, task counts and avatars
+occupy aligned columns across rows. Card/list controls retain exactly one
+selected layout; selecting the active layout cannot clear it. Avatars occupy one
+aligned metadata column across rows, independent of repository/task counts and
+relative-date text. Narrow lists keep that avatar column while wrapping the
+project copy and counts without overflow.
 
 Landing tabs, project cards, repository/review rows, task rows and task detail
 sections copy Community Projects composition and styling, adapting native fields
@@ -1123,9 +1126,12 @@ start with Activity, followed by Projects, Tasks, Reviews and Repositories. Only
 recorded Git/JJ code identities remain inline on agent session rows and headers.
 Session, root, snapshot, author and comment identities belong in a
 keyboard-accessible shadcn kebab menu that copies complete native values without
-changing selection. Tool hover actions include the same menu for call, snapshot,
-turn, sanitized input/output and recorded paths. Open portaled menus keep their
-hover toolbar visible; touch exposes the actions without hover.
+changing selection. Agent session transcript/tool counts and duration align at
+the right of the bottom row, with duration last. Tool hover actions stay within
+their row bounds so narrow or clipped transcript containers retain clickable
+controls. They include the same menu for call, snapshot, turn, sanitized
+input/output and recorded paths. Open portaled menus keep their hover toolbar
+visible; touch exposes the actions without hover.
 
 Native review and task bubbles use Community hover/focus Reply and message
 menus. Native record menus group readable copy values in one keyboard-accessible

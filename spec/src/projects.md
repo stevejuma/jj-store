@@ -151,6 +151,10 @@ Projects navigation uses Community's FolderGit2 icon, restores the section gap
 above collapsible groups, and places each project expand/collapse control at the
 trailing edge of its row without reserving space for an absent row menu.
 
+Directory card/list controls MUST retain exactly one selected layout for pointer
+and keyboard selection. Project list titles, descriptions, counts and avatars
+align in stable columns, including wrapped narrow lists.
+
 Directory card/list layout and collapsible Mine/Other groups copy Community,
 including the inset content spacing beneath collection headings. Project titles
 and descriptions MUST NOT be repeated as unstyled text above the collections.

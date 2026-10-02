@@ -1150,6 +1150,11 @@ entity IDs. Status and retry share that identity, even after refresh. Linked
 repository navigation uses the normal target session and token checks, never the
 home metadata grant.
 
+Project list rows reserve aligned title, description, count, creator-avatar and
+date columns. Card/list selection always retains one layout. Agent row metric
+placement and tool toolbar bounds change presentation only; native records,
+snapshots and clipboard values retain their existing contracts.
+
 Project list rows reserve aligned creator-avatar and date columns regardless of
 count or date-text length, including narrow lists. They retain the existing
 native actor, count and timestamp values.

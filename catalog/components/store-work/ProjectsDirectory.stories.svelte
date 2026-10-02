@@ -12,7 +12,7 @@
 </script>
 
 <Story
-  name="Project avatars align across rows"
+  name="Project columns align across rows"
   args={{ variedProjectMetadata: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -22,6 +22,16 @@
       list.style.width = `${width}px`;
       await waitFor(() => {
         const rows = [...list.querySelectorAll<HTMLElement>("article")];
+        for (const selector of [
+          ".community-projects__project-description",
+          ".community-projects__project-repositories",
+          ".community-projects__project-counts",
+        ]) {
+          const lefts = rows.map(
+            (row) => row.querySelector(selector)!.getBoundingClientRect().left,
+          );
+          expect(Math.max(...lefts) - Math.min(...lefts)).toBeLessThan(1);
+        }
         const avatars = rows.map(
           (row) =>
             row

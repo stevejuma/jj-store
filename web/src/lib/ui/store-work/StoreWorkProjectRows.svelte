@@ -46,9 +46,12 @@
         >
         <span class="community-projects__card-copy"
           ><span
-            ><strong>{project.title}</strong>{project.excerpt ??
-              project.body ??
-              "No project description"}</span
+            ><strong>{project.title}</strong><span
+              class="community-projects__project-description"
+              >{project.excerpt ??
+                project.body ??
+                "No project description"}</span
+            ></span
           ></span
         >
         <span class="community-projects__card-meta">

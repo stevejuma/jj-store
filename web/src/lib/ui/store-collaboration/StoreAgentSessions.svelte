@@ -143,27 +143,29 @@
                             >Started <CommunityRelativeTime
                               timestamp={timing.startedAt}
                             /></span
-                          ><CommunityChip
-                            class="store-collaboration__agent-duration"
-                            variant="subtle"
-                            size="compact"
-                            ariaLabel={`Session duration ${timing.durationLabel}`}
-                            title={`Session duration ${timing.durationLabel}`}
-                            >{timing.durationLabel}</CommunityChip
-                          >{/if}<span
-                          class="store-collaboration__metric"
-                          aria-label={`${session.transcript_count} transcripts`}
-                          title={`${session.transcript_count} transcripts`}
-                          ><MessagesSquareIcon
-                            aria-hidden="true"
-                          />{session.transcript_count}</span
-                        ><span
-                          class="store-collaboration__metric"
-                          aria-label={`${session.tool_count} tools`}
-                          title={`${session.tool_count} tools`}
-                          ><WrenchIcon
-                            aria-hidden="true"
-                          />{session.tool_count}</span
+                          >{/if}<span class="store-collaboration__agent-metrics"
+                          ><span
+                            class="store-collaboration__metric"
+                            aria-label={`${session.transcript_count} transcripts`}
+                            title={`${session.transcript_count} transcripts`}
+                            ><MessagesSquareIcon
+                              aria-hidden="true"
+                            />{session.transcript_count}</span
+                          ><span
+                            class="store-collaboration__metric"
+                            aria-label={`${session.tool_count} tools`}
+                            title={`${session.tool_count} tools`}
+                            ><WrenchIcon
+                              aria-hidden="true"
+                            />{session.tool_count}</span
+                          >{#if timing}<CommunityChip
+                              class="store-collaboration__agent-duration"
+                              variant="subtle"
+                              size="compact"
+                              ariaLabel={`Session duration ${timing.durationLabel}`}
+                              title={`Session duration ${timing.durationLabel}`}
+                              >{timing.durationLabel}</CommunityChip
+                            >{/if}</span
                         ></span
                       >
                     </span>

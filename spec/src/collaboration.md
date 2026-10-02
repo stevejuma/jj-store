@@ -77,6 +77,11 @@ views and supports exact discussions on immutable code, diff and agent
 artifacts. Review task context is explicit and version-bound; replaying or
 reading a comment never dispatches an agent.
 
+Agent session list metrics align at the trailing end of the second row in
+transcript-count, tool-count, duration order. Tool action toolbars remain inside
+their row bounds and accessible by pointer, keyboard and touch; open menus
+retain visibility.
+
 ## Thread presentation alignment
 
 Thread settings and replies occupy the shell's far-right sidebar, with the same

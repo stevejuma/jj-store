@@ -23,6 +23,13 @@
     const c = within(canvasElement),
       select = c.getByRole("button", { name: /Open Codex ended/ });
     const card = select.closest(".store-collaboration__row")!;
+    const duration = card.querySelector(
+      ".store-collaboration__agent-duration",
+    )!;
+    await expect(
+      card.getBoundingClientRect().right -
+        duration.getBoundingClientRect().right,
+    ).toBeLessThan(18);
     const write = fn(),
       descriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
     Object.defineProperty(navigator, "clipboard", {
@@ -62,6 +69,14 @@
             name: "Actions for apply_patch tool call",
           }),
         ).toHaveAttribute("data-visible"),
+      );
+      const actions = within(tool).getByRole("group", {
+        name: "Actions for apply_patch tool call",
+      });
+      await waitFor(() =>
+        expect(actions.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+          tool.getBoundingClientRect().top,
+        ),
       );
       await userEvent.click(
         within(tool).getByRole("button", {

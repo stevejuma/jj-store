@@ -312,3 +312,21 @@
 .store-collaboration__empty {
   padding-block: 2rem;
 }
+
+.store-collaboration__row[data-kind="agent"] {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.store-collaboration__row[data-kind="agent"] .store-collaboration__row-actions {
+  position: absolute;
+  inset-block-start: 0.7rem;
+  inset-inline-end: 0.75rem;
+}
+.store-collaboration__row[data-kind="agent"] .store-collaboration__row-title {
+  padding-inline-end: 4rem;
+}
+.store-collaboration__agent-metrics {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}

@@ -201,8 +201,18 @@
 }
 .community-projects__project-row .community-projects__card-meta {
   display: grid;
-  grid-template-columns: auto auto 1.5rem 6.5rem;
+  grid-template-columns: 2rem 8.5rem 1.5rem 6.5rem;
   flex: none;
+}
+.community-projects__project-row .community-projects__card-copy > span {
+  display: grid;
+  grid-template-columns: minmax(0, 35%) minmax(0, 1fr);
+  gap: 1rem;
+}
+.community-projects__project-row .community-projects__card-copy strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .community-projects__project-repositories {
   grid-column: 1;
@@ -227,7 +237,7 @@
     flex-basis: calc(100% - 2rem);
   }
   .community-projects__project-row .community-projects__card-meta {
-    grid-template-columns: auto auto 1.5rem;
+    grid-template-columns: 2rem 8.5rem 1.5rem;
   }
   .community-projects__project-row .community-projects__card-meta > time {
     display: none;

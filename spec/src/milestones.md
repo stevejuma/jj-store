@@ -43276,6 +43276,96 @@ and named tests are checked by the progress gate.
         "note": "Consuming governance/format lanes completed before commit:14 protected files/4 chapters;5 validators/21 chapters/147 requirements;120 tasks;all changed files formatted. Evidence bookkeeping rerun after correction. /tmp/jj-project-repository-{spec-first,spec-validate,progress-final,format-check}.log."
       }
     ]
+  },
+  {
+    "id": "E-UI-071",
+    "tasks": ["M11.4", "M9.5"],
+    "date": "2026-10-02",
+    "kind": "focused mandatory layout selection and aligned project/agent rows",
+    "revision": "Enclosing Jujutsu change nyovpkun",
+    "requirements": [
+      "JST-UI-015",
+      "JST-UI-006",
+      "JST-COLLAB-005",
+      "JST-WORK-008",
+      "JST-API-005"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. Root aggregate, Rust and unrelated UI lanes are out of scope under targeted verification policy."
+    ],
+    "scope": "UI-only existing presentation. Shared card/list function binding rejects empty selection. Stable project copy/count columns preserve avatar and responsive alignment. Agent transcript/tool counts and duration align at the trailing second row with duration last. Tool actions remain within the tool row for visibility and continuous pointer access. Community and public Design Core sources inspected. No backend build, restart, fixture writes, main landing, release or publication.",
+    "versions": "Node26.9.0;pnpm10.32.1;JJ0.45.1;existing Svelte5.57.1,Storybook10.5.7,Vitest4.1.11 retained.",
+    "formats": "No API, native record, permission, route or persistence format changes.",
+    "next": "Continue authorized search, structural focus sheet and scoped Projects Agents tabs.",
+    "artifacts": "/tmp/jj-layout-toggle-{before,after}.log; /tmp/jj-row-*.log",
+    "files": [
+      "catalog/components/store-application/NativeAgentMenus.stories.svelte",
+      "catalog/components/store-work/LayoutControls.stories.svelte",
+      "catalog/components/store-work/ProjectsDirectory.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/store-collaboration.css",
+      "web/src/lib/ui/store-work/StoreWorkLayoutControls.svelte",
+      "web/src/lib/ui/store-work/StoreWorkProjectRows.svelte",
+      "web/src/lib/ui/store-work/community-work-rows.css"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/LayoutControls.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before:2/2 fail when selected layout clears. Function binding fixes pointer checks; initial keyboard token {Space} was corrected to the actual space key without weakening selection assertions."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before:project aligned description span absent and agent duration is not trailing.4 other stories pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/LayoutControls.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "8/8 focused stories including repeated pointer/keyboard selection, responsive column coordinates and clickable tool copy menu."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "59/60 pass. TaskScroll returning-scroll assertion sampled0 instead of400 in this batch; exact unmodified TaskScroll family rerun passes4/4. No assertion or product change was needed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 unmodified TaskScroll stories pass in fresh process, including retained400px scroll and draft."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings;749 production modules;133 catalog modules;ownership validator passes."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped API chapter initially missing. Added presentation-only contract note; final gate rerun follows."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --write changed source, stories and canonical chapters",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final mapped gate10 protected files/5 chapters;5 validators/21 chapters/147 requirements;120 tasks;changed source/stories/spec formatted. All reads/checks and exact focused results recorded; broader lanes are out of scope."
+      }
+    ]
   }
 ]
 ```
