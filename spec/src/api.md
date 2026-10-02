@@ -1338,8 +1338,10 @@ The response composes existing separately authorized session/transcript reads
 and reaction/tool-review commands without switching the global code connection.
 
 The Projects tab-row search submits the existing `q` filter explicitly on Enter.
-Close clears that filter through the same route action. The 512 UTF-8 byte
-bound, independent home/repository admission and unsupported Review text-search
+Close clears that filter through the same route action and restores the tabs.
+Clear removes draft and submitted text through the existing filter action while
+retaining the open input in its current scope. The 512 UTF-8 byte bound,
+independent home/repository admission and unsupported Review text-search
 capability remain unchanged; displaying search controls grants no extra access.
 
 Focus/Split reply presentation preserves the existing native conversation, reply

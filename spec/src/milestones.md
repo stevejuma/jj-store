@@ -44295,6 +44295,194 @@ and named tests are checked by the progress gate.
         "note": "CLI rejected unsupported --check flag before execution. Native targeted diff was reviewed separately; the seven-file Prettier check is the passing formatting gate. No source or repository-state mutation."
       }
     ]
+  },
+  {
+    "id": "E-UI-079",
+    "tasks": ["M11.4"],
+    "date": "2026-10-02",
+    "kind": "Stable circular search controls and a single Activity filter",
+    "revision": "Enclosing Jujutsu change pynomxls",
+    "requirements": ["JST-UI-015", "JST-WORK-008", "JST-UI-001"],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. App root aggregate lanes, Rust builds/tests, production built-CSP qualification and package publication are out of scope.",
+      "Design Core broad qualification is tracked independently in its verification chapter; cold AI preview readiness and visual cache permissions required additional investigation. No release or visual approval is claimed."
+    ],
+    "scope": "Reused appearance workspace. Inspected Community Projects and Design Core InputGroup before editing. Leading Search/Close action remains mounted at the same position and 32px size across expansion, retaining its original outline and subtle background. Search changes to Close on hover/keyboard focus; the trailing 24px circular Clear exists only for nonempty input, clears both draft and submitted query, and keeps the input open/focused. Enter, Escape, route restoration and filter-popup draft retention remain. Activity combines scope and native category filters in one top-row popover. Source-first InputGroup size forwarding repair in sibling Design Core; consumed through the already governed local pnpm hook, with registry manifest/lockfile preserved. Restarted only owned Vite after package refresh; backend PID91193 and fixture data retained. No main landing, Rust restart, reseed or live mutation. Broader story execution exposed shared browser storage: a prior outer details rail made agent selection constrain and occlude the main region. ProjectsHubFixture now uses fresh per-instance memory storage by default and retains explicitly supplied storage. Original agent assertions are restored; no waits, assertions or production shell policy changed.",
+    "files": [
+      "web/src/lib/ui/store-work/StoreProjectsNavigation.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilterControls.svelte",
+      "web/src/lib/ui/store-work/StoreActivityFilter.svelte",
+      "catalog/components/store-work/ProjectsFilters.stories.svelte",
+      "catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;pnpm10.32.1;local Design Core0.1.2 sibling source;portable app dependency range remains^0.2.0.",
+    "formats": "Presentation-only. Existing bounded q and activity filters; no API/schema, authorization, native identity or persistence-format changes.",
+    "artifacts": "/tmp/jj-search-controls-*.log; /tmp/dc-input-group-*.log; /tmp/design-core-input-group-fix.tgz",
+    "next": "Retain visual-pending; follow source package qualification separately. Next requested slice: agent row spacing and Focus sheets.",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Desktop/mobile circle regression:38px width vs36px height. /tmp/jj-search-controls-before-tests.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (initial after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Geometry corrected; newly authored keyboard assertion used Shift-Tab despite leading addon following input in DOM. Corrected to Tab, then reverted to Shift-Tab when leading button became a persistent header sibling before input. No production failure masked. /tmp/jj-search-controls-after-tests.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (after keyboard correction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 before additional user requests: hover glyphs, keyboard focus, borderless row, drafts, submitted and draft Clear, Close and Escape. /tmp/jj-search-controls-after-keyboard.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (position before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "4px horizontal displacement on expansion; exact x/y/width/height regression added. /tmp/jj-search-controls-position-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte (position after and restored outline)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Each2/2: stable position/size, 32px leading and24px Clear, outline border and background. /tmp/jj-search-controls-position-after.log; /tmp/jj-search-controls-final-tests.log. Separate processes overlapped while user refinements arrived; Vitest selected a free browser port. Final serialized combined run follows."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsActivityControls.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2failed/1passed: both hub/project Activity headers expose2filter buttons instead of1. /tmp/jj-search-controls-activity-before.log."
+      },
+      {
+        "command": "pnpm install --offline --force --no-frozen-lockfile; jj restore -- pnpm-lock.yaml",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refreshed pre-existing guarded local Design Core dependency without downloads; restored registry lockfile. No node_modules edits or new dependency alias/patch/substitution. /tmp/jj-search-controls-package-refresh.log."
+      },
+      {
+        "command": "Owner-verified UI-only restart using scripts/dev-ui-services.mjs start/ready",
+        "result": "pass",
+        "failures": 0,
+        "note": "Vite PID88268 replaced by68050; backend91193 remains alive on7462. Existing fixture/runtime root retained; no server or RustFS restart."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors/0warnings;140catalog module boundaries. Final checks follow last filter refinement. /tmp/jj-search-controls-web-check.log; /tmp/jj-search-controls-catalog-check.log."
+      },
+      {
+        "command": "Design Core: pnpm test:storybook src/shared/shadcn/input-group/InputGroup.sizing.stories.svelte (before); pnpm test:storybook src/shared/shadcn/input-group (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source regression1failed before (xs became default),12/12 after forwarding size as a real Button prop. All4sizes/default/square icons and Clear action. Separate source canonical/verification update and qualification logs /tmp/dc-input-group-size-before.log and /tmp/dc-input-group-size-after.log."
+      },
+      {
+        "command": "Design Core: pnpm spec:first; pnpm packages:pack; pnpm pack --out /tmp/design-core-input-group-fix.tgz",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first3protected/2canonical chapters. packages:pack no-ops for already published0.1.2, so explicit pnpm pack creates source-distributed validation artifact; no publication."
+      },
+      {
+        "command": "Discovery: pnpm exec visual-delta test --help in app/source; interrupted source help process",
+        "result": "fail",
+        "failures": 1,
+        "note": "App has no visual-delta CLI; source test subcommand does not recognize --help and began execution. SIGTERM stopped only that agent-owned process; subsequent source compare uses supported exact story IDs. A guessed search path also did not exist; discovery corrected with rg."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "5/5 pass. /tmp/jj-search-controls-combined-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (initial and final-before-isolation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Each54passed/1failed: LandingAgentsAndNativeSessionNavigation could not access Projects and tasks after session selection. Exact isolated rerun1passed/3skipped. /tmp/jj-search-controls-consumers.log; /tmp/jj-search-controls-consumers-final.log; /tmp/jj-search-controls-agents-rerun.log. Temporary wait assertion did not resolve the full lane and was reverted."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (diagnostic wait run)",
+        "result": "pass",
+        "failures": 0,
+        "note": "55/55 passed with temporary diagnostic catch. Not used as a substitute for restoring original assertions. /tmp/jj-search-controls-consumer-diagnostics.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (restored assertions)",
+        "result": "fail",
+        "failures": 3,
+        "note": "52passed/3failed: agent main region and both repository Add task keyboard stories. /tmp/jj-search-controls-consumers-restored-story.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte (diagnostic)",
+        "result": "pass",
+        "failures": 0,
+        "note": "7/7 passed in isolation. /tmp/jj-search-controls-agent-action-diagnostics.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (visibility diagnostics)",
+        "result": "fail",
+        "failures": 1,
+        "note": "54passed/1failed. DOM proved main ancestor aria-hidden=true and inert=true with retained collapsed left sidebar and open outer details rail. This is the shell constrained replacement policy under leaked fixture layout, not a missing Projects region. Diagnostic removed. /tmp/jj-search-controls-consumers-visibility-diagnostics.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work (per-instance storage)",
+        "result": "pass",
+        "failures": 0,
+        "note": "55/55 pass with original assertions and isolated fixture storage. /tmp/jj-search-controls-consumers-isolated-storage.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm spec:first; pnpm spec:validate; pnpm check:progress (initial final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0typeerrors/0warnings;140module boundaries. All focused governance lanes passed. Final fixture/evidence checks follow."
+      },
+      {
+        "command": "Live browser: Activity filter and search controls",
+        "result": "pass",
+        "failures": 0,
+        "note": "One Filters for activity button; one dialog combines scope and native categories. Search control x251/y59/32x32 before/after, Clear24x24, original themed outline; Clear retains focused open input. Inspected /tmp/jj-search-controls-fixed.png and /tmp/jj-search-controls-activity-final.png. No data mutations."
+      },
+      {
+        "command": "Design Core wider checks and compare (independent source)",
+        "result": "fail",
+        "failures": 1,
+        "note": "InputGroup12/12;715unit;643Storybook;14workspace;35Shadcn pass with1configured skip. Initial checks shell10pass/1readinessfailure; fresh dev/static exact retries also failed. AI1pass/2readiness failures plus overlapping output artifact loss. Subsequent shell11/11 and AI3/3 pass against owned9259preview; complete checks retry passed cold shell11/11 but failed cold AI1pass/2readinesstimeouts. Visual compare of5InputGroupstories failed canonical cacheEACCES before screenshots. No baseline changed. Source verification retains exact logs and later outcomes."
+      },
+      {
+        "command": "Temporary source preview cleanup",
+        "result": "pass",
+        "failures": 0,
+        "note": "Stopped only owned Python9259server and later owned Storybook9259preview; closed temporary source browser tab. Vite7460/backend7462 retained."
+      },
+      {
+        "command": "Read-only discovery and unsupported guessed paths",
+        "result": "fail",
+        "failures": 1,
+        "note": "Some rg/cat discovery used absent paths or a zsh glob with no matches. Retried using rg --files. No source state changed by failed reads."
+      },
+      {
+        "command": "pnpm check:progress (initial final evidence)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Rejected three descriptive tests references and pass with remaining qualification gaps. Removed descriptive references from tests and retained them in run notes; entry remains pending for separate visual/source qualification. Checker and assertions unchanged."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm spec:first; pnpm spec:validate; pnpm check:progress; targeted Prettier (fixture and final evidence)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web/catalog0errors0warnings,140catalog boundaries; ownership/spec-first/spec-validate/progress120tasks pass. All nine changed files formatted and format-checked. Logs /tmp/jj-search-controls-web-final.log; /tmp/jj-search-controls-catalog-final.log; /tmp/jj-search-controls-governance-final.log; /tmp/jj-search-controls-progress-final.log; /tmp/jj-search-controls-format-final.log."
+      }
+    ]
   }
 ]
 ```

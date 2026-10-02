@@ -264,6 +264,10 @@ adaptations retain provenance and Apache-2.0 attribution. Shared primitives
 remain public Design Core imports. Stories are visual-pending until human
 review.
 
+Projects catalog fixtures use per-instance memory storage by default, so saved
+sidebar and appearance state cannot leak between scenarios. Explicitly supplied
+storage remains available for persistence acceptance.
+
 Repository settings includes a Local folders section when the service advertises
 workspace-link management. Its explicit path form preserves the draft through
 section changes and failed requests until successful linking or Cancel. Refresh
@@ -1333,8 +1337,14 @@ heights.
 Projects workspace search lives beside its top tabs. Opening search hides the
 tabs and presents a labelled, borderless input across the row; Enter submits the
 existing bounded query. Closing clears the query, restores tabs and returns
-focus to Search. Hover, keyboard focus or nonempty text reveals Close. Route
+focus to Search. The circular leading action shows Search at rest and Close on
+pointer hover or keyboard focus; clicking it closes search. A separate smaller
+circular Clear action with a themed background appears only for nonempty text,
+clears the draft and submitted query, and keeps the input open and focused.
+Opening search preserves the leading button's position and size. Route
 restoration displays the active query, while background reads and filter
 popovers retain unsent search drafts. Additional filters use the trailing filter
-icon; the section heading has no search/settings trigger. Reviews retain only
-the supported repository filter, and Repositories need no empty filter popover.
+icon; Activity combines repository/home scope and native activity categories in
+one filter popover rather than exposing duplicate filter buttons. The section
+heading has no search/settings trigger. Reviews retain only the supported
+repository filter, and Repositories need no empty filter popover.

@@ -30,10 +30,14 @@
     search = $state("");
   let input: HTMLInputElement | null = $state(null);
   let trigger: HTMLButtonElement | null = $state(null);
+  let hovered = $state(false);
+  // Only our Clear action retains the open bar after a submitted query changes.
+  let keepOpenForScope: string | undefined;
   $effect(() => {
-    scope;
+    const currentScope = scope;
     search = query;
-    open = !!query;
+    open = !!query || keepOpenForScope === currentScope;
+    keepOpenForScope = undefined;
   });
   async function show() {
     open = true;
@@ -41,19 +45,46 @@
     input?.focus();
   }
   async function close() {
+    keepOpenForScope = undefined;
     search = "";
     open = false;
     if (query) await hub.filter({ workQuery: "" });
     await tick();
     trigger?.focus({ preventScroll: true });
   }
+  async function clear() {
+    search = "";
+    if (query) {
+      keepOpenForScope = scope;
+      await hub.filter({ workQuery: "" });
+    }
+    await tick();
+    input?.focus({ preventScroll: true });
+  }
 </script>
 
 <div class="community-projects__tabs store-projects-navigation">
+  {#if tab !== "reviews"}<Button
+      bind:ref={trigger}
+      class="community-projects__tab-back store-projects-search__action store-projects-search__close"
+      data-open={open ? "" : undefined}
+      data-hovered={hovered ? "" : undefined}
+      onpointerenter={() => (hovered = true)}
+      onpointerleave={() => (hovered = false)}
+      size="icon-sm"
+      variant="outline"
+      aria-label={open ? "Close search" : `Search ${tab}`}
+      title={open ? "Close search" : `Search ${tab}`}
+      onclick={open ? close : show}
+      ><span class="store-projects-search__search-icon" aria-hidden="true"
+        ><SearchIcon /></span
+      ><span class="store-projects-search__close-icon" aria-hidden="true"
+        ><XIcon /></span
+      ></Button
+    >{/if}
   {#if tab !== "reviews" && open}
     <form
       class="store-projects-search store-projects__search-field"
-      data-filled={search ? "" : undefined}
       onsubmit={(event) => {
         event.preventDefault();
         void hub.filter({ workQuery: search });
@@ -73,36 +104,19 @@
           aria-label={`Search ${tab}`}
           placeholder={`Search ${tab}`}
         />
-        <InputGroup.Addon align="inline-start"
-          ><InputGroup.Button
-            type="submit"
-            size="icon-sm"
-            variant="outline"
-            aria-label="Search"
-            title="Search"><SearchIcon aria-hidden="true" /></InputGroup.Button
-          ></InputGroup.Addon
-        >
-        <InputGroup.Addon align="inline-end"
-          ><InputGroup.Button
-            class="store-projects-search__close"
-            size="icon-sm"
-            aria-label="Close search"
-            title="Close search"
-            onclick={close}><XIcon aria-hidden="true" /></InputGroup.Button
-          ></InputGroup.Addon
-        >
+        {#if search.length > 0}<InputGroup.Addon align="inline-end"
+            ><InputGroup.Button
+              class="store-projects-search__action"
+              size="icon-xs"
+              variant="secondary"
+              aria-label="Clear search"
+              title="Clear search"
+              onclick={clear}><XIcon aria-hidden="true" /></InputGroup.Button
+            ></InputGroup.Addon
+          >{/if}
       </InputGroup.Root>
     </form>
   {:else}
-    {#if tab !== "reviews"}<Button
-        bind:ref={trigger}
-        class="community-projects__tab-back"
-        variant="outline"
-        size="icon-sm"
-        aria-label={`Search ${tab}`}
-        title={`Search ${tab}`}
-        onclick={show}><SearchIcon aria-hidden="true" /></Button
-      >{/if}
     <ScrollArea
       type="hover"
       orientation="horizontal"
@@ -125,6 +139,9 @@
 </div>
 
 <style>
+  .store-projects-navigation {
+    height: 3.25rem;
+  }
   .store-projects-search {
     flex: 1;
     min-width: 0;
@@ -136,14 +153,25 @@
     gap: 0.4rem;
     flex: none;
   }
-  .store-projects-search :global(.store-projects-search__close) {
-    opacity: 0;
-    pointer-events: none;
+  .store-projects-navigation :global(.store-projects-search__action) {
+    border-radius: 50%;
   }
-  .store-projects-search:hover :global(.store-projects-search__close),
-  .store-projects-search:focus-within :global(.store-projects-search__close),
-  .store-projects-search[data-filled] :global(.store-projects-search__close) {
-    opacity: 1;
-    pointer-events: auto;
+  .store-projects-search__search-icon {
+    display: flex;
+  }
+  .store-projects-search__close-icon {
+    display: none;
+  }
+  :global(.store-projects-search__close[data-open][data-hovered])
+    .store-projects-search__search-icon,
+  :global(.store-projects-search__close[data-open]:focus-visible)
+    .store-projects-search__search-icon {
+    display: none;
+  }
+  :global(.store-projects-search__close[data-open][data-hovered])
+    .store-projects-search__close-icon,
+  :global(.store-projects-search__close[data-open]:focus-visible)
+    .store-projects-search__close-icon {
+    display: flex;
   }
 </style>

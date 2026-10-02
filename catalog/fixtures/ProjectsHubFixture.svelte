@@ -9,6 +9,7 @@
   } from "../../web/src/lib/controller/contracts.js";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import { createMemoryStoryStorage } from "./memory-storage.js";
   import {
     fixtureTransport,
     homeA,
@@ -17,7 +18,7 @@
     childId,
   } from "./projects-hub-fixture.js";
   let {
-    layoutStorage,
+    layoutStorage = createMemoryStoryStorage(),
     detail = false,
     projectDetail = false,
     longRepositoryDescriptions = false,

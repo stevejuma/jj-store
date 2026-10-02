@@ -34,47 +34,50 @@
 {#if tab === "activity"}<StoreActivityFilter
     value={route.workActivity ?? "all"}
     onChange={(workActivity) => void hub.filter({ workActivity })}
-  />{/if}
-
-<Popover.Root bind:open>
-  <Popover.Trigger>
-    {#snippet child({ props })}
-      <Button
-        {...props}
-        type="button"
-        variant={filtered ? "default" : "ghost"}
-        size="icon-sm"
-        aria-label={`Filters for ${tab}`}
-        title={`Filters for ${tab}`}
-        aria-pressed={filtered}
-      >
-        <ListFilterIcon aria-hidden="true" />
-      </Button>
-    {/snippet}
-  </Popover.Trigger>
-  <Popover.Content
-    align="end"
-    role="dialog"
-    aria-label={title}
-    style="--ui-popover-width: min(24rem, calc(100vw - 2rem)); max-height: min(80vh, 40rem); overflow-y: auto;"
+    scopeFiltered={filtered}
+    ><StoreProjectsFilters {controller} {project} /></StoreActivityFilter
   >
-    <Popover.Header
-      style="flex-direction: row; align-items: center; justify-content: space-between;"
+{:else}
+  <Popover.Root bind:open>
+    <Popover.Trigger>
+      {#snippet child({ props })}
+        <Button
+          {...props}
+          type="button"
+          variant={filtered ? "default" : "ghost"}
+          size="icon-sm"
+          aria-label={`Filters for ${tab}`}
+          title={`Filters for ${tab}`}
+          aria-pressed={filtered}
+        >
+          <ListFilterIcon aria-hidden="true" />
+        </Button>
+      {/snippet}
+    </Popover.Trigger>
+    <Popover.Content
+      align="end"
+      role="dialog"
+      aria-label={title}
+      style="--ui-popover-width: min(24rem, calc(100vw - 2rem)); max-height: min(80vh, 40rem); overflow-y: auto;"
     >
-      <Popover.Title role="heading" aria-level={2}>{title}</Popover.Title>
-      <Popover.Close
-        >{#snippet child({ props })}
-          <Button
-            {...props}
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Close filters"
-          >
-            <XIcon aria-hidden="true" />
-          </Button>
-        {/snippet}</Popover.Close
+      <Popover.Header
+        style="flex-direction: row; align-items: center; justify-content: space-between;"
       >
-    </Popover.Header>
-    <StoreProjectsFilters {controller} {project} />
-  </Popover.Content>
-</Popover.Root>
+        <Popover.Title role="heading" aria-level={2}>{title}</Popover.Title>
+        <Popover.Close
+          >{#snippet child({ props })}
+            <Button
+              {...props}
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Close filters"
+            >
+              <XIcon aria-hidden="true" />
+            </Button>
+          {/snippet}</Popover.Close
+        >
+      </Popover.Header>
+      <StoreProjectsFilters {controller} {project} />
+    </Popover.Content>
+  </Popover.Root>
+{/if}
