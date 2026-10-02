@@ -67,14 +67,13 @@
     width: 100%;
     min-width: 0;
     min-height: 0;
-    height: 100%;
+    align-items: flex-start;
     gap: 0.75rem;
   }
   .store-discussion-workspace__context {
     flex: 1 1 0;
     min-width: 0;
     min-height: 0;
-    overflow: auto;
   }
   .store-discussion-workspace__panel {
     display: flex;
@@ -104,6 +103,7 @@
   @media (max-width: 48rem) {
     .store-discussion-workspace {
       flex-direction: column;
+      align-items: stretch;
     }
     .store-discussion-workspace__panel {
       border-left: 0;

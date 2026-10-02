@@ -1350,3 +1350,6 @@ changes; this does not alter API authorization or mutation identities.
 Adjacent tool-call grouping is presentation-only. AgentActivity order and exact
 tool-call, event, snapshot and turn IDs remain unchanged; grouped actions still
 use the selected individual native call and existing authorized review commands.
+Grouped rows and their hover controls share the transcript scroll viewport;
+inline call sizing and message-edge alignment do not change those command
+targets or retained Focus/Split drafts.

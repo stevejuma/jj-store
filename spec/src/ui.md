@@ -746,7 +746,13 @@ Agent transcript chunks and review comments render through the owned Community
 message component. Adjacent recorded tool calls form a single expandable Design
 Core ToolCalls group, in native order. Messages, capture gaps and other recorded
 events separate groups. Each call retains its own details, native copy menu,
-review anchor, reply actions and draft. Failed calls show their error status
+review anchor, reply actions and draft. Tool groups start at the visible message
+edge, including its owned horizontal bleed. The heading icon and individual
+status icons share that edge. Closed calls retain compact, contiguous rows;
+expanded details occupy only their own call. Inline discussion contexts size to
+their content and do not create a scroll viewport around each call or clip its
+hover toolbar. The transcript owns scrolling, and the full toolbar remains
+pointer reachable across row boundaries. Failed calls show their error status
 without an extra resting “Tool failed” label; expanded details retain the actual
 error output. Open review threads compose the owned Community chat composer with
 exact optimistic-concurrency actions; resolved threads remove the composer and
@@ -1146,10 +1152,11 @@ session rows and headers. Session, root, snapshot, author and comment identities
 belong in a keyboard-accessible shadcn kebab menu that copies complete native
 values without changing selection. Agent session transcript/tool counts and
 duration align at the right of the bottom row, with duration last. Tool hover
-actions stay within their row bounds so narrow or clipped transcript containers
-retain clickable controls. They include the same menu for call, snapshot, turn,
-sanitized input/output and recorded paths. Open portaled menus keep their hover
-toolbar visible; touch exposes the actions without hover.
+actions stay fully visible and clickable without a per-call scroll viewport,
+including where the toolbar is taller than a compact row. They include the same
+menu for call, snapshot, turn, sanitized input/output and recorded paths. Open
+portaled menus keep their hover toolbar visible; touch exposes the actions
+without hover.
 
 Native review and task bubbles use Community hover/focus Reply and message
 menus. Native record menus group readable copy values in one keyboard-accessible

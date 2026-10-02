@@ -92,9 +92,7 @@ export async function agentSidebarPlay({
   await expect(
     Math.abs(
       toolCalls.getBoundingClientRect().left -
-        firstMessage
-          .querySelector('[data-ui-component="community-member-avatar"]')!
-          .getBoundingClientRect().left,
+        firstMessage.getBoundingClientRect().left,
     ),
   ).toBeLessThan(1);
   const transcript = canvas.getByRole("log", {

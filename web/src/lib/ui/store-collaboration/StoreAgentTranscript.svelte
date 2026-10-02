@@ -127,13 +127,15 @@
               />{/if}{/snippet}</CommunityMessage
         >
       {:else if entry.type === "tools"}
-        <StoreAgentTools
-          items={entry.items}
-          {patches}
-          {controller}
-          interactive={interactive &&
-            controller.state.repository.profile !== "git_sha1_jj045"}
-        />
+        <div class="store-agent-transcript__tools">
+          <StoreAgentTools
+            items={entry.items}
+            {patches}
+            {controller}
+            interactive={interactive &&
+              controller.state.repository.profile !== "git_sha1_jj045"}
+          />
+        </div>
       {:else if entry.type === "capture_gap"}
         <Chat.SystemMessage>
           Capture gap from {entry.missing_from} to {entry.missing_to}
@@ -146,6 +148,12 @@
 </Chat.MessageList>
 
 <style>
+  .store-agent-transcript__tools {
+    width: 100%;
+    min-width: 0;
+    margin-inline: -0.5rem;
+  }
+
   :global([data-ui-component="ai-chat-message-list"]) {
     min-height: 0;
     padding: 0.75rem;

@@ -18,6 +18,81 @@
 </script>
 
 <Story
+  name="Grouped rows align with messages and keep hover actions clickable"
+  play={async ({ canvasElement }) => {
+    const c = await openSession(canvasElement);
+    await userEvent.click(
+      c.getByRole("button", { name: "Expand 3 tool calls" }),
+    );
+    const heading = c.getByRole("button", { name: "Collapse 3 tool calls" });
+    const group = heading.closest('[data-ui-component="ai-chat-tool-calls"]')!;
+    const message = c.getAllByRole("article")[0]!;
+    await expect(
+      Math.abs(
+        group.getBoundingClientRect().left -
+          message.getBoundingClientRect().left,
+      ),
+    ).toBeLessThan(1);
+    const calls = Array.from(
+      group.querySelectorAll<HTMLElement>('[data-ui-part="agent-tool-review"]'),
+    );
+    const triggers = calls.map((call) =>
+      call.querySelector<HTMLElement>('[data-ai-chat-part="call-trigger"]')!,
+    );
+    const checkSpacing = async () => {
+      await waitFor(() => {
+        for (let index = 0; index < calls.length; index++) {
+          expect(
+            Math.abs(
+              triggers[index]!.getBoundingClientRect().left -
+                heading.getBoundingClientRect().left,
+            ),
+          ).toBeLessThan(1);
+          expect(
+            triggers[index]!.getBoundingClientRect().height,
+          ).toBeLessThanOrEqual(26);
+          if (index > 0)
+            expect(
+              Math.abs(
+                calls[index]!.getBoundingClientRect().top -
+                  calls[index - 1]!.getBoundingClientRect().bottom,
+              ),
+            ).toBeLessThan(1);
+        }
+      });
+    };
+    await checkSpacing();
+    for (const tool of calls) {
+      await userEvent.hover(tool);
+      const actions = within(tool).getByRole("group", { name: /^Actions for/ });
+      await waitFor(() => expect(getComputedStyle(actions).opacity).toBe("1"));
+      for (const button of within(actions).getAllByRole("button")) {
+        const bounds = button.getBoundingClientRect();
+        for (const y of [bounds.top + 2, bounds.bottom - 2]) {
+          await expect(
+            button.contains(
+              document.elementFromPoint(bounds.left + bounds.width / 2, y),
+            ),
+          ).toBe(true);
+        }
+      }
+      const context = tool.parentElement!;
+      await expect(getComputedStyle(context).overflowY).toBe("visible");
+      await userEvent.unhover(tool);
+    }
+    await userEvent.click(triggers[1]!);
+    await expect(
+      within(calls[1]!).getByText("Permission denied by the fixture", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await checkSpacing();
+    await userEvent.click(triggers[1]!);
+    await checkSpacing();
+  }}
+/>
+
+<Story
   name="Adjacent calls group and failed details retain the actual error"
   play={async ({ canvasElement }) => {
     const c = await openSession(canvasElement);
