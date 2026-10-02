@@ -344,6 +344,8 @@ impl From<jj_store_service::local_repository::LocalError> for Error {
             E::Invalid => Self::invalid(),
             E::Stale => Self::new(StatusCode::CONFLICT, "stale_local_metadata"),
             E::NotFound => Self::new(StatusCode::NOT_FOUND, "local_agent_not_found"),
+            E::ThreadResolved => Self::new(StatusCode::CONFLICT, "thread_resolved"),
+            E::ThreadOpen => Self::new(StatusCode::CONFLICT, "thread_open"),
             E::IntentConflict => Self::new(StatusCode::CONFLICT, "intent_conflict"),
             E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_local_metadata"),
             E::Limit => Self::limit(),

@@ -35,7 +35,7 @@ and presentation.
 
 Initial qualification is JJ 0.45.1, Git SHA-1 and macOS ARM64. The owned ref is
 outside branches, tags and upstream `refs/jj`; ordinary Git and JJ network
-commands do not transfer it. No metadata synchronization is introduced.
+commands do not transfer it.
 
 Metadata commits retain preceding selected metadata commits through parent
 edges. Domain bytes and immutable evidence use actual tree entries; retained
@@ -160,10 +160,13 @@ The landed companion foundation, WorkStore CLI, agent capture/provenance and
 repository-wide review provider do not complete the local collaboration profile.
 The remaining capabilities below are unimplemented or unqualified. Their status
 and command evidence are recorded only in [the milestone ledger](milestones.md).
-Local review capability advertisement remains disabled (`reviews: false`) until
-the portable anchor and CLI gates pass. Only repository anchors are qualified
-for local review persistence; native code/agent anchors fail closed. Metadata
-network synchronization is outside this profile.
+Review capabilities are staged independently: bounded committed-metadata-pinned
+list/detail reads, repository-anchor commands, code anchors and agent anchors.
+Repository review reads/actions reuse the shared reconstruction and projector;
+CLI and browser derive the same device actor. Local continuations require an
+explicit committed metadata pin and bind repository, registration generation,
+query and page size. Native code/agent anchors fail closed until portable
+validation and retention qualify. GETs never initialize identity or actor state.
 
 | Milestone | Pending capability                                                                                                   | Acceptance gate                                                                                                                                                                                                                                                                                                                     |
 | --------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

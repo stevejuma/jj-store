@@ -615,15 +615,21 @@ durable status plus identical replay, stale preconditions, changed intent and
 read-only denial. This adds no user-facing CLI command; collaboration command
 presentation was completed by the final M9.4 slice below.
 
-`jj review` now uses the current workspace's native connection and the same
-service-owned ReviewStore contracts as HTTP. `list` and `show` expose bounded
-current-root data; all writes require caller-retained request IDs and their
-exact optimistic-concurrency values. `create` reads one bounded typed anchor
-document and rejects a foreign repository. `status` distinguishes committed,
-not-known and outcome-unknown receipt states. The owner-only LocalTrusted Unix
-socket requires no bearer credential, while authenticated connections retain
-their existing token behavior. Review publication wakes the existing SSE feed;
-the hint is only an in-process repository ID and WAL replay supplies the event.
+`jj review` dispatches by the current workspace backend and uses the same
+service-owned ReviewStore semantics as HTTP. Native access uses the bound
+connection; Git-backed JJ access opens the local companion without a server.
+Local `repository` creation explicitly initializes missing metadata; read-only
+list/show/status leave absent identity and actor state absent. Local list
+continuations use `--after` and `--at-metadata`; historical show accepts
+`--at-metadata`. Native cursors and local selectors are disjoint. `list` and
+`show` expose bounded current-root data; all writes require caller-retained
+request IDs and their exact optimistic-concurrency values. `create` reads one
+bounded typed anchor document and rejects a foreign repository. `status`
+distinguishes committed, not-known and outcome-unknown receipt states. The
+owner-only LocalTrusted Unix socket requires no bearer credential, while
+authenticated connections retain their existing token behavior. Review
+publication wakes the existing SSE feed; the hint is only an in-process
+repository ID and WAL replay supplies the event.
 
 Installed `jj agent` hooks stamp accepted observations with the local system
 clock before normalization and publication. The hook keeps source timestamps

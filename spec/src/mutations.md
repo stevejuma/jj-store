@@ -1,5 +1,14 @@
 # Typed mutations
 
+Local repository review HTTP and CLI actions use the already-qualified typed
+projector and original device actor/receipts. No request supplies actor
+identity. Replies bind workflow versions, edits bind selected comment revisions,
+and workflow changes bind selected thread snapshots. Missing receipt status
+remains unknown; browser drafts stay intact and writes are never replayed
+automatically. Confirmed actions advance companion display metadata
+independently of code; ordinary review reads stage or publish nothing. Portable
+code/agent anchors stay rejected until their provider evidence gate passes.
+
 Collaboration read optimization does not change publication or receipt behavior.
 Shared data caches retain only validated immutable domain selections and graphs.
 Request authorization and complete captured manifest envelopes remain fresh;

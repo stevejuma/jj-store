@@ -59,3 +59,16 @@ export function isLocalAssociation(
 ): value is Model<"LocalBrowserCodeAssociation"> {
   return "source_repositories" in value;
 }
+
+export type ReviewSnapshot =
+  Model<"ReviewReadSnapshot"> | Model<"LocalReviewSnapshot">;
+export type ReviewPage = Omit<Model<"ReviewThreadPage">, "snapshot"> & {
+  snapshot: ReviewSnapshot;
+};
+export type ReviewDetail = Omit<Model<"ReviewThreadDetail">, "snapshot"> & {
+  snapshot: ReviewSnapshot;
+};
+export type ReviewOutcome =
+  Model<"ReviewCommandOutcome"> | Model<"LocalReviewOutcome">;
+export type ReviewStatus =
+  Model<"ReviewCommandStatus"> | Model<"LocalReviewOutcome">;

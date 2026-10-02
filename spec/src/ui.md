@@ -27,7 +27,8 @@ selection. Routes accept complete Git SHA-1 or native commit IDs syntactically
 and validate their width against discovered profile before reads. Cache keys
 include profile, repository and connection session. External freshness only
 offers refresh, including changes missed during disconnection. Unsupported local
-search, code writes, reviews, conversion and synchronization remain gated.
+Search, code writes, portable review anchors and conversion remain gated.
+Repository review reads and actions have independent capabilities.
 
 The reviewed catalog application is the presentation authority for the served
 browser. Production browsing, search, typed mutations and conflict editing share
@@ -1100,9 +1101,10 @@ initialize missing companion metadata. Existing code, dirty files and project
 homes remain unchanged. Registered local repositories reuse repository browsing,
 Projects and Agents presentation with profile-aware identities and separately
 pinned collaboration state. Settings expose binding recovery and removal.
-Capabilities hide unavailable code editing, indexed search, reviews, native
-maintenance and synchronization. Browser navigation preferences retain their
-existing device-local format.
+Capabilities hide unavailable code editing, indexed search, portable review
+anchors and native maintenance. Repository review reads/actions are advertised
+independently from supported anchor types. Browser navigation preferences retain
+their existing device-local format.
 
 The development runner admits the existing Git-backed fixture without reseeding
 its code or moving any sample project's metadata home. Restart acceptance checks

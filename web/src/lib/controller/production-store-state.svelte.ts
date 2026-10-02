@@ -104,7 +104,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   transcriptCursor: string | null;
   transcriptDescriptor: Model<"AgentTranscriptDescriptor"> | undefined;
   reviewThreads: Model<"ReviewThreadSummary">[];
-  reviewThread: Model<"ReviewThreadDetail"> | undefined;
+  reviewThread: import("./repository-read-types.js").ReviewDetail | undefined;
   reviewContext:
     import("./native-activity-types.js").NativeReviewContext | undefined;
   reviewPatch: import("./review-anchor-patch.js").ReviewInlinePatch | undefined;

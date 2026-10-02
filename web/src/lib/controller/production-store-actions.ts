@@ -214,6 +214,7 @@ export function createProductionStoreActions(options: {
       options.invalidate();
       await options.reader.selectReviewThread(id);
     },
+    createRepositoryReview: options.reader.createRepositoryReview,
     replyToReview: options.reader.reply,
     editReviewComment: options.reader.edit,
     commentOnDiffLine: options.reader.commentOnDiffLine,

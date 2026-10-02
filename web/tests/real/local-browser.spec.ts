@@ -233,6 +233,123 @@ test("local_projects_tasks_comments_match_cli_and_recover_unknown_outcomes", asy
   ).toHaveLength(1);
 });
 
+test("filesystem reviews create and reply with CLI parity and pinned historical reads", async ({
+  page,
+}) => {
+  test.skip(!fixture, "filesystem profile is not active");
+  const headers = { "x-jj-store-protocol": "1" };
+  const endpoint = `/v1/local/repos/${fixture.repository}`;
+  const before = await (
+    await page.request.get(`${endpoint}/snapshot`, { headers })
+  ).json();
+  await page.goto(
+    `/#/repos/${fixture.repository}/reviews?at_op=${fixture.operation}`,
+  );
+  const create = page.getByRole("button", {
+    name: "New repository review",
+    exact: true,
+  });
+  await expect(create).toBeEnabled();
+  await create.focus();
+  await page.keyboard.press("Enter");
+  const dialog = page.getByRole("dialog", { name: "New repository review" });
+  await expect(dialog).toBeVisible();
+  const editor = dialog
+    .getByRole("group", { name: "Repository review message", exact: true })
+    .getByRole("textbox");
+  await editor.fill("Review from filesystem browser");
+  const a11y = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(a11y.violations).toEqual([]);
+  await page.route(
+    "**/v1/local/repos/*/reviews/commands",
+    async (route) => {
+      await route.fetch();
+      await route.abort("failed");
+    },
+    { times: 1 },
+  );
+  await dialog
+    .getByRole("button", { name: "Create review", exact: true })
+    .click();
+  await expect(
+    dialog.getByRole("button", { name: "Check request status", exact: true }),
+  ).toBeVisible();
+  await expect(editor).toHaveText("Review from filesystem browser");
+  await dialog
+    .getByRole("button", { name: "Check request status", exact: true })
+    .click();
+  await expect(dialog).not.toBeVisible();
+  await expect(
+    page.getByText("Review from filesystem browser", { exact: true }).first(),
+  ).toBeVisible();
+  const thread = new URLSearchParams(
+    new URL(page.url()).hash.split("?")[1],
+  ).get("thread")!;
+  expect(thread).toMatch(/^[0-9a-f]{32}$/);
+  const after = await (
+    await page.request.get(`${endpoint}/snapshot`, { headers })
+  ).json();
+  expect(after.heads).toEqual(before.heads);
+  const old = await (
+    await page.request.post(`${endpoint}/reviews/page`, {
+      headers,
+      data: {
+        metadata_commit: before.metadata_commit,
+        limit: 50,
+        cursor: null,
+      },
+    })
+  ).json();
+  expect(old.data.threads.some((t: any) => t.thread_id === thread)).toBe(false);
+  const current = await (
+    await page.request.post(`${endpoint}/reviews/detail`, {
+      headers,
+      data: { metadata_commit: after.metadata_commit, thread_id: thread },
+    })
+  ).json();
+  expect(current.comments[0].content.text).toBe(
+    "Review from filesystem browser",
+  );
+  const cli = JSON.parse(
+    execFileSync(
+      `${process.env.CARGO_TARGET_DIR ?? "target"}/debug/jj`,
+      [
+        "-R",
+        fixture.folder,
+        "--ignore-working-copy",
+        "review",
+        "--format=json",
+        "show",
+        thread,
+        "--at-metadata",
+        after.metadata_commit,
+      ],
+      {
+        encoding: "utf8",
+        env: { ...process.env, JJ_CONFIG: `${fixture.root}/jj.toml` },
+      },
+    ),
+  );
+  expect(cli).toEqual(current);
+  const reply = page
+    .getByRole("group", { name: "Reply to review thread", exact: true })
+    .getByRole("textbox");
+  await reply.fill("Reply from browser");
+  await page.getByRole("button", { name: "Reply", exact: true }).last().click();
+  await expect(
+    page.getByText("Reply from browser", { exact: true }).first(),
+  ).toBeVisible();
+  await expect(reply.locator(".cm-placeholder")).toHaveText(
+    "Reply with Markdown",
+  );
+  await page.reload();
+  await expect(
+    page.getByText("Reply from browser", { exact: true }).first(),
+  ).toBeVisible();
+});
+
 test("local_folder_reconnect_and_removal_preserve_code_and_collaboration", async ({
   page,
 }) => {

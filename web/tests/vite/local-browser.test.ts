@@ -360,3 +360,99 @@ test("local_sse_reconnect_announces_freshness_without_advancing_display", async 
   assert.deepEqual(data.heads, [operation]);
   source.close();
 });
+
+test("local_reviews_pin_companion_history_and_confirm_actions_without_advancing_code", async () => {
+  const nextMetadata = "66".repeat(20),
+    nextOperation = "77".repeat(64),
+    thread = "88".repeat(16),
+    request = "99".repeat(16);
+  const snapshot = (pin: string) => ({
+    profile: "local_jj_git",
+    repo_id: repository,
+    metadata_commit: pin,
+    review_root: "aa".repeat(32),
+    review_state_version: 1,
+  });
+  const calls: { url: string; body: any }[] = [];
+  let confirmed = false;
+  const outcome = {
+    status: "committed",
+    receipt: {
+      repository,
+      request_id: request,
+      command: { thread_id: thread },
+    },
+  };
+  const source = new HttpLocalStoreDataSource(repository, async (url, init) => {
+    const body = init?.body ? JSON.parse(String(init.body)) : null;
+    calls.push({ url: String(url), body });
+    if (String(url).endsWith("snapshot"))
+      return json(
+        confirmed
+          ? { ...head, heads: [nextOperation], metadata_commit: nextMetadata }
+          : head,
+      );
+    if (String(url).endsWith("reviews/page"))
+      return json({
+        data: {
+          version: 1,
+          snapshot: snapshot(body.metadata_commit),
+          threads: [],
+          next_after: null,
+        },
+        next_cursor: "retained",
+      });
+    if (String(url).endsWith("reviews/detail"))
+      return json({
+        snapshot: snapshot(body.metadata_commit),
+        thread: { thread_id: thread },
+      });
+    if (String(url).endsWith("reviews/commands")) {
+      confirmed = true;
+      return json(outcome);
+    }
+    return json(outcome);
+  });
+  await source.reviewThreads();
+  assert.equal(calls[1].body.metadata_commit, metadata);
+  await source.reviewThread(thread);
+  assert.equal(calls[2].body.metadata_commit, metadata);
+  await source.applyReviewCommand({
+    version: 1,
+    request_id: request,
+    command: {
+      command: "resolve_thread",
+      thread_id: thread,
+      expected_thread_version: "aa".repeat(32),
+      reason: null,
+    },
+  });
+  assert.deepEqual((await source.snapshot()).heads, [operation]);
+  await source.reviewThreads();
+  assert.equal(calls.at(-1)!.body.metadata_commit, nextMetadata);
+  assert.equal(
+    calls.filter((c) => c.url.endsWith("reviews/commands")).length,
+    1,
+  );
+  source.close();
+});
+
+test("local_review_reads_reject_foreign_companion_snapshots", async () => {
+  const source = new HttpLocalStoreDataSource(repository, async (url) =>
+    String(url).endsWith("snapshot")
+      ? json(head)
+      : json({
+          data: {
+            snapshot: {
+              profile: "local_jj_git",
+              repo_id: "ff".repeat(16),
+              metadata_commit: metadata,
+            },
+            threads: [],
+          },
+          next_cursor: null,
+        }),
+  );
+  await assert.rejects(source.reviewThreads(), /snapshot mismatch/);
+  source.close();
+});

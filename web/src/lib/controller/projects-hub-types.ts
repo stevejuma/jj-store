@@ -26,7 +26,7 @@ export interface WorkBrowseTransport extends WorkTransport {
   reviews?(
     cursor?: string,
     signal?: AbortSignal,
-  ): Promise<Model<"ReviewThreadPage">>;
+  ): Promise<import("./repository-read-types.js").ReviewPage>;
   browse(
     query: WorkBrowseQuery,
     signal?: AbortSignal,

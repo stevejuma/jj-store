@@ -7,14 +7,14 @@ use jj_store_wal::publication::{
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "command", rename_all = "snake_case", deny_unknown_fields)]
 pub enum LocalReviewCommand {
     Initialize,
     RepositoryThread { body: ReviewCommentBodyV1 },
     Apply { intent: Box<ReviewCommandV1> },
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct LocalReviewRequest {
     pub version: u32,
@@ -54,14 +54,14 @@ impl LocalReviewRequest {
         Ok(m::IntentDigest::new(hash.finalize().into()))
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct ReviewResult {
     pub root: m::RecordDigest,
     pub accepted_at_millis: i64,
     pub command: Option<ReviewCommandResultV1>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct LocalReviewReceipt {
     pub version: u32,
     pub profile: LocalProfile,
@@ -75,7 +75,7 @@ pub struct LocalReviewReceipt {
     pub accepted_at_millis: i64,
     pub command: Option<ReviewCommandResultV1>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum LocalReviewOutcome {
     Committed { receipt: Box<LocalReviewReceipt> },

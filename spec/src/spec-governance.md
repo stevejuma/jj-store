@@ -1,5 +1,13 @@
 # Specification governance
 
+Local review delivery qualifies reads/actions separately from portable anchor
+support. Shared reconstruction changes retain native service regressions; new
+local routes and generated schemas require the complete contract response lane.
+Cold filesystem UI tests use disposable state and isolated ports, and visual
+baseline approval remains separate. Native M10 replication remains governed by
+its existing chapter; local repository synchronization is removed from active
+capabilities and backlog. Historical ledger entries are retained unchanged.
+
 Parent-workspace integration preserves the local-settings M14 tasks and
 evidence. Persistent Threads and Reactions use M15 after rebasing to avoid
 colliding task and evidence IDs. Renumbering does not change their requirements

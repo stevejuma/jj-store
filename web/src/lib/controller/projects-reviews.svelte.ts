@@ -5,7 +5,7 @@ import type { WorkBrowseTransport } from "./projects-hub-types.js";
 export interface ProjectReviewHome {
   repository: StoreRepositorySummary;
   threads: Model<"ReviewThreadSummary">[];
-  snapshot: Model<"ReviewReadSnapshot"> | null;
+  snapshot: import("./repository-read-types.js").ReviewSnapshot | null;
   cursor: string | null;
   loading: boolean;
   error: string;
@@ -27,10 +27,6 @@ export function createProjectsReviews(context: {
     if (views.size > 16) views.delete(views.keys().next().value!);
   }
   async function read(home: ProjectReviewHome, ticket: number, more = false) {
-    if (home.repository.profile === "git_sha1_jj045") {
-      home.error = "Reviews are not supported for local JJ repositories.";
-      return;
-    }
     home.loading = true;
     home.error = "";
     try {

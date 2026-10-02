@@ -1,8 +1,17 @@
 # Repository review threads
 
 `jj review` reads and updates the ReviewStore selected by the current bound
-native workspace. It works over the owner-only LocalTrusted socket or the
-configured authenticated native RPC connection.
+native workspace or the selected Git-backed JJ companion. Native access works
+over the owner-only LocalTrusted socket or the configured authenticated native
+RPC connection. Local access requires no server. Read-only commands do not
+initialize companion metadata or a device actor.
+
+For a local repository, `jj review repository --request-id ID --body TEXT`
+creates a repository discussion and initializes metadata on the first write.
+`list --after KEY --at-metadata COMMIT` resumes selected committed history;
+`show THREAD --at-metadata COMMIT` reads historical detail. Native `--cursor`
+and local selectors cannot be mixed. Code and agent anchors remain gated until
+their portable evidence is qualified.
 
 List and show commands return current-root thread state. `--format json`
 preserves complete stable IDs, exact selected revisions, snapshot IDs, cursors,

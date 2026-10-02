@@ -132,12 +132,12 @@ export interface StoreDataSource {
     transcript: Model<"AgentTranscriptDescriptor">,
     cursor?: string,
   ): Promise<Browse.AgentTranscript>;
-  reviewThreads(cursor?: string): Promise<Model<"ReviewThreadPage">>;
-  reviewThread(id: string): Promise<Model<"ReviewThreadDetail">>;
+  reviewThreads(cursor?: string): Promise<Browse.ReviewPage>;
+  reviewThread(id: string): Promise<Browse.ReviewDetail>;
   applyReviewCommand(
     request: StoreReviewCommandRequest,
-  ): Promise<Model<"ReviewCommandOutcome">>;
-  reviewCommandStatus(id: string): Promise<Model<"ReviewCommandStatus">>;
+  ): Promise<Browse.ReviewOutcome>;
+  reviewCommandStatus(id: string): Promise<Browse.ReviewStatus>;
   previewMutation(request: StoreMutationRequest): Promise<StoreMutationPreview>;
   applyMutation(request: StoreMutationRequest): Promise<StoreMutationOutcome>;
   mutationStatus(requestId: string): Promise<StoreMutationStatusResponse>;

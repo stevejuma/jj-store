@@ -25076,6 +25076,2055 @@
         }
       }
     },
+    "/v1/local/repos/{repo}/reviews/page": {
+      "post": {
+        "operationId": "local_review_page",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalReviewPageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "metadata_commit": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{40}$",
+                    "minLength": 40,
+                    "maxLength": 40
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "format": "uint",
+                    "minimum": 0
+                  },
+                  "cursor": { "type": ["string", "null"] }
+                },
+                "additionalProperties": false,
+                "required": ["metadata_commit", "limit"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/local/repos/{repo}/reviews/detail": {
+      "post": {
+        "operationId": "local_review_detail",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalReviewThreadDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "metadata_commit": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{40}$",
+                    "minLength": 40,
+                    "maxLength": 40
+                  },
+                  "thread_id": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{32}$",
+                    "minLength": 32,
+                    "maxLength": 32
+                  }
+                },
+                "additionalProperties": false,
+                "required": ["metadata_commit", "thread_id"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/local/repos/{repo}/reviews/commands": {
+      "post": {
+        "operationId": "local_review_apply",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LocalReviewOutcome" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "stale_review, thread_resolved, thread_open, or intent_conflict. No publication by this rejected attempt.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0
+                  },
+                  "request_id": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{32}$",
+                    "minLength": 32,
+                    "maxLength": 32
+                  },
+                  "command": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "anchor": {
+                            "type": "object",
+                            "properties": {
+                              "schema_version": {
+                                "type": "integer",
+                                "format": "uint32",
+                                "minimum": 0
+                              },
+                              "repository_id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{32}$",
+                                "minLength": 32,
+                                "maxLength": 32
+                              },
+                              "target": {
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
+                                        "const": "code_text"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "operation_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{128}$",
+                                            "minLength": 128,
+                                            "maxLength": 128
+                                          },
+                                          "commit_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{128}$",
+                                            "minLength": 128,
+                                            "maxLength": 128
+                                          },
+                                          "change_id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "path": { "type": "string" },
+                                          "file_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{128}$",
+                                            "minLength": 128,
+                                            "maxLength": 128
+                                          },
+                                          "value_kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "file",
+                                              "binary_file",
+                                              "empty_file",
+                                              "symlink",
+                                              "gitlink",
+                                              "conflict_term",
+                                              "conflict_artifact"
+                                            ]
+                                          },
+                                          "text": {
+                                            "type": "object",
+                                            "properties": {
+                                              "encoding": {
+                                                "type": "string",
+                                                "enum": ["utf8"]
+                                              },
+                                              "start_byte": {
+                                                "type": "string",
+                                                "pattern": "^(0|[1-9][0-9]*)$"
+                                              },
+                                              "end_byte": {
+                                                "type": "string",
+                                                "pattern": "^(0|[1-9][0-9]*)$"
+                                              },
+                                              "selected_sha256": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "encoding",
+                                              "start_byte",
+                                              "end_byte",
+                                              "selected_sha256"
+                                            ]
+                                          },
+                                          "diff_context": {
+                                            "type": ["object", "null"],
+                                            "properties": {
+                                              "before_operation_id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{128}$",
+                                                "minLength": 128,
+                                                "maxLength": 128
+                                              },
+                                              "before_commit_id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{128}$",
+                                                "minLength": 128,
+                                                "maxLength": 128
+                                              },
+                                              "before_path": {
+                                                "type": ["string", "null"]
+                                              },
+                                              "after_operation_id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{128}$",
+                                                "minLength": 128,
+                                                "maxLength": 128
+                                              },
+                                              "after_commit_id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{128}$",
+                                                "minLength": 128,
+                                                "maxLength": 128
+                                              },
+                                              "after_path": {
+                                                "type": ["string", "null"]
+                                              },
+                                              "side": {
+                                                "type": "string",
+                                                "enum": ["before", "after"]
+                                              },
+                                              "comparison": {
+                                                "type": "string",
+                                                "enum": ["explicit_pair"]
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "before_operation_id",
+                                              "before_commit_id",
+                                              "after_operation_id",
+                                              "after_commit_id",
+                                              "side",
+                                              "comparison"
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "operation_id",
+                                          "commit_id",
+                                          "path",
+                                          "file_id",
+                                          "value_kind",
+                                          "text"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
+                                        "const": "code_artifact"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "operation_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{128}$",
+                                            "minLength": 128,
+                                            "maxLength": 128
+                                          },
+                                          "commit_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{128}$",
+                                            "minLength": 128,
+                                            "maxLength": 128
+                                          },
+                                          "change_id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "path": { "type": "string" },
+                                          "object": {
+                                            "oneOf": [
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "commit"
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{128}$",
+                                                    "minLength": 128,
+                                                    "maxLength": 128
+                                                  }
+                                                },
+                                                "required": ["kind", "id"],
+                                                "additionalProperties": false
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "tree"
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{128}$",
+                                                    "minLength": 128,
+                                                    "maxLength": 128
+                                                  }
+                                                },
+                                                "required": ["kind", "id"],
+                                                "additionalProperties": false
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "file"
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{128}$",
+                                                    "minLength": 128,
+                                                    "maxLength": 128
+                                                  }
+                                                },
+                                                "required": ["kind", "id"],
+                                                "additionalProperties": false
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "symlink"
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{128}$",
+                                                    "minLength": 128,
+                                                    "maxLength": 128
+                                                  }
+                                                },
+                                                "required": ["kind", "id"],
+                                                "additionalProperties": false
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "copy"
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{128}$",
+                                                    "minLength": 128,
+                                                    "maxLength": 128
+                                                  }
+                                                },
+                                                "required": ["kind", "id"],
+                                                "additionalProperties": false
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "view"
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{128}$",
+                                                    "minLength": 128,
+                                                    "maxLength": 128
+                                                  }
+                                                },
+                                                "required": ["kind", "id"],
+                                                "additionalProperties": false
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "operation"
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{128}$",
+                                                    "minLength": 128,
+                                                    "maxLength": 128
+                                                  }
+                                                },
+                                                "required": ["kind", "id"],
+                                                "additionalProperties": false
+                                              }
+                                            ]
+                                          },
+                                          "value_kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "file",
+                                              "binary_file",
+                                              "empty_file",
+                                              "symlink",
+                                              "gitlink",
+                                              "conflict_term",
+                                              "conflict_artifact"
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "operation_id",
+                                          "commit_id",
+                                          "path",
+                                          "object",
+                                          "value_kind"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
+                                        "const": "agent_text"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "session_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "session_snapshot": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          },
+                                          "owner": {
+                                            "oneOf": [
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "tool_call_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "snapshot": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "kind": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "index_page",
+                                                          "session_snapshot",
+                                                          "turn_snapshot",
+                                                          "message_snapshot",
+                                                          "tool_snapshot",
+                                                          "intent",
+                                                          "observation_batch",
+                                                          "event_batch",
+                                                          "transcript_manifest",
+                                                          "transcript_page",
+                                                          "transcript_chunk",
+                                                          "content",
+                                                          "checkpoint_version",
+                                                          "association",
+                                                          "alias",
+                                                          "relation_page",
+                                                          "source_state",
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
+                                                        ]
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": ["kind", "id"]
+                                                  },
+                                                  "attempt_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "tool"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "kind",
+                                                  "tool_call_id",
+                                                  "snapshot",
+                                                  "attempt_id"
+                                                ]
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "message_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "snapshot": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "kind": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "index_page",
+                                                          "session_snapshot",
+                                                          "turn_snapshot",
+                                                          "message_snapshot",
+                                                          "tool_snapshot",
+                                                          "intent",
+                                                          "observation_batch",
+                                                          "event_batch",
+                                                          "transcript_manifest",
+                                                          "transcript_page",
+                                                          "transcript_chunk",
+                                                          "content",
+                                                          "checkpoint_version",
+                                                          "association",
+                                                          "alias",
+                                                          "relation_page",
+                                                          "source_state",
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
+                                                        ]
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": ["kind", "id"]
+                                                  },
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "message"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "kind",
+                                                  "message_id",
+                                                  "snapshot"
+                                                ]
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "block_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "snapshot": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "kind": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "index_page",
+                                                          "session_snapshot",
+                                                          "turn_snapshot",
+                                                          "message_snapshot",
+                                                          "tool_snapshot",
+                                                          "intent",
+                                                          "observation_batch",
+                                                          "event_batch",
+                                                          "transcript_manifest",
+                                                          "transcript_page",
+                                                          "transcript_chunk",
+                                                          "content",
+                                                          "checkpoint_version",
+                                                          "association",
+                                                          "alias",
+                                                          "relation_page",
+                                                          "source_state",
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
+                                                        ]
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": ["kind", "id"]
+                                                  },
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "plan"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "kind",
+                                                  "block_id",
+                                                  "snapshot"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          "block_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "block_version": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          },
+                                          "part": {
+                                            "type": "string",
+                                            "enum": [
+                                              "input",
+                                              "output",
+                                              "message",
+                                              "plan",
+                                              "exposed_summary"
+                                            ]
+                                          },
+                                          "content": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          },
+                                          "representation_version": {
+                                            "type": "string"
+                                          },
+                                          "sanitizer_version": {
+                                            "type": "string"
+                                          },
+                                          "normalizer_version": {
+                                            "type": "string"
+                                          },
+                                          "source_coverage": {
+                                            "type": "string",
+                                            "enum": [
+                                              "complete",
+                                              "partial",
+                                              "redacted",
+                                              "truncated",
+                                              "unknown"
+                                            ]
+                                          },
+                                          "text": {
+                                            "type": "object",
+                                            "properties": {
+                                              "encoding": {
+                                                "type": "string",
+                                                "enum": ["utf8"]
+                                              },
+                                              "start_byte": {
+                                                "type": "string",
+                                                "pattern": "^(0|[1-9][0-9]*)$"
+                                              },
+                                              "end_byte": {
+                                                "type": "string",
+                                                "pattern": "^(0|[1-9][0-9]*)$"
+                                              },
+                                              "selected_sha256": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "encoding",
+                                              "start_byte",
+                                              "end_byte",
+                                              "selected_sha256"
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "session_id",
+                                          "session_snapshot",
+                                          "owner",
+                                          "block_id",
+                                          "block_version",
+                                          "part",
+                                          "content",
+                                          "representation_version",
+                                          "sanitizer_version",
+                                          "normalizer_version",
+                                          "source_coverage",
+                                          "text"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
+                                        "const": "agent_artifact"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "session_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "session_snapshot": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          },
+                                          "owner": {
+                                            "oneOf": [
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "tool_call_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "snapshot": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "kind": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "index_page",
+                                                          "session_snapshot",
+                                                          "turn_snapshot",
+                                                          "message_snapshot",
+                                                          "tool_snapshot",
+                                                          "intent",
+                                                          "observation_batch",
+                                                          "event_batch",
+                                                          "transcript_manifest",
+                                                          "transcript_page",
+                                                          "transcript_chunk",
+                                                          "content",
+                                                          "checkpoint_version",
+                                                          "association",
+                                                          "alias",
+                                                          "relation_page",
+                                                          "source_state",
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
+                                                        ]
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": ["kind", "id"]
+                                                  },
+                                                  "attempt_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "tool"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "kind",
+                                                  "tool_call_id",
+                                                  "snapshot",
+                                                  "attempt_id"
+                                                ]
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "message_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "snapshot": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "kind": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "index_page",
+                                                          "session_snapshot",
+                                                          "turn_snapshot",
+                                                          "message_snapshot",
+                                                          "tool_snapshot",
+                                                          "intent",
+                                                          "observation_batch",
+                                                          "event_batch",
+                                                          "transcript_manifest",
+                                                          "transcript_page",
+                                                          "transcript_chunk",
+                                                          "content",
+                                                          "checkpoint_version",
+                                                          "association",
+                                                          "alias",
+                                                          "relation_page",
+                                                          "source_state",
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
+                                                        ]
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": ["kind", "id"]
+                                                  },
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "message"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "kind",
+                                                  "message_id",
+                                                  "snapshot"
+                                                ]
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "block_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "snapshot": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "kind": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "index_page",
+                                                          "session_snapshot",
+                                                          "turn_snapshot",
+                                                          "message_snapshot",
+                                                          "tool_snapshot",
+                                                          "intent",
+                                                          "observation_batch",
+                                                          "event_batch",
+                                                          "transcript_manifest",
+                                                          "transcript_page",
+                                                          "transcript_chunk",
+                                                          "content",
+                                                          "checkpoint_version",
+                                                          "association",
+                                                          "alias",
+                                                          "relation_page",
+                                                          "source_state",
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
+                                                        ]
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": ["kind", "id"]
+                                                  },
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "const": "plan"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "kind",
+                                                  "block_id",
+                                                  "snapshot"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "session_id",
+                                          "session_snapshot",
+                                          "owner"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
+                                        "const": "revision"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "operation_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{128}$",
+                                            "minLength": 128,
+                                            "maxLength": 128
+                                          },
+                                          "commit_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{128}$",
+                                            "minLength": 128,
+                                            "maxLength": 128
+                                          },
+                                          "change_id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          }
+                                        },
+                                        "required": [
+                                          "operation_id",
+                                          "commit_id"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
+                                        "const": "operation"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "operation_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{128}$",
+                                            "minLength": 128,
+                                            "maxLength": 128
+                                          }
+                                        },
+                                        "required": ["operation_id"]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
+                                        "const": "repository"
+                                      }
+                                    },
+                                    "required": ["target"]
+                                  }
+                                ]
+                              },
+                              "created_context": {
+                                "type": "object",
+                                "properties": {
+                                  "publication_position": {
+                                    "type": ["integer", "null"],
+                                    "format": "uint64",
+                                    "minimum": 0
+                                  },
+                                  "code_state_version": {
+                                    "type": ["integer", "null"],
+                                    "format": "uint64",
+                                    "minimum": 0
+                                  },
+                                  "agent_root": {
+                                    "type": ["string", "null"],
+                                    "pattern": "^[0-9a-f]{64}$",
+                                    "minLength": 64,
+                                    "maxLength": 64
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              "sensitivity": {
+                                "type": "string",
+                                "enum": ["public", "repository", "restricted"]
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "schema_version",
+                              "repository_id",
+                              "target",
+                              "created_context",
+                              "sensitivity"
+                            ]
+                          },
+                          "body": {
+                            "type": "object",
+                            "properties": {
+                              "schema_version": {
+                                "type": "integer",
+                                "format": "uint32",
+                                "minimum": 0
+                              },
+                              "format": {
+                                "type": "string",
+                                "enum": ["plain_text", "safe_markdown"]
+                              },
+                              "text": { "type": "string" },
+                              "sanitizer_version": { "type": "string" }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "schema_version",
+                              "format",
+                              "text",
+                              "sanitizer_version"
+                            ]
+                          },
+                          "command": {
+                            "type": "string",
+                            "const": "create_thread"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["command", "anchor", "body"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected_workflow_version": {
+                            "type": "integer",
+                            "format": "uint64",
+                            "minimum": 0
+                          },
+                          "parent_comment_id": {
+                            "type": ["string", "null"],
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "body": {
+                            "type": "object",
+                            "properties": {
+                              "schema_version": {
+                                "type": "integer",
+                                "format": "uint32",
+                                "minimum": 0
+                              },
+                              "format": {
+                                "type": "string",
+                                "enum": ["plain_text", "safe_markdown"]
+                              },
+                              "text": { "type": "string" },
+                              "sanitizer_version": { "type": "string" }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "schema_version",
+                              "format",
+                              "text",
+                              "sanitizer_version"
+                            ]
+                          },
+                          "command": {
+                            "type": "string",
+                            "const": "append_reply"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "command",
+                          "thread_id",
+                          "expected_workflow_version",
+                          "body"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected_revision_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{64}$",
+                            "minLength": 64,
+                            "maxLength": 64
+                          },
+                          "replacement_body": {
+                            "type": "object",
+                            "properties": {
+                              "schema_version": {
+                                "type": "integer",
+                                "format": "uint32",
+                                "minimum": 0
+                              },
+                              "format": {
+                                "type": "string",
+                                "enum": ["plain_text", "safe_markdown"]
+                              },
+                              "text": { "type": "string" },
+                              "sanitizer_version": { "type": "string" }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "schema_version",
+                              "format",
+                              "text",
+                              "sanitizer_version"
+                            ]
+                          },
+                          "command": {
+                            "type": "string",
+                            "const": "edit_comment"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "command",
+                          "comment_id",
+                          "expected_revision_id",
+                          "replacement_body"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected_revision_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{64}$",
+                              "minLength": 64,
+                              "maxLength": 64
+                            }
+                          },
+                          "replacement_body": {
+                            "type": "object",
+                            "properties": {
+                              "schema_version": {
+                                "type": "integer",
+                                "format": "uint32",
+                                "minimum": 0
+                              },
+                              "format": {
+                                "type": "string",
+                                "enum": ["plain_text", "safe_markdown"]
+                              },
+                              "text": { "type": "string" },
+                              "sanitizer_version": { "type": "string" }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "schema_version",
+                              "format",
+                              "text",
+                              "sanitizer_version"
+                            ]
+                          },
+                          "command": {
+                            "type": "string",
+                            "const": "resolve_comment_conflict"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "command",
+                          "comment_id",
+                          "expected_revision_ids",
+                          "replacement_body"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected_revision_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{64}$",
+                            "minLength": 64,
+                            "maxLength": 64
+                          },
+                          "reason": { "type": ["string", "null"] },
+                          "command": {
+                            "type": "string",
+                            "const": "tombstone_comment"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "command",
+                          "comment_id",
+                          "expected_revision_id"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected_revision_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{64}$",
+                            "minLength": 64,
+                            "maxLength": 64
+                          },
+                          "moderation_reason": { "type": "string" },
+                          "command": {
+                            "type": "string",
+                            "const": "hide_comment"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "command",
+                          "comment_id",
+                          "expected_revision_id",
+                          "moderation_reason"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected_thread_version": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{64}$",
+                            "minLength": 64,
+                            "maxLength": 64
+                          },
+                          "reason": { "type": ["string", "null"] },
+                          "command": {
+                            "type": "string",
+                            "const": "resolve_thread"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "command",
+                          "thread_id",
+                          "expected_thread_version"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected_thread_version": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{64}$",
+                            "minLength": 64,
+                            "maxLength": 64
+                          },
+                          "reason": { "type": ["string", "null"] },
+                          "command": {
+                            "type": "string",
+                            "const": "reopen_thread"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "command",
+                          "thread_id",
+                          "expected_thread_version"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "required": ["version", "request_id", "command"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/local/repos/{repo}/reviews/commands/{request_id}": {
+      "get": {
+        "operationId": "local_review_status",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RequestId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LocalReviewOutcome" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "stale_review, thread_resolved, thread_open, or intent_conflict. No publication by this rejected attempt.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}]
+      },
+      "head": {
+        "operationId": "local_review_status_head",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RequestId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "stale_review, thread_resolved, thread_open, or intent_conflict. No publication by this rejected attempt."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}]
+      }
+    },
     "/v1/local/repos/{repo}/events": {
       "get": {
         "operationId": "local_freshness",
@@ -31782,10 +33831,13 @@
           "collaboration": { "type": "boolean" },
           "agents": { "type": "boolean" },
           "reviews": { "type": "boolean" },
+          "review_actions": { "type": "boolean" },
+          "review_repository_anchors": { "type": "boolean" },
+          "review_code_anchors": { "type": "boolean" },
+          "review_agent_anchors": { "type": "boolean" },
           "search": { "type": "boolean" },
           "code_mutations": { "type": "boolean" },
-          "conversion": { "type": "boolean" },
-          "synchronization": { "type": "boolean" }
+          "conversion": { "type": "boolean" }
         },
         "required": [
           "version",
@@ -31794,10 +33846,13 @@
           "collaboration",
           "agents",
           "reviews",
+          "review_actions",
+          "review_repository_anchors",
+          "review_code_anchors",
+          "review_agent_anchors",
           "search",
           "code_mutations",
-          "conversion",
-          "synchronization"
+          "conversion"
         ]
       },
       "LocalCodeQueryResponse": {
@@ -33675,6 +35730,174 @@
             },
             "required": ["subject", "repository", "commit_id"]
           }
+        ]
+      },
+      "LocalReviewPageResponse": {
+        "type": "object",
+        "properties": {
+          "data": { "$ref": "#/components/schemas/LocalReviewThreadPage" },
+          "next_cursor": { "type": ["string", "null"] }
+        },
+        "required": ["data", "next_cursor"]
+      },
+      "LocalReviewThreadPage": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "snapshot": { "$ref": "#/components/schemas/LocalReviewSnapshot" },
+          "threads": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewThreadSummary" }
+          },
+          "next_after": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ReviewCatalogKey" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": ["version", "snapshot", "threads", "next_after"]
+      },
+      "LocalReviewSnapshot": {
+        "type": "object",
+        "properties": {
+          "profile": { "$ref": "#/components/schemas/LocalProfile" },
+          "repo_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/RepositoryId" },
+              { "type": "null" }
+            ]
+          },
+          "metadata_commit": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/GitSha1Id" },
+              { "type": "null" }
+            ]
+          },
+          "review_state_version": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "review_root": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/RecordDigest" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": [
+          "profile",
+          "repo_id",
+          "metadata_commit",
+          "review_state_version",
+          "review_root"
+        ]
+      },
+      "ReviewCatalogKey": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "minLength": 64,
+        "maxLength": 64
+      },
+      "LocalReviewThreadDetail": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "snapshot": { "$ref": "#/components/schemas/LocalReviewSnapshot" },
+          "thread": { "$ref": "#/components/schemas/ReviewThreadSummary" },
+          "anchor": { "$ref": "#/components/schemas/ReviewAnchor" },
+          "comments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewComment" }
+          },
+          "comment_conflicts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewCommentConflict" }
+          },
+          "events": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewEvent" }
+          }
+        },
+        "required": [
+          "version",
+          "snapshot",
+          "thread",
+          "anchor",
+          "comments",
+          "comment_conflicts",
+          "events"
+        ]
+      },
+      "LocalReviewOutcome": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "receipt": { "$ref": "#/components/schemas/LocalReviewReceipt" },
+              "status": { "type": "string", "const": "committed" }
+            },
+            "required": ["status", "receipt"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "request_id": { "$ref": "#/components/schemas/RequestId" },
+              "status": { "type": "string", "const": "outcome_unknown" }
+            },
+            "required": ["status", "request_id"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "request_id": { "$ref": "#/components/schemas/RequestId" },
+              "status": { "type": "string", "const": "not_known" }
+            },
+            "required": ["status", "request_id"]
+          }
+        ]
+      },
+      "LocalReviewReceipt": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "profile": { "$ref": "#/components/schemas/LocalProfile" },
+          "repository": { "$ref": "#/components/schemas/RepositoryId" },
+          "actor": { "$ref": "#/components/schemas/PrincipalId" },
+          "request_id": { "$ref": "#/components/schemas/RequestId" },
+          "intent": { "$ref": "#/components/schemas/IntentDigest" },
+          "metadata_sequence": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "review_state_version": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "review_root": { "$ref": "#/components/schemas/RecordDigest" },
+          "accepted_at_millis": { "type": "integer", "format": "int64" },
+          "command": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ReviewCommandResultV1" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": [
+          "version",
+          "profile",
+          "repository",
+          "actor",
+          "request_id",
+          "intent",
+          "metadata_sequence",
+          "review_state_version",
+          "review_root",
+          "accepted_at_millis",
+          "command"
         ]
       },
       "LocalFreshnessEvent": {

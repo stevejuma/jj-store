@@ -181,7 +181,8 @@ export interface StoreControllerState {
   readonly agentRelations: readonly Model<"AgentRelationLink">[];
   readonly agentTranscript: readonly Model<"AgentTranscriptChunk">[];
   readonly reviewThreads: readonly Model<"ReviewThreadSummary">[];
-  readonly reviewThread: Model<"ReviewThreadDetail"> | undefined;
+  readonly reviewThread:
+    import("./repository-read-types.js").ReviewDetail | undefined;
   readonly reviewContext?: import("./native-activity-types.js").NativeReviewContext;
   readonly reviewPatch:
     import("./review-anchor-patch.js").ReviewInlinePatch | undefined;
@@ -265,6 +266,7 @@ export interface StoreController {
     selectDirectory(path: string): void | Promise<void>;
     selectAgentSession(id: string | null): void | Promise<void>;
     selectReviewThread(id: string | null): void | Promise<void>;
+    createRepositoryReview?(text: string): Promise<void>;
     replyToReview(text: string, parentCommentId?: string): Promise<void>;
     editReviewComment(
       commentId: string,

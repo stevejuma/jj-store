@@ -183,10 +183,86 @@ export class HttpLocalStoreDataSource
   uploadConflict = () => this.unsupported();
   search = () => this.unsupported();
   searchStatus = () => this.unsupported();
-  reviewThreads = () => this.unsupported();
-  reviewThread = () => this.unsupported();
-  applyReviewCommand = () => this.unsupported();
-  reviewCommandStatus = () => this.unsupported();
+  private validateReview(snapshot: Model<"LocalReviewSnapshot">, pin: string) {
+    if (
+      snapshot.repo_id !== this.repository ||
+      snapshot.metadata_commit !== pin ||
+      snapshot.profile !== "local_jj_git"
+    )
+      throw new ApiError("snapshot_mismatch");
+  }
+  async reviewThreads(cursor?: string) {
+    const pin = await this.metadata();
+    const page = await this.read<Model<"LocalReviewPageResponse">>(
+      "reviews/page",
+      {
+        metadata_commit: pin,
+        limit: 50,
+        cursor: cursor ?? null,
+      },
+    );
+    this.validateReview(page.data.snapshot, pin);
+    return { ...page.data, next_cursor: page.next_cursor };
+  }
+  async reviewThread(id: string) {
+    const pin = await this.metadata();
+    const detail = await this.read<Model<"LocalReviewThreadDetail">>(
+      "reviews/detail",
+      {
+        metadata_commit: pin,
+        thread_id: fullId(id, 32),
+      },
+    );
+    this.validateReview(detail.snapshot, pin);
+    if (detail.thread.thread_id !== id) throw new ApiError("snapshot_mismatch");
+    return detail;
+  }
+  private async confirmedReview(outcome: Model<"LocalReviewOutcome">) {
+    if (outcome.status === "committed") {
+      if (
+        outcome.receipt.repository !== this.repository ||
+        !outcome.receipt.command
+      )
+        throw new ApiError("snapshot_mismatch");
+      const current = await this.snapshot();
+      const fresh =
+        await this.read<Model<"LocalRepositorySnapshot">>("snapshot");
+      if (
+        fresh.repository !== this.repository ||
+        String(fresh.generation) !== String(current.generation)
+      )
+        throw new ApiError("snapshot_mismatch");
+      // Confirmed user actions advance companion state; external code remains pinned.
+      this.head = {
+        ...current,
+        metadata_commit: fresh.metadata_commit,
+        actor: fresh.actor,
+      };
+    }
+    return outcome;
+  }
+  async applyReviewCommand(
+    request: Parameters<StoreDataSource["applyReviewCommand"]>[0],
+  ) {
+    const outcome = await this.client.request<Model<"LocalReviewOutcome">>(
+      "reviews/commands",
+      request,
+    );
+    if (
+      outcome.status === "committed" &&
+      outcome.receipt.request_id !== request.request_id
+    )
+      throw new ApiError("snapshot_mismatch");
+    return this.confirmedReview(outcome);
+  }
+  async reviewCommandStatus(id: string) {
+    const outcome = await this.read<Model<"LocalReviewOutcome">>(
+      `reviews/commands/${fullId(id, 32)}`,
+    );
+    if (outcome.status === "committed" && outcome.receipt.request_id !== id)
+      throw new ApiError("snapshot_mismatch");
+    return this.confirmedReview(outcome);
+  }
   previewMutation = () => this.unsupported();
   applyMutation = () => this.unsupported();
   mutationStatus = () => this.unsupported();

@@ -3,9 +3,23 @@ use super::review_replication::{count_comment_conflicts, load_graph_events, load
 use super::*;
 use jj_store_wal::publication::{
     ArtifactAnchorV1, CommentRevisionContentV1, CommentSelectionV1, Domain, ReviewCatalogKey,
-    ReviewObjectRef, ReviewObjectV1, ReviewThreadId,
+    ReviewObjectRef, ReviewObjectV1, ReviewSnapshotRead, ReviewThreadId,
 };
 use std::collections::BTreeSet;
+
+pub(crate) struct ReviewSelection<'a> {
+    pub repository: m::RepositoryId,
+    pub store: &'a dyn ReviewSnapshotRead,
+}
+
+pub(crate) struct ReviewDetailContent {
+    pub version: u32,
+    pub thread: ReviewThreadSummary,
+    pub anchor: ReviewAnchor,
+    pub comments: Vec<ReviewComment>,
+    pub comment_conflicts: Vec<ReviewCommentConflict>,
+    pub events: Vec<ReviewEvent>,
+}
 
 const MAX_THREAD_EVENTS: usize = 4096;
 const MAX_THREAD_BODY_BYTES: usize = 8 * 1024 * 1024;
@@ -29,7 +43,14 @@ impl ReviewThreadPager {
         let pin = self.pin(&session).await?;
         let snapshot = pin.snapshot.clone();
         let page = pin.store.list_threads(None, limit).await.map_err(map_wal)?;
-        let threads = resolve_threads(&pin, page.selections).await?;
+        let threads = resolve_threads(
+            &ReviewSelection {
+                repository: pin.snapshot.repo_id,
+                store: &pin.store,
+            },
+            page.selections,
+        )
+        .await?;
         authorize_epoch(&session, snapshot.epoch).await?;
         let next_cursor = page
             .next_after
@@ -72,7 +93,14 @@ impl ReviewThreadPager {
             .list_threads(Some(claims.after), limit)
             .await
             .map_err(map_wal)?;
-        let threads = resolve_threads(&pin, page.selections).await?;
+        let threads = resolve_threads(
+            &ReviewSelection {
+                repository: pin.snapshot.repo_id,
+                store: &pin.store,
+            },
+            page.selections,
+        )
+        .await?;
         authorize_epoch(&session, pin.snapshot.epoch).await?;
         let next_cursor = self.cursors.next(&claims, page.next_after)?;
         Ok(ReviewThreadPage {
@@ -102,66 +130,23 @@ impl ReviewThreadPager {
         thread_id: ReviewThreadId,
     ) -> Result<ReviewThreadDetail> {
         let pin = self.pin(&session).await?;
-        let reference = pin
-            .store
-            .lookup_thread(thread_id)
-            .await
-            .map_err(map_wal)?
-            .ok_or(Error::NotFound)?;
-        let (thread, anchor, comments, comment_conflicts, events, version) =
-            match pin.store.read_object(reference).await.map_err(map_wal)? {
-                ReviewObjectV1::ThreadSnapshot(value) => {
-                    if value.thread_id != thread_id {
-                        return Err(Error::Corrupt);
-                    }
-                    let anchor = load_anchor(&pin, value.original_anchor).await?;
-                    let mut thread =
-                        review_models::summary(reference, &value, anchor.value.clone());
-                    let comments = load_comments(&pin, thread_id, &value.comments).await?;
-                    let events = load_events(&pin, thread_id, value.event_page_root).await?;
-                    if events.len() as u64 != value.last_event_sequence {
-                        return Err(Error::Corrupt);
-                    }
-                    thread.presentation = Some(
-                        super::review_presentation::load(&pin, &thread, &value.comments, &events)
-                            .await?,
-                    );
-                    (thread, anchor, comments, Vec::new(), events, 1)
-                }
-                ReviewObjectV1::ThreadMerge(value) => {
-                    if value.thread_id != thread_id {
-                        return Err(Error::Corrupt);
-                    }
-                    let anchor = load_anchor(&pin, value.original_anchor).await?;
-                    let (comments, conflicts) =
-                        load_merged_comments(&pin, thread_id, &value.comments).await?;
-                    let mut thread = review_models::merged_summary(
-                        reference,
-                        &value,
-                        anchor.value.clone(),
-                        conflicts.len(),
-                    );
-                    let events = load_graph_events(&pin, thread_id, value.event_graph_root).await?;
-                    if events.len() as u64 != value.thread_version {
-                        return Err(Error::Corrupt);
-                    }
-                    thread.presentation = Some(
-                        super::review_presentation::load(&pin, &thread, &value.comments, &events)
-                            .await?,
-                    );
-                    (thread, anchor, comments, conflicts, events, 2)
-                }
-                _ => return Err(Error::Corrupt),
-            };
+        let content = resolve_detail(
+            &ReviewSelection {
+                repository: pin.snapshot.repo_id,
+                store: &pin.store,
+            },
+            thread_id,
+        )
+        .await?;
         authorize_epoch(&session, pin.snapshot.epoch).await?;
         Ok(ReviewThreadDetail {
-            version,
+            version: content.version,
             snapshot: pin.snapshot,
-            thread,
-            anchor,
-            comments,
-            comment_conflicts,
-            events,
+            thread: content.thread,
+            anchor: content.anchor,
+            comments: content.comments,
+            comment_conflicts: content.comment_conflicts,
+            events: content.events,
         })
     }
 
@@ -192,8 +177,75 @@ impl ReviewThreadPager {
     }
 }
 
-async fn resolve_threads(
-    pin: &ReviewPin,
+pub(crate) async fn resolve_detail(
+    pin: &ReviewSelection<'_>,
+    thread_id: ReviewThreadId,
+) -> Result<ReviewDetailContent> {
+    let reference = pin
+        .store
+        .lookup(
+            jj_store_wal::publication::ReviewCatalogKind::Threads,
+            ReviewCatalogKey::derive("thread", thread_id.as_bytes()).map_err(|_| Error::Corrupt)?,
+        )
+        .await
+        .map_err(map_wal)?
+        .ok_or(Error::NotFound)?;
+    let (thread, anchor, comments, comment_conflicts, events, version) =
+        match pin.store.read_object(reference).await.map_err(map_wal)? {
+            ReviewObjectV1::ThreadSnapshot(value) => {
+                if value.thread_id != thread_id {
+                    return Err(Error::Corrupt);
+                }
+                let anchor = load_anchor(pin, value.original_anchor).await?;
+                let mut thread = review_models::summary(reference, &value, anchor.value.clone());
+                let comments = load_comments(pin, thread_id, &value.comments).await?;
+                let events = load_events(pin, thread_id, value.event_page_root).await?;
+                if events.len() as u64 != value.last_event_sequence {
+                    return Err(Error::Corrupt);
+                }
+                thread.presentation = Some(
+                    super::review_presentation::load(pin, &thread, &value.comments, &events)
+                        .await?,
+                );
+                (thread, anchor, comments, Vec::new(), events, 1)
+            }
+            ReviewObjectV1::ThreadMerge(value) => {
+                if value.thread_id != thread_id {
+                    return Err(Error::Corrupt);
+                }
+                let anchor = load_anchor(pin, value.original_anchor).await?;
+                let (comments, conflicts) =
+                    load_merged_comments(pin, thread_id, &value.comments).await?;
+                let mut thread = review_models::merged_summary(
+                    reference,
+                    &value,
+                    anchor.value.clone(),
+                    conflicts.len(),
+                );
+                let events = load_graph_events(pin, thread_id, value.event_graph_root).await?;
+                if events.len() as u64 != value.thread_version {
+                    return Err(Error::Corrupt);
+                }
+                thread.presentation = Some(
+                    super::review_presentation::load(pin, &thread, &value.comments, &events)
+                        .await?,
+                );
+                (thread, anchor, comments, conflicts, events, 2)
+            }
+            _ => return Err(Error::Corrupt),
+        };
+    Ok(ReviewDetailContent {
+        version,
+        thread,
+        anchor,
+        comments,
+        comment_conflicts,
+        events,
+    })
+}
+
+pub(crate) async fn resolve_threads(
+    pin: &ReviewSelection<'_>,
     selections: Vec<(ReviewCatalogKey, ReviewObjectRef)>,
 ) -> Result<Vec<ReviewThreadSummary>> {
     let mut rows = Vec::with_capacity(selections.len());
@@ -202,8 +254,7 @@ async fn resolve_threads(
             ReviewObjectV1::ThreadSnapshot(value) => {
                 verify_thread_key(key, value.thread_id)?;
                 let anchor =
-                    load_store_anchor(&pin.store, value.original_anchor, pin.snapshot.repo_id)
-                        .await?;
+                    load_store_anchor(pin.store, value.original_anchor, pin.repository).await?;
                 let mut thread = review_models::summary(reference, &value, anchor);
                 let events = load_events(pin, value.thread_id, value.event_page_root).await?;
                 if events.len() as u64 != value.last_event_sequence {
@@ -218,9 +269,8 @@ async fn resolve_threads(
             ReviewObjectV1::ThreadMerge(value) => {
                 verify_thread_key(key, value.thread_id)?;
                 let anchor =
-                    load_store_anchor(&pin.store, value.original_anchor, pin.snapshot.repo_id)
-                        .await?;
-                let conflict_count = count_comment_conflicts(&pin.store, &value.comments).await?;
+                    load_store_anchor(pin.store, value.original_anchor, pin.repository).await?;
+                let conflict_count = count_comment_conflicts(pin.store, &value.comments).await?;
                 let mut thread =
                     review_models::merged_summary(reference, &value, anchor, conflict_count);
                 let events =
@@ -240,12 +290,15 @@ async fn resolve_threads(
     Ok(rows)
 }
 
-async fn load_anchor(pin: &ReviewPin, reference: ReviewObjectRef) -> Result<ReviewAnchor> {
+async fn load_anchor(
+    pin: &ReviewSelection<'_>,
+    reference: ReviewObjectRef,
+) -> Result<ReviewAnchor> {
     let ReviewObjectV1::Anchor(value) = pin.store.read_object(reference).await.map_err(map_wal)?
     else {
         return Err(Error::Corrupt);
     };
-    if value.repository_id != pin.snapshot.repo_id {
+    if value.repository_id != pin.repository {
         return Err(Error::Corrupt);
     }
     Ok(ReviewAnchor {
@@ -255,7 +308,7 @@ async fn load_anchor(pin: &ReviewPin, reference: ReviewObjectRef) -> Result<Revi
 }
 
 async fn load_comments(
-    pin: &ReviewPin,
+    pin: &ReviewSelection<'_>,
     thread_id: ReviewThreadId,
     selections: &[CommentSelectionV1],
 ) -> Result<Vec<ReviewComment>> {
@@ -316,7 +369,7 @@ async fn load_comments(
 }
 
 async fn load_events(
-    pin: &ReviewPin,
+    pin: &ReviewSelection<'_>,
     thread_id: ReviewThreadId,
     root: ReviewObjectRef,
 ) -> Result<Vec<ReviewEvent>> {
@@ -387,7 +440,7 @@ fn verify_thread_key(key: ReviewCatalogKey, thread_id: ReviewThreadId) -> Result
 }
 
 async fn load_store_anchor(
-    store: &wal::publication::ReviewStoreSnapshot,
+    store: &dyn ReviewSnapshotRead,
     reference: ReviewObjectRef,
     repository: m::RepositoryId,
 ) -> Result<ArtifactAnchorV1> {

@@ -1,5 +1,12 @@
 # Compatibility and release
 
+Repository-review browser/CLI integration preserves native V1 anchor, record,
+receipt and manifest bytes and local companion request framing. Local read DTOs
+carry their actual Git metadata selection, never synthetic native epochs or WAL
+positions. Native and local CLI continuation selectors remain disjoint. The
+unused local synchronization capability is removed; native M10 controls retain
+their contracts.
+
 The additive application content-search endpoint exposes V1 results with full
 native source identities, current revisions, bounded excerpts and opaque
 expiring cursors. Generated OpenAPI/TypeScript and actual HTTP response captures

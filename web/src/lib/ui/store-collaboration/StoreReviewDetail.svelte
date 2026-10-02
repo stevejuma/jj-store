@@ -129,10 +129,10 @@
           <div>
             <dt>Snapshot</dt>
             <dd>
-              <StoreIdentityCopy
-                value={detail.snapshot.review_root}
-                label="review root"
-              /><StoreIdentityCopy
+              {#if detail.snapshot.review_root}<StoreIdentityCopy
+                  value={detail.snapshot.review_root}
+                  label="review root"
+                />{/if}<StoreIdentityCopy
                 value={detail.thread.thread_id}
                 label="review thread ID"
               />

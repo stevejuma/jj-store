@@ -2,6 +2,7 @@
 use crate::*;
 mod agents;
 mod events;
+mod reviews;
 mod work;
 use axum::{
     Json,
@@ -59,10 +60,13 @@ pub(crate) struct Capabilities {
     pub collaboration: bool,
     pub agents: bool,
     pub reviews: bool,
+    pub review_actions: bool,
+    pub review_repository_anchors: bool,
+    pub review_code_anchors: bool,
+    pub review_agent_anchors: bool,
     pub search: bool,
     pub code_mutations: bool,
     pub conversion: bool,
-    pub synchronization: bool,
 }
 // One inventory owns executable methods, request bodies and response contracts.
 macro_rules! endpoints {
@@ -88,6 +92,7 @@ pub(super) fn router() -> Router<Arc<State>> {
     endpoints!(register)
         .merge(work::router())
         .merge(agents::router())
+        .merge(reviews::router())
         .merge(events::router())
 }
 fn admit(state: &State) -> Result<()> {
@@ -342,11 +347,14 @@ async fn capabilities(
         code_browse: true,
         collaboration: true,
         agents: true,
-        reviews: false,
+        reviews: true,
+        review_actions: true,
+        review_repository_anchors: true,
+        review_code_anchors: false,
+        review_agent_anchors: false,
         search: false,
         code_mutations: false,
         conversion: false,
-        synchronization: false,
     })
 }
 #[derive(Serialize, Deserialize)]
@@ -544,5 +552,6 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
     endpoints!(register);
     work::document(document);
     agents::document(document);
+    reviews::document(document);
     events::document(document);
 }

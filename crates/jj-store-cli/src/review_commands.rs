@@ -14,6 +14,8 @@ use jj_store_model::RequestId;
 use jj_store_service::review_mutations;
 use std::path::PathBuf;
 
+mod local;
+
 const MAX_ANCHOR_BYTES: u64 = 2 * 1024 * 1024;
 
 #[derive(Clone, Debug, Args)]
@@ -33,9 +35,25 @@ pub enum ReviewCommand {
         limit: usize,
         #[arg(long)]
         cursor: Option<String>,
+        /// Local continuation key, requiring the matching committed metadata pin
+        #[arg(long)]
+        after: Option<jj_review::ReviewCatalogKey>,
+        #[arg(long)]
+        at_metadata: Option<jj_store_service::local_repository::MetadataCommit>,
     },
     /// Show one current-root thread with comments and events
-    Show { thread_id: ReviewThreadId },
+    Show {
+        thread_id: ReviewThreadId,
+        #[arg(long)]
+        at_metadata: Option<jj_store_service::local_repository::MetadataCommit>,
+    },
+    /// Create a repository-wide discussion in a local Git-backed JJ repository
+    Repository {
+        #[arg(long)]
+        request_id: RequestId,
+        #[command(flatten)]
+        body: BodyArgs,
+    },
     /// Create a thread from one complete typed anchor document
     Create {
         #[arg(long)]
@@ -154,17 +172,36 @@ pub async fn run(
     let Some(command) = args.command else {
         return presentation::help(ui, helper, &["review".into()]);
     };
-    let connection = Connection::read(helper.workspace_loader()?.repo_path()).map_err(error)?;
+    let path = helper.workspace_loader()?.repo_path();
+    let backend = std::fs::read_to_string(path.join("store/type")).map_err(error)?;
+    if backend.trim() == "git" {
+        return local::run(ui, helper, args.format, command).await;
+    }
+    let connection = Connection::read(path).map_err(error)?;
     let client = connection.connect().await.map_err(error)?;
     match command {
-        ReviewCommand::List { limit, cursor } => {
+        ReviewCommand::List {
+            limit,
+            cursor,
+            after,
+            at_metadata,
+        } => {
+            if after.is_some() || at_metadata.is_some() {
+                return Err(error("local selectors are invalid for native reviews"));
+            }
             let page = client
                 .review_threads(cursor.as_deref(), limit)
                 .await
                 .map_err(error)?;
             review_presentation::page(ui, helper, args.format, &page)
         }
-        ReviewCommand::Show { thread_id } => {
+        ReviewCommand::Show {
+            thread_id,
+            at_metadata,
+        } => {
+            if at_metadata.is_some() {
+                return Err(error("local selectors are invalid for native reviews"));
+            }
             let detail = client.review_thread(thread_id).await.map_err(error)?;
             review_presentation::detail(ui, helper, args.format, &detail)
         }
@@ -307,7 +344,10 @@ fn request(
                 reason,
             },
         ),
-        ReviewCommand::List { .. } | ReviewCommand::Show { .. } | ReviewCommand::Status { .. } => {
+        ReviewCommand::List { .. }
+        | ReviewCommand::Show { .. }
+        | ReviewCommand::Status { .. }
+        | ReviewCommand::Repository { .. } => {
             return Err("invalid review command dispatch".into());
         }
     };

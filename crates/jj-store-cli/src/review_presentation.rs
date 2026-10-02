@@ -12,8 +12,25 @@ pub(crate) fn page(
     format: Format,
     page: &ReviewThreadPage,
 ) -> Result<(), CommandError> {
-    let rows = page
-        .threads
+    page_rows(
+        ui,
+        helper,
+        format,
+        page,
+        &page.threads,
+        page.next_cursor.as_deref(),
+    )
+}
+
+pub(crate) fn page_rows(
+    ui: &Ui,
+    helper: &CommandHelper,
+    format: Format,
+    value: &impl serde::Serialize,
+    threads: &[jj_store_service::collaboration::ReviewThreadSummary],
+    next: Option<&str>,
+) -> Result<(), CommandError> {
+    let rows = threads
         .iter()
         .map(|thread| {
             format!(
@@ -22,16 +39,14 @@ pub(crate) fn page(
             )
         })
         .collect::<String>();
-    let cursor = page
-        .next_cursor
-        .as_deref()
+    let cursor = next
         .map(|value| format!("Next cursor: {value}\n"))
         .unwrap_or_default();
     presentation::result(
         ui,
         helper,
         format,
-        &serde_json::to_value(page).map_err(error)?,
+        &serde_json::to_value(value).map_err(error)?,
         &format!("{rows}{cursor}"),
     )
 }
@@ -42,8 +57,18 @@ pub(crate) fn detail(
     format: Format,
     detail: &ReviewThreadDetail,
 ) -> Result<(), CommandError> {
-    let comments = detail
-        .comments
+    detail_rows(ui, helper, format, detail, &detail.thread, &detail.comments)
+}
+
+pub(crate) fn detail_rows(
+    ui: &Ui,
+    helper: &CommandHelper,
+    format: Format,
+    value: &impl serde::Serialize,
+    thread: &jj_store_service::collaboration::ReviewThreadSummary,
+    comments: &[jj_store_service::collaboration::ReviewComment],
+) -> Result<(), CommandError> {
+    let comments = comments
         .iter()
         .map(|comment| {
             let body = match &comment.content {
@@ -61,10 +86,10 @@ pub(crate) fn detail(
         ui,
         helper,
         format,
-        &serde_json::to_value(detail).map_err(error)?,
+        &serde_json::to_value(value).map_err(error)?,
         &format!(
             "Thread: {}\nStatus: {:?}\nWorkflow version: {}\n{comments}",
-            detail.thread.thread_id, detail.thread.status, detail.thread.workflow_version,
+            thread.thread_id, thread.status, thread.workflow_version,
         ),
     )
 }

@@ -1,10 +1,10 @@
 //! Rebuildable summary facts from the exact selected thread closure.
-use super::review_cursors::ReviewPin;
+use super::review_threads::ReviewSelection;
 use super::*;
 use jj_store_wal::publication::{CommentRevisionContentV1, CommentSelectionV1, ReviewObjectV1};
 
 pub(super) async fn load(
-    pin: &ReviewPin,
+    pin: &ReviewSelection<'_>,
     thread: &ReviewThreadSummary,
     selections: &[CommentSelectionV1],
     events: &[ReviewEvent],

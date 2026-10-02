@@ -123,14 +123,16 @@ Git-backed companion profile in `spec/src/local-jj.md` implements immutable
 metadata selected by an owned Git ref, shared WorkStore semantics and
 server-free project/task/comment CLI, local agent capture and portable
 provenance, and repository-wide review persistence. Portable code/agent review
-anchors, review CLI qualification, automatic hook code associations and the
-native portable evidence carrier remain pending. Filesystem-only and mixed
-LocalTrusted browser serving now supports explicit device folder registration,
-operation-pinned code reads, companion-pinned WorkStore editing and qualified
-recorded AgentStore reads. Indexed search, recoverable code commands, full
-reviews, local conversion and cold full-flow qualification remain pending.
-Storage/identity qualification blocks dependent stages; the milestone ledger
-owns the exact supported stages and acceptance evidence.
+anchors, automatic hook code associations and the native portable evidence
+carrier remain pending. Repository review list/detail, browser actions and
+backend-aware CLI share the qualified repository anchor provider.
+Filesystem-only and mixed LocalTrusted browser serving now supports explicit
+device folder registration, operation-pinned code reads, companion-pinned
+WorkStore editing and qualified recorded AgentStore reads. Indexed search,
+recoverable code commands, full reviews, local conversion and cold full-flow
+qualification remain pending. Storage/identity qualification blocks dependent
+stages; the milestone ledger owns the exact supported stages and acceptance
+evidence.
 
 Production components live under `web/src/lib`; catalog fixtures and harnesses
 may import them, while production MUST remain independent of catalog state.

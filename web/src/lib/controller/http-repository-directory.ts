@@ -25,6 +25,7 @@ export async function readRepositoryDirectory(
     reviews.snapshot.repo_id !== client.repository ||
     !("epoch" in tasks.snapshot) ||
     tasks.snapshot.epoch !== head.epoch ||
+    !("epoch" in reviews.snapshot) ||
     reviews.snapshot.epoch !== head.epoch
   )
     throw new ApiError("snapshot_mismatch");

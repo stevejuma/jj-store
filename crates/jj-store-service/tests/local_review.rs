@@ -383,3 +383,53 @@ async fn local_review_selected_inventory_must_contain_the_complete_root_closure(
         Err(LocalError::Corrupt)
     ));
 }
+
+#[tokio::test]
+async fn local_review_browser_pages_and_detail_pin_committed_metadata() {
+    let (_root, repo) = fixture();
+    let absent = repo.review_threads_at(None, 1, None).await.unwrap();
+    assert!(absent.threads.is_empty());
+    assert!(absent.snapshot.metadata_commit.is_none());
+    assert!(repo.metadata_store().read().unwrap().is_none());
+    let created = receipt(repo.apply_review_command(&create(110)).await.unwrap());
+    let thread = created.command.unwrap().thread_id;
+    let pin = repo.metadata_store().read().unwrap().unwrap().commit();
+    repo.apply_review_command(&create(111)).await.unwrap();
+    let old = repo.review_threads_at(Some(pin), 1, None).await.unwrap();
+    assert_eq!(old.threads.len(), 1);
+    assert_eq!(old.threads[0].thread_id, thread);
+    assert!(old.next_after.is_none());
+    let detail = repo.review_thread_at(Some(pin), thread).await.unwrap();
+    assert_eq!(detail.snapshot.metadata_commit, Some(pin));
+    assert_eq!(detail.comments.len(), 1);
+    assert_eq!(
+        detail.thread.presentation.unwrap().excerpt.as_deref(),
+        Some("Initial review")
+    );
+    let now = repo.review_threads_at(None, 1, None).await.unwrap();
+    let next = repo
+        .review_threads_at(now.snapshot.metadata_commit, 1, now.next_after)
+        .await
+        .unwrap();
+    assert_eq!(next.threads.len(), 1);
+    assert_ne!(now.threads[0].thread_id, next.threads[0].thread_id);
+    let (_other_root, other) = fixture();
+    other.apply_review_command(&create(112)).await.unwrap();
+    assert_eq!(
+        other
+            .review_threads_at(Some(pin), 1, None)
+            .await
+            .unwrap_err(),
+        LocalError::Stale
+    );
+    assert_eq!(
+        repo.review_threads_at(None, 0, None).await.unwrap_err(),
+        LocalError::Limit
+    );
+    assert_eq!(
+        repo.review_threads_at(None, 1, now.next_after)
+            .await
+            .unwrap_err(),
+        LocalError::Invalid
+    );
+}

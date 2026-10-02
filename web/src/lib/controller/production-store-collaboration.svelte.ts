@@ -96,10 +96,6 @@ export function createProductionStoreCollaboration(context: Context) {
   }
 
   async function loadReviews(more = false) {
-    if (context.source().profile === "git_sha1_jj045") {
-      data.status.reviews = "unavailable";
-      return;
-    }
     const source = context.source(),
       ticket = context.version();
     data.status.reviews = more ? "refreshing" : "loading";

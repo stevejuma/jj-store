@@ -2,6 +2,8 @@
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import GitPullRequestIcon from "@lucide/svelte/icons/git-pull-request";
+  import PlusIcon from "@lucide/svelte/icons/plus";
+  import StoreRepositoryReviewDialog from "./StoreRepositoryReviewDialog.svelte";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
   import type { StoreController } from "../../controller/contracts.js";
   import { anchorAgentMember } from "../../collaboration/presentation.js";
@@ -20,6 +22,7 @@
   import "./store-collaboration.css";
   let { controller }: { controller: StoreController; layoutStorage?: Storage } =
     $props();
+  let creating = $state(false);
   const view = $derived(controller.state),
     detail = $derived(view.reviewThread);
 </script>
@@ -42,6 +45,18 @@
               <GitPullRequestIcon aria-hidden="true" />
               <h2>Reviews</h2>
             </div>
+            {#if controller.actions.createRepositoryReview && (view.repository.permission === "write" || view.repository.permission === "admin")}
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="New repository review"
+                title="New repository review"
+                disabled={!!view.reviewActionRequestId}
+                onclick={() => {
+                  creating = true;
+                }}><PlusIcon aria-hidden="true" /></Button
+              >
+            {/if}
             <Button
               variant="ghost"
               size="icon-sm"
@@ -119,6 +134,12 @@
         />{/if}
     {/snippet}
   </StoreDiscussionWorkspace>
+  {#if creating}<StoreRepositoryReviewDialog
+      {controller}
+      onClose={() => {
+        creating = false;
+      }}
+    />{/if}
 </section>
 
 <style>

@@ -9,7 +9,10 @@ export async function readLocalRepositoryDirectory(
 ): Promise<RepositoryDirectorySummary> {
   signal?.throwIfAborted();
   const head = await source.snapshot();
-  const tasks = await work.browse({ kind: "tasks", limit: 256 }, signal);
+  const [tasks, reviews] = await Promise.all([
+    work.browse({ kind: "tasks", limit: 256 }, signal),
+    source.reviewThreads(),
+  ]);
   const graph =
     head.heads.length === 1
       ? await source.graph("log", { operation: head.heads[0]!, limit: 50 })
@@ -38,7 +41,7 @@ export async function readLocalRepositoryDirectory(
   return {
     code: graph?.snapshot ?? null,
     work: tasks.snapshot,
-    review: null,
+    review: reviews.snapshot,
     description:
       latest?.description.trim().split("\n")[0] ||
       (head.heads.length > 1
@@ -50,8 +53,8 @@ export async function readLocalRepositoryDirectory(
       : null,
     commits: commits.length,
     commitsPartial: Boolean(graph?.next_cursor),
-    threads: [],
-    reviewsPartial: false,
+    threads: reviews.threads,
+    reviewsPartial: Boolean(reviews.next_cursor),
     tasks: tasks.tasks,
     tasksPartial: Boolean(tasks.next_cursor),
   };

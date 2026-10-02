@@ -17,7 +17,9 @@ use std::{
     sync::Arc,
 };
 
-#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, schemars::JsonSchema,
+)]
 pub struct LocalReviewSnapshot {
     pub profile: LocalProfile,
     pub repo_id: Option<m::RepositoryId>,

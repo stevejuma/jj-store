@@ -27,6 +27,12 @@ export class HttpLocalWorkDataSource implements WorkBrowseTransport {
   };
   directory = (signal?: AbortSignal) =>
     readLocalRepositoryDirectory(this.source, this, signal);
+  async reviews(cursor?: string, signal?: AbortSignal) {
+    signal?.throwIfAborted();
+    const page = await this.source.reviewThreads(cursor);
+    signal?.throwIfAborted();
+    return page;
+  }
   async page(query: WorkQuery, signal?: AbortSignal) {
     const pin = await this.pin();
     const page = await this.read<Model<"LocalWorkPage">>(

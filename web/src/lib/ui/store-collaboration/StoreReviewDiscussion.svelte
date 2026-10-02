@@ -50,10 +50,10 @@
         >
           {detail.thread.status}
         </CommunityChip>
-        <StoreIdentityCopy
-          value={detail.snapshot.review_root}
-          label="review root"
-        />
+        {#if detail.snapshot.review_root}<StoreIdentityCopy
+            value={detail.snapshot.review_root}
+            label="review root"
+          />{/if}
         <StoreReviewAnchorIdentity anchor={detail.anchor.value} />
       </div>
       <div class="store-collaboration__actions">

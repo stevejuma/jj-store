@@ -1,6 +1,7 @@
 //! Presentation of explicit multi-writer ReviewStore state.
-use super::review_cursors::ReviewPin;
+use super::review_threads::ReviewSelection;
 use super::*;
+use jj_store_wal::publication::ReviewSnapshotRead;
 use jj_store_wal::publication::{
     CommentRevisionContentV1, CommentSelectionV1, ReviewCommentRevisionV1, ReviewEventGraphV1,
     ReviewObjectRef, ReviewObjectV1, ReviewThreadId,
@@ -10,7 +11,7 @@ use std::collections::{BTreeMap, BTreeSet};
 const MAX_THREAD_BODY_BYTES: usize = 8 * 1024 * 1024;
 
 pub(super) async fn load_merged_comments(
-    pin: &ReviewPin,
+    pin: &ReviewSelection<'_>,
     thread_id: ReviewThreadId,
     selections: &[CommentSelectionV1],
 ) -> Result<(Vec<ReviewComment>, Vec<ReviewCommentConflict>)> {
@@ -25,7 +26,7 @@ pub(super) async fn load_merged_comments(
             .map_err(map_wal)?
         {
             ReviewObjectV1::CommentRevision(value) => {
-                comments.push(load_comment(&pin.store, selection, *value, &mut body_bytes).await?)
+                comments.push(load_comment(pin.store, selection, *value, &mut body_bytes).await?)
             }
             ReviewObjectV1::CommentConflict(conflict) => {
                 if conflict.thread_id != thread_id || conflict.comment_id != selection.comment_id {
@@ -39,7 +40,7 @@ pub(super) async fn load_merged_comments(
                         return Err(Error::Corrupt);
                     };
                     let comment = load_comment(
-                        &pin.store,
+                        pin.store,
                         &CommentSelectionV1 {
                             comment_id: selection.comment_id,
                             revision: reference,
@@ -72,7 +73,7 @@ pub(super) async fn load_merged_comments(
 }
 
 async fn load_comment(
-    store: &wal::publication::ReviewStoreSnapshot,
+    store: &dyn ReviewSnapshotRead,
     selection: &CommentSelectionV1,
     value: ReviewCommentRevisionV1,
     body_bytes: &mut usize,
@@ -121,7 +122,7 @@ async fn load_comment(
 }
 
 pub(super) async fn load_graph_events(
-    pin: &ReviewPin,
+    pin: &ReviewSelection<'_>,
     thread_id: ReviewThreadId,
     root: ReviewObjectRef,
 ) -> Result<Vec<ReviewEvent>> {
@@ -136,7 +137,7 @@ pub(super) async fn load_graph_events(
 }
 
 async fn ordered_graph_events(
-    pin: &ReviewPin,
+    pin: &ReviewSelection<'_>,
     graph: ReviewEventGraphV1,
 ) -> Result<Vec<ReviewEvent>> {
     let mut pending = graph
@@ -180,7 +181,7 @@ async fn ordered_graph_events(
 }
 
 pub(super) async fn count_comment_conflicts(
-    store: &wal::publication::ReviewStoreSnapshot,
+    store: &dyn ReviewSnapshotRead,
     selections: &[CommentSelectionV1],
 ) -> Result<usize> {
     let mut count = 0;

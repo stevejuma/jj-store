@@ -23,6 +23,17 @@ const defaultRequestId = () =>
     .map((value) => value.toString(16).padStart(2, "0"))
     .join("");
 
+function result(
+  receipt: Extract<
+    import("./repository-read-types.js").ReviewOutcome,
+    { status: "committed" }
+  >["receipt"],
+) {
+  const value = "result" in receipt ? receipt.result : receipt.command;
+  if (!value) throw new ApiError("snapshot_mismatch");
+  return value;
+}
+
 export function createProductionReviewActions(context: Context) {
   const { data } = context;
 
@@ -44,7 +55,7 @@ export function createProductionReviewActions(context: Context) {
         command,
       });
       if (!current()) return;
-      if (outcome.status === "outcome_unknown") {
+      if (outcome.status !== "committed") {
         data.status.reviewAction = "unavailable";
         data.reviewActionMessage =
           "The review outcome is unknown. Check the durable request status before retrying.";
@@ -55,8 +66,8 @@ export function createProductionReviewActions(context: Context) {
       data.status.reviewAction = "ready";
       await context.reloadReviews();
       if (!current() || context.selectedReviewId() !== selectedId) return;
-      context.selectReview(outcome.receipt.result.thread_id);
-      await context.reloadReview(outcome.receipt.result.thread_id);
+      context.selectReview(result(outcome.receipt).thread_id);
+      await context.reloadReview(result(outcome.receipt).thread_id);
     } catch (cause) {
       if (!current()) return;
       // The server explicitly rejects these commands without publication.
@@ -64,6 +75,9 @@ export function createProductionReviewActions(context: Context) {
         cause instanceof ApiError &&
         [
           "stale_review",
+          "stale_local_metadata",
+          "local_agent_not_found",
+          "unsupported_local_capability",
           "intent_conflict",
           "thread_resolved",
           "thread_open",
@@ -174,9 +188,31 @@ export function createProductionReviewActions(context: Context) {
       context.selectedReviewId() !== selectedId
     )
       return;
-    context.selectReview(status.receipt.result.thread_id);
-    await context.reloadReview(status.receipt.result.thread_id);
+    context.selectReview(result(status.receipt).thread_id);
+    await context.reloadReview(result(status.receipt).thread_id);
   }
 
-  return { create, reply, edit, setResolved, checkAction };
+  const createRepositoryReview = (text: string) =>
+    create(
+      {
+        schema_version: 1,
+        repository_id: context.source().repository,
+        target: { target: "repository" },
+        created_context: {
+          publication_position: null,
+          code_state_version: null,
+          agent_root: null,
+        },
+        sensitivity: "repository",
+      },
+      text,
+    );
+  return {
+    create,
+    createRepositoryReview,
+    reply,
+    edit,
+    setResolved,
+    checkAction,
+  };
 }

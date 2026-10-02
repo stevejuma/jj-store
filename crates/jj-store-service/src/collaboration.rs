@@ -15,7 +15,7 @@ mod review_cursors;
 mod review_models;
 mod review_presentation;
 mod review_replication;
-mod review_threads;
+pub(crate) mod review_threads;
 pub use agent_relations::AgentRelationRequest;
 pub use agent_transcripts::AgentTranscriptRequest;
 pub use checkpoint_models::*;

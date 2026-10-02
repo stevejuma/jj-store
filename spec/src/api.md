@@ -1195,11 +1195,11 @@ LocalTrusted administrative installation endpoints under
 Git-backed JJ bindings. The OS picker is available before repository selection.
 Registration retains its request identity through companion initialization and
 discovery persistence. `/v1/local/repos/{repo}/...` serves profile-aware code
-snapshots, bounded code queries and existing local WorkStore/AgentStore
-semantics. Native repository endpoints and native identities retain their
-contracts. Discovery includes profile and availability without filesystem paths.
-All local routes reuse the existing origin, protocol, media-type and
-literal-loopback admission checks.
+snapshots, bounded code queries and existing local
+WorkStore/AgentStore/ReviewStore semantics. Native repository endpoints and
+native identities retain their contracts. Discovery includes profile and
+availability without filesystem paths. All local routes reuse the existing
+origin, protocol, media-type and literal-loopback admission checks.
 
 Local code reads use a strictly typed, non-publishing POST
 `/v1/local/repos/{repo}/query` with explicit operation and owned query variant.
@@ -1214,6 +1214,19 @@ continuations bind that committed selection and complete filters. POST
 `/work/commands` and GET `/work/commands/{request_id}` reuse CLI device actor
 provenance, original request receipts and unknown outcomes. They do not require
 or fabricate a native code snapshot.
+
+Local ReviewStore POST `/reviews/page` and `/reviews/detail` require an explicit
+committed `metadata_commit`. List continuations bind the repository, binding
+generation, exact metadata selection and page size and expire after five
+minutes. They cannot select staged or foreign metadata. Detail uses the same
+bounded comment/event reconstruction and integrity checks as native serving,
+returning `LocalReviewSnapshot` without fabricated epoch or WAL fields. POST
+`/reviews/commands` accepts the existing typed review command body; GET
+`/reviews/commands/{request_id}` returns the original local receipt. Both use
+the CLI device actor. Versioned capabilities advertise review reads, actions,
+repository anchors, code anchors and agent anchors independently. Repository
+anchors are qualified; code and agent anchors remain false. Local repository
+capabilities do not contain a synchronization field.
 
 Local repository AgentStore POST endpoints `/agents/sessions`,
 `/agents/session`, `/agents/transcript` and `/agents/relations` require an

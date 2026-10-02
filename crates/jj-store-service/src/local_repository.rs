@@ -39,6 +39,8 @@ pub use review_types::{
 };
 mod browser_agents;
 pub use browser_agents::*;
+mod browser_reviews;
+pub use browser_reviews::*;
 mod browser_work;
 mod selection;
 pub use browser_work::LocalWorkBrowsePage;
