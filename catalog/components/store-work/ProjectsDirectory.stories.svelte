@@ -12,6 +12,36 @@
 </script>
 
 <Story
+  name="Project avatars align across rows"
+  args={{ variedProjectMetadata: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await c.findByRole("button", { name: "Open project Small project" });
+    const list = c.getByRole("list", { name: "Projects" });
+    for (const width of [980, 620, 300]) {
+      list.style.width = `${width}px`;
+      await waitFor(() => {
+        const rows = [...list.querySelectorAll<HTMLElement>("article")];
+        const avatars = rows.map(
+          (row) =>
+            row
+              .querySelector(".community-member-hover-card__trigger")!
+              .getBoundingClientRect().left,
+        );
+        expect(Math.max(...avatars) - Math.min(...avatars)).toBeLessThan(1);
+        for (const row of rows)
+          expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+      });
+    }
+    list.style.width = "";
+    await userEvent.click(c.getByRole("radio", { name: "Grid layout" }));
+    for (const row of list.querySelectorAll<HTMLElement>("article")) {
+      await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+    }
+  }}
+/>
+
+<Story
   name="Linked repository cards share height and use their width"
   args={{ projectDetail: true, longRepositoryDescriptions: true }}
   play={async ({ canvasElement }) => {

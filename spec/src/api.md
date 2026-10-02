@@ -833,6 +833,13 @@ authorize a code connection even when no code source is active, retain the exact
 operation and restore the Projects scope with Back. Task sections initially
 expand only Description and main-tab skeletons use a page inset.
 
+Initial browser placeholders cover connection and repository discovery as well
+as the individual Projects, repository-tab and task/review detail reads. These
+are presentation states over the existing asynchronous controller; they add no
+requests or read authority. Previously displayed snapshots remain visible during
+background refresh, with empty/error/unsupported states shown after reads
+settle.
+
 A selected JJ Log or Branches change exposes a read-only Evo Log action in the
 right-rail Actions section. Its separate resizable column reads the existing
 native evolution graph at the displayed operation, preserves server predecessor
@@ -1126,6 +1133,10 @@ outcomes keep the complete request, including exact version preconditions and
 entity IDs. Status and retry share that identity, even after refresh. Linked
 repository navigation uses the normal target session and token checks, never the
 home metadata grant.
+
+Project list rows reserve aligned creator-avatar and date columns regardless of
+count or date-text length, including narrow lists. They retain the existing
+native actor, count and timestamp values.
 
 The development seed exercises these same commands for linked sample projects,
 all task states, subtasks and threaded comments. Its cold browser gate reads the

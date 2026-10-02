@@ -1054,6 +1054,10 @@ creation actor and last accepted event date. Their list fields spread across the
 row; narrower panels retain the title, identity and count, and cards retain the
 complete metadata. Both directories provide the existing list/card controls.
 
+Project listing avatars occupy one aligned metadata column across rows,
+independent of repository/task counts and relative-date text. Narrow lists keep
+that avatar column while wrapping the project copy and counts without overflow.
+
 Landing tabs, project cards, repository/review rows, task rows and task detail
 sections copy Community Projects composition and styling, adapting native fields
 and authorized actions. Discussion uses owned CommunityMessage and the copied
@@ -1067,6 +1071,13 @@ icon. Refresh becomes busy synchronously before discovery and remains busy
 through sidebar and current-view reads; mutation controls are disabled through
 that interval. Keyboard, mobile, permission, paging and cold browser acceptance
 remain separate from visual baseline approval.
+
+Initial Projects tabs (Activity, Projects, Tasks, Reviews and Repositories),
+repository tabs and selected task/review details show labelled busy skeletons
+through connection, discovery and the initial data read. Loading banners and
+premature empty or unavailable states do not replace those skeletons. Once a
+snapshot is displayed, background refresh retains its content and drafts;
+settled failures and unsupported features retain their explicit notices.
 
 ### Native collaboration action placement
 

@@ -34,6 +34,12 @@ event date. Tombstoned, hidden and conflicted root comments expose no old body.
 
 ## Initial profile
 
+Browser project listings align creator avatars across rows independently of
+count and date widths. Initial collections and task details use busy skeletons
+from discovery through their first accepted read, while background refresh
+retains displayed data and drafts. Settled empty and failure states remain
+explicit; this changes no WorkStore identity, read or command semantics.
+
 The native profile below remains manifest/WAL backed. M13's separate local
 Git-backed profile uses the same `WorkStateV1` reducer, semantic validation and
 limits through the owned LocalRepository service. It stores an explicitly

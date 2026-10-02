@@ -196,6 +196,44 @@
   margin-inline-start: auto;
 }
 
+.community-projects__project-list {
+  container: project-list / inline-size;
+}
+.community-projects__project-row .community-projects__card-meta {
+  display: grid;
+  grid-template-columns: auto auto 1.5rem 6.5rem;
+  flex: none;
+}
+.community-projects__project-repositories {
+  grid-column: 1;
+}
+.community-projects__project-counts {
+  grid-column: 2;
+}
+.community-projects__project-row .community-member-hover-card__trigger {
+  grid-column: 3;
+  justify-self: center;
+}
+.community-projects__project-row .community-projects__card-meta > time {
+  display: inline-flex;
+  grid-column: 4;
+  justify-self: end;
+}
+@container project-list (max-width: 36rem) {
+  .community-projects__project-row {
+    flex-wrap: wrap;
+  }
+  .community-projects__project-row .community-projects__card-copy {
+    flex-basis: calc(100% - 2rem);
+  }
+  .community-projects__project-row .community-projects__card-meta {
+    grid-template-columns: auto auto 1.5rem;
+  }
+  .community-projects__project-row .community-projects__card-meta > time {
+    display: none;
+  }
+}
+
 .community-projects__card-meta > .community-member-hover-card__trigger {
   position: relative;
   z-index: 2;

@@ -4,7 +4,12 @@
     $props();
 </script>
 
-<div class="store-collaboration-skeleton" role="status" aria-label={label}>
+<div
+  class="store-collaboration-skeleton"
+  role="status"
+  aria-label={label}
+  aria-busy="true"
+>
   {#each [0, 1, 2, 3, 4] as row}
     <div class="store-collaboration-skeleton__row" aria-hidden="true">
       <Skeleton class="store-collaboration-skeleton__avatar" />

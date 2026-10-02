@@ -6,6 +6,7 @@ import type {
 /** Catalog-only pending state over the same production controller contract. */
 export function createLoadingStoreController(
   controller: StoreController,
+  connecting = false,
 ): StoreController {
   return {
     get state(): StoreControllerState {
@@ -21,12 +22,20 @@ export function createLoadingStoreController(
         detail: undefined,
         snapshot: undefined,
         blob: undefined,
+        agentSessions: [],
+        agentSession: undefined,
+        reviewThreads: [],
+        reviewThread: undefined,
         status: {
           ...state.status,
-          navigation: "loading",
-          bookmarks: "loading",
-          graph: files ? "idle" : "loading",
-          files: files ? "loading" : "idle",
+          connection: connecting ? "connecting" : state.status.connection,
+          navigation: connecting ? "idle" : "loading",
+          bookmarks: connecting ? "idle" : "loading",
+          graph: connecting || files ? "idle" : "loading",
+          files: !connecting && files ? "loading" : "idle",
+          agents: connecting ? "idle" : "loading",
+          reviews: connecting ? "idle" : "loading",
+          reviewAction: "idle",
           detail: "idle",
         },
       };
@@ -45,7 +54,8 @@ export function createDetailLoadingStoreController(
         ...state,
         detail: undefined,
         blob: undefined,
-        status: { ...state.status, detail: "loading" },
+        reviewThread: undefined,
+        status: { ...state.status, detail: "loading", reviewAction: "loading" },
       };
     },
     actions: controller.actions,

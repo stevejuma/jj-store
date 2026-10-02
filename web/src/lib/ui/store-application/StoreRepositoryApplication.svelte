@@ -25,6 +25,10 @@
     layoutStorage?: Storage;
   } = $props();
   const state = $derived(controller.state);
+  const preparing = $derived(
+    state.status.connection === "connecting" ||
+      state.status.navigation === "loading",
+  );
   const selectedId = $derived(
     state.route.page === "oplog"
       ? state.route.inspectedOperationId
@@ -130,9 +134,11 @@
         hasMoreFiles={state.canLoadMoreDetail}
         unavailableComparisonCount={state.unavailableComparisonCount}
         loading={state.status.graph === "loading" ||
-          state.status.graph === "refreshing"}
+          state.status.graph === "refreshing" ||
+          preparing}
         referencesLoading={state.status.bookmarks === "loading" ||
-          state.status.bookmarks === "refreshing"}
+          state.status.bookmarks === "refreshing" ||
+          preparing}
         detailLoading={state.status.detail === "loading"}
         filesLoading={state.status.detail === "refreshing"}
         now={state.now}

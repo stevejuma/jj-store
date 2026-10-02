@@ -17,6 +17,11 @@
   import type { StoreController } from "../../controller/contracts.js";
   import type { ProjectsTab } from "../../controller/projects-hub-types.js";
   import StoreProjectsDirectory from "./StoreProjectsDirectory.svelte";
+  import StoreProjectsLoading from "./StoreProjectsLoading.svelte";
+  import {
+    projectsBusy,
+    projectsInitialLoading,
+  } from "./projects-initial-loading.js";
   import StoreWorkTaskRows from "./StoreWorkTaskRows.svelte";
   import StoreWorkRepositories from "./StoreWorkRepositories.svelte";
   import StoreWorkTaskDetail from "./StoreWorkTaskDetail.svelte";
@@ -37,6 +42,7 @@
     work = $derived(hub.detail),
     project = $derived(work?.state.project),
     task = $derived(work?.state.task);
+  const busy = $derived(projectsBusy(controller));
   const repositoryName = (id: string) =>
     controller.state.repositories.find((r) => r.id === id)?.name ?? id;
   const writable = $derived(
@@ -104,7 +110,7 @@
       size="icon-sm"
       aria-label="Refresh projects"
       title="Refresh projects"
-      disabled={hub.loading}
+      disabled={busy}
       onclick={() => controller.actions.refresh()}
       ><RefreshIcon aria-hidden="true" /></Button
     >
@@ -113,7 +119,7 @@
         size="icon-sm"
         aria-label={tab === "tasks" ? "New task" : "New project"}
         title={tab === "tasks" ? "New task" : "New project"}
-        disabled={hub.loading}
+        disabled={busy}
         onclick={() => open(tab === "tasks" ? "createTask" : "createProject")}
         ><PlusIcon aria-hidden="true" /></Button
       >{/if}
@@ -122,7 +128,7 @@
         size="icon-sm"
         aria-label="Edit project"
         title="Edit project"
-        disabled={hub.loading ||
+        disabled={busy ||
           work?.state.loading ||
           work?.state.writing ||
           !!work?.state.pending}
@@ -133,7 +139,7 @@
         size="icon-sm"
         aria-label="New task"
         title="New task"
-        disabled={hub.loading ||
+        disabled={busy ||
           work?.state.loading ||
           work?.state.writing ||
           !!work?.state.pending}
@@ -146,7 +152,7 @@
 <section
   class="store-projects community-projects"
   aria-label="Projects and tasks"
-  aria-busy={hub.loading}
+  aria-busy={busy}
 >
   <ScrollArea
     type="hover"
@@ -195,7 +201,11 @@
           {@render actions()}
         </header>{/if}
       <Tabs.Content value={tab} aria-label={`${tab} view`}>
-        {#if tab === "activity"}<StoreProjectsActivity {controller} />
+        {#if projectsInitialLoading(controller)}<StoreProjectsLoading
+            {route}
+            {layout}
+          />
+        {:else if tab === "activity"}<StoreProjectsActivity {controller} />
         {:else if tab === "reviews"}<StoreProjectsReviews
             {controller}
             {layout}
@@ -276,7 +286,7 @@
         {:else if !route.projectId}<StoreProjectsDirectory
             {controller}
             {layout}
-          />{:else if hub.loading}<p role="status">Loading project…</p>{/if}
+          />{/if}
       </Tabs.Content>
     </Tabs.Root>
   </ScrollArea>

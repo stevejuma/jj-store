@@ -8,6 +8,7 @@
     StoreController,
   } from "../../web/src/lib/controller/contracts.js";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
+  import { Button } from "@lapismd/design-core/shadcn/button";
   import {
     fixtureTransport,
     homeA,
@@ -27,6 +28,10 @@
     mobile = false,
     sharedRepository = false,
     loading = false,
+    discoveryLoading = false,
+    bootstrapLoading = false,
+    deferredRefresh = false,
+    variedProjectMetadata = false,
     repositoryProjects = false,
   }: {
     layoutStorage?: Storage;
@@ -40,8 +45,15 @@
     mobile?: boolean;
     sharedRepository?: boolean;
     loading?: boolean;
+    discoveryLoading?: boolean;
+    bootstrapLoading?: boolean;
+    deferredRefresh?: boolean;
+    variedProjectMetadata?: boolean;
     repositoryProjects?: boolean;
   } = $props();
+  let refreshPending = $state(false);
+  let finishRefresh: (() => void) | undefined;
+  let refreshGate = Promise.resolve();
   const base = untrack(() => createInMemoryStoreController("projects"));
   let route = $state<StoreRoute>({
     ...initialStoreRoute(),
@@ -72,6 +84,61 @@
     push: (next) => (route = next),
     source: (home) => {
       const source = fixtureTransport(home, failedHome, sharedRepository);
+      const page = source.page;
+      source.page = async (query, signal) => {
+        if (refreshPending) await refreshGate;
+        return page(query, signal);
+      };
+      const activity = source.activity;
+      if (activity)
+        source.activity = async (query, signal) => {
+          if (refreshPending) await refreshGate;
+          return activity(query, signal);
+        };
+      const reviews = source.reviews;
+      if (reviews)
+        source.reviews = async (cursor, signal) => {
+          if (refreshPending) await refreshGate;
+          return reviews(cursor, signal);
+        };
+      const directoryRead = source.directory;
+      if (directoryRead)
+        source.directory = async (signal) => {
+          if (refreshPending) await refreshGate;
+          return directoryRead(signal);
+        };
+      const browse = source.browse;
+      source.browse = async (query, signal) => {
+        if (refreshPending) await refreshGate;
+        const page = await browse(query, signal);
+        if (!variedProjectMetadata || !page.projects.length) return page;
+        const first = page.projects[0]!;
+        return {
+          ...page,
+          total_matches: 3,
+          projects: [
+            first,
+            ...[1, 2].map((index) => ({
+              ...first,
+              id: String(index + 5).repeat(32),
+              title:
+                index === 1
+                  ? "Long project title and description"
+                  : "Small project",
+              repositories: index === 1 ? {} : first.repositories,
+              actor: {
+                ...first.actor,
+                updated_at_millis: Date.now() - index * 60000,
+              },
+              task_counts: {
+                active: index === 1 ? 4095 : 0,
+                done: index,
+                total: index === 1 ? 4096 : 2,
+              },
+            })),
+          ],
+        };
+      };
       if (longRepositoryDescriptions && source.directory) {
         const directory = source.directory;
         source.directory = async (signal) => {
@@ -97,8 +164,11 @@
         directory: pending,
         reviews: pending,
         activity: pending,
+        ...(detail || projectDetail ? { page: pending } : {}),
       };
     },
+    discover: () =>
+      discoveryLoading ? new Promise<void>(() => {}) : Promise.resolve(),
     changed: () => {},
   });
   const controller: StoreController = {
@@ -111,20 +181,32 @@
         repositories,
         accessMode: "authenticated" as const,
         installationReady: true,
+        ...(bootstrapLoading
+          ? {
+              status: {
+                ...base.state.status,
+                connection: "connecting" as const,
+                repositories: "loading" as const,
+              },
+            }
+          : {}),
       };
     },
     actions: { ...base.actions, refresh: () => hub.refresh() },
   };
   $effect(() => {
+    if (bootstrapLoading) return;
     void untrack(() => hub.navigation.load());
     void untrack(() =>
-      repositoryProjects
-        ? hub.restore()
-        : detail
-          ? hub.openProject(homeA, projectId, childId)
-          : projectDetail
-            ? hub.openProject(homeA, projectId)
-            : hub.openHub(),
+      discoveryLoading
+        ? hub.refresh()
+        : repositoryProjects
+          ? hub.restore()
+          : detail
+            ? hub.openProject(homeA, projectId, childId)
+            : projectDetail
+              ? hub.openProject(homeA, projectId)
+              : hub.openHub(),
     );
   });
   onDestroy(() => hub.reset());
@@ -136,3 +218,16 @@
   initiallyCollapsed={false}
   displayMode={mobile ? "mobile" : "desktop"}
 />
+{#if deferredRefresh}<Button
+    onclick={() => {
+      refreshGate = new Promise<void>((resolve) => (finishRefresh = resolve));
+      refreshPending = true;
+      void hub.refresh();
+    }}>Pause project refresh</Button
+  >
+  <Button
+    onclick={() => {
+      refreshPending = false;
+      finishRefresh?.();
+    }}>Finish project refresh</Button
+  >{/if}

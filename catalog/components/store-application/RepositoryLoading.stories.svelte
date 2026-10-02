@@ -26,6 +26,169 @@
 </script>
 
 <Story
+  name="Connection loading branches"
+  args={{ initialPage: "branches", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading log"
+  args={{ initialPage: "log", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading oplog"
+  args={{ initialPage: "oplog", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading files"
+  args={{ initialPage: "files", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading agents"
+  args={{ initialPage: "agents", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Connection loading reviews"
+  args={{ initialPage: "reviews", connectionLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector(
+        '[role="status"] [data-ui-component="skeleton"]',
+      ),
+    ).not.toBeNull();
+    await expect(
+      within(canvasElement).queryByText(
+        /No agent sessions|No review threads|No branches|No files/,
+      ),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Reviews"
+  args={{ initialPage: "reviews" }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole("status", {
+        name: "Loading review threads",
+      }),
+    ).toBeVisible();
+  }}
+/>
+
+<Story
+  name="Review detail"
+  args={{ initialPage: "reviews", loading: false, detailLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole("status", {
+        name: "Loading review details",
+      }),
+    ).toBeVisible();
+    await expect(
+      within(canvasElement).queryByText("Review unavailable"),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Review detail before list read"
+  args={{ initialPage: "reviews", detailLoading: true }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole("status", {
+        name: "Loading review details",
+      }),
+    ).toBeVisible();
+    await expect(
+      within(canvasElement).queryByText("Review unavailable"),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Review detail before connection"
+  args={{
+    initialPage: "reviews",
+    connectionLoading: true,
+    detailLoading: true,
+  }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole("status", {
+        name: "Loading review details",
+      }),
+    ).toBeVisible();
+    await expect(
+      within(canvasElement).queryByText("Review unavailable"),
+    ).toBeNull();
+  }}
+/>
+
+<Story
   name="Branches"
   args={{ initialPage: "branches" }}
   play={async ({ canvasElement }) => {

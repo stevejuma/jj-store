@@ -115,9 +115,6 @@
         : `No ${kind} yet`}
       description="Create an item or change the filters to see work across your repositories."
     />{/if}
-  {#if hub.loading}<p role="status">
-      Checking home repositories… Results are still loading.
-    </p>{/if}
   {#if hub.homes.some((home) => home.error)}<p>
       Some homes are unavailable. Results cover the homes shown above.
     </p>{/if}

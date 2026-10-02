@@ -58,7 +58,7 @@
               description={view.status.error}
               tone="destructive"
             />{/if}
-          {#if view.status.reviews === "loading" && !view.reviewThreads.length}
+          {#if (view.status.connection === "connecting" || view.status.navigation === "loading" || view.status.reviews === "loading") && !view.reviewThreads.length}
             <div class="store-reviews__loading">
               <StoreCollaborationSkeleton label="Loading review threads" />
             </div>
@@ -105,7 +105,7 @@
         </div>
       </ScrollArea>{/snippet}
     {#snippet discussion()}
-      {#if view.status.reviewAction === "loading" && !detail}
+      {#if (view.status.connection === "connecting" || view.status.navigation === "loading" || view.status.reviews === "loading" || view.status.reviewAction === "loading") && !detail}
         <div class="store-reviews__loading">
           <StoreCollaborationSkeleton label="Loading review details" />
         </div>

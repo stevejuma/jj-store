@@ -66,7 +66,7 @@
             description={state.status.error}
             tone="destructive"
           />{/if}
-        {#if state.status.agents === "loading" && state.agentSessions.length === 0}
+        {#if (state.status.connection === "connecting" || state.status.navigation === "loading" || state.status.agents === "loading") && state.agentSessions.length === 0}
           <StoreCollaborationSkeleton label="Loading agent sessions" />
         {:else if state.agentSessions.length === 0}
           <Empty.Root class="store-collaboration__empty">
@@ -203,7 +203,7 @@
     </ColumnCanvas.Column>
     <ColumnCanvas.Column id="detail" title="Agent response">
       <ColumnCanvas.Body>
-        {#if state.status.transcript === "loading" && !selected}
+        {#if (state.status.transcript === "loading" || ((state.status.connection === "connecting" || state.status.navigation === "loading" || state.status.agents === "loading") && state.route.agentSessionId)) && !selected}
           <StoreCollaborationSkeleton label="Loading agent response" />
         {:else}<StoreAgentContext {controller} />{/if}
       </ColumnCanvas.Body>

@@ -24,6 +24,7 @@
     large = false,
     workingCopies,
     loading = false,
+    connectionLoading = false,
     detailLoading = false,
     collaborationState = "ready",
     reviewOutcome,
@@ -35,6 +36,7 @@
     large?: boolean;
     workingCopies?: readonly import("../../web/src/lib/projects/repository-log.js").RepositoryWorkingCopy[];
     loading?: boolean;
+    connectionLoading?: boolean;
     detailLoading?: boolean;
     collaborationState?: CatalogCollaborationState;
     reviewOutcome?: "committed" | "unknown";
@@ -80,9 +82,26 @@
         fixture,
         collaborationState,
       );
-    if (loading) return createLoadingStoreController(fixture);
+    if (connectionLoading) {
+      if (detailLoading && initialPage === "reviews")
+        fixture.actions.selectReviewThread(
+          fixture.state.reviewThreads[0]!.thread_id,
+        );
+      return createLoadingStoreController(fixture, true);
+    }
+    if (loading) {
+      if (detailLoading && initialPage === "reviews")
+        fixture.actions.selectReviewThread(
+          fixture.state.reviewThreads[0]!.thread_id,
+        );
+      return createLoadingStoreController(fixture);
+    }
     if (!detailLoading) return fixture;
     if (initialPage === "files") fixture.actions.selectFile("README.md");
+    else if (initialPage === "reviews")
+      fixture.actions.selectReviewThread(
+        fixture.state.reviewThreads[0]!.thread_id,
+      );
     else
       fixture.actions.selectRevision(
         initialPage === "oplog" ? IDS.opLeft : IDS.current,
