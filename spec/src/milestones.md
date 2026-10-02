@@ -39,7 +39,7 @@ shared-package release qualification does not alter those original Git gates.
 | M4.6        | Done        | M4.5                    | JST-UI-003                                                                                                                                                                              | Native fixture graph/file/diff drill-down and accessibility                                                                    | Visual review; live UI remains deferred                                                        | E-UI-003                                                                                                                                                                                                                                                                                                                                                       |
 | M4.7        | Done        | M4.6                    | JST-UI-004                                                                                                                                                                              | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                                            | E-UI-004,E-UI-029,E-UI-044,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                   |
 | M4.8        | Done        | M4.7                    | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks            | Visual review pending; live UI remains deferred                                                | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                        |
-| M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                                 | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                                            | E-UI-007,E-UI-008,E-UI-063,E-UI-065,E-UI-066                                                                                                                                                                                                                                                                                                                   |
+| M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                                 | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                                            | E-UI-007,E-UI-008,E-UI-063,E-UI-065,E-UI-066,E-UI-067                                                                                                                                                                                                                                                                                                          |
 | M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                                     | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                                          | E-M4-018                                                                                                                                                                                                                                                                                                                                                       |
 | M4.11       | Deferred    | M4.10                   | JST-API-004,JST-API-005,JST-UI-005                                                                                                                                                      | Shared authenticated connection and final registry-only browser acceptance                                                     | Future shared/package release                                                                  | E-UI-011                                                                                                                                                                                                                                                                                                                                                       |
 | M4.12       | Deferred    | M4.11                   | JST-API-002,JST-API-003,JST-UI-005                                                                                                                                                      | Shared-deployment route/SSE finalization against registry-only dependencies                                                    | Future shared/package release                                                                  | E-UI-012                                                                                                                                                                                                                                                                                                                                                       |
@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066                                                                                                                                                                                                            |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067                                                                                                                                                                                                   |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -42578,6 +42578,155 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "All22 changed files pass. /tmp/jj-loading-format-check.log."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-067",
+    "tasks": ["M4.9", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "focused task detail fixed header and composer regression",
+    "revision": "Enclosing Jujutsu change kzzwpwsz",
+    "requirements": [
+      "JST-UI-005",
+      "JST-UI-015",
+      "JST-API-005",
+      "JST-WORK-008",
+      "JST-ARCH-004",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Functional checks pass. Visual baseline approval and existing released-registry Design Core qualification remain separate gates."
+    ],
+    "scope": "UI-only task-detail layout within the existing web package. Community task detail inspected first, Design Core public ScrollArea second. Keep the title/header and writable composer in fixed grid rows, with one intervening ScrollArea for metadata, description, subtasks and Activity/comments. StoreWorkComments retains draft/reply/edit state while supplying activity/composer snippets to the page layout. The Projects hub omits its outer page scroller for accepted task detail and binds the content viewport to the existing per-route scroll cache; the legacy shared WorkStore host uses the same fixed rows. Focused direct interaction/accessibility stories and a fresh live HMR task page verify desktop/narrow/read-only behavior and retained comments/drafts. Rust builds/tests, root aggregate spec:check/check/test/build, unrelated Storybook families, built-bundle release qualification, visual baseline updates, main landing, package publication, fixture reset/reseed and backend restart are out of scope under the targeted UI policy.",
+    "versions": "Node26.9.0; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; Playwright1.63.0. Existing private Design Core source hook and tracked registry range^0.2.0 retained.",
+    "formats": "No API, operation pin, WorkStore identity, WAL, manifest, cursor, command, version or permission changes. Comment ownership, reply/edit context and drafts remain in the same native adapter. Read-only task detail has a fixed header and content scroll without a composer. Task navigation restores content scroll from the existing bounded in-session map; no browser-storage persistence is added.",
+    "next": "Review the committed slice through existing Vite HMR7460 in the Appearance workspace; visual baselines and registry qualification remain separate.",
+    "artifacts": "/tmp/jj-task-scroll-*.log; /tmp/jj-task-scroll-final.png. Main persistent fixture and HMR/backend preserved.",
+    "files": [
+      "catalog/components/store-work/TaskScroll.stories.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsViewport.svelte",
+      "web/src/lib/ui/store-work/StoreWork.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/src/lib/ui/store-work/task-detail-layout.css",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before regression:3/3 fail because the original task detail has no separate Task content scroll region. /tmp/jj-task-scroll-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial repair:3/3 desktop950px, narrow380px and read-only380px. Fixed title/composer measurements, Activity collapse and draft retention. /tmp/jj-task-scroll-after.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-work/TaskScroll.stories.svelte catalog/fixtures/ProjectsHubFixture.svelte spec/src/api.md spec/src/projects.md spec/src/ui.md web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreWork.svelte web/src/lib/ui/store-work/StoreWorkComments.svelte web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte web/src/lib/ui/store-work/task-detail-layout.css",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial10 changed source, fixture, story and canonical files formatted."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final checks:0 errors/warnings. /tmp/jj-task-scroll-web-check.log; /tmp/jj-task-scroll-web-check-final.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final checks:0 errors/warnings;130 catalog modules. /tmp/jj-task-scroll-catalog-check.log; /tmp/jj-task-scroll-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial formatted StoreProjects orchestration exceeded300 counted lines at305. Extracted the conditional page-scroll wrapper to StoreProjectsViewport; no limit weakened."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreProjectsViewport.svelte; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Extracted wrapper formatted;742 modules within architecture limits."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "39 pass/40. Existing read-only title-row check caught refresh-button alignment versus newly padded header bounds. Moved spacing to header margins to preserve its content edge; assertion retained. /tmp/jj-task-scroll-consumers.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pre-restoration40/40 in8 direct families on a fresh Vitest browser/Vite process, with blocking accessibility checks. Fixed desktop/narrow/read-only scroll, title-row alignment, reply/edit/reactions/unknown outcomes, retained refresh drafts and navigation. /tmp/jj-task-scroll-consumers-final.log."
+      },
+      {
+        "command": "jj --version; node --version; pnpm --version",
+        "result": "pass",
+        "failures": 0,
+        "note": "JJ0.45.1;Node26.9.0;pnpm10.32.1."
+      },
+      {
+        "command": "cua_repl: fresh hidden task detail; inspect and measure fixed rows; scroll content; capture screenshot; close temporary tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live HMR cold page settles from task skeleton. Content scrollTop0 to588.5px (scrollHeight1033/clientHeight445); header top67.3984375/bottom111.7890625 and footer top570/bottom711 unchanged. Task width=scrollWidth=1079px. AX scroll target was covered by a button; retargeted to the visible content at900,450. Read-only UI verification; no fixture publications. /tmp/jj-task-scroll-final.png."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte -t TaskContentScrollSurvivesReturning",
+        "result": "fail",
+        "failures": 1,
+        "note": "Additional navigation regression:restored task content scroll0px versus saved400px after moving the scroller. Bound the task viewport to the existing Projects scroll owner and captured the route key per listener. /tmp/jj-task-scroll-return-before.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-work/TaskScroll.stories.svelte web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final4/4 task-scroll regressions include400px restored content scroll and retained draft after navigating to the task list and returning. /tmp/jj-task-scroll-return-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final41/41 in8 direct families after restored-scroll binding, with blocking accessibility checks. /tmp/jj-task-scroll-stories-final.log. Final web/catalog/architecture repeats also pass with0 errors/warnings and742 production/catalog modules."
+      },
+      {
+        "command": "cua_repl: fresh hidden final task page; measure and scroll content; Back to tasks; reopen selected task; capture screenshot; close temporary tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final live HMR page:header top67.3984375/bottom111.7890625 and footer top570/bottom711 unchanged; scrollTop0 to588.5 and restored588.5 after navigating away and back. Task width=scrollWidth=1028px. Final screenshot /tmp/jj-task-scroll-final.png. User tab and fixture preserved; no publications."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm check:ui-ownership; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 protected files/4 canonical chapters;5 validators/21 chapters/147 requirements;120 tasks;ownership1 validator;742 modules. /tmp/jj-task-scroll-{spec-first,spec-validate,progress,ownership,architecture-final}.log. Repeated after final binding and ledger update without wider lanes."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "E-UI-067 ledger formatted; repeated for final evidence-only update."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/store-work/TaskScroll.stories.svelte catalog/fixtures/ProjectsHubFixture.svelte spec/src/api.md spec/src/projects.md spec/src/ui.md web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreProjectsViewport.svelte web/src/lib/ui/store-work/StoreWork.svelte web/src/lib/ui/store-work/StoreWorkComments.svelte web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte web/src/lib/ui/store-work/task-detail-layout.css spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All12 changed files formatted. /tmp/jj-task-scroll-format-check.log. Repeated with pnpm exec prettier --write spec/src/ui.md spec/src/milestones.md and pnpm check:progress after final evidence update."
       }
     ]
   }

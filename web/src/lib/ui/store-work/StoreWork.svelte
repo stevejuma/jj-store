@@ -64,6 +64,7 @@
   class="store-projects community-projects"
   aria-label="Projects and tasks"
   aria-busy={view.loading}
+  data-task-detail={view.task && tab === "tasks" ? "" : undefined}
 >
   <StoreWorkStatus {work} />
   <Tabs.Root bind:value={tab} class="store-projects__tab-root">

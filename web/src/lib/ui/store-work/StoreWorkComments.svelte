@@ -2,7 +2,7 @@
   // @community-copy CommunityProjects.svelte task Activity (Apache-2.0), native comments.
   import { focusNativeMessage } from "../focus-message.js";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
-  import { untrack } from "svelte";
+  import { untrack, type Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
@@ -20,11 +20,13 @@
     writable,
     principal,
     busy = false,
+    children,
   }: {
     work: WorkController;
     writable: boolean;
     principal?: string | undefined;
     busy?: boolean;
+    children: Snippet<[Snippet, Snippet]>;
   } = $props();
   const view = $derived(work.state),
     disabled = $derived(
@@ -120,111 +122,117 @@
 </script>
 
 <!-- CommunityProjects task activity and CommunityThreadTreeRow, native callbacks. -->
-<section aria-label="Task activity">
-  <Collapsible.Root
-    class="community-projects__task-activity"
-    bind:open={activityOpen}
-  >
-    <Collapsible.Trigger class="community-projects__task-section-trigger">
-      <span>Activity</span>
-      {#if activityOpen}<ChevronDownIcon
-          class="community-projects__task-section-chevron"
-          aria-hidden="true"
-        />{:else}<ChevronRightIcon
-          class="community-projects__task-section-chevron"
-          aria-hidden="true"
-        />{/if}
-    </Collapsible.Trigger>
-    <Collapsible.Content>
-      <div
-        use:focusNativeMessage={view.comments.some(
-          (c) => c.id === view.focusCommentId,
-        )
-          ? view.focusCommentId
-          : null}
-      >
-        <div
-          class="community-projects__task-timeline"
-          role="list"
-          aria-label="Task comments"
-        >
-          {#each rows as row (row.comment.id)}
-            {@const comment = row.comment}
-            <div
-              class="community-thread-tree-row"
-              role="listitem"
-              aria-label={`Comment ${comment.id.slice(0, 8)}`}
-              data-message-id={comment.id}
-              data-highlighted={comment.id === view.focusCommentId || undefined}
-              data-ui-part="thread-tree-row"
-              data-thread-depth={row.depth}
-              style={`--community-thread-indent: ${row.indentRem}rem; --community-thread-connector-indent: ${row.connectorIndentRem ?? 0}rem;`}
-            >
-              {#each row.guideIndentRems as guideIndent}<span
-                  class="community-thread-tree-row__guide"
-                  data-ui-part="thread-reply-guide"
-                  style={`--community-thread-guide-indent: ${guideIndent}rem;`}
-                  aria-hidden="true"
-                ></span>{/each}
-              {#if row.connectorIndentRem !== undefined}<span
-                  class="community-thread-tree-row__connector"
-                  data-ui-part="thread-reply-connector"
-                  aria-hidden="true"
-                ></span>{/if}
-              {#if row.connectsToChildren}<span
-                  class="community-thread-tree-row__descendant-guide"
-                  data-ui-part="thread-descendant-guide"
-                  aria-hidden="true"
-                ></span>{/if}
-              <div class="community-thread-tree-row__content">
-                <StoreWorkComment
-                  {work}
-                  {comment}
-                  {members}
-                  {writable}
-                  {disabled}
-                  onReply={writable
-                    ? () => {
-                        draft.reply = comment.id;
-                        draft.edit = null;
-                        draft.editContext = undefined;
-                      }
-                    : undefined}
-                  onEdit={writable &&
-                  comment.body !== null &&
-                  comment.actor.created_by === principal
-                    ? () => {
-                        draft.edit = comment.id;
-                        draft.reply = null;
-                        draft.body = comment.body!;
-                        draft.editContext = {
-                          body: comment.body!,
-                          commentVersion: comment.version,
-                          taskVersion: view.task!.version,
-                        };
-                      }
-                    : undefined}
-                  onRemove={writable && comment.body !== null
-                    ? () => (removing = comment.id)
-                    : undefined}
-                />
-              </div>
-            </div>
-          {/each}
-        </div>
-        {#if view.commentCursor}<Button
-            variant="outline"
-            disabled={view.loading}
-            onclick={() => work.more("comments")}>More comments</Button
-          >{/if}
-        {#if !view.comments.length && !view.loading}<StoreWorkEmpty
-            kind="comments"
-            title="No comments yet"
-            description="Add a comment to this task."
+{#snippet activity()}
+  <section aria-label="Task activity">
+    <Collapsible.Root
+      class="community-projects__task-activity"
+      bind:open={activityOpen}
+    >
+      <Collapsible.Trigger class="community-projects__task-section-trigger">
+        <span>Activity</span>
+        {#if activityOpen}<ChevronDownIcon
+            class="community-projects__task-section-chevron"
+            aria-hidden="true"
+          />{:else}<ChevronRightIcon
+            class="community-projects__task-section-chevron"
+            aria-hidden="true"
           />{/if}
-      </div>
-    </Collapsible.Content>
-  </Collapsible.Root>
+      </Collapsible.Trigger>
+      <Collapsible.Content>
+        <div
+          use:focusNativeMessage={view.comments.some(
+            (c) => c.id === view.focusCommentId,
+          )
+            ? view.focusCommentId
+            : null}
+        >
+          <div
+            class="community-projects__task-timeline"
+            role="list"
+            aria-label="Task comments"
+          >
+            {#each rows as row (row.comment.id)}
+              {@const comment = row.comment}
+              <div
+                class="community-thread-tree-row"
+                role="listitem"
+                aria-label={`Comment ${comment.id.slice(0, 8)}`}
+                data-message-id={comment.id}
+                data-highlighted={comment.id === view.focusCommentId ||
+                  undefined}
+                data-ui-part="thread-tree-row"
+                data-thread-depth={row.depth}
+                style={`--community-thread-indent: ${row.indentRem}rem; --community-thread-connector-indent: ${row.connectorIndentRem ?? 0}rem;`}
+              >
+                {#each row.guideIndentRems as guideIndent}<span
+                    class="community-thread-tree-row__guide"
+                    data-ui-part="thread-reply-guide"
+                    style={`--community-thread-guide-indent: ${guideIndent}rem;`}
+                    aria-hidden="true"
+                  ></span>{/each}
+                {#if row.connectorIndentRem !== undefined}<span
+                    class="community-thread-tree-row__connector"
+                    data-ui-part="thread-reply-connector"
+                    aria-hidden="true"
+                  ></span>{/if}
+                {#if row.connectsToChildren}<span
+                    class="community-thread-tree-row__descendant-guide"
+                    data-ui-part="thread-descendant-guide"
+                    aria-hidden="true"
+                  ></span>{/if}
+                <div class="community-thread-tree-row__content">
+                  <StoreWorkComment
+                    {work}
+                    {comment}
+                    {members}
+                    {writable}
+                    {disabled}
+                    onReply={writable
+                      ? () => {
+                          draft.reply = comment.id;
+                          draft.edit = null;
+                          draft.editContext = undefined;
+                        }
+                      : undefined}
+                    onEdit={writable &&
+                    comment.body !== null &&
+                    comment.actor.created_by === principal
+                      ? () => {
+                          draft.edit = comment.id;
+                          draft.reply = null;
+                          draft.body = comment.body!;
+                          draft.editContext = {
+                            body: comment.body!,
+                            commentVersion: comment.version,
+                            taskVersion: view.task!.version,
+                          };
+                        }
+                      : undefined}
+                    onRemove={writable && comment.body !== null
+                      ? () => (removing = comment.id)
+                      : undefined}
+                  />
+                </div>
+              </div>
+            {/each}
+          </div>
+          {#if view.commentCursor}<Button
+              variant="outline"
+              disabled={view.loading}
+              onclick={() => work.more("comments")}>More comments</Button
+            >{/if}
+          {#if !view.comments.length && !view.loading}<StoreWorkEmpty
+              kind="comments"
+              title="No comments yet"
+              description="Add a comment to this task."
+            />{/if}
+        </div>
+      </Collapsible.Content>
+    </Collapsible.Root>
+  </section>
+{/snippet}
+
+{#snippet composer()}
   {#if writable}<CommunityChatComposer
       class="community-projects__task-composer"
       bind:value={draft.body}
@@ -244,5 +252,7 @@
       }}
       onSubmit={(submission) => save(submission.content)}
     />{/if}
-</section>
+{/snippet}
+
+{@render children(activity, composer)}
 <StoreWorkRemoveComment {work} bind:commentId={removing} />

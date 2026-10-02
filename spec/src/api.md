@@ -1138,6 +1138,11 @@ Project list rows reserve aligned creator-avatar and date columns regardless of
 count or date-text length, including narrow lists. They retain the existing
 native actor, count and timestamp values.
 
+Task-detail presentation keeps its header and composer outside the content
+scroller. Moving the composer changes no comment command, version precondition,
+permission or draft owner; Activity and reply/edit actions keep the same native
+records and retained draft state.
+
 The development seed exercises these same commands for linked sample projects,
 all task states, subtasks and threaded comments. Its cold browser gate reads the
 physically reopened native records, verifies zero publication on additive

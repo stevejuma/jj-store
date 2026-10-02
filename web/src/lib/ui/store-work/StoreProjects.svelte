@@ -3,7 +3,7 @@
   import { projectsViewKey } from "../../controller/projects-view-cache.js";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
+  import StoreProjectsViewport from "./StoreProjectsViewport.svelte";
   import StoreWorkLayoutControls from "./StoreWorkLayoutControls.svelte";
   import StoreProjectsFilterControls from "./StoreProjectsFilterControls.svelte";
   import StoreWorkOwnershipGroups from "./StoreWorkOwnershipGroups.svelte";
@@ -70,10 +70,11 @@
       untrack(() => root.scrollTo(0, hub.scroll.get(key) ?? 0));
   });
   $effect(() => {
-    const root = element;
+    const root = element,
+      key = scrollKey;
     if (!root) return;
     const save = () => {
-      if (!hub.loading) hub.scroll.set(scrollKey, root.scrollTop);
+      if (!hub.loading) hub.scroll.set(key, root.scrollTop);
     };
     root.addEventListener("scroll", save);
     return () => root.removeEventListener("scroll", save);
@@ -153,12 +154,9 @@
   class="store-projects community-projects"
   aria-label="Projects and tasks"
   aria-busy={busy}
+  data-task-detail={task ? "" : undefined}
 >
-  <ScrollArea
-    type="hover"
-    class="store-projects__scroll"
-    bind:viewportRef={element}
-  >
+  <StoreProjectsViewport taskDetail={!!task} bind:viewportRef={element}>
     {#if hub.error}<p role="alert">{hub.error}</p>{/if}
     {#if work}<StoreWorkStatus {work} />{/if}
     {#each hub.commands.filter((command) => command.work !== work) as command (command.home)}
@@ -224,6 +222,7 @@
               onOpenRepository={controller.actions.openRepository}
             />
           {:else if task}{#key task.id}<StoreWorkTaskDetail
+                bind:viewportRef={element}
                 {work}
                 repositories={controller.state.repositories}
                 principal={controller.state.repositories.find(
@@ -289,7 +288,7 @@
           />{/if}
       </Tabs.Content>
     </Tabs.Root>
-  </ScrollArea>
+  </StoreProjectsViewport>
 </section>
 {#if dialog}<StoreWorkDialog
     {controller}

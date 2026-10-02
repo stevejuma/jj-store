@@ -1,6 +1,7 @@
 <script lang="ts">
   // @community-copy CommunityProjects.svelte selectedTask detail (Apache-2.0), native metadata.
   import type { Snippet } from "svelte";
+  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
@@ -17,6 +18,7 @@
   import StoreWorkTaskStateIcon from "./StoreWorkTaskStateIcon.svelte";
   import { taskStateLabel } from "./work-presentation.js";
   import "./community-work-tasks.css";
+  import "./task-detail-layout.css";
   let {
     work,
     repositories,
@@ -30,6 +32,7 @@
     onOpenRepository,
     onRefresh,
     subtasks,
+    viewportRef = $bindable<HTMLElement | null>(null),
   }: {
     work: WorkController;
     repositories: readonly StoreRepositorySummary[];
@@ -43,6 +46,7 @@
     onOpenRepository?: (id: string) => void | Promise<void>;
     onRefresh?: () => void | Promise<void>;
     subtasks?: Snippet;
+    viewportRef?: HTMLElement | null;
   } = $props();
   const task = $derived(work.state.task);
   const disabled = $derived(
@@ -85,78 +89,99 @@
           onclick={onRefresh}><RefreshIcon aria-hidden="true" /></Button
         >{/if}
     </header>
-    <dl class="community-projects__task-meta">
-      <div>
-        <dt><StoreWorkTaskStateIcon state={task.state} />Status</dt>
-        <dd>{taskStateLabel(task.state)}</dd>
-      </div>
-      <div>
-        <dt><GitBranchIcon aria-hidden="true" />Repository</dt>
-        <dd>
-          {#if task.repository && target && onOpenRepository}<Button
-              variant="ghost"
-              size="sm"
-              onclick={() => onOpenRepository?.(task.repository!)}
-              >Open target repository</Button
-            ><span>{target.name}</span>
-          {:else if task.repository}<span title={task.repository}
-              >Separate access required for the target repository.</span
+    {#key task.id}<StoreWorkComments {work} {writable} {principal} {busy}>
+        {#snippet children(activity, composer)}
+          <ScrollArea
+            class="community-projects__task-scroll"
+            type="hover"
+            role="region"
+            aria-label="Task content"
+            bind:viewportRef
+          >
+            <div class="community-projects__task-body">
+              <dl class="community-projects__task-meta">
+                <div>
+                  <dt><StoreWorkTaskStateIcon state={task.state} />Status</dt>
+                  <dd>{taskStateLabel(task.state)}</dd>
+                </div>
+                <div>
+                  <dt><GitBranchIcon aria-hidden="true" />Repository</dt>
+                  <dd>
+                    {#if task.repository && target && onOpenRepository}<Button
+                        variant="ghost"
+                        size="sm"
+                        onclick={() => onOpenRepository?.(task.repository!)}
+                        >Open target repository</Button
+                      ><span>{target.name}</span>
+                    {:else if task.repository}<span title={task.repository}
+                        >Separate access required for the target repository.</span
+                      >
+                    {:else}Project only{/if}
+                  </dd>
+                </div>
+                {#if task.parent}<div>
+                    <dt><ListTodoIcon aria-hidden="true" />Parent</dt>
+                    <dd>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onclick={() => onSelectTask(task.parent!)}
+                        >Parent: {work.state.tasks.find(
+                          (t) => t.id === task.parent,
+                        )?.title ?? task.parent.slice(0, 8)}</Button
+                      >
+                    </dd>
+                  </div>{/if}
+                {#if writable}<div>
+                    <dt><ListTodoIcon aria-hidden="true" />Actions</dt>
+                    <dd class="community-projects__task-assignees">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        {disabled}
+                        onclick={onEdit}>Edit task</Button
+                      >{#if onSubtask}<Button
+                          variant="outline"
+                          size="sm"
+                          {disabled}
+                          onclick={onSubtask}>Add subtask</Button
+                        >{/if}
+                    </dd>
+                  </div>{/if}
+              </dl>
+              {#if task.body}<Collapsible.Root
+                  class="community-projects__task-description"
+                  bind:open={descriptionOpen}
+                >
+                  <Collapsible.Trigger
+                    class="community-projects__task-section-trigger"
+                    ><span>Description</span
+                    >{#if descriptionOpen}<ChevronDownIcon
+                        class="community-projects__task-section-chevron"
+                        aria-hidden="true"
+                      />{:else}<ChevronRightIcon
+                        class="community-projects__task-section-chevron"
+                        aria-hidden="true"
+                      />{/if}</Collapsible.Trigger
+                  >
+                  <Collapsible.Content
+                    class="community-projects__task-description-content"
+                    ><CommunityMarkdownContent
+                      fullWidth
+                      content={task.body}
+                    /></Collapsible.Content
+                  >
+                </Collapsible.Root>{/if}
+              {@render subtasks?.()}
+              {@render activity()}
+            </div>
+          </ScrollArea>
+          {#if writable}<footer
+              class="community-projects__task-footer"
+              aria-label="Task comment composer"
             >
-          {:else}Project only{/if}
-        </dd>
-      </div>
-      {#if task.parent}<div>
-          <dt><ListTodoIcon aria-hidden="true" />Parent</dt>
-          <dd>
-            <Button
-              variant="ghost"
-              size="sm"
-              onclick={() => onSelectTask(task.parent!)}
-              >Parent: {work.state.tasks.find((t) => t.id === task.parent)
-                ?.title ?? task.parent.slice(0, 8)}</Button
-            >
-          </dd>
-        </div>{/if}
-      {#if writable}<div>
-          <dt><ListTodoIcon aria-hidden="true" />Actions</dt>
-          <dd class="community-projects__task-assignees">
-            <Button variant="outline" size="sm" {disabled} onclick={onEdit}
-              >Edit task</Button
-            >{#if onSubtask}<Button
-                variant="outline"
-                size="sm"
-                {disabled}
-                onclick={onSubtask}>Add subtask</Button
-              >{/if}
-          </dd>
-        </div>{/if}
-    </dl>
-    {#if task.body}<Collapsible.Root
-        class="community-projects__task-description"
-        bind:open={descriptionOpen}
-      >
-        <Collapsible.Trigger class="community-projects__task-section-trigger"
-          ><span>Description</span>{#if descriptionOpen}<ChevronDownIcon
-              class="community-projects__task-section-chevron"
-              aria-hidden="true"
-            />{:else}<ChevronRightIcon
-              class="community-projects__task-section-chevron"
-              aria-hidden="true"
-            />{/if}</Collapsible.Trigger
-        >
-        <Collapsible.Content
-          class="community-projects__task-description-content"
-          ><CommunityMarkdownContent
-            fullWidth
-            content={task.body}
-          /></Collapsible.Content
-        >
-      </Collapsible.Root>{/if}
-    {@render subtasks?.()}
-    {#key task.id}<StoreWorkComments
-        {work}
-        {writable}
-        {principal}
-        {busy}
-      />{/key}
+              {@render composer()}
+            </footer>{/if}
+        {/snippet}
+      </StoreWorkComments>{/key}
   </article>{/if}

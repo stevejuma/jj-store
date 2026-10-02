@@ -32,6 +32,7 @@
     bootstrapLoading = false,
     deferredRefresh = false,
     variedProjectMetadata = false,
+    longTaskDetail = false,
     repositoryProjects = false,
   }: {
     layoutStorage?: Storage;
@@ -49,6 +50,7 @@
     bootstrapLoading?: boolean;
     deferredRefresh?: boolean;
     variedProjectMetadata?: boolean;
+    longTaskDetail?: boolean;
     repositoryProjects?: boolean;
   } = $props();
   let refreshPending = $state(false);
@@ -87,7 +89,18 @@
       const page = source.page;
       source.page = async (query, signal) => {
         if (refreshPending) await refreshGate;
-        return page(query, signal);
+        const result = await page(query, signal);
+        return longTaskDetail && query.task
+          ? {
+              ...result,
+              tasks: result.tasks.map((task) => ({
+                ...task,
+                body: "Task details remain readable while the title and comment composer stay in view.\n\n".repeat(
+                  60,
+                ),
+              })),
+            }
+          : result;
       };
       const activity = source.activity;
       if (activity)

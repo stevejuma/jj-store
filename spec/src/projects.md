@@ -40,6 +40,11 @@ from discovery through their first accepted read, while background refresh
 retains displayed data and drafts. Settled empty and failure states remain
 explicit; this changes no WorkStore identity, read or command semantics.
 
+Task detail keeps the title header and writable comment composer in fixed page
+rows, with metadata, description, subtasks and comments scrolling between them.
+Read-only detail retains the fixed header without a composer. Scroll, Activity
+collapse and background refresh do not discard drafts or reply/edit context.
+
 The native profile below remains manifest/WAL backed. M13's separate local
 Git-backed profile uses the same `WorkStateV1` reducer, semantic validation and
 limits through the owned LocalRepository service. It stores an explicitly

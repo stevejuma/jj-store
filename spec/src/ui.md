@@ -1102,6 +1102,15 @@ author/content above a reply, supports cancellation and retains draft/context
 after a failed or unknown publication. Captured agent messages are immutable
 evidence and offer copy actions rather than comment-edit callbacks.
 
+Task detail uses a fixed title/header row and a fixed bottom comment composer.
+Only the intervening metadata, description, subtasks and Activity/comments
+scroll within the available page height. The same layout works on narrow and
+read-only pages; read-only detail has no composer. Collapsing Activity,
+scrolling and background refresh retain the draft and reply/edit context. The
+composer remains outside the content scroller and uses the current theme surface
+tokens. Returning to a task restores its content scroll position through the
+existing bounded in-session navigation cache.
+
 ### Repository-linked projects, documents and activity filters
 
 The repository Projects tab retains the repository route, tabs and
