@@ -5,6 +5,8 @@
   import { agentMember } from "../../collaboration/presentation.js";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import StoreAgentSessionMenu from "./StoreAgentSessionMenu.svelte";
+  import StoreDiscussionSheet from "../store-discussion/StoreDiscussionSheet.svelte";
+  import StoreAgentComments from "./StoreAgentComments.svelte";
   import StoreAgentContext from "./StoreAgentContext.svelte";
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
   import "./store-collaboration.css";
@@ -12,10 +14,16 @@
     controller,
     error = "",
     onClose,
+    focused = false,
+    open = true,
+    returnFocus,
   }: {
     controller?: StoreController;
     error?: string;
     onClose(): void;
+    focused?: boolean;
+    open?: boolean;
+    returnFocus?: HTMLElement | null;
   } = $props();
   const agent = $derived(
     controller?.state.agentSession
@@ -25,17 +33,20 @@
   const failure = $derived(error || controller?.state.status.error);
 </script>
 
-<AppShell.Sidebar.Header>
+{#snippet heading(sheet = false)}
   {#if agent}<CommunityMemberAvatar
       member={agent}
       size="small"
       decorative
     />{/if}
-  <strong class="store-agent-sidebar__title">Agent response</strong>
+  {#if sheet}<h1 class="store-agent-sidebar__title">
+      Agent response
+    </h1>{:else}<strong class="store-agent-sidebar__title"
+      >Agent response</strong
+    >{/if}
   {#if controller}<StoreAgentSessionMenu {controller} />{/if}
-  <AppShell.Sidebar.Close label="Close agent response" onclick={onClose} />
-</AppShell.Sidebar.Header>
-<AppShell.Sidebar.Body>
+{/snippet}
+{#snippet body()}
   {#if failure}
     <CommunityProjectsColumnAlert
       title="Agent response unavailable"
@@ -48,11 +59,50 @@
   {:else if controller}
     <StoreAgentContext {controller} showHeader={false} />
   {/if}
-</AppShell.Sidebar.Body>
+{/snippet}
+
+<StoreAgentComments {controller}>
+  {#snippet children(comments, composer)}
+    {#if focused}
+      <StoreDiscussionSheet
+        title="Agent response"
+        {open}
+        {onClose}
+        {returnFocus}
+      >
+        {#snippet header()}{@render heading(true)}{/snippet}
+        {#snippet footer()}{@render composer()}{/snippet}
+        {@render body()}{@render comments()}
+      </StoreDiscussionSheet>
+    {:else}
+      <AppShell.Sidebar.Header>
+        {@render heading()}
+        <AppShell.Sidebar.Close
+          label="Close agent response"
+          onclick={onClose}
+        />
+      </AppShell.Sidebar.Header>
+      <AppShell.Sidebar.Body
+        >{@render body()}{@render comments()}</AppShell.Sidebar.Body
+      >
+      <AppShell.Sidebar.Footer class="store-agent-sidebar__footer"
+        >{@render composer()}</AppShell.Sidebar.Footer
+      >
+    {/if}
+  {/snippet}
+</StoreAgentComments>
 
 <style>
+  :global(.store-agent-sidebar__footer) {
+    padding: 0;
+    border: 0;
+    flex: 0 0 auto;
+  }
   .store-agent-sidebar__title {
     flex: 1;
     min-width: 0;
+    margin: 0;
+    font-size: var(--community-text-body);
+    font-weight: 600;
   }
 </style>

@@ -23,7 +23,10 @@
     type CommunityComposerAutocompleteItem,
     type CommunityComposerAutocompleteQuery,
   } from "./autocomplete.js";
-  import { applyComposerAutocompleteSelection } from "./composer-autocomplete-apply.js";
+  import {
+    applyComposerAutocompleteSelection,
+    insertComposerText,
+  } from "./composer-autocomplete-apply.js";
   import { mergeComposerSlashCatalog } from "./composer-slash-catalog.js";
   import { createComposerAutocomplete } from "./composer-autocomplete.svelte.js";
   import { emptyComposerSlashSession } from "./composer-slash-session.js";
@@ -92,7 +95,11 @@
   });
   const clearAutocomplete = autocomplete.clear,
     updateAutocomplete = autocomplete.update;
-  onDestroy(clearAutocomplete);
+  let active = true;
+  onDestroy(() => {
+    active = false;
+    clearAutocomplete();
+  });
   function selectAutocomplete(index: number) {
     if (!view || !query || !items[index]) return false;
     const selected = applyComposerAutocompleteSelection({
@@ -105,16 +112,7 @@
     return !!selected;
   }
   function insert(text: string) {
-    if (!view) {
-      value += text;
-      return;
-    }
-    const selection = view.state.selection.main;
-    view.dispatch({
-      changes: { from: selection.from, to: selection.to, insert: text },
-      selection: { anchor: selection.from + text.length },
-    });
-    view.focus();
+    if (!insertComposerText(view, text)) value += text;
   }
   function applyAction(action: MiraMarkdownActionId) {
     mira?.applyMarkdownAction(action);
@@ -133,13 +131,15 @@
         attachments: [],
         ...(context ? { context } : {}),
       });
+      if (!active) return;
       if (value === submitted) value = "";
       clearAutocomplete();
     } catch (cause) {
+      if (!active) return;
       error =
         cause instanceof Error ? cause.message : "Message could not be sent";
     } finally {
-      submitting = false;
+      if (active) submitting = false;
     }
   }
   const extension = createCommunityComposerExtension({

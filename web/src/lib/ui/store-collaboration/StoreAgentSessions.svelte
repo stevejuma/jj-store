@@ -47,7 +47,7 @@
           <CommunityProjectsVirtualRows
             rows={state.agentSessions}
             getKey={(session) => session.session_id}
-            estimateSize={() => 78}
+            estimateSize={() => 82}
             hasMore={state.canLoadMoreAgents}
             loading={state.status.agents === "refreshing"}
             loadingAsListItem

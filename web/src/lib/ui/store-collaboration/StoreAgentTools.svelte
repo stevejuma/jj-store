@@ -31,7 +31,9 @@
     items.some(({ tool }) => {
       const session = controller.state.agentSession?.session.session_id;
       return (
-        !!drafts.get(`tool:${session}:${tool.tool_call_id}`).open ||
+        !!drafts.get(
+          `tool:${controller.state.repository.id}:${session}:${tool.tool_call_id}`,
+        ).open ||
         (selected?.sessionId === session &&
           selected?.toolCallId === tool.tool_call_id)
       );

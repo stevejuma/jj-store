@@ -229,3 +229,29 @@ fn whole_artifact_anchor_requires_a_matching_native_object_kind() {
         .is_err()
     );
 }
+
+#[test]
+fn session_anchor_retains_only_the_exact_session_snapshot() {
+    let wire = serde_json::json!({
+        "schema_version": 1,
+        "repository_id": RepositoryId::new([1; 16]),
+        "target": {"target": "agent_session", "value": {
+            "session_id": AgentSessionId::new([11; 16]),
+            "session_snapshot": agent_ref(AgentObjectKind::SessionSnapshot, 12)
+        }},
+        "created_context": context(), "sensitivity": "repository"
+    });
+    let anchor: ArtifactAnchorV1 = serde_json::from_value(wire.clone()).unwrap();
+    let bytes = encode_anchor(&anchor).unwrap();
+    assert_eq!(decode_anchor(&bytes).unwrap(), anchor);
+    assert_eq!(
+        anchor.agent_dependencies().unwrap(),
+        BTreeSet::from([agent_ref(AgentObjectKind::SessionSnapshot, 12)])
+    );
+    assert!(anchor.native_dependencies().unwrap().is_empty());
+    assert!(anchor.validate_text(b"session").is_err());
+    let mut wrong = wire;
+    wrong["target"]["value"]["session_snapshot"]["kind"] = "tool_snapshot".into();
+    let wrong: ArtifactAnchorV1 = serde_json::from_value(wrong).unwrap();
+    assert!(wrong.validate().is_err());
+}

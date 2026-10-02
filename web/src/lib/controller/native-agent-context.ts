@@ -130,7 +130,11 @@ export async function readAnchoredAgentContext(
   anchor: Model<"ArtifactAnchorV1">,
 ): Promise<NativeAgentContext> {
   const target = anchor.target;
-  if (target.target !== "agent_text" && target.target !== "agent_artifact")
+  if (
+    target.target !== "agent_text" &&
+    target.target !== "agent_artifact" &&
+    target.target !== "agent_session"
+  )
     return { sessions: [], error: "" };
   try {
     const session = await source.agentSession(target.value.session_id);

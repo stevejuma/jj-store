@@ -232,10 +232,12 @@ selection cannot broaden the scope; inaccessible links, failed homes and bounded
 scope continuations remain explicit. Agent pagination validates the exact
 repository snapshot and never mixes captures. Refresh preserves loaded windows,
 while access loss and teardown clear protected rows. Selecting a row uses the
-full native repository and session IDs and opens the shared agent response in a
-standard AppShell right sidebar beside the main body, exactly as Thread replies,
-without replacing or reloading the scoped list. Its header, Close action and
-keyboard/pointer resize use the shell primitives, span the full body height and
-remain independent of the outer details rail. Mobile uses the shell right lane.
-Closing restores the selected row focus; navigation and reload retain an
-admitted response selection.
+full native repository and session IDs and opens the shared agent response
+without replacing or reloading the scoped list. The device Thread layout selects
+the standard full-height AppShell right sidebar for Split or the structural
+discussion sheet for Focus, using the same pattern as Thread replies. Shell
+header and dismissal mechanics remain shared; Split retains keyboard/pointer
+resize and the mobile right lane, while Focus covers both right panels and uses
+the mobile root. Neighboring agent row backgrounds retain at least four pixels
+of separation through virtualization. Closing restores the selected row focus;
+navigation, reload and layout changes retain an admitted response selection.

@@ -5967,6 +5967,68 @@
                                     "properties": {
                                       "target": {
                                         "type": "string",
+                                        "const": "agent_session"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "session_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "session_snapshot": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          }
+                                        },
+                                        "required": [
+                                          "session_id",
+                                          "session_snapshot"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
                                         "const": "revision"
                                       },
                                       "value": {
@@ -27613,6 +27675,25 @@
             "properties": {
               "target": { "type": "string", "const": "agent_artifact" },
               "value": { "$ref": "#/components/schemas/AgentArtifactAnchorV1" }
+            },
+            "required": ["target", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "target": { "type": "string", "const": "agent_session" },
+              "value": {
+                "type": "object",
+                "properties": {
+                  "session_id": {
+                    "$ref": "#/components/schemas/AgentSessionId"
+                  },
+                  "session_snapshot": {
+                    "$ref": "#/components/schemas/AgentObjectRef"
+                  }
+                },
+                "required": ["session_id", "session_snapshot"]
+              }
             },
             "required": ["target", "value"]
           },

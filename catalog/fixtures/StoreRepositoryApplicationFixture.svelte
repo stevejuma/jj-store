@@ -28,7 +28,9 @@
     detailLoading = false,
     collaborationState = "ready",
     reviewOutcome,
+    readOnly = false,
     deferredBranchSelection = false,
+    layoutStorage = createMemoryStoryStorage(),
   }: {
     initialPage?: StorePage;
     initiallyCollapsed?: boolean;
@@ -40,7 +42,9 @@
     detailLoading?: boolean;
     collaborationState?: CatalogCollaborationState;
     reviewOutcome?: "committed" | "unknown";
+    readOnly?: boolean;
     deferredBranchSelection?: boolean;
+    layoutStorage?: Storage;
   } = $props();
   let graphPending = $state(false);
 
@@ -50,6 +54,19 @@
       workingCopies,
       reviewOutcome,
     });
+    if (readOnly)
+      return {
+        ...fixture,
+        get state() {
+          return {
+            ...fixture.state,
+            repository: {
+              ...fixture.state.repository,
+              permission: "read" as const,
+            },
+          };
+        },
+      };
     if (deferredBranchSelection) {
       const delayed: StoreController = {
         ...fixture,
@@ -108,7 +125,6 @@
       );
     return createDetailLoadingStoreController(fixture);
   });
-  const layoutStorage = untrack(createMemoryStoryStorage);
 </script>
 
 <StoreRepositoryApplication

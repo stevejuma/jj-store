@@ -2418,6 +2418,14 @@ export interface components {
         }
       | {
           /** @constant */
+          target: "agent_session";
+          value: {
+            session_id: components["schemas"]["AgentSessionId"];
+            session_snapshot: components["schemas"]["AgentObjectRef"];
+          };
+        }
+      | {
+          /** @constant */
           target: "revision";
           value: {
             operation_id: components["schemas"]["OperationId"];
@@ -10255,6 +10263,37 @@ export interface operations {
                                 /** @constant */
                                 kind: "plan";
                               };
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "agent_session";
+                        value: {
+                          session_id: string;
+                          session_snapshot: {
+                            /** @enum {string} */
+                            kind:
+                              | "index_page"
+                              | "session_snapshot"
+                              | "turn_snapshot"
+                              | "message_snapshot"
+                              | "tool_snapshot"
+                              | "intent"
+                              | "observation_batch"
+                              | "event_batch"
+                              | "transcript_manifest"
+                              | "transcript_page"
+                              | "transcript_chunk"
+                              | "content"
+                              | "checkpoint_version"
+                              | "association"
+                              | "alias"
+                              | "relation_page"
+                              | "source_state"
+                              | "projection_catalog"
+                              | "catalog_conflict";
+                            id: string;
+                          };
                         };
                       }
                     | {

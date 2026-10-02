@@ -498,3 +498,132 @@ async fn reopen_must_commit_before_another_reply() {
     assert_eq!(thread.workflow_version, 3);
     assert_ne!(reopened.thread_snapshot, resolved.thread_snapshot);
 }
+
+#[tokio::test]
+async fn session_comments_retain_the_snapshot_and_reject_identity_mismatch_after_cold_open() {
+    use jj_agent as a;
+    use std::collections::BTreeMap;
+    let memory = Arc::new(MemoryStore::default());
+    let open = || {
+        Coordinator::new(
+            memory.clone(),
+            REPOSITORY,
+            Arc::new(Source(SourceScope::new(REPOSITORY))),
+            Arc::new(Permit),
+            Limits::default(),
+        )
+        .unwrap()
+    };
+    let coordinator = open();
+    coordinator
+        .initialize(EpochId::new([2; 16]), Vec::new())
+        .await
+        .unwrap();
+    let session_id = a::AgentSessionId::new([81; 16]);
+    let session = coordinator
+        .stage_agent_object(&a::AgentObjectV1::SessionSnapshot(
+            a::AgentSessionSnapshotV1 {
+                schema_version: 1,
+                session_id,
+                integration: a::IntegrationId::Codex,
+                state: a::SessionState::Ended,
+                parent_session_id: None,
+                evidence: vec![],
+                event_batches: vec![],
+                transcripts: vec![],
+                tools: BTreeMap::new(),
+                coverage: a::CoverageV1 {
+                    completeness: a::CompletenessV1::Complete,
+                    gaps: 0,
+                    redacted_fields: 0,
+                    truncated: false,
+                },
+            },
+        ))
+        .await
+        .unwrap();
+    let ReviewCommandV1::CreateThread {
+        mut anchor,
+        body: initial_body,
+    } = create()
+    else {
+        unreachable!()
+    };
+    anchor.target = ArtifactTargetV1::AgentSession {
+        session_id,
+        session_snapshot: session,
+    };
+    let mut wrong = (*anchor).clone();
+    wrong.target = ArtifactTargetV1::AgentSession {
+        session_id: a::AgentSessionId::new([82; 16]),
+        session_snapshot: session,
+    };
+    assert!(
+        coordinator
+            .stage_review_object(&ReviewObjectV1::Anchor(Box::new(wrong)))
+            .await
+            .is_err()
+    );
+    let mut missing = (*anchor).clone();
+    missing.target = ArtifactTargetV1::AgentSession {
+        session_id,
+        session_snapshot: a::AgentObjectRef::new(
+            a::AgentObjectKind::SessionSnapshot,
+            a::AgentObjectId::new([83; 32]),
+        ),
+    };
+    assert!(
+        coordinator
+            .stage_review_object(&ReviewObjectV1::Anchor(Box::new(missing)))
+            .await
+            .is_err()
+    );
+    let original = *anchor.clone();
+    let command = request(
+        84,
+        ReviewCommandV1::CreateThread {
+            anchor,
+            body: initial_body,
+        },
+    );
+    let created = publish(&coordinator, &command).await;
+    assert_eq!(publish(&coordinator, &command).await, created);
+    drop(coordinator);
+    let cold = open();
+    cold.recover(128).await.unwrap();
+    let cold_store = store(&cold).await;
+    let selected = snapshot(&cold_store, created.thread_snapshot).await;
+    let ReviewObjectV1::Anchor(restored) = cold_store
+        .read_object(selected.original_anchor)
+        .await
+        .unwrap()
+    else {
+        unreachable!()
+    };
+    assert_eq!(*restored, original);
+    assert_eq!(
+        restored.agent_dependencies().unwrap(),
+        BTreeSet::from([session])
+    );
+    let replied = publish(
+        &cold,
+        &request(
+            85,
+            ReviewCommandV1::AppendReply {
+                thread_id: created.thread_id,
+                expected_workflow_version: selected.workflow_version,
+                parent_comment_id: None,
+                body: body("Session follow-up"),
+            },
+        ),
+    )
+    .await;
+    let store = store(&cold).await;
+    assert_eq!(
+        snapshot(&store, replied.thread_snapshot)
+            .await
+            .comments
+            .len(),
+        2
+    );
+}

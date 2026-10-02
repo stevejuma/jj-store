@@ -1934,6 +1934,22 @@
     {
       "local": "web/src/lib/ui/community-markdown-content/CommunityLinkCard.svelte",
       "reason": "Native device appearance link cards use existing message text and HTTP addresses without remote metadata."
+    },
+    {
+      "local": "web/src/lib/ui/store-collaboration/StoreAgentComments.svelte",
+      "reason": "Native session-comment integration composing owned ReviewStore conversation and composer components; locally authored, not copied from Community."
+    },
+    {
+      "local": "web/src/lib/collaboration/review-comment-rows.ts",
+      "reason": "Native ReviewStore reply-tree presentation helper; locally authored."
+    },
+    {
+      "local": "web/src/lib/controller/agent-review-reader.ts",
+      "reason": "Native independent bounded AgentStore review reader; locally authored."
+    },
+    {
+      "local": "web/src/lib/controller/production-agent-loaders.ts",
+      "reason": "Native operation-pinned AgentStore loading integration; locally authored."
     }
   ]
 }

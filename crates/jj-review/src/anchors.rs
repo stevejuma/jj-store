@@ -154,6 +154,10 @@ pub enum ArtifactTargetV1 {
     CodeArtifact(Box<CodeArtifactAnchorV1>),
     AgentText(Box<AgentTextAnchorV1>),
     AgentArtifact(Box<AgentArtifactAnchorV1>),
+    AgentSession {
+        session_id: AgentSessionId,
+        session_snapshot: AgentObjectRef,
+    },
     Revision {
         operation_id: OperationId,
         commit_id: CommitId,

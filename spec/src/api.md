@@ -1332,10 +1332,12 @@ snapshot. No server API or canonical record changes. The Projects route admits
 `tab=agents` for both landing and selected-project views, with paired
 `agent_repository` and `session` native IDs for an inline response. These keys
 are valid only on Agents and retain scope through navigation history. Repository
-Agents and Projects responses occupy the same standard body right sidebar as
-Thread replies, preserving the loaded session directory on selection and Close.
-The response composes existing separately authorized session/transcript reads
-and reaction/tool-review commands without switching the global code connection.
+Agents and Projects responses follow the device Thread layout: Split occupies
+the standard body right sidebar and Focus uses the structural discussion sheet.
+Selection, Close and layout switching preserve the loaded session directory and
+the same native selected session; no request or route identity changes. The
+response composes existing separately authorized session/transcript reads and
+reaction/tool-review commands without switching the global code connection.
 
 The Projects tab-row search submits the existing `q` filter explicitly on Enter.
 Close clears that filter through the same route action and restores the tabs.
@@ -1345,9 +1347,14 @@ independent home/repository admission and unsupported Review text-search
 capability remain unchanged; displaying search controls grants no extra access.
 
 Focus/Split reply presentation preserves the existing native conversation, reply
-and tool-call target IDs. Focus uses the shell structural sheet, with one active
-tool discussion per application and memory-only draft retention across layout
-changes; this does not alter API authorization or mutation identities.
+and tool-call target IDs. Agent tool discussion remains in a full-width inline
+row under the exact call, with independently read existing comments and retained
+drafts inside either response layout. Bounded review context/detail reads never
+change the selected review or route. Comment Reply/Edit selects that exact
+review before activating its retained composer; native permission and unknown
+request guards remain in force. Other Focus discussions use one
+application-owned structural sheet. These choices do not alter API authorization
+or mutation identities.
 
 Adjacent tool-call grouping is presentation-only. AgentActivity order and exact
 tool-call, event, snapshot and turn IDs remain unchanged; grouped actions still
@@ -1355,3 +1362,10 @@ use the selected individual native call and existing authorized review commands.
 Grouped rows and their hover controls share the transcript scroll viewport;
 inline call sizing and message-edge alignment do not change those command
 targets or retained Focus/Split drafts.
+
+Session comments reuse typed ReviewStore creation and reply commands with the
+additive `agent_session` anchor target. It names the exact captured session
+snapshot and stable session, retains the full AgentStore closure, and fails
+closed on mismatched identity. Independent bounded reads for session and tool
+comments do not replace the route or another selected review. Existing request,
+receipt, authorization and unknown-outcome semantics apply unchanged.

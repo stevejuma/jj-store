@@ -114,7 +114,7 @@
                     .includes(query),
               )}
               getKey={(session) => session.session_id}
-              estimateSize={() => 78}
+              estimateSize={() => 82}
               hasMore={!!home.cursor}
               loading={home.loading}
               loadingAsListItem

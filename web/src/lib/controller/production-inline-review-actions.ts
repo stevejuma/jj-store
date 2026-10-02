@@ -1,12 +1,12 @@
 import type { FileDiffLineContext } from "@lapismd/design-core/diff";
 import {
   anchorAgentTool,
-  reviewForAgentTool,
   reviewPatchMatchesLine,
 } from "../collaboration/presentation.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import {
   createAgentToolReviewAnchor,
+  createAgentSessionReviewAnchor,
   createCodeLineReviewAnchor,
 } from "./review-comment-anchor.js";
 import type { createProductionReviewActions } from "./production-review-actions.js";
@@ -19,6 +19,14 @@ interface Context {
   source(): StoreDataSource;
   loadReview(id: string): Promise<void>;
   reviewActions: ReturnType<typeof createProductionReviewActions>;
+  readAgentToolReview(
+    toolCallId: string,
+  ): Promise<
+    import("../api/client.js").Model<"ReviewThreadDetail"> | undefined
+  >;
+  readAgentSessionReview(): Promise<
+    import("../api/client.js").Model<"ReviewThreadDetail"> | undefined
+  >;
 }
 
 export function createProductionInlineReviewActions(context: Context) {
@@ -58,11 +66,8 @@ export function createProductionInlineReviewActions(context: Context) {
       await reviewActions.reply(text);
       return;
     }
-    const existing = reviewForAgentTool(
-      data.reviewThreads,
-      sessionId,
-      toolCallId,
-    );
+    const existing = (await context.readAgentToolReview(toolCallId))?.thread;
+    if (data.agentSession?.session.session_id !== sessionId) return;
     if (existing) {
       if (data.reviewThread?.thread.thread_id !== existing.thread_id) {
         history.replace({
@@ -88,5 +93,37 @@ export function createProductionInlineReviewActions(context: Context) {
     await reviewActions.create(anchor, text);
   }
 
-  return { commentOnDiffLine, commentOnAgentTool };
+  async function commentOnAgentSession(text: string) {
+    const sessionId = data.agentSession?.session.session_id;
+    const source = context.source();
+    if (!text.trim() || !sessionId || source.profile === "git_sha1_jj045")
+      return;
+    const repository = data.repositories.find(
+      (row) => row.id === source.repository,
+    );
+    if (
+      repository?.permission !== "write" &&
+      repository?.permission !== "admin"
+    )
+      return;
+    const existing = await context.readAgentSessionReview();
+    if (
+      data.agentSession?.session.session_id !== sessionId ||
+      context.source() !== source
+    )
+      return;
+    if (existing) {
+      history.replace({
+        ...history.route,
+        reviewThreadId: existing.thread.thread_id,
+      });
+      await context.loadReview(existing.thread.thread_id);
+      if (data.agentSession?.session.session_id !== sessionId) return;
+      await reviewActions.reply(text);
+      return;
+    }
+    const anchor = createAgentSessionReviewAnchor(source, data);
+    if (anchor) await reviewActions.create(anchor, text);
+  }
+  return { commentOnDiffLine, commentOnAgentTool, commentOnAgentSession };
 }

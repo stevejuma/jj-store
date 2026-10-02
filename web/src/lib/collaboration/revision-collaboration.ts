@@ -45,7 +45,11 @@ function anchorMatches(
     );
   if (target.target === "operation")
     return anchorMatchesOperation(anchor, revision.eventId);
-  if (target.target === "agent_text" || target.target === "agent_artifact")
+  if (
+    target.target === "agent_text" ||
+    target.target === "agent_artifact" ||
+    target.target === "agent_session"
+  )
     return relatedSessions.has(target.value.session_id);
   return false;
 }

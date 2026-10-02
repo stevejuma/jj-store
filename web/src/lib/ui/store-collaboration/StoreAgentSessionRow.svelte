@@ -30,7 +30,7 @@
     timing = $derived(agentSessionTiming(session));
 </script>
 
-<div role="listitem">
+<div role="listitem" class="store-agent-session-item">
   <div
     class="store-collaboration__row"
     data-kind="agent"
@@ -115,3 +115,9 @@
     </span>
   </div>
 </div>
+
+<style>
+  .store-agent-session-item {
+    padding-block: 2px;
+  }
+</style>

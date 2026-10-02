@@ -16,20 +16,28 @@
 
   let {
     controller,
+    reviewDetail,
+    onActivate,
     inline = false,
+    rootDepth = 0,
     showComposer = true,
     showDiff = !inline,
     composerPlacement = "inline",
   }: {
     controller: StoreController;
+    reviewDetail?: import("../../api/client.js").Model<"ReviewThreadDetail">;
+    onActivate?: () => Promise<void>;
     inline?: boolean;
+    rootDepth?: 0 | 1;
     showComposer?: boolean;
     showDiff?: boolean;
     composerPlacement?: "inline" | "external";
   } = $props();
   const view = $derived(controller.state);
-  const detail = $derived(view.reviewThread);
-  const commentRows = $derived(reviewCommentRows(detail?.comments ?? []));
+  const detail = $derived(reviewDetail ?? view.reviewThread);
+  const commentRows = $derived(
+    reviewCommentRows(detail?.comments ?? [], rootDepth),
+  );
   const members = $derived(
     detail
       ? [
@@ -182,18 +190,22 @@
                       },
                     ]}
                     onReply={writable && detail.thread.status === "open"
-                      ? () => {
-                          draft.reply = comment;
-                          draft.edit = null;
+                      ? async () => {
+                          const currentDraft = draft;
+                          await onActivate?.();
+                          currentDraft.reply = comment;
+                          currentDraft.edit = null;
                         }
                       : undefined}
                     onEdit={writable &&
                     comment.content.state === "visible" &&
                     comment.author === view.repository?.principal
-                      ? () => {
-                          draft.edit = comment;
-                          draft.reply = null;
-                          draft.body =
+                      ? async () => {
+                          const currentDraft = draft;
+                          await onActivate?.();
+                          currentDraft.edit = comment;
+                          currentDraft.reply = null;
+                          currentDraft.body =
                             comment.content.state === "visible"
                               ? comment.content.text
                               : "";
@@ -227,7 +239,13 @@
           </p>{/if}
       </div>{/if}
     {#if composerPlacement === "inline" && writable && ((showComposer && detail.thread.status === "open") || draft.reply || draft.edit)}
-      <StoreReviewComposer {controller} {inline} {path} />
+      <StoreReviewComposer
+        {controller}
+        {inline}
+        {path}
+        reviewDetail={detail}
+        {onActivate}
+      />
     {/if}
   </div>{/if}
 

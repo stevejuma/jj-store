@@ -76,13 +76,26 @@ while disabling redundant document scroll locking through the public
 `preventScroll` option. Cold built-asset acceptance checks that closing them
 restores pointer interaction under the served strict asset policy.
 
-Repository and Projects agent responses use that same standard body right
-sidebar as Thread replies, rather than a column inside tab content. The
-full-height pane shares the public header, Close, scroll body, mobile lane and
-resize mechanics; its widths persist under the standard panel identity.
-Selecting a session leaves the loaded directory mounted, and Close returns focus
-to its selected row. The outer details rail stays independently controlled.
-Admitted deep links restore the pane after a cold page load.
+Repository, selected-project and installation-wide agent responses follow the
+device Thread layout preference. Split uses the same standard body right sidebar
+as Thread replies, with its public header, Close, scroll body, mobile lane and
+resize mechanics; widths persist under the standard panel identity. Focus uses
+the existing structural discussion sheet, covering the body and both right
+panels with the same desktop allowance and mobile insets as Thread replies.
+Selecting a session leaves the loaded directory mounted. Close, Escape and the
+scrim return focus to its selected row; switching layouts retains the selection
+and opener. The outer details rail stays independently controlled. Admitted deep
+links restore the selected presentation after a cold page load. Agent item
+wrappers reserve two pixels above and below each row, leaving at least four
+pixels between neighboring hover/selected backgrounds in both directories and
+repository listings, including measured virtual rows. The agent header and
+session comment footer remain outside the scrolling body in both layouts. The
+footer adds human comments to the selected native session through an exact
+immutable session anchor; session comments appear after its recorded transcript.
+Drafts retain repository/session identity across Close, Settings and layout
+changes. Read-only and unsupported local profiles do not offer a writable
+composer; pending or unknown outcomes retain drafts and stable request
+identities.
 
 Threads use the forum's full-width inline post composer above
 Topic/Replies/Activity rows, preserving post content in native messages. The
@@ -138,7 +151,7 @@ unchanged.
 | JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, project-scoped and installation-wide Agents directories, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows, tab-row search and trailing icon-only filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and refresh displayed metadata automatically after committed saves and new data. |
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                                                                                                                      |
-| JST-UI-018 | The browser MUST expose the complete Buzz-derived device Appearance page, persist and restore app-wide preferences, apply resolved themes and typography to all owned conversations and overlays, retain native links and drafts, and offer working local link cards and responsive Focus/Split discussions without altering repository authority.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| JST-UI-018 | The browser MUST expose the complete Buzz-derived device Appearance page, persist and restore app-wide preferences, apply resolved themes and typography to all owned conversations and overlays, retain native links and drafts, and offer working local link cards and responsive Focus/Split discussions and agent responses without altering repository authority.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -174,11 +187,13 @@ the standard Thread reply pane and opens a nonmodal AppShell structural sheet
 covering the body and both right panels, leaving7rem of main content visible on
 desktop. Mobile uses the root surface with0.5rem insets. Escape, the scrim and
 Close dismiss through the shell and restore opener focus. The right-panel open
-states and drafts remain retained. One application-owned focused tool discussion
-is active at a time; multiple Split drafts survive layout changes. Native/local
-capability and snapshot authority are unaffected. Browser glass reveals the
-application background, not the operating system desktop. Palette, font and
-preview assets are local under the existing strict CSP.
+states and drafts remain retained. Agent tool comments and composers stay inline
+below each call inside either agent response presentation; independent drafts
+survive layout changes. Other focused inline discussions retain one
+application-owned sheet at a time. Native/local capability and snapshot
+authority are unaffected. Browser glass reveals the application background, not
+the operating system desktop. Palette, font and preview assets are local under
+the existing strict CSP.
 
 Accent swatches keep circular selected rings centered inside their circular
 buttons, including after changing accents, on hover and at mobile widths in
@@ -846,31 +861,40 @@ review. Each text row reveals Design Core's comment action on hover or focus;
 the resulting composer and exact anchored thread occupy that row's annotation
 slot. Agent tool calls reveal a Community-style reply toolbar on hover or focus,
 show an icon count for an existing thread, and place its composer and reply
-thread directly after the call. Both inline surfaces remain keyboard reachable
-and preserve the route-selected discussion column. The repository detail rail
-follows Community's section typography and spacing. Selecting a bookmark shows
-its name as a bold section heading, the target commit avatar, one-line message,
-author and relative update time, then one-row status and target-count chips with
-every exact target Git SHA below; selecting a revision replaces that selection
-detail with change metadata. JJ Log and Op Log selection follows the same
-replacement rule and exposes the enabled mutation actions from the header menu,
-including bookmark creation and conflict resolution when native capabilities and
-an exact selection permit them. Multiline mutation input always uses Community's
-form composer. Fixed Edit description and Abandon targets use the shared commit
-row with author avatar, current message, copyable Git/JJ identifiers, relative
-commit time and bookmark/workspace chips. Create change, Create bookmark and
-Move bookmark use the same row as a searchable Design Core Command View selector
-over loaded revisions; search covers message, author, email, Git/JJ identities,
-bookmarks and workspaces, and the selected full commit ID remains the typed
-mutation value. Commit-selector avatars and row bodies align vertically with the
-trigger chevron, including descriptionless commits. Non-interactive GIT/JJ
-labels use the compact indicator-size oval chips in both the selected button and
-searchable options, with equal badge widths and 10px labels one pixel larger
-than the revision-ID copy buttons. A fixed identifier column stacks Git above JJ
-and aligns the chips across options regardless of message length, reserving the
-JJ row when its change ID is absent. Relative commit time sits directly beneath
-the title at the same left edge, with bookmark/workspace chips alongside it on
-that row. Repository navigation sections have no top margin.
+thread in a full-width row directly below the call, in both Focus and Split
+agent responses. Existing comments remain attached to their tool when the
+composer closes or another tool is selected. Agent comment trees use the same
+2.25rem depth step, six-level visible depth cap, muted curved connectors and
+continuation guides as Thread replies. The session or tool is the conversation
+root: its top comments occupy depth one, and replies to those comments occupy
+depth two with one visible indent. Tool and comment hover/focus boundaries are
+independent: hovering a tool comment reveals only its message toolbar, without
+the parent tool toolbar. Tool replies never open a second structural sheet. Both
+inline surfaces remain keyboard reachable and preserve the route-selected
+discussion column. The repository detail rail follows Community's section
+typography and spacing. Selecting a bookmark shows its name as a bold section
+heading, the target commit avatar, one-line message, author and relative update
+time, then one-row status and target-count chips with every exact target Git SHA
+below; selecting a revision replaces that selection detail with change metadata.
+JJ Log and Op Log selection follows the same replacement rule and exposes the
+enabled mutation actions from the header menu, including bookmark creation and
+conflict resolution when native capabilities and an exact selection permit them.
+Multiline mutation input always uses Community's form composer. Fixed Edit
+description and Abandon targets use the shared commit row with author avatar,
+current message, copyable Git/JJ identifiers, relative commit time and
+bookmark/workspace chips. Create change, Create bookmark and Move bookmark use
+the same row as a searchable Design Core Command View selector over loaded
+revisions; search covers message, author, email, Git/JJ identities, bookmarks
+and workspaces, and the selected full commit ID remains the typed mutation
+value. Commit-selector avatars and row bodies align vertically with the trigger
+chevron, including descriptionless commits. Non-interactive GIT/JJ labels use
+the compact indicator-size oval chips in both the selected button and searchable
+options, with equal badge widths and 10px labels one pixel larger than the
+revision-ID copy buttons. A fixed identifier column stacks Git above JJ and
+aligns the chips across options regardless of message length, reserving the JJ
+row when its change ID is absent. Relative commit time sits directly beneath the
+title at the same left edge, with bookmark/workspace chips alongside it on that
+row. Repository navigation sections have no top margin.
 
 Selecting a JJ change in JJ Log or Branches exposes an Evo Log action in the
 right-rail Actions section independently of mutation permissions. It adds a
@@ -1171,7 +1195,11 @@ visible comments created by the authenticated repository principal when write
 access exists. The composer shows the original text above an edit and the parent
 author/content above a reply, supports cancellation and retains draft/context
 after a failed or unknown publication. Captured agent messages are immutable
-evidence and offer copy actions rather than comment-edit callbacks.
+evidence and offer copy actions rather than comment-edit callbacks. A composer
+that closes after a confirmed send stops its asynchronous UI work before reading
+disposed bindings. Tool comments, nested replies and session comments retain
+their exact pending request and draft until receipt status confirms publication;
+each inline composer offers that status check.
 
 Task detail uses a fixed title/header row and a fixed bottom comment composer.
 Only the intervening metadata, description, subtasks and Activity/comments

@@ -5,6 +5,7 @@
     type AppShellController,
   } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
+  import { useAppearance } from "../../appearance/store.svelte.js";
   import { tick, untrack } from "svelte";
   import { repositoryDetailsPanelId } from "../layout-storage.js";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
@@ -26,6 +27,8 @@
     shell: AppShellController;
     onSelectPage: StoreController["actions"]["selectPage"];
   } = $props();
+  const appearance = useAppearance();
+  const agentFocused = $derived(appearance?.live.threads === "focus");
   const current = $derived(controller.state.route);
   const threadPanel = useThreadPanel();
   const detailsRail = untrack(() => shell.getPanel(repositoryDetailsPanelId)!);
@@ -48,19 +51,26 @@
     projectAgent ? controller.projects?.agents.response : controller,
   );
   let previousAgentKey: string | null = null;
-  let agentOpener: HTMLElement | null = null;
+  let agentOpener = $state<HTMLElement | null>(null);
   $effect(() => {
     const key = agentKey;
+    const focused = agentFocused;
     untrack(() => {
       if (key) {
-        agentOpener =
-          document.activeElement instanceof HTMLElement &&
-          document.activeElement.matches(".store-collaboration__row-select")
-            ? document.activeElement
-            : null;
-        shell.right.open();
+        if (key !== previousAgentKey)
+          agentOpener =
+            document.activeElement instanceof HTMLElement &&
+            document.activeElement.matches(".store-collaboration__row-select")
+              ? document.activeElement
+              : null;
+        if (focused) shell.right.close();
+        else shell.right.open();
         void tick().then(() => {
-          if (agentKey === key && shell.mobile.resolvedMode === "mobile")
+          if (
+            agentKey === key &&
+            !agentFocused &&
+            shell.mobile.resolvedMode === "mobile"
+          )
             shell.mobile.show("right", "right", agentOpener);
         });
       } else if (previousAgentKey && current.page !== "threads") {
@@ -98,7 +108,21 @@
     <StoreThreadSidebar {controller} />
   </AppShell.Sidebar>
 {/if}
-{#if agentKey}
+{#snippet agentResponse(focused = false)}
+  <StoreAgentSidebar
+    controller={agentController}
+    error={projectAgent
+      ? (controller.projects?.agents.selectionError ?? "")
+      : ""}
+    {focused}
+    open={!!agentKey && focused === agentFocused}
+    returnFocus={agentOpener}
+    onClose={closeAgent}
+  />
+{/snippet}
+<!-- Controlled open clears the mobile sheet before its teleported content is removed. -->
+{@render agentResponse(true)}
+{#if agentKey && !agentFocused}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -109,13 +133,7 @@
     resizeLabel="Resize agent response sidebar"
     closeable
   >
-    <StoreAgentSidebar
-      controller={agentController}
-      error={projectAgent
-        ? (controller.projects?.agents.selectionError ?? "")
-        : ""}
-      onClose={closeAgent}
-    />
+    {@render agentResponse()}
   </AppShell.Sidebar>
 {/if}
 

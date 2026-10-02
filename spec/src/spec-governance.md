@@ -163,6 +163,20 @@ cannot widen runtime acceptance without same-change governance review. Upstream
 Community and Design Core changes remain separate source-owned changes with
 consumer acceptance in this repository.
 
+Whole-session agent comments extend the native V1 review anchor surface and are
+jointly governed by `collaboration.md`, `publication.md`, `compatibility.md`,
+`api.md` and `cli.md`; their browser layout and reply presentation are governed
+by `ui.md` and `projects.md`. Qualification includes canonical anchor/dependency
+tests, receipt replay and snapshot-identity rejection after cold WAL reopen, the
+existing admitted LocalTrusted HTTP review fixture and regenerated contract
+conformance. Fake-memory recovery evidence is distinct from real-RustFS
+qualification. Focused controller and cold Storybook consumers cover retained
+drafts, unknown outcomes, independent tool/comment hover actions, thread reply
+indentation, footer placement and Focus/Split layouts. Read-only live UI
+inspection and interaction/accessibility passes do not approve visual baselines
+or qualify the unsupported filesystem-local agent review profile. The milestone
+ledger records these limits and the exact commands.
+
 M10 owns local-first writable replication. Its origin ledger and imported
 publication path are jointly governed by `replication.md` and the existing
 publication requirements. Native head integration is also governed by

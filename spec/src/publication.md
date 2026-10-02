@@ -233,6 +233,15 @@ candidate; resolve and reopen remove the old status selection and add the new
 one. Generated pages and roots are internal candidates rather than
 client-controlled publication inputs.
 
+Whole-session review anchors retain the exact immutable AgentStore session
+snapshot and its complete dependency closure, even when that session later
+advances. Staging and cold selected reads verify that the reference has the
+session-snapshot kind, exists and names the anchored stable session. A missing
+or substituted snapshot fails closed. Creating or replying to a session comment
+uses the existing authorized, receipt-backed ReviewStore publication; only the
+manifest CAS selects its candidate and only the review state version advances.
+The additive anchor does not change manifest, WAL, request or receipt formats.
+
 Read services may retain an audited `ReviewStoreSnapshot` only within bounded
 process-local cursor limits. The snapshot reports its selected closure-object
 count for that accounting, while enumeration and detail continue to follow only

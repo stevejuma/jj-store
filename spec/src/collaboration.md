@@ -723,26 +723,36 @@ Stable workflow identities never substitute for immutable version identities.
 All identifiers use canonical lowercase hexadecimal encoding.
 
 `ArtifactAnchorV1` binds one repository and exactly one code text, whole code
-artifact, agent text, whole agent artifact, revision, operation or repository
-target. Code anchors carry full operation and commit IDs, optional change IDs,
-repository-relative paths and the exact native file/object identity. Diff text
-anchors additionally carry an explicit before/after operation, commit and path
-pair; the selected side must equal the anchor's primary identity. Whole native
-artifacts accept matching file or symlink object kinds. External-width gitlink
-identities have no owned native object key and therefore fail closed in v1.
+artifact, agent text, whole agent artifact, whole agent session, revision,
+operation or repository target. Code anchors carry full operation and commit
+IDs, optional change IDs, repository-relative paths and the exact native
+file/object identity. Diff text anchors additionally carry an explicit
+before/after operation, commit and path pair; the selected side must equal the
+anchor's primary identity. Whole native artifacts accept matching file or
+symlink object kinds. External-width gitlink identities have no owned native
+object key and therefore fail closed in v1.
 
 Text selections use canonical decimal-string UTF-8 byte offsets and a SHA-256
 digest of the selected bytes. Empty, reversed, out-of-bounds, non-UTF-8-boundary
 or digest-mismatched selections are invalid. No line number, display text or
 search result can replace this byte-level check.
 
-Agent anchors pin an immutable session snapshot plus the exact tool attempt,
-message or plan owner snapshot. Text targets also pin the block version, content
-object, content part, source coverage and representation, sanitizer and
-normalizer versions. Kind mismatches fail closed. Anchor dependency traversal
-enumerates every native or AgentStore object needed for original-context reads;
-stable entity IDs and optional change IDs remain lookup facts rather than strong
-object edges.
+The additive `agent_session` target binds the stable session identity and one
+exact immutable session-snapshot reference. It retains that snapshot and its
+complete AgentStore closure through existing review dependency traversal. Native
+staging and cold reads verify that the referenced snapshot belongs to that
+session; wrong kinds, missing snapshots and mismatched identities fail closed.
+Existing V1 anchor encodings and hashes remain unchanged. Filesystem-local agent
+targets remain unsupported. Session comments are human ReviewStore comments,
+never agent prompts, capture edits, tool replies or controller dispatch.
+
+Other agent anchors pin an immutable session snapshot plus the exact tool
+attempt, message or plan owner snapshot. Text targets also pin the block
+version, content object, content part, source coverage and representation,
+sanitizer and normalizer versions. Kind mismatches fail closed. Anchor
+dependency traversal enumerates every native or AgentStore object needed for
+original-context reads; stable entity IDs and optional change IDs remain lookup
+facts rather than strong object edges.
 
 Canonical JSON encoding rejects unknown fields, alternate byte-offset forms and
 noncanonical round trips. The anchor ID hashes those validated canonical bytes.
@@ -1183,11 +1193,14 @@ they introduce no cross-repository authority or inferred task association.
 Native and qualified local snapshots remain distinct and independently pinned.
 Permission changes discard retained sessions, unsupported profiles use explicit
 icon Empty states, and opening a session authorizes its repository separately.
-Project and repository response panes use the same full-body AppShell standard
-right sidebar as Thread replies, with shared header, close, resize and mobile
-lane mechanics. The independently controlled details rail remains separate. They
-reuse the repository Agent response presentation, including separately
-authorized reactions and tool discussions. They retain the Projects directory
-and pinned continuation rather than navigating to a repository page. Closing,
-changed scope and late reads cannot leak or restore an obsolete response;
-unknown command identities remain retained for recovery.
+Project and repository response panes respect the device Thread layout. Split
+uses the same full-body AppShell standard right sidebar as Thread replies, with
+shared header, close, resize and mobile lane mechanics. Focus uses the same
+structural discussion sheet, including desktop body/panel coverage and mobile
+root insets. Close, Escape and scrim dismissal restore the selected row focus.
+The independently controlled details rail remains separate. They reuse the
+repository Agent response presentation, including separately authorized
+reactions and tool discussions. They retain the Projects directory and pinned
+continuation rather than navigating to a repository page. Closing, changed scope
+and late reads cannot leak or restore an obsolete response; unknown command
+identities remain retained for recovery.

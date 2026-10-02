@@ -458,6 +458,16 @@ and immutable ReviewStore result identities. Captured LocalTrusted responses
 validate all four handlers, replay and `not_known` status without changing WAL,
 manifest or ReviewStore object formats.
 
+`ArtifactTargetV1` additively accepts `agent_session`, whose value contains the
+stable `session_id` and exact `session_snapshot` AgentStore reference. Existing
+V1 target encodings and anchor hashes remain byte-for-byte unchanged. The new
+variant uses the existing canonical anchor envelope, dependency traversal and
+ReviewStore commands; it changes no manifest, WAL, request or receipt format.
+OpenAPI and generated TypeScript include the variant, with an actual admitted
+HTTP response captured for conformance. Native staging and cold reads reject
+missing snapshots, wrong kinds and mismatched stable session identities.
+Filesystem-local agent review targets remain unsupported.
+
 The collaboration presentation extension is additive to the version-1 HTTP
 schemas: agent session summaries may expose nullable first and last captured
 activity milliseconds derived from already selected evidence. Missing, unmatched

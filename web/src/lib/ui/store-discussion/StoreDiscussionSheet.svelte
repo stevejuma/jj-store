@@ -8,12 +8,16 @@
     title,
     open,
     children,
+    header,
+    footer,
     onClose,
     returnFocus,
   }: {
     title: string;
     open: boolean;
     children: Snippet;
+    header?: Snippet;
+    footer?: Snippet;
     onClose(): void;
     returnFocus?: HTMLElement | null;
   } = $props();
@@ -39,7 +43,7 @@
   style={insets}
 >
   <AppShell.SurfaceLayer.Header>
-    <h1>{title}</h1>
+    {#if header}{@render header()}{:else}<h1>{title}</h1>{/if}
     <Button
       variant="ghost"
       size="icon-sm"
@@ -52,9 +56,16 @@
   <AppShell.SurfaceLayer.Body class="store-discussion-sheet__body">
     {@render children()}
   </AppShell.SurfaceLayer.Body>
+  {#if footer}<div class="store-discussion-sheet__footer">
+      {@render footer()}
+    </div>{/if}
 </AppShell.SurfaceLayer>
 
 <style>
+  .store-discussion-sheet__footer {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
   h1 {
     flex: 1;
     min-width: 0;

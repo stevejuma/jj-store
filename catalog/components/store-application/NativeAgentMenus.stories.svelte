@@ -62,7 +62,8 @@
       );
       await expect(write).toHaveBeenLastCalledWith("c3".repeat(32));
       const tool = c.getByRole("group", { name: "apply_patch tool call" });
-      await userEvent.hover(tool);
+      const toolRow = within(tool).getByRole("group", { name: /tool row$/ });
+      await userEvent.hover(toolRow);
       await waitFor(() =>
         expect(
           within(tool).getByRole("group", {
@@ -83,7 +84,7 @@
           name: "More apply_patch tool actions",
         }),
       );
-      await userEvent.unhover(tool);
+      await userEvent.unhover(toolRow);
       await expect(
         within(tool).getByRole("group", {
           name: "Actions for apply_patch tool call",

@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+  import { agentCommentReplies } from "./agent-comment-replies-play.js";
   import Fixture from "../../fixtures/AgentToolGroupsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Agent tool groups",
@@ -63,8 +64,13 @@
     };
     await checkSpacing();
     for (const tool of calls) {
-      await userEvent.hover(tool);
-      const actions = within(tool).getByRole("group", { name: /^Actions for/ });
+      tool.scrollIntoView({ block: "center" });
+      await userEvent.hover(
+        within(tool).getByRole("group", { name: /tool row$/ }),
+      );
+      const actions = within(tool).getByRole("group", {
+        name: `Actions for ${tool.getAttribute("aria-label")}`,
+      });
       await waitFor(() => expect(getComputedStyle(actions).opacity).toBe("1"));
       for (const button of within(actions).getAllByRole("button")) {
         const bounds = button.getBoundingClientRect();
@@ -78,7 +84,9 @@
       }
       const context = tool.parentElement!;
       await expect(getComputedStyle(context).overflowY).toBe("visible");
-      await userEvent.unhover(tool);
+      await userEvent.unhover(
+        within(tool).getByRole("group", { name: /tool row$/ }),
+      );
     }
     await userEvent.click(triggers[1]!);
     await expect(
@@ -160,7 +168,9 @@
       value: { writeText: write },
     });
     try {
-      await userEvent.hover(tool);
+      await userEvent.hover(
+        within(tool).getByRole("group", { name: /tool row$/ }),
+      );
       await userEvent.click(
         within(tool).getByRole("button", { name: "More Bash tool actions" }),
       );
@@ -174,20 +184,18 @@
         within(tool).getByRole("button", { name: "Reply to Bash tool call" }),
       );
       await userEvent.type(
-        within(
-          c.getByRole("complementary", { name: "Reply to Bash" }),
-        ).getByRole("textbox"),
+        within(tool).getByRole("textbox", { name: "Markdown editor" }),
         "Bash draft",
       );
       const read = c.getByRole("group", { name: "Read tool call" });
-      await userEvent.hover(read);
+      await userEvent.hover(
+        within(read).getByRole("group", { name: /tool row$/ }),
+      );
       await userEvent.click(
         within(read).getByRole("button", { name: "Reply to Read tool call" }),
       );
       await userEvent.type(
-        within(
-          c.getByRole("complementary", { name: "Reply to Read" }),
-        ).getByRole("textbox"),
+        within(read).getByRole("textbox", { name: "Markdown editor" }),
         "Read draft",
       );
       await userEvent.click(
@@ -201,25 +209,33 @@
       await userEvent.click(
         c.getByRole("button", { name: "Back to jj-store" }),
       );
-      const sheet = await body.findByRole("region", { name: "Reply to Read" });
-      await expect(within(sheet).getByRole("textbox")).toHaveTextContent(
-        "Read draft",
-      );
+      const sheet = await body.findByRole("region", { name: "Agent response" });
+      const restoredBash = within(sheet).getByRole("group", {
+        name: "Bash tool call",
+      });
+      const restoredRead = within(sheet).getByRole("group", {
+        name: "Read tool call",
+      });
+      await expect(
+        within(restoredRead).getByRole("textbox", { name: "Markdown editor" }),
+      ).toHaveTextContent("Read draft");
+      await expect(
+        within(restoredBash).getByRole("textbox", { name: "Markdown editor" }),
+      ).toHaveTextContent("Bash draft");
       await expect(
         document.querySelectorAll('[data-ui-part="surface-layer-surface"]'),
       ).toHaveLength(1);
       await userEvent.click(
-        within(sheet).getByRole("button", { name: "Close Reply to Read" }),
+        within(restoredRead).getByRole("button", { name: "Cancel" }),
       );
-      await expect(
-        within(
-          await body.findByRole("region", { name: "Reply to Bash" }),
-        ).getByRole("textbox"),
-      ).toHaveTextContent("Bash draft");
+      await expect(within(restoredRead).queryByRole("textbox")).toBeNull();
+      await expect(within(restoredBash).getByRole("textbox")).toHaveTextContent(
+        "Bash draft",
+      );
       await userEvent.keyboard("{Escape}");
       await waitFor(() =>
         expect(
-          body.queryByRole("region", { name: "Reply to Bash" }),
+          body.queryByRole("region", { name: "Agent response" }),
         ).toBeNull(),
       );
     } finally {
@@ -227,4 +243,123 @@
       else Reflect.deleteProperty(navigator, "clipboard");
     }
   }}
+/>
+
+<Story
+  name="Tool comments and reply composer stay in a full row below their call"
+  play={async ({ canvasElement }) => {
+    const c = await openSession(canvasElement);
+    await userEvent.click(
+      c.getByRole("button", { name: "Expand 3 tool calls" }),
+    );
+    const tool = c.getByRole("group", { name: "apply_patch tool call" });
+    await userEvent.hover(
+      within(tool).getByRole("group", { name: /tool row$/ }),
+    );
+    await userEvent.click(
+      within(tool).getByRole("button", {
+        name: "Reply to apply_patch tool call",
+      }),
+    );
+    const editor = await within(tool).findByRole("textbox", {
+      name: "Markdown editor",
+    });
+    const trigger = within(tool).getByRole("button", {
+      name: "Show details for apply_patch",
+    });
+    const composer = editor.closest<HTMLElement>(
+      '[data-ui-part="agent-tool-reply-composer"]',
+    )!;
+    await expect(composer.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      trigger.getBoundingClientRect().bottom,
+    );
+    await expect(
+      Math.abs(
+        composer.getBoundingClientRect().width -
+          tool.getBoundingClientRect().width,
+      ),
+    ).toBeLessThan(1);
+    await expect(
+      within(tool).getByText(
+        "Can we preserve the exact operation when this retry races?",
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await userEvent.type(editor, "Keep this comment under the tool");
+    await userEvent.click(
+      within(composer).getByRole("button", { name: "Reply" }),
+    );
+    await within(tool).findByText("Keep this comment under the tool", {
+      exact: true,
+    });
+    await userEvent.click(
+      within(composer).getByRole("button", { name: "Cancel" }),
+    );
+    await expect(
+      within(tool).queryByRole("textbox", { name: "Markdown editor" }),
+    ).toBeNull();
+    await expect(
+      within(tool).getByText("Keep this comment under the tool", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    const other = c.getByRole("group", { name: "Bash tool call" });
+    await userEvent.hover(
+      within(other).getByRole("group", { name: /tool row$/ }),
+    );
+    await userEvent.click(
+      within(other).getByRole("button", { name: "Reply to Bash tool call" }),
+    );
+    await expect(
+      within(tool).getByText("Keep this comment under the tool", {
+        exact: true,
+      }),
+    ).toBeVisible();
+  }}
+/>
+
+<Story
+  name="Tool and comment hover actions stay independent"
+  play={async ({ canvasElement }) => {
+    const c = await openSession(canvasElement);
+    await userEvent.click(
+      c.getByRole("button", { name: "Expand 3 tool calls" }),
+    );
+    const tool = c.getByRole("group", { name: "apply_patch tool call" });
+    const comment = (
+      await within(tool).findByText(
+        "Can we preserve the exact operation when this retry races?",
+        { exact: true },
+      )
+    ).closest(".community-message") as HTMLElement;
+    const actions = within(tool).getByRole("group", {
+      name: "Actions for apply_patch tool call",
+    });
+    await userEvent.hover(
+      within(tool).getByRole("button", {
+        name: "Show details for apply_patch",
+      }),
+    );
+    await waitFor(() => expect(getComputedStyle(actions).opacity).toBe("1"));
+    await userEvent.unhover(
+      within(tool).getByRole("button", {
+        name: "Show details for apply_patch",
+      }),
+    );
+    await userEvent.hover(comment);
+    await waitFor(() => {
+      expect(getComputedStyle(actions).opacity).toBe("0");
+      expect(
+        getComputedStyle(
+          comment.querySelector('[data-ui-part="message-actions"]')!,
+        ).opacity,
+      ).toBe("1");
+    });
+    await expect(actions).not.toHaveAttribute("data-visible");
+  }}
+/>
+
+<Story
+  name="Agent comment replies use Thread indentation and connectors"
+  play={agentCommentReplies}
 />

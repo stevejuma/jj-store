@@ -267,6 +267,9 @@ export interface StoreController {
     selectDirectory(path: string): void | Promise<void>;
     selectAgentSession(id: string | null): void | Promise<void>;
     selectReviewThread(id: string | null): void | Promise<void>;
+    readAgentToolReview?(
+      toolCallId: string,
+    ): Promise<Model<"ReviewThreadDetail"> | undefined>;
     replyToReview(text: string, parentCommentId?: string): Promise<void>;
     editReviewComment(
       commentId: string,
@@ -278,6 +281,8 @@ export interface StoreController {
       text: string,
     ): Promise<void>;
     commentOnAgentTool(toolCallId: string, text: string): Promise<void>;
+    readAgentSessionReview?(): Promise<Model<"ReviewThreadDetail"> | undefined>;
+    commentOnAgentSession?(text: string): Promise<void>;
     setReviewResolved(resolved: boolean): Promise<void>;
     checkReviewAction(): Promise<void>;
     selectRef(value: string): void | Promise<void>;
