@@ -15,7 +15,7 @@ const head: Head = {
   code_state_version: 1,
   heads: [old],
 };
-function fixture() {
+function fixture(refreshThreadNavigation?: () => Promise<void>) {
   const data = createProductionStoreState(),
     history = createStoreRouteHistory();
   data.head = head;
@@ -36,9 +36,25 @@ function fixture() {
     stopFeed: vi.fn(),
     follow: vi.fn(),
     invalidate: vi.fn(),
+    refreshThreadNavigation,
   } as unknown as Parameters<typeof createProductionRefresh>[0]);
   return { data, history, source, restore, query, refresh };
 }
+test("sidebar thread freshness runs independently of the main page refresh", async () => {
+  let finish!: () => void;
+  const sidebar = vi.fn(
+    () =>
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const f = fixture(sidebar);
+  await f.refresh.refresh(true);
+  expect(sidebar).toHaveBeenCalledTimes(1);
+  expect(f.restore).toHaveBeenCalledTimes(1);
+  expect(f.history.route.snapshotOperationId).toBe(next);
+  finish();
+});
 test("current-head views advance automatically and retain commit selections and search", async () => {
   const f = fixture();
   f.history.replace({ ...f.history.route, commitId: historical });

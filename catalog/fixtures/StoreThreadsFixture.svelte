@@ -8,6 +8,7 @@
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { createThreadTransport, THREAD_IDS } from "./thread-transport.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
+  import { createRepositoryThreadNavigation } from "../../web/src/lib/controller/repository-thread-navigation.svelte.js";
   let {
     unknownFirst = false,
     selected = false,
@@ -15,6 +16,9 @@
     replySelected = false,
     withReply = false,
     rejectReaction = false,
+    otherRepository = false,
+    initiallyCollapsed = false,
+    displayMode = "auto",
   }: {
     unknownFirst?: boolean;
     selected?: boolean;
@@ -22,6 +26,9 @@
     replySelected?: boolean;
     withReply?: boolean;
     rejectReaction?: boolean;
+    otherRepository?: boolean;
+    initiallyCollapsed?: boolean;
+    displayMode?: "auto" | "desktop" | "mobile";
   } = $props();
   const transport = untrack(() => createThreadTransport({ unknownFirst }));
   const replyId = "77".repeat(16);
@@ -45,6 +52,8 @@
   });
   const base = untrack(() => createInMemoryStoreController());
   const layoutStorage = untrack(createMemoryStoryStorage);
+  const otherId = "99".repeat(16);
+  const other = untrack(() => createThreadTransport());
   let route = $state({
     ...initialStoreRoute(),
     repository: THREAD_IDS.repo,
@@ -53,12 +62,13 @@
     replyId: untrack(() => (replySelected ? replyId : null)) as string | null,
   });
   const threads = createThreadsController({
-    source: () => transport.transport,
+    source: () =>
+      route.repository === otherId ? other.transport : transport.transport,
     repository: () => route.repository,
     principal: () => THREAD_IDS.actor,
     route: () => route,
     select: (id) => {
-      route = { ...route, threadId: id, replyId: null };
+      route = { ...route, page: "threads", threadId: id, replyId: null };
     },
     selectReply: (id) => {
       route = { ...route, replyId: id };
@@ -72,25 +82,59 @@
     ),
     principal: THREAD_IDS.actor,
   };
+  const repositories = untrack(() =>
+    otherRepository
+      ? [repository, { ...repository, id: otherId, name: "Other repository" }]
+      : [repository],
+  );
+  const threadNavigation = createRepositoryThreadNavigation({
+    repositories: () => repositories,
+    credential: () => null,
+    source: (id) => ({
+      list: async (cursor) => {
+        const page = await (id === otherId ? other : transport).transport.list(
+          cursor,
+        );
+        return { ...page, snapshot: { ...page.snapshot, repo_id: id } };
+      },
+      close: () => {},
+    }),
+  });
   const controller: StoreController = {
     threads,
+    threadNavigation,
     get state() {
-      return { ...base.state, route, repository, repositories: [repository] };
+      return {
+        ...base.state,
+        route,
+        repository: repositories.find((repo) => repo.id === route.repository)!,
+        repositories,
+      };
     },
     actions: {
       ...base.actions,
-      openThreads: (id = null) => threads.open(id),
+      openThreads: async (id = null, owner = route.repository) => {
+        if (owner !== route.repository) {
+          threads.clear();
+          route = { ...route, repository: owner };
+        }
+        await threads.open(id);
+      },
       refresh: threads.refresh,
     },
   };
   $effect(() => {
     void untrack(() => threads.restore());
-    return () => threads.clear();
+    return () => {
+      threads.clear();
+      threadNavigation.clear();
+    };
   });
 </script>
 
 <StoreRepositoryApplication
   {controller}
   {layoutStorage}
-  initiallyCollapsed={false}
+  {initiallyCollapsed}
+  {displayMode}
 />

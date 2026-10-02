@@ -14,7 +14,8 @@ export function navigationItemIcon(
   item: CommunityNavigationItemModel,
 ): Component {
   if (item.kind === "channel") return HashIcon;
-  if (item.kind === "threads") return MessagesSquareIcon;
+  if (["threads", "more-threads", "retry-threads"].includes(item.kind))
+    return MessagesSquareIcon;
   if (item.kind === "projects" || item.kind === "project")
     return FolderKanbanIcon;
   if (item.kind === "branches") return GitBranchIcon;

@@ -129,7 +129,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
 | M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064                                                                                                                                                                                                           |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-UI-063,E-UI-064,E-UI-069                                                                                                                                                                                                                       |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-UI-063,E-UI-064,E-UI-069,E-UI-081                                                                                                                                                                                                              |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063                                                                                                                                                                                                                                                             |
@@ -44943,6 +44943,170 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "51files formatted; spec-first49protected files/9chapters;5validators/21chapters/147requirements;120tasks. Final ledger run insertion is formatted and checked again before standing JJ commit. Logs ledger-format-final/format-final/spec-first-final/spec-validate-final/progress-final."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-081",
+    "tasks": ["M15.5"],
+    "date": "2026-10-02",
+    "kind": "Repository-owned sidebar threads and contextual breadcrumbs",
+    "revision": "Enclosing Jujutsu change rsnmqnln",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-005",
+      "JST-UI-006",
+      "JST-UI-017",
+      "JST-API-006",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007",
+      "JST-GOV-008"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. No milestone status promotion. Rust and root aggregate lanes, built production CSP qualification, backend rebuild/reset/restart, main landing and publication are out of scope for this UI-only slice."
+    ],
+    "scope": "Reuse the appearance workspace and existing Vite HMR. Community navigation and Projects breadcrumbs inspected first, Design Core Collapsible/Command View/Breadcrumb second. Remove the standalone Threads section; native repositories disclose indented Browse threads and exact thread children. Browse threads label omits the redundant repository name. Group icon-only action and compact Actions entry use the connected native owner or authorized native fallback. Independent memory-only bounded list readers load up to two repositories concurrently, retain loaded windows on refresh, validate repository/epoch/thread root and clear protected data on session teardown. Selection binds the explicit owner, guards late connections and omits unsupported local folders. Repository/Threads/selected-thread breadcrumbs reuse Projects header/mobile placement and preserve available code context. Owned picker/action/lifecycle extraction and shared controller callbacks keep existing architecture budgets. Directly affected thread/navigation/project persistence stories and production bootstrap/refresh tests are the complete focused impact surface; root aggregates do not apply.",
+    "files": [
+      "catalog/components/store-threads/StoreThreadNavigation.stories.svelte",
+      "catalog/components/store-threads/StoreThreads.stories.svelte",
+      "catalog/fixtures/StoreThreadsFixture.svelte",
+      "docs/ui-provenance.json",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-refresh.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/production-threads-integration.ts",
+      "web/src/lib/controller/repository-thread-navigation.svelte.ts",
+      "web/src/lib/ui/community-navigation/CommunityNavigation.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigationAction.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigationSectionPicker.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigationTree.css",
+      "web/src/lib/ui/community-navigation/icons.ts",
+      "web/src/lib/ui/community-navigation/model.ts",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/store-navigation.ts",
+      "web/src/lib/ui/store-threads/StoreThreadsBreadcrumb.svelte",
+      "web/src/lib/ui/store-threads/thread-navigation-binding.svelte.ts",
+      "web/src/lib/ui/store-threads/thread-navigation.ts",
+      "web/tests/vite/automatic-store-refresh.test.ts",
+      "web/tests/vite/repository-thread-navigation.test.ts",
+      "web/tests/vite/thread-navigation-integration.test.ts",
+      "web/tests/vite/thread-navigation.test.ts"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; existing Design Core ^0.2.0 and owned Community provenance retained. No dependency changes.",
+    "formats": "Existing bounded Threads HTTP reads, native thread IDs, route/hash, code operation pins, native object/manifest/WAL/receipt and OpenAPI formats unchanged. Optional controller navigation and repository owner fields are presentation-only. Disclosure flags retain existing versioned browser layout storage; sidebar thread data and credentials stay memory-only.",
+    "artifacts": "/tmp/jj-thread-navigation-*.log; /tmp/jj-thread-navigation-live.jpg",
+    "next": "Retain visual-pending; use the verified committed workspace for further UI changes. Main landing and publication require a separate request.",
+    "runs": [
+      {
+        "command": "pnpm catalog:test web/tests/vite/thread-navigation.test.ts (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Standalone section and missing owner forwarding reproduced. /tmp/jj-thread-navigation-before.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/thread-navigation.test.ts web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "25passed. /tmp/jj-thread-navigation-unit-first.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/repository-thread-navigation.test.ts web/tests/vite/thread-navigation.test.ts web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "28passed: independent native owners, paging/window retention, late credential teardown and foreign/denied reads. /tmp/jj-thread-navigation-unit-qualified.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadNavigation.stories.svelte (initial)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Test setup expected a custom label on Breadcrumb, while the public primitive uses breadcrumb; mobile sidebar starts closed. Corrected selectors and opened the accessible mobile sidebar. /tmp/jj-thread-navigation-story-first.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 11,
+        "note": "Web0errors0warnings; catalog11errors0warnings from unsupported Testing Library exact role option. Removed invalid options; exact string matching retained. Logs web-first/catalog-first."
+      },
+      {
+        "command": "pnpm check:architecture (initial/second/third)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial controller313/300, navigation368/364, shell323/320; formatting then left controller311/300 and navigation378/364; final intermediate controller302/300. Extracted reader factory, effect binding and picker/action, reused lifecycle callbacks/source accessor. No budget changes. Logs architecture-first/second/third."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadNavigation.stories.svelte (second)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Assertions omitted normal breadcrumb whitespace. Corrected to anchored whitespace-tolerant directory text; repository, thread, links, icon-only action and indentation assertions retained. /tmp/jj-thread-navigation-story-second.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadNavigation.stories.svelte (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3passed including desktop/mobile/compact owner switching, Browse action, directory breadcrumbs, no standalone section and child icon indentation greater than16px. /tmp/jj-thread-navigation-story-third.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (after picker extraction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings;146catalog modules. Logs web-final/catalog-final."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/repository-thread-navigation.test.ts web/tests/vite/thread-navigation.test.ts web/tests/vite/thread-navigation-integration.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/automatic-store-refresh.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-automatic-refresh.test.ts (first extended)",
+        "result": "fail",
+        "failures": 1,
+        "note": "41passed/1failed: optional cleared replyId was undefined, test expected literal null. Normalize optional absence with ?? null while retaining exact owner, thread and cleared reply assertions. /tmp/jj-thread-navigation-unit-final.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/repository-thread-navigation.test.ts web/tests/vite/thread-navigation.test.ts web/tests/vite/thread-navigation-integration.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/automatic-store-refresh.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-automatic-refresh.test.ts (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "42passed across7files; exact owner connection, authorized native fallback, unsupported/unauthorized rejection, stale navigation guard and independent sidebar freshness included. /tmp/jj-thread-navigation-unit-qualified-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "47passed across8files, interaction/accessibility. Fresh Vitest browser process. /tmp/jj-thread-navigation-consumers.log."
+      },
+      {
+        "command": "pnpm check:architecture (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "788modules, no module budget or ownership violations. /tmp/jj-thread-navigation-architecture-final.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Mapped api.md and spec-governance.md missing from current change. Added bounded authorization/teardown and UI qualification contract. /tmp/jj-thread-navigation-spec-first.log."
+      },
+      {
+        "command": "Targeted pnpm exec prettier --write (changed files; subsequent extraction and integration-test paths)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted all changed production/test/fixture/provenance/UI chapter files; final canonical ledger/chapter formatting and checks follow."
+      },
+      {
+        "command": "Cold live browser sidebar selection, thread context and Browse threads action (CUA temporary background tab)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Projects hub lists thread children under their owner. Selecting test connects jj-store demo and restores its exact thread. Breadcrumb shows owner/Threads/test; group Browse threads returns directory with owner/Threads and retained operation. Child icon left42.59375px vs repository23px. Screenshot inspected and saved; tab closed, user tab unchanged. No live data writes or service resets."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check (30 changed files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web/catalog0errors0warnings;146catalog modules; ownership1validator; spec-first26protected files/4chapters; spec validation5validators/21chapters/147requirements; progress120tasks; all changed files formatted. Logs web-qualified/catalog-qualified/ownership/spec-first-qualified/spec-validate/progress/format. Final evidence insertion is formatted and rechecked before committing."
       }
     ]
   }

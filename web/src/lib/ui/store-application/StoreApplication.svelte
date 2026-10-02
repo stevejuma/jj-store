@@ -10,11 +10,13 @@
   import { provideStoreEntityContext } from "./entity-context.js";
   import { projectsSidebarModel } from "../store-work/projects-sidebar-model.js";
   import { withThreadNavigation } from "../store-threads/thread-navigation.js";
+  import { observeRepositoryThreadNavigation } from "../store-threads/thread-navigation-binding.svelte.js";
   import {
     selectStoreNavigation,
     activeStoreNavigation,
   } from "./store-navigation.js";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
+  import StoreThreadsBreadcrumb from "../store-threads/StoreThreadsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreThreadFocus from "../store-threads/StoreThreadFocus.svelte";
   import { createApplicationThreadPanel as ownThreadPanel } from "../store-threads/thread-panel.svelte.js";
@@ -136,6 +138,7 @@
     ),
   );
   const activeNavigationItem = $derived(activeStoreNavigation(current));
+  observeRepositoryThreadNavigation(() => controller);
   const title = $derived(
     repositorySections.find((section) => section.page === current.page)
       ?.label ?? "Repository",
@@ -180,6 +183,8 @@
   onNavigateForward={() => navigate(1)}
 >
   {#snippet headerCenter()}{#if !settingsOpen && current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
+        {controller}
+      />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
         {controller}
       />{/if}{/snippet}
   {#snippet headerEnd()}{#if !settingsOpen}<StoreApplicationHeaderActions
@@ -240,6 +245,8 @@
             model={{ canNavigateBack, canNavigateForward, navigate }}
           />
           {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
+              {controller}
+            />{:else if current.page === "threads"}<StoreThreadsBreadcrumb
               {controller}
             />{/if}
           <div class="store-application__details-toggle">

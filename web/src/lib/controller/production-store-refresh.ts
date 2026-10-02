@@ -23,10 +23,12 @@ export function createProductionRefresh(options: {
   stopFeed: () => void;
   follow: (source: StoreDataSource) => void;
   invalidate: () => void;
+  refreshThreadNavigation?: () => Promise<void>;
 }) {
   const { data, history, projects, threads, reader, search } = options;
   return {
     async refresh(automatic = false) {
+      void options.refreshThreadNavigation?.();
       if (await threads.refresh()) return;
       if (history.route.page === "projects") {
         await projects.refresh();

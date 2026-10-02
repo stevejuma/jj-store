@@ -16,10 +16,14 @@ export interface CommunityNavigationItemModel {
     | "repository"
     | "project"
     | "more-projects"
+    | "more-threads"
+    | "retry-threads"
     | "retry-projects";
   home?: string;
   project?: string;
   thread?: string;
+  repository?: string;
+  description?: string;
   children?: readonly CommunityNavigationItemModel[];
   initiallyExpanded?: boolean;
 }
@@ -28,6 +32,7 @@ export interface CommunityNavigationSectionModel {
   label: string;
   items: readonly CommunityNavigationItemModel[];
   initiallyCollapsed?: boolean;
+  action?: CommunityNavigationItemModel;
 }
 export interface CommunityNavigationModel {
   primaryItems: readonly CommunityNavigationItemModel[];

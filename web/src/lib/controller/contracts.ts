@@ -198,6 +198,7 @@ export interface StoreController {
   readonly referenceSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly globalSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly threads?: import("./thread-types.js").ThreadsController;
+  readonly threadNavigation?: import("./repository-thread-navigation.svelte.js").RepositoryThreadNavigation;
   readonly projects?: import("./projects-hub-types.js").ProjectsHubController;
   readonly work?: import("./work-types.js").WorkController;
   readonly state: StoreControllerState;
@@ -253,7 +254,7 @@ export interface StoreController {
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
     openRoute?(route: StoreRoute): Promise<void>;
-    openThreads?(id?: string | null): Promise<void>;
+    openThreads?(id?: string | null, repository?: string): Promise<void>;
     openReview?(repository: string, thread: string): Promise<void>;
     openRepository(id: string): void | Promise<void>;
     selectPage(page: StorePage): void | Promise<void>;

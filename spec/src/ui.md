@@ -150,7 +150,7 @@ unchanged.
 | JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, project-scoped and installation-wide Agents directories, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows, tab-row search and trailing icon-only filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and refresh displayed metadata automatically after committed saves and new data. |
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                                                                                                                      |
+| JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, repository-owned sidebar thread children, an accessible Repositories Browse threads action and contextual repository breadcrumbs, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                    |
 | JST-UI-018 | The browser MUST expose the complete Buzz-derived device Appearance page, persist and restore app-wide preferences, apply resolved themes and typography to all owned conversations and overlays, retain native links and drafts, and offer working local link cards and responsive Focus/Split discussions and agent responses without altering repository authority.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 The production controller completes bootstrap before rendering connection
@@ -1113,8 +1113,19 @@ linked repository selects that repository's own authorized code operation.
 The left sidebar includes a primary Projects destination and expandable project
 rows with active linked repositories underneath. Project destinations, project
 rows and the collapsed project-section trigger use Lucide Folder Kanban;
-collapsed Threads uses Messages Square, and repository entries and their group
-retain Folder Git. The collapsed Projects Command View lists project rows
+repository entries and their group retain Folder Git. Native Threads appear only
+as indented children of their owning repository in the Repositories group; their
+child action is labeled Browse threads and there is no separate Threads section.
+A Messages Square icon-only Browse threads action on that group opens the
+connected native repository, or an authorized native repository when no native
+context is selected. Collapsed navigation keeps this action in the Repositories
+Command View. Independent bounded repository thread lists retain their owner,
+pagination and permission boundary without selecting a repository or changing
+the main page. Local folder entries do not advertise unsupported Threads. Thread
+children open their exact native repository and stable thread. Browse Threads
+and selected threads show the repository/Threads breadcrumb in the same desktop
+header and mobile toolbar positions as Projects, with native route links and
+retained code selections. The collapsed Projects Command View lists project rows
 without flattening their linked repositories into options; project search,
 pagination/retry controls and focus restoration remain available. Repositories
 are selected from their own Command View, while expanded project rows retain
@@ -1264,11 +1275,11 @@ visible. Pending or failed requests cannot silently retry a save or apply a
 stale configuration. Refresh recovers the current revision before another
 action.
 
-Projects and Repositories sidebar section expansion and individual project
-expansion persist in versioned browser local storage. Explicit collapsed choices
-win over automatic expansion of an active child, including after Settings closes
-or the application reloads. Storage contains disclosure flags only; unavailable
-or malformed storage falls back to normal navigation.
+Projects and Repositories sidebar section expansion and individual project and
+repository expansion persist in versioned browser local storage. Explicit
+collapsed choices win over automatic expansion of an active child, including
+after Settings closes or the application reloads. Storage contains disclosure
+flags only; unavailable or malformed storage falls back to normal navigation.
 
 ## Registered local JJ folders
 

@@ -96,7 +96,9 @@
     const c = within(canvasElement),
       body = within(document.body);
     await expect(
-      await c.findByRole("button", { name: "Browse threads" }),
+      (await c.findAllByRole("button", { name: "Browse threads" })).find(
+        (button) => button.closest(".lc-community-navigation__section-header"),
+      )!,
     ).toBeVisible();
     await userEvent.click(
       (await c.findAllByRole("button", { name: "general" }))[0]!,

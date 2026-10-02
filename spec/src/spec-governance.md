@@ -177,6 +177,14 @@ inspection and interaction/accessibility passes do not approve visual baselines
 or qualify the unsupported filesystem-local agent review profile. The milestone
 ledger records these limits and the exact commands.
 
+Repository-owned sidebar thread navigation is jointly governed by `ui.md` and
+`api.md`. It reuses existing bounded authorized Threads reads, without altering
+publication or persisted formats. Its evidence covers repository ownership,
+permission/credential teardown, pagination, stale connections, indented
+children, the Browse threads action and contextual breadcrumbs across desktop,
+mobile and compact navigation. Interaction and accessibility evidence remain
+separate from visual baseline approval.
+
 M10 owns local-first writable replication. Its origin ledger and imported
 publication path are jointly governed by `replication.md` and the existing
 publication requirements. Native head integration is also governed by

@@ -1950,6 +1950,26 @@
     {
       "local": "web/src/lib/controller/production-agent-loaders.ts",
       "reason": "Native operation-pinned AgentStore loading integration; locally authored."
+    },
+    {
+      "local": "web/src/lib/controller/repository-thread-navigation.svelte.ts",
+      "reason": "Locally authored bounded, authorized native repository thread sidebar reader; no Community dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-threads/StoreThreadsBreadcrumb.svelte",
+      "reason": "Locally authored native repository/thread route breadcrumb using public Design Core primitives and existing owned breadcrumb styles."
+    },
+    {
+      "local": "web/src/lib/ui/store-threads/thread-navigation-binding.svelte.ts",
+      "reason": "Locally authored sidebar reader lifecycle binding; no Community dependency."
+    },
+    {
+      "local": "web/src/lib/ui/community-navigation/CommunityNavigationAction.svelte",
+      "reason": "Locally authored optional native sidebar section action using public Design Core primitives."
+    },
+    {
+      "local": "web/src/lib/ui/community-navigation/CommunityNavigationSectionPicker.svelte",
+      "reason": "Locally authored sidebar Command View integration extracted from the maintained owned navigation copy."
     }
   ]
 }

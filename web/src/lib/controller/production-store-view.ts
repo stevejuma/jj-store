@@ -197,6 +197,7 @@ export function productionControllerSurface(
       "available" | "threads"
     >;
     projects: StoreController["projects"];
+    threadNavigation?: StoreController["threadNavigation"];
     now?: () => number;
     actions: StoreController["actions"];
     globalSearch?: StoreController["globalSearch"];
@@ -209,6 +210,7 @@ export function productionControllerSurface(
       return options.threads.available() ? options.threads.threads : undefined;
     },
     projects: options.projects,
+    threadNavigation: options.threadNavigation,
     globalSearch: options.globalSearch,
     referenceSearch: options.referenceSearch,
     get state() {

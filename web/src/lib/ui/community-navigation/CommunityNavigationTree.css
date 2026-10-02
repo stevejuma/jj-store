@@ -50,8 +50,9 @@
 .lc-community-navigation__item-children {
   display: grid;
 }
-.lc-community-navigation__item--child[data-ui-component="button"] {
-  --ui-button-padding-inline: 1.65rem 0.625rem;
+.lc-community-navigation__item-children
+  .lc-community-navigation__item--child[data-ui-component="button"] {
+  --ui-button-padding-inline: 1.85rem 0.625rem;
 
   min-height: 1.75rem;
   color: color-mix(in srgb, var(--foreground) 8%, var(--muted-foreground));

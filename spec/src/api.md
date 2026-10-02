@@ -856,6 +856,16 @@ requests or read authority. Previously displayed snapshots remain visible during
 background refresh, with empty/error/unsupported states shown after reads
 settle.
 
+Repository sidebar Threads use the existing authorized, bounded Threads list
+endpoint independently from the selected code source. Each entry retains its own
+native repository and stable thread ID; selecting it connects that owner before
+opening the thread. Memory-only directories are cleared with the credential
+session, discard late or foreign-repository pages, retain loaded windows on
+refresh and omit unsupported local folders. This presentation adds no endpoint
+or persisted contract. Browse threads uses the connected native repository or an
+authorized native fallback; repository/Threads breadcrumbs preserve the
+available code-operation context.
+
 A selected JJ Log or Branches change exposes a read-only Evo Log action in the
 right-rail Actions section. Its separate resizable column reads the existing
 native evolution graph at the displayed operation, preserves server predecessor
