@@ -85,7 +85,7 @@ shared-package release qualification does not alter those original Git gates.
 | M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034                                                                                                                                                                                              |
 | M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                                                                                                                          |
 | M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035                                                                                                                                                                                                                                                                               |
-| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086                                                                                                                                                                                                       |
+| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087                                                                                                                                                                                              |
 | M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                                          | E-M9-033                                                                                                                                                                                                                                                                                                                                                       |
 | M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013                | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014                                                                                                                                                                                                                    |
 | M10.1       | Done        | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                                  | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                                    | E-M10-001,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086                                                                                                                           |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087                                                                                                                  |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -132,7 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-UI-063,E-UI-064,E-UI-069,E-UI-081                                                                                                                                                                                                              |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086                                                                                                                                                                                                                                           |
+| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087                                                                                                                                                                                                                                  |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -45833,6 +45833,210 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "E-UI-086 preserves milestone statuses. 69protected files/4canonical chapters;5validators/21chapters/147requirements;120tasks;73changed files formatted. Final evidence insertion and changed-file formatting checked again before commit. /tmp/jj-overlay-token-{spec-first,spec-validate,progress,format-final,progress-final}.log."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-087",
+    "tasks": ["M9.5", "M11.4", "M16"],
+    "date": "2026-10-03",
+    "kind": "Restore foundation tooltip sizing and qualify local navigation consumers",
+    "revision": "Enclosing Jujutsu change wovknnpw; foundation change quoystmy",
+    "requirements": [
+      "JST-UI-002",
+      "JST-UI-018",
+      "JST-ARCH-004",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007",
+      "JST-GOV-008",
+      "JST-GOV-009"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate and stories stay visual-pending. M11.4 In progress and M16 Partial remain unchanged; source release and registry-only qualification remain pending.",
+      "The earlier compare-only capture stopped at generated-cache EACCES before screenshot comparison. The user subsequently instructed us to ignore Design Core visual tests; further visual testing is out of scope, and no visual pass or baseline approval is claimed."
+    ],
+    "scope": "User requests undoing earlier Design Core tooltip compaction. Inspect Community navigation first, foundation source/history second. Foundation change42a125503632 reduced theme small text to11px and padding from12px/6px to10px/4px. In a reused clean Design Core Appearance workspace rebased onto current clean main parent4922feea, restore theme small-text defaults and12px inline/6px block padding; retain public sizing tokens and unchanged arrow/portal behavior. No consumer tooltip workaround. Consume source via the already documented temporary /tmp/jj-appearance-pnpm.cjs hook with lockfile disabled; verify installed tooltip bytes match source. Restart only owned VitePID68050 to33733, retaining backendPID42374 and persistent main fixture. Source package full checks and compare-only visual target run because shared foundation behavior spans consumers; jj-store runs only focused direct navigation/shell interaction and type checks. Root jj-store aggregates, Rust, fixture reset, native writes, source main landing, publication and visual baseline updates are out of scope. Source acceptance is linked from DC-SHA-050 to spec/records/tooltip-sizing-restoration.md. Latest user instruction excludes further Design Core visual tests; finish with the passing nonvisual lanes and retain the earlier capture failure as historical evidence.",
+    "files": [
+      "docs/reference/appearance-provenance.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "spec/src/architecture.md"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1. Foundation local source0.1.2; its Svelte5.56.6, Storybook10.5.2 and Vitest4.1.11 remain unchanged. Consumer Svelte5.57.1 and Storybook10.5.7. Manifest/lockfile registry ranges unchanged.",
+    "formats": "No native/API/route/preference or public token name changes. Existing jj-store.appearance.v1 and fixture retained. Source checkout remains independently owned.",
+    "artifacts": "/tmp/dc-tooltip-restore-*.log; /tmp/jj-tooltip-restore-*.log; /tmp/jj-tooltip-restore-live.jpg; /tmp/dc-tooltip-restore-pack/lapismd-design-core-0.1.2.tgz",
+    "next": "Retain local source validation; further Design Core visual testing is excluded by the user. Complete separate foundation release/registry qualification only when authorized; no milestone promotion.",
+    "runs": [
+      {
+        "command": "jj --no-pager st; inspect Community navigation, Design Core tracked guidance/owning DC-SHA-050 chapter/history42a125503632; jj rebase -r @ -d4922feea",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both source workspaces clean; reuse quoystmy with current main parent so InputGroup and menu repairs remain available. No main source modifications."
+      },
+      {
+        "command": "pnpm spec:search -- tooltip (Design Core)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Documented command forwards unsupported -- to installed spec-validator; retry without separator."
+      },
+      {
+        "command": "pnpm spec:search tooltip (Design Core)",
+        "result": "fail",
+        "failures": 1,
+        "note": "QMD native modules unavailable; use printed rg fallback and open owning overlays chapter."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/shadcn/tooltip/Tooltip.stories.svelte (source before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact restored-default regression fails11px vs12px;1existing story passes. /tmp/dc-tooltip-restore-before.log."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/shadcn/tooltip/Tooltip.stories.svelte (source after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 default28px height, restored padding, hover and retained custom sizing. /tmp/dc-tooltip-restore-after.log."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/shadcn/tooltip/Tooltip.stories.svelte src/shared/shadcn/tooltip/Tooltip.variations.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 across2tooltip files, including upstream preview. /tmp/dc-tooltip-restore-story-final.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (foundation source/story/owning chapters); pnpm spec:check; pnpm checks (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Canonical new default/token acceptance bullet contains2sentences. Split into atomic bullets; aggregate stops at governance before qualification. Logs format/spec-check/checks."
+      },
+      {
+        "command": "pnpm spec:check (after atomic bullet fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Validation, mdBook and spec-first3lanes pass. /tmp/dc-tooltip-restore-spec-check-final.log."
+      },
+      {
+        "command": "pnpm checks; pnpm check:types (after atomic bullet fix)",
+        "result": "fail",
+        "failures": 2,
+        "note": "New inline consumer source example is parsed as another script by svelte-check, yielding2duplicate Tooltip identifiers. Moved example to colocated Tooltip.sizing.example-sources.ts; production tooltip unchanged. Logs checks-final/types."
+      },
+      {
+        "command": "pnpm pack --pack-destination /tmp/dc-tooltip-restore-pack",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source package tarball created without publication. /tmp/dc-tooltip-restore-pack.log."
+      },
+      {
+        "command": "npm_config_pnpmfile=/tmp/jj-appearance-pnpm.cjs pnpm install --no-frozen-lockfile --lockfile=false; cmp foundation/consumer tooltip-content.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Explicit documented local source refresh; installed production tooltip bytes match. Consumer registry manifest/lockfile remain unchanged. /tmp/jj-tooltip-restore-install.log."
+      },
+      {
+        "command": "node inline ownership-checked Vite-only restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Verified active owner/workspace and exact PID before stopping68050; start33733 with same runtime root, preserve runtime fields and backendPID42374. No backend restart or fixture reset."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (consumer)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both0errors0warnings;153catalog modules. /tmp/jj-tooltip-restore-{web,catalog}.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/components/store-work/DisclosurePersistence.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-threads/StoreThreadNavigation.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "50/50 across7direct navigation/shell/Projects/repository consumers with a fresh browser after source refresh. /tmp/jj-tooltip-restore-consumers.log."
+      },
+      {
+        "command": "Read-only CUA live cold temporary thread tab, keyboard-focus Projects tooltip, computed style and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Buzz tooltip now30px tall with12px text/18px inherited line and6px/12px padding; existing rotated arrow14.14px. Saved full viewport screenshot and closed temporary tab33. User tab unchanged; no data/preference writes."
+      },
+      {
+        "command": "pnpm spec:first (consumer initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Appearance provenance requires its mapped architecture chapter; added the explicit foundation-source validation boundary. /tmp/jj-tooltip-restore-spec-first.log."
+      },
+      {
+        "command": "pnpm visual-delta test --help (source)",
+        "result": "fail",
+        "failures": 1,
+        "note": "No test selection mode specified; canonical Docker dependency bootstrap completed but argument validation refused comparison. Source edited during that bootstrap, so artifact guard also reported the changed story. No baseline update."
+      },
+      {
+        "command": "pnpm visual-delta test --story-id shadcn-overlays-tooltip--open-tooltip --baseline-path-mode nested-import --external 'vendor/shadcn-svelte-docs/static/**'",
+        "result": "fail",
+        "failures": 1,
+        "note": "Canonical container Storybook build passed in5m;1selected story/524total. Capture blocked before comparison by EACCES on /visual-delta/canonical-build-cache/entries temporary tree. Artifact guard also noted the story example edit during the build. No screenshot comparison or baseline approval claimed. /tmp/dc-tooltip-restore-visual.log."
+      },
+      {
+        "command": "pnpm check:types (source qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Root and shell/filter/source consumer Svelte checks all0errors0warnings after relocating the example. /tmp/dc-tooltip-restore-types-final.log."
+      },
+      {
+        "command": "pnpm checks (source qualified attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Governance/quality pass;715unit tests/111files and3Turbo unit tests pass; static build and visual metadata audit pass. Whole catalog643passes/1emoji-grid focus failure across208files/644tests. It expects heart focus but receives Search emoji. /tmp/dc-tooltip-restore-checks-qualified.log. No unrelated source edits."
+      },
+      {
+        "command": "pnpm ci:browser-workspace; pnpm ci:browser-shell; pnpm ci:browser-ai; pnpm ci:browser-shadcn (sequential source lanes)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Complete remaining aggregate browser lanes after its Storybook stop:14workspace,11shell,3AI,35shadcn pass;1shadcn skip. Fresh owned services cleaned up by Playwright. /tmp/dc-tooltip-restore-browser-*.log."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/ai/experimental/emoji-picker/EmojiPicker.stories.svelte (clean main baseline)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 on clean parent4922feea. Installed main uses Bits2.19.3/Svelte5.57.1 while source workspace uses locked Bits2.18.1/Svelte5.56.6; this is not a same-runtime baseline. /tmp/dc-tooltip-restore-emoji-baseline.log."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/ai/experimental/emoji-picker/EmojiPicker.stories.svelte (source isolated initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Same focus failure,1pass/1fail. /tmp/dc-tooltip-restore-emoji-after.log."
+      },
+      {
+        "command": "jj new @- (temporary baseline); pnpm test:storybook src/shared/ai/experimental/emoji-picker/EmojiPicker.stories.svelte (twice); jj edit quoystmy; jj abandon empty baseline; same isolated story after restoration",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 each on2unchanged parent runs with the same installed dependencies, and2/2 after restoring the tooltip slice. Temporary baseline oplrtkvt removed; source patch preserved. Failure is intermittent; no pre-existing deterministic failure claim. Logs emoji-same-deps-before/repeat and emoji-after-repeat."
+      },
+      {
+        "command": "pnpm spec:check (source); pnpm spec:first; pnpm spec:validate; pnpm check:progress (consumer qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source validation/mdBook/spec-first3lanes; consumer1protected file/3canonical chapters,5validators/21chapters/147requirements and120tasks. Final evidence formatting/validation is repeated before commit. Logs spec-qualified/spec-first-final/spec-validate-final/progress-final."
+      },
+      {
+        "command": "pnpm ci:storybook-interaction (source full rerun)",
+        "result": "pass",
+        "failures": 0,
+        "note": "644/644 tests across208files in69.43s. All required nonvisual source lanes now pass through recorded separate runs; initial pnpm checks wrapper failures remain retained and no uninterrupted wrapper pass is claimed. /tmp/dc-tooltip-restore-stories-rerun.log."
+      },
+      {
+        "command": "pnpm exec prettier --write src/shared/shadcn/tooltip/tooltip-content.svelte src/shared/shadcn/tooltip/Tooltip.stories.svelte src/shared/shadcn/tooltip/Tooltip.sizing.example-sources.ts spec/src/shadcn/overlays.md spec/src/verification.md spec/records/tooltip-sizing-restoration.md (source); pnpm exec prettier --write docs/reference/appearance-provenance.md spec/src/ui.md spec/src/architecture.md spec/src/milestones.md (consumer); pnpm spec:check (source); pnpm spec:first; pnpm spec:validate; pnpm check:progress (consumer)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final evidence and changed files formatted. Source3lanes pass; consumer1protected file/3canonical chapters,5validators/21chapters/147requirements and120tasks pass. Logs /tmp/dc-tooltip-restore-evidence-{format,spec}.log and /tmp/jj-tooltip-restore-evidence-{format,spec-first,spec-validate,progress}.log. Source record links full644test rerun while preserving intermittent failure history and visual EACCES gap. No functional changes after the final passing source and consumer suites."
+      },
+      {
+        "command": "pnpm exec prettier --check src/shared/shadcn/tooltip/tooltip-content.svelte src/shared/shadcn/tooltip/Tooltip.stories.svelte src/shared/shadcn/tooltip/Tooltip.sizing.example-sources.ts spec/src/shadcn/overlays.md spec/src/verification.md spec/records/tooltip-sizing-restoration.md (source); pnpm spec:check (source); pnpm exec prettier --check docs/reference/appearance-provenance.md spec/src/ui.md spec/src/architecture.md spec/src/milestones.md (consumer); pnpm spec:first; pnpm spec:validate; pnpm check:progress (consumer); pnpm exec prettier --write spec/src/milestones.md (final ledger insertion)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed-file formatting and documentation gates pass. Latest user instruction to ignore further Design Core visual tests is recorded; earlier visual failure retained as history. No further visual run or baseline changes. Logs /tmp/dc-tooltip-restore-evidence-{format-check,spec-final}.log and /tmp/jj-tooltip-restore-evidence-{format-check,spec-first-final,spec-validate-final,progress-final,ledger-format}.log. Final ledger validation is repeated after this insertion."
       }
     ]
   }

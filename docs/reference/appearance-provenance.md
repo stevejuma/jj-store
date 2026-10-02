@@ -40,6 +40,12 @@ Publishable package and lockfile ranges remain registry-based. A foundation
 release and registry-only qualification are separate gates; this validation
 setup is not publication evidence.
 
+The tooltip sizing restoration is developed in that same foundation workspace:
+it restores the theme's small text and 12px inline / 6px block padding from
+before `42a125503632`, while retaining all public sizing tokens and the existing
+arrow. The Appearance workspace validates it through the temporary hook above;
+no tooltip override or copied foundation component is added to jj-store.
+
 Local main landing is recorded in E-UI-053. The default Design Core workspace
 contains `yovkqwtu`; jj-store main uses its existing ignored `.pnpmfile.cjs`
 source hook with `pnpm install --no-frozen-lockfile --lockfile=false`. Installed

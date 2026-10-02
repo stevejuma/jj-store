@@ -561,6 +561,9 @@ Local Appearance acceptance in main uses the existing ignored foundational
 package hook against landed Design Core source. Its chat typography and native
 scrolling extensions are absent from registry 0.2.0; portable manifest/lockfile
 ranges remain registry-based and registry-only qualification stays separate.
+Tooltip sizing restoration is qualified from the independent Design Core
+Appearance workspace through the documented temporary source hook, preserving
+the standard arrow and public sizing tokens without an application override.
 
 The Projects hub delegates Agents scope and collection reads to owned
 UI-controller modules. Scope discovery joins unfiltered project links; sessions

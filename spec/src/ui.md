@@ -214,6 +214,10 @@ over the app background) and the same stronger tint for pointer hover and
 keyboard selection (55% muted). The treatment follows the active palette and
 keeps its label and description visible without changing search scope behavior.
 
+Navigation tooltips use Design Core's standard small-text sizing and restored
+inline/block padding, leaving room around the arrow. The foundation retains
+public sizing tokens; the app consumes its defaults without a tooltip override.
+
 Accent swatches keep circular selected rings centered inside their circular
 buttons, including after changing accents, on hover and at mobile widths in
 either color mode. Keyboard focus remains visible independently of selection.
