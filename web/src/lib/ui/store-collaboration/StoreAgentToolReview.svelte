@@ -98,6 +98,7 @@
 
 <StoreDiscussionWorkspace
   open={interactive && draftOpen}
+  focusKey={draft}
   title={`Reply to ${tool.native_name}`}
   onClose={() => (draft.open = false)}
 >

@@ -43901,6 +43901,132 @@ and named tests are checked by the progress gate.
         "note": "Zero errors/warnings;135catalog modules;12protected files/5chapters;5validators/21chapters/147requirements;120task bookkeeping."
       }
     ]
+  },
+  {
+    "id": "E-UI-076",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Community structural Focus sheets for Thread replies and tool discussions",
+    "revision": "Enclosing Jujutsu change sykxvszs",
+    "requirements": ["JST-UI-002", "JST-UI-005", "JST-UI-018"],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. Root aggregate lanes, Rust builds/tests and production built-CSP qualification are out of scope."
+    ],
+    "scope": "Owned UI-only Focus/Split presentation. Inspected Community structural surface-layer composition and released Design Core AppShell.SurfaceLayer. Focus covers the main body, standard right sidebar and independent outer details rail, leaving 7rem of desktop main content visible; mobile uses the root surface with 0.5rem insets. Uses the public controlled open API so mobile reparented content closes cleanly. Escape, scrim and Close use shell dismissal/focus restoration. One application-owned focused tool discussion; multiple Split drafts retain values across layout changes and latest-open ownership. Closing it restores the previous open draft. No backend restart/build, demo reset, fixture mutation, main landing, source dependency or release.",
+    "files": [
+      "catalog/components/store-application/DiscussionSheets.stories.svelte",
+      "catalog/components/store-application/appearance-tool-discussion-play.ts",
+      "catalog/components/store-threads/StoreThreads.stories.svelte",
+      "catalog/fixtures/DiscussionSheetFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-discussion/StoreDiscussionSheet.svelte",
+      "web/src/lib/ui/store-discussion/StoreDiscussionWorkspace.svelte",
+      "web/src/lib/ui/store-discussion/StoreFocusedDiscussion.svelte",
+      "web/src/lib/ui/store-discussion/discussion-focus.svelte.ts",
+      "web/src/lib/ui/store-threads/StoreThreadFocus.svelte"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;existing released Design Core AppShell.SurfaceLayer.",
+    "formats": "Existing native Thread reply and tool-call review target identities, memory-only draft ownership, permissions and Focus/Split preferences retained. No server/API/schema changes.",
+    "next": "Complete adjacent tool-call grouping and remove redundant resting failure label.",
+    "artifacts": "/tmp/jj-focus-sheet-*.log",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte -t 'FocusAndSplit|AppearanceFocus' (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2failures/6skipped: centered Dialog instead of labelled structural region. /tmp/jj-focus-sheet-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte -t 'FocusAndSplit|AppearanceFocus' (first after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2interactions passed,2runtime cleanup errors from destroyed active returnFocus getter. Captured returnFocus locally. /tmp/jj-focus-sheet-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte -t 'FocusAndSplit|AppearanceFocus' (after2 and3)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Each2passed/6skipped. Final effect captures focusKey for cleanup. /tmp/jj-focus-sheet-after-2.log; /tmp/jj-focus-sheet-after-3.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte (expanded first)",
+        "result": "fail",
+        "failures": 2,
+        "note": "8pass/2fail: hidden inert rail has no accessible name; mobile conditional sheet unmount leaves duplicate teleported surface on reopen. Read public rail DOM id and use controlled open composition, matching existing conflict sheet. /tmp/jj-focus-sheet-qualified.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte -t MobileFocus (before controlled open)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1fail/1skip independently reproduces duplicate mobile surface after close/reopen. /tmp/jj-focus-sheet-mobile.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte (controlled open)",
+        "result": "pass",
+        "failures": 0,
+        "note": "10/10 pass with blocking accessibility. Desktop covers both rails; mobile root8px insets, close/reopen, Escape/scrim/focus restoration and two retained Split drafts. Fresh Vitest browser/Vite process. /tmp/jj-focus-sheet-controlled.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final zero errors/warnings;137catalog modules. /tmp/jj-focus-sheet-final-web.log; /tmp/jj-focus-sheet-final-catalog.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "768production modules accepted. /tmp/jj-focus-sheet-architecture.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "11protected files/2chapters;5validators/21chapters/147requirements. /tmp/jj-focus-sheet-spec-first.log; /tmp/jj-focus-sheet-spec-validate.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed source and scenario files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted shared sheet, manager, application, Thread consumer, two-draft fixture and scenarios."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-threads catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "31interactions passed but two standalone read-only captured-agent fixtures have no application focus provider. Made optional provider lookup explicit; standalone Split consumers remain usable. /tmp/jj-focus-sheet-consumers.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 exact inline diff/tool review consumers. /tmp/jj-focus-sheet-tool-review.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DiscussionSheets.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-threads catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final34/34 directly affected interactions/accessibility, no runtime errors; fresh cold browser/Vite. /tmp/jj-focus-sheet-final-consumers.log."
+      },
+      {
+        "command": "pnpm web:check (optional standalone provider)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings. /tmp/jj-focus-sheet-leaf-web.log."
+      },
+      {
+        "command": "pnpm check:progress; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "120task bookkeeping and owned source closure accepted."
+      }
+    ]
   }
 ]
 ```

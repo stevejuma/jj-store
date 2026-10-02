@@ -1341,3 +1341,8 @@ The Projects tab-row search submits the existing `q` filter explicitly on Enter.
 Close clears that filter through the same route action. The 512 UTF-8 byte
 bound, independent home/repository admission and unsupported Review text-search
 capability remain unchanged; displaying search controls grants no extra access.
+
+Focus/Split reply presentation preserves the existing native conversation, reply
+and tool-call target IDs. Focus uses the shell structural sheet, with one active
+tool discussion per application and memory-only draft retention across layout
+changes; this does not alter API authorization or mutation identities.

@@ -39,6 +39,8 @@
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
+  import { provideDiscussionFocus } from "../store-discussion/discussion-focus.svelte.js";
+  import StoreFocusedDiscussion from "../store-discussion/StoreFocusedDiscussion.svelte";
   import StoreConflictEditor from "../store-conflicts/StoreConflictEditor.svelte";
   import { conflictEditorKey } from "../store-conflicts/conflict-editor.js";
   import { resolveLayoutStorage } from "../layout-storage.js";
@@ -78,6 +80,7 @@
   onDestroy(() => void shell.dispose());
   const detailsRail = shell.getPanel(repositoryDetailsPanelId)!;
   const threadPanel = ownThreadPanel(() => controller, shell, appearance);
+  provideDiscussionFocus();
   const workspaceGuard = $state({ editing: false });
   setContext(workspaceNavigationKey, workspaceGuard);
   let conflictOpen = $state(false);
@@ -289,9 +292,13 @@
       onSelectPage={selectPage}
       threadFocused={threadPanel.focused}
     />{/if}
-  {#if !settingsOpen && threadPanel.focused}<StoreThreadFocus
-      {controller}
-    />{/if}
+  <StoreFocusedDiscussion
+    open={!settingsOpen && !conflictOpen && !threadPanel.focused}
+  />
+  <StoreThreadFocus
+    open={!settingsOpen && !conflictOpen && threadPanel.focused}
+    {controller}
+  />
   <StoreConflictEditor
     {controller}
     open={conflictOpen}

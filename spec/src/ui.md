@@ -170,11 +170,15 @@ Temporary previews never persist. Startup, cross-tab and OS changes share the
 same resolved palette, including portalled controls and emoji pickers. Native
 entity links retain chips rather than becoming website cards. Conversation and
 reply drafts survive Settings and layout changes within the session. Focus hides
-the standard Thread reply pane while preserving the independently controlled
-repository details rail. Native/local capability and snapshot authority are
-unaffected. Browser glass reveals the application background, not the operating
-system desktop. Palette, font and preview assets are local under the existing
-strict CSP.
+the standard Thread reply pane and opens a nonmodal AppShell structural sheet
+covering the body and both right panels, leaving7rem of main content visible on
+desktop. Mobile uses the root surface with0.5rem insets. Escape, the scrim and
+Close dismiss through the shell and restore opener focus. The right-panel open
+states and drafts remain retained. One application-owned focused tool discussion
+is active at a time; multiple Split drafts survive layout changes. Native/local
+capability and snapshot authority are unaffected. Browser glass reveals the
+application background, not the operating system desktop. Palette, font and
+preview assets are local under the existing strict CSP.
 
 Accent swatches keep circular selected rings centered inside their circular
 buttons, including after changing accents, on hover and at mobile widths in

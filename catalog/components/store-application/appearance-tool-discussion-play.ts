@@ -34,26 +34,50 @@ export const appearanceToolDiscussionPlay = async ({
   };
   await settings("Focus");
   await openReply();
-  const dialog = await body.findByRole("dialog", {
+  const dialog = await body.findByRole("region", {
     name: "Reply to apply_patch",
   });
+  await expect(dialog).toHaveAttribute("data-ui-part", "surface-layer-surface");
+  const main = canvasElement.querySelector('[data-ui-part="main"]')!;
+  const layer = dialog.closest('[data-ui-part="surface-layer"]')!;
+  await waitFor(() => {
+    expect(
+      Math.abs(
+        dialog.getBoundingClientRect().left -
+          main.getBoundingClientRect().left -
+          112,
+      ),
+    ).toBeLessThan(1);
+    expect(dialog.getBoundingClientRect().right).toBeGreaterThanOrEqual(
+      main.getBoundingClientRect().right,
+    );
+  });
+  await expect(
+    getComputedStyle(layer)
+      .getPropertyValue("--ui-shell-surface-layer-inline-end-inset")
+      .trim(),
+  ).toBe("0px");
   await userEvent.type(
     within(dialog).getByRole("textbox"),
     "Unsent tool discussion draft",
   );
-  await userEvent.click(within(dialog).getByRole("button", { name: "Close" }));
+  await userEvent.click(
+    within(dialog).getByRole("button", { name: "Close Reply to apply_patch" }),
+  );
   await waitFor(() =>
     expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
   );
   await openReply();
-  const restored = await body.findByRole("dialog", {
+  const restored = await body.findByRole("region", {
     name: "Reply to apply_patch",
   });
   await expect(within(restored).getByRole("textbox")).toHaveTextContent(
     "Unsent tool discussion draft",
   );
   await userEvent.click(
-    within(restored).getByRole("button", { name: "Close" }),
+    within(restored).getByRole("button", {
+      name: "Close Reply to apply_patch",
+    }),
   );
   await waitFor(() =>
     expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
