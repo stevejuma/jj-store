@@ -40631,6 +40631,72 @@ and named tests are checked by the progress gate.
     "versions": "JJ0.45.1; Rust1.98.1; unchanged Cargo.lock, Tokio1 and native manifest5/collaborationV1.",
     "next": "Retain cache correctness and narrow browser refresh/loading; measure rebuilt served app against baseline.",
     "artifacts": "/tmp/jj-collab-perf-*.log; /tmp/jj-thread-perf-server-main-{before,ready}.json; /tmp/jj-thread-perf-server-benchmark.json."
+  },
+  {
+    "id": "E-UI-056",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "appearance-workspace-rebase-development-switch",
+    "revision": "enclosing Jujutsu change klylkzvs",
+    "before": "User requests reuse of the Appearance workspace, rebase onto committed main and transfer its development service. Appearance is clean at 1c53e7bd above 68a3dbdc. Main's committed parent is nxoksqrt/faf52a70, while its wtqyykvt working change contains unrelated unfinished Thread UI work. Owned server471/storage561 serves the persistent LocalTrusted demo at port7460. Main concurrently rewrote nxoksqrt to ba74e1ea with a bounded-cache correction and rebuilt its executable; Appearance was refreshed to that final committed parent.",
+    "files": ["spec/src/milestones.md"],
+    "runs": [
+      {
+        "command": "jj --no-pager st (main and appearance); jj --no-pager log -r '(@ | @- | default@ | default@-) | latest(::default@-, 6)' --limit 12; jj rebase -r @ -o nxoksqrt; jj --no-pager st; jj --no-pager diff --from @ --to default@- --summary",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebased only the clean Appearance working change klylkzvs onto committed main faf52a70; resulting tree equals default@-. No conflicts and no unfinished main changes included. Main tracked files and working change are not rewritten."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Appearance workspace production UI builds successfully; existing chunk-size and plugin-timing advisories only. /tmp/jj-appearance-workspace-build.log."
+      },
+      {
+        "command": "jj --no-pager diff --summary -- crates runtime Cargo.toml Cargo.lock (main); node /tmp/jj-appearance-workspace-start.mjs; lsof -nP -iTCP:7460 -sTCP:LISTEN",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main has no uncommitted Rust/runtime changes. Copied its existing qualified executable to ignored Appearance target/debug/jj-store and verified identical SHA256; no Rust rebuild. Owned graceful shutdown and startup switch471->10251/storage10269 with cwd and executable under Appearance,3121ms readiness. Existing main .local/dev-demo state stays in place; its ignored config now serves Appearance web/dist. Snapshot, Thread directory, fixture hash and installation hash are unchanged; search ready. HTTP200 index equals the new build, SHA25605d5ac0be02b14c7a0e7f92d77fe09a9490676a402390d5e0ba58bcecc7e8180."
+      },
+      {
+        "command": "cua.getTab(existing in-app browser URL)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Optional refresh inspection timed out in CDP Emulation.setFocusEmulationEnabled. No browser reload or preference change performed; service readiness and served bytes are independently verified."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:validate (initial attempts)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both checks encountered the stale workspace after concurrent ancestor rewrite. Prettier passed. Refreshed the workspace before rerunning these exact checks; no validator suppression."
+      },
+      {
+        "command": "jj workspace update-stale; jj --no-pager log -r change_id(klylkzvs); jj --no-pager diff --from faf52a70 --to ba74e1ea --summary; jj file show -r e138ae9d spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Automatic ancestor-rewrite resolution left an empty Appearance revision and the evidence edit in a divergent revision. Recovered only E-UI-056 into the fresh ledger, preserving upstream changes. Latest committed parent ba74e1ea changes Rust cache behavior and documentation; no UI changes, so served UI build remains current."
+      },
+      {
+        "command": "node /tmp/jj-appearance-workspace-start.mjs (latest committed backend refresh)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refreshed native executable from main after its committed cache correction/rebuild, using atomic ignored binary replacement. Appearance service10251->13961/storage13973,2931ms readiness. Repeated snapshot/directory/fixture/installation equality, built-index equality and search-ready checks pass. No UI source changed in the concurrent rewrite and no Rust build was run in this slice."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:validate; pnpm exec prettier --check spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Evidence-only ledger formatting and consuming governance checks pass; no product requirements or milestone status change."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "User-authorized JJ workspace rebase and local development service transfer. UI bundle rebuild and read-only cold readiness/state preservation checks are the complete operational surface. Rust builds/tests, root aggregates, unrelated suites, package publication, installed CLI changes and visual baseline approval are out of scope. No fixture reset/reseed or native application mutation. M16 remains Partial with E-UI-055's separate release, registry-only, inherited suite/composer-CSP and visual gates retained.",
+    "versions": "JJ0.45.1; pnpm10.32.1; committed main nxoksqrt/ba74e1ea; existing unchanged development server and embedded RustFS binaries.",
+    "formats": "Existing development runtime PID/resource metadata now records Appearance workspaceRoot/webRoot; asset manifest1 rebuilt. Native state, installation identity, fixture format1 and appearance preference jj-store.appearance.v1 unchanged.",
+    "next": "Use Appearance workspace and refresh http://127.0.0.1:7460/ for subsequent UI changes. Persistent runtime is still main .local/dev-demo; rebuild Appearance web assets when changing the served UI. Keep unrelated main work separate.",
+    "artifacts": "Private /tmp/jj-appearance-workspace-before.json and ready.json; /tmp/jj-appearance-workspace-{build,start}.log; temporary start helper /tmp/jj-appearance-workspace-start.mjs. New Appearance server remains running as requested; previous main server is stopped."
   }
 ]
 ```
