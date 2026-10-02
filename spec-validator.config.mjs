@@ -48,6 +48,7 @@ export default defineConfig(tableRequirements(), {
         "^spec/src/(?:SUMMARY|verification)\\.md$",
       ],
       rules: [
+        { pattern: "^desktop/", chapters: ["spec/src/desktop.md"] },
         {
           pattern: "^crates/jj-store-jj/(?:src|tests)/local_",
           chapters: ["spec/src/local-jj.md"],
@@ -138,7 +139,7 @@ export default defineConfig(tableRequirements(), {
         },
       ],
       protected: [
-        "^(?:rustfmt\\.toml$|catalog/|\\.storybook/|crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
+        "^(?:rustfmt\\.toml$|desktop/|catalog/|\\.storybook/|crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
       ],
     },
   },

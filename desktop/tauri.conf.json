@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "jj-store",
+  "version": "0.1.0",
+  "identifier": "com.lapismd.jj-store.desktop.dev",
+  "build": { "frontendDist": "ui" },
+  "app": { "windows": [], "security": { "capabilities": [] } },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg"],
+    "resources": ["resources/"],
+    "icon": ["icons/icon.png"]
+  }
+}

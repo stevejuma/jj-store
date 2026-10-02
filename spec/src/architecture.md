@@ -602,3 +602,11 @@ boundaries. Filtering precedes pagination and charges scanned operations without
 rewriting their parent identities. Query execution never publishes repository
 state. The browser controller owns cancellation, operation/time pinning and
 accepted-query routing; Design Core owns the generic custom-language editor.
+
+## Desktop host boundary
+
+The independently locked desktop host invokes explicit paired binaries and
+serves the existing production web bundle through its managed LocalTrusted
+listener. It has no dependencies on upstream JJ, model, WAL, storage or service
+crates. The root Cargo workspace excludes the host. See [desktop](desktop.md)
+for lifetime and qualification contracts.

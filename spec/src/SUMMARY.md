@@ -14,6 +14,7 @@
 - [Local Git-backed JJ collaboration](local-jj.md)
 - [Read APIs and browser](api.md)
 - [Typed mutations](mutations.md)
+- [Desktop application](desktop.md)
 - [Security and deployment](security.md)
 - [Adapters and Tantivy](adapters.md)
 - [Compatibility and release](compatibility.md)

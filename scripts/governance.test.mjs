@@ -42,6 +42,14 @@ function fixture(
 }
 test("accepts_verified_task", () =>
   assert.deepEqual(validateLedger(fixture()), []));
+test("service_owned_review_reader_is_within_layer_boundary", () => {
+  assert.deepEqual(
+    dependencyErrors([
+      { name: "jj-store-service", dependencies: [{ name: "jj-review" }] },
+    ]),
+    [],
+  );
+});
 test("accepts_m9_delivery_tasks", () =>
   assert.deepEqual(
     validateLedger(

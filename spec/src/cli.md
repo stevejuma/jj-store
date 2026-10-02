@@ -851,3 +851,11 @@ configuration precedence. The local browser regression compares the browser's
 standard aliases against the pinned JJ executable, then poisons repository alias
 configuration to prove reader isolation. Native lifecycle regressions qualify
 filtered operation pagination, traversal limits and read-only behavior.
+
+## Supervised desktop launch
+
+The additive desktop run flags use the existing foreground composition and
+format-2 installation. They require LocalTrusted embedded storage, literal
+loopback and a pipe on stdin. Launch-only bundle-path and origin overrides never
+persist or alter credentials. Owner EOF enters the same bounded shutdown as
+interrupt/termination. See [desktop](desktop.md).

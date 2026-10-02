@@ -58,7 +58,12 @@
     "catalog:check": "svelte-check --tsconfig catalog/tsconfig.json --fail-on-warnings && node scripts/check-catalog.mjs",
     "catalog:test": "vitest run --config catalog/vitest.config.ts --project catalog-unit",
     "catalog:test:browser": "pnpm build-storybook && node --test scripts/catalog-browser.test.mjs",
-    "check:ui-ownership": "spec-validator validate --only ui-ownership"
+    "check:ui-ownership": "spec-validator validate --only ui-ownership",
+    "desktop:prepare": "node scripts/desktop.mjs prepare",
+    "desktop:run": "node scripts/desktop.mjs run",
+    "desktop:check": "node scripts/desktop.mjs check",
+    "desktop:test": "node scripts/desktop.mjs test",
+    "desktop:bundle": "node scripts/desktop.mjs bundle"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",

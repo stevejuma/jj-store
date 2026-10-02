@@ -30,6 +30,8 @@ mod replication_endpoint;
 pub mod review_commands;
 mod review_presentation;
 pub mod server_commands;
+pub mod server_desktop;
+mod server_process;
 mod state_lease;
 mod store_commands;
 pub mod sync_commands;

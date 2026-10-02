@@ -96,6 +96,7 @@ formats.
 | Protected area                                                                                                                                                                                                                                 | Required chapter     |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | `^(?:catalog/\|\.storybook/\|docs/catalog\.md$)`                                                                                                                                                                                               | `ui.md`              |
+| `^desktop/`                                                                                                                                                                                                                                    | `desktop.md`         |
 | `^rustfmt\.toml$`                                                                                                                                                                                                                              | `spec-governance.md` |
 | `^crates/jj-store-model/`                                                                                                                                                                                                                      | `identity.md`        |
 | `^crates/jj-store-object/`                                                                                                                                                                                                                     | `object-store.md`    |
@@ -695,3 +696,10 @@ The package-boundary audit MUST reflect canonical owned-model dependencies.
 Service use of the existing ReviewStore model is qualified by the focused
 `service_review_models_preserve_core_layer_boundaries` governance regression;
 that allowance does not permit reverse core-model or publication dependencies.
+
+## Desktop governance
+
+Desktop host source, its independent lockfile and packaging configuration are
+protected by desktop.md. The same slice records launch-interface changes in
+cli.md and package-boundary changes in architecture.md. Desktop qualification
+keeps process, real-RustFS, browser and actual WKWebView evidence distinct.

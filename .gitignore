@@ -1,6 +1,7 @@
 /target/
 /runtime/embedded-rustfs/target/
-/node_modules/
+/node_modules
+
 /spec/book/
 /.scratch/
 /.local/
@@ -18,3 +19,8 @@
 /web/playwright-report/
 /storybook-static/
 /catalog/test-results/
+
+/desktop/target/
+/desktop/resources/
+
+/desktop/gen/

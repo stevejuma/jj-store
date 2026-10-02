@@ -9,11 +9,7 @@ use jj_cli::ui::Ui;
 use jj_lib::config::{ConfigLayer, ConfigSource, StackedConfig};
 use jj_store_jj::operation_stores::AuthorityResult;
 use jj_store_model::{PrincipalId, RepositoryId, TokenId};
-use jj_store_server::{
-    config::Config,
-    policy::PolicyFile,
-    process::{self, PreparedServer},
-};
+use jj_store_server::{config::Config, policy::PolicyFile, process};
 use serde_json::json;
 use std::{io::Write as _, path::PathBuf};
 
@@ -64,6 +60,8 @@ pub enum ServerCommand {
         /// Require a literal loopback bind address
         #[arg(long)]
         loopback_only: bool,
+        #[command(flatten)]
+        desktop: crate::server_desktop::DesktopOptions,
     },
     /// Print or validate configuration
     #[command(long_about=include_str!("../../../docs/cli/server-config.md"))]
@@ -280,40 +278,9 @@ pub async fn serve(
     format: Format,
     local: bool,
 ) -> AuthorityResult<()> {
-    let config = Config::load(path)?;
-    let verifier = match &config.access {
-        jj_store_server::config::Access::LocalTrusted { rpc_socket, .. } => Some(
-            std::sync::Arc::new(crate::workspace_management::NativeWorkspaceVerifier::new(
-                rpc_socket,
-            )?)
-                as std::sync::Arc<dyn jj_store_service::local_management::WorkspaceVerifier>,
-        ),
-        _ => None,
-    };
-    let server = PreparedServer::prepare_with_browser(
-        &config,
-        local,
-        verifier,
-        crate::folder_picker::native_picker(),
-        Some(path),
-        Some(std::sync::Arc::new(crate::local_browser::LocalFolders)),
-    )
-    .await?;
-    let address = server.address()?;
-    let shutdown = process::shutdown_signal()?;
-    emit(
-        ui,
-        format,
-        true,
-        json!({"version":1,"event":"listening","address":address,"transport":if config.tls.is_some(){"tls"}else{"explicit-loopback"},"storage_readiness":"unverified"}),
-        &format!(
-            "Listening on {address}\nStorage readiness: use jj-store doctor for a known repository.\n"
-        ),
-    )?;
-    ui.stdout().flush()?;
-    server.run(shutdown).await?;
-    Ok(())
+    crate::server_process::serve(ui, path, format, local, Default::default()).await
 }
+
 async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
     let ServerCli {
         format,
@@ -359,7 +326,8 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
         ServerCommand::Run {
             config,
             loopback_only,
-        } => serve(ui, &config, format, loopback_only).await,
+            desktop,
+        } => crate::server_process::serve(ui, &config, format, loopback_only, desktop).await,
         ServerCommand::Token(args) => {
             let (value, text) = crate::token_commands::run(ui, args).await?;
             emit(ui, format, no_pager, value, &text)
