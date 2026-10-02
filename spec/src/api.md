@@ -66,6 +66,10 @@ headers, nosniff and no-store; SVG, external URLs and byte ranges are
 unsupported. All routes share current repository admission, including status and
 assets.
 
+Header chrome uses the sidebar's theme-relative tint for hover, keyboard focus
+and open menu triggers. Its native command admission, snapshot refresh and
+navigation actions retain their existing controller contracts.
+
 The served browser and Storybook consume the same production-owned shell,
 repository views, presentation models and styles under `web/src/lib`. Catalog
 fixtures implement the shared asynchronous controller contract without a

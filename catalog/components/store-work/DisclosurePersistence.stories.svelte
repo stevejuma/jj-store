@@ -13,9 +13,15 @@
   }
   async function transparency(button: HTMLElement) {
     await userEvent.unhover(button);
-    await waitFor(() =>
-      expect(getComputedStyle(button).backgroundColor).toBe("rgba(0, 0, 0, 0)"),
-    );
+    if (import.meta.env.MODE === "test") {
+      const { userEvent: pointer } = await import("vitest/browser");
+      await pointer.unhover(button);
+    }
+    button.blur();
+    await waitFor(() => {
+      expect(button.matches(":hover, :focus-visible")).toBe(false);
+      expect(getComputedStyle(button).backgroundColor).toBe("rgba(0, 0, 0, 0)");
+    });
   }
 </script>
 

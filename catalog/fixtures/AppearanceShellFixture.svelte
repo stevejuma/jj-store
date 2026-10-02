@@ -35,6 +35,7 @@
 </script>
 
 <div class="appearance-shell-fixture">
+  <span class="navigation-hover-sample" aria-hidden="true"></span>
   {#if repository}
     <RepositoryFixture initialPage="files" layoutStorage={storage} />
   {:else}
@@ -48,5 +49,13 @@
     min-height: 0;
     background: var(--background);
     color: var(--foreground);
+  }
+  .navigation-hover-sample {
+    position: absolute;
+    width: 0;
+    height: 0;
+    background: color-mix(in srgb, var(--foreground) 7%, transparent);
+    color: var(--foreground);
+    pointer-events: none;
   }
 </style>

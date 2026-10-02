@@ -76,6 +76,16 @@
   color: var(--muted-foreground);
 }
 
+.lc-community-navigation__compact-search[data-ui-component="button"]:not(
+    :disabled
+  ):hover,
+.lc-community-navigation__compact-search[data-ui-component="button"]:not(
+    :disabled
+  ):focus-visible {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+}
+
 .lc-community-navigation__body nav {
   display: flex;
   min-height: 100%;

@@ -214,6 +214,14 @@ over the app background) and the same stronger tint for pointer hover and
 keyboard selection (55% muted). The treatment follows the active palette and
 keeps its label and description visible without changing search scope behavior.
 
+Shell header actions, sidebar toggles, navigation history and collapsed sidebar
+search use the same foreground tint as sidebar items on hover and keyboard focus
+(7% foreground over the shared chrome). Header menu triggers retain this tint
+while their menu is open, including after the pointer enters the menu. Disabled
+controls retain their disabled treatment, and sidebar toggles remain transparent
+at rest in either expansion state. The treatment follows the selected theme
+without changing global palette roles or body button styles.
+
 Navigation tooltips use Design Core's standard small-text sizing and restored
 inline/block padding, leaving room around the arrow. The foundation retains
 public sizing tokens; the app consumes its defaults without a tooltip override.

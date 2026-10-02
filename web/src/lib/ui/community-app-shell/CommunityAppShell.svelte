@@ -304,26 +304,24 @@
     font-size: var(--community-text-body);
   }
 
+  :global(
+    .community-app-shell__header
+      [data-ui-component="button"]:not(:disabled):is(
+        :focus-visible,
+        [aria-haspopup="menu"][data-state="open"]
+      )
+  ) {
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  }
+
   @media (hover: hover) {
     :global(
       .community-app-shell__header
         [data-ui-component="button"]:not(:disabled):hover
     ) {
-      color: var(--sidebar-accent-foreground, var(--accent-foreground));
-      background: var(--sidebar-accent, var(--accent));
-    }
-
-    @supports (color: color-mix(in oklab, black, white)) {
-      :global(
-        .community-app-shell__header
-          [data-ui-component="button"]:not(:disabled):hover
-      ) {
-        background: color-mix(
-          in oklab,
-          var(--sidebar-accent, var(--accent)) 92%,
-          var(--sidebar-accent-foreground, var(--accent-foreground))
-        );
-      }
+      color: var(--foreground);
+      background: color-mix(in srgb, var(--foreground) 7%, transparent);
     }
   }
 </style>

@@ -80,6 +80,92 @@
       await waitFor(() => expect(trigger).toHaveFocus());
     }
   }
+  async function navigationHover({
+    canvasElement,
+  }: {
+    canvasElement: HTMLElement;
+  }) {
+    const c = within(canvasElement);
+    const collapse = c.queryByRole("button", { name: "Collapse left sidebar" });
+    if (collapse) await userEvent.click(collapse);
+    const rail = c.getByRole("complementary", {
+      name: "Repository navigation sidebar",
+    });
+    await waitFor(() =>
+      expect(rail).toHaveAttribute("data-state", "collapsed"),
+    );
+    const reference = rail.querySelector<HTMLButtonElement>(
+      ".lc-community-navigation__item:not([data-active]), .lc-community-navigation__compact-section-trigger:not([data-active])",
+    );
+    const header = c.getByRole("navigation", {
+      name: "Application navigation",
+    });
+    const search = within(rail).getByRole("button", { name: /^Search / });
+    // A native browser pointer proves the actual CSS hover, including theme paint.
+    if (import.meta.env.MODE !== "test") return;
+    const { userEvent: pointer } = await import("vitest/browser");
+    const sample = canvasElement.querySelector(".navigation-hover-sample")!;
+    const expected = getComputedStyle(sample).backgroundColor;
+    const foreground = getComputedStyle(sample).color;
+    if (reference) {
+      await pointer.hover(reference);
+      await waitFor(() =>
+        expect(getComputedStyle(reference).backgroundColor).toBe(expected),
+      );
+    }
+    const main = c.getByRole("main");
+    async function verify(button: HTMLElement) {
+      await pointer.hover(button);
+      await waitFor(() => {
+        expect(getComputedStyle(button).backgroundColor).toBe(expected);
+        expect(getComputedStyle(button).color).toBe(foreground);
+      });
+      await pointer.hover(main);
+      await userEvent.keyboard("{Tab}");
+      button.focus();
+      await waitFor(() => {
+        expect(button).toHaveFocus();
+        expect(getComputedStyle(button).backgroundColor).toBe(expected);
+      });
+      button.blur();
+    }
+    const branches = c.queryByRole("tab", { name: "Branches" });
+    if (branches) await userEvent.click(branches);
+    for (const button of header.querySelectorAll<HTMLButtonElement>(
+      "button:not(:disabled)",
+    ))
+      await verify(button);
+    await verify(search);
+    const menuTrigger = within(header).queryByRole("button", {
+      name: "Repository actions",
+    });
+    if (menuTrigger && !menuTrigger.hasAttribute("disabled")) {
+      await userEvent.click(menuTrigger);
+      const menu = await within(canvasElement.ownerDocument.body).findByRole(
+        "menu",
+      );
+      await pointer.hover(menu);
+      await waitFor(() => {
+        expect(menuTrigger).toHaveAttribute("data-state", "open");
+        expect(menuTrigger.matches(":hover")).toBe(false);
+        expect(getComputedStyle(menuTrigger).backgroundColor).toBe(expected);
+      });
+      await userEvent.keyboard("{Escape}");
+      menuTrigger.blur();
+      await pointer.hover(main);
+      await waitFor(() => {
+        expect(menuTrigger).toHaveAttribute("data-state", "closed");
+        expect(getComputedStyle(menuTrigger).backgroundColor).toBe(
+          "rgba(0, 0, 0, 0)",
+        );
+      });
+    }
+    if (branches) {
+      await userEvent.click(c.getByRole("button", { name: /^Back$/ }));
+      await verify(c.getByRole("button", { name: /^Forward$/ }));
+    }
+    await pointer.hover(main);
+  }
 </script>
 
 <Story name="Buzz uses one continuous shell gradient" play={chrome} />
@@ -106,4 +192,23 @@
   name="Original navigation picker follows its app surface"
   args={{ theme: "original", repository: true }}
   play={picker}
+/>
+<Story
+  name="Repository header and search hover match the Buzz sidebar"
+  args={{ repository: true }}
+  play={navigationHover}
+/>
+<Story
+  name="Projects header and search hover match the Buzz sidebar"
+  play={navigationHover}
+/>
+<Story
+  name="Repository header and search hover match the dark sidebar"
+  args={{ theme: "buzz-dark", repository: true }}
+  play={navigationHover}
+/>
+<Story
+  name="Repository header and search hover match the neutral sidebar"
+  args={{ theme: "github-light-default", repository: true }}
+  play={navigationHover}
 />
