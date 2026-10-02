@@ -107,9 +107,9 @@ export async function agentSidebarPlay({
   await expect(expandedTool.getBoundingClientRect().right).toBeLessThanOrEqual(
     transcript.getBoundingClientRect().right,
   );
-  const toolReview = expandedTool.closest<HTMLElement>(
-    '[data-ui-part="agent-tool-review"]',
-  );
+  const toolReview = canvas
+    .getByRole("button", { name: "Hide details for apply_patch" })
+    .closest<HTMLElement>('[data-ui-part="agent-tool-review"]');
   if (!toolReview) throw new Error("Tool review surface was not rendered");
   await fireEvent.pointerEnter(toolReview);
   const replyToTool = canvas.getByRole("button", {

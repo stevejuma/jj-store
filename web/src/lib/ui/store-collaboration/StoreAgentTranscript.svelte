@@ -8,7 +8,8 @@
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
-  import StoreAgentToolReview from "./StoreAgentToolReview.svelte";
+  import StoreAgentTools from "./StoreAgentTools.svelte";
+  import { agentTimeline } from "../../collaboration/agent-timeline.js";
   import StoreMessageActions from "./StoreMessageActions.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
 
@@ -31,6 +32,7 @@
   } = $props();
 
   const members = $derived([agent, member]);
+  const timeline = $derived(agentTimeline(activity));
   const canReact = $derived(
     interactive &&
       ["write", "admin"].includes(controller.state.repository.permission ?? ""),
@@ -70,9 +72,9 @@
   aria-label="Agent conversation activity"
 >
   <CommunityProjectsVirtualRows
-    rows={activity}
+    rows={timeline}
     getKey={(entry) => `${entry.type}:${entry.sequence}`}
-    estimateSize={(entry) => (entry?.type === "tool" ? 180 : 118)}
+    estimateSize={(entry) => (entry?.type === "tools" ? 42 : 118)}
   >
     {#snippet row(entry)}
       {#if entry.type === "message"}
@@ -124,9 +126,9 @@
                 showControls={false}
               />{/if}{/snippet}</CommunityMessage
         >
-      {:else if entry.type === "tool"}
-        <StoreAgentToolReview
-          tool={entry.tool}
+      {:else if entry.type === "tools"}
+        <StoreAgentTools
+          items={entry.items}
           {patches}
           {controller}
           interactive={interactive &&

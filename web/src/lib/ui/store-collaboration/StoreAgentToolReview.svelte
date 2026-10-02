@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Chat from "@lapismd/design-core/ai/chat";
+  import type { Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import MessageSquareIcon from "@lucide/svelte/icons/message-square";
   import MessageSquareReplyIcon from "@lucide/svelte/icons/message-square-reply";
@@ -12,17 +12,16 @@
     reviewForAgentTool,
   } from "../../collaboration/presentation.js";
   import type { StoreController } from "../../controller/contracts.js";
-  import StoreAgentToolDetail from "./StoreAgentToolDetail.svelte";
   import StoreRecordMenu from "./StoreRecordMenu.svelte";
 
   let {
     tool,
-    patches = {},
+    children,
     controller,
     interactive = true,
   }: {
     tool: Model<"AgentToolActivity">;
-    patches?: Readonly<Record<string, string>>;
+    children: Snippet;
     controller: StoreController;
     interactive?: boolean;
   } = $props();
@@ -58,23 +57,6 @@
       ) ?? (selected ? controller.state.reviewThread?.thread : undefined),
   );
 
-  function status(state: Model<"ToolState">) {
-    if (state === "succeeded") return "complete" as const;
-    if (state === "failed" || state === "cancelled" || state === "interrupted")
-      return "error" as const;
-    if (state === "running") return "running" as const;
-    if (state === "pending") return "pending" as const;
-    return "unknown" as const;
-  }
-
-  function target(): string | undefined {
-    return (
-      tool.code.flatMap((association) => association.paths)[0] ??
-      tool.observed_paths[0] ??
-      Chat.toolCallTarget(tool.input?.content)
-    );
-  }
-
   async function beginReply() {
     if (
       review &&
@@ -91,10 +73,6 @@
     }
   }
 </script>
-
-{#snippet detail()}
-  <StoreAgentToolDetail {tool} {patches} />
-{/snippet}
 
 <StoreDiscussionWorkspace
   open={interactive && draftOpen}
@@ -124,19 +102,7 @@
         if (!draftOpen) actionsVisible = false;
       }}
     >
-      <Chat.ToolCalls
-        label="Tool activity"
-        calls={[
-          {
-            id: tool.tool_call_id,
-            name: tool.native_name,
-            status: status(tool.state),
-            target: target(),
-            errorMessage: tool.state === "failed" ? "Tool failed" : undefined,
-            detail,
-          },
-        ]}
-      />
+      {@render children()}
       <div
         class="store-agent-tool-review__actions"
         role="group"

@@ -44027,6 +44027,167 @@ and named tests are checked by the progress gate.
         "note": "120task bookkeeping and owned source closure accepted."
       }
     ]
+  },
+  {
+    "id": "E-UI-077",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Adjacent native agent tool groups and concise failed-call rows",
+    "revision": "Enclosing Jujutsu change vrulsuxu",
+    "requirements": ["JST-UI-002", "JST-UI-005", "JST-UI-006"],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval remains separate. Root aggregate lanes, Rust builds/tests and production built-CSP qualification are out of scope."
+    ],
+    "scope": "Owned UI-only agent transcript presentation for repository, project and installation Agents. Inspected Community model adjacent grouping and transcript callWrapper composition first, released Design Core ToolCalls second. Native timeline groups adjacent recorded tools while preserving original records/order and every non-tool boundary. Group virtualization identity uses the first exact sequence, including bigint. Per-call wrappers retain details, hover/focus toolbar, Copy IDs, review anchors and independent reply drafts. Failed row status remains; redundant resting Tool failed alert removed. Actual failure output remains in expanded detail. Multiple open drafts reopen their group after Settings remount and retain one Focus sheet. Native service already deduplicates tool observations to one stable tool_call_id; no server change. No backend rebuild/restart, fixture reset/write, native mutation, main landing, dependency substitution, release or baseline update.",
+    "files": [
+      "catalog/components/store-application/AgentToolGroups.stories.svelte",
+      "catalog/components/store-application/agent-sidebar-play.ts",
+      "catalog/fixtures/AgentToolGroupsFixture.svelte",
+      "catalog/fixtures/agent-tool-groups.ts",
+      "docs/ui-provenance.json",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/collaboration/agent-timeline.ts",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTools.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/tests/vite/agent-timeline.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/vite/agent-timeline.test.ts#groups adjacent calls in recorded order without changing native records",
+      "web/tests/vite/agent-timeline.test.ts#never groups across capture gaps, permissions or recorded metadata",
+      "web/tests/vite/agent-timeline.test.ts#keeps group identity stable when an adjacent continuation is appended"
+    ],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;released Design Core ToolCalls;Community source741b8285e2081f1c9af58afe5a9b72f538fad781 Apache-2.0.",
+    "formats": "No API/schema, native identity, immutable data, AgentStore/ReviewStore roots, request, review anchor, authorization or mutation changes. Existing session-scoped memory-only drafts preserved.",
+    "next": "Review the live HMR UI; visual approval remains separate.",
+    "artifacts": "/tmp/jj-agent-tool-groups-*.log; /tmp/jj-agent-tools-before.png; /tmp/jj-agent-tool-groups.png; /tmp/jj-agent-tool-groups-projects.png",
+    "runs": [
+      {
+        "command": "CUA isolated live repository agent transcript before",
+        "result": "pass",
+        "failures": 0,
+        "note": "Recorded3adjacent tools rendered as separate ToolCalls roots and Bash resting Tool failed alert. /tmp/jj-agent-tools-before.png. No user tab navigation or native writes."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both regressions fail because Expand3tool calls disclosure is absent. /tmp/jj-agent-tool-groups-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte (first after)",
+        "result": "fail",
+        "failures": 4,
+        "note": "2failed scenarios plus2runtime errors from optional review anchor passed to required anchor resolver. Guarded missing review selection. /tmp/jj-agent-tool-groups-after.log."
+      },
+      {
+        "command": "pnpm web:check (first after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Optional review anchor and group sequence number-only type rejected. Guarded anchor; group preserves AgentActivity sequence number|bigint. /tmp/jj-agent-tool-groups-web.log."
+      },
+      {
+        "command": "pnpm catalog:check (first after)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Same2source errors plus readonly fixture activity assigned to mutable controller detail. Fixture now clones its array. /tmp/jj-agent-tool-groups-catalog.log."
+      },
+      {
+        "command": "pnpm catalog:check (second)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Type check clean; catalog source audit rejected API client type import. Fixture uses production controller-state presentation type. /tmp/jj-agent-tool-groups-catalog-2.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte (second after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1pass/1fail: whole-page error-output query matches hidden details from other synthetic calls. Scoped to the selected Bash wrapper without weakening actual-error visibility. /tmp/jj-agent-tool-groups-after-2.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte (third after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 group expansion/collapse, ordered per-call rows, concise failure, exact error output, retained detail disclosure, exact native Copy ID and two independent Split-to-Focus drafts. /tmp/jj-agent-tool-groups-after-3.log."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/agent-timeline.test.ts (initial, second and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Each3/3. Final covers immutable original record references/native IDs, order, every non-tool boundary including gaps and permissions, empty input, stable continuation identity and lossless bigint sequence. /tmp/jj-agent-tool-groups-unit-final.log."
+      },
+      {
+        "command": "pnpm web:check (second); pnpm catalog:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings;140catalog modules. /tmp/jj-agent-tool-groups-web-2.log; /tmp/jj-agent-tool-groups-catalog-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "24/24 directly affected agent transcript, standard sidebar, native menus, tool/diff reviews, standalone read-only reactions, project agents and Focus/Split scenarios pass with blocking accessibility on a fresh Vitest browser/Vite process. /tmp/jj-agent-tool-groups-consumers.log."
+      },
+      {
+        "command": "pnpm spec:first (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Added provenance requires spec-governance chapter; documented owned grouping source/identity boundary. /tmp/jj-agent-tool-groups-spec-first.log."
+      },
+      {
+        "command": "pnpm spec:first (final); pnpm spec:validate; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "10protected files/4chapters;5validators/21chapters/147requirements;773production modules. /tmp/jj-agent-tool-groups-spec-first-final.log; /tmp/jj-agent-tool-groups-spec-validate.log; /tmp/jj-agent-tool-groups-architecture.log."
+      },
+      {
+        "command": "CUA isolated cold live repository agent transcript grouping and Bash detail",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh load restores selected session; one Expand/Collapse3tool group. All individual calls/actions remain. Bash Error details show recorded exit_code1/stderr test failed; no resting failure caption. Group root983px aligns with message avatar983px. /tmp/jj-agent-tool-groups.png. HMR had retained failed component before cold reload; fresh result accepted. No fixture mutations or preference changes."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed production, fixture, story, unit, provenance and canonical files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed files formatted."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned source attribution/dependency boundary passes. /tmp/jj-agent-tool-groups-ownership.log."
+      },
+      {
+        "command": "CUA isolated Projects landing requested OpenCode session grouping",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact user-selected0547515e2a5c7b4e3db180b50813f9a2session restored in Projects Agents body sidebar. One3tool group, no failure caption, per-call error/complete statuses and actions retained. Group root and message avatar both983px. /tmp/jj-agent-tool-groups-projects.png."
+      },
+      {
+        "command": "pnpm check:progress (initial and repeat)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Each rejects bare test file reference. Added exact named-test anchors to evidence references without changing tests. /tmp/jj-agent-tool-groups-progress.log."
+      },
+      {
+        "command": "pnpm check:progress (named anchors)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Checker accepts named test declarations but not Vitest it alias. Changed these3declarations to equivalent test API; assertions unchanged."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/agent-timeline.test.ts (named declarations); pnpm check:progress (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 equivalent named regressions and120task evidence bookkeeping pass. /tmp/jj-agent-tool-groups-unit-named.log; /tmp/jj-agent-tool-groups-progress-final.log."
+      }
+    ]
   }
 ]
 ```

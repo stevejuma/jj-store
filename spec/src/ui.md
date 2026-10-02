@@ -742,15 +742,20 @@ and keep collection scrolling inside the columns. Session, transcript, thread
 and comment rows use measured virtualization. Ready, loading, empty and failed
 states use the same production components in Storybook.
 
-Agent transcript chunks and review comments render through Community's public
-message component. Open review threads compose Community's public chat composer
-with exact optimistic-concurrency actions; resolved threads remove the composer
-and expose Reopen. The detail headers distinguish the selected native code
-snapshot from the independent AgentStore or ReviewStore root. An unknown review
-outcome remains an explicit alert with a Check status action. Live events
-automatically reload collaboration records from committed roots, invalidate the
-session cache and retain the deep route and editor drafts. Unknown requests
-retain their exact identity and preconditions.
+Agent transcript chunks and review comments render through the owned Community
+message component. Adjacent recorded tool calls form a single expandable Design
+Core ToolCalls group, in native order. Messages, capture gaps and other recorded
+events separate groups. Each call retains its own details, native copy menu,
+review anchor, reply actions and draft. Failed calls show their error status
+without an extra resting “Tool failed” label; expanded details retain the actual
+error output. Open review threads compose the owned Community chat composer with
+exact optimistic-concurrency actions; resolved threads remove the composer and
+expose Reopen. The detail headers distinguish the selected native code snapshot
+from the independent AgentStore or ReviewStore root. An unknown review outcome
+remains an explicit alert with a Check status action. Live events automatically
+reload collaboration records from committed roots, invalidate the session cache
+and retain the deep route and editor drafts. Unknown requests retain their exact
+identity and preconditions.
 
 M4.15 adapts Community's global search trigger and command dialog to native
 repository search. `Command+K`/`Control+K` and the sidebar open the same

@@ -401,6 +401,11 @@ overlap failures. The production web manifest includes only flat, regular
 `agent-icons/*.svg` files from the public icon directory; source attribution
 documents and all other public files remain outside the served allowlist.
 
+The owned native agent timeline and grouped tool-call presentation adapt
+Community's adjacent-call grouping and per-call wrapper composition. Their
+source paths, pinned revision and license remain in `docs/ui-provenance.json`;
+native IDs, controller state and review actions stay owned by this repository.
+
 Normal checks also run the Community-derived browser architecture audit. It
 enforces counted-line limits and exact no-growth budgets for existing hotspots,
 rejects production imports from catalog fixtures, and keeps reusable

@@ -1139,6 +1139,12 @@ fall back to creating a reply. Task edit context also retains the observed task
 version. Agent transcript and tool captures stay immutable; copy menus expose
 only the selected sanitized native presentation records.
 
+Browser transcript presentation groups adjacent tool entries without changing
+their native IDs, order, snapshot pins or immutable records. Other recorded
+events remain group boundaries. Per-tool detail, copy and review actions bind
+the original call. A failed call has its error status in the row and preserves
+the recorded error in expanded details, without a redundant failure caption.
+
 An unresolved review command retains its durable request identity and blocks
 replacement submissions until status proves commitment. Draft and edit/reply
 context remain present on failure or unknown outcome. Late command completions
