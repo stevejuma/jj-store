@@ -741,6 +741,25 @@ enumerates every native or AgentStore object needed for original-context reads;
 stable entity IDs and optional change IDs remain lookup facts rather than strong
 object edges.
 
+The additive portable V2 anchor represents retained AgentStore sessions and tool
+invocations directly. It never invents a tool attempt or message/block identity
+when capture did not retain one. A tool target binds the session ID and
+snapshot, tool-call ID and exact tool snapshot. A text target additionally binds
+the stored input/output content reference and a validated UTF-8 selection over
+the original sanitized payload bytes, without reformatting them. A session
+target binds its exact session snapshot. Existing V1 anchor bytes and decoding
+remain unchanged.
+
+Portable agent structural validation requires the tool to occur under that exact
+ID and snapshot in the named session and requires both stable IDs to match the
+tool record. Text validation requires the content reference to equal the
+selected tool input/output and verifies the selected byte digest. The read port
+must supply canonical repository-bound records from a qualified retained
+selection; structural validation alone cannot establish publication, access or
+retention. Portable code evidence must bind the anchor repository, including
+both sides of a diff. Providers continue rejecting portable publication until
+their immutable retention, shared command/audit and receipt gates pass.
+
 Canonical JSON encoding rejects unknown fields, alternate byte-offset forms and
 noncanonical round trips. The anchor ID hashes those validated canonical bytes.
 The v1 resolver maps an immutable anchor only against an explicitly identified

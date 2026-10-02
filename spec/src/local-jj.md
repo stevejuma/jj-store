@@ -147,6 +147,14 @@ of capture completeness and execution outcome. Shared non-code policy does not
 grant a provider permission to accept missing source capsules: local persistence
 must qualify selected evidence and its retained closure separately.
 
+Portable V2 review targets name actual retained sessions, tool invocations and
+input/output payloads rather than inferring execution attempts from tool-call
+IDs. The shared model validates exact session membership, stable identities,
+content selection and UTF-8 byte digests. Local providers must additionally
+prove committed record membership and complete retained Git closures before
+enabling their publication. A model or successful structural check does not
+enable the browser capability.
+
 M13.1 proves versioned publication, receipt replay, initialization races and Git
 reachability before dependent implementation. M13.2 adds WorkStore and direct
 CLI access. M13.3 adds portable AgentStore/ReviewStore evidence. M13.4 adds

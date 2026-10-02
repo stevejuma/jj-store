@@ -1,11 +1,14 @@
 //! Additive portable anchor schema; the native V1 schema is unchanged.
 use crate::{
-    AnchorId, CodeValueKind, CreatedContextV1, DiffSide, Error, Result, SensitivityV1,
-    TextSelectionV1, valid_repo_path,
+    AnchorId, ArtifactId, CodeValueKind, CreatedContextV1, DiffSide, Error, PortableAgentSessionV2,
+    PortableAgentToolTextV2, PortableAgentToolV2, Result, SensitivityV1, TextSelectionV1,
+    valid_repo_path,
 };
+use jj_agent::AgentObjectRef;
 use jj_store_model::{ChangeId, ObjectKey, RepositoryId, portable::*};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
+use std::collections::BTreeSet;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -133,6 +136,9 @@ pub enum ArtifactTargetV2 {
     CodeArtifact(Box<PortableCodeArtifactV2>),
     Revision(PortableRevisionV2),
     Operation(CodeEvidenceRefV1),
+    AgentSession(PortableAgentSessionV2),
+    AgentToolArtifact(PortableAgentToolV2),
+    AgentToolText(Box<PortableAgentToolTextV2>),
     Repository,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
@@ -149,10 +155,20 @@ impl ArtifactAnchorV2 {
         if self.schema_version != 2 {
             return Err(Error::Invalid("portable anchor schema"));
         }
+        if self
+            .code_evidence_unchecked()
+            .iter()
+            .any(|evidence| evidence.repository != self.repository_id)
+        {
+            return Err(Error::Invalid("portable anchor evidence repository"));
+        }
         match &self.target {
             ArtifactTargetV2::CodeText(value) => value.validate(),
             ArtifactTargetV2::CodeArtifact(value) => value.validate(),
             ArtifactTargetV2::Revision(value) => value.validate(),
+            ArtifactTargetV2::AgentSession(value) => value.validate(),
+            ArtifactTargetV2::AgentToolArtifact(value) => value.validate(),
+            ArtifactTargetV2::AgentToolText(value) => value.validate(),
             ArtifactTargetV2::Operation(_) | ArtifactTargetV2::Repository => Ok(()),
         }
     }
@@ -160,6 +176,7 @@ impl ArtifactAnchorV2 {
         self.validate()?;
         match &self.target {
             ArtifactTargetV2::CodeText(value) => value.text.validate_bytes(bytes),
+            ArtifactTargetV2::AgentToolText(value) => value.text.validate_bytes(bytes),
             _ => Err(Error::Invalid("anchor is not text")),
         }
     }
@@ -174,5 +191,49 @@ impl ArtifactAnchorV2 {
     }
     pub fn anchor_id(&self) -> Result<AnchorId> {
         Ok(AnchorId::new(Sha256::digest(self.encode()?).into()))
+    }
+    pub fn artifact_id(&self) -> Result<ArtifactId> {
+        self.validate()?;
+        let bytes = crate::codec::encode(&self.target, 1024 * 1024)?;
+        let mut hash = Sha256::new_with_prefix(b"jj-store/review-artifact/v2\0");
+        hash.update((bytes.len() as u64).to_be_bytes());
+        hash.update(bytes);
+        Ok(ArtifactId::new(hash.finalize().into()))
+    }
+    pub fn code_evidence(&self) -> Result<BTreeSet<CodeEvidenceRefV1>> {
+        self.validate()?;
+        Ok(self.code_evidence_unchecked())
+    }
+    fn code_evidence_unchecked(&self) -> BTreeSet<CodeEvidenceRefV1> {
+        match &self.target {
+            ArtifactTargetV2::CodeText(value) => {
+                let mut values = BTreeSet::from([value.artifact.revision.evidence.clone()]);
+                if let Some(diff) = &value.diff_context {
+                    values.extend([diff.before.evidence.clone(), diff.after.evidence.clone()]);
+                }
+                values
+            }
+            ArtifactTargetV2::CodeArtifact(value) => {
+                BTreeSet::from([value.revision.evidence.clone()])
+            }
+            ArtifactTargetV2::Revision(value) => BTreeSet::from([value.evidence.clone()]),
+            ArtifactTargetV2::Operation(value) => BTreeSet::from([value.clone()]),
+            _ => BTreeSet::new(),
+        }
+    }
+    pub fn agent_dependencies(&self) -> Result<BTreeSet<AgentObjectRef>> {
+        self.validate()?;
+        Ok(match &self.target {
+            ArtifactTargetV2::AgentSession(value) => BTreeSet::from([value.session_snapshot]),
+            ArtifactTargetV2::AgentToolArtifact(value) => {
+                BTreeSet::from([value.session_snapshot, value.tool_snapshot])
+            }
+            ArtifactTargetV2::AgentToolText(value) => BTreeSet::from([
+                value.tool.session_snapshot,
+                value.tool.tool_snapshot,
+                value.content,
+            ]),
+            _ => BTreeSet::new(),
+        })
     }
 }

@@ -27,7 +27,7 @@ fn fixture_artifact() -> PortableCodeArtifactV2 {
 fn anchor() -> ArtifactAnchorV2 {
     ArtifactAnchorV2 {
         schema_version: 2,
-        repository_id: m::RepositoryId::new([9; 16]),
+        repository_id: m::RepositoryId::new([1; 16]),
         target: ArtifactTargetV2::CodeText(Box::new(PortableCodeTextV2 {
             artifact: fixture_artifact(),
             text: TextSelectionV1 {
@@ -112,4 +112,44 @@ fn portable_diff_selection_requires_the_exact_declared_side() {
     };
     value.diff_context.as_mut().unwrap().side = DiffSide::Before;
     assert!(anchor.validate().is_err());
+}
+
+#[test]
+fn portable_code_evidence_binds_the_anchor_repository_and_complete_diff_pair() {
+    let mut anchor = anchor();
+    anchor.repository_id = m::RepositoryId::new([8; 16]);
+    assert!(anchor.validate().is_err());
+    anchor.repository_id = m::RepositoryId::new([1; 16]);
+    let ArtifactTargetV2::CodeText(value) = &mut anchor.target else {
+        panic!()
+    };
+    value.diff_context = Some(PortableDiffContextV2 {
+        before: revision(4),
+        before_path: Some("src/main.rs".into()),
+        after: value.artifact.revision.clone(),
+        after_path: Some(value.artifact.path.clone()),
+        side: DiffSide::After,
+    });
+    assert_eq!(anchor.code_evidence().unwrap().len(), 2);
+    let ArtifactTargetV2::CodeText(value) = &mut anchor.target else {
+        panic!()
+    };
+    value
+        .diff_context
+        .as_mut()
+        .unwrap()
+        .before
+        .evidence
+        .repository = m::RepositoryId::new([8; 16]);
+    assert!(anchor.code_evidence().is_err());
+    for target in [
+        ArtifactTargetV2::Revision(revision(2)),
+        ArtifactTargetV2::Operation(revision(2).evidence),
+    ] {
+        anchor.target = target;
+        anchor.validate().unwrap();
+        anchor.repository_id = m::RepositoryId::new([8; 16]);
+        assert!(anchor.validate().is_err());
+        anchor.repository_id = m::RepositoryId::new([1; 16]);
+    }
 }
