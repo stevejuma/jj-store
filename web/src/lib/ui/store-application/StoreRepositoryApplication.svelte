@@ -130,8 +130,8 @@
         hasMoreFiles={state.canLoadMoreDetail}
         unavailableComparisonCount={state.unavailableComparisonCount}
         loading={state.status.graph === "loading" ||
-          state.status.graph === "refreshing" ||
-          state.status.bookmarks === "loading" ||
+          state.status.graph === "refreshing"}
+        referencesLoading={state.status.bookmarks === "loading" ||
           state.status.bookmarks === "refreshing"}
         detailLoading={state.status.detail === "loading"}
         filesLoading={state.status.detail === "refreshing"}

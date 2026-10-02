@@ -391,7 +391,13 @@ that exact commit and opens its details. Selecting a bookmark scopes the log to
 the exact ancestry of all of its native targets; a conflicted bookmark preserves
 every target and a deleted bookmark produces an empty graph. Route restoration
 loads references before resolving this scope, so reload and Back/Forward cannot
-briefly substitute the repository-wide default log.
+briefly substitute the repository-wide default log. Branch and working-copy
+selection at the current repository operation MUST retain the loaded Branches
+column, its paging cursor, filter, keyboard focus and scroll position. It only
+loads the adjacent scoped history/detail. Reference and graph loading indicators
+are independent: an empty loading graph MUST NOT replace already loaded branch
+cards with skeletons. Actual automatic data refresh still reloads references and
+preserves the selected scope.
 
 Working-copy cards use the same title size as bookmark cards. Working-copy,
 bookmark, JJ Log and Op Log cards share the column card surface and hover and
@@ -1036,13 +1042,17 @@ show failures and use the existing review workspace for detail.
 Repository lists and cards follow Community's name/description, contributor,
 commit/review/task activity bar and date layout. Native repositories use their
 latest selected change summary and contributor; this creates no stored owner or
-description. Each domain retains its own authorized snapshot, bounded loaded
-counts are labelled partial, and unknown or failed homes do not imply zero
-activity. Reviews use the selected initial-comment excerpt, native thread ID,
-exact artifact, comment count, creation actor and last accepted event date.
-Their list fields spread across the row; narrower panels retain the title,
-identity and count, and cards retain the complete metadata. Both directories
-provide the existing list/card controls.
+description. Repository cards put native status chips beside the name, aligned
+to the right of the first row. The description and access row use the full
+content width; descriptions wrap as a two-line excerpt and retain their full
+text in the accessible content. Every card in a repository grid stretches to the
+same row height, with metadata aligned at the bottom. Each domain retains its
+own authorized snapshot, bounded loaded counts are labelled partial, and unknown
+or failed homes do not imply zero activity. Reviews use the selected
+initial-comment excerpt, native thread ID, exact artifact, comment count,
+creation actor and last accepted event date. Their list fields spread across the
+row; narrower panels retain the title, identity and count, and cards retain the
+complete metadata. Both directories provide the existing list/card controls.
 
 Landing tabs, project cards, repository/review rows, task rows and task detail
 sections copy Community Projects composition and styling, adapting native fields

@@ -6,10 +6,14 @@ home may contain several projects and may also contain ordinary code.
 
 Repository directory rows and cards use Community's name/description,
 contributor avatar, commit/review/task activity bar and relative date anatomy.
-The native profile uses the latest selected change summary and contributor when
-there is no independently stored repository description or owner. Code counts
-and activity come from bounded, separately authorized snapshots; partial pages
-and unavailable homes remain explicit. Mine continues to mean administer access.
+Cards place link-state chips at the right of the name row, use the full content
+width for description/access, bound descriptions to two visible lines, and
+stretch to equal grid heights with bottom-aligned metadata. Retired and active
+links share this layout; full description text remains accessible. The native
+profile uses the latest selected change summary and contributor when there is no
+independently stored repository description or owner. Code counts and activity
+come from bounded, separately authorized snapshots; partial pages and
+unavailable homes remain explicit. Mine continues to mean administer access.
 Review rows and cards use the current root comment excerpt, full bound thread
 identity, exact artifact label, comment count, creation actor and last accepted
 event date. Tombstoned, hidden and conflicted root comments expose no old body.

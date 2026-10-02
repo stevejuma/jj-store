@@ -47,8 +47,8 @@
 <CommunityProjectsRepositoryLog
   {page}
   {graph}
-  {bookmarks}
-  {workingCopies}
+  bookmarks={fixtureState === "loading" ? [] : bookmarks}
+  workingCopies={fixtureState === "loading" ? [] : workingCopies}
   selectedBranch={branch}
   {selectedId}
   {selectedPath}

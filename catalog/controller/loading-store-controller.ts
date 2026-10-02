@@ -14,6 +14,7 @@ export function createLoadingStoreController(
       return {
         ...state,
         bookmarks: [],
+        workingCopies: [],
         choices: [],
         targets: [],
         graph: { revisions: [], devices: [] },

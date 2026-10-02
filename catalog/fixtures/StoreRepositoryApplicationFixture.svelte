@@ -14,6 +14,8 @@
   } from "../controller/collaboration-store-controller.js";
   import { IDS } from "./repository.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
+  import type { StoreController } from "../../web/src/lib/controller/contracts.js";
+  import { Button } from "@lapismd/design-core/shadcn/button";
 
   let {
     initialPage = "branches",
@@ -25,6 +27,7 @@
     detailLoading = false,
     collaborationState = "ready",
     reviewOutcome,
+    deferredBranchSelection = false,
   }: {
     initialPage?: StorePage;
     initiallyCollapsed?: boolean;
@@ -35,7 +38,9 @@
     detailLoading?: boolean;
     collaborationState?: CatalogCollaborationState;
     reviewOutcome?: "committed" | "unknown";
+    deferredBranchSelection?: boolean;
   } = $props();
+  let graphPending = $state(false);
 
   const controller = untrack(() => {
     const fixture = createInMemoryStoreController(initialPage, {
@@ -43,6 +48,33 @@
       workingCopies,
       reviewOutcome,
     });
+    if (deferredBranchSelection) {
+      const delayed: StoreController = {
+        ...fixture,
+        get state() {
+          const state = fixture.state;
+          return graphPending
+            ? {
+                ...state,
+                graph: { revisions: [], devices: [] },
+                status: { ...state.status, graph: "loading" as const },
+              }
+            : state;
+        },
+        actions: {
+          ...fixture.actions,
+          selectBookmark(name) {
+            fixture.actions.selectBookmark(name);
+            graphPending = true;
+          },
+          selectWorkingCopy(commit, workspace) {
+            fixture.actions.selectWorkingCopy(commit, workspace);
+            graphPending = true;
+          },
+        },
+      };
+      return delayed;
+    }
     if (collaborationState !== "ready")
       return createCollaborationStateStoreController(
         fixture,
@@ -66,3 +98,6 @@
   {displayMode}
   {layoutStorage}
 />
+{#if deferredBranchSelection}<Button onclick={() => (graphPending = false)}
+    >Finish branch load</Button
+  >{/if}

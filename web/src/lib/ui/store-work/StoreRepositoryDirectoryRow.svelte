@@ -52,8 +52,12 @@
     onclick={() => onOpen(repository.id)}
     aria-label={`Open repository ${repository.name}`}
   >
-    <span
-      ><strong title={repository.id}>{repository.name}</strong><span
+    <span class="store-projects__repository-copy"
+      ><span class="store-projects__repository-title"
+        ><strong title={repository.id}>{repository.name}</strong>
+        {#if status}<CommunityChip size="compact">{status}</CommunityChip>{/if}
+      </span><span
+        class="store-projects__repository-description"
         title={entry?.summary ? "Latest selected change" : undefined}
       >
         {entry?.summary?.description ||
@@ -65,10 +69,7 @@
       </span></span
     >
     <span class="store-projects__repository-access"
-      >{accessible
-        ? `${repository.permission ?? "Local"} access`
-        : ""}{#if status}<CommunityChip size="compact">{status}</CommunityChip
-        >{/if}</span
+      >{accessible ? `${repository.permission ?? "Local"} access` : ""}</span
     >
   </button>
   {#if accessible}<div

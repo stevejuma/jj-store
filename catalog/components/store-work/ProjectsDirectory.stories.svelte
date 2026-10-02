@@ -12,6 +12,66 @@
 </script>
 
 <Story
+  name="Linked repository cards share height and use their width"
+  args={{ projectDetail: true, longRepositoryDescriptions: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await c.findByRole("button", { name: "Edit project" });
+    await userEvent.click(await c.findByRole("tab", { name: "Repositories" }));
+    await waitFor(() =>
+      expect(
+        c.getByText(/Native parsing and storage services with/),
+      ).toBeVisible(),
+    );
+    await userEvent.click(c.getByRole("radio", { name: "Grid layout" }));
+    const list = c.getByRole("list", { name: "Repository links" });
+    const retired = within(list).getByText("Retired");
+    const row = retired.closest("article")!;
+    const title = within(row).getByText("UI repository");
+    const target = within(row).getByRole("button", {
+      name: "Open repository UI repository",
+    });
+    const description = within(row).getByTitle("Latest selected change");
+    const active = c
+      .getByRole("button", { name: "Open repository Parser repository" })
+      .closest("article")!;
+    for (const width of [980, 620, 300]) {
+      list.style.width = `${width}px`;
+      await waitFor(() => {
+        const chip = retired.getBoundingClientRect(),
+          heading = title.getBoundingClientRect();
+        expect(
+          Math.abs(
+            chip.top + chip.height / 2 - heading.top - heading.height / 2,
+          ),
+        ).toBeLessThan(3);
+        expect(target.getBoundingClientRect().right - chip.right).toBeLessThan(
+          2,
+        );
+        expect(
+          target.getBoundingClientRect().width -
+            description.getBoundingClientRect().width,
+        ).toBeLessThan(2);
+        expect(description.getBoundingClientRect().height).toBeLessThanOrEqual(
+          title.getBoundingClientRect().height * 2 + 1,
+        );
+        expect(
+          Math.abs(
+            row.getBoundingClientRect().height -
+              active.getBoundingClientRect().height,
+          ),
+        ).toBeLessThan(1);
+        expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+      });
+    }
+    list.style.width = "";
+    await userEvent.click(c.getByRole("radio", { name: "List layout" }));
+    await expect(target).toBeVisible();
+    await expect(retired).toBeVisible();
+  }}
+/>
+
+<Story
   name="Repository metadata in list and cards"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);

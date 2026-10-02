@@ -18,6 +18,8 @@
   let {
     layoutStorage,
     detail = false,
+    projectDetail = false,
+    longRepositoryDescriptions = false,
     failedHome = false,
     localReviews = false,
     failedReviews = false,
@@ -29,6 +31,8 @@
   }: {
     layoutStorage?: Storage;
     detail?: boolean;
+    projectDetail?: boolean;
+    longRepositoryDescriptions?: boolean;
     failedHome?: boolean;
     localReviews?: boolean;
     failedReviews?: boolean;
@@ -68,6 +72,19 @@
     push: (next) => (route = next),
     source: (home) => {
       const source = fixtureTransport(home, failedHome, sharedRepository);
+      if (longRepositoryDescriptions && source.directory) {
+        const directory = source.directory;
+        source.directory = async (signal) => {
+          const summary = await directory(signal);
+          return {
+            ...summary,
+            description:
+              `${summary.description} with repository navigation and native projects, tasks, reviews and activity. `.repeat(
+                4,
+              ),
+          };
+        };
+      }
       if (failedReviews)
         source.reviews = async () => {
           throw new Error("Reviews temporarily unavailable");
@@ -105,7 +122,9 @@
         ? hub.restore()
         : detail
           ? hub.openProject(homeA, projectId, childId)
-          : hub.openHub(),
+          : projectDetail
+            ? hub.openProject(homeA, projectId)
+            : hub.openHub(),
     );
   });
   onDestroy(() => hub.reset());

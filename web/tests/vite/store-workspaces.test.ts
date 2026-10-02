@@ -146,6 +146,45 @@ test("working-copy cards distinguish two workspace names sharing the same commit
   history.destroy();
 });
 
+test("branch selections preserve loaded references and paging while reading only scoped history", async () => {
+  const { data, history, reads } = harness(null);
+  history.replace({ ...history.route, page: "branches" });
+  data.workingCopies = copies;
+  data.bookmarks = [
+    { name: "main", targets: [commit] },
+    { name: "feature", targets: ["56".repeat(64)] },
+  ] as typeof data.bookmarks;
+  data.refsCursor = "retained-next-page";
+  data.refsPageSnapshot = snapshot;
+  data.status.bookmarks = "ready";
+  const bookmarks = data.bookmarks,
+    workingCopies = data.workingCopies,
+    pin = data.refsPageSnapshot;
+  const targets: string[][] = [];
+  reads.loadGraph.mockImplementation(async () => {
+    targets.push([...data.targets]);
+  });
+  const actions = createProductionBranchActions({
+    data,
+    history,
+    reader: reads as never,
+    invalidate: vi.fn(),
+  });
+  await actions.selectBookmark("main");
+  await actions.selectBookmark("feature");
+  await actions.selectWorkingCopy(commit, "agent/review");
+  expect(targets).toEqual([[commit], ["56".repeat(64)], [commit]]);
+  expect(reads.loadCommit).toHaveBeenCalledWith(commit);
+  expect(reads.loadReferences).not.toHaveBeenCalled();
+  expect(data.bookmarks).toBe(bookmarks);
+  expect(data.workingCopies).toBe(workingCopies);
+  expect(data.refsPageSnapshot).toBe(pin);
+  expect(data.refsCursor).toBe("retained-next-page");
+  expect(data.status.bookmarks).toBe("ready");
+  expect(history.route.snapshotOperationId).toBe(operation);
+  history.destroy();
+});
+
 test("workspace discovery follows every pinned reference page and preserves shared targets", async () => {
   const references = vi.fn(async (_operation: string, cursor?: string) =>
     window(cursor ? ["agent/review"] : ["default"], cursor ? null : "more"),
