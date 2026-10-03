@@ -25401,7 +25401,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
+        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -37335,7 +37335,7 @@ and named tests are checked by the progress gate.
         "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
         "result": "pass",
         "failures": 0,
-        "note": "Fresh served app on 7460 displays 87e1cd5d\u20268fb9 and 20d6c008\u2026ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
       },
       {
         "command": "pnpm check:progress",
@@ -47141,7 +47141,7 @@ and named tests are checked by the progress gate.
         "command": "python3 /tmp/jj-land-resolve.py; jj resolve --list; pnpm exec prettier --write (11 resolved files)",
         "result": "pass",
         "failures": 0,
-        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main\u2019s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
+        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main’s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
       },
       {
         "command": "pnpm install --no-frozen-lockfile --lockfile=false; compare installed tooltip-content.svelte to landed Design Core source",
@@ -47279,7 +47279,7 @@ and named tests are checked by the progress gate.
         "command": "python3 parent evidence and main dependency/runtime metadata audit",
         "result": "pass",
         "failures": 0,
-        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main\u2019s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
+        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main’s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
       },
       {
         "command": "pnpm test:storybook catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
@@ -50134,6 +50134,163 @@ and named tests are checked by the progress gate.
     ],
     "scope": "Main workspace native presentation and direct UI consumers only. The boolean glass command is presentation-only. Root aggregates, unrelated Rust/UI suites and HTTP generation remain out of scope. Shared-main Settings/Reviews edits belong to the coordinated separate task and are excluded from this commit.",
     "next": "The verified compile/browser/cold-start slice is ready for a file-scoped commit. Leave the final main debug app open; manually review repeated movement/resize and hover after the final observer change, then continue the separate M17 gates."
+  },
+  {
+    "id": "E-M14-015",
+    "tasks": ["M14", "M14.7"],
+    "date": "2026-10-03",
+    "kind": "settings-repository-context-and-presentation",
+    "revision": "enclosing Jujutsu change soytvzqt",
+    "before": "Main workspace, coordinated with native chrome task; its protected files committed separately as vssplolt/bdf88069. New navigation regression: 3 failing stories for missing repository context/toolbar refresh and Appearance introduction. Native Local folders row assertion: 1 failed, 5 passed. Browser comments showed oversized top spacing, horizontal action groups, plain guidance, borderless/narrow folder path and undersized opacity reset glyph.",
+    "versions": "Svelte 5, Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11, Playwright Chromium; released Design Core ^0.2.0 public components. Existing native executable and .local/dev-demo fixture reused; no dependency changes.",
+    "formats": "Presentation-only. Existing repository-open and Settings refresh actions, draft/pending guards and native identities retained. No API, native object, WAL, manifest, receipt, credential or storage format changes.",
+    "files": [
+      "catalog/components/store-appearance/StoreAppearance.stories.svelte",
+      "catalog/components/store-application/SettingsNavigation.stories.svelte",
+      "catalog/components/store-application/StoreLocalFolderDialog.stories.svelte",
+      "catalog/components/store-application/StoreStorageSettings.stories.svelte",
+      "catalog/components/store-application/StoreWorkspaceSettings.stories.svelte",
+      "catalog/fixtures/SearchSettingsFixture.svelte",
+      "catalog/fixtures/WorkspaceSettingsFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-appearance/AppearanceThemes.svelte",
+      "web/src/lib/ui/store-appearance/StoreAppearance.svelte",
+      "web/src/lib/ui/store-appearance/appearance.css",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryPicker.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte",
+      "web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreLocalFolderDialog.svelte",
+      "web/src/lib/ui/store-settings/StoreLocalFolders.svelte",
+      "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchHealth.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "web/src/lib/ui/store-settings/StoreSettingsNotice.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsRepository.svelte",
+      "web/src/lib/ui/store-settings/StoreStorageOperation.svelte",
+      "web/src/lib/ui/store-settings/StoreStorageSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncReconciliation.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncWait.svelte",
+      "web/src/lib/ui/store-settings/StoreWorkspaceSettings.svelte",
+      "web/src/lib/ui/store-work/StoreWorkField.svelte",
+      "web/src/lib/ui/store-work/community-work-forms.css",
+      "web/tests/browser/local-search-settings.spec.ts",
+      "web/tests/browser/local-storage.spec.ts",
+      "web/tests/browser/local-workspaces.spec.ts"
+    ],
+    "tests": [
+      "web/tests/browser/local-search-settings.spec.ts#Search tabs preserve drafts and separate Save from Apply",
+      "web/tests/browser/local-storage.spec.ts#Storage recovers a lost response without replacing the captured target",
+      "web/tests/browser/local-workspaces.spec.ts#local folder settings preserve drafts and link without changing repository context"
+    ],
+    "runs": [
+      {
+        "command": "pnpm dev:ui",
+        "result": "pass",
+        "failures": 0,
+        "note": "Restarted main UI on literal loopback 7460, backend 7462. Existing native binaries and fixture reused; no reset or Rust rebuild."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/SettingsNavigation.stories.svelte (before)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Missing picker, refresh placement and old Appearance introduction; .local/settings-navigation-before.log. First cold optimizer import/timing issues corrected before the recorded baseline."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreWorkspaceSettings.stories.svelte (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "5 pass/1 fail: folder form was outside bordered rows; .local/settings-folders-before.log."
+      },
+      {
+        "command": "pnpm check:architecture (during shell integration)",
+        "result": "fail",
+        "failures": 1,
+        "note": "StoreApplication counted 322 then 321 lines against its existing 320 budget; redundant title derivation removed, budget unchanged."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/SettingsNavigation.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte (intermediate)",
+        "result": "fail",
+        "failures": 5,
+        "note": "Initial run exposed four invalid dd role overrides via axe and one obsolete Appearance introduction assertion. Status/alert roles moved inside dd; intro test aligned with requested removal. Later run passed44/45 and exposed a1px ghost border; explicit borderless trigger fixed that user requirement. No acceptance threshold loosened."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/SettingsNavigation.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "45/45 cold Chromium stories, interactions and configured accessibility acceptance. Equal-width vertical action checks and unchanged Appearance mode layout included. .local/settings-all-stories-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreLocalFolderDialog.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 cold story: visible1px path border, group fills control column, public status Alert and retained typing/inspection availability. .local/settings-dialog-story.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-search-settings.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "6/6; original Search settings revision is retained with dirty drafts; cancellation adopts refreshed state. .local/settings-search-unit.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both Svelte checks0 errors/0 warnings;163 catalog and844 architecture modules; UI ownership passes. Scoped StoreWorkField bordered option leaves existing consumers at their prior default."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh production build/asset manifest; existing large-chunk warning retained. .local/settings-build-final.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts local-search-settings.spec.ts local-storage.spec.ts local-sync.spec.ts local-workspaces.spec.ts (during iteration)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Earlier assertions expected silent Search draft revision adoption and Storage readiness while Maintenance remained selected. Confirmed production unit contract, retained strict conflict handling, asserted draft preservation and explicit Cancel/re-entry; retained active tab assertion before selecting Overview. Final original scenarios rerun."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts local-search-settings.spec.ts local-storage.spec.ts local-sync.spec.ts local-workspaces.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "6/6 cold built-UI tests with prebuilt browser_preview, no Rust compilation: toolbar tooltip, repo picker and dirty guard, mobile, Search Save/Apply conflict flow, exact Storage pending target, explicit context from Projects, Sync/reconciliation and folder drafts/links plus axe. .local/settings-browser-final.log."
+      },
+      {
+        "command": "CUA live main UI preview at http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "Verified centered compact picker, nav refresh, rounded rows, equal-width action columns and info notice. Folder border1px; final group/control both596.398px after correcting its fit-content default with explicit layout width. No live repository mutation. Screenshot .local/settings-final.jpg; visual baseline not approved."
+      },
+      {
+        "command": "pnpm exec prettier --check changed Settings files; pnpm check:progress (first ledger attempt)",
+        "result": "fail",
+        "failures": 8,
+        "note": "Formatting passes. Ledger checker rejected seven test references missing named # anchors and a passing entry with unrelated milestone/visual gaps in remaining. Added named targets and moved out-of-scope gates to scope without changing milestone status."
+      },
+      {
+        "command": "pnpm check:progress (named story references)",
+        "result": "fail",
+        "failures": 5,
+        "note": "Ledger named-test scanner supports function/test definitions but not Svelte CSF story names. Story evidence remains in files and actual runs; tests lists executable browser test definitions. Checker unchanged."
+      },
+      {
+        "command": "pnpm exec prettier --check changed Settings files; pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:first; pnpm spec:validate (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting passes;125-task evidence bookkeeping;35 protected files and3 canonical chapters;5 validators,22 chapters and152 requirements. No milestone status changed."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Only Settings, direct form/picker consumers and Reviews action alignment; Appearance action layout excluded from column styling. Shared native chrome work excluded. Root aggregate checks, Rust suites, unrelated UI suites and schema generation are out of scope under the targeted UI policy. Visual baselines remain visual-pending, and M14 full integrated qualification and milestone status are unchanged.",
+    "next": "Retain focused Settings regression coverage and continue separately governed remaining M14 work."
   }
 ]
 ```

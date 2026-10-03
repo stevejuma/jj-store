@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
   import StoreWorkspaceSettings from "../../web/src/lib/ui/store-settings/StoreWorkspaceSettings.svelte";
   import { emptyWorkspaceLinks } from "../../web/src/lib/controller/workspace-link-types.js";
   import "../../web/src/lib/ui/store-settings/StoreSettings.css";
@@ -45,27 +46,31 @@
   }
 </script>
 
-<main class="store-settings">
-  <h1>Repository settings</h1>
-  <StoreWorkspaceSettings
-    {settings}
-    {supported}
-    {pickerSupported}
-    onBrowse={async () => {
-      settings.workspacePicking = true;
-      await Promise.resolve();
-      if (selection === "selected")
-        settings.workspacePath = "/workspaces/picked folder";
-      if (selection === "failed")
-        settings.workspacePickerError =
-          "Folder picker unavailable. Enter the folder path manually.";
-      settings.workspacePicking = false;
-    }}
-    onRefresh={async () => {}}
-    onPath={(path) => {
-      settings.workspacePath = path;
-      if (!path) settings.workspaceLinksError = "";
-    }}
-    onLink={link}
-  />
+<main>
+  <StoreSettingsPage
+    section="repository"
+    refreshLabel="Refresh folders"
+    onRefresh={supported ? async () => {} : undefined}
+  >
+    <StoreWorkspaceSettings
+      {settings}
+      {supported}
+      {pickerSupported}
+      onBrowse={async () => {
+        settings.workspacePicking = true;
+        await Promise.resolve();
+        if (selection === "selected")
+          settings.workspacePath = "/workspaces/picked folder";
+        if (selection === "failed")
+          settings.workspacePickerError =
+            "Folder picker unavailable. Enter the folder path manually.";
+        settings.workspacePicking = false;
+      }}
+      onPath={(path) => {
+        settings.workspacePath = path;
+        if (!path) settings.workspaceLinksError = "";
+      }}
+      onLink={link}
+    />
+  </StoreSettingsPage>
 </main>

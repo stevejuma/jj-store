@@ -6,6 +6,7 @@
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { DialogFrame } from "@lapismd/design-core/forms/dialog";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
+  import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import PlusIcon from "@lucide/svelte/icons/plus";
@@ -54,11 +55,15 @@
     <Field.Group class="store-work__fields community-settings__option-group">
       <StoreWorkField
         label="Folder"
+        bordered
         id={`${formId}-path`}
         description="Enter an absolute folder path or browse for an existing Git-backed JJ repository."
         disabled={busy || pending}
       >
-        <ButtonGroup.Root class="store-settings__folder-picker w-full">
+        <ButtonGroup.Root
+          class="store-settings__folder-picker"
+          style="width: 100%"
+        >
           <Input
             id={`${formId}-path`}
             value={path}
@@ -81,6 +86,7 @@
       </StoreWorkField>
       {#if !reconnect}<StoreWorkField
           label="Name"
+          bordered
           id={`${formId}-name`}
           description="Choose the name shown in this installation."
           disabled={busy || pending}
@@ -108,12 +114,12 @@
         </Button>
       </StoreWorkField>
     </Field.Group>
-    {#if inspected}<p role="status">
+    {#if inspected}<StoreSettingsNotice>
         Supported Git-backed JJ folder. {inspected.repository
           ? `Repository ${inspected.repository}`
           : "Companion metadata will be initialized on Add."}
-      </p>{/if}
-    {#if message}<p role="status">{message}</p>{/if}
+      </StoreSettingsNotice>{/if}
+    {#if message}<StoreSettingsNotice>{message}</StoreSettingsNotice>{/if}
     {#snippet footer()}
       <Button
         type="button"
@@ -138,3 +144,16 @@
     {/snippet}
   </DialogFrame>
 </Dialog.Root>
+
+<style>
+  :global(.store-settings__folder-picker) {
+    min-width: 0;
+  }
+  :global(.store-settings__folder-picker input) {
+    flex: 1;
+    min-width: 0;
+  }
+  :global(.store-settings__folder-picker button) {
+    flex-shrink: 0;
+  }
+</style>

@@ -3,6 +3,7 @@
   import Sun from "@lucide/svelte/icons/sun";
   import Moon from "@lucide/svelte/icons/moon";
   import ChevronDown from "@lucide/svelte/icons/chevron-down";
+  import RotateCcw from "@lucide/svelte/icons/rotate-ccw";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
   import { Slider } from "@lapismd/design-core/shadcn/slider";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -143,7 +144,8 @@
             size="icon-sm"
             aria-label="Reset glass opacity"
             title="Reset glass opacity"
-            onclick={() => store.update({ opacity: 65 })}>↺</Button
+            onclick={() => store.update({ opacity: 65 })}
+            ><RotateCcw aria-hidden="true" /></Button
           >
         </div>
       </AppearanceRow>{/if}

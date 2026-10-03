@@ -12,9 +12,6 @@
 </script>
 
 <section class="store-appearance" aria-label="Appearance settings">
-  <header>
-    <p>Choose how jj-store looks and feels.</p>
-  </header>
   <div class="appearance-groups">
     <AppearanceThemes /><AppearancePreferences />
   </div>

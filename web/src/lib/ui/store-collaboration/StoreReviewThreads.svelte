@@ -40,28 +40,30 @@
             <GitPullRequestIcon aria-hidden="true" />
             <h2>Reviews</h2>
           </div>
-          {#if controller.actions.createRepositoryReview && (view.repository.permission === "write" || view.repository.permission === "admin")}
+          <div>
+            {#if controller.actions.createRepositoryReview && (view.repository.permission === "write" || view.repository.permission === "admin")}
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="New repository review"
+                title="New repository review"
+                disabled={!!view.reviewActionRequestId}
+                onclick={() => {
+                  creating = true;
+                }}><PlusIcon aria-hidden="true" /></Button
+              >
+            {/if}
             <Button
               variant="ghost"
               size="icon-sm"
-              aria-label="New repository review"
-              title="New repository review"
-              disabled={!!view.reviewActionRequestId}
-              onclick={() => {
-                creating = true;
-              }}><PlusIcon aria-hidden="true" /></Button
+              aria-label="Refresh reviews"
+              title="Refresh reviews"
+              disabled={view.status.reviews === "loading" ||
+                view.status.reviews === "refreshing"}
+              onclick={() => controller.actions.refresh()}
+              ><RefreshIcon aria-hidden="true" /></Button
             >
-          {/if}
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Refresh reviews"
-            title="Refresh reviews"
-            disabled={view.status.reviews === "loading" ||
-              view.status.reviews === "refreshing"}
-            onclick={() => controller.actions.refresh()}
-            ><RefreshIcon aria-hidden="true" /></Button
-          >
+          </div>
         </header>
         {#if view.status.error}<CommunityProjectsColumnAlert
             title="Reviews unavailable"

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import PauseIcon from "@lucide/svelte/icons/pause";
   import PlayIcon from "@lucide/svelte/icons/play";
   import RotateCwIcon from "@lucide/svelte/icons/rotate-cw";
@@ -44,6 +44,9 @@
 
 <StoreSettingsPage
   section="sync"
+  onRefresh={supported ? onRefresh : undefined}
+  refreshLabel="Refresh sync"
+  refreshDisabled={busy}
   value="overview"
   tabs={supported
     ? [
@@ -66,19 +69,10 @@
             <h2 id="sync-overview">Upstream sync</h2>
             <p>Status updates automatically.</p>
           </div>
-          <Button
-            variant="outline"
-            disabled={busy}
-            onclick={() => void onRefresh()}
-            ><RefreshCwIcon
-              data-icon="inline-start"
-              aria-hidden="true"
-            />Refresh sync</Button
-          >
         </header>
-        {#if busy}<p role="status">
+        {#if busy}<StoreSettingsNotice>
             {settings.changing ? "Updating sync…" : "Loading sync status…"}
-          </p>{/if}
+          </StoreSettingsNotice>{/if}
         {#if settings.value && !settings.value.configured}
           <dl class="store-settings__rows">
             <div>

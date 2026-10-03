@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import { onMount, type Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreLocalFolderDialog from "./StoreLocalFolderDialog.svelte";
@@ -212,10 +213,10 @@
         title="No Git-backed JJ folders"
         description="Add an existing JJ folder to browse its code and projects."
       />{/if}
-    <p class="store-settings__empty">
+    <StoreSettingsNotice>
       Removing a registration preserves the folder and project links.
-    </p>
-    {#if message}<p role="status">{message}</p>{/if}
+    </StoreSettingsNotice>
+    {#if message}<StoreSettingsNotice>{message}</StoreSettingsNotice>{/if}
   </section>
 {/if}
 <StoreLocalFolderDialog

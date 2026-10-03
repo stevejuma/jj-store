@@ -88,6 +88,22 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
   expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
   await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
+  const refresh = navigation.getByRole("button", {
+    name: "Refresh settings",
+    exact: true,
+  });
+  await expect(refresh).toHaveText("");
+  await refresh.hover();
+  await expect(page.locator('[data-slot="tooltip-content"]')).toHaveText(
+    "Refresh settings",
+  );
+  await expect(page.locator(".store-settings")).toHaveCSS("padding-top", "0px");
+  const picker = page.getByRole("combobox", {
+    name: "Settings repository",
+    exact: true,
+  });
+  await expect(picker).toHaveText(/Local acceptance/);
+  await expect(picker).toBeEnabled();
   await expect(page.locator(".store-settings h1")).toHaveCount(0);
   await page.getByRole("tab", { name: "Configuration", exact: true }).focus();
   await page.keyboard.press("ArrowRight");
@@ -99,6 +115,7 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   ).toHaveAttribute("aria-selected", "true");
   const prefixes = page.getByRole("textbox", { name: "Exclude path prefixes" });
   await prefixes.fill("private");
+  await expect(picker).toBeDisabled();
   await page.getByRole("tab", { name: "Health", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Text-search health" }),
@@ -115,13 +132,19 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   await page
     .getByRole("button", { name: "Save settings", exact: true })
     .click();
-  await expect(
-    page.getByText(/Refresh settings before retrying/),
-  ).toBeVisible();
+  await expect(page.getByText(/search settings changed/)).toBeVisible();
   await expect(prefixes).toHaveValue("private");
   await page
     .getByRole("button", { name: "Refresh settings", exact: true })
     .click();
+  await expect(prefixes).toHaveValue("private");
+  // Refresh preserves the draft's original revision. Cancel explicitly adopts
+  // the newer configuration before re-entering and saving these changes.
+  await page
+    .getByRole("button", { name: "Cancel changes", exact: true })
+    .click();
+  await expect(prefixes).toHaveValue("");
+  await prefixes.fill("private");
   await page
     .getByRole("button", { name: "Save settings", exact: true })
     .click();
@@ -130,10 +153,12 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   await page.getByRole("button", { name: "Apply saved settings" }).click();
   await expect(page.getByText(/Matches saved settings/)).toBeVisible();
   expect(applies).toBe(1);
+  await expect(picker).toBeEnabled();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(
     page.locator('[data-ui-component="app-shell"][data-ui-part="root"]'),
   ).toHaveAttribute("data-display-mode", "mobile");
+  await expect(picker).toBeVisible();
   const mobileTabsTop = (await tabs.boundingBox())!.y;
   const scroller = page
     .getByRole("region", { name: "Settings content" })

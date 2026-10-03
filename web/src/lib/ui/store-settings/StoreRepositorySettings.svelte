@@ -8,8 +8,9 @@
   import StoreWorkspaceSettings from "./StoreWorkspaceSettings.svelte";
   import StoreGraphIndexSettings from "./StoreGraphIndexSettings.svelte";
   let { controller }: { controller: StoreController } = $props();
-  const state = $derived(controller.state);
-  const settings = $derived(state.settings);
+  let active = $state("general");
+  const view = $derived(controller.state);
+  const settings = $derived(view.settings);
   const capabilities = $derived(settings.capabilities);
   const native = $derived(
     settings.snapshot && "epoch" in settings.snapshot
@@ -46,7 +47,16 @@
 
 <StoreSettingsPage
   section="repository"
-  value="general"
+  bind:value={active}
+  onRefresh={active === "folders" &&
+  view.repository.profile !== "git_sha1_jj045" &&
+  capabilities?.local_workspace_links
+    ? controller.actions.refreshWorkspaceLinks
+    : undefined}
+  refreshLabel="Refresh folders"
+  refreshDisabled={settings.workspaceLinking ||
+    settings.workspacePicking ||
+    ["loading", "refreshing"].includes(settings.workspaceLinksState)}
   tabs={[
     { value: "general", label: "General" },
     { value: "folders", label: "Local folders" },
@@ -62,24 +72,24 @@
       <dl class="store-settings__rows">
         <div>
           <dt>Name</dt>
-          <dd>{state.repository.name}</dd>
+          <dd>{view.repository.name}</dd>
         </div>
         <div>
           <dt>Repository ID</dt>
           <dd>
-            <CopyableValue label="Repository ID" value={state.repository.id} />
+            <CopyableValue label="Repository ID" value={view.repository.id} />
           </dd>
         </div>
         <div>
           <dt>Permission</dt>
-          <dd>{state.repository.permission ?? "Unavailable"}</dd>
+          <dd>{view.repository.permission ?? "Unavailable"}</dd>
         </div>
         <div>
           <dt>Selected operation</dt>
           <dd>
             <CopyableValue
               label="Selected operation"
-              value={state.route.snapshotOperationId}
+              value={view.route.snapshotOperationId}
               emptyLabel="Choose an operation head"
             />
           </dd>
@@ -87,7 +97,7 @@
         <div>
           <dt>Operation heads</dt>
           <dd class="store-settings__stack">
-            {#each state.operationHeads as head, index (head)}<CopyableValue
+            {#each view.operationHeads as head, index (head)}<CopyableValue
                 label={`Operation head ${index + 1}`}
                 value={head}
               />{/each}
@@ -95,7 +105,7 @@
         </div>
         <div>
           <dt>Conflicts</dt>
-          <dd>{state.conflictCount ?? "Not loaded"}</dd>
+          <dd>{view.conflictCount ?? "Not loaded"}</dd>
         </div>
         {#if local}<div>
             <dt>Profile</dt>
@@ -140,13 +150,12 @@
     </section>
   </Tabs.Content>
   <Tabs.Content value="folders">
-    {#if state.repository.profile === "git_sha1_jj045"}<StoreLocalFolders
+    {#if view.repository.profile === "git_sha1_jj045"}<StoreLocalFolders
         {controller}
-        repository={state.repository.id}
+        repository={view.repository.id}
       />{:else}<StoreWorkspaceSettings
         {settings}
         supported={Boolean(settings.capabilities?.local_workspace_links)}
-        onRefresh={controller.actions.refreshWorkspaceLinks}
         onPath={controller.actions.setWorkspacePath}
         onLink={controller.actions.linkWorkspace}
         pickerSupported={Boolean(settings.capabilities?.local_folder_picker)}

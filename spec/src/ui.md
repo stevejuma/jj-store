@@ -287,19 +287,20 @@ restoration. Choosing it retains the saved accent for other themes.
 
 Settings opens from the existing profile menu and replaces the repository
 navigation and body with a jj-store-owned settings sidebar and selected section.
-The sidebar contains Appearance, Local service, Repository, Search and Sync. The
-content navigation begins with its section icon and single page title, followed
-by section tabs when present. It has no return button; Back to jj-store remains
-in the settings sidebar, including the mobile navigation stage. Appearance keeps
-its descriptive introduction without a duplicate page heading. Repository tabs,
-header actions and the details sidebar are absent until Back to jj-store
-restores the same repository route and resumes queued updates. Settings never
-writes its destination or section to the hash, browser history or storage. A
-fresh component starts on Local service; section selection lasts only for that
-component lifetime. Mobile selection returns to the content stage and retains a
-control that reopens settings navigation. On desktop, collapsing the settings
-sidebar retains Back, Local service, Repository and Search as labelled icon
-controls without clipped text; expanding it restores their visible labels.
+The sidebar contains Appearance, Local service, Repository, Search, Storage and
+Sync. The content navigation begins with its section icon and single page title,
+followed by section tabs when present. It has no return button; Back to jj-store
+remains in the settings sidebar, including the mobile navigation stage.
+Appearance begins with Theme directly below navigation, without an introductory
+description or duplicate page heading. Repository tabs, header actions and the
+details sidebar are absent until Back to jj-store restores the same repository
+route and resumes queued updates. Settings never writes its destination or
+section to the hash, browser history or storage. A fresh component starts on
+Local service; section selection lasts only for that component lifetime. Mobile
+selection returns to the content stage and retains a control that reopens
+settings navigation. On desktop, collapsing the settings sidebar retains Back,
+Local service, Repository and Search as labelled icon controls without clipped
+text; expanding it restores their visible labels.
 
 Local service reports access mode, authoritative-storage readiness, HTTP and SSE
 state and automatic update status. Repository reports the retained discovery
@@ -322,21 +323,30 @@ left and Reconnect/Remove actions on the right. Registration guidance sits left
 of Add/Refresh actions in a matching settings row. Search status and editable
 enablement/budget or file-scope controls share one bordered group, with labels
 and descriptions left and controls right. Save/Cancel, index maintenance and
-sync controls use that same description-left/action-right composition and stack
-on narrow screens. Unsupported Search, Sync, graph preparation and local-folder
-management use the public shadcn Empty composition with a suitable icon,
-explicit availability text and no unavailable controls. Loading and recoverable
-errors retain their status/alert presentation.
+sync controls use that same description-left/action-right composition. Each
+Settings action group stacks vertically, with its buttons stretching to equal
+width; Appearance option groups retain their horizontal layout. Rows stack their
+label and control columns on narrow screens. Standalone guidance, loading and
+status messages use public Design Core Alert composition with an information
+icon and polite status semantics; errors retain destructive alerts. Descriptions
+and status values already contained in rows remain within those rows.
+Unsupported Search, Sync and local-folder management use the public shadcn Empty
+composition with a suitable icon, explicit availability text and no unavailable
+controls. Graph preparation, including unavailable status, uses bordered
+Settings rows.
 
 Local JJ registration and reconnect dialogs use the same Settings-style divided
 rows, with descriptions left and path/name/inspection controls right. Folder
-Browse remains explicit and Inspection precedes Add. The Projects Repositories
-header consolidates add actions into one menu with task and Git icons and opens
-Link repository through a labelled link-icon control. Link selection and manual
-native-ID entry live only in a matching dialog. Menu closure preserves the
-registration manager and pending identity; form errors and unknown requests
-retain drafts, as does Cancel in the link dialog. Keyboard navigation opens and
-closes dialogs without leaving page interaction blocked.
+Browse remains explicit and Inspection precedes Add. Path and name inputs retain
+their standard visible borders. The path/Browse group fills the available
+control column, with the input flexing and Browse retaining its natural width.
+The Projects Repositories header consolidates add actions into one menu with
+task and Git icons and opens Link repository through a labelled link-icon
+control. Link selection and manual native-ID entry live only in a matching
+dialog. Menu closure preserves the registration manager and pending identity;
+form errors and unknown requests retain drafts, as does Cancel in the link
+dialog. Keyboard navigation opens and closes dialogs without leaving page
+interaction blocked.
 
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
 Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct
@@ -437,27 +447,38 @@ service installation, upstream credential editing, Git transport management or
 remote administration is included. Qualification and visual baseline approval
 remain separate.
 
-Settings content fills the available page width with a compact one-rem top and
-inline inset; the first section does not add another top margin. Settings action
-buttons pair their existing text with decorative leading Lucide icons using the
-public Button icon slot. Refresh, link, cancel, save/apply, index
-preparation/rebuild, retry and pause/resume retain their accessible names and
-action availability. Stacked operation-head copy controls keep their natural
-compact width.
+Settings content fills the available width with a one-rem inline inset and no
+extra top padding; the first section adds no top margin. Storage readiness,
+maintenance, graph-index status and native Local folders use the same rounded,
+bordered Settings rows as other sections. Settings action buttons retain their
+text and decorative leading Lucide icons through the public Button icon slot.
+The Appearance opacity reset uses a normal-size Lucide reset icon. Stacked
+operation-head copy controls retain their compact width.
 
-Repository, Search and Sync subsection tabs occupy a full-width strip at the top
-of the Settings content, matching Projects. Each page places its title and
-decorative section icon at the far right of this strip, after any subsection
-tabs, and omits the former body title and description. The strip stays visible
-while scrolling and uses horizontal overflow on narrow screens. Keyboard
-selection and tab-panel relationships remain intact; moving the navigation does
-not reset form drafts or change action availability. Every Settings page starts
-its top navigation strip with a circular, icon-only Back button labelled Back to
-app, including Local service and unavailable sections without subsection tabs.
-The control closes the transient Settings destination and restores the retained
-application route and selected snapshot, including on mobile without reopening
-the sidebar. Content width and responsive padding are scoped to the Settings
-page component; other application panels retain their own layout.
+Repository, Search, Storage and Sync subsection tabs occupy a full-width sticky
+strip. The section icon and title come first, followed by horizontally
+scrollable tabs. Search configuration/scopes/health, native Local folders,
+Storage and Sync place their current refresh action at the far right as a ghost
+icon-only button with its accessible name and public shadcn tooltip. Existing
+capability, loading and pending-action guards remain intact. Back remains in the
+Settings sidebar.
+
+Repository-specific Settings sections center the existing repository Command
+View picker in the application header, including the mobile toolbar. Appearance
+and Local service omit this picker. Its trigger uses a transparent, borderless
+ghost style with muted text, fits its content up to 11rem and truncates long
+names with an ellipsis. Opening from Projects shows Choose repository until
+explicitly selected. Selection uses the existing repository-open action,
+refreshes Settings and retains the active section; selecting the current
+repository is a no-op and preserves the selected historical snapshot. Dirty
+Search and folder drafts, pending Storage commands, active Settings work and
+guarded code edits prevent a repository change and explain the reason in a
+tooltip. Repository switching retains the existing teardown and stale-response
+protections. Settings section selection itself remains transient and does not
+write the route.
+
+Repository review creation and Refresh share one trailing action group at the
+far right of the Reviews header.
 
 ## Shell composition
 

@@ -1,7 +1,7 @@
 <script lang="ts">
+  import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import SearchXIcon from "@lucide/svelte/icons/search-x";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
-  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import SaveIcon from "@lucide/svelte/icons/save";
   import XIcon from "@lucide/svelte/icons/x";
   import CheckIcon from "@lucide/svelte/icons/check";
@@ -23,7 +23,6 @@
     settings,
     supported,
     section = "configuration",
-    onRefresh,
     onDraft,
     onCancel,
     onSave,
@@ -32,7 +31,6 @@
     settings: SearchSettings;
     supported: boolean;
     section?: "configuration" | "scopes";
-    onRefresh: () => Promise<void>;
     onDraft: (patch: Partial<SearchDraft>) => void;
     onCancel: () => void;
     onSave: () => Promise<void>;
@@ -59,13 +57,6 @@
       </h2>
       <p>Save your settings, then apply them to this repository.</p>
     </div>
-    {#if supported}<Button
-        variant="outline"
-        disabled={settings.changing}
-        onclick={() => void onRefresh()}
-        ><RefreshCwIcon data-icon="inline-start" aria-hidden="true" />Refresh
-        settings</Button
-      >{/if}
   </header>
   {#if !supported}<StoreSettingsEmpty
       Icon={SearchXIcon}
@@ -273,9 +264,9 @@
           >
         </div>
       </div>
-    {:else if settings.changing}<p role="status">
-        Loading search settings…
-      </p>{/if}
+    {:else if settings.changing}<StoreSettingsNotice
+        >Loading search settings…</StoreSettingsNotice
+      >{/if}
     {#if settings.error || settings.value?.error}<Alert.Root
         variant="destructive"
         ><Alert.Title>Search settings need attention</Alert.Title

@@ -6,11 +6,26 @@
   import type { StoreController } from "../../controller/contracts.js";
   let active = $state("configuration");
   let { controller }: { controller: StoreController } = $props();
+  const settings = $derived(controller.state.settings);
+  const supported = $derived(
+    active === "health"
+      ? settings.capabilities?.search
+      : settings.capabilities?.local_search_management,
+  );
 </script>
 
 <StoreSettingsPage
   section="search"
   bind:value={active}
+  onRefresh={supported
+    ? active === "health"
+      ? controller.actions.refreshSettings
+      : controller.actions.refreshSearchSettings
+    : undefined}
+  refreshLabel={active === "health" ? "Refresh status" : "Refresh settings"}
+  refreshDisabled={active === "health"
+    ? ["loading", "refreshing"].includes(settings.searchStatusState)
+    : settings.searchSettings.changing}
   tabs={[
     { value: "configuration", label: "Configuration" },
     { value: "scopes", label: "File scopes" },
@@ -24,7 +39,6 @@
           settings={controller.state.settings.searchSettings}
           supported={controller.state.settings.capabilities
             ?.local_search_management === true}
-          onRefresh={controller.actions.refreshSearchSettings}
           onDraft={controller.actions.setSearchDraft}
           onCancel={controller.actions.cancelSearchDraft}
           onSave={controller.actions.saveSearchSettings}

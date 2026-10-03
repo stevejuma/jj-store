@@ -30,8 +30,10 @@
   font-size: var(--community-text-secondary);
 }
 
-.community-settings__option-row [data-ui-component="input"],
-.community-settings__option-row [data-ui-component="textarea"] {
+.community-settings__option-row:not(.store-work__field--bordered)
+  [data-ui-component="input"],
+.community-settings__option-row:not(.store-work__field--bordered)
+  [data-ui-component="textarea"] {
   min-height: auto;
   padding: 0;
   border: 0;

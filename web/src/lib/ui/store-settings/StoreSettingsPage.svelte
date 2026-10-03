@@ -6,6 +6,8 @@
   import SearchIcon from "@lucide/svelte/icons/search";
   import ServerIcon from "@lucide/svelte/icons/server";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
+  import { Button } from "@lapismd/design-core/shadcn/button";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import type { StoreSettingsSection } from "./model.js";
   import "./StoreSettings.css";
@@ -14,11 +16,17 @@
     section,
     tabs = [],
     value = $bindable(""),
+    onRefresh,
+    refreshLabel = "Refresh settings",
+    refreshDisabled = false,
     children,
   }: {
     section: StoreSettingsSection;
     tabs?: readonly { value: string; label: string; disabled?: boolean }[];
     value?: string;
+    onRefresh?: () => Promise<void>;
+    refreshLabel?: string;
+    refreshDisabled?: boolean;
     children: Snippet;
   } = $props();
 
@@ -80,6 +88,29 @@
         </Tabs.List>
       </ScrollArea>
     {/if}
+    {#if onRefresh}
+      <div class="store-settings__nav-actions">
+        <Tooltip.Provider>
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              {#snippet child({ props })}
+                <Button
+                  {...props}
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={refreshLabel}
+                  disabled={refreshDisabled}
+                  onclick={() => void onRefresh?.()}
+                >
+                  <RefreshCwIcon aria-hidden="true" />
+                </Button>
+              {/snippet}
+            </Tooltip.Trigger>
+            <Tooltip.Content>{refreshLabel}</Tooltip.Content>
+          </Tooltip.Root>
+        </Tooltip.Provider>
+      </div>
+    {/if}
   </nav>
 {/snippet}
 
@@ -97,7 +128,7 @@
   .store-settings {
     width: 100%;
     min-width: 0;
-    padding: 1rem 1rem 4rem;
+    padding: 0 1rem 4rem;
     box-sizing: border-box;
   }
   .store-settings :global(.store-settings__section:first-child) {
@@ -116,6 +147,10 @@
   .store-settings__page-title :global(svg) {
     width: 1rem;
     height: 1rem;
+  }
+  .store-settings__nav-actions {
+    flex: none;
+    margin-inline-start: auto;
   }
   @media (max-width: 40rem) {
     .store-settings {

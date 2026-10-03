@@ -81,8 +81,8 @@
       c.getAllByRole("heading", { name: "Appearance", level: 1 }),
     ).toHaveLength(1);
     await expect(
-      c.getByText("Choose how jj-store looks and feels."),
-    ).toBeVisible();
+      c.queryByText("Choose how jj-store looks and feels."),
+    ).toBeNull();
     await expect(
       c.getByRole("navigation", { name: "Settings page navigation" })
         .firstElementChild,
@@ -133,9 +133,16 @@
     await userEvent.click(slider);
     await userEvent.keyboard("{End}");
     await expect(slider).toHaveAttribute("aria-valuenow", "90");
-    await userEvent.click(
-      c.getByRole("button", { name: "Reset glass opacity" }),
+    const reset = c.getByRole("button", { name: "Reset glass opacity" });
+    await expect(reset.querySelector("svg")).not.toBeNull();
+    await expect(
+      reset.querySelector("svg")!.getBoundingClientRect().width,
+    ).toBeGreaterThanOrEqual(16);
+    const modes = c.getAllByRole("radio").slice(0, 3);
+    await expect(modes[0].getBoundingClientRect().top).toBe(
+      modes[1].getBoundingClientRect().top,
     );
+    await userEvent.click(reset);
     await expect(slider).toHaveAttribute("aria-valuenow", "65");
     await userEvent.click(c.getByRole("radio", { name: "Larger" }));
     await userEvent.click(c.getByRole("radio", { name: "Spacious" }));

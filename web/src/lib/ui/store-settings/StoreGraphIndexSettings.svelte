@@ -1,6 +1,5 @@
 <script lang="ts">
   import NetworkIcon from "@lucide/svelte/icons/network";
-  import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
@@ -15,38 +14,51 @@
   aria-labelledby="repository-graph-index"
 >
   <header class="store-settings__section-heading">
-    <div>
-      <h2 id="repository-graph-index">Graph index</h2>
-      <p>Prepare the selected operation for repository history browsing.</p>
-    </div>
-    {#if supported}
-      <Button
-        variant="outline"
-        disabled={!settings.indexOperation || preparing}
-        onclick={() => void controller.actions.prepareIndex()}
-        ><NetworkIcon data-icon="inline-start" aria-hidden="true" />{preparing
-          ? "Preparing graph index…"
-          : "Prepare graph index"}</Button
-      >
-    {/if}
+    <h2 id="repository-graph-index">Graph index</h2>
   </header>
-  <p>Text search has a separate index, managed in Search settings.</p>
-  {#if !supported}
-    <StoreSettingsEmpty
-      Icon={NetworkIcon}
-      title="Graph preparation unavailable"
-      description="Graph preparation is not available."
-    />
-  {:else if !settings.indexOperation}
-    <p class="store-settings__empty">
-      Choose one operation head before preparing the graph index.
-    </p>
-  {/if}
-  {#if preparing}
-    <p role="status">Preparing the graph index…</p>
-  {:else if settings.indexPreparation === "ready"}
-    <p role="status">Graph index preparation completed.</p>
-  {/if}
+  <dl class="store-settings__rows">
+    <div>
+      <dt>
+        Repository history
+        <p class="store-settings__row-description">
+          Prepare the selected operation for repository history browsing.
+        </p>
+      </dt>
+      <dd>
+        {#if supported}
+          <div class="store-settings__actions">
+            <Button
+              variant="outline"
+              disabled={!settings.indexOperation || preparing}
+              onclick={() => void controller.actions.prepareIndex()}
+              ><NetworkIcon
+                data-icon="inline-start"
+                aria-hidden="true"
+              />{preparing
+                ? "Preparing graph index…"
+                : "Prepare graph index"}</Button
+            >
+          </div>
+        {:else}<span>Graph preparation is not available.</span>{/if}
+      </dd>
+    </div>
+    <div>
+      <dt>Text-search index</dt>
+      <dd>Text search has a separate index, managed in Search settings.</dd>
+    </div>
+    {#if supported && !settings.indexOperation}<div>
+        <dt>Selected operation</dt>
+        <dd>Choose one operation head before preparing the graph index.</dd>
+      </div>{/if}
+    {#if preparing}<div>
+        <dt>Status</dt>
+        <dd><span role="status">Preparing the graph index…</span></dd>
+      </div>
+    {:else if settings.indexPreparation === "ready"}<div>
+        <dt>Status</dt>
+        <dd><span role="status">Graph index preparation completed.</span></dd>
+      </div>{/if}
+  </dl>
   {#if settings.indexPreparationError}
     <Alert.Root variant="destructive">
       <Alert.Title>Graph index preparation failed</Alert.Title>

@@ -1,10 +1,9 @@
 <script lang="ts">
-  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import SearchXIcon from "@lucide/svelte/icons/search-x";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
   const settings = $derived(controller.state.settings);
@@ -22,16 +21,6 @@
       <h2 id="search-health">Text-search health</h2>
       <p>Positions update automatically while Settings is open.</p>
     </div>
-    {#if capabilities?.search}
-      <Button
-        variant="outline"
-        disabled={settings.searchStatusState === "loading" ||
-          settings.searchStatusState === "refreshing"}
-        onclick={() => void controller.actions.refreshSettings()}
-        ><RefreshCwIcon data-icon="inline-start" aria-hidden="true" />Refresh
-        status</Button
-      >
-    {/if}
   </header>
   {#if !capabilities?.search}
     <StoreSettingsEmpty
@@ -40,7 +29,7 @@
       description="Search is not configured for this repository."
     />
   {:else if settings.searchStatusState === "loading" && !search}
-    <p class="store-settings__empty" role="status">Loading search status…</p>
+    <StoreSettingsNotice>Loading search status…</StoreSettingsNotice>
   {:else}
     <dl class="store-settings__rows">
       <div>

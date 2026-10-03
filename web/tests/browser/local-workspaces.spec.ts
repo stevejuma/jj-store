@@ -126,6 +126,12 @@ test("local folder settings preserve drafts and link without changing repository
   await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   const input = page.getByRole("textbox", { name: "Folder path" });
   await expect(page.getByText("No local folders linked.")).toBeVisible();
+  await expect(
+    navigation.getByRole("button", { name: "Refresh folders", exact: true }),
+  ).toHaveText("");
+  await expect(
+    input.locator('xpath=ancestor::*[contains(@class,"store-settings__rows")]'),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Browse…" }).click();
   await expect(input).toHaveValue("/workspaces/example with spaces");
   expect(requests).toHaveLength(0);

@@ -75,8 +75,14 @@ test("Storage recovers a lost response without replacing the captured target", a
   await expect(
     page.getByRole("button", { name: "Retry original request" }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("combobox", { name: "Settings repository" }),
+  ).toBeDisabled();
   target.position = 12;
-  await page.getByRole("button", { name: "Check status", exact: true }).click();
+  await page
+    .getByRole("navigation", { name: "Settings page navigation" })
+    .getByRole("button", { name: "Check status", exact: true })
+    .click();
   await expect(
     page.getByRole("button", { name: "Publish checkpoint" }),
   ).toBeEnabled();
@@ -111,4 +117,17 @@ test("Storage recovers a lost response without replacing the captured target", a
   ).toBeVisible();
   expect(new URL(page.url()).hash).toBe("#/projects");
   expect(commands).toHaveLength(2);
+  const picker = page.getByRole("combobox", { name: "Settings repository" });
+  await expect(picker).toHaveText(/Choose repository/);
+  await picker.click();
+  await page.getByRole("option", { name: /Local acceptance/ }).click();
+  await expect(picker).toHaveText(/Local acceptance/);
+  await expect(
+    page.getByRole("heading", { name: "Storage", level: 1 }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("tab", { name: "Maintenance", exact: true }),
+  ).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("tab", { name: "Overview", exact: true }).click();
+  await expect(page.getByText("Selected manifest is readable")).toBeVisible();
 });

@@ -15,6 +15,7 @@
     emptyLabel = "Choose repository",
     allowEmpty = false,
     disabled = false,
+    variant = "outline",
     onChange,
   }: {
     id?: string;
@@ -28,6 +29,7 @@
     emptyLabel?: string;
     allowEmpty?: boolean;
     disabled?: boolean;
+    variant?: "outline" | "ghost";
     onChange?: (value: string) => void;
   } = $props();
   let open = $state(false),
@@ -58,9 +60,13 @@
         {...props}
         {id}
         type="button"
-        variant="outline"
+        {variant}
         role="combobox"
-        class={["store-repository-picker__trigger", props.class]}
+        class={[
+          "store-repository-picker__trigger",
+          variant === "ghost" && "store-repository-picker__trigger--ghost",
+          props.class,
+        ]}
         aria-label={label}
         aria-expanded={open}
         {disabled}
@@ -153,6 +159,10 @@
     width: 100%;
     min-width: 0;
     justify-content: flex-start;
+  }
+  :global(.store-repository-picker__trigger--ghost) {
+    border: 0;
+    color: var(--muted-foreground);
   }
   :global(.store-repository-picker__trigger > span) {
     flex: 1;

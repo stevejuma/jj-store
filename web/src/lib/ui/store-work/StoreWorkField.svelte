@@ -8,6 +8,7 @@
     description = "",
     disabled = false,
     compact = false,
+    bordered = false,
     hideLabel = false,
     class: className = "",
     children,
@@ -17,6 +18,7 @@
     description?: string;
     disabled?: boolean;
     compact?: boolean;
+    bordered?: boolean;
     hideLabel?: boolean;
     class?: string;
     children: Snippet;
@@ -26,7 +28,11 @@
 <Field.Field
   orientation={compact ? "vertical" : "responsive"}
   data-disabled={disabled || undefined}
-  class={["store-work__field community-settings__option-row", className]}
+  class={[
+    "store-work__field community-settings__option-row",
+    bordered && "store-work__field--bordered",
+    className,
+  ]}
 >
   <Field.Content class={hideLabel ? "sr-only" : undefined}>
     {#if id}<Field.Label for={id}>{label}</Field.Label>{:else}<Field.Title

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
   import StoreSearchConfiguration from "../../web/src/lib/ui/store-settings/StoreSearchConfiguration.svelte";
   import {
     searchDraft,
@@ -27,15 +28,17 @@
   });
 </script>
 
-<div class="store-settings">
+<StoreSettingsPage
+  section="search"
+  onRefresh={async () => {
+    settings.state = "ready";
+    settings.error = "";
+  }}
+>
   <StoreSearchConfiguration
     {settings}
     {supported}
     {section}
-    onRefresh={async () => {
-      settings.state = "ready";
-      settings.error = "";
-    }}
     onDraft={(patch) => {
       settings.draft = { ...settings.draft!, ...patch };
       settings.dirty = true;
@@ -59,4 +62,4 @@
       );
     }}
   />
-</div>
+</StoreSettingsPage>

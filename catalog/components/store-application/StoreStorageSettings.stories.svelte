@@ -14,6 +14,16 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await expect(c.getByText("Selected manifest is readable")).toBeVisible();
+    await expect(
+      c
+        .getByText("Selected manifest is readable")
+        .closest(".store-settings__rows"),
+    ).not.toBeNull();
+    await expect(
+      within(
+        c.getByRole("navigation", { name: "Settings page navigation" }),
+      ).getByRole("button", { name: "Refresh storage" }),
+    ).toHaveTextContent("");
     c.getByRole("tab", { name: "Overview" }).focus();
     await userEvent.keyboard("{ArrowRight}");
     await expect(c.getByRole("tab", { name: "Maintenance" })).toHaveFocus();

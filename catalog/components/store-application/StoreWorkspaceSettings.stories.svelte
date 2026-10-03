@@ -17,6 +17,21 @@
     await expect(
       canvas.getByText("Unavailable", { exact: true }),
     ).toBeVisible();
+    await expect(input.closest(".store-settings__rows")).not.toBeNull();
+    await expect(
+      within(
+        canvas.getByRole("navigation", { name: "Settings page navigation" }),
+      ).getByRole("button", { name: "Refresh folders" }),
+    ).toHaveTextContent("");
+    const link = canvas.getByRole("button", { name: "Link folder" });
+    const cancel = canvas.getByRole("button", { name: /^Cancel$/ });
+    await expect(cancel.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      link.getBoundingClientRect().bottom,
+    );
+    await expect(cancel.getBoundingClientRect().width).toBeCloseTo(
+      link.getBoundingClientRect().width,
+      0,
+    );
     await userEvent.type(input, "/wrong");
     await userEvent.keyboard("{Enter}");
     await expect(

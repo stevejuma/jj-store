@@ -36,6 +36,7 @@
   import StoreRepositoryNotices from "./StoreRepositoryNotices.svelte";
   import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
   import StoreSettings from "../store-settings/StoreSettings.svelte";
+  import StoreSettingsRepository from "../store-settings/StoreSettingsRepository.svelte";
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
@@ -134,8 +135,7 @@
   const activeNavigationItem = $derived(activeStoreNavigation(current));
   observeRepositoryThreadNavigation(() => controller);
   const title = $derived(
-    repositorySections.find((section) => section.page === current.page)
-      ?.label ?? "Repository",
+    repositorySections.find(({ page }) => page === current.page)?.label,
   );
   function selectPage(page: StorePage) {
     if (conflictOpen) return;
@@ -159,7 +159,7 @@
   }
   function selectSettings(section: StoreSettingsSection) {
     settingsSection = section;
-    if (section === "search") void controller.actions.refreshSettings();
+    if (section !== "appearance") void controller.actions.refreshSettings();
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function closeSettings() {
@@ -167,6 +167,14 @@
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
 </script>
+
+{#snippet settingsRepository()}
+  <StoreSettingsRepository
+    {controller}
+    section={settingsSection}
+    disabled={workspaceBlocked}
+  />
+{/snippet}
 
 <CommunityAppShell
   controller={shell}
@@ -177,7 +185,7 @@
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
-  {#snippet headerCenter()}{#if !settingsOpen && current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
+  {#snippet headerCenter()}{#if settingsOpen}{@render settingsRepository()}{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
         {controller}
       />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
         {controller}
@@ -230,6 +238,7 @@
       {#if shell.mobile.resolvedMode === "mobile"}
         <AppShell.Toolbar>
           <AppShell.Sidebar.Toggle side="left" sidebarName="settings" />
+          {@render settingsRepository()}
         </AppShell.Toolbar>
       {/if}
       <StoreSettings {controller} section={settingsSection} />
@@ -280,7 +289,7 @@
                   current.page,
                   current.repository,
                 )}{:else}<p class="store-application__placeholder">
-                  {current.repository} · {title}
+                  {current.repository} · {title ?? "Repository"}
                 </p>{/if}
             {/key}
           </div>

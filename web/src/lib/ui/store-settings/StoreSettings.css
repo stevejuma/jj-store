@@ -119,9 +119,9 @@
 .store-settings__actions {
   display: flex;
   flex: none;
-  flex-wrap: wrap;
+  flex-direction: column;
   justify-content: flex-end;
-  align-items: center;
+  align-items: stretch;
   gap: 0.5rem;
 }
 .store-settings__action-row > .store-settings__actions {

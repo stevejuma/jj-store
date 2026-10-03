@@ -127,10 +127,10 @@ route and snapshot.
 
 Local Settings present registration, Search configuration and Sync information
 in bordered rows with labels/descriptions before controls. Unsupported
-capabilities use icon Empty states, while loading and recoverable failures
-retain status and alerts. This presentation does not change advertised
-capabilities, exact folder registration intent, saved/effective Search revisions
-or Sync control semantics.
+capabilities use icon Empty states or bordered graph-status rows, while loading,
+guidance and recoverable failures use public Design Core status and error
+alerts. This presentation does not change advertised capabilities, exact folder
+registration intent, saved/effective Search revisions or Sync control semantics.
 
 Repository cards resolve their resting, hover and selected surfaces against the
 same palette in Branches, JJ Log and Op Log. Pointer hover leaves the bookmark
@@ -242,25 +242,29 @@ changes presentation only and adds no request or persistence format.
 The transient destination consumes the shell's existing compact state so a
 collapsed desktop rail exposes Back and each settings section as labelled icon
 controls while keeping section selection and repository authority unchanged.
-Settings page titles, section icons, Back and subsection tabs share a
-presentation-only page header above their content, with the title at the far
-right and a circular, icon-only Back control retaining its Back to app
-accessible name. Compact content insets remain scoped to Settings, retaining
-existing controller drafts and capability-gated actions. This layout adds no
-routes, requests or public contract changes. Settings identifier presentation
-uses public Design Core CopyableValue controls with the complete native value
-supplied unchanged; abbreviation affects display only. Repository, Search
-generation and Sync frontier values share this control. The page navigation Back
-action invokes the shell's existing transient Settings close callback; it never
-performs a new read, navigation or persisted-route write. Overview insets,
-full-width file editor tokens, a stationary review header and native record Copy
-submenus are presentation-only. Clipboard values, read sessions, routes,
-capabilities and publication callbacks retain their existing contracts; these
-layouts add no request or generated schema. Compact header insets and Source
-syntax highlighting remain presentation-only; recorded and draft bytes, safe
-Markdown previews and edit publication are unchanged. Highlighting uses detected
-filename languages and static token styles under the existing production asset
-policy.
+Settings page titles and section icons precede subsection tabs in the content
+navigation; capability-gated refresh actions sit at its far right as labelled
+icon buttons with tooltips. Back remains in the sidebar. Settings content has no
+extra top padding, and action groups stack with equal-width buttons except on
+Appearance. These layout choices preserve controller drafts and action guards.
+The centered Settings repository picker composes the existing discovery list and
+repository-open action, using a compact ghost trigger. It requires explicit
+selection from Projects, retains the Settings section across a switch, avoids
+reopening the current repository and blocks switching while drafts or pending
+work would be lost. The selected repository and Settings refresh use existing
+controller transitions; no new server route or generated contract is introduced.
+Settings identifiers use public Design Core CopyableValue with complete native
+values unchanged; abbreviation affects display only. Repository, Search
+generation and Sync frontier values share this control. The sidebar Back action
+invokes the existing transient Settings close callback without a new read or
+persisted Settings-route write. Overview insets, full-width file editor tokens,
+a stationary review header and native record Copy submenus are
+presentation-only. Clipboard values, read sessions, routes, capabilities and
+publication callbacks retain their existing contracts; these layouts add no
+request or generated schema. Compact header insets and Source syntax
+highlighting remain presentation-only; recorded and draft bytes, safe Markdown
+previews and edit publication are unchanged. Highlighting uses detected filename
+languages and static token styles under the existing production asset policy.
 
 ## Read-session foundation
 
