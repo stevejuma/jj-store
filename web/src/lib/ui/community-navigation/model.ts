@@ -14,6 +14,8 @@ export interface CommunityNavigationItemModel {
     | StorePage
     | "channel"
     | "repository"
+    | "add-repository"
+    | "add-project"
     | "project"
     | "more-projects"
     | "more-threads"
@@ -24,6 +26,7 @@ export interface CommunityNavigationItemModel {
   thread?: string;
   repository?: string;
   description?: string;
+  disabled?: boolean;
   children?: readonly CommunityNavigationItemModel[];
   initiallyExpanded?: boolean;
 }
@@ -33,6 +36,7 @@ export interface CommunityNavigationSectionModel {
   items: readonly CommunityNavigationItemModel[];
   initiallyCollapsed?: boolean;
   action?: CommunityNavigationItemModel;
+  actions?: readonly CommunityNavigationItemModel[];
 }
 export interface CommunityNavigationModel {
   primaryItems: readonly CommunityNavigationItemModel[];

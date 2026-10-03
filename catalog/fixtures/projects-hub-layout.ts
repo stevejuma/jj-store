@@ -86,7 +86,7 @@ export async function playReadOnlyTask({
   await expect(c.queryByRole("button", { name: "Edit task" })).toBeNull();
   await expect(c.queryByRole("textbox", { name: "Comment" })).toBeNull();
   await userEvent.click(
-    c.getByRole("button", { name: "Parent: Storage work" }),
+    c.getByRole("button", { name: "In progress Storage work" }),
   );
   const subtasks = c.getByRole("region", { name: "Subtasks" });
   await userEvent.click(

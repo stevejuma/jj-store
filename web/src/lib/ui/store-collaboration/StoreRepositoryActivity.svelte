@@ -77,7 +77,10 @@
     >
       {#snippet row(row, index)}
         {@const revision = row.revision}
-        <div class="community-projects__activity-item" role="listitem">
+        <div
+          class="community-projects__activity-item community-projects__activity-item--commit"
+          role="listitem"
+        >
           <CommunityProjectsGitAuthorAvatar
             name={revision.author}
             email={revision.authorEmail}

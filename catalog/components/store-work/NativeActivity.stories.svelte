@@ -16,6 +16,35 @@
     const c = within(canvasElement);
     const region = c.getByRole("region", { name: "Virtual activity fixture" });
     const feed = await c.findByRole("list", { name: "Repository activity" });
+    const commitLink = await c.findByRole("link", {
+      name: "Open commit Native activity 0",
+    });
+    const row = commitLink.closest('[role="listitem"]')!;
+    const byline = row.querySelector(".community-projects__activity-byline")!;
+    const bounds = byline.getBoundingClientRect();
+    await expect(document.elementFromPoint(bounds.x + 4, bounds.y + 4)).toBe(
+      commitLink,
+    );
+    const destination = new URL(
+      commitLink.getAttribute("href")!,
+      location.href,
+    );
+    await expect(destination.hash).toContain("/log?");
+    await expect(destination.hash).toContain(`commit=${"0".repeat(128)}`);
+    await expect(destination.hash).toContain("at_op=");
+    await expect(destination.hash).toContain("change=");
+    const copy = within(row as HTMLElement).getAllByRole("button", {
+      name: /Copy/,
+    })[0]!;
+    const copyBounds = copy.getBoundingClientRect();
+    await expect(
+      copy.contains(
+        document.elementFromPoint(
+          copyBounds.x + copyBounds.width / 2,
+          copyBounds.y + copyBounds.height / 2,
+        ),
+      ),
+    ).toBe(true);
     const viewport = region.querySelector<HTMLElement>(
       '[data-ui-part="scroll-area-viewport"]',
     )!;

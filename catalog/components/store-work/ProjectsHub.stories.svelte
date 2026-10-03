@@ -203,6 +203,15 @@
     await expect(
       body.getByRole("option", { name: /Storage work/ }),
     ).toHaveTextContent("In progress · Parser repository · 21212121");
+    const selected = body
+      .getByRole("option", { name: /Storage work/ })
+      .querySelector('[aria-label="Selected"]')!;
+    await expect(selected).not.toBeNull();
+    await expect(selected.getBoundingClientRect().width).toBeLessThanOrEqual(
+      18,
+    );
+    await expect(selected.closest('[data-ui-part="shortcut"]')).toBeNull();
+    await expect(selected.querySelector("circle")).not.toBeNull();
     await expect(
       body.queryByRole("option", { name: /Browser work/ }),
     ).toBeNull();

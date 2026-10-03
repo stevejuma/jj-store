@@ -21,6 +21,22 @@
     await expect(body.queryByRole("menu")).toBeNull();
     const settings = c.getByRole("complementary", { name: "Thread settings" });
     await expect(within(settings).getByText("Code baseline")).toBeVisible();
+    const nameStyle = getComputedStyle(
+      within(settings).getByText("Name", { exact: true }),
+    );
+    for (const label of [
+      "Lifecycle",
+      "Revision",
+      "Code baseline",
+      "Linked activity",
+    ]) {
+      const style = getComputedStyle(
+        within(settings).getByText(label, { exact: true }),
+      );
+      await expect(style.fontSize).toBe(nameStyle.fontSize);
+      await expect(style.fontFamily).toBe(nameStyle.fontFamily);
+      await expect(style.fontWeight).toBe(nameStyle.fontWeight);
+    }
     const mainHeader = c
       .getByRole("heading", { name: "general", level: 1 })
       .closest('[data-ui-part="toolbar"]')!;

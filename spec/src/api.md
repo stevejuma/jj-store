@@ -231,6 +231,14 @@ unselected heads cannot start a task. Repository switching, disconnection and
 revocation close the source session, abort outstanding requests and clear this
 settings projection. This UI adds no server route, schema or generated contract.
 
+The sidebar Add project action uses the existing permission-gated WorkStore
+create dialog and home selector. Sidebar repository-add actions reuse the same
+LocalTrusted folder manager as Projects and preserve explicit Inspect/Add and
+pending registration identities. Activity row navigation uses the existing hash
+route with the row's repository, operation and complete commit/change IDs.
+Parent-task and picker indicators use already loaded metadata. These changes add
+no transport or persistence contract.
+
 Projects header Add-menu dispatch and repository dialogs reuse the existing
 local-folder registration and WorkStore set_repository contracts. The local
 registration manager remains alive outside the transient menu. Moving link

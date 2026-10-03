@@ -6,7 +6,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as CommandView from "@lapismd/design-core/shadcn/command-view";
   import * as Popover from "@lapismd/design-core/shadcn/popover";
-  import CheckIcon from "@lucide/svelte/icons/check";
+  import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import FolderKanbanIcon from "@lucide/svelte/icons/folder-kanban";
   import ListTodoIcon from "@lucide/svelte/icons/list-todo";
@@ -205,7 +205,7 @@
                 onSelect={() => choose()}
               >
                 <CommandView.ItemIcon
-                  >{#if !value}<CheckIcon
+                  >{#if !value}<CircleCheckIcon
                       aria-hidden="true"
                     />{/if}</CommandView.ItemIcon
                 >
@@ -229,8 +229,8 @@
                 <CommandView.ItemDescription
                   >{details(row)}</CommandView.ItemDescription
                 >
-                {#if row.id === value}<CommandView.Shortcut
-                    ><CheckIcon aria-label="Selected" /></CommandView.Shortcut
+                {#if row.id === value}<span class="store-work-picker__selected"
+                    ><CircleCheckIcon size={16} aria-label="Selected" /></span
                   >{/if}
               </CommandView.Item>{/each}
           </CommandView.Group>
@@ -253,6 +253,12 @@
 </StoreWorkField>
 
 <style>
+  .store-work-picker__selected {
+    grid-area: shortcut;
+    display: inline-flex;
+    margin-inline-start: auto;
+    color: var(--muted-foreground);
+  }
   :global(.store-work-picker__trigger) {
     width: 100%;
     min-width: 0;

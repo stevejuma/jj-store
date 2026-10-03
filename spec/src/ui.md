@@ -1212,6 +1212,28 @@ that full pin in its optional `at_op` field while WorkStore reads remain
 independent. A code pin requires an explicit home/project route; opening another
 linked repository selects that repository's own authorized code operation.
 
+Your projects exposes a trailing Briefcase Plus Add project action when a
+writable home is available; it opens the existing Create project dialog. In
+LocalTrusted mode, the Repositories heading exposes a Git-plus Add local
+repository action using the existing explicit folder inspection/registration
+dialog alongside Browse threads. Compact Command Views offer the same actions,
+retain keyboard access and close before their dialogs open. Authenticated
+connections omit local registration. Opening either dialog does not navigate,
+collapse the group or write repository state.
+
+Thread settings metadata labels (Lifecycle, Revision, Code baseline and Linked
+activity) use the same body font, size and weight as Name, Contributors and
+Thread ID. Parent-task buttons show the loaded parent's status icon and title
+without a redundant Parent prefix, with a visible secondary background; unknown
+parent metadata keeps its ID fallback without inventing a state. Work selectors
+use a compact circular check for the chosen value rather than a shortcut keycap.
+
+Commit activity rows expose their pinned commit link across the row, including
+byline and whitespace, and open the owning repository's JJ log with the exact
+commit, change and captured operation. Keyboard and modified-link navigation
+remain native. Revision copy buttons, author tooltip and agent disclosures keep
+their independent actions.
+
 The left sidebar includes a primary Projects destination and expandable project
 rows with active linked repositories underneath. Project destinations, project
 rows and the collapsed project-section trigger use Lucide Folder Kanban;

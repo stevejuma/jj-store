@@ -14,6 +14,9 @@
     activeItemId?: string;
     onSelect: (item: CommunityNavigationItemModel) => void;
   } = $props();
+  const actions = $derived(
+    section.actions ?? (section.action ? [section.action] : []),
+  );
   let query = $state("");
   let input = $state<HTMLInputElement | null>(null);
   $effect(() => input?.focus());
@@ -66,16 +69,19 @@
         {/each}
       </CommandView.Group>
     {/if}
-    {#if section.action}<CommandView.Group heading="Actions">
-        <CommandView.Item
-          value={section.action.label}
-          onSelect={() => onSelect(section.action!)}
-        >
-          <CommandView.ItemIcon
-            >{@render itemIcon(section.action)}</CommandView.ItemIcon
+    {#if actions.length}<CommandView.Group heading="Actions">
+        {#each actions as action (action.id)}
+          <CommandView.Item
+            value={action.label}
+            disabled={action.disabled}
+            onSelect={() => onSelect(action)}
           >
-          <CommandView.ItemLabel>{section.action.label}</CommandView.ItemLabel>
-        </CommandView.Item>
+            <CommandView.ItemIcon
+              >{@render itemIcon(action)}</CommandView.ItemIcon
+            >
+            <CommandView.ItemLabel>{action.label}</CommandView.ItemLabel>
+          </CommandView.Item>
+        {/each}
       </CommandView.Group>{/if}
   </CommandView.List>
 </CommandView.Root>

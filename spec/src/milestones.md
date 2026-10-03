@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-094                                                                                       |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -129,7 +129,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
 | M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064                                                                                                                                                                                                           |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089                                                                                                                                                                                           |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089,E-UI-094                                                                                                                                                                                  |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                |
@@ -50345,6 +50345,121 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "Only final traffic-light alignment and default native hover behavior. Prior native glass toggle/cold preference restoration evidence remains in E-DESK-005. No code changed, so Rust/UI builds and suites were not repeated. Root aggregates and unrelated consumers are out of scope. M17 first-render, dirty-edit, folder controls, native header double-click/drag qualification, accessibility, visual baselines and distribution remain separate; no milestone is promoted.",
     "next": "Retain this narrow successful review and continue separately governed M17 gates. The original E-DESK-005 history remains unchanged; E-DESK-006 resolves its bounded final movement/resize/hover follow-up."
+  },
+  {
+    "id": "E-UI-094",
+    "tasks": ["M11.4", "M15.5"],
+    "date": "2026-10-04",
+    "kind": "Sidebar creation actions and task, thread and commit activity presentation",
+    "revision": "enclosing Jujutsu change zulyxxpy",
+    "before": "Main workspace starts clean at rsouwqrt/c8b7ea72. Parent task button includes Parent prefix and ghost resting paint; selected work choice uses a 24px bare check inside a shortcut keycap; commit anchor only covers message content. Sidebar lacks add actions. Thread metadata divs inherit typography instead of sharing the Name button label tokens. Exact baseline stories: 2 failures / 21 passes; parent prefix and selected check size fail. Existing typography comparison passes in catalog, so live computed styles are additionally checked.",
+    "versions": "Node 24.10.0; pnpm 10.32.1; JJ 0.45.1; locked Svelte 5, Storybook 10.5.7, Vitest 4.1.11, Playwright 1.63.0 and Design Core public components. No dependency changes.",
+    "formats": "Presentation and existing route/dialog composition only. No HTTP, WAL, manifest, receipt, storage, companion metadata or native identity format changes.",
+    "files": [
+      "catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+      "catalog/components/store-work/NativeActivity.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/fixtures/NativeActivityFixture.svelte",
+      "catalog/fixtures/projects-hub-layout.ts",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-channel-settings/CommunityChannelSettings.css",
+      "web/src/lib/ui/community-navigation/CommunityNavigation.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigationAction.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigationSectionPicker.svelte",
+      "web/src/lib/ui/community-navigation/icons.ts",
+      "web/src/lib/ui/community-navigation/model.ts",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreApplicationNavigation.svelte",
+      "web/src/lib/ui/store-collaboration/StoreRepositoryActivity.svelte",
+      "web/src/lib/ui/store-collaboration/community-native-activity.css",
+      "web/src/lib/ui/store-work/StoreWorkPicker.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/tests/browser/sidebar-repository-actions.spec.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/browser/sidebar-repository-actions.spec.ts#sidebar add actions open the matching existing dialogs without writes"
+    ],
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "21 pass, 2 fail: Parent prefix retained; selected check is 24px instead of at most 18px. .local/sidebar-polish-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/NativeActivity.stories.svelte (first after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "22 pass, 2 fixture failures: readonly task helper still expects old Parent prefix; private activity fixture uses a non-route repository ID. Updated the expected accessible status/title and gave this isolated fixture a valid repository ID. .local/sidebar-polish-after.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/NativeActivity.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "24/24 interactions and accessibility pass. Covers typography, status/title/secondary parent action, circular 16px selection check, whole-byline anchor hit area, pinned route IDs, independent copy controls and agent disclosure/virtualization. .local/sidebar-polish-after2.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-threads/StoreThreadNavigation.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "26/26 directly affected shell, expanded/compact navigation, persistence and Projects activity/repository dialog interactions and accessibility. .local/sidebar-polish-consumers.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsHub.stories.svelte (final selected-indicator assertion)",
+        "result": "pass",
+        "failures": 0,
+        "note": "11/11 pass after the final assertion uses the foundation actual shortcut data-ui-part to prohibit a keycap around the indicator. .local/sidebar-polish-picker-final.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web and catalog 0 errors/0 warnings; 845-module architecture and 163-module catalog ownership boundaries pass. Navigation composition extracted to keep StoreApplication within its unchanged budget. .local/sidebar-polish-{web-final,catalog-final,architecture-final,ownership}.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh production bundle in 7.67s; existing large-chunk warning retained. .local/sidebar-polish-build.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts web/tests/browser/sidebar-repository-actions.spec.ts (initial attempts)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Two starts found the shared 7458 preview port occupied; no assertions ran on those starts. One run reached both expanded actions, then timed out because its compact selector assumed Search Your projects rather than the Command View root accessible name. No services stopped. .local/sidebar-polish-browser{,2,3}.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/sidebar-polish.playwright.config.ts web/tests/browser/sidebar-repository-actions.spec.ts (first isolated run)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Wrong textbox role assumption times out. Snapshot confirms actual combobox named Your projects navigation. Corrected selector without changing product semantics. .local/sidebar-polish-browser4.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/sidebar-polish.playwright.config.ts web/tests/browser/sidebar-repository-actions.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 on fresh isolated Vite preview 7464 serving built assets; both correct dialogs from expanded headings and compact keyboard-filtered menus, focus inside dialogs, no route/group changes or registration/WorkStore writes, axe 0 violations. Isolated preview is not production-CSP qualification. .local/sidebar-polish-browser5.log."
+      },
+      {
+        "command": "CUA background-tab live verification at http://127.0.0.1:7460",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clicking bylines opens exact 40-hex Git-backed and 128-hex native commits with their operation/change pins and 2 changed files each. Add project opens Create project with writable-home selector. All 7 thread labels are DM Sans Variable,14px,400. Parent has in_progress icon and secondary resting background. Selected work check is circular16x16. Screenshots .local/task-parent-polish.jpg and .local/task-picker-polish.jpg saved and reviewed. Dialogs dismissed without saving; temporary tab closed; user tab and dev fixture untouched."
+      },
+      {
+        "command": "pnpm exec prettier --write changed files; pnpm exec prettier --check changed files; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed-file format clean. Spec-first covers19protected files/3canonical chapters;5validators/22chapters/152requirements pass.125-task evidence bookkeeping passes, without milestone promotion. .local/sidebar-polish-{format,spec-first,spec-validate,progress}.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Five user refinements in the main workspace, including the follow-up that Your projects creates a project with Lucide briefcase-plus; Repositories retains Git-plus Add local repository and Browse threads. Reuses owned Community composition and released foundation APIs. UI-only targeted policy: 50 distinct affected stories and one cold browser flow, without root aggregates, Rust lanes, fixture resets, unrelated services or publication. Visual baselines remain pending and no milestone status is promoted.",
+    "next": "Commit verified slice in main and retain existing Vite HMR server for review."
   }
 ]
 ```

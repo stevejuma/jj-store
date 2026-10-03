@@ -130,8 +130,27 @@
   cursor: pointer;
 }
 
-.community-projects__activity-card:not(button) {
+.community-projects__activity-card:not(button, a) {
   cursor: default;
+}
+
+.community-projects__activity-item--commit
+  .community-projects__activity-card::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  content: "";
+}
+
+.community-projects__activity-item--commit
+  :is(
+    .community-projects-git-author-avatar,
+    .community-revision-graph-ids,
+    .community-projects-agent-context-disclosure
+  ) {
+  position: relative;
+  z-index: 2;
 }
 
 .community-projects__activity-card:hover {

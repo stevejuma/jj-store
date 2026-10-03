@@ -145,6 +145,8 @@
       </div>
 
       {#each model.sections as section (section.id)}
+        {@const actions =
+          section.actions ?? (section.action ? [section.action] : [])}
         {#if compact}
           {@const SectionIcon = navigationSectionIcon(section.id)}
 
@@ -239,10 +241,9 @@
                   <span>{section.label}</span>
                 </Collapsible.Trigger>
               </h2>
-              {#if section.action}<CommunityNavigationAction
-                  item={section.action}
-                  {onSelect}
-                />{/if}
+              {#each actions as action (action.id)}
+                <CommunityNavigationAction item={action} {onSelect} />
+              {/each}
             </div>
             <Collapsible.Content>
               <div class="lc-community-navigation__items">

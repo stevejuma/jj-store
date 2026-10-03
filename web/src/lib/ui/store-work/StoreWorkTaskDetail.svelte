@@ -53,6 +53,9 @@
     viewportRef?: HTMLElement | null;
   } = $props();
   const task = $derived(work.state.task);
+  const parent = $derived(
+    work.state.tasks.find((row) => row.id === task?.parent),
+  );
   const disabled = $derived(
     busy || work.state.loading || work.state.writing || !!work.state.pending,
   );
@@ -135,12 +138,13 @@
                     <dt><ListTodoIcon aria-hidden="true" />Parent</dt>
                     <dd>
                       <Button
-                        variant="ghost"
+                        variant="secondary"
                         size="sm"
                         onclick={() => onSelectTask(task.parent!)}
-                        >Parent: {work.state.tasks.find(
-                          (t) => t.id === task.parent,
-                        )?.title ?? task.parent.slice(0, 8)}</Button
+                        >{#if parent}<StoreWorkTaskStateIcon
+                            state={parent.state}
+                          />{/if}
+                        {parent?.title ?? task.parent.slice(0, 8)}</Button
                       >
                     </dd>
                   </div>{/if}

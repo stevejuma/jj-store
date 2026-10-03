@@ -71,6 +71,12 @@
     const task = canvasElement.querySelector<HTMLElement>(
       ".community-projects__task-detail",
     )!;
+    const parent = within(task).getByRole("button", { name: /Storage work/ });
+    await expect(parent).not.toHaveTextContent("Parent:");
+    await expect(parent).toHaveAttribute("data-variant", "secondary");
+    await expect(
+      parent.querySelector('[data-status="in_progress"]'),
+    ).not.toBeNull();
     const taskHeader = task.querySelector<HTMLElement>(
       ".community-projects__task-detail-header",
     )!;

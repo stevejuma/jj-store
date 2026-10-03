@@ -18,5 +18,6 @@
   class="lc-community-navigation__section-action"
   aria-label={item.label}
   title={item.label}
+  disabled={item.disabled}
   onclick={() => onSelect(item)}><Icon aria-hidden="true" /></Button
 >

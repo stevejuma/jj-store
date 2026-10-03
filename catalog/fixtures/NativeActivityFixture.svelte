@@ -5,9 +5,7 @@
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { activityCommit } from "./native-activity.js";
   const controller = untrack(() => createInMemoryStoreController("projects"));
-  const template = untrack(() =>
-    activityCommit(controller.state.repository.id),
-  );
+  const template = untrack(() => activityCommit("ab".repeat(16)));
   let discoveries = $state(0),
     sessions = $state(0),
     continuations = $state(0);

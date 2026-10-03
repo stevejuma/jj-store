@@ -5,8 +5,6 @@
   import { createStoreShell } from "./create-store-shell.js";
   import { repositoryDetailsPanelId } from "../layout-storage.js";
   import { provideStoreEntityContext } from "./entity-context.js";
-  import { projectsSidebarModel } from "../store-work/projects-sidebar-model.js";
-  import { withThreadNavigation } from "../store-threads/thread-navigation.js";
   import { observeRepositoryThreadNavigation } from "../store-threads/thread-navigation-binding.svelte.js";
   import {
     selectStoreNavigation,
@@ -26,7 +24,7 @@
   import { workspaceNavigationKey } from "./workspace-navigation.js";
   import StoreWorkspaceSectionHeader from "./StoreWorkspaceSectionHeader.svelte";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
-  import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
+  import StoreApplicationNavigation from "./StoreApplicationNavigation.svelte";
   import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
   import type {
     StorePage,
@@ -122,16 +120,6 @@
       shell.left.collapsed &&
       !shell.left.previewed,
   );
-  const navigation = $derived(
-    withThreadNavigation(
-      controller,
-      projectsSidebarModel(
-        controller.projects?.navigation.homes ?? [],
-        controller.state.repositories,
-        !!controller.projects,
-      ),
-    ),
-  );
   const activeNavigationItem = $derived(activeStoreNavigation(current));
   observeRepositoryThreadNavigation(() => controller);
   const title = $derived(
@@ -212,8 +200,8 @@
         {compact}
         onSelect={selectSettings}
         onClose={closeSettings}
-      />{:else}<CommunityNavigation
-        model={navigation}
+      />{:else}<StoreApplicationNavigation
+        {controller}
         bind:sectionOpen
         bind:itemOpen
         activeItemId={activeNavigationItem}
@@ -231,7 +219,7 @@
               else controller.actions.signOut();
             }}
           />{/snippet}
-      </CommunityNavigation>{/if}
+      </StoreApplicationNavigation>{/if}
   </AppShell.Sidebar>
   <AppShell.Main>
     {#if settingsOpen}

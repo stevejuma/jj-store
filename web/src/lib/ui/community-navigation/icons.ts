@@ -1,3 +1,5 @@
+import BriefcasePlusIcon from "@lucide/svelte/icons/briefcase-plus";
+import GitBranchPlusIcon from "@lucide/svelte/icons/git-branch-plus";
 import HashIcon from "@lucide/svelte/icons/hash";
 import MessagesSquareIcon from "@lucide/svelte/icons/messages-square";
 import BotIcon from "@lucide/svelte/icons/bot";
@@ -13,6 +15,8 @@ import type { CommunityNavigationItemModel } from "./model.js";
 export function navigationItemIcon(
   item: CommunityNavigationItemModel,
 ): Component {
+  if (item.kind === "add-project") return BriefcasePlusIcon;
+  if (item.kind === "add-repository") return GitBranchPlusIcon;
   if (item.kind === "channel") return HashIcon;
   if (["threads", "more-threads", "retry-threads"].includes(item.kind))
     return MessagesSquareIcon;
