@@ -3,7 +3,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as CommandView from "@lapismd/design-core/shadcn/command-view";
   import * as Popover from "@lapismd/design-core/shadcn/popover";
-  import CheckIcon from "@lucide/svelte/icons/check";
+  import CheckIcon from "@lucide/svelte/icons/circle-check";
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import FolderGit2Icon from "@lucide/svelte/icons/folder-git-2";
   import XIcon from "@lucide/svelte/icons/x";
@@ -12,7 +12,16 @@
   let {
     controller,
     disabled = false,
-  }: { controller: StoreController; disabled?: boolean } = $props();
+    label = "Repository workspace",
+    emptyLabel = "Repository overview",
+    fullWidth = false,
+  }: {
+    controller: StoreController;
+    disabled?: boolean;
+    label?: string;
+    emptyLabel?: string;
+    fullWidth?: boolean;
+  } = $props();
   let open = $state(false),
     query = $state("");
   const view = $derived(controller.state);
@@ -35,7 +44,8 @@
         size="sm"
         class={["store-workspace-picker__trigger", props.class]}
         role="combobox"
-        aria-label="Repository workspace"
+        aria-label={label}
+        style={fullWidth ? "max-width: 100%; width: 100%" : undefined}
         aria-expanded={open}
         title={disabled
           ? "Finish editing or resolving the pending command to switch workspaces."
@@ -45,7 +55,7 @@
           view.status.bookmarks === "loading"}
       >
         <FolderGit2Icon aria-hidden="true" />
-        <span>{view.route.workspace ?? "Repository overview"}</span>
+        <span>{view.route.workspace ?? emptyLabel}</span>
         <ChevronDownIcon aria-hidden="true" />
       </Button>
     {/snippet}
@@ -81,16 +91,15 @@
       <CommandView.List>
         <CommandView.Empty>No matching workspaces.</CommandView.Empty>
         <CommandView.Group heading={view.repository.name}>
-          <CommandView.Item
-            value="Repository overview"
-            onSelect={() => choose(null)}
-          >
+          <CommandView.Item value={emptyLabel} onSelect={() => choose(null)}>
             <CommandView.ItemIcon
               >{#if !view.route.workspace}<CheckIcon
                   aria-hidden="true"
+                />{:else}<FolderGit2Icon
+                  aria-hidden="true"
                 />{/if}</CommandView.ItemIcon
             >
-            <CommandView.ItemLabel>Repository overview</CommandView.ItemLabel>
+            <CommandView.ItemLabel>{emptyLabel}</CommandView.ItemLabel>
             <CommandView.ItemDescription
               >Browse without workspace context</CommandView.ItemDescription
             >
@@ -102,6 +111,8 @@
             >
               <CommandView.ItemIcon
                 >{#if view.route.workspace === copy.workspace}<CheckIcon
+                    aria-hidden="true"
+                  />{:else}<FolderGit2Icon
                     aria-hidden="true"
                   />{/if}</CommandView.ItemIcon
               >

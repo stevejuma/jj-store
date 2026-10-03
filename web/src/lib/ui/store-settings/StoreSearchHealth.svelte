@@ -1,8 +1,8 @@
 <script lang="ts">
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import SearchXIcon from "@lucide/svelte/icons/search-x";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
-  import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
@@ -32,52 +32,43 @@
     <StoreSettingsNotice>Loading search status…</StoreSettingsNotice>
   {:else}
     <dl class="store-settings__rows">
-      <div>
-        <dt>Configured</dt>
-        <dd>Yes</dd>
-      </div>
-      <div>
-        <dt>Health</dt>
-        <dd>
-          <span
-            class="store-settings__status"
-            data-tone={search?.degraded
-              ? "error"
-              : search?.is_stale
-                ? "warning"
-                : "ready"}
-            >{search?.degraded
-              ? "Degraded"
-              : search?.is_stale
-                ? "Stale"
-                : search
-                  ? "Fresh"
-                  : "Unavailable"}</span
-          >
-        </dd>
-      </div>
-      <div>
-        <dt>Repository position</dt>
-        <dd>{number(search?.repository_position)}</dd>
-      </div>
-      <div>
-        <dt>Durable position</dt>
-        <dd>{number(search?.durable_position)}</dd>
-      </div>
-      <div>
-        <dt>Indexed position</dt>
-        <dd>{number(search?.indexed_position)}</dd>
-      </div>
-      <div>
-        <dt>Index generation</dt>
-        <dd>
-          <CopyableValue
-            label="Index generation"
-            value={search?.index_generation}
-            emptyLabel="Not available"
-          />
-        </dd>
-      </div>
+      <StoreReadOnlyRow label="Configured" value="Yes" />
+      <StoreReadOnlyRow
+        label="Health"
+        tone={search?.degraded
+          ? "error"
+          : search?.is_stale
+            ? "warning"
+            : "ready"}
+        value={search?.degraded
+          ? "Degraded"
+          : search?.is_stale
+            ? "Stale"
+            : search
+              ? "Fresh"
+              : null}
+      />
+      <StoreReadOnlyRow
+        label="Repository position"
+        value={search?.repository_position}
+        display={number(search?.repository_position)}
+      />
+      <StoreReadOnlyRow
+        label="Durable position"
+        value={search?.durable_position}
+        display={number(search?.durable_position)}
+      />
+      <StoreReadOnlyRow
+        label="Indexed position"
+        value={search?.indexed_position}
+        display={number(search?.indexed_position)}
+      />
+      <StoreReadOnlyRow
+        label="Index generation"
+        copyLabel="Index generation"
+        value={search?.index_generation}
+        emptyLabel="Not available"
+      />
     </dl>
   {/if}
   {#if settings.searchStatusError}

@@ -1,8 +1,8 @@
 <script lang="ts">
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import SaveIcon from "@lucide/svelte/icons/save";
   import XIcon from "@lucide/svelte/icons/x";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import type {
     StorageOperation,
     StorageAction,
@@ -21,16 +21,13 @@
 </script>
 
 <dl class="store-settings__rows">
-  <div>
-    <dt>{report.kind === "check" ? "Integrity check" : "Checkpoint"}</dt>
-    <dd>
-      <span role="status">
-        {report.kind === "check" && report.phase === "complete"
-          ? "Captured data verified"
-          : `Operation ${words(report.phase)}`}
-      </span>
-    </dd>
-  </div>
+  <StoreReadOnlyRow
+    label={report.kind === "check" ? "Integrity check" : "Checkpoint"}
+    value={report.kind === "check" && report.phase === "complete"
+      ? "Captured data verified"
+      : `Operation ${words(report.phase)}`}
+    live="status"
+  />
   {#if report.message}<div>
       <dt>Details</dt>
       <dd><span role="alert">{report.message}</span></dd>
@@ -57,12 +54,11 @@
         is not proven.
       </dd>
     </div>{/if}
-  <div>
-    <dt>Request</dt>
-    <dd>
-      <CopyableValue value={report.request_id} label="Maintenance request" />
-    </dd>
-  </div>
+  <StoreReadOnlyRow
+    label="Request"
+    value={report.request_id}
+    copyLabel="Maintenance request"
+  />
 </dl>
 <header class="store-settings__section-heading">
   <h2>Captured target</h2>

@@ -37,7 +37,7 @@
 
 .community-app-shell__surface
   [data-ui-part="sidebar"][data-side="right"]:not([data-variant="rail"])
-  > [data-ui-part="sidebar-header"] {
+  > [data-ui-part="sidebar-header"]:not(.lc-channel-settings__header) {
   border-block-end: 1px solid var(--border);
 }
 

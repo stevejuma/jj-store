@@ -103,11 +103,15 @@
       c.getByRole("button", { name: "Wait for current sync" }),
     );
     await expect(c.getByText("Captured target is still pending")).toBeVisible();
-    await expect(c.getByText("Through 9")).toBeVisible();
+    await expect(
+      c.getByRole("button", { name: "Copy full Push target through: 9" }),
+    ).toBeVisible();
     await userEvent.click(c.getByRole("tab", { name: "Overview" }));
     await userEvent.click(c.getByRole("tab", { name: "Progress" }));
     await userEvent.click(c.getByRole("button", { name: "Continue waiting" }));
     await expect(c.getByText("Captured target reached")).toBeVisible();
-    await expect(c.getByText("Through 9")).toBeVisible();
+    await expect(
+      c.getByRole("button", { name: "Copy full Push target through: 9" }),
+    ).toBeVisible();
   }}
 />

@@ -22,6 +22,9 @@
 <Story
   name="Commit revsets and keyboard completion"
   play={async ({ canvas, canvasElement }) => {
+    await expect(
+      canvas.getByRole("button", { name: "Run history query" }),
+    ).toHaveTextContent("");
     const input = canvas.getByRole("searchbox", { name: "Filter JJ history" });
     await userEvent.click(input);
     await userEvent.type(input, "mut");
@@ -139,9 +142,36 @@
 <Story
   name="Multiline query and session email override"
   play={async ({ canvas, canvasElement }) => {
-    await userEvent.click(canvas.getByText("Query context and syntax"));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Query context and syntax" }),
+    );
+    const picker = canvas.getByRole("combobox", { name: "Workspace for @" });
+    await expect(
+      picker.closest(".community-settings__option-group"),
+    ).not.toBeNull();
+    await userEvent.click(picker);
+    const workspaceMenu = within(canvasElement.ownerDocument.body);
+    const workspace = workspaceMenu.getByRole("option", { name: /default/ });
+    await expect(workspace.querySelector("svg")).not.toBeNull();
+    await userEvent.type(
+      workspaceMenu.getByRole("combobox", { name: "Select workspace" }),
+      "default",
+    );
+    await userEvent.keyboard("{ArrowDown}{Enter}");
+    await expect(picker).toHaveTextContent("default");
     const email = canvas.getByRole("textbox", {
       name: "Author email for mine()",
+    });
+    await waitFor(() => {
+      for (const notice of canvasElement.querySelectorAll(
+        '.store-history-query__context [data-slot="alert"]',
+      )) {
+        const icon = notice.querySelector("svg")!.getBoundingClientRect();
+        const row = notice.getBoundingClientRect();
+        expect(
+          Math.abs(icon.y + icon.height / 2 - row.y - row.height / 2),
+        ).toBeLessThan(1);
+      }
     });
     await waitFor(() => expect(email).toHaveValue("fixture@example.invalid"));
     await userEvent.clear(email);

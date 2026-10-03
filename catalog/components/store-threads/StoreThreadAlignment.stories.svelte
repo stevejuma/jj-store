@@ -49,7 +49,7 @@
           paneHeader.getBoundingClientRect().bottom,
       ),
     ).toBeLessThan(1);
-    await expect(getComputedStyle(paneHeader).borderBottomWidth).toBe("1px");
+    await expect(getComputedStyle(paneHeader).borderBottomWidth).toBe("0px");
 
     await expect(settings).toHaveClass(
       "community-application__standard-right-sidebar",
@@ -81,6 +81,9 @@
     );
     const dialog = await body.findByRole("dialog", { name: "Rename thread" });
     const input = within(dialog).getByRole("textbox", { name: "Thread name" });
+    await expect(
+      input.closest(".community-settings__option-group"),
+    ).not.toBeNull();
     await userEvent.clear(input);
     await userEvent.type(input, "planning");
     await userEvent.click(

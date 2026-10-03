@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { CopyableValue } from "@lapismd/design-core/workspace/settings";
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import SquareIcon from "@lucide/svelte/icons/square";
   import type { SyncSettings } from "../../controller/sync-settings.js";
@@ -52,18 +52,15 @@
 {#if wait.barrier}
   <dl class="store-settings__rows">
     {#each [{ label: "Push target", replica: wait.barrier.local_replica, epoch: wait.barrier.push_epoch, through: wait.barrier.push_through }, { label: "Pull target", replica: wait.barrier.peer_replica, epoch: wait.barrier.pull_epoch, through: wait.barrier.pull_through }] as target}
-      <div>
-        <dt>{target.label}</dt>
-        <dd>
-          <CopyableValue
-            label={`${target.label} replica`}
-            value={target.replica}
-          /><CopyableValue
-            label={`${target.label} epoch`}
-            value={target.epoch}
-          /><span>Through {target.through.toString()}</span>
-        </dd>
-      </div>
+      <StoreReadOnlyRow
+        label={`${target.label} replica`}
+        value={target.replica}
+      />
+      <StoreReadOnlyRow label={`${target.label} epoch`} value={target.epoch} />
+      <StoreReadOnlyRow
+        label={`${target.label} through`}
+        value={target.through}
+      />
     {/each}
   </dl>
 {/if}

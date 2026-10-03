@@ -1,12 +1,15 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
-  import { Label } from "@lapismd/design-core/shadcn/label";
+  import * as Field from "@lapismd/design-core/shadcn/field";
+  import * as Alert from "@lapismd/design-core/shadcn/alert";
+  import { DialogFrame } from "@lapismd/design-core/forms/dialog";
+  import StoreWorkField from "../store-work/StoreWorkField.svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import CommunityChannelSettings from "../community-channel-settings/CommunityChannelSettings.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityEntityChip from "../community-entity-chip/CommunityEntityChip.svelte";
-  import StoreIdentityCopy from "../store-collaboration/StoreIdentityCopy.svelte";
+  import StoreReadOnlyRow from "../store-settings/StoreReadOnlyRow.svelte";
   import { baselineLinks, activityLinks } from "./thread-context.js";
   import { threadWritable } from "./thread-view.js";
   import { useThreadPanel } from "./thread-panel.svelte.js";
@@ -59,14 +62,13 @@
         ></span
       >
     </div>
-    <div class="lc-channel-settings__row">
-      <span
-        ><strong>Revision</strong><StoreIdentityCopy
-          value={detail.thread.reference.id}
-          label="Thread revision"
-        /></span
-      >
-    </div>
+    <StoreReadOnlyRow
+      label="Revision"
+      copyLabel="Thread revision"
+      value={detail.thread.reference.id}
+      standalone
+      stacked
+    />
     <div class="lc-channel-settings__row">
       <span
         ><strong>Code baseline</strong
@@ -90,29 +92,48 @@
       >
     </div>
   </CommunityChannelSettings>{/if}
-<Dialog.Root bind:open={renameOpen}
-  ><Dialog.Content preventScroll={false}
-    ><Dialog.Header
-      ><Dialog.Title>Rename thread</Dialog.Title><Dialog.Description
-        >Update this thread’s name.</Dialog.Description
-      ></Dialog.Header
-    >
+<Dialog.Root bind:open={renameOpen}>
+  <DialogFrame
+    size="wide"
+    preventScroll={false}
+    busy={disabled}
+    title="Rename thread"
+    description="Update this thread’s name."
+  >
     <form
-      onsubmit={(e) => {
-        e.preventDefault();
+      id="rename-thread-form"
+      onsubmit={(event) => {
+        event.preventDefault();
         void run(() => threads!.rename(title));
       }}
     >
-      <Label for="rename-thread">Thread name</Label><Input
-        id="rename-thread"
-        bind:value={title}
-        required
-        maxlength={1024}
-      />{#if error}<p role="alert">{error}</p>{/if}<Dialog.Footer
-        ><Button type="submit" disabled={disabled || !title.trim()}
-          >Save name</Button
-        ></Dialog.Footer
+      <Field.Group class="store-work__fields community-settings__option-group">
+        <StoreWorkField label="Thread name" id="rename-thread" {disabled}>
+          <Input
+            id="rename-thread"
+            bind:value={title}
+            {disabled}
+            required
+            maxlength={1024}
+          />
+        </StoreWorkField>
+      </Field.Group>
+    </form>
+    {#if error}<Alert.Root variant="destructive"
+        ><Alert.Description>{error}</Alert.Description></Alert.Root
+      >{/if}
+    {#snippet footer()}
+      <Button
+        type="button"
+        variant="outline"
+        {disabled}
+        onclick={() => (renameOpen = false)}>Cancel</Button
       >
-    </form></Dialog.Content
-  ></Dialog.Root
->
+      <Button
+        type="submit"
+        form="rename-thread-form"
+        disabled={disabled || !title.trim()}>Save name</Button
+      >
+    {/snippet}
+  </DialogFrame>
+</Dialog.Root>

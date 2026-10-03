@@ -32,6 +32,11 @@
       link.getBoundingClientRect().width,
       0,
     );
+    const group = input.closest('[role="group"]')!;
+    const row = input.closest('[data-slot="field"]')!;
+    await expect(group.getBoundingClientRect().width).toBeGreaterThan(
+      row.getBoundingClientRect().width * 0.58,
+    );
     await userEvent.type(input, "/wrong");
     await userEvent.keyboard("{Enter}");
     await expect(

@@ -3,7 +3,7 @@
   import { AppShell } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import Hash from "@lucide/svelte/icons/hash";
-  import Copy from "@lucide/svelte/icons/copy";
+  import StoreReadOnlyRow from "../store-settings/StoreReadOnlyRow.svelte";
   import Pencil from "@lucide/svelte/icons/pencil";
   import type { Snippet } from "svelte";
   let {
@@ -61,15 +61,14 @@
             ></span
           ></Button
         >
-        <Button
-          variant="ghost"
-          class="lc-channel-settings__row"
-          onclick={() => navigator.clipboard.writeText(id)}
-          ><span><strong>Thread ID</strong><small>{id}</small></span><Copy
-            data-icon="inline-end"
-            aria-hidden="true"
-          /></Button
-        >
+        <StoreReadOnlyRow
+          label="Thread ID"
+          value={id}
+          standalone
+          stacked
+          onOpen={onClose}
+          openLabel="Open thread conversation"
+        />
         {#if children}{@render children()}{/if}
       </div>
     </section>

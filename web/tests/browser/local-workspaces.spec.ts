@@ -60,6 +60,18 @@ test("local folder settings preserve drafts and link without changing repository
     revision++;
     await route.fulfill({ json: { version: 1, revision, links } });
   });
+  await page.addInitScript(() => {
+    let copied = "";
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async (value: string) => {
+          copied = value;
+        },
+        readText: async () => copied,
+      },
+    });
+  });
   await page.goto("/");
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
@@ -89,6 +101,17 @@ test("local folder settings preserve drafts and link without changing repository
   await expect(
     page.getByRole("textbox", { name: "Repository ID" }),
   ).toHaveCount(0);
+  const copy = page.getByRole("button", { name: /^Copy full Repository ID:/ });
+  const fullId = (await copy.getAttribute("aria-label"))!.split(": ")[1];
+  await copy
+    .locator(
+      'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " store-readonly-row ")][1]',
+    )
+    .click({ position: { x: 8, y: 8 } });
+  await expect(copy).toHaveAttribute("data-copied", "true");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    fullId,
+  );
   const tabs = page.getByRole("tablist", {
     name: "Repository settings sections",
   });
@@ -132,6 +155,11 @@ test("local folder settings preserve drafts and link without changing repository
   await expect(
     input.locator('xpath=ancestor::*[contains(@class,"store-settings__rows")]'),
   ).toBeVisible();
+  const group = (await input.locator("..").boundingBox())!;
+  const row = (await input
+    .locator('xpath=ancestor::*[@data-slot="field"]')
+    .boundingBox())!;
+  expect(group.width).toBeGreaterThan(row.width * 0.58);
   await page.getByRole("button", { name: "Browse…" }).click();
   await expect(input).toHaveValue("/workspaces/example with spaces");
   expect(requests).toHaveLength(0);
@@ -141,6 +169,11 @@ test("local folder settings preserve drafts and link without changing repository
   await page.getByRole("button", { name: "Repository", exact: true }).click();
   await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   await expect(input).toHaveValue("/workspaces/example with spaces");
+  await page.getByRole("tab", { name: "General", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Open repository", exact: true }),
+  ).toBeDisabled();
+  await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   await input.press("Enter");
   await expect(page.getByText(/workspace links changed/)).toBeVisible();
   await expect(input).toHaveValue("/workspaces/example with spaces");
@@ -186,4 +219,19 @@ test("local folder settings preserve drafts and link without changing repository
   expect(restoredAppBounds.x).toBeCloseTo(originalAppBounds.x, 0);
   expect(restoredAppBounds.width).toBeCloseTo(originalAppBounds.width, 0);
   expect(await page.evaluate(() => location.hash)).toBe(originalHash);
+  await page
+    .getByRole("button", { name: "Open profile menu for Local" })
+    .click();
+  await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
+  await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open operation head 1", exact: true })
+    .click();
+  await expect(
+    page.getByRole("navigation", { name: "Settings navigation" }),
+  ).toHaveCount(0);
+  await expect(page).toHaveURL(/\/oplog\?.*operation=/);
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    fullId,
+  );
 });

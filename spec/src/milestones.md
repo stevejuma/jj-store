@@ -40,7 +40,7 @@ shared-package release qualification does not alter those original Git gates.
 | M4.7        | Done        | M4.6                    | JST-UI-004                                                                                                                                                                              | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                                            | E-UI-004,E-UI-029,E-UI-044,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                   |
 | M4.8        | Done        | M4.7                    | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks            | Visual review pending; live UI remains deferred                                                | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                        |
 | M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                                 | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                                            | E-UI-007,E-UI-008,E-UI-063,E-UI-065,E-UI-066,E-UI-067,E-UI-068                                                                                                                                                                                                                                                                                                 |
-| M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                                     | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                                          | E-M4-018,E-UI-090,E-UI-091,E-UI-092,E-UI-093                                                                                                                                                                                                                                                                                                                   |
+| M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                                     | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                                          | E-M4-018,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095                                                                                                                                                                                                                                                                                                          |
 | M4.11       | Deferred    | M4.10                   | JST-API-004,JST-API-005,JST-UI-005                                                                                                                                                      | Shared authenticated connection and final registry-only browser acceptance                                                     | Future shared/package release                                                                  | E-UI-011                                                                                                                                                                                                                                                                                                                                                       |
 | M4.12       | Deferred    | M4.11                   | JST-API-002,JST-API-003,JST-UI-005                                                                                                                                                      | Shared-deployment route/SSE finalization against registry-only dependencies                                                    | Future shared/package release                                                                  | E-UI-012                                                                                                                                                                                                                                                                                                                                                       |
 | M4.13       | Deferred    | M4.11                   | JST-API-002,JST-UI-006                                                                                                                                                                  | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                                 | Future Design Core release                                                                     | E-UI-013,E-UI-014,E-UI-015,E-UI-083                                                                                                                                                                                                                                                                                                                            |
@@ -113,10 +113,10 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                             | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                           | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                             |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                             | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025                                                                                                                                                                                                                              |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093                                                                                                                                                                                            |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095                                                                                                                                                                                   |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | -                                                                                                                                                                                                                                                                                                                                                              |
-| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014                                                                                                                                                                                                                               |
+| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095                                                                                                                                                                                                                      |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                                              | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049                                                                                                                                                                                                                                                                                                                         |
 | M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                                      | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-063                                                                                                                                                                                                                                                                       |
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation                       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                            |
@@ -129,7 +129,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
 | M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064                                                                                                                                                                                                           |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089,E-UI-094                                                                                                                                                                                  |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089,E-UI-094,E-UI-095                                                                                                                                                                         |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                |
@@ -50460,6 +50460,286 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "Five user refinements in the main workspace, including the follow-up that Your projects creates a project with Lucide briefcase-plus; Repositories retains Git-plus Add local repository and Browse threads. Reuses owned Community composition and released foundation APIs. UI-only targeted policy: 50 distinct affected stories and one cold browser flow, without root aggregates, Rust lanes, fixture resets, unrelated services or publication. Visual baselines remain pending and no milestone status is promoted.",
     "next": "Commit verified slice in main and retain existing Vite HMR server for review."
+  },
+  {
+    "id": "E-UI-095",
+    "tasks": ["M14", "M15.5", "M4.10", "M13.4"],
+    "date": "2026-10-04",
+    "kind": "Reusable Settings copy rows, thread form alignment and collapsible history search",
+    "revision": "enclosing Jujutsu change uxoswqxv",
+    "before": "Main continues from zulyxxpy/90d119e0. Thread rename uses a plain form; Thread ID and Revision have different copy presentation; folder control is capped. History search is always visible with text Run and a details context. Exact baseline counts and subsequent failures are recorded below.",
+    "versions": "Node 24.10.0; pnpm 10.32.1; JJ 0.45.1; locked Svelte 5, Storybook 10.5.7, Vitest 4.1.11 and Playwright 1.63.0. Existing E-UI-090/E-UI-092/E-UI-093 ignored foundation source-validation hook remains; package manifests retain normal semver ranges. No dependency edits or publication.",
+    "formats": "Presentation only, existing authorized route/clipboard/controller interfaces. No HTTP, WAL, manifest, receipt, native identity, companion metadata or persistence format changes.",
+    "files": [
+      "catalog/components/store-application/StoreSettingsIdentifier.stories.svelte",
+      "catalog/components/store-application/StoreSyncSettings.stories.svelte",
+      "catalog/components/store-application/StoreWorkspaceSettings.stories.svelte",
+      "catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+      "catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+      "catalog/fixtures/HistoryQueryFixture.svelte",
+      "catalog/fixtures/ReadOnlyRowFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-app-shell/right-sidebar.css",
+      "web/src/lib/ui/community-channel-settings/CommunityChannelSettings.css",
+      "web/src/lib/ui/community-channel-settings/CommunityChannelSettings.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogHeader.svelte",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreWorkspacePicker.svelte",
+      "web/src/lib/ui/store-history-query/StoreHistoryQuery.svelte",
+      "web/src/lib/ui/store-history-query/StoreHistoryQueryContext.svelte",
+      "web/src/lib/ui/store-history-query/StoreHistoryQueryHeader.svelte",
+      "web/src/lib/ui/store-history-query/StoreHistoryQueryToggle.svelte",
+      "web/src/lib/ui/store-history-query/history-query.css",
+      "web/src/lib/ui/store-settings/StoreReadOnlyRow.svelte",
+      "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchHealth.svelte",
+      "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsRepository.svelte",
+      "web/src/lib/ui/store-settings/StoreStorageOperation.svelte",
+      "web/src/lib/ui/store-settings/StoreStoragePosition.svelte",
+      "web/src/lib/ui/store-settings/StoreStorageSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncWait.svelte",
+      "web/src/lib/ui/store-settings/StoreWorkspaceSettings.svelte",
+      "web/src/lib/ui/store-settings/settings-navigation.ts",
+      "web/src/lib/ui/store-threads/StoreThreadSettings.svelte",
+      "web/tests/browser/history-query.spec.ts",
+      "web/tests/browser/local-workspaces.spec.ts",
+      "web/tests/browser/threads-alignment.spec.ts"
+    ],
+    "tests": [
+      "web/tests/browser/history-query.spec.ts#cold native history search highlights, completes and retains invalid drafts under CSP",
+      "web/tests/browser/history-query.spec.ts#cold local-folder history uses pinned custom grammars and local query transport",
+      "web/tests/browser/local-workspaces.spec.ts#local folder settings preserve drafts and link without changing repository context",
+      "web/tests/browser/threads-alignment.spec.ts#cold LocalTrusted Threads shell settings references scoped search and reply focus"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "7 passed; thread rename lacks Settings Field group and folder path group is capped too narrowly. Evidence: .local/readonly-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "2 passed; Thread settings header has a 1px bottom border. Evidence: .local/thread-header-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "3 passed; Run query action still has text instead of an icon-only control. Evidence: .local/history-polish-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte catalog/components/store-application/StoreSettingsIdentifier.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "13/13 interactions and accessibility. Full row clipboard hit area, full values, tick feedback, keyboard, failure/retry, empty/zero and stale clipboard completion/disposal; rename form and folder control width. Evidence: .local/readonly-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/SettingsNavigation.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/store-application/StoreSyncReconciliation.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "29 passed; Sync expected stale Through 9 text after the value moved into a reusable copy row. SettingsNavigation, Search, Storage, SyncReconciliation and application consumers pass. Evidence: .local/readonly-consumers.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "7 passed; initial fixture edit targeted canvas instead of c and missed the same Through 9 assertion; corrected to Copy full Push target through: 9. Evidence: .local/readonly-final-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "17 passed; unselected workspace entry lacks its requested icon. Added FolderGit2 with CircleCheck for selection. Evidence: .local/history-polish-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreWorkspaces.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "26/26 HistoryQuery, SyncSettings, RepositoryLog, Workspaces and ThreadAlignment interactions/accessibility. Includes corrected Sync accessible copy control. Evidence: .local/polish-final-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/SettingsNavigation.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreWorkspaces.stories.svelte catalog/components/store-history-query/StoreHistoryQuery.stories.svelte catalog/components/store-application/StoreSettingsIdentifier.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "28/28 navigation, application, workspaces, history and readonly-row direct consumers pass. Evidence: .local/polish-consumers-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "9/9 SearchSettings and StorageSettings interactions/accessibility pass after explanatory recovery/selection rows remain fully readable. Evidence: .local/polish-readonly-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "13/13 RepositoryLog and HistoryQuery pass after extracting header composition to preserve the existing module budget. Evidence: .local/polish-header-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "3 passed; info icons are above vertical center. Live Op Log confirms offsets of -31.5px and -21px. Evidence: .local/history-info-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 including geometric icon centering in the query guidance boxes. Scope remains the query-context composition. Evidence: .local/history-info-after.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial history context used unsupported Notice title props and nested $props.id() inside a template expression instead of a top-level initializer. Fixed before final checks. .local/history-polish-web.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both checks report zero errors/warnings; catalog boundary checks 164 modules. .local/polish-web-final.log, .local/polish-catalog-final.log, .local/polish-web-last.log and .local/polish-catalog-last.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "RepositoryLog reached 307 counted lines against its existing 300-line budget; extracted the owned header composition. .local/polish-architecture-last.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "851 architecture modules and UI ownership pass after extraction and final palette/icon styling. .local/polish-architecture-final.log, .local/polish-architecture-palette.log, .local/polish-ownership.log and .local/polish-ownership-final.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production assets built repeatedly for cold verification, final .local/polish-build-palette.log; earlier .local/polish-build-last.log. Existing chunk-size/timing warnings remain informational. Reuses the prebuilt native browser_preview binary; no Rust build."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts web/tests/browser/local-workspaces.spec.ts web/tests/browser/history-query.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial cold run: 1 passed; search disappeared on route refresh because disclosure reset depended on the entire route. Reset now tracks only stable repository/page context. .local/polish-browser.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts web/tests/browser/local-workspaces.spec.ts web/tests/browser/history-query.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 cold flows pass after stable-context fix. .local/polish-browser2.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts web/tests/browser/local-workspaces.spec.ts web/tests/browser/history-query.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Later native completion interaction pressed Enter after option visibility but before selection. Strengthened the precondition to aria-selected=true and retained the exact mutable() final assertion; 2 passed. .local/polish-browser-final.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts web/tests/browser/local-workspaces.spec.ts web/tests/browser/history-query.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 3/3 cold production-asset browser flows, fresh strict-CSP native preview on 7458, isolated pinned native/local transport fixtures and axe. Verifies hidden search toggles, retained drafts/applied queries, both grammars, focus border/ring, invalid-query feedback and independent Settings copy/Open navigation. .local/polish-browser-last.log and final .local/polish-browser-palette.log. Follow-up found that the original Settings ancestry selector matched the action span rather than the entire row; the strengthened geometric pointer regression and correction below supersede that copy-hit assertion."
+      },
+      {
+        "command": "pnpm exec prettier --write changed files; pnpm exec prettier --check changed files",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial filename extraction inherited rg line-number configuration; no product failure. Corrected to rg --no-line-number. .local/polish-format.log."
+      },
+      {
+        "command": "pnpm exec prettier --write changed files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Corrected filename extraction passed in .local/polish-format2.log; final history CSS/story/UI chapter formatted in .local/history-palette-format.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped API chapter was missing; added canonical read-only copy/navigation and controller-owned query presentation requirements. .local/polish-spec-first.log."
+      },
+      {
+        "command": "Live in-app browser on 127.0.0.1:7460, temporary tab 8",
+        "result": "pass",
+        "failures": 0,
+        "note": "Inspected full-row Thread ID/Revision copy targets, matching labels, rename form, full folder control width and 1px input border, JJ Log/Op Log hidden/pressed search, darker header-grey circle and query Field group. Final info icon center offsets are 0px on both pages. Rest search border resolves --ui-input-border-color, focus uses the exact standard --ui-input-focus-ring-color at 50% with a transparent border; no inset accent shadow. Saved .local/history-settings-polish.png. No form save/fixture mutation; temporary tab closed and main HMR left running. Initial geometry/synthetic clicks did not reveal the active-translation bug; subsequent real pointer verification below closes that gap."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final after the icon-centering story change: zero errors/warnings and 164 catalog modules. .local/polish-catalog-palette.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm exec prettier --check changed files; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "39 changed files formatted; spec-first covers 36 protected files and 3 canonical chapters. 5 validators, 22 chapters and 152 requirements pass. Progress bookkeeping passes for125tasks; no milestone promotion. .local/polish-ledger-format.log, .local/polish-format-final.log, .local/polish-spec-first-final.log, .local/polish-spec-validate-final.log and .local/polish-progress-final.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts web/tests/browser/threads-alignment.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "New pointer regression first timed out: ancestor contains(store-readonly-row) matched store-readonly-row__actions. Corrected both thread and Settings tests to match the complete class token, preserving the label/value assertions. .local/copy-row-before.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts web/tests/browser/threads-alignment.spec.ts web/tests/browser/local-workspaces.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Corrected exact row selectors reproduce both defects: Settings whitespace does not set data-copied; Thread held press loses the copy button under elementFromPoint. The default 1px active translation establishes a new containing block for the stretched pseudo-element. .local/copy-row-before2.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-settings/StoreReadOnlyRow.svelte spec/src/ui.md; pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Disabled translation only on the composed stretched copy control so its hit area stays anchored to the row. Each successful copy remounts the tick for a 160ms scale animation, disabled for reduced motion. Fresh built assets pass. .local/copy-row-format2.log and .local/copy-row-build.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts web/tests/browser/threads-alignment.spec.ts web/tests/browser/local-workspaces.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Settings regression passes and Thread label/value/independent Open assertions pass; later existing toolbar-border assertion expected 1px while the unchanged StoreThreadHeader in parent90d119e0 explicitly has border-block-end:0. Aligned that stale assertion with the established contract; Thread settings header now separately asserts the newly requested0px. .local/copy-row-after.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/settings-playwright.config.ts web/tests/browser/threads-alignment.spec.ts web/tests/browser/local-workspaces.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 cold browser flows. Actual mouse-down and release verifies the complete labels and values remain copy hit targets; exact clipboard contents and call count prove Open does not copy. Includes existing scoped-search/reply, rename, Settings draft/mobile and axe flows. .local/copy-row-after2.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreSettingsIdentifier.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte; pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "7/7 affected copy/Thread interactions and accessibility; web types0errors/0warnings. .local/copy-row-stories.log and .local/copy-row-web.log."
+      },
+      {
+        "command": "Live in-app browser pointer clicks on sample Thread ID and Revision labels",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both labels now report data-copied=true; computed SVG animation is copy-confirm and circular tick shown. Screenshot .local/thread-copy-row-polish.png. AX-only click was inconclusive; actual pointer clicks confirmed behavior. Temporary tab9closed; user tab and main HMR remain."
+      },
+      {
+        "command": "pnpm exec prettier --check changed files; pnpm check:architecture; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final follow-up checks pass:40changed files,851architecture modules,37protected files/3canonical chapters,5validators/22chapters/152requirements and125task evidence bookkeeping. .local/copy-row-{format-final,architecture,spec-first,spec-validate,progress}.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "User-requested refinements in main, preserving earlier settings/sidebar work. One owned reusable row provides whole-row copy, circular success/failure feedback and independent guarded navigation; long explanatory text remains readable. History search uses standard input palette and darker selected header grey, with Settings-form query context and icon workspace picker. UI-only targeted policy: affected stories/type checks plus cold built-asset native/local browser flows; root aggregate and Rust lanes are out of scope. Existing registry-only release qualification and visual baselines remain pending; no milestone status promotion. Follow-up hardens the row hit area during active pointer presses and adds replayable reduced-motion-aware tick feedback. Earlier false-positive row-target test is explicitly corrected.",
+    "next": "Retain these focused regressions and the main Vite HMR preview; registry-only dependency qualification and visual baseline approval remain separate existing gates."
   }
 ]
 ```

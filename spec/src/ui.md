@@ -370,18 +370,26 @@ keyboard accessible.
 
 Repository settings groups General, Local folders and Advanced values in
 keyboard-accessible tabs with horizontal overflow on narrow screens. Tab changes
-do not discard folder drafts. Repository, Search health and Sync identifiers
-compose the public Design Core CopyableValue control directly. It displays an
-abbreviated value with a compact copy icon, copies the complete value, retains
-the complete labelled identity for assistive access and uses its shared
-success/failure feedback. Missing values retain their availability label.
+do not discard folder drafts. Read-only Settings values use an owned reusable
+row composed with public Design Core controls. Clicking any part of the row or
+activating its copy button with Enter or Space copies the full value, with
+circular tick feedback and an announced failure/retry state. The entire copy
+target remains stable throughout a pointer press, including on labels and
+values. Each successful copy animates the tick unless reduced motion is enabled.
+Long values truncate in the available space; missing values retain their
+availability label without a copy action. A separate trailing Open action is
+offered only for valid app destinations and does not copy. Settings navigation
+preserves drafts and pending-action guards. Feedback clears when the value
+changes or the row is removed.
 
 The optional native folder picker joins Folder path to a Git-icon Browse button.
-Only an explicit click opens the dialog on the local-service machine. Selection
-fills the draft; Link folder remains the separate validation/save action. Cancel
-preserves the draft; failures retain manual entry and explain the fallback.
-While picking, repeated browse and link actions are disabled. Repository changes
-discard late selections. Unsupported platforms keep the manual form.
+The path/Browse group fills its available control column, with the input taking
+the space left by Browse. Only an explicit click opens the dialog on the
+local-service machine. Selection fills the draft; Link folder remains the
+separate validation/save action. Cancel preserves the draft; failures retain
+manual entry and explain the fallback. While picking, repeated browse and link
+actions are disabled. Repository changes discard late selections. Unsupported
+platforms keep the manual form.
 
 ## Local management delivery
 
@@ -1221,12 +1229,18 @@ retain keyboard access and close before their dialogs open. Authenticated
 connections omit local registration. Opening either dialog does not navigate,
 collapse the group or write repository state.
 
-Thread settings metadata labels (Lifecycle, Revision, Code baseline and Linked
-activity) use the same body font, size and weight as Name, Contributors and
-Thread ID. Parent-task buttons show the loaded parent's status icon and title
-without a redundant Parent prefix, with a visible secondary background; unknown
-parent metadata keeps its ID fallback without inventing a state. Work selectors
-use a compact circular check for the chosen value rather than a shortcut keycap.
+The Thread settings sidebar header has no bottom divider. Thread settings
+metadata labels (Lifecycle, Revision, Code baseline and Linked activity) use the
+same body font, size and weight as Name, Contributors and Thread ID. Thread ID
+and Revision use the same reusable read-only row with muted value text,
+whole-row full-value copying and circular tick feedback. Thread ID can
+independently open its conversation; immutable thread revision IDs remain
+copy-only. Rename thread uses DialogFrame and the bordered, divided Settings
+Field group, retaining validation, draft and pending-write behavior. Parent-task
+buttons show the loaded parent's status icon and title without a redundant
+Parent prefix, with a visible secondary background; unknown parent metadata
+keeps its ID fallback without inventing a state. Work selectors use a compact
+circular check for the chosen value rather than a shortcut keycap.
 
 Commit activity rows expose their pinned commit link across the row, including
 byline and whitespace, and open the owning repository's JJ log with the exact
@@ -1545,6 +1559,20 @@ text stays in memory.
 
 ## Rich history query delivery
 
+JJ Log and Op Log start with search hidden. A circular Search button in each
+column header toggles its search area, exposes pressed/expanded state and uses
+an accent icon over a darker shade of the header grey while pressed. Hiding
+preserves the draft and accepted query; switching pages starts with search
+hidden. The full-width oval input uses the default Design Core shape with no
+leading icon, and separate circular icon-only Search and query-context actions
+inline at the end. Query context is initially collapsed. Its workspace/email
+controls use the shared rounded Settings Field group; workspace selection uses
+the searchable Command View with workspace icons. Syntax and execution guidance
+use informational alerts with icons vertically centered beside their text.
+Search inputs use the standard Design Core input border and focus-ring palette,
+with a grey theme border at rest and a transparent border while the focus ring
+is visible. Invalid-query feedback retains its destructive theme treatment.
+
 JJ Log and Op Log MUST use Design Core `SearchFilterInput` in custom-language
 mode, with jj-store-owned revset and operation grammars, static-class
 highlighting and catalog-driven keyboard completion. Query execution is
@@ -1582,11 +1610,12 @@ local repository readers retain their existing review capability.
 
 History query editors MUST preserve multiline whitespace and use visible
 semantic syntax colors. Enter inserts a line or accepts an active completion;
-Ctrl/Command+Enter and Search execute. Borderless focus retains the caret;
-invalid drafts tint the input with spaced diagnostics and keep prior results.
-The session-only author email initially uses query metadata's optional default;
-manual edits, including empty values, MUST win across metadata/head refreshes.
-Email MUST remain absent from URLs and persisted UI state.
+Ctrl/Command+Enter and Search execute. Default search focus retains the caret
+and visible oval outline; invalid drafts tint the input with spaced diagnostics
+and keep prior results. The session-only author email initially uses query
+metadata's optional default; manual edits, including empty values, MUST win
+across metadata/head refreshes. Email MUST remain absent from URLs and persisted
+UI state.
 
 ## Captured Sync waits
 

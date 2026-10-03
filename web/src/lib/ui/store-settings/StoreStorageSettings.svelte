@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import DatabaseIcon from "@lucide/svelte/icons/database";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import ShieldCheckIcon from "@lucide/svelte/icons/shield-check";
@@ -70,26 +71,18 @@
           <h2 id="storage-overview">Storage readiness</h2>
         </header>
         <dl class="store-settings__rows">
-          <div>
-            <dt>
-              Status
-              <p class="store-settings__row-description">
-                Status updates automatically. Integrity checks run only when
-                requested.
-              </p>
-            </dt>
-            <dd>
-              <span role="status">
-                {settings.value
-                  ? settings.value.ready
-                    ? "Selected manifest is readable"
-                    : "Storage unavailable"
-                  : settings.state === "failed"
-                    ? "Storage status could not be read."
-                    : "Loading storage status…"}
-              </span>
-            </dd>
-          </div>
+          <StoreReadOnlyRow
+            label="Status"
+            description="Status updates automatically. Integrity checks run only when requested."
+            live="status"
+            value={settings.value
+              ? settings.value.ready
+                ? "Selected manifest is readable"
+                : "Storage unavailable"
+              : settings.state === "failed"
+                ? "Storage status could not be read."
+                : "Loading storage status…"}
+          />
           {#if settings.value}
             <div>
               <dt>Checkpoint coverage</dt>

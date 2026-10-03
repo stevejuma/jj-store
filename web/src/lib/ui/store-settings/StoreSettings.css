@@ -40,7 +40,8 @@
   background: var(--card, var(--background));
 }
 
-.store-settings__rows > div:not([data-slot="field-group"]),
+.store-settings__rows
+  > div:not([data-slot="field-group"]):not(.store-readonly-row),
 .store-settings__summary-rows > div {
   display: grid;
   min-width: 0;
@@ -163,7 +164,8 @@
 }
 
 @media (max-width: 40rem) {
-  .store-settings__rows > div:not([data-slot="field-group"]),
+  .store-settings__rows
+    > div:not([data-slot="field-group"]):not(.store-readonly-row),
   .store-settings__summary-rows > div {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.3rem;

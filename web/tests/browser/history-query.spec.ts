@@ -42,20 +42,43 @@ test("cold native history search highlights, completes and retains invalid draft
   expect(response?.headers()["content-security-policy"]).not.toContain(
     "unsafe-inline",
   );
+  const searchToggle = page.getByRole("button", {
+    name: "Search JJ Log",
+    exact: true,
+  });
+  await expect(searchToggle).toHaveAttribute("aria-pressed", "false");
+  await expect(
+    page.getByRole("searchbox", { name: "Filter JJ history" }),
+  ).toHaveCount(0);
+  await searchToggle.click();
+  await expect(searchToggle).toHaveAttribute("aria-pressed", "true");
+  await expect(searchToggle).toHaveCSS("border-radius", "999px");
   const input = page.getByRole("searchbox", { name: "Filter JJ history" });
   await expect(input).toBeVisible();
   await input.fill("mut");
   await expect(
     page.getByRole("option", { name: "mutable() alias", exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: "mutable() alias", exact: true }),
+  ).toHaveAttribute("aria-selected", "true");
   await input.press("Enter");
   await expect(input).toHaveText("mutable()");
+  await searchToggle.click();
+  await expect(input).toHaveCount(0);
+  await searchToggle.click();
+  await expect(input).toHaveText("mutable()");
+  await expect(
+    page.getByRole("button", { name: "Run history query" }),
+  ).toHaveText("");
+  await expect(
+    page.locator(".cv-search-filter-bar__search-pill > svg"),
+  ).toHaveCount(0);
   await expect(page.locator(".history-query-alias")).toBeVisible();
   await input.click();
-  await expect(page.locator(".cv-search-filter-bar__search-pill")).toHaveCSS(
-    "box-shadow",
-    "none",
-  );
+  await expect(
+    page.locator(".cv-search-filter-bar__search-pill"),
+  ).not.toHaveCSS("box-shadow", "none");
   await expect(page.locator(".cv-search-filter-bar__search-pill")).toHaveCSS(
     "border-top-color",
     "rgba(0, 0, 0, 0)",
@@ -124,6 +147,12 @@ test("cold native history search highlights, completes and retains invalid draft
     )
     .toBeNull();
   await page.getByRole("tab", { name: "Op Log", exact: true }).click();
+  const operationToggle = page.getByRole("button", {
+    name: "Search Op Log",
+    exact: true,
+  });
+  await expect(operationToggle).toHaveAttribute("aria-pressed", "false");
+  await operationToggle.click();
   const ops = page.getByRole("searchbox", { name: "Filter operation history" });
   await expect(ops).toBeVisible();
   await ops.fill('from:@-- description:"fixture"');
@@ -132,7 +161,9 @@ test("cold native history search highlights, completes and retains invalid draft
     .poll(() => new URL(page.url()).hash)
     .toContain("history_query=from");
   await expect(page.locator(".history-query-field").first()).toBeVisible();
-  await page.getByText("Query context and syntax", { exact: true }).click();
+  await page
+    .getByRole("button", { name: "Query context and syntax", exact: true })
+    .click();
   await expect(page.getByText(/Dates use YYYY-MM-DD/)).toBeVisible();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   expect(errors).toEqual([]);
@@ -285,13 +316,28 @@ test("cold local-folder history uses pinned custom grammars and local query tran
       ),
     )
     .toBe(true);
+  const searchToggle = page.getByRole("button", {
+    name: "Search JJ Log",
+    exact: true,
+  });
+  await expect(searchToggle).toHaveAttribute("aria-pressed", "false");
+  await expect(
+    page.getByRole("searchbox", { name: "Filter JJ history" }),
+  ).toHaveCount(0);
+  await searchToggle.click();
+  await expect(searchToggle).toHaveAttribute("aria-pressed", "true");
+  await expect(searchToggle).toHaveCSS("border-radius", "999px");
   const input = page.getByRole("searchbox", { name: "Filter JJ history" });
   await expect(input).toBeVisible();
-  await page.getByText("Query context and syntax", { exact: true }).click();
+  await page
+    .getByRole("button", { name: "Query context and syntax", exact: true })
+    .click();
   await expect(
     page.getByRole("textbox", { name: "Author email for mine()" }),
   ).toHaveValue("local@example.invalid");
-  await page.getByText("Query context and syntax", { exact: true }).click();
+  await page
+    .getByRole("button", { name: "Query context and syntax", exact: true })
+    .click();
   await input.fill("mutable()");
   await page.getByRole("button", { name: "Run history query" }).click();
   await expect
@@ -305,11 +351,19 @@ test("cold local-folder history uses pinned custom grammars and local query tran
     )
     .toBe(true);
   await expect(page.locator(".history-query-alias")).toBeVisible();
-  await page.getByText("Query context and syntax", { exact: true }).click();
+  await page
+    .getByRole("button", { name: "Query context and syntax", exact: true })
+    .click();
   await expect(
     page.getByText("Unavailable for this repository: files, at_operation."),
   ).toBeVisible();
   await page.getByRole("tab", { name: "Op Log", exact: true }).click();
+  const operationToggle = page.getByRole("button", {
+    name: "Search Op Log",
+    exact: true,
+  });
+  await expect(operationToggle).toHaveAttribute("aria-pressed", "false");
+  await operationToggle.click();
   const ops = page.getByRole("searchbox", { name: "Filter operation history" });
   await ops.fill("from:@-- user:steve");
   await page.getByRole("button", { name: "Run history query" }).click();

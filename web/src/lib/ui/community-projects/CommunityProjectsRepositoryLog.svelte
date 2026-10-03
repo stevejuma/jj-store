@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreHistoryQueryHeader from "../store-history-query/StoreHistoryQueryHeader.svelte";
   import StoreHistoryQuery from "../store-history-query/StoreHistoryQuery.svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import { onDestroy, untrack } from "svelte";
@@ -13,7 +14,6 @@
   import { createRepositoryLogCanvas } from "../../projects/repository-log-canvas.js";
   import CommunityProjectsRevisionGraph from "./CommunityProjectsRevisionGraph.svelte";
   import CommunityProjectsColumnAlert from "./CommunityProjectsColumnAlert.svelte";
-  import CommunityProjectsRepositoryLogHeader from "./CommunityProjectsRepositoryLogHeader.svelte";
   import CommunityProjectsRepositoryLogEmpty from "./CommunityProjectsRepositoryLogEmpty.svelte";
   import CommunityProjectsRepositoryLogDiff from "./CommunityProjectsRepositoryLogDiff.svelte";
   import CommunityProjectsRepositoryLogFiles from "./CommunityProjectsRepositoryLogFiles.svelte";
@@ -83,6 +83,11 @@
     onLoadMoreFiles?: () => void | Promise<void>;
     controller?: StoreController;
   } = $props();
+  let searchShown = $state(false);
+  const searchId = $props.id();
+  const hasSearch = $derived(
+    !!controller?.historyQuery && (page === "log" || page === "oplog"),
+  );
   const storage = untrack(() => resolveLayoutStorage(layoutStorage));
   const canvas = createRepositoryLogCanvas(
     untrack(() => page),
@@ -176,14 +181,18 @@
         </ColumnCanvas.Body>
       </ColumnCanvas.Column>{/if}
     <ColumnCanvas.Column id="revisions">
-      <CommunityProjectsRepositoryLogHeader
+      <StoreHistoryQueryHeader
         {title}
         count={graph.revisions.length}
+        enabled={hasSearch}
+        context={`${controller?.state.route.repository ?? ""}/${page}`}
+        controls={searchId}
+        bind:expanded={searchShown}
       />
       <ColumnCanvas.Body>
-        {#if controller?.historyQuery && (page === "log" || page === "oplog")}<StoreHistoryQuery
-            {controller}
-          />{/if}
+        {#if hasSearch && controller}<div id={searchId} hidden={!searchShown}>
+            {#if searchShown}<StoreHistoryQuery {controller} />{/if}
+          </div>{/if}
         {#if showInitialSkeleton}<CommunityProjectsRepositorySkeleton
             layout="graph"
             label={page === "oplog"

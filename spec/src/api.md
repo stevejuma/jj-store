@@ -1528,3 +1528,13 @@ and main window. It changes native presentation only; no HTTP, repository,
 credential, filesystem or publication contract changes. Browser glass remains an
 application-background effect. Native composition and handshake follow
 desktop.md and JST-UI-018.
+
+Settings read-only row actions copy complete displayed identities without an API
+mutation. Separate repository and operation links reuse the existing authorized
+routes and retain explicit operation pins; immutable thread revisions, manifest
+digests and companion metadata IDs remain copy-only. Navigation is disabled
+while Settings drafts or pending operations require resolution. History search
+visibility and query-context disclosure are presentation state: toggling them
+preserves the controller-owned draft, accepted query, session email and pinned
+read context. Workspace context uses the existing explicit workspace selection
+action.

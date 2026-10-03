@@ -1,13 +1,37 @@
 <script lang="ts">
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreLocalFolders from "./StoreLocalFolders.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
-  import { CopyableValue } from "@lapismd/design-core/workspace/settings";
-  import type { Model } from "../../api/client.js";
+  import * as Alert from "@lapismd/design-core/shadcn/alert";
+  import { emptyRoute } from "../../controller/global-search-presentation.js";
+  import { settingsNavigationReason } from "./settings-navigation.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreWorkspaceSettings from "./StoreWorkspaceSettings.svelte";
   import StoreGraphIndexSettings from "./StoreGraphIndexSettings.svelte";
-  let { controller }: { controller: StoreController } = $props();
+  let {
+    controller,
+    onClose,
+  }: { controller: StoreController; onClose?: () => void } = $props();
+  let navigationError = $state("");
+  const navigationBlocked = $derived(
+    settingsNavigationReason(controller.state.settings),
+  );
+  async function open(operation?: string) {
+    if (navigationBlocked || !controller.actions.openRoute) return;
+    navigationError = "";
+    try {
+      await controller.actions.openRoute({
+        ...emptyRoute(view.repository.id),
+        page: operation ? "oplog" : "files",
+        snapshotOperationId: operation ?? view.route.snapshotOperationId,
+        inspectedOperationId: operation ?? null,
+      });
+      onClose?.();
+    } catch (error) {
+      navigationError = error instanceof Error ? error.message : String(error);
+    }
+  }
   let active = $state("general");
   const view = $derived(controller.state);
   const settings = $derived(view.settings);
@@ -63,6 +87,9 @@
     { value: "advanced", label: "Advanced" },
   ]}
 >
+  {#if navigationError}<Alert.Root variant="destructive"
+      ><Alert.Description>{navigationError}</Alert.Description></Alert.Root
+    >{/if}
   <Tabs.Content value="general">
     <section
       class="store-settings__section"
@@ -70,82 +97,81 @@
     >
       <header><h2 id="repository-identity">Identity and snapshot</h2></header>
       <dl class="store-settings__rows">
-        <div>
-          <dt>Name</dt>
-          <dd>{view.repository.name}</dd>
-        </div>
-        <div>
-          <dt>Repository ID</dt>
-          <dd>
-            <CopyableValue label="Repository ID" value={view.repository.id} />
-          </dd>
-        </div>
-        <div>
-          <dt>Permission</dt>
-          <dd>{view.repository.permission ?? "Unavailable"}</dd>
-        </div>
-        <div>
-          <dt>Selected operation</dt>
-          <dd>
-            <CopyableValue
-              label="Selected operation"
-              value={view.route.snapshotOperationId}
-              emptyLabel="Choose an operation head"
-            />
-          </dd>
-        </div>
-        <div>
-          <dt>Operation heads</dt>
-          <dd class="store-settings__stack">
-            {#each view.operationHeads as head, index (head)}<CopyableValue
-                label={`Operation head ${index + 1}`}
-                value={head}
-              />{/each}
-          </dd>
-        </div>
-        <div>
-          <dt>Conflicts</dt>
-          <dd>{view.conflictCount ?? "Not loaded"}</dd>
-        </div>
-        {#if local}<div>
-            <dt>Profile</dt>
-            <dd>Git-backed JJ (SHA-1)</dd>
-          </div>
-          <div>
-            <dt>Folder generation</dt>
-            <dd>{number(local.generation)}</dd>
-          </div>
-          <div>
-            <dt>Companion metadata</dt>
-            <dd>
-              <CopyableValue
-                label="Companion metadata"
-                value={local.metadata_commit}
-              />
-            </dd>
-          </div>{/if}
-        {#if native}<div>
-            <dt>Epoch</dt>
-            <dd>
-              <CopyableValue
-                label="Epoch"
-                value={native?.epoch}
-                emptyLabel="Unavailable"
-              />
-            </dd>
-          </div>
-          <div>
-            <dt>Published position</dt>
-            <dd>{number(native?.published_seq)}</dd>
-          </div>
-          <div>
-            <dt>Manifest revision</dt>
-            <dd>{number(native?.manifest_revision)}</dd>
-          </div>
-          <div>
-            <dt>Code state version</dt>
-            <dd>{number(native?.code_state_version)}</dd>
-          </div>{/if}
+        <StoreReadOnlyRow label="Name" value={view.repository.name} />
+        <StoreReadOnlyRow
+          label="Repository ID"
+          copyLabel="Repository ID"
+          value={view.repository.id}
+          onOpen={controller.actions.openRoute ? () => void open() : undefined}
+          openLabel="Open repository"
+          openDisabled={!!navigationBlocked}
+        />
+        <StoreReadOnlyRow
+          label="Permission"
+          value={view.repository.permission}
+        />
+        <StoreReadOnlyRow
+          label="Selected operation"
+          copyLabel="Selected operation"
+          value={view.route.snapshotOperationId}
+          onOpen={controller.actions.openRoute && view.route.snapshotOperationId
+            ? () => void open(view.route.snapshotOperationId!)
+            : undefined}
+          openLabel="Open selected operation"
+          openDisabled={!!navigationBlocked}
+          emptyLabel="Choose an operation head"
+        />
+        {#each view.operationHeads as head, index (head)}
+          <StoreReadOnlyRow
+            label={`Operation head ${index + 1}`}
+            value={head}
+            onOpen={controller.actions.openRoute
+              ? () => void open(head)
+              : undefined}
+            openLabel={`Open operation head ${index + 1}`}
+            openDisabled={!!navigationBlocked}
+          />
+        {/each}
+        <StoreReadOnlyRow
+          label="Conflicts"
+          value={view.conflictCount}
+          emptyLabel="Not loaded"
+        />
+        {#if local}<StoreReadOnlyRow
+            label="Profile"
+            value="Git-backed JJ (SHA-1)"
+          />
+          <StoreReadOnlyRow
+            label="Folder generation"
+            value={local.generation}
+            display={number(local.generation)}
+          />
+          <StoreReadOnlyRow
+            label="Companion metadata"
+            copyLabel="Companion metadata"
+            value={local.metadata_commit}
+          />{/if}
+        {#if native}<StoreReadOnlyRow
+            label="Epoch"
+            copyLabel="Epoch"
+            value={native?.epoch}
+            emptyLabel="Unavailable"
+          />
+          <StoreReadOnlyRow
+            label="Published position"
+            value={native?.published_seq}
+            display={number(native?.published_seq)}
+          />
+          <StoreReadOnlyRow
+            label="Manifest revision"
+            value={native?.manifest_revision}
+            display={number(native?.manifest_revision)}
+          />
+          <StoreReadOnlyRow
+            label="Code state version"
+            value={native?.code_state_version}
+            display={number(native?.code_state_version)}
+          />{/if}
       </dl>
     </section>
   </Tabs.Content>
@@ -172,42 +198,38 @@
       >
         <header><h2 id="repository-capabilities">Capabilities</h2></header>
         <dl class="store-settings__rows">
-          <div>
-            <dt>Native profile</dt>
-            <dd>
-              {"native_profile" in capabilities
-                ? capabilities.native_profile
-                : capabilities.profile}
-            </dd>
-          </div>
-          <div>
-            <dt>Authentication</dt>
-            <dd>
-              {"authentication" in capabilities
-                ? capabilities.authentication.replaceAll("_", " ")
-                : "Local trusted"}
-            </dd>
-          </div>
-          <div>
-            <dt>Supported APIs</dt>
-            <dd>{featureList(capabilities)}</dd>
-          </div>
-          <div>
-            <dt>Typed mutations</dt>
-            <dd>{words(capabilities.typed_mutations)}</dd>
-          </div>
-          <div>
-            <dt>Conflict actions</dt>
-            <dd>{words(capabilities.conflict_resolution_actions)}</dd>
-          </div>
-          {#if "mutation_request_bytes" in capabilities}<div>
-              <dt>Mutation request limit</dt>
-              <dd>{number(capabilities.mutation_request_bytes)} bytes</dd>
-            </div>{/if}
-          <div>
-            <dt>Conflict upload limit</dt>
-            <dd>{number(capabilities.conflict_upload_bytes)} bytes</dd>
-          </div>
+          <StoreReadOnlyRow
+            label="Native profile"
+            value={"native_profile" in capabilities
+              ? capabilities.native_profile
+              : capabilities.profile}
+          />
+          <StoreReadOnlyRow
+            label="Authentication"
+            value={"authentication" in capabilities
+              ? capabilities.authentication.replaceAll("_", " ")
+              : "Local trusted"}
+          />
+          <StoreReadOnlyRow
+            label="Supported APIs"
+            value={featureList(capabilities)}
+          />
+          <StoreReadOnlyRow
+            label="Typed mutations"
+            value={words(capabilities.typed_mutations)}
+          />
+          <StoreReadOnlyRow
+            label="Conflict actions"
+            value={words(capabilities.conflict_resolution_actions)}
+          />
+          {#if "mutation_request_bytes" in capabilities}<StoreReadOnlyRow
+              label="Mutation request limit"
+              value={`${number(capabilities.mutation_request_bytes)} bytes`}
+            />{/if}
+          <StoreReadOnlyRow
+            label="Conflict upload limit"
+            value={`${number(capabilities.conflict_upload_bytes)} bytes`}
+          />
         </dl>
       </section>
       {#if "limits" in capabilities}<section
@@ -216,50 +238,30 @@
         >
           <header><h2 id="repository-limits">Read and event limits</h2></header>
           <dl class="store-settings__rows">
-            <div>
-              <dt>Requests / workers</dt>
-              <dd>
-                {number(capabilities.limits.requests)} / {number(
-                  capabilities.limits.workers,
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>Deadline</dt>
-              <dd>{number(capabilities.limits.deadline_millis)} ms</dd>
-            </div>
-            <div>
-              <dt>Page / index commits</dt>
-              <dd>
-                {number(capabilities.limits.page)} / {number(
-                  capabilities.limits.index_commits,
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>JSON / file limits</dt>
-              <dd>
-                {number(capabilities.limits.json_bytes)} / {number(
-                  capabilities.limits.file_bytes,
-                )} bytes
-              </dd>
-            </div>
-            <div>
-              <dt>Event streams / replay</dt>
-              <dd>
-                {number(capabilities.event_limits.streams)} / {number(
-                  capabilities.event_limits.replay_window,
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>Event page / polling</dt>
-              <dd>
-                {number(capabilities.event_limits.page)} / {number(
-                  capabilities.event_limits.poll_millis,
-                )} ms
-              </dd>
-            </div>
+            <StoreReadOnlyRow
+              label="Requests / workers"
+              value={`${number(capabilities.limits.requests)} / ${number(capabilities.limits.workers)}`}
+            />
+            <StoreReadOnlyRow
+              label="Deadline"
+              value={`${number(capabilities.limits.deadline_millis)} ms`}
+            />
+            <StoreReadOnlyRow
+              label="Page / index commits"
+              value={`${number(capabilities.limits.page)} / ${number(capabilities.limits.index_commits)}`}
+            />
+            <StoreReadOnlyRow
+              label="JSON / file limits"
+              value={`${number(capabilities.limits.json_bytes)} / ${number(capabilities.limits.file_bytes)} bytes`}
+            />
+            <StoreReadOnlyRow
+              label="Event streams / replay"
+              value={`${number(capabilities.event_limits.streams)} / ${number(capabilities.event_limits.replay_window)}`}
+            />
+            <StoreReadOnlyRow
+              label="Event page / polling"
+              value={`${number(capabilities.event_limits.page)} / ${number(capabilities.event_limits.poll_millis)} ms`}
+            />
           </dl>
         </section>{/if}
     {/if}

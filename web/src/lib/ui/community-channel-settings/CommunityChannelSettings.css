@@ -180,3 +180,7 @@
   color: color-mix(in srgb, var(--destructive) 70%, var(--foreground));
   background: color-mix(in srgb, var(--destructive) 8%, var(--background));
 }
+
+.lc-channel-settings__details-card > .store-readonly-row:not(:last-child) {
+  border-block-end: 1px solid var(--border);
+}

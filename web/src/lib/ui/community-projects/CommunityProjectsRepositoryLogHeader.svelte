@@ -1,7 +1,12 @@
 <script lang="ts">
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
 
-  let { title, count }: { title: string; count: number } = $props();
+  import type { Snippet } from "svelte";
+  let {
+    title,
+    count,
+    actions,
+  }: { title: string; count: number; actions?: Snippet } = $props();
 </script>
 
 <ColumnCanvas.Header>
@@ -10,5 +15,16 @@
     <ColumnCanvas.Count>{count}</ColumnCanvas.Count>
   </div>
 
-  <ColumnCanvas.Toggle columnTitle={title} />
+  <div class="community-projects-log-header__actions">
+    {#if actions}{@render actions()}{/if}
+    <ColumnCanvas.Toggle columnTitle={title} />
+  </div>
 </ColumnCanvas.Header>
+
+<style>
+  .community-projects-log-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+</style>

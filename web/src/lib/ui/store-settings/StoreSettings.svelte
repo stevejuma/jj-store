@@ -15,9 +15,11 @@
   let {
     controller,
     section,
+    onClose,
   }: {
     controller: StoreController;
     section: StoreSettingsSection;
+    onClose?: () => void;
   } = $props();
   onMount(() => {
     const timer = setInterval(() => {
@@ -43,7 +45,7 @@
         ><StoreServiceSettings {controller} /></StoreSettingsPage
       >
     {:else if section === "repository"}
-      <StoreRepositorySettings {controller} />
+      <StoreRepositorySettings {controller} {onClose} />
     {:else if section === "storage"}
       <StoreStorageSettings
         settings={controller.state.settings.storageSettings}

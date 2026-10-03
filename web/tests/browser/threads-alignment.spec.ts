@@ -11,6 +11,16 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
 }) => {
   await page.setViewportSize({ width: 1800, height: 1000 });
   await page.addInitScript(() => {
+    const copies: string[] = [];
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async (value: string) => {
+          copies.push(value);
+        },
+        readText: async () => JSON.stringify(copies),
+      },
+    });
     const key = "jj-store/layout/v1/shell";
     if (!localStorage.getItem(key))
       localStorage.setItem(
@@ -181,6 +191,56 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
   await expect(page.getByRole("menu")).toHaveCount(0);
   const settings = page.getByRole("complementary", { name: "Thread settings" });
   await expect(settings).toBeVisible();
+  const copiedValues: string[] = [];
+  for (const label of ["Thread ID", "Thread revision"]) {
+    const copy = settings.getByRole("button", {
+      name: new RegExp(`^Copy full ${label}:`),
+    });
+    const accessibleName = (await copy.getAttribute("aria-label"))!;
+    const value = accessibleName.split(": ")[1];
+    const row = copy.locator(
+      'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " store-readonly-row ")][1]',
+    );
+    for (const area of ["dt", ".store-readonly-row__value"]) {
+      await row.scrollIntoViewIfNeeded();
+      const box = (await row.locator(area).boundingBox())!;
+      const point = { x: box.x + 8, y: box.y + box.height / 2 };
+      await page.mouse.move(point.x, point.y);
+      await page.mouse.down();
+      try {
+        // The stretched copy target must cover the row throughout a held press.
+        await expect
+          .poll(() =>
+            page.evaluate(
+              ({ x, y }) =>
+                document
+                  .elementFromPoint(x, y)
+                  ?.closest("button")
+                  ?.getAttribute("aria-label"),
+              point,
+            ),
+          )
+          .toBe(accessibleName);
+      } finally {
+        await page.mouse.up();
+      }
+      await expect(copy).toHaveAttribute("data-copied", "true");
+      await expect(copy.locator("svg circle")).toBeVisible();
+      copiedValues.push(value);
+      expect(
+        JSON.parse(await page.evaluate(() => navigator.clipboard.readText())),
+      ).toEqual(copiedValues);
+    }
+  }
+  await settings
+    .getByRole("button", { name: "Open thread conversation" })
+    .click();
+  await expect(settings).toBeHidden();
+  expect(
+    JSON.parse(await page.evaluate(() => navigator.clipboard.readText())),
+  ).toEqual(copiedValues);
+  await menu.click();
+  await expect(settings).toBeVisible();
   await expect(settings).toHaveClass(
     /community-application__standard-right-sidebar/,
   );
@@ -217,8 +277,8 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
         toolbarBounds.height,
     ),
   ).toBeLessThan(1);
-  await expect(paneHeader).toHaveCSS("border-bottom-width", "1px");
-  await expect(toolbar).toHaveCSS("border-bottom-width", "1px");
+  await expect(paneHeader).toHaveCSS("border-bottom-width", "0px");
+  await expect(toolbar).toHaveCSS("border-bottom-width", "0px");
   const bounds = (await settings.boundingBox())!;
   const composition = page.locator(".community-app-shell__surface");
   const compositionBounds = (await composition.boundingBox())!;

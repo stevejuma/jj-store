@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { settingsNavigationReason } from "./settings-navigation.js";
   import type { StoreController } from "../../controller/contracts.js";
   import { storeErrorMessage } from "../../controller/store-error.js";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
@@ -22,25 +23,10 @@
   const reason = $derived(
     disabled
       ? "Finish the current edit before changing repositories."
-      : settings.searchSettings.dirty
-        ? "Save or cancel your Search changes before changing repositories."
-        : settings.workspacePath
-          ? "Link or cancel your folder draft before changing repositories."
-          : settings.storageSettings.pending
-            ? "Resolve the pending Storage request before changing repositories."
-            : settings.workspaceLinking ||
-                settings.workspacePicking ||
-                settings.searchSettings.changing ||
-                settings.storageSettings.changing ||
-                settings.syncSettings.changing ||
-                settings.indexPreparation === "loading" ||
-                ["capturing", "waiting"].includes(
-                  settings.syncSettings.wait.state,
-                )
-              ? "Wait for the current Settings action to finish before changing repositories."
-              : switching || view.status.connection === "connecting"
-                ? "Opening repository…"
-                : "",
+      : settingsNavigationReason(settings) ||
+          (switching || view.status.connection === "connecting"
+            ? "Opening repository…"
+            : ""),
   );
   $effect(() => {
     selection = current;

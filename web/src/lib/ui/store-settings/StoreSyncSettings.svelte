@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import PauseIcon from "@lucide/svelte/icons/pause";
   import PlayIcon from "@lucide/svelte/icons/play";
@@ -10,7 +11,6 @@
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import type {
     SyncSettings,
     SyncAction,
@@ -75,10 +75,10 @@
           </StoreSettingsNotice>{/if}
         {#if settings.value && !settings.value.configured}
           <dl class="store-settings__rows">
-            <div>
-              <dt>Upstream</dt>
-              <dd>No upstream is configured. Repository work remains local.</dd>
-            </div>
+            <StoreReadOnlyRow
+              label="Upstream"
+              value="No upstream is configured. Repository work remains local."
+            />
           </dl>
           <StoreSettingsEmpty
             Icon={CloudOffIcon}
@@ -87,22 +87,20 @@
           />
         {:else if worker}
           <dl class="store-settings__rows">
-            <div>
-              <dt>Worker</dt>
-              <dd>{words(worker.phase)}</dd>
-            </div>
-            <div>
-              <dt>Local repository</dt>
-              <dd>{worker.local_ready ? "Ready" : "Unavailable"}</dd>
-            </div>
-            <div>
-              <dt>Offline access</dt>
-              <dd>{worker.offline_ready ? "Ready" : "Unavailable"}</dd>
-            </div>
-            <div>
-              <dt>Operation heads</dt>
-              <dd>{number(worker.operation_heads)}</dd>
-            </div>
+            <StoreReadOnlyRow label="Worker" value={words(worker.phase)} />
+            <StoreReadOnlyRow
+              label="Local repository"
+              value={worker.local_ready ? "Ready" : "Unavailable"}
+            />
+            <StoreReadOnlyRow
+              label="Offline access"
+              value={worker.offline_ready ? "Ready" : "Unavailable"}
+            />
+            <StoreReadOnlyRow
+              label="Operation heads"
+              value={worker.operation_heads}
+              display={number(worker.operation_heads)}
+            />
             <div>
               <dt>Reconciliation</dt>
               <dd>
@@ -167,18 +165,21 @@
           </header>
           <StoreSyncWait wait={settings.wait} {onWait} {onStopWait} />
           <dl class="store-settings__rows">
-            <div>
-              <dt>Local pending positions</dt>
-              <dd>{number(worker.local_pending_positions)}</dd>
-            </div>
-            <div>
-              <dt>Peer pending positions</dt>
-              <dd>{number(worker.peer_pending_positions)}</dd>
-            </div>
-            <div>
-              <dt>Checkpoint revision</dt>
-              <dd>{number(worker.checkpoint_revision)}</dd>
-            </div>
+            <StoreReadOnlyRow
+              label="Local pending positions"
+              value={worker.local_pending_positions}
+              display={number(worker.local_pending_positions)}
+            />
+            <StoreReadOnlyRow
+              label="Peer pending positions"
+              value={worker.peer_pending_positions}
+              display={number(worker.peer_pending_positions)}
+            />
+            <StoreReadOnlyRow
+              label="Checkpoint revision"
+              value={worker.checkpoint_revision}
+              display={number(worker.checkpoint_revision)}
+            />
             {#each [{ label: "Push", direction: worker.push }, { label: "Pull", direction: worker.pull }] as { label, direction }}
               <div>
                 <dt>{label} health</dt>
@@ -200,45 +201,29 @@
                   : "Not configured"}
               </dd>
             </div>
-            <div>
-              <dt>Search repository / indexed position</dt>
-              <dd>
-                {number(worker.search.repository_position)} / {number(
-                  worker.search.indexed_position,
-                )}
-              </dd>
-            </div>
+            <StoreReadOnlyRow
+              label="Search repository / indexed position"
+              value={`${number(worker.search.repository_position)} / ${number(worker.search.indexed_position)}`}
+            />
           </dl>
           {#each [{ label: "Local frontier", frontier: worker.local_frontier }, { label: "Peer frontier", frontier: worker.peer_frontier }, { label: "Peer acknowledgement", frontier: worker.pushed }, { label: "Pulled frontier", frontier: worker.pulled }] as { label, frontier }}
             <h3>{label}</h3>
             {#if frontier}
               <dl class="store-settings__rows">
-                <div>
-                  <dt>Replica</dt>
-                  <dd>
-                    <CopyableValue
-                      label={`${label} replica`}
-                      value={frontier.replica}
-                    />
-                  </dd>
-                </div>
-                <div>
-                  <dt>Log epoch</dt>
-                  <dd>
-                    <CopyableValue
-                      label={`${label} epoch`}
-                      value={frontier.log_epoch}
-                    />
-                  </dd>
-                </div>
-                <div>
-                  <dt>Through / observed upper bound</dt>
-                  <dd>
-                    {number(frontier.through)} / {number(
-                      frontier.observed_upper_bound,
-                    )}
-                  </dd>
-                </div>
+                <StoreReadOnlyRow
+                  label="Replica"
+                  copyLabel={`${label} replica`}
+                  value={frontier.replica}
+                />
+                <StoreReadOnlyRow
+                  label="Log epoch"
+                  copyLabel={`${label} epoch`}
+                  value={frontier.log_epoch}
+                />
+                <StoreReadOnlyRow
+                  label="Through / observed upper bound"
+                  value={`${number(frontier.through)} / ${number(frontier.observed_upper_bound)}`}
+                />
               </dl>
             {:else}<p>Unavailable</p>{/if}
           {/each}

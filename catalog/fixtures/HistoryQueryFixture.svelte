@@ -126,7 +126,15 @@
         return history.route;
       },
       bookmarks: [],
-      workingCopies: [],
+      workingCopies: [
+        {
+          workspace: "default",
+          changeId: "12".repeat(16),
+          message: "Workspace commit",
+        },
+      ],
+      repository: { name: "Query fixture" },
+      status: data.status,
     },
     actions: {
       selectWorkspace: async (workspace: string | null) => {

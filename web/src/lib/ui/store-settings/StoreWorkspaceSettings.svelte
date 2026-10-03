@@ -108,7 +108,8 @@
               >
             </Field.Content>
             <ButtonGroup.Root
-              class="store-settings__field-action store-settings__input"
+              class="store-settings__field-action"
+              style="width: 100%"
               aria-label="Choose local folder"
             >
               <Input
