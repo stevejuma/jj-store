@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { resolveDiffLanguage } from "@lapismd/design-core/diff";
   import { DialogFrame } from "@lapismd/design-core/forms/dialog";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
@@ -229,26 +230,33 @@
           </Alert.Description>
         </Alert.Root>
       {:else if mutation.status === "committed"}
-        <Alert.Root>
-          <Alert.Title>Repository updated</Alert.Title>
-          <Alert.Description>
-            The committed receipt was selected and the displayed snapshot was
-            refreshed.
-          </Alert.Description>
-        </Alert.Root>
+        <StoreNotice
+          noticeKey={`mutation-result:${mutation.requestId ?? "new"}`}
+          title="Repository updated"
+          message="The committed receipt was selected and the displayed snapshot was refreshed."
+          severity="info"
+          lifetime="timed"
+        />
       {:else if mutation.status === "failed"}
-        <Alert.Root variant="destructive">
-          <Alert.Title>File update failed</Alert.Title>
-          <Alert.Description>{mutation.error}</Alert.Description>
-        </Alert.Root>
+        <StoreNotice
+          noticeKey={`mutation-failure:${mutation.requestId ?? "new"}`}
+          title="File update failed"
+          message={mutation.error}
+          severity="error"
+          lifetime="dismiss"
+        />
       {/if}
     {/if}
 
-    {#if validation || (mutation.status === "failed" && !mutation.result)}<p
-        class="store-file-editor__error"
-        role="alert"
-      >
-        {validation || mutation.error}
+    <StoreNotice
+      noticeKey={`mutation-preview:${mutation.requestId ?? "new"}`}
+      title="File preview failed"
+      message={mutation.status === "failed" && !mutation.result
+        ? mutation.error
+        : ""}
+    />
+    {#if validation}<p class="store-file-editor__error" role="alert">
+        {validation}
       </p>{/if}
 
     {#snippet footer()}

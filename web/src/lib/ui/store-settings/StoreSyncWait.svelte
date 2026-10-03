@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
@@ -67,6 +67,9 @@
     {/each}
   </dl>
 {/if}
-{#if wait.error}<Alert.Root variant="destructive"
-    ><Alert.Description>{wait.error}</Alert.Description></Alert.Root
-  >{/if}
+<StoreNotice
+  noticeKey="sync-wait"
+  title="Sync wait failed"
+  message={wait.error}
+  pending={wait.state === "capturing" || wait.state === "waiting"}
+/>

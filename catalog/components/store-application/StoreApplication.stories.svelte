@@ -264,7 +264,9 @@
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
     await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
     await expect(
-      canvas.getByText("Search status could not be loaded."),
+      within(canvasElement.ownerDocument.body).getByText(
+        "Search status could not be loaded.",
+      ),
     ).toBeVisible();
     await expect(
       canvas.getByRole("button", { name: "Refresh status" }),

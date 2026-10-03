@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import GitMergeIcon from "@lucide/svelte/icons/git-merge";
@@ -70,9 +70,12 @@
     >
   </div>
 {/if}
-{#if error}<Alert.Root variant="destructive"
-    ><Alert.Description>{error}</Alert.Description></Alert.Root
-  >{/if}
+<StoreNotice
+  noticeKey="reconciliation"
+  title="Reconciliation unavailable"
+  message={error}
+  pending={loading}
+/>
 <Dialog.Root bind:open onOpenChange={changed}>
   <StoreMutationDialog
     {controller}

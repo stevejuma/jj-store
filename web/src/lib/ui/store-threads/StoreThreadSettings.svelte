@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Label } from "@lapismd/design-core/shadcn/label";
@@ -108,7 +109,12 @@
         bind:value={title}
         required
         maxlength={1024}
-      />{#if error}<p role="alert">{error}</p>{/if}<Dialog.Footer
+      /><StoreNotice
+        noticeKey="thread-settings"
+        title="Could not update thread"
+        message={error}
+        pending={false}
+      /><Dialog.Footer
         ><Button type="submit" disabled={disabled || !title.trim()}
           >Save name</Button
         ></Dialog.Footer

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import { storeErrorMessage } from "../../controller/store-error.js";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
@@ -92,7 +93,12 @@
         <Tooltip.Content>{reason}</Tooltip.Content>
       </Tooltip.Root>
     </Tooltip.Provider>
-    {#if error}<span role="alert">{error}</span>{/if}
+    <StoreNotice
+      noticeKey="settings-repository"
+      title="Could not open repository"
+      message={error}
+      pending={switching}
+    />
   </div>
 {/if}
 
@@ -105,9 +111,5 @@
   }
   .store-settings-repository__control {
     display: block;
-  }
-  [role="alert"] {
-    color: var(--destructive);
-    font-size: var(--community-text-secondary);
   }
 </style>

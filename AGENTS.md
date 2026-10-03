@@ -158,6 +158,26 @@ deployment topologies, shared release qualification, controller dispatch,
 backup/restore, stock-JJ filesystem mirroring, continuous Git mirroring, Nostr
 export, other harnesses and CRDT semantics remain deferred.
 
+## Application feedback
+
+Prefer application-owned Design Core toasts for transient operational errors,
+warnings and informational outcomes. Publish through the shared notification
+service with stable identities and explicit lifetime policies. Clear resolved or
+obsolete conditions, retain acknowledgement-required notices until dismissed,
+and do not replay dismissed conditions during refresh or navigation. Keep field
+validation, unavailable-content explanations, and contextual operation or
+recovery status beside their controls. Do not duplicate feedback inline and in a
+toast. Severity must be distinguishable beyond color, and dismissal must
+preserve drafts and pending request identities. Notification state is
+session-only; OS delivery and persistent notification history remain separate
+work.
+
+Use `StoreNotice` for feedback derived from view state and the service under
+`web/src/lib/notifications` for explicit outcomes. Choose `condition` for
+recoverable state, `dismiss` for acknowledgement, and `timed` for routine
+information. Loading or retrying is not recovery; preserve dismissal until a
+successful state change or a distinct request establishes a new episode.
+
 ## Local execution
 
 For UI work, use `pnpm dev:ui`: it reuses the existing native executable and

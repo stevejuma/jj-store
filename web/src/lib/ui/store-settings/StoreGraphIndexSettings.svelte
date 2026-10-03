@@ -1,6 +1,6 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import NetworkIcon from "@lucide/svelte/icons/network";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
@@ -59,10 +59,10 @@
         <dd><span role="status">Graph index preparation completed.</span></dd>
       </div>{/if}
   </dl>
-  {#if settings.indexPreparationError}
-    <Alert.Root variant="destructive">
-      <Alert.Title>Graph index preparation failed</Alert.Title>
-      <Alert.Description>{settings.indexPreparationError}</Alert.Description>
-    </Alert.Root>
-  {/if}
+  <StoreNotice
+    noticeKey="graph-index"
+    title="Graph index preparation failed"
+    message={settings.indexPreparationError}
+    pending={preparing}
+  />
 </section>

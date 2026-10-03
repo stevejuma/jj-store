@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { untrack } from "svelte";
   import { projectsViewKey } from "../../controller/projects-view-cache.js";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
@@ -119,7 +120,12 @@
     bounded={tab === "agents"}
     bind:viewportRef={element}
   >
-    {#if hub.error}<p role="alert">{hub.error}</p>{/if}
+    <StoreNotice
+      noticeKey="projects"
+      title="Projects request failed"
+      message={hub.error}
+      pending={hub.loading}
+    />
     {#if work}<StoreWorkStatus {work} />{/if}
     {#each hub.commands.filter((command) => command.work !== work) as command (command.home)}
       <section

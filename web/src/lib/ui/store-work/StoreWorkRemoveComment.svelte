@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreWorkStatus from "./StoreWorkStatus.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as AlertDialog from "@lapismd/design-core/shadcn/alert-dialog";
   import type { WorkController } from "../../controller/work-types.js";
@@ -41,7 +42,7 @@
         remain.</AlertDialog.Description
       >
     </AlertDialog.Header>
-    {#if view.error}<p role="alert">{view.error}</p>{/if}
+    <StoreWorkStatus {work} />
     <AlertDialog.Footer>
       <Button
         variant="outline"

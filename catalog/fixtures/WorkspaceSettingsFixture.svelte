@@ -29,9 +29,10 @@
   async function link() {
     settings.workspaceLinking = true;
     settings.workspaceLinksError = "";
+    settings.workspaceValidation = "";
     await Promise.resolve();
     if (settings.workspacePath === "/wrong") {
-      settings.workspaceLinksError =
+      settings.workspaceValidation =
         "Invalid workspace binding. Check the folder path.";
     } else {
       settings.workspaceLinks!.links.push({
@@ -68,6 +69,7 @@
       }}
       onPath={(path) => {
         settings.workspacePath = path;
+        settings.workspaceValidation = "";
         if (!path) settings.workspaceLinksError = "";
       }}
       onLink={link}

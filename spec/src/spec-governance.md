@@ -732,3 +732,10 @@ acceptance includes active window movement and resize observations, with manual
 evidence retained when macOS screen-sharing UI obscures the traffic lights.
 Focused browser and host checks do not qualify visual baselines or public
 distribution.
+
+The tracked application-feedback guidance prefers scoped Design Core toasts for
+transient operational feedback. JST-UI-019 owns lifecycle, accessibility and
+contextual exceptions; notification changes retain focused UI and cold browser
+evidence without rerunning unrelated Rust/storage qualification. Pending shared
+package release and registry-only acceptance remain distinct from local source
+validation.

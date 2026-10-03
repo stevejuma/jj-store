@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import SearchXIcon from "@lucide/svelte/icons/search-x";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
@@ -8,7 +9,6 @@
   import RotateCwIcon from "@lucide/svelte/icons/rotate-cw";
   import DatabaseIcon from "@lucide/svelte/icons/database";
   import * as Field from "@lapismd/design-core/shadcn/field";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Textarea } from "@lapismd/design-core/shadcn/textarea";
@@ -267,12 +267,12 @@
     {:else if settings.changing}<StoreSettingsNotice
         >Loading search settings…</StoreSettingsNotice
       >{/if}
-    {#if settings.error || settings.value?.error}<Alert.Root
-        variant="destructive"
-        ><Alert.Title>Search settings need attention</Alert.Title
-        ><Alert.Description
-          >{settings.error || settings.value?.error}</Alert.Description
-        ></Alert.Root
-      >{/if}
+    {#if settings.validation}<p role="alert">{settings.validation}</p>{/if}
+    <StoreNotice
+      noticeKey="search-settings"
+      title="Search settings need attention"
+      message={settings.error || settings.value?.error}
+      pending={settings.changing}
+    />
   {/if}
 </section>

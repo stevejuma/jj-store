@@ -46,12 +46,12 @@ two-command creation. Reaction hover/focus tooltips show counts and loaded
 authorized actors, exclude conflicts and group only values represented by the
 selected message revision's displayed chip. Pending/error UI is scoped to the
 exact reaction target in message metadata, including replies; unknown outcomes
-keep the same request ID and status/retry semantics, while non-reaction failures
-retain page feedback. The metadata row shows a spinner while that target's
-command is in flight or awaiting confirmation, after timestamp and reply
-information. Compact retry controls retain the existing request/status
-semantics; error details remain available from the failure indicator without
-changing message content.
+keep the same request ID and status/retry semantics, while non-reaction
+operational failures use the scoped application notification service. The
+metadata row shows a spinner while that target's command is in flight or
+awaiting confirmation, after timestamp and reply information. Compact retry
+controls retain the existing request/status semantics; error details remain
+available from the failure indicator without changing message content.
 
 The rebased HTTP inventory retains all local workspace, Search and Sync
 management routes alongside Thread, Reaction and retained-image routes. The
@@ -1520,3 +1520,8 @@ and main window. It changes native presentation only; no HTTP, repository,
 credential, filesystem or publication contract changes. Browser glass remains an
 application-background effect. Native composition and handshake follow
 desktop.md and JST-UI-018.
+
+Application feedback changes presentation only. Toast dismissal never resets
+pending mutation identities, drops a draft or retries a command. Obsolete and
+cancelled reads remain silent, session changes clear protected notices, and
+confirmed state recovery removes the matching condition notice.

@@ -87,10 +87,17 @@
     await userEvent.click(c.getByRole("button", { name: "Pause sync" }));
     await expect(c.getByRole("button", { name: "Pause sync" })).toBeDisabled();
     await expect(
-      c.getByText(/Sync status will be retried automatically/),
+      within(canvasElement.ownerDocument.body).getByText(
+        /Sync status will be retried automatically/,
+      ),
     ).toBeVisible();
     await userEvent.click(c.getByRole("button", { name: "Refresh sync" }));
     await expect(c.getByRole("button", { name: "Pause sync" })).toBeEnabled();
+    await expect(
+      within(canvasElement.ownerDocument.body).queryByText(
+        /Sync status will be retried automatically/,
+      ),
+    ).not.toBeInTheDocument();
   }}
 />
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { onDestroy, untrack } from "svelte";
   import { ApiError } from "../../api/client.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -135,7 +136,13 @@
     />
   {/if}
   {#if error}<p class="store-file-editor__error" role="alert">{error}</p>{/if}
-  {#if message}<p role="status">{message}</p>{/if}
+  <StoreNotice
+    noticeKey={`working-file:${file.selection.path}`}
+    title="Working file saved"
+    {message}
+    severity="info"
+    lifetime="timed"
+  />
   <footer class="store-file-editor__actions">
     <Button
       type="button"

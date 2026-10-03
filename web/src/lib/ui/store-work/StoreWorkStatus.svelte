@@ -1,12 +1,28 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { WorkController } from "../../controller/work-types.js";
   let { work }: { work: WorkController } = $props();
 </script>
 
-{#if work.state.error}<p role="alert">{work.state.error}</p>{/if}
-{#if work.state.message}<p role="status" aria-label="Work command status">
-    {work.state.message}
+<StoreNotice
+  noticeKey={`work:${work.state.project?.id ?? "directory"}:${work.state.task?.id ?? ""}`}
+  title="Task command failed"
+  message={work.state.pending ? "" : work.state.error}
+  pending={work.state.loading || work.state.writing}
+/>
+<StoreNotice
+  noticeKey="work-result"
+  title="Task command completed"
+  message={work.state.pending ? "" : work.state.message}
+  severity="info"
+  lifetime="timed"
+/>
+{#if work.state.pending && (work.state.error || work.state.message)}<p
+    role="status"
+    aria-label="Work command status"
+  >
+    {work.state.error || work.state.message}
   </p>{/if}
 {#if work.state.pending}<div class="store-work__notice">
     <p>

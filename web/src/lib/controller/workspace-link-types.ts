@@ -16,6 +16,7 @@ export interface WorkspaceLinkSettings {
   workspaceLinks: Model<"WorkspaceLinks"> | null;
   workspaceLinksState: StoreLoadStatus;
   workspaceLinksError: string;
+  workspaceValidation?: string;
   workspacePath: string;
   workspaceLinking: boolean;
   workspacePicking: boolean;
@@ -26,6 +27,7 @@ export function emptyWorkspaceLinks(): WorkspaceLinkSettings {
     workspaceLinks: null,
     workspaceLinksState: "idle",
     workspaceLinksError: "",
+    workspaceValidation: "",
     workspacePath: "",
     workspaceLinking: false,
     workspacePicking: false,

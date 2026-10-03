@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
@@ -58,7 +59,17 @@
       placeholder="Write a review…"
       ariaLabel="Repository review message"
     />
-    {#if view.reviewActionMessage}<p role="status">
+    <StoreNotice
+      noticeKey="repository-review"
+      title="Review update"
+      message={view.reviewActionRequestId ? "" : view.reviewActionMessage}
+      severity={view.status.reviewAction === "ready" ? "info" : "error"}
+      lifetime={view.status.reviewAction === "ready" ? "timed" : "condition"}
+      pending={view.status.reviewAction === "refreshing"}
+    />
+    {#if view.reviewActionRequestId && view.reviewActionMessage}<p
+        role="status"
+      >
         {view.reviewActionMessage}
       </p>{/if}
     {#if view.reviewActionRequestId}<Button
