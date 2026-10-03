@@ -1479,3 +1479,8 @@ characters. Missing, malformed or unavailable configuration omits the hint;
 authenticated native serving MUST omit host identity. This additive metadata
 never changes request identity, admission, operation pins or explicit query
 context. Multiline query whitespace retains the existing 4096-byte bound.
+
+A client awaiting query metadata MUST discard the waiting submission when its
+query scope is invalidated, including view disposal. Metadata completion grants
+no authority to resume a canceled query; explicit operation/admission contracts
+remain unchanged.

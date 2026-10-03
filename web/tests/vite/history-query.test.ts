@@ -231,3 +231,33 @@ test("failed or disconnected metadata can retry and disposed metadata cannot app
   await pending;
   expect(delayed.query.email).toBe("");
 });
+
+test("disposing while identity metadata loads prevents the waiting query from running", async () => {
+  let resolve!: (
+    value: NonNullable<
+      Awaited<ReturnType<NonNullable<StoreDataSource["queryInfo"]>>>
+    >,
+  ) => void;
+  const f = fixture(
+    () =>
+      new Promise((done) => {
+        resolve = done;
+      }),
+  );
+  f.query.setDraft("mine()");
+  const waiting = f.query.run();
+  f.query.dispose();
+  resolve({
+    version: 1,
+    jj_version: "0.45.1",
+    max_query_bytes: 4096,
+    callables: [],
+    aliases: [],
+    operators: [],
+    operation_fields: [],
+    unsupported: [],
+    default_user_email: "host@example.invalid",
+  });
+  await waiting;
+  expect(f.graph).not.toHaveBeenCalled();
+});

@@ -1505,10 +1505,10 @@ debounced and uses the displayed operation, explicit workspace, session-only
 author email and frozen time context. Only successful text/time is stored in the
 URL; page switches clear incompatible syntax. Invalid drafts retain the last
 successful graph and its cursor, superseded requests are canceled, and
-navigation/disconnection suppress late results. Clearing restores the normal
-graph scope; queries and pagination must never fabricate edges across
-filtered-out rows. Cold browser acceptance MUST retain strict CSP. Visual
-baselines remain pending.
+navigation, disconnection and disposal suppress waiting submissions and late
+results. Clearing restores the normal graph scope; queries and pagination must
+never fabricate edges across filtered-out rows. Cold browser acceptance MUST
+retain strict CSP. Visual baselines remain pending.
 
 Automatic current-head refresh MUST retain the unapplied history draft and its
 diagnostic while reloading the accepted query with its frozen time. Advancing

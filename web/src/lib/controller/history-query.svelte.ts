@@ -127,9 +127,11 @@ export function createHistoryQuery(context: {
     )
       return;
     const identity = scope,
+      sequenceBeforeMetadata = sequence,
       textBeforeMetadata = draft.trim();
     if (context.source().queryInfo) await prepare();
     if (
+      sequenceBeforeMetadata !== sequence ||
       identity !== scope ||
       draft.trim() !== textBeforeMetadata ||
       context.data.status.connection !== "connected"
