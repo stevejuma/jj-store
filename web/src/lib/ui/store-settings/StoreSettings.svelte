@@ -8,6 +8,7 @@
   import StoreStorageSettings from "./StoreStorageSettings.svelte";
   import StoreSyncSettings from "./StoreSyncSettings.svelte";
   import StoreSearchSettings from "./StoreSearchSettings.svelte";
+  import StoreAgentSettings from "./StoreAgentSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
   import type { StoreSettingsSection } from "./model.js";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
@@ -26,6 +27,7 @@
       if (
         !document.hidden &&
         section !== "appearance" &&
+        section !== "agents" &&
         controller.state.status.connection === "connected"
       )
         void controller.actions.refreshSettings();
@@ -44,6 +46,13 @@
       <StoreSettingsPage section="service"
         ><StoreServiceSettings {controller} /></StoreSettingsPage
       >
+    {:else if section === "agents"}
+      <StoreAgentSettings
+        management={controller.capture}
+        repositoryName={(id) =>
+          controller.state.repositories.find((r) => r.id === id)?.name ??
+          "Previously bound repository"}
+      />
     {:else if section === "repository"}
       <StoreRepositorySettings {controller} {onClose} />
     {:else if section === "storage"}

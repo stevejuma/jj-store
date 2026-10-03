@@ -53,7 +53,7 @@
   }
 </script>
 
-{#if section !== "appearance" && section !== "service"}
+{#if section !== "appearance" && section !== "service" && section !== "agents"}
   <div class="store-settings-repository">
     <Tooltip.Provider>
       <Tooltip.Root disabled={!reason}>

@@ -20,13 +20,13 @@ Open <http://127.0.0.1:7470/>. Start Codex in `.local/codex-preview/repository`:
 codex -C "$PWD/.local/codex-preview/repository"
 ```
 
-Open Settings → Local service → Capture to see the configured profile and source
-coverage. Let discovery observe the session before submitting a prompt. Capture
-requires a fresh supported task start after monitoring has armed; a start missed
-during discovery waits for the next turn or an explicit **Import history**.
-Source growth alone does not authorize importing old history. Import controls
-show body-free source ordinals; a source with no recorded repository binding may
-be unlinked. An import that cannot establish current directory admission remains
+Open Settings → Agents to see the configured profile and source coverage. Let
+discovery observe the session before submitting a prompt. Capture requires a
+fresh supported task start after monitoring has armed; a start missed during
+discovery waits for the next turn or an explicit **Import history**. Source
+growth alone does not authorize importing old history. Import controls show
+body-free source ordinals; a source with no recorded repository binding may be
+unlinked. An import that cannot establish current directory admission remains
 withheld and may return an unknown acknowledgement. Preserve its original
 request ID; a missing receipt does not prove rejection. Clearer source selection
 and an explicit pre-acceptance refusal are deferred usability work.

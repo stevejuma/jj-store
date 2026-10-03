@@ -109,3 +109,31 @@
     ).toBeLessThan(8);
   }}
 />
+
+<Story
+  name="Dedicated installation Agents section"
+  play={async ({ canvasElement }) => {
+    await openSettings(canvasElement);
+    const c = within(canvasElement);
+    await expect(
+      c.queryByRole("heading", { name: "Agent transcript capture" }),
+    ).toBeNull();
+    await userEvent.click(c.getByRole("button", { name: /^Agents$/ }));
+    await expect(
+      c.getByRole("heading", { name: "Agents", level: 1 }),
+    ).toBeVisible();
+    await expect(
+      c.queryByRole("combobox", { name: "Settings repository" }),
+    ).toBeNull();
+    await expect(
+      c.getByText("Capture management is not available for this connection."),
+    ).toBeVisible();
+    await userEvent.click(c.getByRole("button", { name: /^Local service$/ }));
+    await expect(
+      c.getByRole("heading", { name: "Service status" }),
+    ).toBeVisible();
+    await expect(
+      c.queryByRole("heading", { name: "Agent transcript capture" }),
+    ).toBeNull();
+  }}
+/>

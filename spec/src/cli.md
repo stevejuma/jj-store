@@ -1464,3 +1464,7 @@ backend, and `dev:capture:stop` stops the owned preview processes while
 preserving history. The main fixture, installed binaries and unrelated services
 are untouched. CLI version is checked before startup; Desktop is a separate
 qualification gate.
+
+The local preview exposes capture management through Settings → Agents, with the
+shared divided Settings rows and header refresh. Local service retains service
+and device-folder management.

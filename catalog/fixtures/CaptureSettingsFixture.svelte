@@ -2,7 +2,7 @@
   import { onDestroy, untrack } from "svelte";
   import { ApiError } from "../../web/src/lib/api/api-error.js";
   import { createCaptureManagement } from "../../web/src/lib/controller/capture-management.svelte.js";
-  import StoreCaptureSettings from "../../web/src/lib/ui/store-settings/StoreCaptureSettings.svelte";
+  import StoreAgentSettings from "../../web/src/lib/ui/store-settings/StoreAgentSettings.svelte";
   import type {
     CaptureImport,
     CaptureTransport,
@@ -118,7 +118,4 @@
   onDestroy(() => management.destroy());
 </script>
 
-<StoreCaptureSettings
-  {management}
-  repositoryName={() => "Capture repository"}
-/>
+<StoreAgentSettings {management} repositoryName={() => "Capture repository"} />

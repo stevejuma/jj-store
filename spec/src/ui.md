@@ -313,7 +313,7 @@ restoration. Choosing it retains the saved accent for other themes.
 
 ## Transient store settings
 
-JST-UI-016 installation capture management lives in Local service settings,
+JST-UI-016 installation capture management lives in dedicated Agents settings,
 independently of a selected repository. LocalTrusted bootstrap must advertise
 `local_capture_management` before any capture request. The installation-owned
 controller survives settings closure and repository navigation, closes its
@@ -346,20 +346,20 @@ selecting a different source, including when its receipt is unavailable.
 
 Settings opens from the existing profile menu and replaces the repository
 navigation and body with a jj-store-owned settings sidebar and selected section.
-The sidebar contains Appearance, Local service, Repository, Search, Storage and
-Sync. The content navigation begins with its section icon and single page title,
-followed by section tabs when present. It has no return button; Back to jj-store
-remains in the settings sidebar, including the mobile navigation stage.
-Appearance begins with Theme directly below navigation, without an introductory
-description or duplicate page heading. Repository tabs, header actions and the
-details sidebar are absent until Back to jj-store restores the same repository
-route and resumes queued updates. Settings never writes its destination or
-section to the hash, browser history or storage. A fresh component starts on
-Local service; section selection lasts only for that component lifetime. Mobile
-selection returns to the content stage and retains a control that reopens
-settings navigation. On desktop, collapsing the settings sidebar retains Back,
-Local service, Repository and Search as labelled icon controls without clipped
-text; expanding it restores their visible labels.
+The sidebar contains Appearance, Local service, Agents, Repository, Search,
+Storage and Sync. The content navigation begins with its section icon and single
+page title, followed by section tabs when present. It has no return button; Back
+to jj-store remains in the settings sidebar, including the mobile navigation
+stage. Appearance begins with Theme directly below navigation, without an
+introductory description or duplicate page heading. Repository tabs, header
+actions and the details sidebar are absent until Back to jj-store restores the
+same repository route and resumes queued updates. Settings never writes its
+destination or section to the hash, browser history or storage. A fresh
+component starts on Local service; section selection lasts only for that
+component lifetime. Mobile selection returns to the content stage and retains a
+control that reopens settings navigation. On desktop, collapsing the settings
+sidebar retains Back, Local service, Agents, Repository and Search as labelled
+icon controls without clipped text; expanding it restores their visible labels.
 
 Local service reports access mode, authoritative-storage readiness, HTTP and SSE
 state and automatic update status. Repository reports the retained discovery
@@ -389,10 +389,19 @@ label and control columns on narrow screens. Standalone guidance, loading and
 status messages use public Design Core Alert composition with an information
 icon and polite status semantics; transient operational errors use the
 application notification service. Descriptions and status values already
-contained in rows remain within those rows. Unsupported Search, Sync and
-local-folder management use the public shadcn Empty composition with a suitable
-icon, explicit availability text and no unavailable controls. Graph preparation,
-including unavailable status, uses bordered Settings rows.
+contained in rows remain within those rows. Capture
+policy, harness diagnostics, source coverage and import inspection use the same
+bordered, divided two-column Settings rows. Source descriptions and repository
+bindings sit left; coverage, inputs and vertically stacked equal-width actions
+sit right. Capture refresh occupies the far-right page header. Closing or
+leaving Agents stops visible capture polling while preserving pending commands
+and request-ID drafts. Agents is installation-scoped and has no repository
+picker.
+
+Unsupported capture, Search, Sync and local-folder management use the public
+shadcn Empty composition with a suitable icon, explicit availability text and no
+unavailable controls. Graph preparation, including unavailable status, uses
+bordered Settings rows.
 
 Local JJ registration and reconnect dialogs use the same Settings-style divided
 rows, with descriptions left and path/name/inspection controls right. Folder
@@ -537,17 +546,17 @@ Settings sidebar.
 
 Repository-specific Settings sections center the existing repository Command
 View picker in the application header, including the mobile toolbar. Appearance
-and Local service omit this picker. Its trigger uses a transparent, borderless
-ghost style with muted text, fits its content up to 11rem and truncates long
-names with an ellipsis. Opening from Projects shows Choose repository until
-explicitly selected. Selection uses the existing repository-open action,
-refreshes Settings and retains the active section; selecting the current
-repository is a no-op and preserves the selected historical snapshot. Dirty
-Search and folder drafts, pending Storage commands, active Settings work and
-guarded code edits prevent a repository change and explain the reason in a
-tooltip. Repository switching retains the existing teardown and stale-response
-protections. Settings section selection itself remains transient and does not
-write the route.
+Local service and Agents omit this picker. Its trigger uses a transparent,
+borderless ghost style with muted text, fits its content up to 11rem and
+truncates long names with an ellipsis. Opening from Projects shows Choose
+repository until explicitly selected. Selection uses the existing
+repository-open action, refreshes Settings and retains the active section;
+selecting the current repository is a no-op and preserves the selected
+historical snapshot. Dirty Search and folder drafts, pending Storage commands,
+active Settings work and guarded code edits prevent a repository change and
+explain the reason in a tooltip. Repository switching retains the existing
+teardown and stale-response protections. Settings section selection itself
+remains transient and does not write the route.
 
 Repository review creation and Refresh share one trailing action group at the
 far right of the Reviews header.
@@ -1725,17 +1734,16 @@ cold flow evidence do not approve visual baselines.
 
 ### Usable capture settings lifecycle
 
-Opening the Local service section loads capture status and sources
-automatically. A serial five-second visible refresh retains the loaded source
-count and validates all replacement continuations, waking on focus and reconnect
-and after control acknowledgements. Closure cancels ordinary observations and
-removes polling; installation-owned exact commands, original import selectors,
-receipt identity and request-ID drafts survive navigation. Late reads cannot
-replace observations from a newer view. A missing import receipt retains
-uncertainty and cannot prove rejection. Unsupported OpenCode/Cursor sources have
-no usable import action. Worker state and configuration setup use plain labels;
-receipt details remain available. Agents reuse main's automatic pinned snapshot
-updates.
+Opening the Agents section loads capture status and sources automatically. A
+serial five-second visible refresh retains the loaded source count and validates
+all replacement continuations, waking on focus and reconnect and after control
+acknowledgements. Closure cancels ordinary observations and removes polling;
+installation-owned exact commands, original import selectors, receipt identity
+and request-ID drafts survive navigation. Late reads cannot replace observations
+from a newer view. A missing import receipt retains uncertainty and cannot prove
+rejection. Unsupported OpenCode/Cursor sources have no usable import action.
+Worker state and configuration setup use plain labels; receipt details remain
+available. Agents reuse main's automatic pinned snapshot updates.
 
 Runtime unavailable observations are a cumulative unsigned counter, not a count
 of tracked sources. Repeated discovery failures can exceed the 4096-source

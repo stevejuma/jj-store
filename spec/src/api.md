@@ -1659,3 +1659,7 @@ source associations with one metadata read under existing coordination. Current
 installation Admin, configuration and control-file admission are rechecked after
 inspection. No paths, native keys, reader source IDs or generation witnesses
 appear in the response; the read contacts no harness and reads no pending body.
+
+Capture management is presented in installation-scoped Agents settings. Leaving
+that section cancels visible observations without replacing the original pending
+command or request-ID draft; the section does not select a repository.

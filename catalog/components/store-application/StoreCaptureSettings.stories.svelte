@@ -147,3 +147,37 @@
     ).toHaveValue("ef".repeat(16));
   }}
 />
+
+<Story
+  name="Shared settings rows and action columns"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(await c.findByText("Codex CLI source 1")).toBeVisible();
+    await expect(
+      c.getByRole("heading", { name: "Agents", level: 1 }),
+    ).toBeVisible();
+    const refresh = c.getByRole("button", { name: "Refresh capture" });
+    await expect(refresh.closest(".store-settings__tab-bar")).not.toBeNull();
+    const pause = c.getByRole("button", { name: "Pause capture" });
+    const rescan = c.getByRole("button", { name: "Rescan capture" });
+    const actions = pause.closest(".store-settings__actions")!;
+    await expect(actions.parentElement?.parentElement).toHaveClass(
+      "store-settings__rows",
+    );
+    await expect(getComputedStyle(actions).flexDirection).toBe("column");
+    await expect(pause.getBoundingClientRect().width).toBe(
+      rescan.getBoundingClientRect().width,
+    );
+    await expect(rescan.getBoundingClientRect().top).toBeGreaterThan(
+      pause.getBoundingClientRect().bottom,
+    );
+    const sourceAction = c.getByRole("button", { name: /Import history for/ });
+    await expect(sourceAction.closest("dl")).toHaveClass(
+      "store-settings__rows",
+    );
+    const request = c.getByRole("textbox", {
+      name: "Previous import request ID",
+    });
+    await expect(request.closest(".store-settings__rows")).not.toBeNull();
+  }}
+/>

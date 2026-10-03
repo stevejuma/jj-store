@@ -148,7 +148,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -68575,6 +68575,192 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "formats": "Current AgentStore only; native/capture formats unchanged; combined OpenAPI103 routes(30 local,73 other); historical M17 capture task fields preserved via explicit M18 mapping;392 historical evidence objects including latest main E-UI-094 preserved plus this entry.",
   "scope": "New codex-preview workspace integrated onto latest committed main90d119e0. Original capture stack/main working copy/OpenCode draft preserved. Functional CLI-only native preview, automatic UI freshness, isolated repeatable setup and real native RustFS/edit/history/restart evidence. Root aggregates and full roadmap qualification out of scope. Deferred limitations: Codex Desktop, OpenCode configured/history/export, Cursor, complete conversations/replay, automatic provenance/checkpoints, advanced review/search/archive, broader release/platform/deployment remain Deferred. Cold debug native sanitizer/preparation takes more than two minutes; performance optimization Deferred. Body-free history source ordinals can select an unlinked trial; admission withholds it but unknown pre-acceptance command can remain unresolved. Source-selection and deterministic refusal UX Deferred; retain exact original request. Registry-only Design Core UI release qualification and visual baselines remain open; local preview uses inherited documented temporary validation hook.",
   "next": "Try the running CLI-only preview at http://127.0.0.1:7470/ using docs/capture-preview.md; gather feedback before reopening deferred work."
+},
+{
+  "id": "E-M18-002",
+  "tasks": [
+    "M18",
+    "M18.8"
+  ],
+  "date": "2026-10-04",
+  "kind": "ui-settings",
+  "revision": "enclosing JJ change zmyqspmo",
+  "files": [
+    "catalog/components/store-application/SettingsNavigation.stories.svelte",
+    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+    "catalog/fixtures/CaptureSettingsFixture.svelte",
+    "docs/capture-preview.md",
+    "docs/implementation-plan.md",
+    "spec/src/collaboration.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/store-application/StoreApplication.svelte",
+    "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureDiagnostics.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+    "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
+    "web/src/lib/ui/store-settings/StoreSettings.svelte",
+    "web/src/lib/ui/store-settings/StoreSettingsNavigation.svelte",
+    "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
+    "web/src/lib/ui/store-settings/StoreSettingsRepository.svelte",
+    "web/src/lib/ui/store-settings/model.ts",
+    "web/tests/browser/local-capture-settings.spec.ts",
+    "spec/src/milestones.md",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md"
+  ],
+  "tests": [
+    "web/tests/browser/local-capture-settings.spec.ts#cold capture controls preserve intent and snapshot",
+    "web/tests/browser/local-capture-settings.spec.ts#visible capture follows observations and stops when settings closes"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; jj describe -m \"Align agent capture settings with settings navigation and rows\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Clean preview change; main and other services preserved; enclosing change zmyqspmo"
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte -t \"Shared settings rows and action columns\"; repeat with -t shared-settings-rows",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both name filters skipped all stories, so they are not acceptance evidence; reran complete affected story file"
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before implementation)",
+      "result": "fail",
+      "failures": 1,
+      "note": "7 existing stories passed; added shared-row/Agents regression failed because Agents heading was absent"
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte (first after)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Navigation4 passed; Capture suite import failed transiently in Vite/Tailwind virtual CSS transformation; independently repeated affected Capture suite successfully"
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (retry, then final icons/notices)",
+      "result": "pass",
+      "failures": 0,
+      "note": "8 stories passed; before/after functional regression1/0; all shared action-column, controls, receipts, unavailable and draft scenarios passed"
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/SettingsNavigation.stories.svelte (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "4 stories passed including dedicated installation Agents entry/no repository picker; existing navigation scenarios retained"
+    },
+    {
+      "command": "pnpm web:check (initial and final); pnpm web:build (initial and final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "0 errors/warnings in type check; built bundle plus asset manifest passed; existing large-chunk warnings retained"
+    },
+    {
+      "command": "pnpm catalog:check (first)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Testing Library role options do not support Playwright exact:true; corrected new fixture selectors to anchored names"
+    },
+    {
+      "command": "pnpm catalog:check (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "0 errors/warnings; catalog boundaries166 modules passed"
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (initial)",
+      "result": "pass",
+      "failures": 0,
+      "note": "3 cold built-bundle tests passed using existing compiled disposable browser host and previously captured HTTP fixtures; no Rust compilation"
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (added geometry)",
+      "result": "fail",
+      "failures": 1,
+      "note": "New exact-text source locator timed out because source label includes version/binding children; retained label match corrected;2 other tests passed"
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (geometry correction)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Axe observed enabled history button during public Button disabled-opacity transition; added enabled and settled-opacity waits before accessibility inspection;2 other tests passed"
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (settled)",
+      "result": "pass",
+      "failures": 0,
+      "note": "3 passed; desktop/right and mobile/stacked column geometry; desktop/mobile Axe0 violations; no horizontal overflow; exact pending intent and request draft retained; polling stops on leaving Agents and closure"
+    },
+    {
+      "command": "pnpm check:ui-ownership; pnpm check:architecture; pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "UI ownership passed; architecture867 modules;17 package boundaries"
+    },
+    {
+      "command": "pnpm exec prettier --write changed Svelte, TypeScript and scope documents; pnpm exec prettier --check changed files (first)",
+      "result": "fail",
+      "failures": 1,
+      "note": "New anchored navigation selectors needed formatting; formatted both affected tests"
+    },
+    {
+      "command": "pnpm exec prettier --check changed files (after formatting)",
+      "result": "pass",
+      "failures": 0,
+      "note": "All matched files formatted; final test-only opacity wait formatted subsequently"
+    },
+    {
+      "command": "curl -fsSI --max-time 10 http://127.0.0.1:7470/; GET transformed StoreSettingsNavigation.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Running preview responds200 and serves Agents navigation through existing HMR process"
+    },
+    {
+      "command": "CUA preview AX/DOM/rebind/screenshot; native Codex fallback",
+      "result": "fail",
+      "failures": 1,
+      "note": "In-app tab1 focus-emulation timed out and screenshot reset the tool; native Codex access was refused by tool safety. No user app actions applied. Built browser evidence remains distinct from live visual qualification."
+    },
+    {
+      "command": "pnpm spec:first (first)",
+      "result": "fail",
+      "failures": 3,
+      "note": "Documentation/plan and shared UI change maps also require api, architecture and cli chapters; added scoped presentation/preview descriptions"
+    },
+    {
+      "command": "pnpm check:progress (first)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Ledger named-test matcher accepts fn/test declarations, not Story names; retained story coverage in actual run notes and removed unsupported named-story references"
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "5 validators;22 chapters;166 requirements"
+    },
+    {
+      "command": "pnpm spec:first (after mapped documentation)",
+      "result": "pass",
+      "failures": 0,
+      "note": "18 protected paths/6 canonical chapters"
+    },
+    {
+      "command": "pnpm check:progress (after named-test correction)",
+      "result": "pass",
+      "failures": 0,
+      "note": "135 tasks; historical evidence retained"
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "versions": "JJ0.45.1;pnpm10.32.1;Codex CLI0.156.1; inherited Design Core local validation source unchanged",
+  "formats": "Current AgentStore and capture API unchanged; all393 historical evidence objects preserved byte-for-byte; UI-only settings composition",
+  "scope": "Dedicated installation Agents section; shared rows, actions, public Alert/Empty/Field components and optional header refresh. Root aggregate/Rust suites out of scope under targeted UI policy. Visual baselines remain visual-pending; live in-app visual inspection unavailable due browser connection. Existing backend busy/cold performance caveat unchanged. User-requested configured root paths follow as a separate cross-layer slice.",
+  "next": "Expose actual configured CLI capture roots in typed status and these shared settings rows; preserve existing backend configuration and authorization."
 },
 {
     "id": "E-UI-095",

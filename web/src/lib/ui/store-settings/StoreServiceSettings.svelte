@@ -1,7 +1,6 @@
 <script lang="ts">
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreLocalFolders from "./StoreLocalFolders.svelte";
-  import StoreCaptureSettings from "./StoreCaptureSettings.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
   const state = $derived(controller.state);
@@ -29,13 +28,6 @@
     />
   </dl>
 </section>
-
-<StoreCaptureSettings
-  management={controller.capture}
-  repositoryName={(id) =>
-    state.repositories.find((r) => r.id === id)?.name ??
-    "Previously bound repository"}
-/>
 
 {#if state.accessMode === "local_trusted"}<StoreLocalFolders
     {controller}

@@ -648,3 +648,7 @@ Write admission, bounded workers and receipt-backed manifest publication. The
 full multi-harness/conversation/provenance/review/archive roadmap remains
 separately deferred. This changes execution scope and acceptance sequencing,
 without introducing another authority, runtime or legacy storage profile.
+
+Agent capture management has a dedicated installation-scoped Agents settings
+section. It composes the owned shared Settings rows and foundational controls;
+repository navigation and the capture observation lifecycle remain independent.

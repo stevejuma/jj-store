@@ -1,4 +1,7 @@
 <script lang="ts">
+  import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
+  import SearchIcon from "@lucide/svelte/icons/search";
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
@@ -16,40 +19,70 @@
   aria-labelledby="capture-import-heading"
 >
   <header><h3 id="capture-import-heading">History import progress</h3></header>
-  <Field.Group
-    ><Field.Field data-invalid={!!requestId && !captureId(requestId)}>
-      <Field.Label for="capture-import-request"
-        >Previous import request ID</Field.Label
-      >
-      <Input
-        id="capture-import-request"
-        bind:value={management.state.importRequestDraft}
-        aria-invalid={!!requestId && !captureId(requestId)}
-        maxlength={32}
-        disabled={busy}
-      />
-      <Field.Description
-        >Inspect the original request without selecting a new source.</Field.Description
-      >
-    </Field.Field></Field.Group
-  >
-  <div class="store-settings__actions">
-    <Button
-      variant="outline"
-      disabled={busy || !captureId(requestId)}
-      onclick={() => management.inspectImport(requestId)}
-      >Inspect import request</Button
-    >
-    {#if result}<Button
-        variant="outline"
-        disabled={busy}
-        onclick={() => management.inspectImport(result.request_id)}
-        >Refresh import status</Button
-      >{/if}
-  </div>
+  <Field.Group>
+    <div class="store-settings__rows">
+      <Field.Group class="store-settings__editable-rows">
+        <Field.Field
+          orientation="horizontal"
+          class="store-settings__option-row"
+          data-invalid={!!requestId && !captureId(requestId)}
+        >
+          <Field.Content>
+            <Field.Label for="capture-import-request"
+              >Previous import request ID</Field.Label
+            >
+            <Field.Description id="capture-import-help"
+              >Inspect the original request without selecting a new source.</Field.Description
+            >
+          </Field.Content>
+          <Input
+            class="store-settings__input"
+            id="capture-import-request"
+            bind:value={management.state.importRequestDraft}
+            aria-describedby="capture-import-help"
+            aria-invalid={!!requestId && !captureId(requestId)}
+            maxlength={32}
+            disabled={busy}
+          />
+        </Field.Field>
+      </Field.Group>
+    </div>
+    <div class="store-settings__action-row">
+      <div>
+        <strong>Inspect history import</strong>
+        <p>
+          Check the accepted boundary and publication progress for the original
+          request.
+        </p>
+      </div>
+      <div class="store-settings__actions">
+        <Button
+          variant="outline"
+          disabled={busy || !captureId(requestId)}
+          onclick={() => management.inspectImport(requestId)}
+          ><SearchIcon data-icon="inline-start" aria-hidden="true" />Inspect
+          import request</Button
+        >
+        {#if result}<Button
+            variant="outline"
+            disabled={busy}
+            onclick={() => management.inspectImport(result.request_id)}
+            ><RefreshCwIcon
+              data-icon="inline-start"
+              aria-hidden="true"
+            />Refresh import status</Button
+          >{/if}
+      </div>
+    </div>
+  </Field.Group>
   {#if result}
-    <CopyableValue label="Import request ID" value={result.request_id} />
     <dl class="store-settings__rows">
+      <div>
+        <dt>Import request</dt>
+        <dd>
+          <CopyableValue label="Import request ID" value={result.request_id} />
+        </dd>
+      </div>
       <div>
         <dt>History acceptance</dt>
         <dd>{result.receipt ? "Accepted" : "No receipt available"}</dd>
@@ -103,10 +136,10 @@
         </div>
       {/if}
     </dl>
-    <p>
+    <StoreSettingsNotice>
       History completion covers the accepted record boundary. Live-tail coverage
       is reported separately. Published AgentStore data appears automatically in
       Agents.
-    </p>
+    </StoreSettingsNotice>
   {/if}
 </section>

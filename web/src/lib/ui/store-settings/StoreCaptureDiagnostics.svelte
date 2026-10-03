@@ -90,22 +90,29 @@
       <header>
         <h3>{captureProfiles[harness.profile]} {harness.product_version}</h3>
       </header>
-      <p>
-        {number(harness.roots)} configured roots · {number(
-          harness.available_roots,
-        )} available · {number(harness.unavailable_roots)} unavailable · {number(
-          harness.unchecked_roots,
-        )} unchecked
-      </p>
-      <p>
-        {number(harness.tracked)} tracked sources · {number(
-          harness.observed_sources,
-        )} observed · {number(harness.awaiting_activity)} awaiting activity · {number(
-          harness.caught_up,
-        )} caught up · {number(harness.running_sources)} running · {number(
-          harness.degraded_sources,
-        )} degraded
-      </p>
+      <dl class="store-settings__rows">
+        <div>
+          <dt>Configured roots</dt>
+          <dd>
+            {number(harness.roots)} configured roots · {number(
+              harness.available_roots,
+            )} available · {number(harness.unavailable_roots)} unavailable · {number(
+              harness.unchecked_roots,
+            )} unchecked
+          </dd>
+        </div>
+        <div>
+          <dt>Tracked sources</dt>
+          <dd>
+            {number(harness.tracked)} tracked sources · {number(
+              harness.observed_sources,
+            )} observed · {number(harness.awaiting_activity)} awaiting activity ·
+            {number(harness.caught_up)} caught up · {number(
+              harness.running_sources,
+            )} running · {number(harness.degraded_sources)} degraded
+          </dd>
+        </div>
+      </dl>
     </section>
   {/each}
 {/if}

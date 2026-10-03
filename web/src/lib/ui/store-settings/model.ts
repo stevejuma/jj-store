@@ -1,2 +1,8 @@
 export type StoreSettingsSection =
-  "appearance" | "service" | "repository" | "search" | "storage" | "sync";
+  | "appearance"
+  | "service"
+  | "agents"
+  | "repository"
+  | "search"
+  | "storage"
+  | "sync";

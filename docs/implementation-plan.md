@@ -16,10 +16,11 @@ status/evidence ledger is [milestones.md](../spec/src/milestones.md).
 
 Open the current application, use Codex normally in a repository directory or
 another physical JJ workspace linked to this local server, and see its captured
-session, messages and tool activity appear in Agents automatically. Settings
-shows whether capture is enabled, observing sources, paused, catching up or
-unavailable. Pause, resume, rescan and the existing Codex history import are
-usable without repeatedly clicking Refresh.
+session, messages and tool activity appear in Agents automatically. Settings →
+Agents uses the shared bordered rows and action columns independently of the
+repository picker, and shows whether capture is enabled, observing sources,
+paused, catching up or unavailable. Pause, resume, rescan and the existing Codex
+history import are usable without repeatedly clicking Refresh.
 
 The first preview supports LocalTrusted native repositories and current
 AgentStore only. Configured profiles are Codex CLI 0.156.1 and Codex Desktop

@@ -1,4 +1,13 @@
 <script lang="ts">
+  import InfoIcon from "@lucide/svelte/icons/info";
+  import RotateCwIcon from "@lucide/svelte/icons/rotate-cw";
+  import SearchIcon from "@lucide/svelte/icons/search";
+  import BotIcon from "@lucide/svelte/icons/bot";
+  import PauseIcon from "@lucide/svelte/icons/pause";
+  import PlayIcon from "@lucide/svelte/icons/play";
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
+  import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import { captureSummary } from "../../controller/capture-presentation.js";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -38,88 +47,118 @@
     <h2 id="capture-settings-heading">Agent transcript capture</h2>
   </header>
   {#if !management?.supported || !state}
-    <p>Capture management is not available for this connection.</p>
+    <StoreSettingsEmpty
+      Icon={BotIcon}
+      title="Capture unavailable"
+      description="Capture management is not available for this connection."
+    />
   {:else}
-    <p>
-      Watch configured harness locations for active sessions linked to this
-      server. Settings apply to the whole local service. Status and published
-      Agents update automatically.
-    </p>
-    <div class="store-settings__actions">
-      <Button
-        variant="outline"
-        disabled={state.busy}
-        onclick={() => management.refresh()}>Refresh capture</Button
-      >
-      {#if state.value?.enabled}
-        <Button
-          variant="outline"
-          disabled={!ready}
-          onclick={() =>
-            management.control(
-              state.value?.policy?.paused ? "resume" : "pause",
-            )}
-          >{state.value.policy?.paused
-            ? "Resume capture"
-            : "Pause capture"}</Button
-        >
-        <Button
-          variant="outline"
-          disabled={!ready || state.value.policy?.paused}
-          onclick={() => management.rescan()}>Rescan capture</Button
-        >
-      {/if}
+    <div class="store-settings__rows store-settings__rows--controls">
+      <div>
+        <div>
+          <strong>Automatic transcript capture</strong>
+          <p class="store-settings__row-description">
+            Watch configured harness locations for active sessions linked to
+            this server. Settings apply to the whole local service. Status and
+            published Agents update automatically.
+          </p>
+          <p class="store-settings__row-description">
+            Pause policy persists across restarts. Worker status updates every
+            five seconds while this view is open.
+          </p>
+        </div>
+        <div class="store-settings__actions">
+          {#if state.value?.enabled}
+            <Button
+              variant="outline"
+              disabled={!ready}
+              onclick={() =>
+                management.control(
+                  state.value?.policy?.paused ? "resume" : "pause",
+                )}
+            >
+              {#if state.value.policy?.paused}<PlayIcon
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                />{:else}<PauseIcon
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                />{/if}
+              {state.value.policy?.paused ? "Resume capture" : "Pause capture"}
+            </Button>
+            <Button
+              variant="outline"
+              disabled={!ready || state.value.policy?.paused}
+              onclick={() => management.rescan()}
+              ><RefreshCwIcon
+                data-icon="inline-start"
+                aria-hidden="true"
+              />Rescan capture</Button
+            >
+          {/if}
+        </div>
+      </div>
     </div>
-    {#if state.status === "loading" || state.status === "refreshing"}<p
-        role="status"
-      >
-        Loading capture status…
-      </p>{/if}
+    {#if state.status === "loading" || state.status === "refreshing"}
+      <StoreSettingsNotice>Loading capture status…</StoreSettingsNotice>
+    {/if}
     {#if state.value?.enabled}
-      <p role="status">{captureSummary(state.value)}</p>
+      <StoreSettingsNotice>{captureSummary(state.value)}</StoreSettingsNotice>
       <StoreCaptureDiagnostics value={state.value} />
-      <p>
-        Pause policy persists across restarts. Worker status updates every five
-        seconds while this view is open.
-      </p>
       <StoreCaptureSources {management} {repositoryName} />
-    {:else if state.value}<p>
+    {:else if state.value}
+      <StoreSettingsNotice>
         Transcript capture is disabled in server configuration.
-      </p>
-      <p>
-        Enable selected Codex profiles in the server’s <code>agent_capture</code
-        >
-        configuration, then restart this local backend. Only active sessions in linked
-        repository folders are captured.
-      </p>{:else}<p>Loading service coverage…</p>{/if}
+      </StoreSettingsNotice>
+      <dl class="store-settings__rows">
+        <div>
+          <dt>Enable transcript capture</dt>
+          <dd>
+            Enable selected Codex profiles in the server’s <code
+              >agent_capture</code
+            > configuration, then restart this local backend. Only active sessions
+            in linked repository folders are captured.
+          </dd>
+        </div>
+      </dl>
+    {:else}<StoreSettingsNotice>Loading service coverage…</StoreSettingsNotice
+      >{/if}
     {#if state.pending?.uncertain}
-      <Alert.Root
-        ><Alert.Title>Capture outcome unknown</Alert.Title><Alert.Description
+      <Alert.Root role="status"
+        ><InfoIcon aria-hidden="true" /><Alert.Title
+          >Capture outcome unknown</Alert.Title
+        ><Alert.Description
           >Retain the original request. A missing receipt or refused retry does
           not prove the original command failed.</Alert.Description
         ></Alert.Root
       >
-      <CopyableValue
-        label="Capture request ID"
-        value={state.pending.command.request_id}
-      />
-      <div class="store-settings__actions">
-        <Button
-          variant="outline"
-          disabled={state.busy}
-          onclick={() => management.retry()}
-          >Retry original capture request</Button
-        >
-        {#if state.pending.kind === "import"}<Button
+      <div class="store-settings__action-row">
+        <div>
+          <CopyableValue
+            label="Capture request ID"
+            value={state.pending.command.request_id}
+          />
+        </div>
+        <div class="store-settings__actions">
+          <Button
             variant="outline"
             disabled={state.busy}
-            onclick={() =>
-              management.inspectImport(state.pending!.command.request_id)}
-            >Check original import receipt</Button
-          >{/if}
+            onclick={() => management.retry()}
+            ><RotateCwIcon data-icon="inline-start" aria-hidden="true" />Retry
+            original capture request</Button
+          >
+          {#if state.pending.kind === "import"}<Button
+              variant="outline"
+              disabled={state.busy}
+              onclick={() =>
+                management.inspectImport(state.pending!.command.request_id)}
+              ><SearchIcon data-icon="inline-start" aria-hidden="true" />Check
+              original import receipt</Button
+            >{/if}
+        </div>
       </div>
     {/if}
-    {#if state.controlOutcome}<p>
+    {#if state.controlOutcome}<StoreSettingsNotice>
         Original policy receipt: {state.controlOutcome.receipt.paused
           ? "pause"
           : "resume"} · {state.controlOutcome.replayed
@@ -127,9 +166,10 @@
           : "Accepted"} · {state.controlOutcome.runtime_requested
           ? "Worker change requested"
           : "No worker change requested"}
-      </p>{/if}
+      </StoreSettingsNotice>{/if}
     <StoreCaptureImport {management} />
-    {#if state.message}<p role="status">{state.message}</p>{/if}
+    {#if state.message}<StoreSettingsNotice>{state.message}</StoreSettingsNotice
+      >{/if}
     {#if state.error}<Alert.Root variant="destructive"
         ><Alert.Title>Capture request unavailable</Alert.Title
         ><Alert.Description>{state.error}</Alert.Description></Alert.Root

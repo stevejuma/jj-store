@@ -142,7 +142,8 @@
   }
   function selectSettings(section: StoreSettingsSection) {
     settingsSection = section;
-    if (section !== "appearance") void controller.actions.refreshSettings();
+    if (section !== "appearance" && section !== "agents")
+      void controller.actions.refreshSettings();
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function closeSettings() {

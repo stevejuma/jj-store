@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
+  import BotIcon from "@lucide/svelte/icons/bot";
   import PaletteIcon from "@lucide/svelte/icons/palette";
   import DatabaseIcon from "@lucide/svelte/icons/database";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
@@ -35,26 +36,30 @@
       ? "Appearance"
       : section === "service"
         ? "Local service"
-        : section === "repository"
-          ? "Repository"
-          : section === "storage"
-            ? "Storage"
-            : section === "sync"
-              ? "Sync"
-              : "Search",
+        : section === "agents"
+          ? "Agents"
+          : section === "repository"
+            ? "Repository"
+            : section === "storage"
+              ? "Storage"
+              : section === "sync"
+                ? "Sync"
+                : "Search",
   );
   const PageIcon = $derived(
     section === "appearance"
       ? PaletteIcon
       : section === "service"
         ? ServerIcon
-        : section === "repository"
-          ? DatabaseIcon
-          : section === "storage"
+        : section === "agents"
+          ? BotIcon
+          : section === "repository"
             ? DatabaseIcon
-            : section === "sync"
-              ? RefreshCwIcon
-              : SearchIcon,
+            : section === "storage"
+              ? DatabaseIcon
+              : section === "sync"
+                ? RefreshCwIcon
+                : SearchIcon,
   );
 </script>
 

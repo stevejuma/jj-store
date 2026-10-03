@@ -17,9 +17,22 @@ async function openSettings(page: Page) {
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
+  await page
+    .getByRole("button", { name: "Local service", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Local service", level: 1 }),
+  ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Agent transcript capture" }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Agents", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Agents", level: 1 }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("combobox", { name: "Settings repository" }),
+  ).toHaveCount(0);
 }
 async function bootstrap(page: Page, supported = true) {
   await api(page, { access: "local_trusted" });
@@ -132,6 +145,13 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
     .poll(() => paths.includes("/v1/local/capture/sources"))
     .toBe(true);
   await expect(page.getByText("Codex CLI source 1")).toBeVisible();
+  const sourceRow = page.getByText("Codex CLI source 1").locator("..");
+  const columns = await sourceRow.evaluate((row) => {
+    const label = row.querySelector("dt")!.getBoundingClientRect();
+    const control = row.querySelector("dd")!.getBoundingClientRect();
+    return { labelRight: label.right, controlLeft: control.left };
+  });
+  expect(columns.controlLeft).toBeGreaterThan(columns.labelRight);
   await page.getByRole("button", { name: "Pause capture" }).click();
   await expect(page.getByText("Capture outcome unknown")).toBeVisible();
   await page
@@ -178,8 +198,33 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   await expect(page.getByText("completed · Boundary available")).toBeVisible();
   await expect(page.getByText("2,048 / 1,024 bytes")).toBeVisible();
   await page.getByRole("button", { name: "Refresh import status" }).click();
+  const historyAction = page.getByRole("button", {
+    name: /Import history for/,
+  });
+  await expect(historyAction).toBeEnabled();
+  // Public Button animates disabled opacity; inspect the settled enabled view.
+  await expect
+    .poll(() =>
+      historyAction.evaluate((button) => getComputedStyle(button).opacity),
+    )
+    .toBe("1");
+  await page.screenshot({
+    path: test.info().outputPath("agents-settings-desktop.png"),
+  });
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.setViewportSize({ width: 390, height: 844 });
+  const mobileColumns = await sourceRow.evaluate((row) => {
+    const label = row.querySelector("dt")!.getBoundingClientRect();
+    const control = row.querySelector("dd")!.getBoundingClientRect();
+    return {
+      labelLeft: label.left,
+      labelBottom: label.bottom,
+      controlLeft: control.left,
+      controlTop: control.top,
+    };
+  });
+  expect(mobileColumns.controlLeft).toBe(mobileColumns.labelLeft);
+  expect(mobileColumns.controlTop).toBeGreaterThan(mobileColumns.labelBottom);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -242,6 +287,17 @@ test("visible capture follows observations and stops when settings closes", asyn
     page.getByRole("button", { name: "Resume capture" }),
   ).toBeEnabled();
   expect(reads).toBeGreaterThan(1);
+  await page
+    .getByRole("button", { name: "Local service", exact: true })
+    .click();
+  const serviceReads = reads;
+  await page.clock.fastForward(15000);
+  expect(reads).toBe(serviceReads);
+  await page.getByRole("button", { name: "Agents", exact: true }).click();
+  await expect(
+    page.getByRole("textbox", { name: "Previous import request ID" }),
+  ).toHaveValue("ef".repeat(16));
+  await expect.poll(() => reads).toBeGreaterThan(serviceReads);
   await page.getByRole("button", { name: "Back to jj-store" }).click();
   const closedReads = reads;
   await page.clock.fastForward(15000);
