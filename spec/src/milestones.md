@@ -133,10 +133,10 @@ shared-package release qualification does not alter those original Git gates.
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                |
-| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004                                                                                                                                                                                                                                                                                                                    |
+| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005                                                                                                                                                                                                                                                                                                         |
 | M17.1       | In progress | M8a.4                   | JST-DESK-003                                                                                                                                                                            | Opt-in bounded parent-pipe service supervision                                                                                 | Retain real RustFS and ordinary process evidence                                               | E-DESK-001,E-DESK-003                                                                                                                                                                                                                                                                                                                                          |
-| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004                                                                                                                                                                                                                                                                                                                    |
-| M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003                                                                                                                                                                                                                                                                                                                                          |
+| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005                                                                                                                                                                                                                                                                                                         |
+| M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003,E-DESK-005                                                                                                                                                                                                                                                                                                                               |
 | M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                            | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -49916,6 +49916,224 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "Workspace review and authorized recoverable retirement only. Pending capture work is retained rather than promoted to integration acceptance. Canonical task/milestone statuses and all previous evidence stay unchanged. Product suites, Rust builds, browser/visual tests, reset/reseed, other repositories and unrelated service operations are out of scope.",
     "next": "agent-capture is the sole remaining secondary app workspace: finish and verify explicit OpenCode API history import work, then separately qualify its branch integration. Main development fixture and native desktop installation remain available."
+  },
+  {
+    "id": "E-DESK-005",
+    "tasks": ["M17", "M17.2", "M17.3"],
+    "date": "2026-10-03",
+    "kind": "native-header-alignment-and-glass",
+    "revision": "vssplolt (enclosing change)",
+    "versions": "macOS ARM64; Rust1.98.1; Tauri2.11.5, Tao0.35.3, Wry0.55.1, window-vibrancy0.6.0; Buzz ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be. Existing ignored foundation source hook retained; no registry-only release qualification.",
+    "formats": "Boolean set_glass_background command is generated in the host app ACL and admitted only to the exact managed origin/main window. Native NSWindow stays opaque, WKWebView transparency follows confirmed Sidebar vibrancy. Preferences format1, browser CSP and all repository/HTTP authority formats unchanged.",
+    "files": [
+      "catalog/components/store-appearance/NativeGlass.stories.svelte",
+      "catalog/components/store-application/DesktopChrome.stories.svelte",
+      "desktop/Cargo.lock",
+      "desktop/Cargo.toml",
+      "desktop/README.md",
+      "desktop/build.rs",
+      "desktop/permissions/autogenerated/set_glass_background.toml",
+      "desktop/src/lib.rs",
+      "desktop/src/native.rs",
+      "desktop/src/native_glass.rs",
+      "desktop/src/native_window.rs",
+      "desktop/src/macos_chrome.rs",
+      "desktop/tauri.conf.json",
+      "docs/reference/appearance-provenance.md",
+      "docs/ui-provenance.json",
+      "spec/src/api.md",
+      "spec/src/desktop.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "web/src/lib/appearance/desktop-glass.ts",
+      "web/src/lib/appearance/native-glass.css",
+      "web/src/lib/appearance/runtime.svelte.ts",
+      "web/src/lib/appearance/store.svelte.ts",
+      "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      "web/src/lib/ui/community-app-shell/desktop-chrome.css",
+      "web/src/style.css",
+      "web/tests/vite/desktop-glass.test.ts",
+      "spec/src/architecture.md",
+      "spec/src/spec-governance.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "CUA main debug app screenshot before; inspect pinned Buzz AppTopChrome, chromeLayout, ThemeProvider, theme.css, window_vibrancy.rs and tauri.conf.json",
+        "result": "fail",
+        "failures": 2,
+        "note": "Native traffic lights centered at16px while toggle centered20px; CSS-only glass still painted an opaque gradient."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/desktop-glass.test.ts (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "One failed suite: native glass controller absent; no native handshake existed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/desktop-glass.test.ts web/tests/vite/appearance.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "15/15: delayed installation, rapid toggles, failure and explicit retry, disposal and device preference/draft consumers."
+      },
+      {
+        "command": "cargo check --manifest-path desktop/Cargo.toml --offline",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial native vibrancy host compile and generated one-command ACL pass."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DesktopChrome.stories.svelte catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte (first)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Two header assertions exposed scoped CSS precedence under20px rem and mobile layout. One AppearanceShell import failed during cold Vite dependency optimization/reload.4 tests passed; failure guards retained."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DesktopChrome.stories.svelte catalog/components/store-appearance/AppearanceShell.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "16/16 cold Chromium interactions/accessibility; fixed40px header and23px control center remain at enlarged rem and narrow layouts; browser glass/pickers remain qualified."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-appearance/NativeGlass.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 light/dark composition: one translucent gradient wash, opacity30/65, transparent header, no CSS blur and opaque main; normal browser fallback restored."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/DesktopChrome.stories.svelte (icon-only sizing refinement)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2; fixed dimensions restricted to icon-sized buttons, retaining content-sized repository picker buttons."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/0 warnings for both type checks;160 catalog modules,838 architecture modules."
+      },
+      {
+        "command": "pnpm check:ui-ownership (new CSS provenance first and second attempts)",
+        "result": "fail",
+        "failures": 2,
+        "note": "First missing tracked entry; second Community-copy schema rejected Buzz path. Classified native app-owned CSS under owned with complete separate Buzz source/license attribution; scanner rules unchanged."
+      },
+      {
+        "command": "pnpm check:ui-ownership (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "22 chapters/152 requirements; native source-pinned adaptation and owned presentation boundary accepted."
+      },
+      {
+        "command": "pnpm desktop:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 host tests pass; explicitly staged real-runtime target remains ignored in this regular command."
+      },
+      {
+        "command": "cargo build -p jj-store-cli --bins --locked; pnpm web:build; node scripts/desktop.mjs stage --server-dir /Users/stevejuma/code/lapismd/jj-store/target/debug --rustfs-runtime /Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs --web-root /Users/stevejuma/code/lapismd/jj-store/web/dist; pnpm desktop:bundle",
+        "result": "pass",
+        "failures": 0,
+        "note": "Current main paired CLI and212 production assets staged; debug app bundled. Web build retains existing chunk-size warning. Required for cold native qualification, no unrelated aggregate."
+      },
+      {
+        "command": "CUA Quit and cold launch updated main bundle; user screenshot after window use",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial inactive screenshot aligned at23px but user evidence showed active native controls resetting to16px and missing hover glyphs. Native qualification was reopened; not treated as completion."
+      },
+      {
+        "command": "cargo check --manifest-path desktop/Cargo.toml --offline (AppKit bridge first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Default ObjC feature fanout needed uncached optional packages. Restricted to the actual NSWindow/NSView/NSButton and geometry features instead."
+      },
+      {
+        "command": "cargo check --manifest-path desktop/Cargo.toml --offline (AppKit bridge next); pnpm desktop:bundle (next)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Compiler rejected a missing window reference and three required documented retained-superview unsafe borrows. Fixed with scoped main-thread safety comments; no unguarded pointer access."
+      },
+      {
+        "command": "cargo check --manifest-path desktop/Cargo.toml --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final event-driven AppKit geometry/hover tracking host check passes; interop confined to the retained main-thread callback."
+      },
+      {
+        "command": "pnpm desktop:bundle (first AppKit geometry/tracking correction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Debug macOS app built with the original native-button tracking correction; /tmp/jj-desktop-glass-chrome-bundle-final.log."
+      },
+      {
+        "command": "User manual review after AppKit correction; CUA cold restart with saved Glass background",
+        "result": "fail",
+        "failures": 1,
+        "note": "User confirmed default hover glyphs, reported a transient geometry reset, then said alignment seemed okay. A later cold inactive screenshot still showed default16px centers; reopened late-layout correction instead of treating that confirmation as full native acceptance."
+      },
+      {
+        "command": "CUA Settings > Appearance: Glass background off then on; Cmd+Q; lsof -nP -iTCP:57653 -sTCP:LISTEN; ps -p 18424,18436 -o pid=,command=; CUA cold getApp exact main bundle",
+        "result": "pass",
+        "failures": 0,
+        "note": "Glass-off restores the opaque Buzz gradient; glass-on49percent restores the muted native wash while main content stays white/opaque. Quit removes both recorded host/service PIDs and listener. Cold restart keeps original57653 and saved glass wash. AX click on menu text needed screenshot-coordinate fallback; one noWindowsAvailable and stale-state refusals were refreshed, not product passes."
+      },
+      {
+        "command": "pnpm spec:first (before mapped chapter updates)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Required architecture.md and spec-governance.md were missing; added explicit independent native presentation and audited interop/observer ownership, without changing gate rules."
+      },
+      {
+        "command": "cargo check --manifest-path desktop/Cargo.toml --offline; cargo check --manifest-path desktop/Cargo.toml --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Late-window-update observer compiles with minimal cached ObjC/notification features; independent lock adds only root dependency edges. /tmp/jj-desktop-glass-update-observer-{check,locked}.log."
+      },
+      {
+        "command": "pnpm desktop:bundle (late-window-update observer)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native-only debug bundle completed even though the tool turn was interrupted; inspected final success log and no remaining build process. Staged212-asset web UI/paired service reused; unrelated Settings edits were not repackaged. /tmp/jj-desktop-glass-update-observer-bundle.log."
+      },
+      {
+        "command": "CUA Cmd+Q; lsof -nP -iTCP:57653 -sTCP:LISTEN; pgrep -fl jj-store-desktop/desktop-supervised; CUA cold launch final bundle and settled screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Old host/service and listener absent before launch. Final notification correction retains23px native/button centers and16px leading inset after settled cold startup; saved native glass wash returns and main stays opaque. Original macOS buttons are retained; observer corrections are idempotent/reentrancy guarded, token removed on exit."
+      },
+      {
+        "command": "cargo fmt --manifest-path desktop/Cargo.toml -- --check; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust formatting passes; mapped chapters restored spec-first,5validators/22chapters/152requirements validate and125tasks progress bookkeeping passes. Native broad gesture/distribution gates remain unpromoted."
+      },
+      {
+        "command": "pnpm exec prettier --write (explicit owned Markdown/JSON/CSS/Svelte/TypeScript paths from /tmp/jj-desktop-glass-owned-paths.json); cargo fmt --manifest-path desktop/Cargo.toml -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only the owned slice formatted; canonical desktop/governance paragraphs wrapped, production UI files unchanged by formatting."
+      },
+      {
+        "command": "pnpm desktop:test (final); pnpm check:ui-ownership (final); pnpm spec:first (final); pnpm spec:validate (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 host tests pass, staged real-runtime target remains ignored. Ownership and5validators/22chapters/152requirements pass; spec-first sees58 protected files including separate shared-main Settings changes."
+      },
+      {
+        "command": "pnpm check:progress (premature evidence pass status)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Checker correctly rejected pass while remaining native review gates exist. Restored pending evidence status without changing checks or removing gaps; focused successful runs remain individually recorded."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Final observer version retains alignment at cold startup; repeated manual active movement/resize and default hover glyphs after that final observer refinement remain a bounded review follow-up. User verified glyphs on the preceding identical native tracking implementation.",
+      "Visual baseline approval and remaining M17 render, native drag/double-click, dirty-edit, accessibility and distribution gates remain separate."
+    ],
+    "scope": "Main workspace native presentation and direct UI consumers only. The boolean glass command is presentation-only. Root aggregates, unrelated Rust/UI suites and HTTP generation remain out of scope. Shared-main Settings/Reviews edits belong to the coordinated separate task and are excluded from this commit.",
+    "next": "The verified compile/browser/cold-start slice is ready for a file-scoped commit. Leave the final main debug app open; manually review repeated movement/resize and hover after the final observer change, then continue the separate M17 gates."
   }
 ]
 ```

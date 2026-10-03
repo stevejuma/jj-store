@@ -91,3 +91,15 @@ popover role to the app background for all 62 derived palettes, rather than
 Buzz's elevated grey. Search commands and menus inherit that role directly;
 other roles and the historical Original snapshot retain their existing values.
 These are app-owned presentation adaptations.
+
+Native Glass background adapts the same pinned Buzz revision's
+`desktop/src-tauri/src/commands/window_vibrancy.rs`,
+`desktop/src/shared/theme/ThemeProvider.tsx` and
+`desktop/src/shared/styles/globals/theme.css`. The opaque NSWindow, Sidebar
+material, transparent WKWebView, readiness handshake and single translucent
+theme wash are maintained locally in `desktop/src/native_glass.rs` and
+`web/src/lib/appearance`. Fixed macOS header geometry follows
+`desktop/src/app/AppTopChrome.tsx` and
+`desktop/src/shared/layout/chromeLayout.ts`. Native source, adaptation and
+Apache-2.0 attribution are listed in `docs/ui-provenance.json`; Buzz is not a
+runtime or build dependency.

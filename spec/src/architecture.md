@@ -611,6 +611,16 @@ listener. It has no dependencies on upstream JJ, model, WAL, storage or service
 crates. The root Cargo workspace excludes the host. See [desktop](desktop.md)
 for lifetime and qualification contracts.
 
+Native glass and traffic-light layout depend only on the host's independently
+locked Tauri, window-vibrancy and minimal AppKit bindings. The renderer receives
+one boolean appearance command restricted to the managed main window and exact
+origin. Native vibrancy preserves an opaque NSWindow while clearing only the
+WKWebView canvas. Main-thread native geometry and tracking corrections borrow
+the retained window hierarchy only within Tauri's callback or the window's
+AppKit update notification. A single owned observer token is removed on host
+exit; corrections are idempotent and do not poll. They store no platform pointer
+and add no repository or filesystem authority.
+
 Local identity hints remain inside the JJ adapter's read-only query metadata
 boundary. Host configuration discovery and registered-folder JJ/Git fallback
 MUST expose only bounded email; evaluator settings, aliases, storage, model and

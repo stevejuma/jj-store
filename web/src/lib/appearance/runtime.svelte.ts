@@ -1,4 +1,5 @@
 import { onDestroy, untrack } from "svelte";
+import { attachNativeGlass } from "./desktop-glass.js";
 import {
   applyAppearance,
   attachAppearance,
@@ -35,6 +36,7 @@ export function ownAppearance(provided?: AppearanceStore, storage?: Storage) {
       "data-store-font",
       "data-store-density",
       "data-store-glass",
+      "data-store-native-glass",
       "data-store-prominent",
     ];
     const before = attributes.map(
@@ -45,8 +47,15 @@ export function ownAppearance(provided?: AppearanceStore, storage?: Storage) {
     const opacity = root.style.getPropertyValue("--store-glass-opacity");
     root.dataset.uiScrollStrategy = "native";
     const dispose = attachAppearance(store, window, root);
-    $effect(() => applyAppearance(root, store));
+    const nativeGlass = attachNativeGlass(root, () =>
+      applyAppearance(root, store),
+    );
+    $effect(() => {
+      applyAppearance(root, store);
+      void nativeGlass?.set(store.live.glass);
+    });
     onDestroy(() => {
+      void nativeGlass?.dispose();
       dispose();
       for (const [name, value] of before)
         value === null

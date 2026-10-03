@@ -2,6 +2,7 @@
 @import "./lib/ui/community-typography.css";
 @import "./lib/appearance/theme-palettes.css";
 @import "./lib/appearance/appearance.css";
+@import "./lib/appearance/native-glass.css";
 
 html,
 body,

@@ -2,6 +2,7 @@
   import "../community-overlays.css";
   import "./right-sidebar.css";
   import "./header-hover.css";
+  import "./desktop-chrome.css";
 
   import { Button } from "@lapismd/design-core/shadcn/button";
   import {
@@ -206,14 +207,9 @@
     grid-template-rows: minmax(0, 1fr);
   }
 
-  /* Native traffic lights use fixed logical pixels, independently of text zoom. */
+  /* Native control geometry must stay fixed when application text scales. */
   .community-app-shell[data-desktop-chrome="macos"] {
-    grid-template-rows: max(40px, 2.5rem) minmax(0, 1fr);
-  }
-
-  .community-app-shell[data-desktop-chrome="macos"]
-    .community-app-shell__header-start {
-    padding-inline-start: 80px;
+    grid-template-rows: 40px minmax(0, 1fr);
   }
 
   .community-app-shell__header {

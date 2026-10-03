@@ -34,6 +34,8 @@ supports dragging; ordinary browser presentation keeps its existing spacing.
 
 Native folder controls, first-render handshake, dirty-edit Quit protection,
 signed distribution and automatic updates remain pending in the single canonical
-progress ledger. The initial icon is a development placeholder. No Buzz source
-is copied in this slice; its Tauri lifecycle is a source-pinned design
-reference.
+progress ledger. The initial icon is a development placeholder. Native Glass
+background follows Buzz's Sidebar vibrancy with an opaque native window,
+transparent webview and one translucent theme wash. Its adaptations and
+Apache-2.0 attribution are recorded in `docs/ui-provenance.json`. The renderer
+receives only a boolean glass command for the managed main window and origin.

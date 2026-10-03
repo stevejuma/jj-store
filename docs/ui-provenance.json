@@ -1980,6 +1980,35 @@
     {
       "local": "web/src/lib/ui/community-navigation/CommunityNavigationSectionPicker.svelte",
       "reason": "Locally authored sidebar Command View integration extracted from the maintained owned navigation copy."
+    },
+    {
+      "local": "web/src/lib/ui/community-app-shell/desktop-chrome.css",
+      "reason": "Native desktop header geometry and fixed icon sizes; Buzz source adaptation and Apache-2.0 attribution recorded in desktopAppearance."
     }
-  ]
+  ],
+  "desktopAppearance": {
+    "reference": "Buzz desktop",
+    "repository": "https://github.com/block/buzz",
+    "revision": "ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be",
+    "license": "Apache-2.0",
+    "licenseFile": "docs/licenses/buzz-Apache-2.0.txt",
+    "adaptations": [
+      {
+        "local": "desktop/src/native_glass.rs",
+        "source": "desktop/src-tauri/src/commands/window_vibrancy.rs"
+      },
+      {
+        "local": "web/src/lib/appearance/desktop-glass.ts",
+        "source": "desktop/src/shared/theme/ThemeProvider.tsx"
+      },
+      {
+        "local": "web/src/lib/appearance/native-glass.css",
+        "source": "desktop/src/shared/styles/globals/theme.css"
+      },
+      {
+        "local": "web/src/lib/ui/community-app-shell/desktop-chrome.css",
+        "source": "desktop/src/app/AppTopChrome.tsx"
+      }
+    ]
+  }
 }

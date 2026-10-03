@@ -1509,3 +1509,10 @@ not create the journal or start a check. Reports expose captured position,
 limits, phase and exact/covering checkpoint selection; checkpoint authority
 remains the manifest. Operations continue independently of HTTP request
 cancellation.
+
+The managed macOS appearance bridge exposes only `set_glass_background` with a
+boolean `enabled` argument, admitted by host ACL for the exact managed origin
+and main window. It changes native presentation only; no HTTP, repository,
+credential, filesystem or publication contract changes. Browser glass remains an
+application-background effect. Native composition and handshake follow
+desktop.md and JST-UI-018.

@@ -720,3 +720,15 @@ their selectors and records the original Community source and license in
 ui-provenance.json. Native titlebar configuration and narrowly scoped window
 permissions live in the host; the renderer's versioned marker remains a
 presentation hint and cannot authorize repository operations.
+
+Buzz-derived native glass and header geometry retain source revision and
+Apache-2.0 attribution separately from Community copies. Glass qualification
+checks serialized native installation acknowledgements, opaque failure fallback
+and cold saved-preference restoration. AppKit interop is limited to documented
+main-thread retained-window and notification borrows in the native chrome
+module; its one observer has explicit exit cleanup and no stored platform
+pointer. The remaining host denies unsafe code. Native hover and alignment
+acceptance includes active window movement and resize observations, with manual
+evidence retained when macOS screen-sharing UI obscures the traffic lights.
+Focused browser and host checks do not qualify visual baselines or public
+distribution.

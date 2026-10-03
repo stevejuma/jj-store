@@ -2,6 +2,24 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreApplication from "../../fixtures/StoreApplicationFixture.svelte";
+  async function aligned(header: HTMLElement, toggle: HTMLElement) {
+    const center = () => {
+      const box = toggle.getBoundingClientRect();
+      return box.top + box.height / 2 - header.getBoundingClientRect().top;
+    };
+    await expect(header.getBoundingClientRect().height).toBe(40);
+    await expect(center()).toBeCloseTo(23, 1);
+    const root = header.ownerDocument.documentElement;
+    const before = root.style.fontSize;
+    try {
+      root.style.fontSize = "20px";
+      await expect(header.getBoundingClientRect().height).toBe(40);
+      await expect(center()).toBeCloseTo(23, 1);
+      await expect(toggle.getBoundingClientRect().height).toBe(28);
+    } finally {
+      root.style.fontSize = before;
+    }
+  }
   const { Story } = defineMeta({
     title: "JJ Store/Desktop chrome",
     component: StoreApplication,
@@ -29,6 +47,7 @@
     await expect(header.getBoundingClientRect().height).toBeGreaterThanOrEqual(
       40,
     );
+    await aligned(header, sidebarToggle);
     await userEvent.click(sidebarToggle);
     await expect(
       canvas.getByRole("button", { name: "Collapse left sidebar" }),
@@ -56,6 +75,10 @@
     const header = canvas.getByRole("navigation", {
       name: "Application navigation",
     });
+    await aligned(
+      header,
+      canvas.getByRole("button", { name: "Expand left sidebar" }),
+    );
     await expect(header).toBeVisible();
     await expect(header).toHaveAttribute("data-tauri-drag-region", "deep");
     await expect(header.getBoundingClientRect().height).toBeGreaterThanOrEqual(

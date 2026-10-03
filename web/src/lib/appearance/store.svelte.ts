@@ -1,4 +1,5 @@
 import { getContext, setContext } from "svelte";
+import { isMacDesktopWindow } from "../desktop-chrome.js";
 import {
   appearanceStorageKey,
   defaultAppearance,
@@ -76,7 +77,10 @@ export function applyAppearance(root: HTMLElement, store: AppearanceStore) {
   root.dataset.storeAccent = live.accent;
   root.dataset.storeFont = live.fontSize;
   root.dataset.storeDensity = live.density;
-  root.dataset.storeGlass = String(live.glass);
+  root.dataset.storeGlass = String(
+    live.glass &&
+      (!isMacDesktopWindow() || root.dataset.storeNativeGlass === "true"),
+  );
   root.dataset.storeProminent = String(live.prominent);
   root.style.setProperty("--store-glass-opacity", String(live.opacity / 100));
   root.style.colorScheme = getIsDark(store.theme) ? "dark" : "light";

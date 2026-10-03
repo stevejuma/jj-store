@@ -222,8 +222,12 @@ below each call inside either agent response presentation; independent drafts
 survive layout changes. Other focused inline discussions retain one
 application-owned sheet at a time. Native/local capability and snapshot
 authority are unaffected. Browser glass reveals the application background, not
-the operating system desktop. Palette, font and preview assets are local under
-the existing strict CSP.
+the operating system desktop. The managed macOS desktop instead installs native
+Sidebar vibrancy through its narrowly scoped presentation command, then reveals
+it under one translucent theme wash; main content and portalled controls stay
+opaque. Native readiness, rapid toggle serialization, failure fallback and
+disposal are governed by desktop.md. Palette, font and preview assets are local
+under the existing strict CSP.
 
 Buzz light and dark draw their gradient once across the full application shell.
 The header and left navigation reveal that same image instead of restarting the

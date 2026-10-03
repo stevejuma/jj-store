@@ -4,7 +4,11 @@
   "version": "0.1.0",
   "identifier": "com.lapismd.jj-store.desktop.dev",
   "build": { "frontendDist": "ui" },
-  "app": { "windows": [], "security": { "capabilities": [] } },
+  "app": {
+    "windows": [],
+    "macOSPrivateApi": true,
+    "security": { "capabilities": [] }
+  },
   "bundle": {
     "active": true,
     "targets": ["app", "dmg"],

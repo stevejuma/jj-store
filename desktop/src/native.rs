@@ -1,4 +1,4 @@
-//! Native window and menu lifecycle; no renderer invoke handlers are installed.
+//! Native window and menu lifecycle with a presentation-only glass command.
 use crate::{installation::Resources, native_window, runtime::ManagedService};
 use std::sync::Mutex;
 use tauri::{
@@ -19,6 +19,7 @@ fn show(app: &tauri::AppHandle) {
 }
 pub fn run() {
     let app = tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![crate::native_glass::set_glass_background])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| show(app)))
         .plugin(tauri_plugin_window_state::Builder::default().with_state_flags(StateFlags::all() & !StateFlags::VISIBLE).build())
         .plugin(tauri_plugin_dialog::init())
@@ -80,6 +81,8 @@ pub fn run() {
             }
         }
         RunEvent::ExitRequested { .. } | RunEvent::Exit => {
+            #[cfg(target_os = "macos")]
+            crate::macos_chrome::shutdown();
             if let Ok(mut service) = handle.state::<RuntimeState>().0.lock() {
                 if let Some(mut owner) = service.take() {
                     if let Err(error) = owner.stop() {
