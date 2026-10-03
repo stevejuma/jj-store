@@ -117,7 +117,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095                                                                                                                                                                                   |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | -                                                                                                                                                                                                                                                                                                                                                              |
-| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095                                                                                                                                                                                                                      |
+| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098                                                                                                                                                                                                             |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                                              | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049                                                                                                                                                                                                                                                                                                                         |
 | M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                                      | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-063                                                                                                                                                                                                                                                                       |
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation                       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                            |
@@ -130,7 +130,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
 | M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064                                                                                                                                                                                                           |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089,E-UI-094,E-UI-095                                                                                                                                                                         |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089,E-UI-094,E-UI-095,E-UI-098                                                                                                                                                                |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                |
@@ -51048,6 +51048,88 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "User-authorized main integration and temporary-workspace retirement. Existing source qualification is inherited unchanged; only merged consumer surfaces and their direct regressions rerun under targeted UI policy. Root aggregates, Rust/native/storage qualification, screenshot comparisons and visual baselines are out of scope. M4.31 remains in progress for released Design Core registry consumption; no milestone promoted and no package published.",
     "next": "Retain main notification regressions. Release and registry-only consumer acceptance remain the separately governed M4.31 follow-up; OS delivery and persistent history remain deferred."
+  },
+  {
+    "id": "E-UI-098",
+    "tasks": ["M14", "M15.5"],
+    "date": "2026-10-04",
+    "kind": "Align and scope Settings identifier copy actions",
+    "revision": "enclosing Jujutsu change zksxxqxv",
+    "before": "Main clean at mompnpzq/aad84020 after notification integration. All StoreReadOnlyRow values expose copy controls; rows without an Open action have their copy icon one button width too far right.",
+    "versions": "Node 24.10.0; pnpm 10.32.1; JJ 0.45.1; locked Svelte 5, Storybook 10.5.7 and Vitest 4.1.11. Existing foundation source-validation setup inherited unchanged; no dependency changes or publication.",
+    "formats": "Owned UI composition and presentation only. No HTTP, native identity, storage, WAL, receipt, companion metadata or persistence changes.",
+    "files": [
+      "catalog/components/store-application/StoreSettingsIdentifier.stories.svelte",
+      "catalog/components/store-application/StoreSyncSettings.stories.svelte",
+      "catalog/fixtures/ReadOnlyRowFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-channel-settings/CommunityChannelSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreReadOnlyRow.svelte",
+      "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchHealth.svelte",
+      "web/src/lib/ui/store-settings/StoreStorageOperation.svelte",
+      "web/src/lib/ui/store-settings/StoreStoragePosition.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncWait.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadSettings.svelte",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "Live browser comparison of Thread ID and Revision copy button geometry",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: linked Thread ID copy x1186, copy-only Revision x1218; each button32px wide. One missing link slot causes a 32px misalignment."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreSettingsIdentifier.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte; pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial alignment-only change:7/7 interactions/accessibility, web0 errors/0 warnings. .local/copy-align-stories.log and .local/copy-align-web.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreSyncSettings.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "4 passed/1 failed after adding the requested eligibility regression: ordinary Push target through 9 still exposes a copy button. .local/copy-scope-before.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreSettingsIdentifier.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "36/36 directly affected copy, Thread, Repository, Service, Search, Storage, Sync and navigation interactions/accessibility. Existing identifier story now proves a destination enables copy even without explicit copyable opt-in; Sync count remains visible and has no copy action. .local/copy-scope-stories.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings;166 catalog modules. .local/copy-scope-web.log and .local/copy-scope-catalog.log."
+      },
+      {
+        "command": "pnpm exec prettier --write changed files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed production, catalog and canonical files formatted. .local/copy-align-format.log and .local/copy-scope-format.log."
+      },
+      {
+        "command": "Live in-app browser verification on 127.0.0.1:7460",
+        "result": "pass",
+        "failures": 0,
+        "note": "After: Thread ID and Revision copy x976, width32. Repository ID/Selected operation/Operation head and copy-only Epoch all x964. Local service has zero copy buttons. Repository name, permission, counts, profile, capabilities and limits have no copy controls; IDs and hashes retain their actions. CSS reserves two equally sized action columns without a dummy control. Screenshots .local/copy-row-alignment.png and .local/copy-row-scope.png. Temporary tab10 closed; user tab and HMR preserved; no saved mutations."
+      },
+      {
+        "command": "pnpm exec prettier --check changed files; pnpm check:architecture; pnpm check:ui-ownership; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 changed files formatted; 859 architecture modules; UI ownership passes; spec-first covers 12 protected files and 3 canonical chapters. 5 validators, 22 chapters, 153 requirements and 126-task evidence bookkeeping pass. Logs .local/copy-scope-{format-final,architecture,ownership,spec-first,spec-validate,progress}.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Copyability defaults off and is explicitly enabled for identifiers/hashes or supplied internal destinations. Plain statuses/counts/descriptions stay non-interactive. Grid action slots preserve copy alignment without an empty focusable button. UI-only targeted policy: focused affected stories, types, browser geometry and governance checks; root aggregates, Rust lanes and built-bundle qualification out of scope. Visual baselines and existing registry release qualification remain separate; no milestone status promoted.",
+    "next": "Retain the focused copy eligibility and interaction regressions; main HMR stays available for review."
   }
 ]
 ```

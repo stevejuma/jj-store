@@ -1530,14 +1530,17 @@ application-background effect. Native composition and handshake follow
 desktop.md and JST-UI-018.
 
 Settings read-only row actions copy complete displayed identities without an API
-mutation. Separate repository and operation links reuse the existing authorized
-routes and retain explicit operation pins; immutable thread revisions, manifest
-digests and companion metadata IDs remain copy-only. Navigation is disabled
-while Settings drafts or pending operations require resolution. History search
-visibility and query-context disclosure are presentation state: toggling them
-preserves the controller-owned draft, accepted query, session email and pinned
-read context. Workspace context uses the existing explicit workspace selection
-action.
+mutation. Copy actions are opt-in for identifiers and hashes, or enabled by an
+internal navigation destination; ordinary status/count values stay
+non-interactive. Separate repository and operation links reuse the existing
+authorized routes and retain explicit operation pins; immutable thread
+revisions, manifest digests and companion metadata IDs remain copy-only.
+Copy-only rows reserve the trailing link space for alignment without adding a
+navigation action. Navigation is disabled while Settings drafts or pending
+operations require resolution. History search visibility and query-context
+disclosure are presentation state: toggling them preserves the controller-owned
+draft, accepted query, session email and pinned read context. Workspace context
+uses the existing explicit workspace selection action.
 
 Application feedback changes presentation only. Toast dismissal never resets
 pending mutation identities, drops a draft or retries a command. Obsolete and

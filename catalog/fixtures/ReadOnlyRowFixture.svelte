@@ -5,10 +5,12 @@
   let {
     value = "ab".repeat(64),
     onOpen,
+    copyable = true,
     lifecycle = false,
   }: {
     value?: string | number | null;
     onOpen?: () => void;
+    copyable?: boolean;
     lifecycle?: boolean;
   } = $props();
   let replaced = $state(false),
@@ -21,6 +23,7 @@
         label="Operation ID"
         value={replaced ? "replacement" : value}
         {onOpen}
+        {copyable}
       />{/if}
   </dl>
   {#if lifecycle}<Button onclick={() => (replaced = true)}>Replace value</Button

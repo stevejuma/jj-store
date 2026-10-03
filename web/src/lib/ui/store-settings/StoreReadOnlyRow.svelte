@@ -8,6 +8,7 @@
   let {
     label,
     copyLabel = label,
+    copyable = false,
     value,
     display,
     emptyLabel = "Unavailable",
@@ -22,6 +23,7 @@
   }: {
     label: string;
     copyLabel?: string;
+    copyable?: boolean;
     value: string | number | bigint | null | undefined;
     display?: string;
     emptyLabel?: string;
@@ -35,12 +37,14 @@
     openDisabled?: boolean;
   } = $props();
   const text = $derived(value == null ? "" : String(value));
+  const canCopy = $derived(copyable || !!onOpen);
   let feedback = $state<"" | "copied" | "failed">("");
   let feedbackVersion = $state(0);
   let timer: ReturnType<typeof setTimeout> | undefined;
   let attempt = 0;
   $effect(() => {
     text;
+    canCopy;
     attempt += 1;
     feedback = "";
     clearTimeout(timer);
@@ -80,7 +84,7 @@
     <span class="store-readonly-row__value" data-tone={tone} role={live}
       >{text ? (display ?? text) : emptyLabel}</span
     >
-    {#if text}
+    {#if text && canCopy}
       <span class="store-readonly-row__actions">
         <Button
           type="button"
@@ -159,7 +163,8 @@
     white-space: nowrap;
   }
   .store-readonly-row__actions {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     flex: none;
     align-items: center;
     margin-inline-start: auto;

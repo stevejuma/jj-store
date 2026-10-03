@@ -111,14 +111,24 @@
     );
     await expect(c.getByText("Captured target is still pending")).toBeVisible();
     await expect(
-      c.getByRole("button", { name: "Copy full Push target through: 9" }),
+      within(
+        c.getByText("Push target through").closest(".store-readonly-row")!,
+      ).getByText("9", { exact: true }),
     ).toBeVisible();
+    await expect(
+      c.queryByRole("button", { name: "Copy full Push target through: 9" }),
+    ).not.toBeInTheDocument();
     await userEvent.click(c.getByRole("tab", { name: "Overview" }));
     await userEvent.click(c.getByRole("tab", { name: "Progress" }));
     await userEvent.click(c.getByRole("button", { name: "Continue waiting" }));
     await expect(c.getByText("Captured target reached")).toBeVisible();
     await expect(
-      c.getByRole("button", { name: "Copy full Push target through: 9" }),
+      within(
+        c.getByText("Push target through").closest(".store-readonly-row")!,
+      ).getByText("9", { exact: true }),
     ).toBeVisible();
+    await expect(
+      c.queryByRole("button", { name: "Copy full Push target through: 9" }),
+    ).not.toBeInTheDocument();
   }}
 />

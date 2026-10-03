@@ -63,6 +63,7 @@
       >
     </div>
     <StoreReadOnlyRow
+      copyable
       label="Revision"
       copyLabel="Thread revision"
       value={detail.thread.reference.id}

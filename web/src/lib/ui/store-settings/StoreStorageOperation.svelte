@@ -55,6 +55,7 @@
       </dd>
     </div>{/if}
   <StoreReadOnlyRow
+    copyable
     label="Request"
     value={report.request_id}
     copyLabel="Maintenance request"

@@ -64,6 +64,7 @@
         display={number(search?.indexed_position)}
       />
       <StoreReadOnlyRow
+        copyable
         label="Index generation"
         copyLabel="Index generation"
         value={search?.index_generation}

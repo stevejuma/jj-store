@@ -25,7 +25,7 @@
 
 <Story
   name="Whole row copy and independent navigation"
-  args={{ onOpen: open }}
+  args={{ onOpen: open, copyable: false }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       write = fn(async (_value: string) => {}),

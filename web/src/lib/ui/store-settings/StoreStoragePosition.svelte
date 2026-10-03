@@ -6,11 +6,13 @@
 
 <dl class="store-settings__rows">
   <StoreReadOnlyRow
+    copyable
     label="Repository"
     value={position.repository}
     copyLabel="Repository"
   />
   <StoreReadOnlyRow
+    copyable
     label="Epoch"
     value={position.epoch}
     copyLabel="Storage epoch"
@@ -24,6 +26,7 @@
     value={position.revision.toLocaleString("en-GB")}
   />
   <StoreReadOnlyRow
+    copyable
     label="Manifest digest"
     value={position.digest}
     copyLabel="Manifest digest"

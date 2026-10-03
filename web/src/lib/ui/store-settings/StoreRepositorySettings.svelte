@@ -99,6 +99,7 @@
       <dl class="store-settings__rows">
         <StoreReadOnlyRow label="Name" value={view.repository.name} />
         <StoreReadOnlyRow
+          copyable
           label="Repository ID"
           copyLabel="Repository ID"
           value={view.repository.id}
@@ -111,6 +112,7 @@
           value={view.repository.permission}
         />
         <StoreReadOnlyRow
+          copyable
           label="Selected operation"
           copyLabel="Selected operation"
           value={view.route.snapshotOperationId}
@@ -123,6 +125,7 @@
         />
         {#each view.operationHeads as head, index (head)}
           <StoreReadOnlyRow
+            copyable
             label={`Operation head ${index + 1}`}
             value={head}
             onOpen={controller.actions.openRoute
@@ -147,11 +150,13 @@
             display={number(local.generation)}
           />
           <StoreReadOnlyRow
+            copyable
             label="Companion metadata"
             copyLabel="Companion metadata"
             value={local.metadata_commit}
           />{/if}
         {#if native}<StoreReadOnlyRow
+            copyable
             label="Epoch"
             copyLabel="Epoch"
             value={native?.epoch}

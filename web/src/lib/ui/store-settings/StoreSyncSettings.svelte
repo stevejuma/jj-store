@@ -211,11 +211,13 @@
             {#if frontier}
               <dl class="store-settings__rows">
                 <StoreReadOnlyRow
+                  copyable
                   label="Replica"
                   copyLabel={`${label} replica`}
                   value={frontier.replica}
                 />
                 <StoreReadOnlyRow
+                  copyable
                   label="Log epoch"
                   copyLabel={`${label} epoch`}
                   value={frontier.log_epoch}

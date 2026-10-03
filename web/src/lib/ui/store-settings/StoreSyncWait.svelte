@@ -53,10 +53,15 @@
   <dl class="store-settings__rows">
     {#each [{ label: "Push target", replica: wait.barrier.local_replica, epoch: wait.barrier.push_epoch, through: wait.barrier.push_through }, { label: "Pull target", replica: wait.barrier.peer_replica, epoch: wait.barrier.pull_epoch, through: wait.barrier.pull_through }] as target}
       <StoreReadOnlyRow
+        copyable
         label={`${target.label} replica`}
         value={target.replica}
       />
-      <StoreReadOnlyRow label={`${target.label} epoch`} value={target.epoch} />
+      <StoreReadOnlyRow
+        copyable
+        label={`${target.label} epoch`}
+        value={target.epoch}
+      />
       <StoreReadOnlyRow
         label={`${target.label} through`}
         value={target.through}

@@ -62,6 +62,7 @@
           ></Button
         >
         <StoreReadOnlyRow
+          copyable
           label="Thread ID"
           value={id}
           standalone
