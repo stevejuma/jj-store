@@ -133,10 +133,10 @@ shared-package release qualification does not alter those original Git gates.
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                |
-| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005                                                                                                                                                                                                                                                                                                         |
+| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                              |
 | M17.1       | In progress | M8a.4                   | JST-DESK-003                                                                                                                                                                            | Opt-in bounded parent-pipe service supervision                                                                                 | Retain real RustFS and ordinary process evidence                                               | E-DESK-001,E-DESK-003                                                                                                                                                                                                                                                                                                                                          |
-| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005                                                                                                                                                                                                                                                                                                         |
-| M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003,E-DESK-005                                                                                                                                                                                                                                                                                                                               |
+| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                              |
+| M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                    |
 | M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                            | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -50291,6 +50291,60 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "Only Settings, direct form/picker consumers and Reviews action alignment; Appearance action layout excluded from column styling. Shared native chrome work excluded. Root aggregate checks, Rust suites, unrelated UI suites and schema generation are out of scope under the targeted UI policy. Visual baselines remain visual-pending, and M14 full integrated qualification and milestone status are unchanged.",
     "next": "Retain focused Settings regression coverage and continue separately governed remaining M14 work."
+  },
+  {
+    "id": "E-DESK-006",
+    "tasks": ["M17", "M17.2", "M17.3"],
+    "date": "2026-10-03",
+    "kind": "native-chrome-manual-and-zoom-qualification",
+    "revision": "rsouwqrt (enclosing change)",
+    "before": "E-DESK-005 retained the final observer build cold-start proof, but movement, edge resizing and hover glyphs after that last refinement were pending. Main is clean after native vssplolt/bdf88069 and separate Settings soytvzqt/89243006.",
+    "versions": "macOS ARM64; Tauri2.11.5, Tao0.35.3, Wry0.55.1; native debug bundle contains final vssplolt AppKit update observer. Its staged production renderer predates the separate Settings commit. Native host/chrome source is unchanged by Settings; latest Settings bundle qualification is outside this entry.",
+    "formats": "No implementation, API, native authority, appearance preferences or baseline changes. Persistent installation and original loopback57653 retained.",
+    "files": [
+      "spec/src/milestones.md",
+      "desktop/src/macos_chrome.rs",
+      "desktop/src/native_window.rs",
+      "desktop/src/native_glass.rs",
+      "web/src/lib/ui/community-app-shell/desktop-chrome.css"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "CUA getApp exact main jj-store.app; native window Raise; screenshot; drag integrated header from700,44 to740,80",
+        "result": "fail",
+        "failures": 1,
+        "note": "Raise retained correct inactive geometry, but native mouse dragging returned noWindowsAvailable. This attempt is inconclusive for movement, not a product failure or pass; movement is qualified by the separate user review below."
+      },
+      {
+        "command": "CUA native fullscreen-button secondary action zoom the window; refreshed AX and screenshot; repeat secondary action to restore; screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual native Zoom/Restore changes screenshot size2530x1504 ->3456x1988 ->2530x1504. Original close/minimize/zoom controls retain46px Retina screenshot centers, matching the sidebar toggle at23 logical pixels after resize and settled relayout. Does not qualify dragging or header double-click."
+      },
+      {
+        "command": "User manual review in final running bundle: move window, resize by edge, hover native traffic lights",
+        "result": "pass",
+        "failures": 0,
+        "note": "User explicitly answered Aligned; hover glyphs appear. Resolves the final observer version movement/edge-resize/native-hover gap from E-DESK-005 without replacing native controls or claiming screen-sharing-obscured automation glyph evidence."
+      },
+      {
+        "command": "CUA final active-window AX and screenshot; lsof -nP -iTCP:57653 -sTCP:LISTEN",
+        "result": "pass",
+        "failures": 0,
+        "note": "After manual edge resizing,2540x1658 active screenshot still shows native colored controls centered with sidebar toggle. Saved native glass wash and opaque content retained; original listener remains live. App stays open for review."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm exec prettier --check spec/src/milestones.md; pnpm check:progress; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical formatting passes;125-task bookkeeping and5validators/22chapters/152requirements pass. Documentation-only qualification: no build, root aggregate or unrelated suite needed."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Only final traffic-light alignment and default native hover behavior. Prior native glass toggle/cold preference restoration evidence remains in E-DESK-005. No code changed, so Rust/UI builds and suites were not repeated. Root aggregates and unrelated consumers are out of scope. M17 first-render, dirty-edit, folder controls, native header double-click/drag qualification, accessibility, visual baselines and distribution remain separate; no milestone is promoted.",
+    "next": "Retain this narrow successful review and continue separately governed M17 gates. The original E-DESK-005 history remains unchanged; E-DESK-006 resolves its bounded final movement/resize/hover follow-up."
   }
 ]
 ```
