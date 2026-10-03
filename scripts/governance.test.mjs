@@ -375,3 +375,23 @@ test("requires_catalog_evidence", () => {
     assert.equal(needsEvidence(path), true);
   }
 });
+
+test("service_review_models_preserve_core_layer_boundaries", () => {
+  assert.deepEqual(
+    dependencyErrors([
+      { name: "jj-store-service", dependencies: [{ name: "jj-review" }] },
+      {
+        name: "jj-review",
+        dependencies: [{ name: "jj-agent" }, { name: "jj-store-model" }],
+      },
+    ]),
+    [],
+  );
+  assert.equal(
+    dependencyErrors([
+      { name: "jj-store-model", dependencies: [{ name: "jj-review" }] },
+      { name: "jj-review", dependencies: [{ name: "jj-store-wal" }] },
+    ]).length,
+    2,
+  );
+});

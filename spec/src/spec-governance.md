@@ -682,3 +682,16 @@ JST-WORK-008 and JST-LOCAL-004. It changes client read scheduling, not native
 publication, cursor authority or request identity. Evidence must distinguish
 current-head advancement, historical code pins, independent collaboration roots,
 retained drafts and unknown command intent, reconnect and session cancellation.
+
+History search uses released Design Core editor chrome with an upstream
+custom-language extension point; jj-store owns query grammars, metadata,
+execution and routing. Callable descriptions are adapted from jjbutler
+`apps/desktop/src/lib/components/RevsetQueryBar.svelte` at `a015979d1de4`
+(user-owned code). Standard aliases are maintained from pinned JJ 0.45.1
+`src/config/revsets.toml`. No jjbutler checkout or runtime dependency is
+introduced.
+
+The package-boundary audit MUST reflect canonical owned-model dependencies.
+Service use of the existing ReviewStore model is qualified by the focused
+`service_review_models_preserve_core_layer_boundaries` governance regression;
+that allowance does not permit reverse core-model or publication dependencies.

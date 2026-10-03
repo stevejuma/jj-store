@@ -202,6 +202,7 @@ export function productionControllerSurface(
     actions: StoreController["actions"];
     globalSearch?: StoreController["globalSearch"];
     referenceSearch?: StoreController["referenceSearch"];
+    historyQuery?: StoreController["historyQuery"];
   },
   pause?: StoreController["actions"]["setRefreshPaused"],
 ): StoreController {
@@ -213,6 +214,7 @@ export function productionControllerSurface(
     threadNavigation: options.threadNavigation,
     globalSearch: options.globalSearch,
     referenceSearch: options.referenceSearch,
+    historyQuery: options.historyQuery,
     get state() {
       return productionSessionView(
         data,

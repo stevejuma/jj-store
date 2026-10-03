@@ -123,6 +123,7 @@ pub struct FileContent {
 )]
 pub enum Request {
     Graph(GraphRequest, GraphWindow),
+    QueryInfo,
     Commit { commit: m::GitSha1Id },
     File { file: m::GitSha1Id },
     Paths(paths::Request),
@@ -139,6 +140,7 @@ pub enum Request {
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]
 pub enum Response {
     Graph(GraphPage),
+    QueryInfo(crate::query::language::QueryInfo),
     Commit(Box<CommitDetail>),
     File(FileContent),
     Paths(paths::Page),
@@ -204,6 +206,7 @@ impl Executor {
             Box::pin(async move {
                 let context = Context::open(access, operation, budget, limits).await?;
                 let value = match request {
+                    Request::QueryInfo => Response::QueryInfo(crate::query::language::info(true)),
                     Request::Graph(request, page) => {
                         graphs::validate(
                             &request,

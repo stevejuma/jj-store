@@ -11,6 +11,9 @@ pub enum GraphRequest {
         at_time_millis: i64,
     },
     Operations,
+    OperationsFiltered {
+        query: String,
+    },
     Evolution {
         commit: m::GitSha1Id,
     },

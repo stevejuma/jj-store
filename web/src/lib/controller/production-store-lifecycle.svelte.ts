@@ -186,3 +186,13 @@ export function resetConnectionView(
     error: message,
   });
 }
+
+export function destroyProductionStoreLifecycle(
+  lifecycle: AbortController,
+  disconnect: () => void,
+  history: History,
+) {
+  lifecycle.abort();
+  disconnect();
+  history.destroy();
+}

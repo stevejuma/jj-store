@@ -1,4 +1,14 @@
 import {
+  safeLabel,
+  safePath,
+  one,
+  validOptional,
+} from "./store-route-fields.js";
+import {
+  historyQueryFromParams,
+  historyQueryToParams,
+} from "./history-query-route.js";
+import {
   projectsRouteFromHash,
   projectsRouteToHash,
 } from "./projects-route-codec.js";
@@ -22,6 +32,8 @@ const pages = new Set<StorePage>([
 ]);
 const queryKeys = new Set([
   "at_op",
+  "history_query",
+  "history_time",
   "bookmark",
   "workspace",
   "commit",
@@ -47,40 +59,13 @@ export type StoreRouteHashResult =
   | { kind: "invalid"; message: string }
   | { kind: "route"; route: StoreRoute };
 
-function safeLabel(value: string, maximum: number): boolean {
-  return (
-    value.length > 0 &&
-    value.length <= maximum &&
-    !/[\u0000-\u001f]/u.test(value)
-  );
-}
-
-function safePath(value: string): boolean {
-  if (!safeLabel(value, 4096) || value.startsWith("/") || value.includes("\\"))
-    return false;
-  return value
-    .split("/")
-    .every((part) => part && part !== "." && part !== "..");
-}
-
-function one(query: URLSearchParams, key: string): string | null | undefined {
-  const values = query.getAll(key);
-  return values.length > 1 ? undefined : (values[0] ?? null);
-}
-
-function validOptional(
-  value: string | null | undefined,
-  pattern: RegExp,
-): value is string | null {
-  return value !== undefined && (value === null || pattern.test(value));
-}
-
 export function storeRouteToHash(route: StoreRoute): string | null {
   if (route.projectsHub && route.page === "projects")
     return projectsRouteToHash(route);
   if (!repositoryId.test(route.repository) || !pages.has(route.page))
     return null;
   const query = new URLSearchParams();
+  historyQueryToParams(query, route);
   if (route.snapshotOperationId) query.set("at_op", route.snapshotOperationId);
   if (route.workspace) query.set("workspace", route.workspace);
   if (route.bookmark) query.set("bookmark", route.bookmark);
@@ -131,6 +116,10 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   if ([...query.keys()].some((key) => !queryKeys.has(key)))
     return { kind: "invalid", message: "Unknown repository route field." };
 
+  const historyFields = historyQueryFromParams(query, page);
+  if (!historyFields)
+    return { kind: "invalid", message: "Invalid history query context." };
+  const { historyQuery, historyTime } = historyFields;
   const snapshotOperationId = one(query, "at_op");
   const bookmark = one(query, "bookmark");
   const workspace = one(query, "workspace");
@@ -193,6 +182,8 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   if (taskId && !projectId)
     return { kind: "invalid", message: "Task selections require a project." };
   const hasSnapshotSelection = Boolean(
+    historyQuery ||
+    historyTime !== null ||
     workspace ||
     bookmark ||
     commitId ||
@@ -281,6 +272,8 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   return {
     kind: "route",
     route: {
+      ...(historyQuery ? { historyQuery } : {}),
+      ...(historyTime !== null ? { historyTime: Number(historyTime) } : {}),
       page,
       repository,
       bookmark: bookmark ?? "",

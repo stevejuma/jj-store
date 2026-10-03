@@ -562,3 +562,17 @@ ARM64 using descriptor-relative no-follow traversal and atomic private-file
 rename. It preserves executable mode and excludes hard-linked/symlink files and
 metadata paths. Save changes no JJ IDs, bookmarks, operation heads or companion
 refs; recorded-state commands and conversion remain separate gates.
+
+## History query compatibility
+
+The owned query-error union adds a structured `invalid_query` variant; typed
+consumers of failed index tasks retain string handling and narrow the diagnostic
+variant explicitly. Query metadata and filtered operation graph requests are
+additive version-1 contracts; structured query diagnostics are optional in
+existing error envelopes. The catalog and standard aliases describe pinned JJ
+0.45.1, with explicit filesystem-profile exclusions for content and
+cross-operation predicates. No object, manifest, WAL, receipt or companion
+persistence format changes. Operation filters remain an owned metadata language;
+they do not claim JJ commit revset semantics. Design Core custom-language
+support is qualified against source in an ignored temporary dependency setup;
+registry-only consumption awaits a release containing that generic extension.

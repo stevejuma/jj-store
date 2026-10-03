@@ -50,7 +50,10 @@ function eventPosition(event: Schemas["CommittedEvent"]): number {
   return event.snapshot.published_seq;
 }
 function taskError(task: Schemas["IndexTask"]): string | undefined {
-  if (task.status === "failed") return task.error;
+  if (task.status === "failed")
+    return typeof task.error === "string"
+      ? task.error
+      : task.error.invalid_query.message;
   if (task.status === "ready") return task.index.operation;
   return undefined;
 }

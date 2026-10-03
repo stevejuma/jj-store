@@ -40,7 +40,7 @@ shared-package release qualification does not alter those original Git gates.
 | M4.7        | Done        | M4.6                    | JST-UI-004                                                                                                                                                                              | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                                            | E-UI-004,E-UI-029,E-UI-044,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                   |
 | M4.8        | Done        | M4.7                    | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks            | Visual review pending; live UI remains deferred                                                | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                        |
 | M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                                 | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                                            | E-UI-007,E-UI-008,E-UI-063,E-UI-065,E-UI-066,E-UI-067,E-UI-068                                                                                                                                                                                                                                                                                                 |
-| M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                                     | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                                          | E-M4-018                                                                                                                                                                                                                                                                                                                                                       |
+| M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                                     | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                                          | E-M4-018,E-UI-090,E-UI-091                                                                                                                                                                                                                                                                                                                                     |
 | M4.11       | Deferred    | M4.10                   | JST-API-004,JST-API-005,JST-UI-005                                                                                                                                                      | Shared authenticated connection and final registry-only browser acceptance                                                     | Future shared/package release                                                                  | E-UI-011                                                                                                                                                                                                                                                                                                                                                       |
 | M4.12       | Deferred    | M4.11                   | JST-API-002,JST-API-003,JST-UI-005                                                                                                                                                      | Shared-deployment route/SSE finalization against registry-only dependencies                                                    | Future shared/package release                                                                  | E-UI-012                                                                                                                                                                                                                                                                                                                                                       |
 | M4.13       | Deferred    | M4.11                   | JST-API-002,JST-UI-006                                                                                                                                                                  | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                                 | Future Design Core release                                                                     | E-UI-013,E-UI-014,E-UI-015,E-UI-083                                                                                                                                                                                                                                                                                                                            |
@@ -113,7 +113,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                             | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                           | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                             |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                             | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025                                                                                                                                                                                                                              |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089                                                                                                                                                                                                                                |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091                                                                                                                                                                                                              |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060                                                                                                                                                                                                                                                   |
@@ -25396,7 +25396,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
+        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -37330,7 +37330,7 @@ and named tests are checked by the progress gate.
         "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
         "result": "pass",
         "failures": 0,
-        "note": "Fresh served app on 7460 displays 87e1cd5d\u20268fb9 and 20d6c008\u2026ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
       },
       {
         "command": "pnpm check:progress",
@@ -47136,7 +47136,7 @@ and named tests are checked by the progress gate.
         "command": "python3 /tmp/jj-land-resolve.py; jj resolve --list; pnpm exec prettier --write (11 resolved files)",
         "result": "pass",
         "failures": 0,
-        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main\u2019s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
+        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main’s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
       },
       {
         "command": "pnpm install --no-frozen-lockfile --lockfile=false; compare installed tooltip-content.svelte to landed Design Core source",
@@ -47274,7 +47274,7 @@ and named tests are checked by the progress gate.
         "command": "python3 parent evidence and main dependency/runtime metadata audit",
         "result": "pass",
         "failures": 0,
-        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main\u2019s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
+        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main’s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
       },
       {
         "command": "pnpm test:storybook catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
@@ -47433,6 +47433,847 @@ and named tests are checked by the progress gate.
         "note": "Both main working copies clean; temporary paths absent and registrations removed. Source default retains tooltip quoystmy/bb40d39d. Persistent server95351/UI95352 stay alive,7460returns200 and fixture SHA256 unchanged. Final retirement evidence is folded into the enclosing verified merge as a ledger-only update; repeat document governance before squash."
       }
     ]
+  },
+  {
+    "id": "E-UI-090",
+    "tasks": ["M4.10", "M13.4"],
+    "date": "2026-10-03",
+    "kind": "implementation",
+    "revision": "enclosing Jujutsu change lsmrmlpp",
+    "before": "New workspaces fork clean yyknxszk and Design Core zukowoxl. JJ Log/Op Log have no rich query editor. Design Core built-in filter mode cannot accept host grammar without interpreting filter chips; exact custom-language before regression fails. jjbutler is read-only source reference; its unrelated work is preserved.",
+    "versions": "JJ0.45.1; Rust1.98.1; macOS ARM64; version1 HTTP/native/local contracts. CodeMirror6 and Svelte5. Source Design Core change ookknysq, jjbutler a015979d1de4. Registry manifest remains @lapismd/design-core ^0.2.0. Qualified Design Core commit b0a8c96e.",
+    "formats": "Additive QueryInfo, OperationsFiltered and optional bounded Diagnostic. Exact JJ standard aliases;4096-byte/64-term metadata grammar. No manifest/object/WAL/receipt/native or companion persistence change. Successful text/time in URL; author email in session memory only. Strict CSP unchanged. Owned query-error schemas include an additive diagnostic variant; the typed index-task consumer explicitly narrows it. Existing canonical service-to-ReviewStore-model dependency is reflected in the audit map without production dependency changes.",
+    "files": [
+      "catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+      "catalog/fixtures/HistoryQueryFixture.svelte",
+      "crates/jj-store-cli/tests/local_browser/history_query.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/history_query.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_browsing.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-jj/src/local_browser/graph_types.rs",
+      "crates/jj-store-jj/src/local_browser/graphs.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/native.rs",
+      "crates/jj-store-jj/src/query/graphs.rs",
+      "crates/jj-store-jj/src/query/language/aliases.rs",
+      "crates/jj-store-jj/src/query/language/callables.json",
+      "crates/jj-store-jj/src/query/language/mod.rs",
+      "crates/jj-store-jj/src/query/language/operations.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "package.json",
+      "pnpm-lock.yaml",
+      "schemas/openapi.json",
+      "scripts/check-boundaries.mjs",
+      "scripts/contracts.types.ts",
+      "scripts/governance.test.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/api/api-error.ts",
+      "web/src/lib/api/client.ts",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/api/local-client.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/history-query-route.ts",
+      "web/src/lib/controller/history-query-types.ts",
+      "web/src/lib/controller/history-query.svelte.ts",
+      "web/src/lib/controller/http-local-code-data-source.ts",
+      "web/src/lib/controller/http-repository-transports.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-loaders.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/store-error.ts",
+      "web/src/lib/controller/store-route-codec.ts",
+      "web/src/lib/controller/store-route-fields.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/store-history-query/StoreHistoryQuery.svelte",
+      "web/src/lib/ui/store-history-query/history-language.ts",
+      "web/src/lib/ui/store-history-query/history-query.css",
+      "web/tests/browser/history-query.spec.ts",
+      "web/tests/store-route-codec.test.ts",
+      "web/tests/vite/history-language.test.ts",
+      "web/tests/vite/history-query-transport.test.ts",
+      "web/tests/vite/history-query.test.ts"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/history_query.rs#history_queries_filter_sparse_ancestry_before_paging_and_never_publish",
+      "scripts/governance.test.mjs#service_review_models_preserve_core_layer_boundaries"
+    ],
+    "runs": [
+      {
+        "command": "pnpm install --offline --ignore-scripts --frozen-lockfile (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Isolated source-workspace dependencies installed."
+      },
+      {
+        "command": "pnpm install --ignore-scripts --lockfile=false --config.pnpmfile=.local/rich-search-pnpmfile.cjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Ignored temporary source-validation setup; publishable manifest and lockfile retain registry ranges."
+      },
+      {
+        "command": "pnpm install --lockfile-only --ignore-scripts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Late diff inspection found the inherited ignored .pnpmfile.cjs substituted a local Design Core checkout into this candidate lockfile. Restored the parent lock, then regenerated with --ignore-pnpmfile before commit."
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/filter/search-filter-bar/SearchFilterInput.stories.svelte (Design Core parent before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "One regression failed, one passed: custom highlight missing. /tmp/rich-search-dc-baseline.log"
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/filter/search-filter-bar (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three files / ten interaction and accessibility tests. /tmp/rich-search-dc-family.log"
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/filter/search-filter-bar/SearchFilterInput.stories.svelte (Design Core final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two tests; custom grammar, reactive completions, controlled draft, selection/undo preservation. /tmp/rich-search-dc-final-focused.log"
+      },
+      {
+        "command": "pnpm checks (Design Core first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Spec count/atomicity rejected the new requirement; fixed canonical bullets. /tmp/rich-search-dc-checks.log"
+      },
+      {
+        "command": "pnpm checks (Design Core retry)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Governance, formatting, types, 111 unit files /715 tests, Turbo and static build passed. Full interaction run completed 206/208 files then stalled; only our runner stopped. /tmp/rich-search-dc-checks2.log"
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/forms/cycle-picker/CyclePicker.stories.svelte src/shared/shadcn/popover/Popover.stories.svelte (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two stalled files rerun cold: four passed. /tmp/rich-search-dc-stalled-stories.log"
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook --no-file-parallelism (Design Core)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Serial retry hit AppShell timeout under concurrent host load and was stopped; separate cold AppShell rerun passed all15. /tmp/rich-search-dc-storybook-serial.log"
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/shell/app-shell/AppShell.stories.svelte (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 passed. /tmp/rich-search-dc-shell-retry.log"
+      },
+      {
+        "command": "pnpm test:workspace:pointer (Design Core development host attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Separate dev hosts timed out before unrelated story readiness. Requalified with fresh prebuilt static assets; original logs retained under /tmp/rich-search-dc-*pointer.log and ai-browser.log."
+      },
+      {
+        "command": "pnpm test:shell:pointer (Design Core development host attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Separate dev hosts timed out before unrelated story readiness. Requalified with fresh prebuilt static assets; original logs retained under /tmp/rich-search-dc-*pointer.log and ai-browser.log."
+      },
+      {
+        "command": "pnpm test:shadcn:pointer (Design Core development host attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Separate dev hosts timed out before unrelated story readiness. Requalified with fresh prebuilt static assets; original logs retained under /tmp/rich-search-dc-*pointer.log and ai-browser.log."
+      },
+      {
+        "command": "pnpm test:ai-chat-browser (Design Core development host attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Separate dev hosts timed out before unrelated story readiness. Requalified with fresh prebuilt static assets; original logs retained under /tmp/rich-search-dc-*pointer.log and ai-browser.log."
+      },
+      {
+        "command": "python3 -m http.server 9369 --directory storybook-static --bind 127.0.0.1; pnpm test:workspace:pointer (Design Core static attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Two initial tests timed out; diagnostic browser proved asset ERR_CONNECTION_RESET. Stopped only our host and runner; replaced disposable static host with Node HTTP. /tmp/rich-search-dc-workspace-static.log"
+      },
+      {
+        "command": "pnpm packages:pack (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "No unpublished version selected; this release-helper no-op did not prove packing. /tmp/rich-search-dc-pack.log"
+      },
+      {
+        "command": "pnpm pack --pack-destination .local/packages (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Packed source-distributed public exports to ignored tarball. /tmp/rich-search-dc-pack2.log"
+      },
+      {
+        "command": "cargo check --locked -p jj-store-jj -p jj-store-service -p jj-store-http",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owning backend boundary compiled. /tmp/rich-search-rust-check2.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-jj query::language",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three language/catalog/parser cases. /tmp/rich-search-language-tests2.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle history_queries_filter_sparse_ancestry_before_paging_and_never_publish",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact native sparse pagination, real parent gaps, context, limits, cursor mismatch and zero-publication proof. /tmp/rich-search-native-tests.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test local_browser history_query",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fixture iterations caught missing Debug, TOML quoted-key, escaped-newline and operation-description mistakes; fixed without weakening product assertions. /tmp/rich-search-local-tests*.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test local_browser history_query (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pinned actual CLI oracle for six aliases, poisoned repo alias isolation, sparse operations and unchanged dirty files/heads. /tmp/rich-search-local-tests5.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact metadata auth/pin, filtered operations and HTTP400 diagnostic. /tmp/rich-search-http-tests.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle graph_acceptance (shared cache attempts)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Our runners waited behind simultaneous other-workspace builds. Stopped only our queued work and cloned ignored artifacts to isolated target using cp -cpR; no other service modified."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle graph_acceptance (isolated before assertion updates)",
+        "result": "fail",
+        "failures": 3,
+        "note": "15 passed /3 failed: generic Invalid assertions now receive intentional typed query diagnostics. /tmp/rich-search-isolated-graphs.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle graph_acceptance (isolated final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All18 graph/cache/cancellation/resource/history cases pass; assertions now require exact diagnostic kinds. /tmp/rich-search-isolated-graphs2.log"
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Additive OpenAPI and TypeScript contracts generated. /tmp/rich-search-contract-generate.log"
+      },
+      {
+        "command": "pnpm web:check (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "One native snapshot field typo corrected to operation_id. /tmp/rich-search-web-check.log"
+      },
+      {
+        "command": "pnpm web:check (subsequent and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings. /tmp/rich-search-web-check2.log, check3.log, check4.log"
+      },
+      {
+        "command": "pnpm catalog:check (new fixture)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fixture-only StoreDataSource cast fixed through explicit unknown conversion. /tmp/rich-search-catalog-check2.log"
+      },
+      {
+        "command": "pnpm catalog:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings;131 catalog modules. /tmp/rich-search-catalog-check3.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing direct controller surface31 files /196 tests. /tmp/rich-search-web-existing-unit.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config web/vitest.config.ts web/tests/vite/history-query.test.ts web/tests/vite/history-language.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mistyped nonexistent config path; corrected to catalog config. No test ran. /tmp/rich-search-web-query-final.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/history-query.test.ts web/tests/vite/history-language.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six focused language and controller cases. /tmp/rich-search-web-query-final2.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/history-query-transport.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three regressions prove fresh identical native/local requests after cancellation and metadata operation mismatch rejection. /tmp/rich-search-transport-tests.log"
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "11 URL/context codec cases. /tmp/rich-search-route-tests.log"
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two production-component keyboard/axe cases. /tmp/rich-search-stories.log"
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Served production build; existing chunk-size warning. /tmp/rich-search-web-build.log"
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/history-query.spec.ts (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cold host startup timed out behind shared Cargo lock; no browser test ran. Isolated target/prebuilt host required. /tmp/rich-search-cold-browser.log"
+      },
+      {
+        "command": "pnpm check:architecture (extraction iterations)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Counted-line budget failures repaired by extracting route fields, lifecycle cleanup and transports. /tmp/rich-search-architecture*.log"
+      },
+      {
+        "command": "pnpm check:architecture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "738 production modules. /tmp/rich-search-architecture-final.log"
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production ownership passes. Boundary result recorded separately below. /tmp/rich-search-ui-ownership.log"
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Three mapped canonical chapters missing; added architecture, CLI qualification and compatibility scope. /tmp/rich-search-spec-first.log"
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate (after mapped chapters)",
+        "result": "pass",
+        "failures": 0,
+        "note": "54 protected files,8 chapters;5 validators /21 chapters /146 requirements. /tmp/rich-search-spec-first2.log and spec-validate2.log"
+      },
+      {
+        "command": "pnpm exec prettier --write $(jj --no-pager diff --name-only | rg \"\\.(ts|svelte|css|json|md|yaml)$\")",
+        "result": "fail",
+        "failures": 1,
+        "note": "Local rg configuration added line prefixes to piped filenames; replaced with subprocess argument array. /tmp/rich-search-final-format.log"
+      },
+      {
+        "command": "pnpm packages:pack (jj-store accidental invocation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Script belongs to Design Core; no such script in consumer. Correct owning package pack run follows. /tmp/rich-search-wrong-pack.log"
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook (Design Core final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "208 files /644 interaction and accessibility tests passed. /tmp/rich-search-dc-storybook-final.log"
+      },
+      {
+        "command": "WORKSPACE_STORYBOOK_PORT=9370 pnpm test:workspace:pointer (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh Node static host,14 passed. /tmp/rich-search-dc-workspace-node.log"
+      },
+      {
+        "command": "SHELL_STORYBOOK_PORT=9370 pnpm test:shell:pointer (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh static host,11 passed. /tmp/rich-search-dc-shell-node.log"
+      },
+      {
+        "command": "SHADCN_STORYBOOK_PORT=9370 pnpm test:shadcn:pointer (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "35 passed,one existing skip. /tmp/rich-search-dc-shadcn-node.log"
+      },
+      {
+        "command": "AI_CHAT_STORYBOOK_URL=http://127.0.0.1:9370 pnpm test:ai-chat-browser (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three passed. /tmp/rich-search-dc-ai-node.log"
+      },
+      {
+        "command": "pnpm spec:check; pnpm spec:validate (Design Core final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All3 governance lanes pass, final evidence validated. /tmp/rich-search-dc-spec-final2.log and validate-final.log. Source committed as ookknysq/b0a8c96e."
+      },
+      {
+        "command": "pnpm exec prettier --check (changed Design Core files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All files formatted. /tmp/rich-search-dc-format-final.log"
+      },
+      {
+        "command": "pnpm catalog:test (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "43 catalog/controller files /238 tests pass; complete direct unit consumer surface. /tmp/rich-search-catalog-unit-final.log"
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two keyboard and accessibility production-component cases pass. /tmp/rich-search-stories-final.log"
+      },
+      {
+        "command": "pnpm web:build (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production assets rebuilt, only inherited CSS parser/chunk-size warnings. /tmp/rich-search-web-build-final.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-jj query::language (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three exact language cases pass including bare bookmark mine, mine() callable and builtin_log workspace context. Unrelated integration binaries contain only filtered tests. /tmp/rich-search-language-tests-final.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-http -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owning packages formatted. /tmp/rich-search-rust-format-final.log"
+      },
+      {
+        "command": "pnpm exec prettier --write (changed consumer files via explicit subprocess arguments)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Corrected formatter argument list passes. /tmp/rich-search-final-format2.log"
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md spec/src/verification.md; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "120 tasks; evidence bookkeeping passes. /tmp/rich-search-ledger-format.log and progress.log"
+      },
+      {
+        "command": "pnpm check:boundaries (inherited before state)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing jj-store-service production jj-review dependency is explicitly authorized by architecture.md, but unchanged audit map rejects it. Parent manifest and audit reproduce the mismatch; no production dependency added. /tmp/rich-search-boundaries-final.log"
+      },
+      {
+        "command": "node --test --test-name-pattern=service_review_models_preserve_core_layer_boundaries scripts/governance.test.mjs (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact new regression fails with inherited invalid-layer report. /tmp/rich-search-boundary-before.log"
+      },
+      {
+        "command": "node --test --test-name-pattern=service_review_models_preserve_core_layer_boundaries scripts/governance.test.mjs (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "One regression passes after canonical model-map alignment; reverse core/publication dependencies still rejected. /tmp/rich-search-boundary-after.log"
+      },
+      {
+        "command": "pnpm check:boundaries (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 owned packages pass; upstream JJ and persistence boundaries remain intact. /tmp/rich-search-boundaries-final2.log"
+      },
+      {
+        "command": "pnpm test:governance",
+        "result": "pass",
+        "failures": 0,
+        "note": "42 passed. Wider governance suite required because the shared static dependency audit and contract consumer check changed. /tmp/rich-search-governance-final.log"
+      },
+      {
+        "command": "pnpm contracts:check (isolated first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Generated artifacts and runtime response validation passed, seven contract unit tests passed, then compile-time consumer rejected the new structured error union in IndexTask. Consumer narrowing repaired. /tmp/rich-search-isolated-contracts.log"
+      },
+      {
+        "command": "pnpm test:contracts (after typed diagnostic narrowing)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven validation tests and TypeScript consumer acceptance pass; strings retain old behavior and invalid_query exposes its diagnostic message. /tmp/rich-search-contract-types-fixed.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test local_browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "All7 local-folder reader/registration/history cases pass. /tmp/rich-search-local-browser-final.log"
+      },
+      {
+        "command": "jj restore --from @- pnpm-lock.yaml; pnpm install --lockfile-only --ignore-scripts --ignore-pnpmfile",
+        "result": "pass",
+        "failures": 0,
+        "note": "Portable registry lock generated with CodeMirror autocomplete and Lezer highlight1.2.5; no checkout specifiers/checksum. Explicit assertion passes. Source validation node_modules remains separate. /tmp/rich-search-portable-lock-final.log"
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm exec tsx --test web/tests/store-route-codec.test.ts (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings,131 catalog modules and11 URL codec tests. /tmp/rich-search-web-check-final.log, catalog-check-final.log, route-tests-final.log"
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm spec:first; pnpm spec:validate (latest)",
+        "result": "pass",
+        "failures": 0,
+        "note": "738 modules, ownership pass,56 protected files /9 chapters and146 requirements. Subsequent governance source map requires final rerun. /tmp/rich-search-architecture-final2.log and *-final.log"
+      },
+      {
+        "command": "pnpm contracts:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated artifacts match;151 actual HTTP/SSE responses conform,7 validation tests and TypeScript consumer acceptance pass. /tmp/rich-search-contracts-final2.log"
+      },
+      {
+        "command": "node scripts/browser-fixtures.mjs; cargo build --locked -p jj-store-http --example browser_preview",
+        "result": "pass",
+        "failures": 0,
+        "note": "Captured native fixture responses and prebuilt isolated production-asset host. /tmp/rich-search-isolated-fixtures.log and preview.log"
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/history-query.spec.ts (cold second)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Local profile passed; native completion test used broad /mutable/ matcher and matched four distinct aliases. Replaced with exact mutable() alias assertion. /tmp/rich-search-cold-browser2.log"
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/history-query.spec.ts (cold third)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Local profile passed; native clear assertion counted the CodeMirror placeholder as document text. Asserted actual empty-editor placeholder, absent clear action and cleared accepted URL instead. Query success wait also now requires the exact applied text. /tmp/rich-search-cold-browser3.log"
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/history-query.spec.ts (cold final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both native and filesystem UI profiles pass from a fresh production-asset host under unchanged STRICT_CSP. Native includes real keyboard completion, static highlighting, invalid draft retention, frozen operation/time, clear, operation grammar and axe; local verifies pinned custom grammar transport. Browser transports use explicit deterministic fixtures; actual query semantics are separately proved by Rust/local/HTTP tests. /tmp/rich-search-cold-browser4.log"
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (final after governance updates)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All protected source/test/schema/chapter changes mapped;146 requirements,120 tasks. /tmp/rich-search-spec-first-final2.log, spec-validate-final2.log, progress-final.log"
+      },
+      {
+        "command": "pnpm exec prettier --check (all changed consumer source/docs/schema files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All checked files formatted. /tmp/rich-search-format-check-final.log. Final browser/ledger formatting repeated separately."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Registry-only installation and qualification require a Design Core release containing custom-language mode. Source package and consumer acceptance are verified; no package publishing requested or performed."
+    ],
+    "scope": "Focused native/local graph/query/HTTP/frontend contract surface; complete source Design Core nonvisual lanes required because the generic public component spans repositories. Root jj-store aggregates, unrelated Rust/runtime/RustFS suites and Design Core screenshots/baseline updates are out of scope; visual tests explicitly excluded by user. No milestone completion or release/deployment claim. Shared static boundary-audit repair ran all42 governance tests; no additional production dependency or storage format change. All functional qualification failures are resolved. Disposable source/static/preview hosts were cleaned up. No root/full-Rust/real-RustFS or registry-only full-flow claim.",
+    "next": "Release the qualified Design Core extension through the normal workflow, refresh the consumer registry range/lockfile if needed, and rerun registry-only acceptance. Retain explicit deferrals for visual baselines and wider M13 work."
+  },
+  {
+    "id": "E-UI-091",
+    "tasks": ["M4.10", "M13.4"],
+    "date": "2026-10-03",
+    "kind": "rich-history-search-main-integration-and-workspace-retirement",
+    "revision": "enclosing Jujutsu change suvkzynx",
+    "before": "Both main and temporary checkouts are clean. App main wpmoyoqz/50363aec includes newer Appearance, Projects Agents and automatic refresh; verified rich-search lsmrmlpp/979d0b03 forks yyknxszk/36c92787. Design Core main quoystmy/bb40d39d includes tooltip restoration, while custom language ookknysq/b0a8c96e forks zukowoxl/4922feea. Rich-search E-UI-056 collides with existing main Appearance evidence. User authorizes main commits and removal of only the two rich-search workspaces; Design Core visual tests stay excluded.",
+    "files": [
+      "catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+      "catalog/fixtures/HistoryQueryFixture.svelte",
+      "crates/jj-store-cli/tests/local_browser/history_query.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/history_query.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_browsing.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-jj/src/local_browser/graph_types.rs",
+      "crates/jj-store-jj/src/local_browser/graphs.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/native.rs",
+      "crates/jj-store-jj/src/query/graphs.rs",
+      "crates/jj-store-jj/src/query/language/aliases.rs",
+      "crates/jj-store-jj/src/query/language/callables.json",
+      "crates/jj-store-jj/src/query/language/mod.rs",
+      "crates/jj-store-jj/src/query/language/operations.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "package.json",
+      "pnpm-lock.yaml",
+      "schemas/openapi.json",
+      "scripts/check-boundaries.mjs",
+      "scripts/contracts.types.ts",
+      "scripts/governance.test.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/api/api-error.ts",
+      "web/src/lib/api/client.ts",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/api/local-client.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/history-query-route.ts",
+      "web/src/lib/controller/history-query-types.ts",
+      "web/src/lib/controller/history-query.svelte.ts",
+      "web/src/lib/controller/http-local-code-data-source.ts",
+      "web/src/lib/controller/http-repository-transports.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-loaders.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/store-error.ts",
+      "web/src/lib/controller/store-route-codec.ts",
+      "web/src/lib/controller/store-route-fields.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/controller/store-route-types.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/store-history-query/StoreHistoryQuery.svelte",
+      "web/src/lib/ui/store-history-query/history-language.ts",
+      "web/src/lib/ui/store-history-query/history-query.css",
+      "web/tests/browser/history-query.spec.ts",
+      "web/tests/store-route-codec.test.ts",
+      "web/tests/vite/history-language.test.ts",
+      "web/tests/vite/history-query-transport.test.ts",
+      "web/tests/vite/history-query.test.ts"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager workspace list; jj --no-pager log; jj --no-pager diff --summary (main and temporary app/Design Core checkouts)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both main working copies and both rich-search temporary working copies are clean; committed overlap inspected and current canonical chapters read. Unrelated registered workspaces and processes retained."
+      },
+      {
+        "command": "jj new @- ookknysq -m \"Integrate custom search languages into main\" (Design Core); jj new @- lsmrmlpp -m \"Integrate rich history search into main\" (app)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Design Core merge has no conflicts. App has seven conflict paths: six chapters/ledger and one import. Retained newer main prose, all original main JSON evidence entries, rich-search chapters and both controller imports. Renamed only rich-search evidence to E-UI-090 and combined verification/task links. Both original implementation commits remain ancestors."
+      },
+      {
+        "command": "pnpm install --ignore-scripts --lockfile=false",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing ignored source hook resolves Design Core from ../design-core main. Main manifest, portable registry lock and installed dependency graph contain no temporary checkout reference. /tmp/rich-search-main-install.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/history-query.test.ts web/tests/vite/history-language.test.ts web/tests/vite/history-query-transport.test.ts web/tests/vite/automatic-refresh.test.ts web/tests/vite/production-automatic-refresh.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six selected files and29 tests pass before the integration regression. One supplied optional filename has no matching file; actual discovered surface is recorded. /tmp/rich-search-main-query-before.log"
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte (first main regression)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Three scenarios: two pass, new scenario fails during initial accepted-query setup. Isolated fixture history from the Storybook URL and reused the proven keyboard completion setup. /tmp/rich-search-main-refresh-before.log"
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte (isolated before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Two cases pass; exact new regression proves current-head refresh replaces invalid bad( draft with accepted mutable(). Preserved draft/diagnostic across operation-only changes while retaining cancellation and accepted-route synchronization. /tmp/rich-search-main-refresh-before2.log"
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three keyboard/axe scenarios pass, including draft plus accepted-query preservation on a new displayed operation. /tmp/rich-search-main-refresh-after.log"
+      },
+      {
+        "command": "pnpm check:architecture (initial and first extraction)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial combined contracts303/controller309 counted lines exceed300. After route-type and shared reader/query construction extraction, controller301 remains; moved operation binding into the shared factory. No contract or runtime behavior weakened. /tmp/rich-search-main-architecture.log and architecture-after.log"
+      },
+      {
+        "command": "pnpm check:architecture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "818 modules pass source budget and catalog/production boundaries. /tmp/rich-search-main-architecture-final.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite (before, extraction and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All46 files /278 tests pass on each run; final follows the shared constructor binding change. Complete direct controller consumer lane rerun because merged reader construction, route contracts and automatic refresh share lifecycle consumers. /tmp/rich-search-main-controller-unit.log, controller-unit-after.log and controller-unit-final.log"
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts web/tests/production-store-loaders.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 route, snapshot and presentation regressions pass. /tmp/rich-search-main-route-unit.log"
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings on both checks;155 catalog modules. Final checks follow the route extraction and draft preservation. /tmp/rich-search-main-web-check-final.log and catalog-check-final.log"
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm check:ui-ownership; pnpm test:governance",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 package boundaries, ownership validator and all43 governance tests pass. Full governance lane qualifies the merged shared audit and contract consumers. /tmp/rich-search-main-boundaries.log, ownership.log and governance.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-rich-search/target pnpm contracts:generate; CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-rich-search/target pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Regeneration from combined executable routes matches merged artifacts. All153 actual HTTP/SSE responses conform; seven contract tests and TypeScript consumers pass. /tmp/rich-search-main-contract-generate.log and contract-check.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-rich-search/target cargo test --locked -p jj-store-cli --test native_lifecycle graph_acceptance",
+        "result": "pass",
+        "failures": 0,
+        "note": "18 native graph/cache/query cases pass, including sparse filtered operations, traversal accounting and no publication. /tmp/rich-search-main-native-graphs.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-rich-search/target cargo test --locked -p jj-store-cli --test local_browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "All7 filesystem registration, reader, alias and preservation cases pass on integrated source. /tmp/rich-search-main-local-browser.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-rich-search/target cargo test --locked -p jj-store-jj --lib query::language",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three pinned catalog/context and bounded grammar regressions pass. /tmp/rich-search-main-language.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-rich-search/target node scripts/browser-fixtures.mjs; CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-rich-search/target cargo build --locked -p jj-store-http --example browser_preview; pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Recaptured native HTTP/SSE/mutation fixtures and rebuilt isolated production static host and UI from main. Existing CSS/chunk/plugin timing advisories only. /tmp/rich-search-main-fixtures.log, preview-build.log and web-build.log"
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both directly affected story families pass12 keyboard/axe cases. /tmp/rich-search-main-stories-final.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-rich-search/target pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/history-query.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both fresh production-host native/local browser cases pass with unchanged STRICT_CSP. Native checks highlighting, completion, invalid-draft graph retention, frozen time, clear, operation grammar, runtime errors and axe; local proves pinned profile transport. Semantics remain separately proved by actual Rust/HTTP readers. Host is stopped. /tmp/rich-search-main-cold-browser.log"
+      },
+      {
+        "command": "pnpm check:types; pnpm test:storybook src/shared/filter/search-filter-bar; pnpm spec:check with JJ-selected --file arguments; pnpm exec prettier --check <integrated files> (Design Core main)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four type/strict consumer checks have zero errors/warnings;3 search family files /10 stories pass; canonical validation, mdBook and spec-first pass. Initial default merge @- selection was ambiguous and replaced by explicit JJ file inventory. Source integration record owns details and original full nonvisual qualification. /tmp/rich-search-main-dc-{types,stories,spec-final,format-check}.log"
+      },
+      {
+        "command": "pnpm spec:first --base 50363aec --head @",
+        "result": "pass",
+        "failures": 0,
+        "note": "Tool exits successfully but reports no protected files through its Git range path; discarded as acceptance evidence because it does not inspect the active JJ merge."
+      },
+      {
+        "command": "pnpm spec:first with --file arguments from jj --no-pager diff --from 50363aec --to @ --name-only; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual JJ change inventory qualifies60 protected files /9 owning chapters. Five validators /21 chapters /147 requirements and120 tasks pass. /tmp/rich-search-main-spec-first-jj.log, spec-validate.log and progress-before.log"
+      },
+      {
+        "command": "pnpm exec prettier --write <changed production, fixture, story and canonical files>; portable-lock and installed-source assertions",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed files formatted; manifest and lock keep normal registry semver ranges. Active main source installation resolves only ../design-core; ignored temporary dependency hook remains solely in the retirement candidate."
+      },
+      {
+        "command": "pnpm check:progress (new integration evidence before versions field)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New E-UI-091 omitted required versions metadata. Added observed toolchain and source/registry package versions; no implementation change. /tmp/rich-search-main-progress-final.log"
+      },
+      {
+        "command": "pnpm exec prettier --check <all JJ-selected non-Rust integration files>; cargo fmt -p jj-store-cli -p jj-store-http -p jj-store-jj -- --check; pnpm spec:first with explicit JJ-selected --file arguments",
+        "result": "pass",
+        "failures": 0,
+        "note": "Every matched integrated frontend/schema/chapter file is formatted; three owning Rust packages pass formatting;60 protected files /9 chapters mapped. /tmp/rich-search-main-format-final.log, rust-format.log and spec-first-final.log"
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte (final diagnostic assertion); pnpm check:progress; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three exact production editor keyboard/axe scenarios pass, explicitly retaining the invalid diagnostic with draft and accepted query after head refresh. Corrected versions metadata passes120-task bookkeeping and147-requirement validation. /tmp/rich-search-main-refresh-final.log, progress-final2.log and spec-validate-final2.log"
+      },
+      {
+        "command": "pnpm exec prettier --write/check spec/src/milestones.md and final story; pnpm check:progress; jj commit -m \"Integrate rich history search into main\"; jj commit -m \"Integrate custom search languages into main\" (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Verified integrations committed from both default/main workspaces; both became clean empty working copies. Product implementation parents remain ancestors. Final bookkeeping passes. Retirement-only documentation is folded into these same integration changes."
+      },
+      {
+        "command": "jj --no-pager st (both temporary checkouts); jj --no-pager log -r \"lsmrmlpp & ::@-\" (app main) and \"ookknysq & ::@-\" (Design Core main); lsof/ps ownership checks; kill -TERM 88148",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both temporary working copies are empty; both implementation parents are retained in main. Found leftover source-qualification Python static host PID88148 with cwd design-core-rich-search and sole listener127.0.0.1:9170. Stopped only that owned host; no remaining process uses either temporary workspace. Main development services and unrelated static hosts retained."
+      },
+      {
+        "command": "jj workspace forget rich-search (app main and Design Core main); trash -v /Users/stevejuma/code/lapismd/jj-store-rich-search; trash -v /Users/stevejuma/code/lapismd/design-core-rich-search",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only the two user-authorized rich-search workspace registrations removed. Both folders moved recoverably to macOS Trash after verification and main commits. All eleven remaining app workspace registrations and Design Core release-verify-fix are retained. Main dependency hook, portable manifest/lock and installed graph have no temporary checkout reference."
+      },
+      {
+        "command": "pnpm exec prettier --write/check spec/src/milestones.md; pnpm check:progress; pnpm spec:validate; jj squash --into @- -m \"Integrate rich history search into main\"; final JJ/paths/dependency assertions",
+        "result": "pass",
+        "failures": 0,
+        "note": "Retirement-only evidence formatted and folded into the enclosing integration.120-task bookkeeping and147-requirement validation pass. Both main working copies are clean; implementation parents remain ancestors; both temporary registrations/directories and port9170 are absent. Installed main custom search source remains available with no temporary checkout dependency paths. /tmp/rich-search-main-retirement-{format-check,progress,spec}.log"
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "formats": "Additive QueryInfo, operations_filtered and optional invalid_query diagnostic contracts remain identical to the verified source implementation. Merge retains newer Appearance, agent_session reviews, Threads and automatic refresh; route type reexport preserves existing imports. No storage, native identity, manifest, WAL, receipt, credential or companion format change. Registry-only consumption remains a separately recorded E-UI-090 release gate.",
+    "scope": "Verified source main integration across frontend controllers, custom editor, native/local graph readers and generated contracts. No root jj-store check/test/build/spec:check aggregates, unrelated Rust/runtime/RustFS suites or live-service reset/restart; no package publication. Design Core visual tests and baseline updates excluded by explicit user instruction. Complete prior source qualification remains retained; focused integration is not a full repository pass or milestone completion.",
+    "next": "Main source integration and authorized workspace retirement are complete. Normal Design Core release and registry-only consumer qualification remain the separately recorded E-UI-090 follow-up; visual baselines remain pending.",
+    "versions": "macOS ARM64; JJ and jj-lib0.45.1; rustc1.98.1; Node24.10.0; pnpm10.32.1; Svelte5.57.1; source Design Core package0.1.2 (registry dependency range^0.2.0); Playwright1.63.0; Vitest4.1.11."
   }
 ]
 ```

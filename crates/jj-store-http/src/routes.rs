@@ -72,6 +72,8 @@ struct Log {
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Operations {
+    #[serde(default)]
+    query: String,
     at_op: Option<m::OperationId>,
     heads: Option<m::OperationId>,
     cursor: Option<String>,
@@ -268,6 +270,7 @@ impl AgentRelations {
 macro_rules! endpoints {
     ($register:ident) => {
         $register! {
+            (get, "/repos/{repo}/query-info", query_info, Selection, Envelope<q::language::QueryInfo>, Reply::Json(200)),
             (get, "/repos/{repo}/capabilities", capabilities, Empty, Capabilities, Reply::Json(200)),
             (get, "/repos/{repo}/local/search", local_search_settings, Empty, jj_store_service::search_management::LocalSearchSettings, Reply::Json(200)),
             (post, "/repos/{repo}/local/search/save", save_search_settings, Empty, jj_store_service::search_management::LocalSearchSettings, Reply::Json(200)),
@@ -643,7 +646,11 @@ async fn operations(
         &state,
         context,
         args.at_op.or(args.heads),
-        q::Request::Operations,
+        if args.query.is_empty() {
+            q::Request::Operations
+        } else {
+            q::Request::OperationsFiltered { query: args.query }
+        },
         args.limit,
         args.cursor,
     )
@@ -1135,4 +1142,13 @@ async fn events(
         .headers_mut()
         .insert("x-accel-buffering", "no".parse().unwrap());
     Ok(response)
+}
+
+async fn query_info(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Selection>,
+) -> Result<Response> {
+    let read = pinned(&context, &state, input(args)?.at_op).await?;
+    envelope(&state, &read, q::language::info(false)).await
 }

@@ -58,6 +58,14 @@ async fn http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_c
     let router = api(&f, cache.path());
     let before = f.f.session.snapshot().await.unwrap().manifest().clone();
     let routes = [
+        ("query-info", format!("query-info?at_op={}", f.operation)),
+        (
+            "operations",
+            format!(
+                "operations?at_op={}&query=from:%40%20description:fixture&limit=1",
+                f.operation
+            ),
+        ),
         (
             "references",
             format!("references?at_op={}&kind=bookmarks&limit=1", f.operation),
@@ -140,6 +148,30 @@ async fn http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_c
         .await
         .unwrap();
     assert_eq!(unauthorized.status(), StatusCode::UNAUTHORIZED);
+    let (status, diagnostic) = json(
+        &router,
+        &f.f.reader,
+        &format!("operations?at_op={}&query=unknown:x", f.operation),
+    )
+    .await;
+    assert_eq!(status, StatusCode::BAD_REQUEST);
+    assert_eq!(diagnostic["code"], "invalid_query");
+    assert_eq!(diagnostic["diagnostic"]["kind"], "syntax");
+    assert!(diagnostic["diagnostic"]["message"].as_str().unwrap().len() <= 4096);
+    samples.push(serde_json::json!({"method":"get", "path":"/v1/repos/{repo}/operations", "status":400, "media":"application/json", "data":diagnostic}));
+    let denied = router
+        .clone()
+        .oneshot(
+            Request::builder()
+                .uri(format!("/v1/repos/{REPO}/query-info?at_op={}", f.operation))
+                .header("host", "127.0.0.1:7443")
+                .header("x-jj-store-protocol", "1")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(denied.status(), StatusCode::UNAUTHORIZED);
     assert_eq!(*f.f.session.snapshot().await.unwrap().manifest(), before);
     if let Some(path) = std::env::var_os("JJ_STORE_BROWSING_CONTRACT_CAPTURE") {
         std::fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();

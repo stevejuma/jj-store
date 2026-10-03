@@ -245,6 +245,8 @@ pub(crate) struct CommitDetail {
 }
 #[derive(Serialize, JsonSchema)]
 pub(crate) struct ErrorBody {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub diagnostic: Option<q::language::Diagnostic>,
     pub version: u32,
     pub code: &'static str,
     #[serde(skip_serializing_if = "Option::is_none")]

@@ -156,11 +156,13 @@ export class Client {
         code?: string;
         snapshot?: Snapshot;
         heads?: Head;
+        diagnostic?: { kind: string; message: string };
       };
       throw new ApiError(
         typeof error.code === "string" ? error.code : "request_failed",
         error.snapshot,
         error.heads,
+        error.diagnostic,
       );
     }
     return value;

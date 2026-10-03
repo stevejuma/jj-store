@@ -1,6 +1,8 @@
 import { ApiError } from "../api/client.js";
 
 export function storeErrorMessage(cause: unknown): string {
+  if (cause instanceof ApiError && cause.diagnostic)
+    return cause.diagnostic.message;
   if (cause instanceof ApiError)
     return (
       (

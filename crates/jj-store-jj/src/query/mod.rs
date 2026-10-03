@@ -4,6 +4,7 @@ pub mod admission;
 pub mod cache;
 pub mod content;
 mod graphs;
+pub mod language;
 pub mod predicates;
 pub mod workers;
 use crate::{
@@ -42,6 +43,8 @@ pub enum Error {
     IndexRebuildRequired,
     #[error("invalid query or missing query context")]
     Invalid,
+    #[error("{0}")]
+    InvalidQuery(language::Diagnostic),
     #[error("native query or cache is unavailable")]
     Unavailable,
     #[error("committed native object is corrupt")]
@@ -105,6 +108,9 @@ pub enum Request {
         at_time_millis: i64,
     },
     Operations,
+    OperationsFiltered {
+        query: String,
+    },
     Evolution {
         commit: m::CommitId,
     },

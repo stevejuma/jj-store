@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreHistoryQuery from "../store-history-query/StoreHistoryQuery.svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import { onDestroy, untrack } from "svelte";
   import type { FileListingFile } from "@lapismd/design-core/diff";
@@ -180,6 +181,9 @@
         count={graph.revisions.length}
       />
       <ColumnCanvas.Body>
+        {#if controller?.historyQuery && (page === "log" || page === "oplog")}<StoreHistoryQuery
+            {controller}
+          />{/if}
         {#if showInitialSkeleton}<CommunityProjectsRepositorySkeleton
             layout="graph"
             label={page === "oplog"
@@ -213,7 +217,7 @@
                 : "Revision graph"}
               commitLabel={page === "oplog" ? "operation ID" : "commit ID"}
               onSelect={(revision) => selectRevision(revision.eventId)}
-              hasMore={hasMoreGraph}
+              hasMore={hasMoreGraph && !controller?.historyQuery?.pending}
               {loading}
               onLoadMore={() => void onLoadMoreGraph()}
               collaborationContext={controller?.state}

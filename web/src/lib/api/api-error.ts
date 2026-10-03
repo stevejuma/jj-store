@@ -5,6 +5,7 @@ export class ApiError extends Error {
     readonly code: string,
     readonly snapshot?: Snapshot,
     readonly heads?: Head,
+    readonly diagnostic?: { kind: string; message: string },
   ) {
     super(code.replaceAll("_", " "));
   }

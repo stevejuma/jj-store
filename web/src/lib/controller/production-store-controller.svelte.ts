@@ -11,7 +11,7 @@ import { createProductionRepositoryThreadNavigation } from "./repository-thread-
 import type { StoreController } from "./contracts.js";
 
 import type { StoreDataSource } from "./native-data-source.js";
-import { createProductionStoreReader } from "./production-store-reader.svelte.js";
+import { createProductionStoreReaders } from "./production-store-reader.svelte.js";
 import { createProductionStoreState } from "./production-store-state.svelte.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import { productionControllerSurface } from "./production-store-view.js";
@@ -24,6 +24,7 @@ import {
   requireProductionSource,
   reportProductionStoreError,
   resetConnectionView,
+  destroyProductionStoreLifecycle,
   startProductionStoreLifecycle,
 } from "./production-store-lifecycle.svelte.js";
 import { createProductionBranchActions } from "./production-branch-actions.js";
@@ -55,12 +56,12 @@ export function createProductionStoreController(
   const activeSource = () => requireProductionSource(source);
   const current = (ticket: number, active: StoreDataSource) =>
     ticket === version && active === source;
-  const reader = createProductionStoreReader({
+  const { reader, historyQuery } = createProductionStoreReaders({
     data,
     history,
     source: activeSource,
-    operation: () => history.route.snapshotOperationId,
     version: () => version,
+    begin: () => ++version,
     current,
     report: (cause) => reportProductionStoreError(data, cause),
   });
@@ -145,6 +146,7 @@ export function createProductionStoreController(
     settings.clear();
     mutations.configure([]);
     mutations.reset();
+    historyQuery.dispose();
     search.clear();
     globalSearch.clear();
     referenceSearch.clear();
@@ -251,11 +253,8 @@ export function createProductionStoreController(
     connect: ({ repository, token }) => connect(repository, token),
     connectRepository,
     disconnect: () => disconnect(),
-    destroy: () => {
-      lifecycle.abort();
-      disconnect();
-      history.destroy();
-    },
+    destroy: () =>
+      destroyProductionStoreLifecycle(lifecycle, disconnect, history),
     refresh,
     selectOperation,
     restoreRoute,
@@ -296,6 +295,7 @@ export function createProductionStoreController(
     () => source,
     () => sessionToken,
     {
+      historyQuery,
       threads: threadsIntegration,
       projects,
       threadNavigation,

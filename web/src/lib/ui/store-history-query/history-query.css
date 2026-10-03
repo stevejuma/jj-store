@@ -1,0 +1,45 @@
+.store-history-query {
+  padding: 0.5rem 0.75rem;
+  border-block-end: 1px solid var(--ui-border);
+}
+.store-history-query__context {
+  font-size: 0.75rem;
+  color: var(--ui-muted-foreground);
+}
+.store-history-query__context summary {
+  cursor: pointer;
+  margin-block-start: 0.35rem;
+}
+.store-history-query__context p {
+  margin-block: 0.5rem;
+}
+.store-history-query__context label {
+  display: block;
+  margin-block: 0.5rem 0.25rem;
+}
+.store-history-query__context select {
+  background: var(--ui-background);
+  color: var(--ui-foreground);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  padding: 0.25rem;
+}
+.history-query-string {
+  color: var(--code-string, var(--ui-foreground));
+}
+.history-query-function,
+.history-query-field {
+  color: var(--code-function, var(--ui-primary));
+}
+.history-query-alias {
+  color: var(--code-keyword, var(--ui-primary));
+}
+.history-query-operator {
+  color: var(--code-operator, var(--ui-muted-foreground));
+}
+.history-query-literal {
+  color: var(--code-number, var(--ui-foreground));
+}
+.history-query-symbol {
+  color: var(--code-variable, var(--ui-foreground));
+}

@@ -179,6 +179,8 @@ export function createStoreRouteHistory(
       push({
         ...route,
         page,
+        historyQuery: undefined,
+        historyTime: undefined,
         projectsHub: false,
         workTab: undefined,
         workQuery: undefined,

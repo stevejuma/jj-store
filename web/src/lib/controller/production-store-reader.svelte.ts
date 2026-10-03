@@ -1,3 +1,4 @@
+import { createHistoryQuery } from "./history-query.svelte.js";
 import { readWorkingCopies } from "./store-workspaces.js";
 import { fullId } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
@@ -28,6 +29,18 @@ interface ReaderContext {
   version(): number;
   current(ticket: number, source: StoreDataSource): boolean;
   report(cause: unknown): void;
+}
+
+export function createProductionStoreReaders(
+  context: Omit<ReaderContext, "operation"> & { begin(): number },
+) {
+  return {
+    reader: createProductionStoreReader({
+      ...context,
+      operation: () => context.history.route.snapshotOperationId,
+    }),
+    historyQuery: createHistoryQuery(context),
+  };
 }
 
 export function createProductionStoreReader(context: ReaderContext) {
@@ -88,7 +101,7 @@ export function createProductionStoreReader(context: ReaderContext) {
               : undefined;
     data.status.graph = more ? "refreshing" : "loading";
     try {
-      data.graphAtTimeMillis ??= Date.now();
+      data.graphAtTimeMillis ??= history.route.historyTime ?? Date.now();
       const value = await readGraph(
         source,
         operation,
@@ -99,6 +112,7 @@ export function createProductionStoreReader(context: ReaderContext) {
         more ? (data.graphPageSnapshot ?? undefined) : undefined,
         branchTargets,
         history.route.workspace ?? undefined,
+        { text: history.route.historyQuery ?? "", email: data.historyEmail },
       );
       if (!context.current(ticket, source)) return;
       data.graph = more

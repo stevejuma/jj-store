@@ -55,9 +55,15 @@ export class LocalClient {
       new TextDecoder("utf-8", { fatal: true }).decode(
         await responseBytes(response, 16 * 1024 * 1024),
       ),
-    ) as T & { code?: string };
+    ) as T & { code?: string; diagnostic?: { kind: string; message: string } };
     this.closed.signal.throwIfAborted();
-    if (!response.ok) throw new ApiError(value.code ?? "local_request_failed");
+    if (!response.ok)
+      throw new ApiError(
+        value.code ?? "local_request_failed",
+        undefined,
+        undefined,
+        value.diagnostic,
+      );
     return value;
   }
 }
