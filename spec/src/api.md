@@ -1467,3 +1467,8 @@ authorization claim, and browser clients cannot obtain additional repository or
 filesystem access by setting it. The host's window-only permissions remain
 restricted to the managed main window and exact LocalTrusted origin; bootstrap,
 HTTP admission and browser CSP retain their existing contracts.
+
+Review transport availability is expressed by its optional reader, rather than
+being inferred from a repository profile. Unsupported catalog fixtures omit that
+reader explicitly; the typed production application props do not alter HTTP
+admission, read envelopes or review persistence.

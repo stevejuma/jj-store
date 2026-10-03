@@ -1524,3 +1524,11 @@ retains a header in narrow layouts. Ordinary browser and catalog presentation
 keep their existing spacing unless the desktop profile is explicitly selected.
 The presentation marker grants no repository access; the host separately limits
 native window permissions to its managed main window and exact origin.
+
+The shared application keeps its typed composition props in an owned leaf
+module. Desktop presentation is an optional prop; both native marker defaults
+and explicit catalog selections use the same production shell.
+
+Catalog fixtures for unavailable reviews explicitly omit the optional review
+reader. Repository profile alone does not imply unsupported reads; qualified
+local repository readers retain their existing review capability.

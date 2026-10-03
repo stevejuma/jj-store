@@ -1,9 +1,6 @@
 <script lang="ts">
   // Adapted from CommunityApplication's shell composition; all state is local.
-  import {
-    AppShell,
-    type AppShellDisplayMode,
-  } from "@lapismd/design-core/shell";
+  import { AppShell } from "@lapismd/design-core/shell";
   import StoreApplicationRightPanels from "./StoreApplicationRightPanels.svelte";
   import { createStoreShell } from "./create-store-shell.js";
   import { repositoryDetailsPanelId } from "../layout-storage.js";
@@ -22,7 +19,8 @@
   import { createApplicationThreadPanel as ownThreadPanel } from "../store-threads/thread-panel.svelte.js";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
   import { repositorySections } from "./repository-sections.js";
-  import { onDestroy, setContext, untrack, type Snippet } from "svelte";
+  import { onDestroy, setContext, untrack } from "svelte";
+  import type { StoreApplicationProps } from "./application-props.js";
   import { isMacDesktopWindow } from "../../desktop-chrome.js";
   import "./store-application.css";
   import { workspaceNavigationKey } from "./workspace-navigation.js";
@@ -34,7 +32,6 @@
     StorePage,
     CommunityNavigationItemModel,
   } from "../community-navigation/model.js";
-  import type { StoreController } from "../../controller/contracts.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
   import StoreRepositoryNotices from "./StoreRepositoryNotices.svelte";
   import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
@@ -58,14 +55,7 @@
     layoutStorage,
     desktopChrome = untrack(isMacDesktopWindow),
     children,
-  }: {
-    controller: StoreController;
-    initiallyCollapsed?: boolean;
-    displayMode?: AppShellDisplayMode;
-    layoutStorage?: Storage;
-    desktopChrome?: boolean;
-    children?: Snippet<[StorePage, string]>;
-  } = $props();
+  }: StoreApplicationProps = $props();
   import { ownApplicationAppearance as ownAppearance } from "../../appearance/runtime.svelte.js";
   const appearance = ownAppearance(
     () => controller.state.route.repository,

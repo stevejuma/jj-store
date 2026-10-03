@@ -113,6 +113,7 @@
     push: (next) => (route = next),
     source: (home) => {
       const source = fixtureTransport(home, failedHome, sharedRepository);
+      if (localReviews && home === homeB) source.reviews = undefined;
       const page = source.page;
       source.page = async (query, signal) => {
         if (refreshPending) await refreshGate;

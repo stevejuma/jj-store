@@ -133,10 +133,10 @@ shared-package release qualification does not alter those original Git gates.
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                |
-| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002                                                                                                                                                                                                                                                                                                                                          |
-| M17.1       | In progress | M8a.4                   | JST-DESK-003                                                                                                                                                                            | Opt-in bounded parent-pipe service supervision                                                                                 | Retain real RustFS and ordinary process evidence                                               | E-DESK-001                                                                                                                                                                                                                                                                                                                                                     |
-| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002                                                                                                                                                                                                                                                                                                                                          |
-| M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002                                                                                                                                                                                                                                                                                                                                                     |
+| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003                                                                                                                                                                                                                                                                                                                               |
+| M17.1       | In progress | M8a.4                   | JST-DESK-003                                                                                                                                                                            | Opt-in bounded parent-pipe service supervision                                                                                 | Retain real RustFS and ordinary process evidence                                               | E-DESK-001,E-DESK-003                                                                                                                                                                                                                                                                                                                                          |
+| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003                                                                                                                                                                                                                                                                                                                               |
+| M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003                                                                                                                                                                                                                                                                                                                                          |
 | M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                            | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -48878,6 +48878,225 @@ and named tests are checked by the progress gate.
     ],
     "scope": "Native window presentation and its production-header consumers only. Exact regression and9 final directly relevant Storybook interactions pass; no diagnostic guard weakened. Cold production WebView/package evidence is distinct from browser harness evidence. Root aggregates, full Rust workspace, storage suites, unrelated UI suites, public signing and DMG qualification are out of scope. No Buzz implementation copied; existing owned Community hover styles only extracted with provenance.",
     "next": "Manually qualify native drag and double-click, then continue the remaining M17.3 native controls/render/dirty-edit and M17.4 distribution gates."
+  },
+  {
+    "id": "E-DESK-003",
+    "tasks": ["M17", "M17.1", "M17.2", "M17.3"],
+    "date": "2026-10-03",
+    "kind": "desktop-main-rebase",
+    "revision": "yuzrmrwx (enclosing change)",
+    "versions": "macOS ARM64; Rust1.98.1; JJ0.45.1; Node26.9.0; pnpm10.32.1 (official Tauri dlx invoked12.6.0); independently locked Tauri2.11.5 graph. Existing ignored Design Core source hook retained; not registry-only acceptance.",
+    "formats": "No HTTP/CLI schema, persisted repository, WAL, receipt or device format change. Main rich history/automatic refresh/navigation retained. Typed application props extracted; unsupported fixture explicitly models the optional reader instead of inferring capability from local profile. Latest main header hover/focus/open CSS extracted with existing provenance.",
+    "files": [
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/application-props.ts",
+      "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      "web/src/lib/ui/community-app-shell/header-hover.css",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "spec/src/desktop.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "spec/src/api.md"
+    ],
+    "tests": [
+      "desktop/tests/managed_runtime.rs#real_managed_runtime_restarts_preserves_origin_and_rejects_occupied_port",
+      "crates/jj-store-cli/tests/desktop_supervision.rs#desktop_owner_eof_stops_real_service_and_retains_installation"
+    ],
+    "runs": [
+      {
+        "command": "jj rebase -s ykmzsnwm -o suvkzynx; resolve foundation/chrome conflicts with jj new and jj squash --use-destination-message",
+        "result": "pass",
+        "failures": 0,
+        "note": "Desktop foundation and chrome now descend from main67040334. Preserved main navigation, automatic refresh, history language and Appearance. All298 main evidence entries compare equal, and both desktop entries remain. No conflicted ancestors."
+      },
+      {
+        "command": "cp -cR target .local/desktop-integration-target (main workspace)",
+        "result": "pass",
+        "failures": 0,
+        "note": "APFS-cloned isolated Cargo target preserves the active main development executable and service; no unrelated service restart."
+      },
+      {
+        "command": "pnpm exec prettier --write resolved spec chapters, ledger and CommunityAppShell.svelte/header-hover.css (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Conflict resolution temporarily omitted the closing style tag; formatter caught1 syntax failure. Restored tag, formatted and verified before further qualification."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 6,
+        "note": "Each command reported3 errors: missing direct autocomplete/highlight dependencies and stale local Design Core custom-language props. Refreshed the ignored dependency tree using the existing source hook."
+      },
+      {
+        "command": "pnpm web:build (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1 unresolved @codemirror/autocomplete import from the stale dependency tree; fixed by dependency refresh."
+      },
+      {
+        "command": "pnpm test:storybook DesktopChrome.stories.svelte StoreApplication.stories.svelte (initial selection)",
+        "result": "fail",
+        "failures": 1,
+        "note": "2 native stories pass,1 application suite fails to import after Vite dependency optimizer reload. Refreshed dependencies and used fresh runners for final qualification."
+      },
+      {
+        "command": "pnpm install --offline --no-frozen-lockfile; jj restore --from @- -- pnpm-lock.yaml",
+        "result": "pass",
+        "failures": 0,
+        "note": "Installed main direct editor dependencies, current Bits UI and current Design Core through the existing ignored hook. Restored the tracked registry lockfile; no dependency or loader configuration change committed."
+      },
+      {
+        "command": "pnpm check:architecture (before prop extraction)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1 failure: combined StoreApplication has322 counted lines against existing320 limit. Extracted its typed composition props without raising the budget."
+      },
+      {
+        "command": "pnpm test:governance",
+        "result": "pass",
+        "failures": 0,
+        "note": "44/44 pass. Full relevant governance lane required because desktop extends protected-file and ledger scanners; /tmp/jj-desktop-integration-governance.log."
+      },
+      {
+        "command": "pnpm desktop:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked native Tauri host check passes; /tmp/jj-desktop-integration-native-check.log."
+      },
+      {
+        "command": "pnpm desktop:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 regular host/owned-process tests pass;1 real-runtime test ignored by default, explicitly run separately; /tmp/jj-desktop-integration-host-tests.log."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/.local/desktop-integration-target cargo test --locked -p jj-store-cli --test desktop_supervision --test server_executable",
+        "result": "pass",
+        "failures": 0,
+        "note": "Supervision1pass/1ignored; foreground executable14pass/3ignored. Full regular foreground target covers the extracted shared startup/readiness/signal boundary; /tmp/jj-desktop-integration-cli-tests.log."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/.local/desktop-integration-target JJ_STORE_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs cargo test --locked -p jj-store-cli --test desktop_supervision -- --ignored --exact desktop_owner_eof_stops_real_service_and_retains_installation",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 real RustFS EOF shutdown/restart and retained format2 configuration proof; /tmp/jj-desktop-integration-real-supervision.log."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/.local/desktop-integration-target cargo check --locked -p jj-store-cli; cargo build --locked -p jj-store-cli --bins (same isolated target)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused CLI check and paired development executable build pass; /tmp/jj-desktop-integration-cli-{check,build}.log. Main development service remains running from its original binary."
+      },
+      {
+        "command": "pnpm test:storybook DesktopChrome, StoreApplication, StoreWorkspaceSettings, StoreSettingsIdentifier (fresh runner)",
+        "result": "pass",
+        "failures": 0,
+        "note": "22/22 interactions pass; /tmp/jj-desktop-integration-stories-final.log."
+      },
+      {
+        "command": "pnpm test:storybook desktop/application/settings, ProjectsHub and StoreAppearance direct consumers",
+        "result": "fail",
+        "failures": 1,
+        "note": "36pass/1fail across6 families. UnsupportedReviewsEmptyState fixture assumed local profile implied absent reviews, which main no longer does; /tmp/jj-desktop-integration-direct-consumers.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsHub.stories.svelte -t UnsupportedReviewsEmptyState (unchanged main)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Reproduced the exact1failure against main67040334. Fixture now explicitly omits its optional reader for the unsupported scenario; production behavior and assertions unchanged; /tmp/jj-desktop-integration-main-baseline.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsHub.stories.svelte -t UnsupportedReviewsEmptyState (repaired)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact original regression1pass/10skipped; /tmp/jj-desktop-integration-fixture-regression.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/{ProjectsActivity,ProjectsActivityControls,ProjectsAgents,ProjectsDirectory,ProjectsFilters,ProjectsHub,ProjectsRepositoryActions,ProjectsReviewDetail,TaskScroll}.stories.svelte catalog/components/store-application/{DesktopChrome,StoreApplication,StoreWorkspaceSettings,StoreSettingsIdentifier}.stories.svelte catalog/components/store-appearance/StoreAppearance.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "68/68 in14families on a fresh Vitest browser/Vite process, with normal accessibility assertions. All9 consumers of the changed shared Projects fixture plus application/native/settings/Appearance consumers; /tmp/jj-desktop-integration-all-consumers.log. Wider direct fixture lane required by the shared harness change."
+      },
+      {
+        "command": "pnpm catalog:test catalog/components/community-app-shell/shell-header-geometry.test.ts web/tests/vite/appearance.test.ts web/tests/vite/thread-navigation-integration.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "16/16 exact geometry, Appearance and navigation units; /tmp/jj-desktop-integration-ui-units.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (final after fixture repair)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/0 warnings in both scopes;156 catalog modules. Final fixture check repeated after repair; /tmp/jj-desktop-integration-{web-check-final,final-catalog-check}.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "823 modules within existing budgets;16 Cargo package boundaries; UI source ownership validates22chapters/152requirements."
+      },
+      {
+        "command": "pnpm web:build (refreshed dependencies)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh212-asset production bundle; inherited Design Core :global CSS minifier and large-chunk advisories retained; /tmp/jj-desktop-integration-web-build-final.log."
+      },
+      {
+        "command": "node scripts/desktop.mjs stage --server-dir /Users/stevejuma/code/lapismd/jj-store/.local/desktop-integration-target/debug --rustfs-runtime /Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs; pnpm desktop:bundle",
+        "result": "pass",
+        "failures": 0,
+        "note": "Paired explicit executables/current built UI staged; official Tauri CLI builds debug ARM64 app, not a signed release or DMG; /tmp/jj-desktop-integration-app-build.log."
+      },
+      {
+        "command": "JJ_STORE_DESKTOP_TEST_RESOURCES=/Users/stevejuma/code/lapismd/jj-store-desktop/desktop/resources cargo test --manifest-path desktop/Cargo.toml --locked --no-default-features --test managed_runtime -- --ignored --exact real_managed_runtime_restarts_preserves_origin_and_rejects_occupied_port",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 cold real managed RustFS host-runtime proof: stable origin, occupied-port refusal, restart, unchanged installation identity/configuration and removed socket; /tmp/jj-desktop-integration-real-host.log."
+      },
+      {
+        "command": "CUA Cmd+Q old app; JJ_STORE_DESKTOP_DATA_DIR=/private/tmp/jj-desktop-integration-native.OUg8YL desktop/target/debug/bundle/macos/jj-store.app/Contents/MacOS/jj-store-desktop; CUA Projects/Settings/close/Quit; repeat launch at same test state",
+        "result": "pass",
+        "failures": 0,
+        "note": "Old owned60321/60346/60348 process tree exited. Actual rebuilt WKWebView shows latest Agents/search UI and native controls with no separate titlebar/title. Local service Ready; Close preserves listening service and Settings, but CUA observation reactivates the window so visibility timing is unqualified. Cmd+Q returns clean exit, children/61046 listener absent; cold restart retains61046 and renders Projects again; second Quit clean. App-quit/noWindowsAvailable CUA results were corroborated by process/session checks. /tmp/jj-desktop-integration-native-{smoke,restart}.log."
+      },
+      {
+        "command": "pnpm exec prettier --check changed production/catalog/spec files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Resolved chapters, header styles, application props and fixture use canonical formatting."
+      },
+      {
+        "command": "pnpm check:progress (first E-DESK-003 bookkeeping)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Named-test checker recognizes fn/def/test(), not generated Svelte story names. Kept the exact story command/count in runs and its source in files; named Rust regressions remain referenced. No checker change."
+      },
+      {
+        "command": "pnpm spec:first (first E-DESK-003 bookkeeping)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Shared catalog fixture maps to UI and API chapters; added the optional-review-reader explanation in API as well as UI. No public contract change."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "5validators/22chapters/152requirements pass before final bookkeeping corrections."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm exec prettier --check changed production/catalog/spec files (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "125tasks; spec-first3protected files/3canonical chapters;5validators/22chapters/152requirements; canonical formatting passes. All298 existing main evidence entries retain identical parsed contents. Final web check after fixture repair and unused-type removal also0errors/0warnings: /tmp/jj-desktop-integration-final-web-check.log."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Native drag/double-click gestures, full native accessibility, macOS double-click preference, folder bridge, first-render handshake, dirty-edit protection and release/DMG gates remain incomplete; no visual baseline approval."
+    ],
+    "scope": "Focused CLI/service lifecycle, native host, cold real-runtime/package smoke and all directly affected UI consumers. Full regular foreground and governance suites qualify shared extracted startup/scanners; all14 direct UI families qualify the shared fixture repair. Root aggregates, full Rust workspace, unrelated storage/browser suites and release qualification remain out of scope.",
+    "next": "Land verified rebased stack in clean main, preserve paired app/resources and persistent Application Support state, verify relocation, then forget desktop and move its checkout to Trash. Continue the pending M17 gates from main."
   }
 ]
 ```
