@@ -1,3 +1,4 @@
+import { untrack } from "svelte";
 import {
   initialStoreMutationState,
   type StoreMutationCommand,
@@ -72,6 +73,7 @@ export function createInMemoryStoreMutations(options: {
   }
 
   function reset() {
+    if (untrack(() => ["unknown", "applying"].includes(state.status))) return;
     command = null;
     Object.assign(state, {
       status: "idle",

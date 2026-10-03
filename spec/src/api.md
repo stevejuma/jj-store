@@ -1484,3 +1484,15 @@ A client awaiting query metadata MUST discard the waiting submission when its
 query scope is invalidated, including view disposal. Metadata completion grants
 no authority to resume a canceled query; explicit operation/admission contracts
 remain unchanged.
+
+Local Sync adds protected POST `/local/sync/barrier` with an empty body and POST
+`/local/sync/wait` with the existing versioned SyncWaitRequest. Both use
+LocalTrusted admin admission before control-plane access. Wait requests are
+bounded to one second and half the HTTP deadline; a worker timeout returns a
+LocalSyncWait report with reached=false and the unchanged barrier. Capture is
+explicit and may contact the configured peer; ordinary status GETs remain local.
+
+The Settings reconciliation entry reuses the native preview/apply/status routes
+and captures a current head independently from the historical browsing pin.
+Transport failures after dispatch remain unknown; closing a presentation cannot
+replace its request. Confirmed reconciliation uses automatic refresh semantics.

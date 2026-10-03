@@ -266,8 +266,9 @@ The local browser Sync management adapter reuses the existing status, wake and
 set-paused control plane. It preserves distinct local/peer origins, captured
 frontiers, pending counts and faults; no changes to reconciliation, authority,
 WorkStore support or worker semantics are introduced. Pause/Resume is idempotent
-process-lifetime control. Browser finite-frontier waits remain a subsequent UI
-slice.
+process-lifetime control. Browser finite-frontier waits use explicit barrier
+capture and bounded continuations. A timeout retains the original target;
+stopping the browser wait does not pause replication.
 
 Local Search replacement updates the configured sync report to the current
 worker health receiver; disabling Search reports an unconfigured projection.

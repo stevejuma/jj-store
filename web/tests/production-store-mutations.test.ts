@@ -95,6 +95,7 @@ function fixture() {
   });
   return {
     mutation: { ...mutation, state },
+    source,
     command,
     requests,
     setPreview(value: StoreMutationPreview | Promise<StoreMutationPreview>) {
@@ -200,4 +201,48 @@ test("late preview responses cannot repopulate a departed session", async () => 
   await pending;
   assert.equal(f.mutation.state.status, "previewing");
   assert.equal(f.mutation.state.result, null);
+});
+
+test("reconciliation captures fresh heads without changing browsing and retains unknown intent", async () => {
+  const f = fixture();
+  const fresh = {
+    ...head,
+    published_seq: 10,
+    heads: ["aa".repeat(64), "bb".repeat(64)],
+  };
+  f.source.snapshot = async () => ({ profile: "native", ...fresh });
+  f.mutation.configure(["reconcile_operations"]);
+  const captured = await f.mutation.captureReconciliation();
+  assert.deepEqual(captured.heads, fresh.heads);
+  assert.deepEqual(head.heads, ["12".repeat(64)]);
+  f.setPreview({
+    status: "prepared",
+    preview: {
+      version: 1,
+      request_id: "",
+      request_digest: "ab".repeat(32),
+      expected: {
+        epoch: fresh.epoch,
+        position: 10,
+        code_state_version: 5,
+        heads: fresh.heads,
+      },
+      result: prepared({} as StoreMutationRequest),
+    },
+  });
+  await f.mutation.preview(
+    { type: "reconcile_operations", base: fresh.heads[0]! },
+    captured,
+  );
+  const request = f.requests[0]!;
+  assert.deepEqual(request.expected.heads, fresh.heads);
+  f.setApply({ status: "outcome_unknown", request_id: request.request_id });
+  await f.mutation.apply();
+  f.mutation.actions.resetMutation();
+  assert.equal(f.mutation.state.requestId, request.request_id);
+  await assert.rejects(f.mutation.captureReconciliation(), /pending/i);
+  await assert.rejects(f.mutation.preview(f.command), /pending/i);
+  f.setStatus({ status: "committed", receipt: f.makeReceipt(request) });
+  await f.mutation.checkStatus();
+  assert.equal(f.mutation.state.status, "committed");
 });

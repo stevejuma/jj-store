@@ -1,3 +1,4 @@
+import { createProductionSyncWait } from "./production-sync-wait.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import { storeErrorMessage } from "./http-store-data-source.js";
@@ -10,7 +11,13 @@ export function createProductionSyncSettings(options: {
 }) {
   const { data } = options;
   let generation = 0;
+  const wait = createProductionSyncWait({
+    ...options,
+    state: () => data.syncSettings,
+    supported: () => Boolean(data.capabilities?.local_sync_management),
+  });
   function clear() {
+    wait.stopSyncWait();
     generation++;
     data.syncSettings = emptySyncSettings();
   }
@@ -51,6 +58,7 @@ export function createProductionSyncSettings(options: {
     }
   }
   return {
+    ...wait,
     clear,
     refreshSyncSettings: () => request(),
     controlSync: (action: SyncAction) => request(action),

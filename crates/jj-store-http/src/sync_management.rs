@@ -46,3 +46,45 @@ pub(crate) async fn local_sync_control(
             .map_err(failure)?,
     )
 }
+
+pub(crate) async fn local_sync_barrier(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    query: Input<Empty>,
+    body: std::result::Result<Json<Empty>, axum::extract::rejection::JsonRejection>,
+) -> Result<Response> {
+    input(query)?;
+    let manager = manager(&state, &context).await?;
+    let Json(_) = body.map_err(|_| Error::invalid())?;
+    state.json(
+        &manager
+            .capture(context.id("repo")?)
+            .await
+            .map_err(failure)?,
+    )
+}
+pub(crate) async fn local_sync_wait(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    query: Input<Empty>,
+    body: std::result::Result<
+        Json<jj_store_service::replication_control::WaitRequestV1>,
+        axum::extract::rejection::JsonRejection,
+    >,
+) -> Result<Response> {
+    input(query)?;
+    let manager = manager(&state, &context).await?;
+    let Json(mut request) = body.map_err(|_| Error::invalid())?;
+    if !(1..=1000).contains(&request.timeout_millis) {
+        return Err(Error::invalid());
+    }
+    request.timeout_millis = request
+        .timeout_millis
+        .min((state.config.timeout.as_millis() / 2).max(1) as u64);
+    state.json(
+        &manager
+            .wait(context.id("repo")?, request)
+            .await
+            .map_err(failure)?,
+    )
+}

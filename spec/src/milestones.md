@@ -122,7 +122,7 @@ shared-package release qualification does not alter those original Git gates.
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation                       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                            |
 | M14.4       | Done        | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                                  | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild                               | E-M14-009,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                                      | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery                               | -                                                                                                                                                                                                                                                                                                                                                              |
-| M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                                 | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing                  | E-M14-008,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
+| M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                                 | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing                  | E-M14-008,E-M14-010,E-M14-011,E-M14-012,E-M14-013                                                                                                                                                                                                                                                                                                              |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                                  | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities                        | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007 | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032                                                                                                                          |
 | M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                                              | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                                            | E-M15-001,E-M15-005,E-M15-016                                                                                                                                                                                                                                                                                                                                  |
@@ -49364,6 +49364,183 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "Only UI query metadata-await cancellation is complete. E-UI-092 retains the separate registry release gate; Design Core visuals remain excluded. Main Vite picks up this source guard through HMR; backend63916 and fixture unchanged. Disposable static9370host stopped; original trunk() query restored without errors.",
     "next": "Commit verified UI follow-up in main. Existing source package release and wider M13/visual gates remain separate."
+  },
+  {
+    "id": "E-M14-013",
+    "tasks": ["M14", "M14.6"],
+    "date": "2026-10-03",
+    "kind": "captured-sync-waits-and-settings-reconciliation",
+    "revision": "enclosing Jujutsu change xnzxyowv",
+    "before": "Fresh local-management Jujutsu workspace from qyrqmyzz/0ba87fbb; main clean and services preserved. New wait regression fails 1/4 because waitForSync is absent; reconciliation capture regression fails 1/4. Existing Sync only exposes pause/resume/retry and textual reconciliation guidance.",
+    "versions": "JJ 0.45.1; Rust 1.98.1; Svelte 5; existing Design Core source-validation dependencies cloned into an isolated ignored node_modules; registry manifests unchanged.",
+    "formats": "Additive protected SyncBarrier and LocalSyncWait HTTP contracts. No native object, manifest, WAL or receipt format change. Captured reconciliation uses existing command and exact current heads; uncertain requests retained across presentation closure.",
+    "files": [
+      "catalog/components/store-application/StoreSyncReconciliation.stories.svelte",
+      "catalog/components/store-application/StoreSyncSettings.stories.svelte",
+      "catalog/controller/in-memory-store-mutations.svelte.ts",
+      "catalog/controller/in-memory-store-settings.svelte.ts",
+      "catalog/fixtures/SyncReconciliationFixture.svelte",
+      "catalog/fixtures/SyncSettingsFixture.svelte",
+      "crates/jj-store-cli/tests/native_lifecycle/http_sync_management.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-http/src/sync_management.rs",
+      "crates/jj-store-server/src/replication.rs",
+      "crates/jj-store-server/src/sync_management.rs",
+      "crates/jj-store-service/src/sync_management.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/mutations.md",
+      "spec/src/replication.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-mutation-commit.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-mutations.ts",
+      "web/src/lib/controller/production-sync-settings.ts",
+      "web/src/lib/controller/production-sync-wait.ts",
+      "web/src/lib/controller/sync-settings.ts",
+      "web/src/lib/ui/store-mutations/StoreMutationDialog.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationFields.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncReconciliation.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncWait.svelte",
+      "web/tests/browser/local-sync.spec.ts",
+      "web/tests/production-store-mutations.test.ts",
+      "web/tests/vite/production-sync-settings.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/vite/production-sync-settings.test.ts#sync waits retain a fixed barrier across timeout and ignore a stopped response",
+      "web/tests/production-store-mutations.test.ts#reconciliation captures fresh heads without changing browsing and retains unknown intent",
+      "crates/jj-store-cli/tests/native_lifecycle/http_local_management.rs#local_workspace_management_requires_local_admin_and_captures_contracts",
+      "web/tests/browser/local-sync.spec.ts#captured sync targets survive Settings navigation and timeout"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-sync-settings.test.ts (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "3 pass/1 fail: missing wait action; /tmp/jj-local-management-sync-before.log."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/production-store-mutations.test.ts (before reconciliation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "3 pass/1 fail: missing capture action; /tmp/jj-local-management-reconcile-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-sync-settings.test.ts web/tests/vite/production-store-settings.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "10/10 tests; /tmp/jj-local-management-sync-unit-final.log."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/production-store-mutations.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 tests including exact fresh head selection and unknown request retention; /tmp/jj-local-management-reconcile-after.log."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI and TypeScript from registered handlers; /tmp/jj-local-management-contracts.log."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle local_workspace_management_requires_local_admin_and_captures_contracts",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 actual HTTP capture fixture; timeout/reached, invalid request and admin admission; /tmp/jj-local-management-sync-http.log. Initial unused Json warning fixed."
+      },
+      {
+        "command": "cargo check --locked -p jj-store-service -p jj-store-http -p jj-store-server",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust boundary check; /tmp/jj-local-management-rust-check.log."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-server --lib replication::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 outage/control test; /tmp/jj-local-management-sync-worker.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreSyncSettings.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "5/5 interaction/accessibility cases; /tmp/jj-local-management-sync-stories.log."
+      },
+      {
+        "command": "pnpm test:storybook StoreSyncSettings.stories.svelte StoreSyncReconciliation.stories.svelte StoreRepositoryActions.stories.svelte (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "10 pass/1 fail; new test expected combobox but public Select exposes button with listbox popup. Corrected semantic query without changing product or relaxing behavior; /tmp/jj-local-management-reconcile-stories.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web has 0 errors/warnings; catalog/ownership and architecture focused checks. Final checks recorded below."
+      },
+      {
+        "command": "pnpm web:build; node scripts/browser-fixtures.mjs; pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-sync.spec.ts -g \"captured sync targets|Sync reconciliation\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh built bundle and server:2/2 browser tests including historical route retention, exact request recovery and mobile axe; /tmp/jj-local-management-sync-browser-final.log. Bundle emits existing large-chunk warning."
+      },
+      {
+        "command": "pnpm exec prettier --write changed frontend/spec files; rustfmt --edition 2024 changed Rust files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Targeted formatting only."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "156 actual HTTP/SSE response captures and 7 contract tests pass."
+      },
+      {
+        "command": "pnpm catalog:check (initial reconciliation fixture)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Literal widening then catalog boundary rejected a direct API type import. Return type now derives from owned controller contracts; final type and boundary checks pass."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "4 pass/1 fail: pending-command guard tracked mutation status inside a UI effect and reset file preview. Guard now reads untracked."
+      },
+      {
+        "command": "pnpm web:build && pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts web/tests/browser/local-sync.spec.ts -g \"text file edit|repository action|repository command|unknown mutation|captured sync targets|Sync reconciliation\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "7/7 cold built-bundle tests pass."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-mutations/StoreRepositoryActions.stories.svelte catalog/components/store-application/StoreSyncReconciliation.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "6/6 pass; fixed reconciliation exact story also 1/1; Sync family 5/5 passed."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 Svelte diagnostics; 158 catalog modules pass ownership boundary."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Storage overview, integrity and checkpoints are the next implementation slice. Expanded real-peer Sync pressure/fault qualification and visual baselines are separate gates; agent management is excluded."
+    ],
+    "scope": "Configured native Sync UI and shared mutation-dialog consumers. Generated-contract captures required by new HTTP endpoints. Main development service is untouched. No full root aggregate, full Rust workspace, expanded two-instance replication/soak, agent management or visual-baseline approval.",
+    "next": "Implement Storage overview, integrity and exact-target checkpoints."
   }
 ]
 ```

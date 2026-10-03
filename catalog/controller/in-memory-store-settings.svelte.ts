@@ -2,6 +2,7 @@ import { emptySearchSettings } from "../../web/src/lib/controller/search-setting
 import { emptySyncSettings } from "../../web/src/lib/controller/sync-settings.js";
 import { emptyWorkspaceLinks } from "../../web/src/lib/controller/workspace-link-types.js";
 import type {
+  StoreController,
   StoreLoadStatus,
   StoreSettingsState,
 } from "../../web/src/lib/controller/contracts.js";
@@ -125,10 +126,17 @@ export function createInMemoryStoreSettings(options: {
 }
 
 export const unavailableManagementActions = {
+  async captureReconciliation(): ReturnType<
+    StoreController["actions"]["captureReconciliation"]
+  > {
+    throw new Error("Reconciliation capture unavailable");
+  },
   async refreshWorkspaceLinks() {},
   setWorkspacePath() {},
   async linkWorkspace() {},
   async pickWorkspaceFolder() {},
+  async waitForSync() {},
+  stopSyncWait() {},
   async refreshSyncSettings() {},
   async controlSync() {},
   setSearchDraft() {},

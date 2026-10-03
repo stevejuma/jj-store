@@ -581,3 +581,8 @@ Optional LocalTrusted `default_user_email` is an additive QueryInfo hint; it
 neither persists identity nor changes explicit query semantics. Authenticated
 serving omits it. Multiline URLs preserve query whitespace within the existing
 byte bound while other control characters remain rejected.
+
+Local-management contract samples cover the additive SyncBarrier and
+LocalSyncWait browser endpoints, including pending and reached outcomes with
+unchanged full issuer/epoch identities. Native persistence formats are
+unchanged.

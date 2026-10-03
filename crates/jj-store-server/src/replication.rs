@@ -585,8 +585,10 @@ impl ReplicationControls for ControlPlane {
             (state.handle.clone(), state.local, state.peer.clone())
         };
         let handle = handle.ok_or(ReplicationControlError::Unavailable)?;
-        if local.map(|value| value.replica) != Some(request.barrier.local_replica)
-            || peer.map(|value| value.replica) != Some(request.barrier.peer_replica)
+        if local.map(|value| (value.replica, value.log_epoch))
+            != Some((request.barrier.local_replica, request.barrier.push_epoch))
+            || peer.map(|value| (value.replica, value.log_epoch))
+                != Some((request.barrier.peer_replica, request.barrier.pull_epoch))
         {
             return Err(ReplicationControlError::Invalid);
         }

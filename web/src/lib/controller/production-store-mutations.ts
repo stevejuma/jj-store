@@ -1,3 +1,4 @@
+import { untrack } from "svelte";
 import { isLocal, type RepositoryHead } from "./repository-profile.js";
 import type { Head } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
@@ -26,7 +27,10 @@ export function createProductionStoreMutations(options: {
   let request: StoreMutationRequest | null = null;
   const state = options.state;
 
-  function reset() {
+  const unresolved = () =>
+    state.status === "unknown" || state.status === "applying";
+  function reset(force = false) {
+    if (!force && untrack(unresolved)) return;
     request = null;
     Object.assign(state, {
       status: "idle",
@@ -41,11 +45,36 @@ export function createProductionStoreMutations(options: {
     state.available = available.filter(isMutationKind);
   }
 
-  async function preview(command: StoreMutationCommand) {
+  async function captureReconciliation(): Promise<Head> {
+    if (unresolved())
+      throw new Error("A pending command must be recovered first.");
+    if (!state.available.includes("reconcile_operations"))
+      throw new Error("Reconciliation is unavailable.");
     const source = options.source();
-    const head = options.head();
+    const head = await source.snapshot(true);
+    if (!options.current(source))
+      throw new Error("Repository connection changed.");
+    if (isLocal(head) || head.heads.length < 2)
+      throw new Error(
+        "Reconciliation requires multiple current operation heads.",
+      );
+    return head;
+  }
+
+  async function preview(command: StoreMutationCommand, captured?: Head) {
+    if (unresolved())
+      throw new Error("A pending command must be recovered first.");
+    const source = options.source();
+    const head = captured ?? options.head();
     if (!head || isLocal(head))
       throw new Error("No captured repository head is available.");
+    if (
+      captured &&
+      (command.type !== "reconcile_operations" ||
+        !captured.heads.includes(command.base) ||
+        captured.repo_id !== source.repository)
+    )
+      throw new Error("Choose one captured operation head as the base.");
     request = mutationRequest(head, command);
     Object.assign(state, {
       status: "previewing",
@@ -82,7 +111,7 @@ export function createProductionStoreMutations(options: {
       if (receipt) await options.committed(receipt, request.command);
     } catch (cause) {
       if (!options.current(source)) return;
-      state.status = "failed";
+      state.status = "unknown";
       state.error = storeErrorMessage(cause);
     }
   }
@@ -101,22 +130,24 @@ export function createProductionStoreMutations(options: {
       if (receipt) await options.committed(receipt, request.command);
     } catch (cause) {
       if (!options.current(source)) return;
-      state.status = "failed";
+      state.status = "unknown";
       state.error = storeErrorMessage(cause);
     }
   }
 
   return {
     configure,
-    reset,
+    reset: () => reset(true),
+    captureReconciliation,
     preview,
     apply,
     checkStatus,
     actions: {
+      captureReconciliation,
       previewMutation: preview,
       applyMutation: apply,
       checkMutationStatus: checkStatus,
-      resetMutation: reset,
+      resetMutation: () => reset(),
     },
   };
 }

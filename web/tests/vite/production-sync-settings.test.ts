@@ -28,6 +28,7 @@ function fixture() {
   });
   return {
     data,
+    source,
     status,
     control,
     settings,
@@ -105,4 +106,48 @@ test("sync transport sends typed intent over protected POST", async () => {
     version: 1,
     action: "pause",
   });
+});
+
+test("sync waits retain a fixed barrier across timeout and ignore a stopped response", async () => {
+  const f = fixture();
+  await f.settings.refreshSyncSettings();
+  const barrier = {
+    version: 1,
+    repository: "ab".repeat(16),
+    local_replica: "01".repeat(16),
+    peer_replica: "02".repeat(16),
+    push_epoch: "03".repeat(16),
+    pull_epoch: "04".repeat(16),
+    push_through: 9,
+    pull_through: 12,
+  };
+  const capture = vi.fn(async () => barrier);
+  const wait = vi.fn(async () => ({
+    version: 1,
+    barrier,
+    reached: false,
+    status: null,
+  }));
+  Object.assign(f.source.sync!, { capture, wait });
+  await f.settings.waitForSync(true);
+  expect(f.data.syncSettings.wait.barrier).toEqual(barrier);
+  expect(f.data.syncSettings.wait.state).toBe("pending");
+  await f.settings.waitForSync(false);
+  expect(capture).toHaveBeenCalledOnce();
+  expect(wait.mock.calls[1]![0]).toEqual(barrier);
+  let deliver!: (value: unknown) => void;
+  wait.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        deliver = resolve;
+      }),
+  );
+  const pending = f.settings.waitForSync(false);
+  f.settings.stopSyncWait();
+  deliver({ version: 1, barrier, reached: true, status: null });
+  await pending;
+  expect(f.data.syncSettings.wait.state).toBe("stopped");
+  expect(f.data.syncSettings.wait.barrier).toEqual(barrier);
+  f.disconnect();
+  expect(f.data.syncSettings.wait.barrier).toBeNull();
 });

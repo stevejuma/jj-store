@@ -4,6 +4,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import StoreAppearance from "../store-appearance/StoreAppearance.svelte";
   import StoreRepositorySettings from "./StoreRepositorySettings.svelte";
+  import StoreSyncReconciliation from "./StoreSyncReconciliation.svelte";
   import StoreSyncSettings from "./StoreSyncSettings.svelte";
   import StoreSearchSettings from "./StoreSearchSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
@@ -50,7 +51,12 @@
         )}
         onRefresh={controller.actions.refreshSyncSettings}
         onControl={controller.actions.controlSync}
-      />
+        onWait={controller.actions.waitForSync}
+        onStopWait={controller.actions.stopSyncWait}
+        >{#snippet reconciliation()}<StoreSyncReconciliation
+            {controller}
+          />{/snippet}</StoreSyncSettings
+      >
     {:else}
       <StoreSearchSettings {controller} />
     {/if}

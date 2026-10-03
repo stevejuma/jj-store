@@ -6,7 +6,7 @@ import type {
 
 export function createProductionMutationCommitter(
   history: ReturnType<typeof createStoreRouteHistory>,
-  refresh: () => Promise<void>,
+  refresh: (automatic?: boolean) => Promise<void>,
 ) {
   return async (
     receipt: StoreMutationReceipt,
@@ -25,6 +25,6 @@ export function createProductionMutationCommitter(
         directory: destination.split("/").slice(0, -1).join("/"),
       });
     }
-    await refresh();
+    await refresh(command.type === "reconcile_operations");
   };
 }

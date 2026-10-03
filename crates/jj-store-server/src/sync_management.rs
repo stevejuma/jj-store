@@ -1,7 +1,7 @@
 use jj_store_model::RepositoryId;
 use jj_store_rpc::server::{ReplicationControlError, ReplicationControls};
 use jj_store_service::sync_management::{
-    Error, LocalSyncStatus, SyncAction, SyncCommand, SyncManager,
+    Error, LocalSyncStatus, LocalSyncWait, SyncAction, SyncCommand, SyncManager,
 };
 use std::sync::Arc;
 
@@ -22,6 +22,41 @@ fn configured(worker: jj_store_service::replication_control::StatusV1) -> LocalS
 }
 #[async_trait::async_trait]
 impl SyncManager for LocalSync {
+    async fn capture(
+        &self,
+        repository: RepositoryId,
+    ) -> Result<jj_store_service::replication_control::BarrierV1, Error> {
+        self.0.capture_barrier(repository).await.map_err(failure)
+    }
+    async fn wait(
+        &self,
+        repository: RepositoryId,
+        request: jj_store_service::replication_control::WaitRequestV1,
+    ) -> Result<LocalSyncWait, Error> {
+        if request.version != 1
+            || request.barrier.version != 1
+            || request.barrier.repository != repository
+            || !(1..=1000).contains(&request.timeout_millis)
+        {
+            return Err(Error::Invalid);
+        }
+        match self.0.wait(repository, &request).await {
+            Ok(outcome) => Ok(LocalSyncWait {
+                version: 1,
+                barrier: outcome.barrier,
+                reached: true,
+                status: outcome.status,
+            }),
+            Err(ReplicationControlError::Timeout) => Ok(LocalSyncWait {
+                version: 1,
+                barrier: request.barrier,
+                reached: false,
+                status: self.0.status(repository).await.map_err(failure)?,
+            }),
+            Err(error) => Err(failure(error)),
+        }
+    }
+
     async fn status(&self, repository: RepositoryId) -> Result<LocalSyncStatus, Error> {
         match self.0.status(repository).await {
             Ok(worker) => Ok(configured(worker)),

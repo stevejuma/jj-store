@@ -4,6 +4,7 @@
   import PlayIcon from "@lucide/svelte/icons/play";
   import RotateCwIcon from "@lucide/svelte/icons/rotate-cw";
   import CloudOffIcon from "@lucide/svelte/icons/cloud-off";
+  import StoreSyncWait from "./StoreSyncWait.svelte";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
@@ -19,11 +20,17 @@
     supported,
     onRefresh,
     onControl,
+    onWait,
+    onStopWait,
+    reconciliation,
   }: {
     settings: SyncSettings;
     supported: boolean;
     onRefresh: () => Promise<void>;
     onControl: (action: SyncAction) => Promise<void>;
+    onWait: (capture: boolean) => Promise<void>;
+    onStopWait: () => void;
+    reconciliation?: import("svelte").Snippet;
   } = $props();
   const worker = $derived(settings.value?.worker);
   const busy = $derived(
@@ -111,6 +118,7 @@
               </dd>
             </div>
           </dl>
+          {#if reconciliation}{@render reconciliation()}{/if}
           <div class="store-settings__action-row">
             <div>
               <strong>Sync controls</strong>
@@ -163,6 +171,7 @@
             <h2 id="sync-progress">Replication progress</h2>
             <p>Local and peer positions belong to separate histories.</p>
           </header>
+          <StoreSyncWait wait={settings.wait} {onWait} {onStopWait} />
           <dl class="store-settings__rows">
             <div>
               <dt>Local pending positions</dt>

@@ -95,6 +95,8 @@ export function createProductionStoreActions(options: {
     setWorkspacePath: options.settings.setWorkspacePath,
     linkWorkspace: options.settings.linkWorkspace,
     pickWorkspaceFolder: options.settings.pickWorkspaceFolder,
+    waitForSync: options.settings.waitForSync,
+    stopSyncWait: options.settings.stopSyncWait,
     refreshSyncSettings: options.settings.refreshSyncSettings,
     setSearchDraft: options.settings.setSearchDraft,
     cancelSearchDraft: options.settings.cancelSearchDraft,

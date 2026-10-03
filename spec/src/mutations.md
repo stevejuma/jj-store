@@ -744,3 +744,7 @@ symlink escape. File mode is retained and the parent is flushed. A stale
 selection retains the original file; a transport loss remains uncertain until
 explicit readback. No code-command journal or repository receipt is fabricated
 for physical Save. Snapshot is independently authorized.
+
+Local Sync barrier capture and bounded waits reuse the existing owned
+replication control types. They grant no repository mutation or upstream
+configuration authority and cannot silently capture replacement targets.

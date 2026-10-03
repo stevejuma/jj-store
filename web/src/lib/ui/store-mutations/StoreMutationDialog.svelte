@@ -22,10 +22,12 @@
     controller,
     action,
     open,
+    capturedHead,
   }: {
     controller: StoreController;
     action: StoreMutationAction;
     open: boolean;
+    capturedHead?: import("../../api/client.js").Head;
   } = $props();
   const view = $derived(controller.state);
   const mutation = $derived(view.mutation);
@@ -51,7 +53,12 @@
 
   $effect(() => {
     if (open && !initialized) {
-      initialize();
+      if (!(
+        capturedHead &&
+        mutation.command?.type === "reconcile_operations" &&
+        ["unknown", "applying"].includes(mutation.status)
+      ))
+        initialize();
       initialized = true;
     } else if (!open && initialized) {
       controller.actions.resetMutation();
@@ -77,7 +84,11 @@
       workspace: "",
       bookmark: bookmark?.name ?? view.route.bookmark,
       target: selected,
-      base: view.route.snapshotOperationId ?? view.operationHeads[0] ?? "",
+      base:
+        capturedHead?.heads[0] ??
+        view.route.snapshotOperationId ??
+        view.operationHeads[0] ??
+        "",
       expectedTargets: [...(bookmark?.targets ?? [])],
       retainBookmarks: false,
       restoreDescendants: true,
@@ -95,6 +106,7 @@
     try {
       await controller.actions.previewMutation(
         buildMutationCommand(action, form),
+        capturedHead,
       );
     } catch (cause) {
       validation = cause instanceof Error ? cause.message : "Invalid command.";
@@ -119,6 +131,7 @@
     >
       <StoreMutationFields
         {action}
+        operationHeads={capturedHead?.heads}
         bind:description={form.description}
         bind:workspace={form.workspace}
         bind:bookmark={form.bookmark}

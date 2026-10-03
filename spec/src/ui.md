@@ -1540,3 +1540,15 @@ invalid drafts tint the input with spaced diagnostics and keep prior results.
 The session-only author email initially uses query metadata's optional default;
 manual edits, including empty values, MUST win across metadata/head refreshes.
 Email MUST remain absent from URLs and persisted UI state.
+
+## Captured Sync waits
+
+Sync Progress offers explicit capture-and-wait and continuation of the same
+issuer-bound push/pull barrier. Timeout means pending, not failure or a new
+target. Stop cancels only the browser wait; replication continues. The barrier
+survives Settings section changes but never a repository/session change.
+
+Sync Overview opens the shared reconciliation dialog from a freshly captured
+current head set, with an explicit base selector. The underlying historical
+route remains retained. Uncertain mutations survive dialog/Settings closure and
+prevent a replacement command until the original receipt is recovered.

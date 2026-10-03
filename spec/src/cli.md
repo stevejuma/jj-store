@@ -865,3 +865,7 @@ host identity hints. Registered-folder identity fallback remains an adapter
 read; it MUST NOT invoke installed JJ/Git commands, migrate configuration or
 alter recorded/physical repository state. CLI query arguments continue to supply
 explicit author email and retain existing standard-alias isolation.
+
+The registered local-management HTTP capture includes explicit Sync barrier
+capture, reached/pending waits, invalid targets and LocalTrusted-only admission.
+These browser controls preserve the existing CLI finite-frontier semantics.

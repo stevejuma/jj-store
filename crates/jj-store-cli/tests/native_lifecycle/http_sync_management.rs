@@ -7,6 +7,7 @@ struct Controls {
     configured: AtomicBool,
     paused: AtomicBool,
     calls: AtomicUsize,
+    reached: AtomicBool,
 }
 #[async_trait::async_trait]
 impl ReplicationControls for Controls {
@@ -65,16 +66,37 @@ impl ReplicationControls for Controls {
     }
     async fn capture_barrier(
         &self,
-        _: jj_store_model::RepositoryId,
+        repository: jj_store_model::RepositoryId,
     ) -> std::result::Result<control::BarrierV1, ControlError> {
-        Err(ControlError::Invalid)
+        self.calls.fetch_add(1, Ordering::SeqCst);
+        Ok(control::BarrierV1 {
+            version: 1,
+            repository,
+            local_replica: jj_store_model::ReplicaId::new([1; 16]),
+            peer_replica: jj_store_model::ReplicaId::new([2; 16]),
+            push_epoch: jj_store_model::EpochId::new([3; 16]),
+            pull_epoch: jj_store_model::EpochId::new([4; 16]),
+            push_through: jj_store_model::WalPosition(9),
+            pull_through: jj_store_model::WalPosition(12),
+        })
     }
     async fn wait(
         &self,
-        _: jj_store_model::RepositoryId,
-        _: &control::WaitRequestV1,
+        repository: jj_store_model::RepositoryId,
+        request: &control::WaitRequestV1,
     ) -> std::result::Result<control::WaitOutcomeV1, ControlError> {
-        Err(ControlError::Invalid)
+        self.calls.fetch_add(1, Ordering::SeqCst);
+        if request.barrier.push_epoch != jj_store_model::EpochId::new([3; 16]) {
+            return Err(ControlError::Invalid);
+        }
+        if !self.reached.load(Ordering::SeqCst) {
+            return Err(ControlError::Timeout);
+        }
+        Ok(control::WaitOutcomeV1 {
+            version: 1,
+            barrier: request.barrier,
+            status: self.status(repository).await?,
+        })
     }
 }
 fn command(body: &str) -> Request<Body> {
@@ -143,6 +165,53 @@ pub(super) async fn capture(f: &ContentFixture, cache: &std::path::Path, samples
         assert_eq!(data["worker"]["phase"], phase);
         samples.push(serde_json::json!({"path":"/v1/repos/{repo}/local/sync/control","method":"post","status":200,"media":"application/json","data":data}));
     }
+    let mut capture_request = command("{}");
+    *capture_request.uri_mut() = format!("/v1/repos/{REPO}/local/sync/barrier")
+        .parse()
+        .unwrap();
+    let response = local.clone().oneshot(capture_request).await.unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let barrier: Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 1024 * 1024).await.unwrap())
+            .unwrap();
+    samples.push(serde_json::json!({"path":"/v1/repos/{repo}/local/sync/barrier","method":"post","status":200,"media":"application/json","data":barrier}));
+    for reached in [false, true] {
+        controls.reached.store(reached, Ordering::SeqCst);
+        let mut request = command(
+            &serde_json::json!({"version":1,"barrier":barrier,"timeout_millis":1000}).to_string(),
+        );
+        *request.uri_mut() = format!("/v1/repos/{REPO}/local/sync/wait").parse().unwrap();
+        let response = local.clone().oneshot(request).await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let data: Value =
+            serde_json::from_slice(&to_bytes(response.into_body(), 1024 * 1024).await.unwrap())
+                .unwrap();
+        assert_eq!(data["reached"], reached);
+        assert_eq!(data["barrier"], barrier);
+        samples.push(serde_json::json!({"path":"/v1/repos/{repo}/local/sync/wait","method":"post","status":200,"media":"application/json","data":data}));
+    }
+    let mut invalid_barrier = barrier.clone();
+    invalid_barrier["push_epoch"] = serde_json::json!(jj_store_model::EpochId::new([99; 16]));
+    let mut invalid_wait = command(
+        &serde_json::json!({"version":1,"barrier":invalid_barrier,"timeout_millis":1000})
+            .to_string(),
+    );
+    *invalid_wait.uri_mut() = format!("/v1/repos/{REPO}/local/sync/wait").parse().unwrap();
+    assert_eq!(
+        local.clone().oneshot(invalid_wait).await.unwrap().status(),
+        StatusCode::BAD_REQUEST
+    );
+    for timeout in [0, 1001] {
+        let mut request = command(
+            &serde_json::json!({"version":1,"barrier":barrier,"timeout_millis":timeout})
+                .to_string(),
+        );
+        *request.uri_mut() = format!("/v1/repos/{REPO}/local/sync/wait").parse().unwrap();
+        assert_eq!(
+            local.clone().oneshot(request).await.unwrap().status(),
+            StatusCode::BAD_REQUEST
+        );
+    }
     let calls = controls.calls.load(Ordering::SeqCst);
     for body in [
         r#"{"version":2,"action":"pause"}"#,
@@ -171,7 +240,17 @@ pub(super) async fn capture(f: &ContentFixture, cache: &std::path::Path, samples
                 ..Config::default()
             },
         );
+        let mut barrier_request = command("{}");
+        *barrier_request.uri_mut() = format!("/v1/repos/{REPO}/local/sync/barrier")
+            .parse()
+            .unwrap();
+        let mut wait_request = command(
+            &serde_json::json!({"version":1,"barrier":barrier,"timeout_millis":1000}).to_string(),
+        );
+        *wait_request.uri_mut() = format!("/v1/repos/{REPO}/local/sync/wait").parse().unwrap();
         for mut request in [
+            barrier_request,
+            wait_request,
             protected(&format!("/v1/repos/{REPO}/local/sync")),
             command(r#"{"version":1,"action":"pause"}"#),
         ] {

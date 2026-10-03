@@ -200,6 +200,8 @@ export interface StoreController {
     controlSearch(
       action: import("./search-settings.js").SearchAction,
     ): Promise<void>;
+    waitForSync(capture: boolean): Promise<void>;
+    stopSyncWait(): void;
     refreshSyncSettings(): Promise<void>;
     controlSync(action: import("./sync-settings.js").SyncAction): Promise<void>;
     loadMore(
@@ -216,7 +218,11 @@ export interface StoreController {
     ): Promise<void>;
     search(query: string): Promise<void>;
     selectSearchResult(result: StoreSearchResult): Promise<void>;
-    previewMutation(command: StoreMutationCommand): Promise<void>;
+    captureReconciliation(): Promise<import("../api/client.js").Head>;
+    previewMutation(
+      command: StoreMutationCommand,
+      captured?: import("../api/client.js").Head,
+    ): Promise<void>;
     applyMutation(): Promise<void>;
     checkMutationStatus(): Promise<void>;
     resetMutation(): void;

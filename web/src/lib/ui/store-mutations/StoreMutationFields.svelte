@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Select from "@lapismd/design-core/shadcn/select";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Checkbox } from "@lapismd/design-core/shadcn/checkbox";
   import * as Field from "@lapismd/design-core/shadcn/field";
@@ -12,6 +13,7 @@
 
   let {
     action,
+    operationHeads,
     description = $bindable(),
     workspace = $bindable(),
     bookmark = $bindable(),
@@ -25,6 +27,7 @@
     onChange,
   }: {
     action: StoreMutationAction;
+    operationHeads?: readonly string[];
     description: string;
     workspace: string;
     bookmark: string;
@@ -108,14 +111,28 @@
   {#if action === "reconcile"}
     <Field.Field>
       <Field.Label for="store-mutation-base">Base operation</Field.Label>
-      <Input
-        id="store-mutation-base"
-        bind:value={base}
-        oninput={onChange}
-        spellcheck="false"
-        autocomplete="off"
-      />
-      <Field.Description
+      {#if operationHeads}
+        <Select.Root type="single" bind:value={base} onValueChange={onChange}>
+          <Select.Trigger id="store-mutation-base" aria-label="Base operation"
+            >{base
+              ? `${base.slice(0, 12)}…`
+              : "Choose operation"}</Select.Trigger
+          >
+          <Select.Content
+            >{#each operationHeads as operation}<Select.Item
+                value={operation}
+                label={operation}>{operation.slice(0, 12)}…</Select.Item
+              >{/each}</Select.Content
+          >
+        </Select.Root>
+      {:else}<Input
+          id="store-mutation-base"
+          bind:value={base}
+          oninput={onChange}
+          spellcheck="false"
+          autocomplete="off"
+        />
+      {/if}<Field.Description
         >Choose one captured operation head as the base.</Field.Description
       >
     </Field.Field>

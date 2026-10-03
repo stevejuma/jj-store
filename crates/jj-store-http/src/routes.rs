@@ -16,7 +16,9 @@ use crate::mutations::{
 use crate::review_mutations::{apply as review_command_apply, status as review_command_status};
 use crate::search::{Query as SearchQuery, search, search_status};
 use crate::search_management::{control_search, local_search_settings, save_search_settings};
-use crate::sync_management::{local_sync_control, local_sync_status};
+use crate::sync_management::{
+    local_sync_barrier, local_sync_control, local_sync_status, local_sync_wait,
+};
 use crate::work::{
     apply as work_apply, browse as work_browse, page as work_page, status as work_status,
 };
@@ -276,6 +278,8 @@ macro_rules! endpoints {
             (post, "/repos/{repo}/local/search/save", save_search_settings, Empty, jj_store_service::search_management::LocalSearchSettings, Reply::Json(200)),
             (post, "/repos/{repo}/local/search/control", control_search, Empty, jj_store_service::search_management::LocalSearchSettings, Reply::Json(200)),
             (get, "/repos/{repo}/local/sync", local_sync_status, Empty, jj_store_service::sync_management::LocalSyncStatus, Reply::Json(200)),
+            (post, "/repos/{repo}/local/sync/barrier", local_sync_barrier, Empty, jj_store_service::replication_control::BarrierV1, Reply::Json(200)),
+            (post, "/repos/{repo}/local/sync/wait", local_sync_wait, Empty, jj_store_service::sync_management::LocalSyncWait, Reply::Json(200)),
             (post, "/repos/{repo}/local/sync/control", local_sync_control, Empty, jj_store_service::sync_management::LocalSyncStatus, Reply::Json(200)),
             (get, "/repos/{repo}/local/workspaces", local_workspaces, Empty, jj_store_service::local_management::WorkspaceLinks, Reply::Json(200)),
             (post, "/repos/{repo}/local/workspaces/pick", pick_workspace_folder, Empty, jj_store_service::local_management::FolderSelection, Reply::Json(200)),
@@ -363,6 +367,11 @@ pub(super) fn document(doc: &mut Document) {
     );
     doc.body::<jj_store_service::sync_management::SyncCommand>(
         "/v1/repos/{repo}/local/sync/control",
+        "post",
+    );
+    doc.body::<Empty>("/v1/repos/{repo}/local/sync/barrier", "post");
+    doc.body::<jj_store_service::replication_control::WaitRequestV1>(
+        "/v1/repos/{repo}/local/sync/wait",
         "post",
     );
     doc.body::<Empty>("/v1/repos/{repo}/local/workspaces/pick", "post");
