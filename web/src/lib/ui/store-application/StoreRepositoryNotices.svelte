@@ -1,8 +1,6 @@
 <script lang="ts">
   import type { StoreController } from "../../controller/contracts.js";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
-  import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
-  import { Button } from "@lapismd/design-core/shadcn/button";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   let { controller }: { controller: StoreController } = $props();
   const state = $derived(controller.state);
   const error = $derived(
@@ -12,26 +10,17 @@
   );
 </script>
 
-{#if error}
-  <section class="store-repository-notices" aria-label="Repository notices">
-    {#if error}<Alert.Root>
-        <TriangleAlertIcon aria-hidden="true" />
-        <Alert.Title>Repository request failed</Alert.Title>
-        <Alert.Description>{error}</Alert.Description>
-        {#if error.includes("index rebuild required")}<Button
-            variant="outline"
-            onclick={() => controller.actions.prepareIndex()}
-            >Prepare graph index</Button
-          >{/if}
-      </Alert.Root>{/if}
-  </section>
-{/if}
-
-<style>
-  .store-repository-notices {
-    display: grid;
-    gap: 0.5rem;
-    flex: none;
-    padding: 0.75rem 1rem;
-  }
-</style>
+<StoreNotice
+  noticeKey="repository-request"
+  title="Repository request failed"
+  message={error}
+  pending={state.status.navigation === "loading" ||
+    state.status.navigation === "refreshing"}
+  action={error.includes("index rebuild required")
+    ? {
+        id: "prepare-index",
+        label: "Prepare graph index",
+        run: () => void controller.actions.prepareIndex(),
+      }
+    : undefined}
+/>

@@ -1,11 +1,11 @@
 <script lang="ts">
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import DatabaseIcon from "@lucide/svelte/icons/database";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import ShieldCheckIcon from "@lucide/svelte/icons/shield-check";
   import SaveIcon from "@lucide/svelte/icons/save";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type {
     StorageSettings,
@@ -59,9 +59,16 @@
       description="Open a native repository on a local service with administrator access to use Storage maintenance."
     />
   {:else}
-    {#if settings.error}<Alert.Root variant="destructive"
-        ><Alert.Description>{settings.error}</Alert.Description></Alert.Root
-      >{/if}
+    <StoreNotice
+      noticeKey="storage"
+      title="Storage request failed"
+      message={settings.pending ? "" : settings.error}
+      pending={settings.changing ||
+        ["loading", "refreshing"].includes(settings.state)}
+    />
+    {#if settings.pending && settings.error}<p role="status">
+        {settings.error}
+      </p>{/if}
     <Tabs.Content value="overview">
       <section
         class="store-settings__section"

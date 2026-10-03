@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { untrack } from "svelte";
   import { projectsViewKey } from "../../controller/projects-view-cache.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -65,9 +66,12 @@
         >
       </div>
     </header>
-    {#if controller.projects?.error}<p role="alert">
-        {controller.projects.error}
-      </p>{/if}
+    <StoreNotice
+      noticeKey="projects"
+      title="Projects request failed"
+      message={controller.projects?.error}
+      pending={controller.projects?.loading}
+    />
     {#if projectsInitialLoading(controller)}<StoreProjectsLoading
         route={controller.projects!.route}
         {layout}

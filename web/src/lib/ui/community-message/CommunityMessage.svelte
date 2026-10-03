@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { useAppearance } from "../../appearance/store.svelte.js";
   const appearance = useAppearance();
   import { Message, MessageBubble } from "@lapismd/design-core/ai/chat";
@@ -301,8 +302,11 @@
       {deletePending ? "Deleting…" : "Delete message"}
     {/snippet}
 
-    {#if deleteError}<p class="community-message__delete-error" role="alert">
-        {deleteError}
-      </p>{/if}
+    <StoreNotice
+      noticeKey={`delete-message:${message.id}`}
+      title="Could not delete message"
+      message={deleteError}
+      pending={deletePending}
+    />
   </ConfirmDialog>
 {/if}

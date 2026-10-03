@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import "./store-threads.css";
   import CommunityWorkspaceSurface from "../community-workspace/CommunityWorkspaceSurface.svelte";
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
@@ -102,7 +103,13 @@
 
 {#if threads}<section class="store-threads" aria-label="Threads">
     <StoreThreadHeader {controller} bind:query />
-    {#if threads.error}<Alert.Root variant="destructive"
+    <StoreNotice
+      noticeKey="threads"
+      title="Thread action needs attention"
+      message={threads.pending ? "" : threads.error}
+      pending={threads.busy}
+    />
+    {#if threads.pending && threads.error}<Alert.Root variant="destructive"
         ><Alert.Title>Thread action needs attention</Alert.Title
         ><Alert.Description>{threads.error}</Alert.Description>
         {#if threads.pending}<Button

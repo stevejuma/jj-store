@@ -34,6 +34,7 @@ export function createProductionSearchSettings(options: {
       if (!state.dirty) draftRevision = state.value?.revision;
       state.draft = { ...state.draft, ...patch };
       state.dirty = true;
+      state.validation = "";
     }
   }
   function cancelSearchDraft() {
@@ -42,6 +43,7 @@ export function createProductionSearchSettings(options: {
       state.draft = searchDraft(state.value.desired);
       draftRevision = state.value.revision;
       state.dirty = false;
+      state.validation = "";
     }
   }
   async function request(action?: SearchAction | "save") {
@@ -59,12 +61,14 @@ export function createProductionSearchSettings(options: {
     )
       return;
     if (action && action !== "save" && state.dirty) return;
+    if (action === "save") state.validation = "";
     let configuration;
     try {
       if (action === "save" && state.draft)
         configuration = searchConfiguration(state.draft);
     } catch (cause) {
-      state.error = storeErrorMessage(cause);
+      state.validation =
+        cause instanceof Error ? cause.message : "Check the Search settings.";
       return;
     }
     const source = options.source(),

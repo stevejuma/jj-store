@@ -200,3 +200,23 @@ test("picking is capability gated, single flight and discards late selections", 
   expect(f.data.workspacePath).toBe("");
   expect(f.data.workspacePicking).toBe(false);
 });
+
+test("invalid folder binding stays field validation and retains the path", async () => {
+  const { data, link, settings, disconnect } = fixture();
+  await settings.refreshWorkspaceLinks();
+  settings.setWorkspacePath("/wrong");
+  link.mockRejectedValueOnce(new ApiError("invalid_workspace_binding"));
+  await settings.linkWorkspace();
+  expect(data.workspaceValidation).toBe(
+    "Invalid workspace binding. Check the folder path.",
+  );
+  expect(data.workspaceLinksError).toBe("");
+  expect(data.workspacePath).toBe("/wrong");
+  settings.setWorkspacePath("/corrected");
+  expect(data.workspaceValidation).toBe("");
+  link.mockRejectedValueOnce(new ApiError("invalid_workspace_binding"));
+  await settings.linkWorkspace();
+  expect(data.workspaceValidation).not.toBe("");
+  disconnect();
+  expect(data.workspaceValidation).toBe("");
+});

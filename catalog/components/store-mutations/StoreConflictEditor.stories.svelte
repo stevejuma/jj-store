@@ -60,7 +60,9 @@
     await userEvent.click(
       within(confirmation).getByRole("button", { name: "Apply resolution" }),
     );
-    await expect(view.getByText("Conflicts resolved")).toBeVisible();
+    await expect(
+      within(canvasElement.ownerDocument.body).getByText("Conflicts resolved"),
+    ).toBeVisible();
     await userEvent.click(
       view.getByRole("button", { name: "Close conflict editor" }),
     );
@@ -179,7 +181,9 @@
     );
     await expect(view.getByText("Publication outcome unknown")).toBeVisible();
     await userEvent.click(view.getByRole("button", { name: "Check status" }));
-    await expect(view.getByText("Conflicts resolved")).toBeVisible();
+    await expect(
+      within(canvasElement.ownerDocument.body).getByText("Conflicts resolved"),
+    ).toBeVisible();
   }}
 >
   {#snippet template()}<StoreConflictEditorFixture

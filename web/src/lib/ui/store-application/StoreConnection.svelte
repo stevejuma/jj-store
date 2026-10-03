@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreRepositoryPicker from "./StoreRepositoryPicker.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -122,10 +123,12 @@
           </Field.Group>
         </form>
       {/if}
-      {#if status.error}<Alert.Root variant="destructive">
-          <Alert.Title>Connection failed</Alert.Title>
-          <Alert.Description>{status.error}</Alert.Description>
-        </Alert.Root>{/if}
+      <StoreNotice
+        noticeKey="connection"
+        title="Connection failed"
+        message={status.error}
+        {pending}
+      />
     </Card.Content>
   </Card.Root>
 </main>

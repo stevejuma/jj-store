@@ -1,3 +1,4 @@
+import { ApiError } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import { storeErrorMessage } from "./http-store-data-source.js";
@@ -46,6 +47,7 @@ export function createProductionWorkspaceLinks(options: {
     if (data.workspaceLinking || data.workspacePicking) return;
     data.workspacePickerError = "";
     data.workspacePath = path;
+    data.workspaceValidation = "";
     if (!path) data.workspaceLinksError = "";
   }
   async function linkWorkspace() {
@@ -67,6 +69,7 @@ export function createProductionWorkspaceLinks(options: {
       expected_revision: data.workspaceLinks.revision,
     };
     data.workspaceLinking = true;
+    data.workspaceValidation = "";
     data.workspaceLinksState = "ready";
     data.workspaceLinksError = "";
     try {
@@ -79,6 +82,14 @@ export function createProductionWorkspaceLinks(options: {
       data.workspacePath = "";
     } catch (cause) {
       if (!options.current(ticket, source) || request !== generation) return;
+      if (
+        cause instanceof ApiError &&
+        ["invalid_workspace_binding", "invalid_request"].includes(cause.code)
+      ) {
+        data.workspaceValidation =
+          "Invalid workspace binding. Check the folder path.";
+        return;
+      }
       data.workspaceLinksError = `${(storeErrorMessage(cause) || "Folder link could not be confirmed").replace(/\.$/, "")}. Saved folder state will be checked automatically.`;
     } finally {
       if (options.current(ticket, source) && request === generation)
@@ -103,7 +114,10 @@ export function createProductionWorkspaceLinks(options: {
       if (!source.localWorkspaces) throw new Error("Folder picker unavailable");
       const result = await source.localWorkspaces.pick();
       if (!options.current(ticket, source) || request !== generation) return;
-      if (result.path !== null) data.workspacePath = result.path;
+      if (result.path !== null) {
+        data.workspacePath = result.path;
+        data.workspaceValidation = "";
+      }
     } catch (cause) {
       if (!options.current(ticket, source) || request !== generation) return;
       data.workspacePickerError = `${storeErrorMessage(cause)}. Enter the folder path manually or try Browse again.`;

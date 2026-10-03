@@ -1,8 +1,8 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import * as Field from "@lapismd/design-core/shadcn/field";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { DialogFrame } from "@lapismd/design-core/forms/dialog";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
@@ -119,9 +119,12 @@
         </StoreWorkField>
       </Field.Group>
     </form>
-    {#if error}<Alert.Root variant="destructive"
-        ><Alert.Description>{error}</Alert.Description></Alert.Root
-      >{/if}
+    <StoreNotice
+      noticeKey="thread-settings"
+      title="Could not update thread"
+      message={error}
+      pending={false}
+    />
     {#snippet footer()}
       <Button
         type="button"

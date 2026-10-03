@@ -61,6 +61,7 @@ shared-package release qualification does not alter those original Git gates.
 | M4.28       | Done        | M4.27                   | JST-UI-003,JST-UI-005,JST-UI-009,JST-UI-014,JST-API-002                                                                                                                                 | Native Evo Log column, independent pinned anchor/history and chrome alignment; focused and cold browser acceptance             | Retain evolution and chrome regressions; visual review remains separate                        | E-UI-041                                                                                                                                                                                                                                                                                                                                                       |
 | M4.29       | Done        | M4.28                   | JST-UI-008,JST-API-005                                                                                                                                                                  | File editor and prose composers remove native focus ring under served asset policy; focused and cold browser acceptance        | Retain editor/composer focus regressions; visual review remains separate                       | E-UI-042,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                                     |
 | M4.30       | Done        | M4.29                   | JST-UI-008,JST-API-005                                                                                                                                                                  | Root navigation clears file edit presentation and workspace guard; focused and cold browser acceptance                         | Retain file navigation/edit regressions; visual review remains separate                        | E-UI-043,E-M11-006,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                           |
+| M4.31       | In progress | M4.30                   | JST-UI-019,JST-UI-005,JST-API-005                                                                                                                                                       | Scoped notification lifetimes, inline validation boundaries and cold toast acceptance                                          | Complete released Design Core dependency acceptance after source qualification                 | E-UI-096,E-UI-097                                                                                                                                                                                                                                                                                                                                              |
 | M5          | Done        | M4.1                    | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                                     | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                                     | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1                    | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                                               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1                    | JST-MUT-003                                                                                                                                                                             | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                                      | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -50740,6 +50741,313 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "User-requested refinements in main, preserving earlier settings/sidebar work. One owned reusable row provides whole-row copy, circular success/failure feedback and independent guarded navigation; long explanatory text remains readable. History search uses standard input palette and darker selected header grey, with Settings-form query context and icon workspace picker. UI-only targeted policy: affected stories/type checks plus cold built-asset native/local browser flows; root aggregate and Rust lanes are out of scope. Existing registry-only release qualification and visual baselines remain pending; no milestone status promotion. Follow-up hardens the row hit area during active pointer presses and adds replayable reduced-motion-aware tick feedback. Earlier false-positive row-target test is explicitly corrected.",
     "next": "Retain these focused regressions and the main Vite HMR preview; registry-only dependency qualification and visual baseline approval remain separate existing gates."
+  },
+  {
+    "id": "E-UI-096",
+    "tasks": ["M4.31"],
+    "date": "2026-10-04",
+    "kind": "session-notification-source-and-consumer-qualification",
+    "revision": "kkoupnws (enclosing change)",
+    "before": "Operational feedback was rendered in individual pages/dialogs without shared identity, dismissal or lifetime ownership. Field validation and durable unknown-outcome recovery already owned contextual state.",
+    "versions": "macOS ARM64; pnpm10.32.1, Svelte5, Vitest4.1.11, consumer Playwright1.63.0; Design Core source0.1.2 in enclosing source change lqkpxqtl. Released dependency acceptance remains distinct.",
+    "formats": "No storage, manifest, WAL, API wire, CLI, credential or persisted notification formats changed. Notification event subscriptions carry plain data; callbacks remain session-local. OS delivery and restart history are excluded.",
+    "files": [
+      "AGENTS.md",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreNotifications.stories.svelte",
+      "catalog/components/store-application/StoreSyncSettings.stories.svelte",
+      "catalog/components/store-application/StoreWorkspaceSettings.stories.svelte",
+      "catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "catalog/fixtures/NotificationsFixture.svelte",
+      "catalog/fixtures/WorkspaceSettingsFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/App.svelte",
+      "web/src/lib/controller/production-search-settings.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/production-workspace-links.ts",
+      "web/src/lib/controller/search-settings.ts",
+      "web/src/lib/controller/workspace-link-types.ts",
+      "web/src/lib/notifications/notification-context.svelte.ts",
+      "web/src/lib/notifications/notification-recovery.svelte.ts",
+      "web/src/lib/notifications/notification-service.svelte.ts",
+      "web/src/lib/ui/community-message/CommunityMessage.svelte",
+      "web/src/lib/ui/community-projects/StoreFileEditor.svelte",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreApplicationPlaceholder.svelte",
+      "web/src/lib/ui/store-application/StoreConnection.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryNotices.svelte",
+      "web/src/lib/ui/store-collaboration/StoreRepositoryReviewDialog.svelte",
+      "web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationDialog.svelte",
+      "web/src/lib/ui/store-notifications/StoreNotice.svelte",
+      "web/src/lib/ui/store-notifications/StoreNotificationHost.svelte",
+      "web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchHealth.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsRepository.svelte",
+      "web/src/lib/ui/store-settings/StoreStorageSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncReconciliation.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncWait.svelte",
+      "web/src/lib/ui/store-settings/StoreWorkspaceSettings.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadCreate.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadLifecycleActions.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadSettings.svelte",
+      "web/src/lib/ui/store-threads/StoreThreads.svelte",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreRepositoryProjects.svelte",
+      "web/src/lib/ui/store-work/StoreWorkRemoveComment.svelte",
+      "web/src/lib/ui/store-work/StoreWorkStatus.svelte",
+      "web/src/lib/ui/store-working-copy/StoreWorkingFileEditor.svelte",
+      "web/tests/browser/notifications.spec.ts",
+      "web/tests/vite/notification-service.test.ts",
+      "web/tests/vite/production-search-settings.test.ts",
+      "web/tests/vite/production-store-workspaces.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/browser/notifications.spec.ts#operational toasts deduplicate, retain dismissal and clear on recovery",
+      "web/tests/vite/production-store-workspaces.test.ts#invalid folder binding stays field validation and retains the path",
+      "web/tests/vite/production-search-settings.test.ts#invalid search drafts stay inline across refresh and clear on cancellation"
+    ],
+    "runs": [
+      {
+        "command": "jj workspace add ../jj-store-notifications --name notifications -r @-; source: jj workspace add ../design-core-notifications --name notifications -r @",
+        "result": "pass",
+        "failures": 0,
+        "note": "Isolated kkoupnws from committed c8b7ea72 and source lqkpxqtl from 04b1ec1b; unrelated main navigation edits excluded. No installed executable or existing service replaced."
+      },
+      {
+        "command": "source: pnpm test:storybook src/shared/workspace/plugins/notifications/ControlledNotifications.stories.svelte (before public API)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2 failed controlled stories plus 2 runtime diagnostics: existing renderer required app.notifications. Source owns controlled presentation API; no consumer CSS or dependency patch."
+      },
+      {
+        "command": "pnpm install --offline --ignore-scripts --lockfile=false --config.pnpmfile=.local/notifications.pnpmfile.cjs; pnpm web:check (initial link validation)",
+        "result": "fail",
+        "failures": 30,
+        "note": "Initial link: source qualification duplicated Svelte/Lezer identities and produced 30 type errors. Explicit file: installation fixed package resolution; no tracked manifest or lockfile edits."
+      },
+      {
+        "command": "source: pnpm install --offline --frozen-lockfile --ignore-scripts; pnpm packages:pack; pnpm pack --pack-destination .local; consumer: pnpm install --offline --ignore-scripts --lockfile=false --config.pnpmfile=.local/notifications.pnpmfile.cjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "packages:pack was a no-op because source version 0.1.2 is already published. Explicit pnpm pack created a new local tarball including runtime helpers and public type; ignored consumer hook installs that exact tarball. This qualifies changed source, not published 0.1.2 or the declared ^0.2.0 range."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreNotifications.stories.svelte catalog/components/store-application/StoreConnection.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte (initial)",
+        "result": "fail",
+        "failures": 8,
+        "note": "20/28 passed. Five duplicate empty notification landmarks and three canvas/validation assertions failed. Source omits empty landmark semantics; only relocated toast selectors changed to the document, folder validation kept inline. Follow-up 28/28 passed."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte (initial)",
+        "result": "fail",
+        "failures": 4,
+        "note": "34/38 passed. Conflict success assertions still queried inline; Work unknown outcomes needed their original named inline message. Follow-up with StoreApplication added had 44/50 pass: two duplicate success outcomes after snapshot routing, two Work pending messages, a relocated Settings assertion and contextual stale fingerprint. Fixed actual lifetime/context bugs; kept exact recovery and stale selection feedback inline."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test --config .local/notifications-playwright.config.ts notifications.spec.ts local-search-settings.spec.ts local-storage.spec.ts local-sync.spec.ts local-workspaces.spec.ts mutations.spec.ts file-editor-navigation.spec.ts conflicts.spec.ts (initial)",
+        "result": "fail",
+        "failures": 4,
+        "note": "13/17 passed. Top-end portal obscured conflict/header controls and Sync refresh; moved foundational portal to bottom end. Exact four-case rerun passed conflicts but exposed dismissal replay during non-mutating Sync refresh; pending state now includes loading/refreshing in producers and recovery observers. Exact notification test then passed."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (during StoreApplication refactor)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Missing mobile navigation aliases after removing two derived variables to meet the line budget. Restored aliases and consolidated persisted navigation layout state; subsequent types and architecture passed without raising budgets."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/notification-service.test.ts web/tests/vite/production-search-settings.test.ts web/tests/vite/production-store-workspaces.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "22/22: stable identity/dismissal/recovery, timed pause/resume, sticky scopes, actions/disposal; validation versus operational errors, retained drafts/revisions, refresh/cancel and reset/late responses. .local/notifications-unit-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "27/27 exact rerun; no duplicate completion toast on snapshot navigation, retained named unknown-outcome recovery and inline stale fingerprint. .local/notifications-stories-regressions.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "852 modules and unchanged per-file budgets; owned UI boundary passes. No Rust or Community dependency introduced."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreNotifications.stories.svelte catalog/components/store-application/StoreConnection.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "78/78 across15 affected files, interactions and configured accessibility. Packed source dependency. .local/notifications-stories-final.log."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test --config .local/notifications-playwright.config.ts notifications.spec.ts local-search-settings.spec.ts local-storage.spec.ts local-sync.spec.ts local-workspaces.spec.ts mutations.spec.ts file-editor-navigation.spec.ts conflicts.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "17/17 cold built-UI tests under production CSP. Fresh isolated server and captured API mocks; no native/storage qualification substituted. .local/notifications-browser-final.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm web:build; pnpm exec playwright test --config .local/notifications-playwright.config.ts notifications.spec.ts mutations.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final logical-resource scopes include workspace, bookmark, directory, evolution and operation comparison selections. Types0 errors/0 warnings; fresh production bundle;6/6 exact lifecycle/mutation tests after this refinement. .local/notifications-browser-scope.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both Svelte checks0 errors/0 warnings,165 catalog modules,852 architecture modules, UI ownership passes. StoreApplication stays within its unchanged320-line budget."
+      },
+      {
+        "command": "pnpm exec prettier --write changed files; pnpm check:progress; pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting and126-task bookkeeping pass;50 protected files/four canonical chapters;five validators/22 chapters/153 requirements. No existing milestone promoted."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Production notification service/root, Settings, repository and command feedback, thread/task/review actions and their direct consumers. Source public API/CSS required Design Core full nonvisual lanes, recorded in its verification chapter. Consumer follows the targeted UI policy: root aggregates, Rust/RustFS/native desktop storage suites and schema generation are out of scope. Cold browser uses an isolated static server on127.0.0.1:7568 serving this built web/dist with the exact STRICT_CSP from assets.rs and captured mocked APIs; it is not native runtime or storage qualification. Registry publication/consumer range refresh and visual baselines remain separate; no existing milestone promoted.",
+    "next": "Release the separately committed Design Core extension and validate registry-resolved consumption in a separately authorized release slice. M4.31 remains in progress for that gate; OS delivery and notification history remain deferred."
+  },
+  {
+    "id": "E-UI-097",
+    "tasks": ["M4.31"],
+    "date": "2026-10-04",
+    "kind": "notification-main-integration-and-workspace-retirement",
+    "revision": "mompnpzq (enclosing Jujutsu merge change)",
+    "before": "Both main workspaces and both notifications workspaces were clean. jj-store main had advanced from c8b7ea72 to d4a70441 with sidebar actions, reusable copy rows and collapsible history search. Merging kkoupnws produced eight conflicted paths; Design Core main could advance directly from 04b1ec1b to lqkpxqtl/95ef5207.",
+    "versions": "macOS ARM64; Node24.10.0, pnpm10.32.1, JJ0.45.1, Svelte5.57.1, Vitest4.1.11, Playwright1.63.0. Main Design Core source95ef5207922a remains package0.1.2; consumer manifest remains portable ^0.2.0. Existing local source-validation hook is used; no registry release acceptance is claimed.",
+    "formats": "No API wire, native identity, manifest, WAL, storage or credential formats changed. Existing main navigation/copy/search behavior and notification lifecycle contracts are preserved. Source E-UI-094 was renumbered to E-UI-096 because newer main already owns E-UI-094 and E-UI-095; every existing main evidence object is retained verbatim.",
+    "files": [
+      "AGENTS.md",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchHealth.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsRepository.svelte",
+      "web/src/lib/ui/store-settings/StoreStorageSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadSettings.svelte"
+    ],
+    "tests": [
+      "web/tests/browser/notifications.spec.ts#operational toasts deduplicate, retain dismissal and clear on recovery"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj workspace list; source: jj rebase -r @ -o lqkpxqtl; consumer: jj new @- kkoupnws -m \"Integrate notification toasts into main\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean workspaces confirmed. Design Core main tree is byte-identical to its qualified feature revision. Eight jj-store conflicts were resolved by retaining both notification behavior and newer main presentation; no unrelated workspaces or bookmarks moved."
+      },
+      {
+        "command": "Initial Python conflict-resolution script; jj restore spec/src/api.md web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-settings/StoreSearchHealth.svelte web/src/lib/ui/store-settings/StoreSettingsRepository.svelte web/src/lib/ui/store-settings/StoreStorageSettings.svelte web/src/lib/ui/store-settings/StoreSyncSettings.svelte; corrected conflict resolution",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial marker pattern was too broad and the script stopped at the ledger. Restored only the six files it edited from the automatic parent merge, then used line-bounded markers. Final review, clean conflict state and functional checks below confirm the corrected result; no tests ran against the incomplete edit."
+      },
+      {
+        "command": "Python JSON comparison of merged ledger against uxoswqxv and kkoupnws",
+        "result": "pass",
+        "failures": 0,
+        "note": "All313 original/merged evidence entries unique; every main evidence object preserved verbatim, and feature entry retained verbatim except its necessary E-UI-096 identifier."
+      },
+      {
+        "command": "pnpm install --offline --ignore-scripts --lockfile=false",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refreshed existing file:../design-core validation dependency from main; manifests/lockfile unchanged. No runtime dependency points to either retired workspace. Install log copied into .local/notifications-integration/install.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/milestones.md web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-settings/StoreSearchHealth.svelte web/src/lib/ui/store-settings/StoreSettingsRepository.svelte web/src/lib/ui/store-settings/StoreStorageSettings.svelte web/src/lib/ui/store-settings/StoreSyncSettings.svelte web/src/lib/ui/store-threads/StoreThreadSettings.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/notifications-integration/format.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both type checks0errors/0warnings;166catalog modules. .local/notifications-integration/types.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/notification-service.test.ts web/tests/vite/production-search-settings.test.ts web/tests/vite/production-store-workspaces.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "22/22tests in three files; .local/notifications-integration/unit.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreNotifications.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte catalog/components/store-application/StoreSettingsIdentifier.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "41/41interaction/accessibility stories across eight directly merged surfaces. .local/notifications-integration/stories.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "859architecture modules with unchanged budgets; ownership and fresh production bundle pass. .local/notifications-integration/boundaries.log and build.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/notifications-playwright.config.ts notifications.spec.ts local-search-settings.spec.ts local-storage.spec.ts local-sync.spec.ts local-workspaces.spec.ts threads-alignment.spec.ts sidebar-repository-actions.spec.ts history-query.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "11/11cold built-UI tests under exact production CSP on fresh isolated127.0.0.1:7568server; mocked captured API responses. Covers dismissal/recovery, Settings drafts/copy actions, unknown storage/sync recovery, thread rename/reply, sidebar creation and both history grammars. .local/notifications-integration/browser.log. This is UI evidence, not native/storage qualification."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Tool default @- is ambiguous on a merge. .local/notifications-integration/spec-first.log. No spec requirement weakened."
+      },
+      {
+        "command": "pnpm spec:first --base uxoswqxv --head @",
+        "result": "fail",
+        "failures": 1,
+        "note": "Explicit range uses Git read-only diff and requires commit hashes rather than JJ change IDs. .local/notifications-integration/spec-first-main.log."
+      },
+      {
+        "command": "pnpm spec:first --base d4a70441 --head 2132b4b67ba3996c9df31dc80b5afdad904be195; pnpm spec:first --base 2c33e89d --head 2132b4b67ba3996c9df31dc80b5afdad904be195; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both parent ranges qualify:50protected files/4chapters from main and53/3from feature;5validators/22chapters/153requirements;126-task bookkeeping. .local/notifications-integration/spec-first-{main,feature}-sha.log, spec-validate.log and progress.log."
+      },
+      {
+        "command": "node .local/notifications-integration/restart-ui.mjs; node .local/notifications-integration/preview-smoke.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Owned main Vite restart succeeded but first read-only shell smoke timed out: cached optimized Mira imports referred to prior pnpm paths. .local/notifications-integration/restart-ui.log and preview-smoke.log."
+      },
+      {
+        "command": "node .local/notifications-integration/restart-ui.mjs --refresh-cache; node .local/notifications-integration/preview-smoke.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Moved ignored generated .vite cache aside and restarted only owned main UI.127.0.0.1:7460shell loads with zero page errors. Backend PID18306, native desktop and other preview services unchanged. .local/notifications-integration/restart-ui-fresh.log and preview-smoke-fresh.log."
+      },
+      {
+        "command": "lsof -d cwd -Fn; verified SIGTERM of temporary static servers74475/80809/81899/81928; jj workspace forget notifications in both repositories; remove exactly jj-store-notifications and design-core-notifications",
+        "result": "pass",
+        "failures": 0,
+        "note": "Found and stopped four task-owned leftover Python Storybook static hosts before retirement. Both source revisions remain ancestors of main. Verified clean temporary workspaces and copied42consumer plus26source ignored artifacts byte-for-byte into each main .local/notifications-integration/source-evidence directory, including source package tarball. Other workspaces retained."
+      },
+      {
+        "command": "pnpm exec prettier --check merged files; pnpm check:progress; pnpm spec:validate; pnpm spec:first --base d4a70441 --head 70d42bcb; pnpm spec:first --base 2c33e89d --head 70d42bcb",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final merge record formatting,126-task bookkeeping,5validators/22chapters/153requirements and both parent spec-first ranges pass. Both temporary paths are absent and their workspace registrations removed; other workspaces remain. .local/notifications-integration/{format-final,progress-final,spec-final,spec-first-final-main,spec-first-final-feature}.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "User-authorized main integration and temporary-workspace retirement. Existing source qualification is inherited unchanged; only merged consumer surfaces and their direct regressions rerun under targeted UI policy. Root aggregates, Rust/native/storage qualification, screenshot comparisons and visual baselines are out of scope. M4.31 remains in progress for released Design Core registry consumption; no milestone promoted and no package published.",
+    "next": "Retain main notification regressions. Release and registry-only consumer acceptance remain the separately governed M4.31 follow-up; OS delivery and persistent history remain deferred."
   }
 ]
 ```

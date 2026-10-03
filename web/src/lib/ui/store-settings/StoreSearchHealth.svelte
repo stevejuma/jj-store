@@ -1,9 +1,9 @@
 <script lang="ts">
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import SearchXIcon from "@lucide/svelte/icons/search-x";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
   const settings = $derived(controller.state.settings);
@@ -71,10 +71,11 @@
       />
     </dl>
   {/if}
-  {#if settings.searchStatusError}
-    <Alert.Root variant="destructive">
-      <Alert.Title>Search status unavailable</Alert.Title>
-      <Alert.Description>{settings.searchStatusError}</Alert.Description>
-    </Alert.Root>
-  {/if}
+  <StoreNotice
+    noticeKey="search-health"
+    title="Search status unavailable"
+    message={settings.searchStatusError}
+    pending={settings.searchStatusState === "loading" ||
+      settings.searchStatusState === "refreshing"}
+  />
 </section>

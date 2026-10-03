@@ -159,3 +159,18 @@ test("save and apply use independent revision checked protected requests", async
     action: "apply",
   });
 });
+
+test("invalid search drafts stay inline across refresh and clear on cancellation", async () => {
+  const f = fixture();
+  await f.settings.refreshSearchSettings();
+  f.settings.setSearchDraft({ budget: "2049" });
+  await f.settings.saveSearchSettings();
+  expect(f.save).not.toHaveBeenCalled();
+  expect(f.data.searchSettings.error).toBe("");
+  expect(f.data.searchSettings.validation).toMatch(/2048/);
+  await f.settings.refreshSearchSettings();
+  expect(f.data.searchSettings.validation).toMatch(/2048/);
+  expect(f.data.searchSettings.draft?.budget).toBe("2049");
+  f.settings.cancelSearchDraft();
+  expect(f.data.searchSettings.validation).toBe("");
+});

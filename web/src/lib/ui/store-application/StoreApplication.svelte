@@ -1,4 +1,7 @@
 <script lang="ts">
+  import StoreApplicationPlaceholder from "./StoreApplicationPlaceholder.svelte";
+  import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
+  import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
   // Adapted from CommunityApplication's shell composition; all state is local.
   import { AppShell } from "@lapismd/design-core/shell";
   import StoreApplicationRightPanels from "./StoreApplicationRightPanels.svelte";
@@ -16,7 +19,6 @@
   import StoreThreadFocus from "../store-threads/StoreThreadFocus.svelte";
   import { createApplicationThreadPanel as ownThreadPanel } from "../store-threads/thread-panel.svelte.js";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
-  import { repositorySections } from "./repository-sections.js";
   import { onDestroy, setContext, untrack } from "svelte";
   import type { StoreApplicationProps } from "./application-props.js";
   import { isMacDesktopWindow } from "../../desktop-chrome.js";
@@ -61,12 +63,8 @@
     untrack(() => layoutStorage),
   );
   const storage = untrack(() => resolveLayoutStorage(layoutStorage));
-  const navigationLayout = untrack(() => loadNavigationLayout(storage));
-  let sectionOpen = $state(navigationLayout.sections);
-  let itemOpen = $state(navigationLayout.items);
-  $effect(() =>
-    saveNavigationLayout(storage, { sections: sectionOpen, items: itemOpen }),
-  );
+  const layout = $state(untrack(() => loadNavigationLayout(storage)));
+  $effect(() => saveNavigationLayout(storage, layout));
   const shell = createStoreShell(
     storage,
     untrack(() => initiallyCollapsed),
@@ -122,9 +120,6 @@
   );
   const activeNavigationItem = $derived(activeStoreNavigation(current));
   observeRepositoryThreadNavigation(() => controller);
-  const title = $derived(
-    repositorySections.find(({ page }) => page === current.page)?.label,
-  );
   function selectPage(page: StorePage) {
     if (conflictOpen) return;
     controller.actions.selectPage(page);
@@ -154,6 +149,7 @@
     settingsOpen = false;
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
+  const notifications = ownApplicationNotifications(() => controller);
 </script>
 
 {#snippet settingsRepository()}
@@ -202,8 +198,8 @@
         onClose={closeSettings}
       />{:else}<StoreApplicationNavigation
         {controller}
-        bind:sectionOpen
-        bind:itemOpen
+        bind:sectionOpen={layout.sections}
+        bind:itemOpen={layout.items}
         activeItemId={activeNavigationItem}
         {compact}
         onSelect={select}
@@ -280,9 +276,10 @@
               {#if children}{@render children(
                   current.page,
                   current.repository,
-                )}{:else}<p class="store-application__placeholder">
-                  {current.repository} · {title ?? "Repository"}
-                </p>{/if}
+                )}{:else}<StoreApplicationPlaceholder
+                  repository={current.repository}
+                  page={current.page}
+                />{/if}
             {/key}
           </div>
         </div>
@@ -313,3 +310,5 @@
     {controller}
     bind:open={searchOpen}
   />{/if}
+
+<StoreNotificationHost owner={notifications} />

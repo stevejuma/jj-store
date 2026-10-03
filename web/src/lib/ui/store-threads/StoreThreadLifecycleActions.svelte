@@ -1,5 +1,6 @@
 <!-- @community-copy src/components/community-channel-settings/CommunityChannelSettings.svelte -->
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import Archive from "@lucide/svelte/icons/archive";
@@ -119,6 +120,11 @@
         >Remove thread</Button
       >
     </Dialog.Footer>
-    {#if error}<p role="alert">{error}</p>{/if}
+    <StoreNotice
+      noticeKey="thread-lifecycle"
+      title="Thread action failed"
+      message={error}
+      pending={false}
+    />
   </Dialog.Content>
 </Dialog.Root>

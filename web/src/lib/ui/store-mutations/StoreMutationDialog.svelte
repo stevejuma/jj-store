@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -147,11 +148,8 @@
         onChange={changed}
       />
     </form>
-    {#if validation || mutation.error}<p
-        class="store-mutation-error"
-        role="alert"
-      >
-        {validation || mutation.error}
+    {#if validation}<p class="store-mutation-error" role="alert">
+        {validation}
       </p>{/if}
   {:else if mutation.result}
     <StoreMutationPreview result={mutation.result} />
@@ -162,18 +160,28 @@
           uses the same request ID.
         </Alert.Description>
       </Alert.Root>
-    {:else if mutation.status === "committed"}<Alert.Root>
-        <Alert.Title>Repository updated</Alert.Title>
-        <Alert.Description>
-          The committed receipt was selected and the displayed snapshot was
-          refreshed.
-        </Alert.Description>
-      </Alert.Root>
-    {:else if mutation.status === "failed"}<Alert.Root variant="destructive">
-        <Alert.Title>Command failed</Alert.Title>
-        <Alert.Description>{mutation.error}</Alert.Description>
-      </Alert.Root>{/if}
+    {:else if mutation.status === "committed"}<StoreNotice
+        noticeKey={`mutation-result:${mutation.requestId ?? "new"}`}
+        title="Repository updated"
+        message="The committed receipt was selected and the displayed snapshot was refreshed."
+        severity="info"
+        lifetime="timed"
+      />
+    {:else if mutation.status === "failed"}<StoreNotice
+        noticeKey={`mutation-failure:${mutation.requestId ?? "new"}`}
+        title="Command failed"
+        message={mutation.error}
+        severity="error"
+        lifetime="dismiss"
+      />{/if}
   {/if}
+  <StoreNotice
+    noticeKey={`mutation-preview:${mutation.requestId ?? "new"}`}
+    title="Command preview failed"
+    message={mutation.status === "failed" && !mutation.result
+      ? mutation.error
+      : ""}
+  />
   {#snippet footer()}
     {#if mutation.status === "idle" || (mutation.status === "failed" && !mutation.result)}
       <Dialog.Close>

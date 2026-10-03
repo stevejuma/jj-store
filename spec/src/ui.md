@@ -182,6 +182,34 @@ unchanged.
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, repository-owned sidebar thread children, an accessible Repositories Browse threads action and contextual repository breadcrumbs, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                    |
 | JST-UI-018 | The browser MUST expose the complete Buzz-derived device Appearance page, persist and restore app-wide preferences, apply resolved themes and typography to all owned conversations and overlays, retain native links and drafts, and offer working local link cards and responsive Focus/Split discussions and agent responses without altering repository authority.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| JST-UI-019 | Operational feedback MUST use scoped session-only Design Core toasts with explicit lifetimes, deduplication, recovery clearing, dismissal suppression and accessible severity; validation, unavailable content and exact contextual recovery MUST remain inline.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+
+## Application notifications
+
+JST-UI-019 requires one application-owned, session-only notification service and
+public Design Core toast presentation. Condition notices clear on recovery or
+when their resource becomes obsolete; acknowledgement notices survive navigation
+until dismissal, and routine informational outcomes expire after four seconds.
+Repeated observations update one stable scoped key. A dismissed unchanged
+condition cannot replay during polling or remount; resolution permits a new
+episode. Pointer and keyboard interaction pause timed dismissal.
+
+Field/query validation, unavailable-content explanations, pending command
+status, stale drafts and exact request recovery remain contextual. Reaction
+metadata retains its existing placement. General request failures and
+confirmations use toasts without duplicating inline announcements. Actions
+retain exact command identity and never change repository state merely because a
+toast is dismissed.
+
+The application clears protected notification state on session changes and
+teardown. New notification records are independent of transport and DOM;
+optional subscribers receive plain data for a future selective desktop adapter.
+No OS notification delivery, disk persistence or notification-center UI is
+introduced. Design Core owns severity icons/colors, keyboard controls, portal
+placement and modal focus compatibility. Catalog owners remain isolated from
+production state.
+
+## Application startup
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -328,12 +356,12 @@ Settings action group stacks vertically, with its buttons stretching to equal
 width; Appearance option groups retain their horizontal layout. Rows stack their
 label and control columns on narrow screens. Standalone guidance, loading and
 status messages use public Design Core Alert composition with an information
-icon and polite status semantics; errors retain destructive alerts. Descriptions
-and status values already contained in rows remain within those rows.
-Unsupported Search, Sync and local-folder management use the public shadcn Empty
-composition with a suitable icon, explicit availability text and no unavailable
-controls. Graph preparation, including unavailable status, uses bordered
-Settings rows.
+icon and polite status semantics; transient operational errors use the
+application notification service. Descriptions and status values already
+contained in rows remain within those rows. Unsupported Search, Sync and
+local-folder management use the public shadcn Empty composition with a suitable
+icon, explicit availability text and no unavailable controls. Graph preparation,
+including unavailable status, uses bordered Settings rows.
 
 Local JJ registration and reconnect dialogs use the same Settings-style divided
 rows, with descriptions left and path/name/inspection controls right. Folder
@@ -447,13 +475,13 @@ WorkStore replication remains unavailable. Settings opened from the Projects hub
 preserve that route; repository actions require explicit repository context.
 
 Forms preserve drafts until Save/Cancel. Operation status remains queryable when
-Settings reopens, errors stay in their owning section, and teardown or
-repository switching cannot apply a stale response. Use Community composition
-and public Design Core controls, with keyboard/mobile and cold browser
-acceptance. No new backup/restore, destructive GC, global cache deletion,
-service installation, upstream credential editing, Git transport management or
-remote administration is included. Qualification and visual baseline approval
-remain separate.
+Settings reopens, operational errors use scoped notifications while validation
+and exact recovery status stay beside their controls, and teardown or repository
+switching cannot apply a stale response. Use Community composition and public
+Design Core controls, with keyboard/mobile and cold browser acceptance. No new
+backup/restore, destructive GC, global cache deletion, service installation,
+upstream credential editing, Git transport management or remote administration
+is included. Qualification and visual baseline approval remain separate.
 
 Settings content fills the available width with a one-rem inline inset and no
 extra top padding; the first section adds no top margin. Storage readiness,

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
@@ -49,7 +50,12 @@
     >
       <Label for="thread-title">Thread name</Label>
       <Input id="thread-title" bind:value={title} maxlength={1024} required />
-      {#if error}<p role="alert">{error}</p>{/if}
+      <StoreNotice
+        noticeKey="thread-create"
+        title="Could not create thread"
+        message={error}
+        pending={threads.busy}
+      />
       <Dialog.Footer
         ><Button
           type="submit"

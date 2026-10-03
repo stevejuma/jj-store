@@ -1,5 +1,6 @@
 <script lang="ts">
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import PauseIcon from "@lucide/svelte/icons/pause";
   import PlayIcon from "@lucide/svelte/icons/play";
@@ -9,7 +10,6 @@
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type {
     SyncSettings,
@@ -230,10 +230,12 @@
         </section>
       {/if}
     </Tabs.Content>
-    {#if settings.error}<Alert.Root variant="destructive"
-        ><Alert.Title>Sync status unavailable</Alert.Title><Alert.Description
-          >{settings.error}</Alert.Description
-        ></Alert.Root
-      >{/if}
+    <StoreNotice
+      noticeKey="sync"
+      title="Sync status unavailable"
+      message={settings.error}
+      pending={settings.changing ||
+        ["loading", "refreshing"].includes(settings.state)}
+    />
   {/if}
 </StoreSettingsPage>

@@ -1,7 +1,7 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import LinkIcon from "@lucide/svelte/icons/link";
   import XIcon from "@lucide/svelte/icons/x";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import * as ButtonGroup from "@lapismd/design-core/shadcn/button-group";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
@@ -165,20 +165,21 @@
           </div>
         </div>
       </Field.Group>
+      {#if settings.workspaceValidation}<p role="alert">
+          {settings.workspaceValidation}
+        </p>{/if}
     </form>
-    {#if settings.workspacePickerError}
-      <Alert.Root variant="destructive"
-        ><Alert.Title>Folder picker unavailable</Alert.Title>
-        <Alert.Description>{settings.workspacePickerError}</Alert.Description
-        ></Alert.Root
-      >
-    {/if}
-    {#if settings.workspaceLinksError}
-      <Alert.Root variant="destructive"
-        ><Alert.Title>Local folders unavailable</Alert.Title><Alert.Description
-          >{settings.workspaceLinksError}</Alert.Description
-        ></Alert.Root
-      >
-    {/if}
+    <StoreNotice
+      noticeKey="folder-picker"
+      title="Folder picker unavailable"
+      message={settings.workspacePickerError}
+      pending={busy}
+    />
+    <StoreNotice
+      noticeKey="folders"
+      title="Local folders unavailable"
+      message={settings.workspaceLinksError}
+      pending={busy}
+    />
   {/if}
 </section>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { AppShell } from "@lapismd/design-core/shell";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -192,19 +193,20 @@
               staged file handles and conflict fingerprints remain unchanged.
             </Alert.Description>
           </Alert.Root>
-        {:else if mutation.status === "committed"}<Alert.Root>
-            <Alert.Title>Conflicts resolved</Alert.Title>
-            <Alert.Description>
-              The atomic resolution receipt was committed and the snapshot was
-              refreshed.
-            </Alert.Description>
-          </Alert.Root>
-        {:else if mutation.status === "failed"}<Alert.Root
-            variant="destructive"
-          >
-            <Alert.Title>Resolution rejected</Alert.Title>
-            <Alert.Description>{mutation.error}</Alert.Description>
-          </Alert.Root>{/if}
+        {:else if mutation.status === "committed"}<StoreNotice
+            noticeKey={`mutation-result:${mutation.requestId ?? "new"}`}
+            title="Conflicts resolved"
+            message="The atomic resolution receipt was committed and the snapshot was refreshed."
+            severity="info"
+            lifetime="timed"
+          />
+        {:else if mutation.status === "failed"}<StoreNotice
+            noticeKey={`mutation-failure:${mutation.requestId ?? "new"}`}
+            title="Resolution rejected"
+            message={mutation.error}
+            severity="error"
+            lifetime="dismiss"
+          />{/if}
       {/if}
       {#each view.conflicts as conflict (conflict.path)}
         <div
@@ -229,7 +231,7 @@
           />
         </div>
       {/each}
-      {#if validation || mutation.error}<p
+      {#if validation || ((!mutation.result || mutation.status === "unknown") && mutation.error)}<p
           class="store-conflict-editor__error"
           role="alert"
         >

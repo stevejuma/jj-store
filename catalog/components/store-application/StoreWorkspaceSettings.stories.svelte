@@ -107,7 +107,7 @@
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole("button", { name: "Browse…" }));
     await expect(
-      canvas.getByText(
+      within(canvasElement.ownerDocument.body).getByText(
         "Folder picker unavailable. Enter the folder path manually.",
       ),
     ).toBeVisible();

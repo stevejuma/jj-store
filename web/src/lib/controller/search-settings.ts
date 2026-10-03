@@ -20,6 +20,7 @@ export interface SearchSettings {
   dirty: boolean;
   state: StoreLoadStatus;
   error: string;
+  validation?: string;
   changing: boolean;
 }
 export const emptySearchSettings = (): SearchSettings => ({
