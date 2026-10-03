@@ -199,7 +199,6 @@ impl Context {
             let native = self.commit_record(id).await?;
             for parent in native.parents {
                 self.budget.work(1)?;
-                let parent = parent;
                 if !seen.contains(&parent) {
                     pending.insert(parent);
                 }

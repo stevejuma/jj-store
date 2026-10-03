@@ -3,7 +3,6 @@ use crate::{
     AgentEventBatchV1, AgentIndexPageV1, AgentObjectId, AgentProjectionCatalogV1,
     AgentRelationPageV1, AgentSessionSnapshotV1, CaptureSourceStateV1, CodeAssociationV1, Result,
     SanitizedObservationBatchV1, ToolInvocationSnapshotV1, TranscriptChunkV1, TranscriptManifestV1,
-    TranscriptPageV1,
 };
 use jj_store_model::ObjectKey;
 use serde::{Deserialize, Serialize};
@@ -78,7 +77,7 @@ pub enum AgentObjectV1 {
     ObservationBatch(SanitizedObservationBatchV1),
     EventBatch(AgentEventBatchV1),
     TranscriptManifest(TranscriptManifestV1),
-    TranscriptPage(TranscriptPageV1),
+    TranscriptTailPage(crate::TranscriptTailPageV2),
     TranscriptChunk(TranscriptChunkV1),
     Content(AgentContentV1),
     CheckpointVersion(AgentCheckpointVersionV1),
@@ -100,7 +99,7 @@ impl AgentObjectV1 {
             Self::ObservationBatch(_) => AgentObjectKind::ObservationBatch,
             Self::EventBatch(_) => AgentObjectKind::EventBatch,
             Self::TranscriptManifest(_) => AgentObjectKind::TranscriptManifest,
-            Self::TranscriptPage(_) => AgentObjectKind::TranscriptPage,
+            Self::TranscriptTailPage(_) => AgentObjectKind::TranscriptPage,
             Self::TranscriptChunk(_) => AgentObjectKind::TranscriptChunk,
             Self::Content(_) => AgentObjectKind::Content,
             Self::CheckpointVersion(_) => AgentObjectKind::CheckpointVersion,
@@ -122,7 +121,7 @@ impl AgentObjectV1 {
             Self::ObservationBatch(value) => value.validate(),
             Self::EventBatch(value) => value.validate(),
             Self::TranscriptManifest(value) => value.validate(),
-            Self::TranscriptPage(value) => value.validate(),
+            Self::TranscriptTailPage(value) => value.validate(),
             Self::TranscriptChunk(value) => value.validate(),
             Self::Content(value) => value.validate(),
             Self::CheckpointVersion(value) => value.validate(),
@@ -145,7 +144,7 @@ impl AgentObjectV1 {
             Self::ObservationBatch(_) | Self::TranscriptChunk(_) | Self::Content(_) => Vec::new(),
             Self::EventBatch(value) => value.dependencies()?.into_iter().collect(),
             Self::TranscriptManifest(value) => value.dependencies()?.into_iter().collect(),
-            Self::TranscriptPage(value) => value.dependencies()?.into_iter().collect(),
+            Self::TranscriptTailPage(value) => value.dependencies()?.into_iter().collect(),
             Self::CheckpointVersion(value) => value.dependencies()?.into_iter().collect(),
             Self::Association(value) => value.dependencies()?.into_iter().collect(),
             Self::PortableCheckpointVersion(value) => value.dependencies()?.into_iter().collect(),

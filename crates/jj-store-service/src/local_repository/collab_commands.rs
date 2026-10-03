@@ -181,6 +181,17 @@ async fn validate_link(
         return Ok(());
     };
     match target {
+        ThreadLinkTargetV1::CaptureGap {
+            source_state,
+            event_batch,
+            ..
+        } => {
+            agents
+                .reads()
+                .validate_capture_gap(*source_state, *event_batch)
+                .await?;
+        }
+
         ThreadLinkTargetV1::Session {
             session_id,
             snapshot,

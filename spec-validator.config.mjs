@@ -48,6 +48,10 @@ export default defineConfig(tableRequirements(), {
         "^spec/src/(?:SUMMARY|verification)\\.md$",
       ],
       rules: [
+        {
+          pattern: "^docs/capture-preview\\.md$",
+          chapters: ["spec/src/cli.md", "spec/src/collaboration.md"],
+        },
         { pattern: "^desktop/", chapters: ["spec/src/desktop.md"] },
         {
           pattern: "^crates/jj-store-jj/(?:src|tests)/local_",
@@ -92,6 +96,10 @@ export default defineConfig(tableRequirements(), {
         },
         {
           pattern: "^crates/jj-(?:agent|review|collab)/",
+          chapters: ["spec/src/collaboration.md"],
+        },
+        {
+          pattern: "^crates/jj-store-capture/",
           chapters: ["spec/src/collaboration.md"],
         },
         {

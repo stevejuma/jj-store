@@ -6,6 +6,11 @@ use std::{collections::BTreeSet, net::SocketAddr, path::PathBuf};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
+    #[serde(
+        default,
+        skip_serializing_if = "crate::capture_config::AgentCaptureConfig::is_default"
+    )]
+    pub agent_capture: crate::capture_config::AgentCaptureConfig,
     pub format: u32,
     pub bind: SocketAddr,
     pub public_url: String,

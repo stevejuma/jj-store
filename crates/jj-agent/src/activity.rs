@@ -138,6 +138,24 @@ pub enum ToolState {
     Unknown,
 }
 
+impl ToolState {
+    pub fn is_terminal(self) -> bool {
+        matches!(
+            self,
+            Self::Succeeded | Self::Failed | Self::Cancelled | Self::Interrupted | Self::Skipped
+        )
+    }
+
+    /// Retain terminal observations while reporting contradictory terminal evidence.
+    pub fn observe(self, next: Self) -> (Self, bool) {
+        if self.is_terminal() {
+            (self, next.is_terminal() && self != next)
+        } else {
+            (next, false)
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ToolInvocationSnapshotV1 {
@@ -154,6 +172,28 @@ pub struct ToolInvocationSnapshotV1 {
     pub evidence: Vec<AgentObjectRef>,
 }
 impl ToolInvocationSnapshotV1 {
+    /// Enrich one invocation without clearing absent fields or renaming its identity.
+    pub fn enrich(&mut self, next: &Self) -> Result<bool> {
+        self.validate()?;
+        next.validate()?;
+        if self.tool_call_id != next.tool_call_id || self.session_id != next.session_id {
+            return Err(Error::Invalid("tool enrichment identity"));
+        }
+        let (state, conflict) = self.state.observe(next.state);
+        self.state = state;
+        self.turn_id = self.turn_id.or(next.turn_id);
+        self.input = self.input.or(next.input);
+        self.output = self.output.or(next.output);
+        self.attempts.extend(next.attempts.iter().copied());
+        for reference in &next.evidence {
+            if !self.evidence.contains(reference) {
+                self.evidence.push(*reference);
+            }
+        }
+        self.validate()?;
+        Ok(conflict)
+    }
+
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != 1
             || !valid_label(&self.native_name, 256)

@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 pub mod assets;
 mod body;
+mod capture_management;
 mod collab;
 mod collaboration;
 mod content_search;
@@ -103,6 +104,7 @@ pub struct Config {
     pub local_search: Option<Arc<dyn jj_store_service::search_management::SearchManager>>,
     pub local_storage: Option<Arc<dyn jj_store_service::storage_management::StorageManager>>,
     pub local_sync: Option<Arc<dyn jj_store_service::sync_management::SyncManager>>,
+    pub local_capture: Option<Arc<dyn jj_store_service::capture_management::CaptureManager>>,
     pub local_workspaces: Option<Arc<dyn jj_store_service::local_management::WorkspaceManager>>,
     pub local_folder_picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
     pub storage_ready: bool,
@@ -131,6 +133,7 @@ impl Default for Config {
             local_repositories: None,
             local_storage: None,
             local_sync: None,
+            local_capture: None,
             local_search: None,
             local_folder_picker: None,
             storage_ready: true,
@@ -318,6 +321,7 @@ impl HttpApi {
             "/v1",
             routes::router()
                 .merge(local_browser::router())
+                .merge(capture_management::router())
                 .with_state(self.0.clone())
                 .layer(middleware::from_fn_with_state(self.0.clone(), admit)),
         )

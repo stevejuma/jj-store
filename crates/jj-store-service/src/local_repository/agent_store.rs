@@ -24,6 +24,7 @@ pub struct LocalAgentStore {
     pub(crate) io: Arc<AgentIo>,
     root: AgentRootV1,
     objects: BTreeSet<AgentObjectRef>,
+    transcripts: TranscriptAppendProofs,
     evidence: BTreeSet<m::portable::CodeEvidenceRefV1>,
 }
 impl LocalAgentStore {
@@ -50,6 +51,9 @@ impl AgentSnapshotRead for LocalAgentStore {
     }
     fn root(&self) -> &AgentRootV1 {
         &self.root
+    }
+    fn transcript_boundary(&self, root: AgentObjectRef) -> Option<TranscriptAppendBoundary> {
+        self.transcripts.boundary(root)
     }
     async fn lookup(
         &self,
@@ -112,13 +116,11 @@ impl LocalRepository {
         };
         let objects = io.audit(&root).await?;
         let mut evidence = BTreeSet::new();
+        let mut transcripts = TranscriptAppendAudit::default();
         for reference in &objects {
-            evidence.extend(
-                io.read_agent_object(*reference)
-                    .await?
-                    .code_evidence()
-                    .map_err(|_| LocalError::Corrupt)?,
-            );
+            let object = io.read_agent_object(*reference).await?;
+            transcripts.observe(*reference, &object);
+            evidence.extend(object.code_evidence().map_err(|_| LocalError::Corrupt)?);
         }
         Ok(LocalAgentStore {
             snapshot: LocalAgentSnapshot {
@@ -133,6 +135,7 @@ impl LocalRepository {
             io,
             root,
             objects,
+            transcripts: transcripts.finish(),
             evidence,
         })
     }

@@ -1,7 +1,7 @@
 use crate::{
     CaptureState, NormalizationBatchV1, NormalizationDiagnosticKind, NormalizationDiagnosticV1,
     NormalizedActivityRecordV1, NormalizedToolRecordV1, PermissionState, ReducedToolsV1,
-    ToolCallId, ToolState,
+    ToolCallId,
 };
 use std::collections::BTreeMap;
 
@@ -44,33 +44,18 @@ fn merge_tool(
     if current.permission_state == PermissionState::NotObserved {
         current.permission_state = next.permission_state;
     }
-    let current_terminal = terminal(current.state);
-    let next_terminal = terminal(next.state);
-    if !current_terminal || next_terminal {
-        if current_terminal && next_terminal && current.state != next.state {
-            for state in [current.state, next.state] {
-                if !current.conflicting_terminal_states.contains(&state) {
-                    current.conflicting_terminal_states.push(state);
-                }
+    let (state, conflict) = current.state.observe(next.state);
+    if conflict {
+        for state in [current.state, next.state] {
+            if !current.conflicting_terminal_states.contains(&state) {
+                current.conflicting_terminal_states.push(state);
             }
-            diagnostics.push(NormalizationDiagnosticV1 {
-                kind: NormalizationDiagnosticKind::ConflictingTerminalState,
-                code: "tool-terminal-conflict".into(),
-                source_sequence: Some(next.source_sequence),
-            });
-        } else if !current_terminal {
-            current.state = next.state;
         }
+        diagnostics.push(NormalizationDiagnosticV1 {
+            kind: NormalizationDiagnosticKind::ConflictingTerminalState,
+            code: "tool-terminal-conflict".into(),
+            source_sequence: Some(next.source_sequence),
+        });
     }
-}
-
-fn terminal(state: ToolState) -> bool {
-    matches!(
-        state,
-        ToolState::Succeeded
-            | ToolState::Failed
-            | ToolState::Cancelled
-            | ToolState::Interrupted
-            | ToolState::Skipped
-    )
+    current.state = state;
 }

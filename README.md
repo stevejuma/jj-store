@@ -13,6 +13,7 @@ existing repository migration is provided.
 - [Original reference](docs/reference/README.md)
 - [Agent guide](AGENTS.md)
 - [Repository browser](docs/browser.md)
+- [Local Codex capture preview](docs/capture-preview.md)
 
 ## Development
 

@@ -86,8 +86,10 @@ interaction, accessibility and runtime diagnostics.
 
 ## Change map
 
-`docs/ui-provenance.json` requires both `spec-governance.md` and `ui.md`.
-Provenance changes are protected ownership and presentation changes.
+`docs/ui-provenance.json` requires both `spec-governance.md` and `ui.md`. The
+isolated `docs/capture-preview.md` runbook maps to `cli.md` and
+`collaboration.md`; its launcher and admission examples remain governed
+contracts. Provenance changes are protected ownership and presentation changes.
 
 Local Git-backed companion implementation additionally requires local-jj.md;
 native identity and publication chapters continue to govern their existing
@@ -104,6 +106,7 @@ formats.
 | `^crates/jj-store-replication/`                                                                                                                                                                                                                | `replication.md`     |
 | `^crates/jj-work/`                                                                                                                                                                                                                             | `projects.md`        |
 | `^crates/jj-(?:agent\|review\|collab)/`                                                                                                                                                                                                        | `collaboration.md`   |
+| `^crates/jj-store-capture/`                                                                                                                                                                                                                    | `collaboration.md`   |
 | `^crates/jj-store-jj/`                                                                                                                                                                                                                         | `jj-integration.md`  |
 | `^crates/jj-store-service/`                                                                                                                                                                                                                    | `mutations.md`       |
 | `^crates/jj-store-rpc/`                                                                                                                                                                                                                        | `jj-integration.md`  |
@@ -121,6 +124,22 @@ Git interoperability additionally protects
 and requires `git-interop.md`.
 
 ## Verification scope
+
+Installation capture management adds a server-package response capture to the
+shared contract runner. Fixture selection binds package and test binary
+explicitly; existing CLI captures retain their defaults. Changes to this runner
+require every registered HTTP/SSE capture and contract-tool test, plus the
+direct generated-client check. Authenticated control selection/application also
+requires the complete owning server library and direct runtime/journal consumers
+because foreground binding and journal coordination are shared. UI interaction,
+real storage and live harness acceptance remain separate gates.
+
+Capture runtime extraction qualifies the shared spool, sanitizer, native/local
+drainers, lease recovery and their CLI/server consumers. Boundary checks reject
+upstream JJ and CLI/server dependencies in jj-store-capture and reject runtime
+dependencies in models, object storage and WAL. Existing public CLI capture
+paths remain reexports; extraction does not qualify automatic discovery or
+readers.
 
 A logical behavior remains one verification surface when it spans its production
 module, colocated styles, direct tests or stories, canonical chapter and ledger.
@@ -199,6 +218,43 @@ permission/credential teardown, pagination, stale connections, indented
 children, the Browse threads action and contextual breadcrumbs across desktop,
 mobile and compact navigation. Interaction and accessibility evidence remain
 separate from visual baseline approval.
+
+The M18.2 import fixture
+`imports::import_acceptance_progress_and_replay_are_actual_http_contracts`
+registers `JJ_STORE_CAPTURE_IMPORT_CONTRACT_CAPTURE` against the server's
+`capture_management` binary. It captures actual retained-worker acceptance,
+request inspection, completion, paused replay after transcript removal, stopped
+tail, strict input, changed reuse, revocation and disabled responses. The
+complete registered HTTP/SSE inventory and generated-contract/TypeScript checks
+remain required for this additive public contract. Native MemoryStore and
+synthetic harness evidence do not qualify real harness/RustFS release or enabled
+startup.
+
+The M18.2 rescan fixture
+`rescan::rescan_is_conditional_actor_free_and_preserves_device_policy` registers
+`JJ_STORE_CAPTURE_RESCAN_CONTRACT_CAPTURE` against the server's
+`capture_management` test binary. It captures actual Admin rescan acceptance,
+strict-input, stale-policy, pause, revocation, disabled and stopped responses.
+The shared runner rechecks every registered HTTP/SSE response fixture alongside
+the additive route and cached discovery/degradation schema fields.
+
+The M18.2 harness coverage fixture
+`coverage::harness_coverage_is_bounded_cached_and_contains_no_roots` registers
+`JJ_STORE_CAPTURE_COVERAGE_CONTRACT_CAPTURE` against the server's
+`capture_management` binary. It captures actual two-profile running, paused,
+cached-after-root-removal and stopped observations through the existing Admin
+status route. The complete registered response inventory remains required.
+
+The M18.2 fixture
+`sources::source_pages_are_bounded_cached_and_hold_no_admission_proofs`
+registers `JJ_STORE_CAPTURE_SOURCES_CONTRACT_CAPTURE` against the server package
+and `capture_management` binary in the same runner. Actual bounded pages, paused
+and cached-after-root-removal reads, terminal observations and invalid/stale
+query responses MUST conform to the generated source contract. The fixture also
+checks physical slot retirement and source-state non-admission. Adding this
+fixture requires every existing response capture, the contract-tool tests and
+TypeScript/generated browser checks. Empty POST control/rescan query schemas
+remain distinct from their actor-free request bodies.
 
 M10 owns local-first writable replication. Its origin ledger and imported
 publication path are jointly governed by `replication.md` and the existing
@@ -739,3 +795,60 @@ contextual exceptions; notification changes retain focused UI and cold browser
 evidence without rerunning unrelated Rust/storage qualification. Pending shared
 package release and registry-only acceptance remain distinct from local source
 validation.
+
+Common-native identity-join changes qualify the complete direct AgentStore WAL
+catalog binary, native/local service capture and binding/paging consumers, and
+CLI spool/publication/recovery contracts. Named duplicate-identity and
+concurrent cross-profile regressions precede those broader focused binaries.
+Bounded alias lookup uses a separate incomplete-proof regression. Native
+MemoryStore recovery and real Git companion reopen remain separate evidence;
+neither qualifies a real harness edit, RustFS or automatic worker composition.
+Partial qualification may add evidence to a Planned verification row without
+claiming the complete requirement is implemented.
+
+The API snapshot source-coverage fixture
+`api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free`
+registers `JJ_STORE_CAPTURE_SNAPSHOT_CONTRACT_CAPTURE` in the server
+`capture_management` binary. Actual nonempty receipt-backed counts, absent
+coverage after selected-evidence corruption and current Admin revocation
+responses join the existing response capture inventory. It uses a paused worker
+and stopped loopback harness to prove management reads metadata without
+contacting OpenCode or reading a corrupt pending body. This additive response
+requires the complete registered HTTP/SSE capture inventory, contract-tool tests
+and generated-client checks; it grants no configured startup or import/export
+qualification.
+
+## Capture preview integration planning
+
+At the original review, main's M17 desktop tasks and the capture branch's
+historical M17 tasks collided. The integration change MUST retain main's desktop
+identity, allocate a free capture family (M18 is reserved by the preview plan
+subject to fresh inspection), and record an explicit mapping from historical
+capture task IDs. Historical evidence IDs and payloads MUST remain intact; the
+merged ledger and its checker must resolve the mapping without attributing
+capture evidence to desktop work. Preserve both parent evidence sequences and
+deduplicate only identical entries. A rebase MUST exclude the bookmarked
+unfinished OpenCode import draft and preserve main's active changes. This
+mapping and any checker change require focused governance regressions in the
+integration change. The implementation evidence below records the rebase;
+completion of the preview still requires its real-service and browser gates.
+
+## Capture preview integration
+
+Committed main retains desktop M17. The verified capture stack is rebased as a
+single integration change onto committed main; its original 81-change history
+and unfinished OpenCode draft remain bookmarked separately. Current capture
+tasks use M18. Historical E-M17-* evidence retains its original IDs, task fields
+and payloads. The explicit ledger family mapping applies only during task
+lookup. Governance regression rejects ambiguous or missing mappings and prevents
+capture evidence from qualifying desktop tasks. Main and capture evidence
+sequences remain ordered and payload-identical; two whitespace-only source
+encodings are additionally retained verbatim in the ledger.
+
+Integrated process preparation retains main's installation Storage manager
+alongside capture supervision, while the browser retains main's scoped Agents,
+Settings layout, query lifecycle and released dependencies. Public contracts are
+regenerated from combined executable route registrations. This integration
+requires owning-package Rust checks, merged HTTP contract captures, production
+UI type checks and direct lifecycle/controller tests because it combines native
+publication, process startup and client registration boundaries.

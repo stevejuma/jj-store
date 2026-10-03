@@ -1,6 +1,6 @@
 [workspace]
 exclude = ["desktop"]
-members = ["crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
+members = ["crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
 resolver = "2"
 
 [workspace.package]
@@ -11,6 +11,7 @@ license = "Apache-2.0"
 authors = ["LapisMD contributors"]
 
 [workspace.dependencies]
+jj-store-capture = { path = "crates/jj-store-capture" }
 jj-collab = { path = "crates/jj-collab" }
 jj-work = { path = "crates/jj-work" }
 jj-agent = { path = "crates/jj-agent" }

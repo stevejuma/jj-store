@@ -1,12 +1,14 @@
 use super::agent::agent_error;
+use super::agent_capture_aliases::{adopt_selected_aliases, common_projection};
 use super::agent_capture_records::{CaptureObjects, stage_capture_objects};
+use super::agent_capture_results::resolve_tool_results;
 use super::*;
 use jj_agent::{
-    AgentAliasV1, AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentObjectV1,
-    AgentSessionId, AgentSessionSnapshotV1, CaptureSourceReceiptV1, CaptureSourceStateV1,
-    CompletenessV1, CoverageV1, NativeEntityKind, NormalizationBatchV1, NormalizedActivityRecordV1,
+    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentObjectV1, AgentSessionId,
+    AgentSessionSnapshotV1, CaptureSourceReceiptV1, CaptureSourceStateV1, CompletenessV1,
+    CoverageV1, NativeEntityKind, NormalizationBatchV1, NormalizedActivityRecordV1,
     NormalizerProfileV1, SanitizedObservationBatchV1, SessionState, SourcePositionV1,
-    normalize_batch,
+    normalize_batch_candidates,
 };
 
 impl AgentProjector<'_> {
@@ -20,8 +22,13 @@ impl AgentProjector<'_> {
         if base.repository() != self.objects.repository() {
             return Err(Error::Corrupt("agent projection repository"));
         }
-        let normalized = normalize_batch(profile, batch).map_err(agent_error)?;
-        let objects = stage_capture_objects(self.objects, profile, batch, &normalized).await?;
+        profile.validate().map_err(agent_error)?;
+        let mut candidates = normalize_batch_candidates(profile, batch).map_err(agent_error)?;
+        let aliases = adopt_selected_aliases(base, &mut candidates).await?;
+        let mut normalized = candidates.activity;
+        resolve_tool_results(base, &mut normalized, &candidates.tool_results, &aliases).await?;
+        let objects =
+            stage_capture_objects(self.objects, base, profile, batch, &mut normalized).await?;
         let (mut edits, sessions) = self
             .stage_sessions(base, batch, &normalized, &objects)
             .await?;
@@ -34,7 +41,7 @@ impl AgentProjector<'_> {
         edits.push(
             self.stage_projection(
                 base,
-                profile,
+                &profile.identity(),
                 activated_at_millis,
                 &sessions,
                 objects.event_batch,
@@ -43,6 +50,20 @@ impl AgentProjector<'_> {
             )
             .await?,
         );
+        if let Some(identity) = common_projection(&normalized.aliases) {
+            edits.push(
+                self.stage_projection(
+                    base,
+                    identity,
+                    activated_at_millis,
+                    &sessions,
+                    objects.event_batch,
+                    previous_source,
+                    source_ref,
+                )
+                .await?,
+            );
+        }
         let delta = AgentDeltaV1 {
             schema_version: 1,
             edits,
@@ -104,25 +125,6 @@ impl AgentProjector<'_> {
             });
         }
         Ok((edits, selected))
-    }
-
-    async fn stage_aliases(
-        &self,
-        base: &dyn AgentSnapshotRead,
-        aliases: &[AgentAliasV1],
-    ) -> Result<Vec<AgentCatalogEditV1>> {
-        let mut edits = Vec::new();
-        for alias in aliases {
-            let key = alias.catalog_key().map_err(agent_error)?;
-            let expected = base.lookup(AgentCatalogKind::Aliases, key).await?;
-            let replacement = self
-                .stage_agent_object(&AgentObjectV1::Alias(alias.clone()))
-                .await?;
-            if expected != Some(replacement) {
-                edits.push(edit(AgentCatalogKind::Aliases, key, expected, replacement));
-            }
-        }
-        Ok(edits)
     }
 
     async fn stage_source_state(

@@ -28,6 +28,18 @@ in WAL. The service's Git record carrier preserves the existing repository-bound
 envelope bytes, while companion ref publication remains in JJ integration.
 Neither the shared reducer nor the object interface can select repository state.
 
+`jj-store-capture` owns the reusable private sanitized spool, in-process
+Kingfisher policy, state leases, installation-private source registration and
+receipt-aware native/local drainers. Source IDs reuse the supplied installation
+identity and a durable ordinal; registration has no repository or activity
+authority. It consumes owned domain, service, WAL request and RPC client
+interfaces, with no upstream JJ, CLI, server, search or UI dependency. CLI
+capture modules reexport these types and functions to preserve existing callers.
+Server composition can use the same spool and publisher interface with
+in-process authorized services. Shared control-path policy preserves the
+existing checkout rejection and explicit ignored development-root exception; it
+never initializes a working copy.
+
 The custom CLI consumes jj-collab's owned typed Thread, Reaction and
 custom-emoji contracts directly. Its filesystem commands select the existing
 local companion provider without runner, server, Git transport or storage
@@ -626,3 +638,13 @@ boundary. Host configuration discovery and registered-folder JJ/Git fallback
 MUST expose only bounded email; evaluator settings, aliases, storage, model and
 WAL remain independent. HTTP composition admits the hint only for LocalTrusted
 serving. Configuration reading MUST NOT invoke migration or publication.
+
+## Usable capture preview scope
+
+The current capture delivery sequence integrates with verified committed main,
+then prioritizes the existing Capture settings and Agents UI and a runnable
+LocalTrusted Codex preview. It reuses current AgentStore, native directory and
+Write admission, bounded workers and receipt-backed manifest publication. The
+full multi-harness/conversation/provenance/review/archive roadmap remains
+separately deferred. This changes execution scope and acceptance sequencing,
+without introducing another authority, runtime or legacy storage profile.

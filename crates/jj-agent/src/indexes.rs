@@ -242,7 +242,13 @@ impl CaptureSourceStateV1 {
     }
     pub fn catalog_key(&self) -> Result<AgentCatalogKey> {
         self.validate()?;
-        derive_key("source", &(self.integration, self.source_instance_id))
+        Self::source_catalog_key(self.integration, self.source_instance_id)
+    }
+    pub fn source_catalog_key(
+        integration: IntegrationId,
+        source: SourceInstanceId,
+    ) -> Result<AgentCatalogKey> {
+        derive_key("source", &(integration, source))
     }
 }
 

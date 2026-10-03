@@ -39,7 +39,16 @@ export function dependencyErrors(packages) {
       "jj-store-wal",
     ],
     "jj-store-rpc": ["jj-store-model", "jj-store-object", "jj-store-service"],
+    "jj-store-capture": [
+      "jj-agent",
+      "jj-collab",
+      "jj-store-model",
+      "jj-store-wal",
+      "jj-store-service",
+      "jj-store-rpc",
+    ],
     "jj-store-server": [
+      "jj-store-capture",
       "jj-store-adapters",
       "jj-store-tantivy",
       "jj-store-http",

@@ -27,38 +27,39 @@ impl TranscriptChunkV1 {
     }
 }
 
+/// Immutable append tail. Prefixes retain earlier current tails.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
-pub struct TranscriptPageV1 {
+pub struct TranscriptTailPageV2 {
     pub schema_version: u32,
     pub source_instance_id: SourceInstanceId,
     pub source_generation: u64,
     pub chunks: Vec<AgentObjectRef>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub next: Option<AgentObjectRef>,
+    pub prefix: Option<AgentObjectRef>,
 }
-impl TranscriptPageV1 {
+impl TranscriptTailPageV2 {
     pub fn validate(&self) -> Result<()> {
-        let unique: BTreeSet<_> = self.chunks.iter().collect();
-        if self.schema_version != 1
+        if self.schema_version != 2
+            || self.source_generation == 0
             || self.chunks.is_empty()
             || self.chunks.len() > 256
             || self
                 .chunks
                 .iter()
-                .any(|value| value.kind != AgentObjectKind::TranscriptChunk)
-            || unique.len() != self.chunks.len()
+                .any(|r| r.kind != AgentObjectKind::TranscriptChunk)
+            || self.chunks.iter().collect::<BTreeSet<_>>().len() != self.chunks.len()
             || self
-                .next
-                .is_some_and(|value| value.kind != AgentObjectKind::TranscriptPage)
+                .prefix
+                .is_some_and(|r| r.kind != AgentObjectKind::TranscriptPage)
         {
-            return Err(Error::Invalid("transcript page"));
+            return Err(Error::Invalid("transcript tail page"));
         }
         Ok(())
     }
     pub fn dependencies(&self) -> Result<BTreeSet<AgentObjectRef>> {
         self.validate()?;
-        Ok(self.chunks.iter().copied().chain(self.next).collect())
+        Ok(self.chunks.iter().copied().chain(self.prefix).collect())
     }
 }
 

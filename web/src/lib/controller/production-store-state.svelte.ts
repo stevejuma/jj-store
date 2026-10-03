@@ -48,6 +48,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   syncSettings: import("./sync-settings.js").SyncSettings;
   accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   storageReady: boolean;
+  captureSupported: boolean;
   backups: Model<"BackupStatus">[];
   heads: string[];
   repositories: StoreRepositorySummary[];
@@ -148,6 +149,7 @@ export function createProductionStoreState(): ProductionStoreState {
     syncSettings: emptySyncSettings(),
     accessMode: "bootstrapping",
     storageReady: false,
+    captureSupported: false,
     backups: [],
     heads: [],
     repositories: [],

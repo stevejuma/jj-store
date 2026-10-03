@@ -3,9 +3,7 @@ use super::{LocalAgentStore, LocalError, LocalRepository, LocalResult, collab_gr
 use jj_collab::ThreadBindingV1;
 use jj_store_jj::local_metadata::{GitOid, RetainedKind, Snapshot};
 use jj_store_model::{PrincipalId, RequestId};
-use jj_store_wal::publication::{
-    AgentCatalogKey, AgentCatalogKind, AgentDeltaV1, AgentObjectIo, AgentObjectKind, AgentObjectV1,
-};
+use jj_store_wal::publication::{AgentDeltaV1, AgentProjector};
 use std::collections::BTreeMap;
 
 pub(super) struct CaptureBinding<'a> {
@@ -22,32 +20,11 @@ impl CaptureBinding<'_> {
         pin: Option<&Snapshot>,
         agent: &LocalAgentStore,
     ) -> LocalResult<(Vec<u8>, BTreeMap<GitOid, RetainedKind>)> {
-        let mut sessions = self
-            .delta
-            .edits
-            .iter()
-            .filter(|e| e.catalog == AgentCatalogKind::Sessions);
-        let edit = sessions.next().ok_or(LocalError::Invalid)?;
-        if sessions.next().is_some() {
-            return Err(LocalError::Invalid);
-        }
-        let snapshot = edit
-            .replacement
-            .filter(|r| r.kind == AgentObjectKind::SessionSnapshot)
-            .ok_or(LocalError::Invalid)?;
-        let AgentObjectV1::SessionSnapshot(session) = agent.io.read_agent_object(snapshot).await?
-        else {
-            return Err(LocalError::Corrupt);
-        };
-        if edit.key
-            != AgentCatalogKey::derive("session", session.session_id.as_bytes())
-                .map_err(|_| LocalError::Invalid)?
-        {
-            return Err(LocalError::Corrupt);
-        }
-        let command =
-            self.binding
-                .capture_link(session.session_id, snapshot, self.actor, self.request)?;
+        AgentProjector::validate_capture_binding_delta(self.delta)
+            .map_err(|_| LocalError::Invalid)?;
+        let command = AgentProjector::new(agent.io.as_ref())
+            .capture_binding_command(self.delta, self.binding, self.actor, self.request)
+            .await?;
         let mut threads = repo.thread_store_at(pin).await?;
         let (root, _) = threads.state.apply(
             &command,

@@ -14,72 +14,6 @@ pub(super) struct Pin {
     pub results: Vec<ContentHit>,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::sync::atomic::{AtomicU64, Ordering};
-    struct Time(AtomicU64);
-    impl Clock for Time {
-        fn unix_seconds(&self) -> crate::auth::Result<u64> {
-            Ok(self.0.load(Ordering::SeqCst))
-        }
-    }
-    fn pin() -> Arc<Pin> {
-        Arc::new(Pin {
-            expires: 400,
-            viewer: jj_store_model::PrincipalId::new([3; 16]),
-            results: Vec::new(),
-            snapshot: ContentSnapshot {
-                repo_id: jj_store_model::RepositoryId::new([1; 16]),
-                epoch: jj_store_model::EpochId::new([2; 16]),
-                manifest_digest: jj_store_model::RecordDigest::new([4; 32]),
-                published_seq: jj_store_model::WalPosition(1),
-                thread_root: None,
-                work_root: None,
-            },
-        })
-    }
-    #[test]
-    fn capacity_restart_and_query_deadline_fail_closed_without_eviction() {
-        let clock = Arc::new(Time(AtomicU64::new(100)));
-        let registry = Registry::new(clock.clone());
-        let pin = pin();
-        let first = registry
-            .retain(pin.clone(), ContentQuery::default(), 1)
-            .unwrap();
-        for _ in 1..64 {
-            registry
-                .retain(pin.clone(), ContentQuery::default(), 1)
-                .unwrap();
-        }
-        assert_eq!(
-            registry
-                .retain(pin.clone(), ContentQuery::default(), 1)
-                .unwrap_err(),
-            Error::Busy
-        );
-        let query = ContentQuery {
-            cursor: Some(first),
-            ..Default::default()
-        };
-        assert_eq!(registry.lookup(pin.snapshot.repo_id, &query).unwrap().1, 1);
-        assert!(matches!(
-            Registry::new(clock.clone()).lookup(pin.snapshot.repo_id, &query),
-            Err(Error::CursorReset)
-        ));
-        clock.0.store(400, Ordering::SeqCst);
-        assert!(matches!(
-            registry.lookup(pin.snapshot.repo_id, &query),
-            Err(Error::CursorReset)
-        ));
-        assert_eq!(
-            registry
-                .retain(pin, ContentQuery::default(), 1)
-                .unwrap_err(),
-            Error::CursorReset
-        );
-    }
-}
 impl Pin {
     fn bytes(&self) -> usize {
         self.results
@@ -186,5 +120,72 @@ impl<Q: CursorQuery> Registry<Q> {
             },
         );
         Ok(token)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    struct Time(AtomicU64);
+    impl Clock for Time {
+        fn unix_seconds(&self) -> crate::auth::Result<u64> {
+            Ok(self.0.load(Ordering::SeqCst))
+        }
+    }
+    fn pin() -> Arc<Pin> {
+        Arc::new(Pin {
+            expires: 400,
+            viewer: jj_store_model::PrincipalId::new([3; 16]),
+            results: Vec::new(),
+            snapshot: ContentSnapshot {
+                repo_id: jj_store_model::RepositoryId::new([1; 16]),
+                epoch: jj_store_model::EpochId::new([2; 16]),
+                manifest_digest: jj_store_model::RecordDigest::new([4; 32]),
+                published_seq: jj_store_model::WalPosition(1),
+                thread_root: None,
+                work_root: None,
+            },
+        })
+    }
+    #[test]
+    fn capacity_restart_and_query_deadline_fail_closed_without_eviction() {
+        let clock = Arc::new(Time(AtomicU64::new(100)));
+        let registry = Registry::new(clock.clone());
+        let pin = pin();
+        let first = registry
+            .retain(pin.clone(), ContentQuery::default(), 1)
+            .unwrap();
+        for _ in 1..64 {
+            registry
+                .retain(pin.clone(), ContentQuery::default(), 1)
+                .unwrap();
+        }
+        assert_eq!(
+            registry
+                .retain(pin.clone(), ContentQuery::default(), 1)
+                .unwrap_err(),
+            Error::Busy
+        );
+        let query = ContentQuery {
+            cursor: Some(first),
+            ..Default::default()
+        };
+        assert_eq!(registry.lookup(pin.snapshot.repo_id, &query).unwrap().1, 1);
+        assert!(matches!(
+            Registry::new(clock.clone()).lookup(pin.snapshot.repo_id, &query),
+            Err(Error::CursorReset)
+        ));
+        clock.0.store(400, Ordering::SeqCst);
+        assert!(matches!(
+            registry.lookup(pin.snapshot.repo_id, &query),
+            Err(Error::CursorReset)
+        ));
+        assert_eq!(
+            registry
+                .retain(pin, ContentQuery::default(), 1)
+                .unwrap_err(),
+            Error::CursorReset
+        );
     }
 }

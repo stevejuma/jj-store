@@ -20,12 +20,13 @@ never substitutes a display position for this reference.
 
 Native prepared capture requests may carry an explicit optional Thread binding
 and server-chosen acceptance time. The absent field is omitted, preserving the
-legacy intent encoding. Binding validates one session replacement selected by
-the same Agent delta and selects Agent plus Thread roots in one manifest CAS.
-Both domains authorize before receipt replay; the source manifest is privately
-pinned through CAS and reloaded after a race. Matching receipts survive later
-Thread changes and unknown outcomes retain original request/publication IDs.
-Replicated code remains gated on reducer 3.
+legacy intent encoding. Binding validates one real session replacement or an
+explicit diagnostic-only source/projection pair selected by the same Agent delta
+and selects Agent plus Thread roots in one manifest CAS. Both domains authorize
+before receipt replay; the source manifest is privately pinned through CAS and
+reloaded after a race. Matching receipts survive later Thread changes and
+unknown outcomes retain original request/publication IDs. Replicated code
+remains gated on reducer 3.
 
 Upload objects, validate full dependency closure against a certified base,
 upload inventory/result/candidate, then CAS the manifest. No receipt embeds its
@@ -40,12 +41,33 @@ adapter admits only immutable domain records and publishes through its separate
 expected-old-value ref protocol. Record framing and native authority are
 unchanged.
 
+Native tool-result projection reads only selected source-scoped aliases or
+qualified common-native Codex or OpenCode proofs and the selected session/tool
+snapshots. It cannot adopt staged or foreign-session calls. New source aliases
+and transient activity references may adopt one unambiguous accepted target;
+existing records and prepared requests remain unchanged. Ambiguous or incomplete
+alias lookup retains diagnostic evidence/source receipts without fictional
+session edits. Matched result-only batches replace the existing session
+cumulatively; prior roots remain readable and publication still requires
+complete closure audit, authorization and manifest/ref CAS. Result presence does
+not assert successful execution or change session lifecycle.
+
+Qualified common-alias captures additionally edit the V1 projection catalog key
+`codex-native-alias-join/v1` or `opencode-native-alias-join/v1`, preserving each
+integration's selected expected object. This common precondition serializes new
+identity adoption across the integration's product profiles and capture sources.
+Concurrent stale preparation fails before publication rather than creating a
+second native session. Product-specific projections, request framing, prior
+prepared intents and receipt identity remain unchanged. Legacy prepared requests
+can retain prior behavior; any resulting duplicate aliases are reported as
+conflicts by subsequent common lookup, never silently consolidated.
+
 Portable agent objects expose capsule dependencies separately from native
 retention roots. Native staging and recovery reject unsupported portable
 evidence. Local descriptor V2 selects a canonical capsule inventory with the
-root and retains every declared Git commit and nonstandard tree dependency;
-descriptor V1 remains readable. The shared provenance reducer can stage records
-and relation pages but cannot publish either provider's state.
+root and retains every declared Git commit and nonstandard tree dependency; only
+the current descriptor V2 is supported. The shared provenance reducer can stage
+records and relation pages but cannot publish either provider's state.
 
 ReviewStore catalog editing and bounded reads use owned repository-bound
 immutable object and pinned snapshot interfaces. Native wrappers retain full
@@ -544,3 +566,48 @@ before dispatch. Repeated publish and status requests retain it, even after
 disconnect or restart. Selected authority distinguishes the exact checkpoint
 from coverage by a newer checkpoint; coverage does not prove that the original
 write succeeded. Neither path prunes retained records or replaces a newer tail.
+
+## M18 capture publication qualification
+
+The [capture completion profile](collaboration.md) uses this existing authority.
+Diagnostic-only accepted captures retain sanitized evidence and source progress
+without fabricated activity, so they cannot permanently block source-ordered
+drain. Tool projections merge selected prior versions across publications rather
+than reduce only one incoming batch. Transcript append updates bounded tails and
+index paths with independently complete reconstruction roots. Exact requests,
+receipts, prior objects and independently selected domains remain preserved. The
+M18.1 gate requires regressions through the shared native/local engine.
+
+Evidence-only V1 event batches select sanitized evidence and source/projection
+progress without fictional activity. Code and other domain selections remain
+unchanged. Tool projection merges the selected prior snapshot and retains its
+strong content/evidence dependencies. Contradictory terminal observations add
+gap coverage while preserving the prior result. Exact retry requests remain
+unchanged.
+
+Transcript tail-page schema 2 is the only supported page encoding under the
+existing TranscriptPage semantic kind. Schema-1 forward pages are rejected by
+canonical decoding and selected-closure audits, including recovery and copy;
+there is no implicit migration. Current tails retain complete immutable
+prefixes, copy at most 256 selected chunk references and never rebuild accepted
+prefix pages. Native object staging/publication still audits the complete
+dependency closure. Projection read-count regression evidence is distinct from
+authority auditing and cannot claim bounded total publication I/O.
+
+A pinned AgentStore read snapshot derives opaque transcript sequence/count
+witnesses while auditing its retained object closure. Append checks the selected
+manifest against that witness before using the selected tail. This avoids
+trusting an unrelated source cursor as proof of transcript ordering. Witnesses
+carry no publication authority and are rebuilt after restart.
+
+Diagnostic-only bound capture selects Agent and Thread roots atomically. Its
+additive capture_gap link strongly retains the exact source state, empty event
+batch, observed Thread version and optional assignment. Preparation validates
+the source/projection delta and receipt/evidence interval; publication checks
+current authorization and original observed Thread/assignment state. Replay
+precedes those preconditions. Gaps do not create sessions or change primary
+assignments, code heads or Thread lifecycle.
+
+A validated immutable AgentStore cache selection retains its audited append
+witnesses together with the object closure. Attaching a request reader preserves
+these witnesses without granting authorization or reauditing an unrelated pin.

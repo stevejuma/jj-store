@@ -641,23 +641,23 @@ async fn local_code_reads_cover_graphs_diffs_roots_conflicts_and_multiple_heads(
         panic!()
     };
     for row in paths.entries {
-        if let Some(Some(q::dto::TreeValue::File { id, .. })) = row.terms.first() {
-            if row.path == "binary.bin" || row.path == "large.txt" {
-                let Response::File(file) = reader
-                    .read(access.clone(), op, Request::File { file: *id })
-                    .await
-                    .unwrap()
-                else {
-                    panic!()
-                };
-                assert!(file.text.is_none());
-                if row.path == "binary.bin" {
-                    assert!(file.binary);
-                    assert_eq!(file.bytes, 3);
-                } else {
-                    assert!(file.too_large);
-                    assert_eq!(file.bytes, 300_000);
-                }
+        if let Some(Some(q::dto::TreeValue::File { id, .. })) = row.terms.first()
+            && (row.path == "binary.bin" || row.path == "large.txt")
+        {
+            let Response::File(file) = reader
+                .read(access.clone(), op, Request::File { file: *id })
+                .await
+                .unwrap()
+            else {
+                panic!()
+            };
+            assert!(file.text.is_none());
+            if row.path == "binary.bin" {
+                assert!(file.binary);
+                assert_eq!(file.bytes, 3);
+            } else {
+                assert!(file.too_large);
+                assert_eq!(file.bytes, 300_000);
             }
         }
     }

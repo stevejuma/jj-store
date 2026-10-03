@@ -8,6 +8,7 @@ import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
 
 import { createProductionRepositoryThreadNavigation } from "./repository-thread-navigation.svelte.js";
+import { createProductionCaptureManagement } from "./production-capture-management.js";
 import type { StoreController } from "./contracts.js";
 
 import type { StoreDataSource } from "./native-data-source.js";
@@ -20,14 +21,13 @@ import { createProductionStoreMutations } from "./production-store-mutations.js"
 import { createProductionStoreConflicts } from "./production-store-conflicts.js";
 import { createProductionStoreSettings } from "./production-store-index.js";
 import {
-  createProductionRevisionSelector,
+  createProductionSelections,
   requireProductionSource,
   reportProductionStoreError,
   resetConnectionView,
   destroyProductionStoreLifecycle,
   startProductionStoreLifecycle,
 } from "./production-store-lifecycle.svelte.js";
-import { createProductionBranchActions } from "./production-branch-actions.js";
 import { createProductionStoreActions } from "./production-store-actions.js";
 import { createProductionMutationCommitter } from "./production-mutation-commit.js";
 
@@ -36,6 +36,7 @@ export function createProductionStoreController(
 ): StoreController {
   const history = createStoreRouteHistory();
   const data = createProductionStoreState();
+  const capture = createProductionCaptureManagement(data, options.fetcher);
   let source: StoreDataSource | null = null,
     sessionToken: string | null = null;
   let session = 0;
@@ -227,12 +228,7 @@ export function createProductionStoreController(
     current: (active) => active === source,
     uploadLimit: () => data.conflictUploadBytes,
   });
-  const selectRevision = createProductionRevisionSelector(
-    data,
-    history,
-    reader,
-  );
-  const branchActions = createProductionBranchActions({
+  const { selectRevision, branchActions } = createProductionSelections({
     data,
     history,
     reader,
@@ -253,8 +249,10 @@ export function createProductionStoreController(
     connect: ({ repository, token }) => connect(repository, token),
     connectRepository,
     disconnect: () => disconnect(),
-    destroy: () =>
-      destroyProductionStoreLifecycle(lifecycle, disconnect, history),
+    destroy: () => {
+      capture.destroy();
+      destroyProductionStoreLifecycle(lifecycle, disconnect, history);
+    },
     refresh,
     selectOperation,
     restoreRoute,
@@ -302,6 +300,7 @@ export function createProductionStoreController(
       now: options.now,
       globalSearch,
       referenceSearch,
+      capture,
       actions: { ...actions, openThreads, openRoute },
     },
     automatic.pause,

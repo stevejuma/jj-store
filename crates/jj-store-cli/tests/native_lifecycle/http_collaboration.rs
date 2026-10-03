@@ -11,7 +11,7 @@ use jj_agent::{
     NormalizerProfileV1, ObservationId, SanitizedMediaType, SanitizedObservationBatchV1,
     SanitizedObservationV1, SanitizedPayloadV1, SanitizedRepresentation, SessionState,
     SourceInstanceId, SourceKind, SourceTrust, TranscriptChunkV1, TranscriptManifestV1,
-    TranscriptPageV1, TranscriptStreamV1,
+    TranscriptStreamV1, TranscriptTailPageV2,
 };
 use jj_store_http::{Access, Config, HttpApi};
 use jj_store_service::administration::{OperatorPolicies, RepositoryHost};
@@ -165,22 +165,22 @@ async fn publish_transcript(
         .await
         .unwrap();
     let tail = staging
-        .stage_agent_object(&AgentObjectV1::TranscriptPage(TranscriptPageV1 {
-            schema_version: 1,
+        .stage_agent_object(&AgentObjectV1::TranscriptTailPage(TranscriptTailPageV2 {
+            schema_version: 2,
             source_instance_id: source,
             source_generation: 5,
-            chunks: vec![second],
-            next: None,
+            chunks: vec![first],
+            prefix: None,
         }))
         .await
         .unwrap();
     let head = staging
-        .stage_agent_object(&AgentObjectV1::TranscriptPage(TranscriptPageV1 {
-            schema_version: 1,
+        .stage_agent_object(&AgentObjectV1::TranscriptTailPage(TranscriptTailPageV2 {
+            schema_version: 2,
             source_instance_id: source,
             source_generation: 5,
-            chunks: vec![first],
-            next: Some(tail),
+            chunks: vec![second],
+            prefix: Some(tail),
         }))
         .await
         .unwrap();

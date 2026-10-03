@@ -10,6 +10,7 @@ pub struct AgentStoreSelection {
     reference: RecordRef,
     root: AgentRootV1,
     objects: Arc<BTreeSet<AgentObjectRef>>,
+    transcripts: TranscriptAppendProofs,
 }
 impl AgentStoreSelection {
     pub fn object_count(&self) -> usize {
@@ -24,6 +25,7 @@ pub struct AgentStoreSnapshot {
     reference: RecordRef,
     root: AgentRootV1,
     objects: Arc<BTreeSet<AgentObjectRef>>,
+    transcripts: TranscriptAppendProofs,
 }
 impl AgentStoreSnapshot {
     pub fn selection(&self) -> AgentStoreSelection {
@@ -32,6 +34,7 @@ impl AgentStoreSnapshot {
             reference: self.reference,
             root: self.root.clone(),
             objects: self.objects.clone(),
+            transcripts: self.transcripts.clone(),
         }
     }
 
@@ -43,6 +46,9 @@ impl AgentStoreSnapshot {
     }
     pub fn root(&self) -> &AgentRootV1 {
         &self.root
+    }
+    pub fn transcript_proofs(&self) -> &TranscriptAppendProofs {
+        &self.transcripts
     }
     pub fn object_count(&self) -> usize {
         self.objects.len()
@@ -115,11 +121,12 @@ impl Coordinator {
             reference: selection.reference,
             root: selection.root.clone(),
             objects: selection.objects.clone(),
+            transcripts: selection.transcripts.clone(),
         })
     }
 
     pub async fn agent_store(&self, reference: RecordRef) -> Result<AgentStoreSnapshot> {
-        let (root, native, objects) = self.read_agent_root_closure(reference).await?;
+        let (root, native, objects, transcripts) = self.read_agent_root_snapshot(reference).await?;
         self.verify_delta(None, native).await?;
         Ok(AgentStoreSnapshot {
             coordinator: self.clone(),
@@ -127,6 +134,7 @@ impl Coordinator {
             reference,
             root,
             objects: Arc::new(objects),
+            transcripts,
         })
     }
 

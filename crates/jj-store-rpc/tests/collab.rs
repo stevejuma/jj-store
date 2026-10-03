@@ -132,6 +132,13 @@ async fn home(client: &NativeClient) {
 
 #[tokio::test]
 async fn explicit_capture_binding_survives_preparation_publication_and_transport_reconstruction() {
+    capture_binding_acceptance(false).await;
+}
+#[tokio::test]
+async fn diagnostic_gap_binding_survives_preparation_publication_and_transport_reconstruction() {
+    capture_binding_acceptance(true).await;
+}
+async fn capture_binding_acceptance(diagnostic: bool) {
     use jj_agent::{
         CaptureBatchId, IntegrationId, NormalizerProfileV1, ObservationId, SanitizedMediaType,
         SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
@@ -166,7 +173,11 @@ async fn explicit_capture_binding_survives_preparation_publication_and_transport
             source_trust: SourceTrust::LocalUserHook,
             payload: SanitizedPayloadV1::new(
                 SanitizedMediaType::Json,
-                br#"{"hook_event_name":"SessionStart","session_id":"bound-rpc"}"#,
+                if diagnostic {
+                    br#"{"future_record":true}"#.as_slice()
+                } else {
+                    br#"{"hook_event_name":"SessionStart","session_id":"bound-rpc"}"#.as_slice()
+                },
             )
             .unwrap(),
         }],
@@ -186,6 +197,15 @@ async fn explicit_capture_binding_survives_preparation_publication_and_transport
     assert_eq!(prepared.principal, ACTOR);
     assert_eq!(prepared.thread_binding.as_ref().unwrap().binding, binding);
     assert!(prepared.thread_binding.as_ref().unwrap().accepted_at_millis > 0);
+    assert_eq!(
+        prepared
+            .delta
+            .edits
+            .iter()
+            .filter(|e| e.catalog == jj_agent::AgentCatalogKind::Sessions)
+            .count(),
+        usize::from(!diagnostic)
+    );
     assert_eq!(client.collab_thread(first.thread_id).await.unwrap(), before);
     let outcome = client.publish_agent_delta(&prepared).await.unwrap();
     assert!(matches!(
@@ -213,6 +233,13 @@ async fn explicit_capture_binding_survives_preparation_publication_and_transport
         events[0].value.event,
         ThreadEventKindV1::Link { .. }
     ));
+    assert_eq!(
+        matches!(
+            events[0].link.as_ref().unwrap().target,
+            ThreadLinkTargetV1::CaptureGap { .. }
+        ),
+        diagnostic
+    );
     let renamed = request(
         26,
         CollabCommandV1::Thread {

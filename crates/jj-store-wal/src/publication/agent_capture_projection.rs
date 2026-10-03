@@ -1,17 +1,14 @@
 use super::agent::agent_error;
 use super::agent_capture::SessionSelection;
 use super::*;
-use jj_agent::{
-    AgentCatalogEditV1, AgentCatalogKind, AgentObjectV1, AgentProjectionCatalogV1,
-    NormalizerProfileV1,
-};
+use jj_agent::{AgentCatalogEditV1, AgentCatalogKind, AgentObjectV1, AgentProjectionCatalogV1};
 
 impl AgentProjector<'_> {
     #[allow(clippy::too_many_arguments)]
     pub(super) async fn stage_projection(
         &self,
         base: &dyn AgentSnapshotRead,
-        profile: &NormalizerProfileV1,
+        identity: &str,
         activated_at_millis: i64,
         sessions: &[SessionSelection],
         event_batch: AgentObjectRef,
@@ -20,7 +17,7 @@ impl AgentProjector<'_> {
     ) -> Result<AgentCatalogEditV1> {
         let mut projection = AgentProjectionCatalogV1 {
             schema_version: 1,
-            normalizer_version: profile.identity(),
+            normalizer_version: identity.into(),
             activated_at_millis,
             sessions: Vec::new(),
             event_batches: Vec::new(),

@@ -44,6 +44,7 @@ impl Config {
             tls.private_key = policy::outside_checkout(&base.join(&tls.private_key))?;
         }
         self.web_root = self.web_root.take().map(|root| base.join(root));
+        self.agent_capture.resolve_paths(base);
         for replication in &mut self.replication {
             replication.ca_certificate = replication
                 .ca_certificate
@@ -89,6 +90,7 @@ impl Config {
 
     pub fn validate(&self) -> Result<()> {
         self.validate_common()?;
+        self.agent_capture.validate(&self.access, &self.storage)?;
         match &self.storage {
             Storage::Filesystem => {
                 if !matches!(

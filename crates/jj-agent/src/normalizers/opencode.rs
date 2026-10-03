@@ -16,6 +16,10 @@ pub(crate) fn normalize(
             invalid(output, observation.source_sequence, "opencode-json");
             continue;
         };
+        if string(&value, &["capture_format"]) == Some("opencode-snapshot/v1") {
+            super::opencode_snapshot::normalize(profile, batch, observation, &value, output)?;
+            continue;
+        }
         if let Some(version) = string(&value, &["input", "event", "properties", "info", "version"])
             && version != profile.product_version
         {

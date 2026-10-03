@@ -1,8 +1,8 @@
 //! Validation and local preparation for the shared sanitized capture journal.
+use crate::CaptureResult as AuthorityResult;
 use crate::agent_capture::{AgentCaptureSpool, PendingCaptureStateV1, PendingCaptureV1};
 use crate::agent_capture_files::sync_dir;
 use jj_agent::{CaptureBatchId, SourcePositionV1};
-use jj_store_jj::operation_stores::AuthorityResult;
 use jj_store_model::RequestId;
 use jj_store_service::local_repository::{LocalAgentCommand, LocalAgentRequest};
 use std::fs;
@@ -12,6 +12,9 @@ impl PendingCaptureV1 {
         self.profile.validate()?;
         self.cursor.validate()?;
         self.batch.validate()?;
+        if let Some(metadata) = &self.reader_metadata {
+            metadata.validate()?;
+        }
         let last_sequence = self
             .batch
             .observations
@@ -88,11 +91,12 @@ impl AgentCaptureSpool {
         let path = self.path(batch);
         if path.exists() {
             let entry = self.read(&path)?;
-            match entry.state {
+            match &entry.state {
                 PendingCaptureStateV1::LocalPrepared { request }
                     if request.request_id == request_id => {}
                 _ => return Err("local capture completion identity mismatch".into()),
             }
+            self.record_reader_progress(&entry)?;
             fs::remove_file(&path)?;
             sync_dir(path.parent().ok_or("capture spool parent missing")?)?;
         }

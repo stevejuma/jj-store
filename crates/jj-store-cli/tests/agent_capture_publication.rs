@@ -5,6 +5,12 @@ use jj_agent::{
     SanitizedObservationV1, SanitizedPayloadV1, SanitizedRepresentation, SourceInstanceId,
     SourceKind, SourcePositionV1, SourceTrust,
 };
+use jj_store_capture::agent_publication::{
+    CaptureDrainPartition, CaptureDrainScheduler, drain_capture_spool_entry,
+    drain_capture_spool_partition,
+};
+#[path = "agent_capture_publication/scheduling.rs"]
+mod scheduling;
 use jj_store_cli::{
     agent_capture::{AgentCaptureSpool, PendingCaptureStateV1},
     agent_publication::{AgentCapturePublisher, drain_capture_spool},
@@ -15,6 +21,7 @@ use jj_store_model::{
     EpochId, IntentDigest, OperationId, PrincipalId, PublicationId, RepositoryId, RequestId,
     WalPosition,
 };
+use jj_store_service::local_repository::{LocalAgentCommand, LocalAgentRequest};
 use jj_store_wal::publication::{AgentDeltaRequest, PublishOutcome, Receipt, Snapshot};
 use std::{
     collections::{BTreeSet, VecDeque},
@@ -23,6 +30,102 @@ use std::{
 
 const REPOSITORY: RepositoryId = RepositoryId::new([9; 16]);
 const PRINCIPAL: PrincipalId = PrincipalId::new([4; 16]);
+
+#[tokio::test]
+async fn exact_queued_entry_drain_preserves_other_batches_and_prepared_retry() {
+    let root = tempfile::tempdir().unwrap();
+    let mut spool = AgentCaptureSpool::open(root.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut spool, capture(1, 1, RepositoryId::new([10; 16])));
+    enqueue(&mut spool, capture(2, 2, REPOSITORY));
+    let queue = spool.pending().unwrap();
+    let entry = queue
+        .iter()
+        .find(|entry| entry.batch.batch_id == CaptureBatchId::new([2; 16]))
+        .unwrap();
+    let publisher = FakePublisher::new([Reply::Unknown, Reply::Committed]);
+    assert!(
+        drain_capture_spool_entry(&mut spool, entry, &publisher)
+            .await
+            .unwrap()
+            .outcome_unknown
+    );
+    let prepared = spool.pending().unwrap();
+    let exact = prepared
+        .iter()
+        .find(|entry| entry.batch.batch_id == CaptureBatchId::new([2; 16]))
+        .unwrap();
+    let mut changed = exact.clone();
+    changed.cursor.parser_version = "changed-parser".into();
+    assert!(
+        drain_capture_spool_entry(&mut spool, &changed, &publisher)
+            .await
+            .is_err()
+    );
+    assert_eq!(spool.pending().unwrap(), prepared);
+    let report = drain_capture_spool_entry(&mut spool, exact, &publisher)
+        .await
+        .unwrap();
+    assert_eq!(report.committed, 1);
+    assert_eq!(report.remaining, 1);
+    assert_eq!(
+        *publisher.prepared.lock().unwrap(),
+        vec![entry.batch.batch_id]
+    );
+    let published = publisher.published.lock().unwrap();
+    assert_eq!(published.len(), 2);
+    assert_eq!(published[0], published[1]);
+    assert_eq!(
+        spool.pending().unwrap(),
+        vec![
+            queue
+                .iter()
+                .find(|entry| entry.batch.batch_id == CaptureBatchId::new([1; 16]))
+                .unwrap()
+                .clone()
+        ]
+    );
+}
+
+#[tokio::test]
+async fn exact_entry_cannot_bypass_an_earlier_same_partition_intent() {
+    let root = tempfile::tempdir().unwrap();
+    let mut spool = AgentCaptureSpool::open(root.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut spool, capture(2, 2, REPOSITORY));
+    let selected = spool.pending().unwrap().remove(0);
+    // Selection is only a hint: another handle can enqueue an earlier entry.
+    let mut other = AgentCaptureSpool::open(root.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut other, capture(1, 1, REPOSITORY));
+    let before = spool.pending().unwrap();
+    let publisher = FakePublisher::new([Reply::Committed]);
+    assert!(
+        drain_capture_spool_entry(&mut spool, &selected, &publisher)
+            .await
+            .is_err()
+    );
+    assert!(publisher.prepared.lock().unwrap().is_empty());
+    assert!(publisher.published.lock().unwrap().is_empty());
+    assert_eq!(spool.pending().unwrap(), before);
+    let earlier = before
+        .iter()
+        .find(|entry| entry.batch.batch_id == CaptureBatchId::new([1; 16]))
+        .unwrap();
+    let unknown = FakePublisher::new([Reply::Unknown]);
+    assert!(
+        drain_capture_spool_entry(&mut spool, earlier, &unknown)
+            .await
+            .unwrap()
+            .outcome_unknown
+    );
+    let prepared = spool.pending().unwrap();
+    assert!(
+        drain_capture_spool_entry(&mut spool, &selected, &publisher)
+            .await
+            .is_err()
+    );
+    assert!(publisher.prepared.lock().unwrap().is_empty());
+    assert!(publisher.published.lock().unwrap().is_empty());
+    assert_eq!(spool.pending().unwrap(), prepared);
+}
 
 #[derive(Clone, Copy)]
 enum Reply {
@@ -36,6 +139,7 @@ struct FakePublisher {
     prepared: Mutex<Vec<CaptureBatchId>>,
     published: Mutex<Vec<AgentDeltaRequest>>,
     drop_binding: bool,
+    diagnostic_only: bool,
 }
 
 impl FakePublisher {
@@ -45,6 +149,7 @@ impl FakePublisher {
             prepared: Mutex::default(),
             published: Mutex::default(),
             drop_binding: false,
+            diagnostic_only: false,
         }
     }
 }
@@ -84,15 +189,42 @@ impl AgentCapturePublisher for FakePublisher {
             publication_id,
             AgentDeltaV1 {
                 schema_version: 1,
-                edits: vec![AgentCatalogEditV1 {
-                    catalog: AgentCatalogKind::Sessions,
-                    key: AgentCatalogKey::derive("capture", batch.batch_id.as_bytes())?,
-                    expected: None,
-                    replacement: Some(AgentObjectRef::new(
-                        AgentObjectKind::SessionSnapshot,
-                        AgentObjectId::new([batch.batch_id.as_bytes()[0]; 32]),
-                    )),
-                }],
+                edits: if self.diagnostic_only {
+                    [
+                        (AgentCatalogKind::Sources, AgentObjectKind::SourceState),
+                        (
+                            AgentCatalogKind::Projections,
+                            AgentObjectKind::ProjectionCatalog,
+                        ),
+                    ]
+                    .into_iter()
+                    .enumerate()
+                    .map(|(i, (catalog, kind))| {
+                        Ok(AgentCatalogEditV1 {
+                            catalog,
+                            key: AgentCatalogKey::derive(
+                                "capture-gap",
+                                &[batch.batch_id.as_bytes()[0], i as u8],
+                            )?,
+                            expected: None,
+                            replacement: Some(AgentObjectRef::new(
+                                kind,
+                                AgentObjectId::new([i as u8 + 1; 32]),
+                            )),
+                        })
+                    })
+                    .collect::<jj_agent::Result<Vec<_>>>()?
+                } else {
+                    vec![AgentCatalogEditV1 {
+                        catalog: AgentCatalogKind::Sessions,
+                        key: AgentCatalogKey::derive("capture", batch.batch_id.as_bytes())?,
+                        expected: None,
+                        replacement: Some(AgentObjectRef::new(
+                            AgentObjectKind::SessionSnapshot,
+                            AgentObjectId::new([batch.batch_id.as_bytes()[0]; 32]),
+                        )),
+                    }]
+                },
             },
             result,
         )?)
@@ -116,9 +248,21 @@ impl AgentCapturePublisher for FakePublisher {
 
 #[tokio::test]
 async fn bound_capture_journals_before_prepare_and_retries_exact_assignment_after_restart() {
+    bound_spool_acceptance(false).await;
+}
+#[tokio::test]
+async fn bound_diagnostic_gap_drains_after_restart_without_a_session_edit() {
+    bound_spool_acceptance(true).await;
+}
+async fn bound_spool_acceptance(diagnostic: bool) {
     use jj_collab::{CollabObjectId, CollabObjectKind, CollabObjectRef, ThreadBindingV1, ThreadId};
     let directory = tempfile::tempdir().unwrap();
-    let pending = capture(7, 1, REPOSITORY);
+    let mut pending = capture(7, 1, REPOSITORY);
+    if diagnostic {
+        pending.batch.observations[0].payload =
+            SanitizedPayloadV1::new(SanitizedMediaType::Json, br#"{"future_record":true}"#)
+                .unwrap();
+    }
     let binding = ThreadBindingV1 {
         thread_id: ThreadId::new([10; 16]),
         observed_thread: CollabObjectRef {
@@ -148,7 +292,8 @@ async fn bound_capture_journals_before_prepare_and_retries_exact_assignment_afte
             .is_err()
     );
     drop(spool);
-    let publisher = FakePublisher::new([Reply::Unknown, Reply::Committed]);
+    let mut publisher = FakePublisher::new([Reply::Unknown, Reply::Committed]);
+    publisher.diagnostic_only = diagnostic;
     let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
     assert_eq!(
         spool.pending().unwrap()[0].thread_binding,
@@ -182,6 +327,15 @@ async fn bound_capture_journals_before_prepare_and_retries_exact_assignment_afte
     assert_eq!(publisher.prepared.lock().unwrap().len(), 1);
     let requests = publisher.published.lock().unwrap();
     assert_eq!(requests[0], requests[1]);
+    assert_eq!(
+        requests[0]
+            .delta
+            .edits
+            .iter()
+            .filter(|e| e.catalog == AgentCatalogKind::Sessions)
+            .count(),
+        usize::from(!diagnostic)
+    );
     assert_eq!(
         requests[0].thread_binding.as_ref().unwrap().binding,
         binding
@@ -266,6 +420,203 @@ fn receipt(request: &AgentDeltaRequest, result: Vec<u8>) -> Receipt {
         },
         result,
     }
+}
+
+#[tokio::test]
+async fn bounded_partition_drain_retains_other_repositories_sources_and_unknown_intent() {
+    let directory = tempfile::tempdir().unwrap();
+    let other = RepositoryId::new([10; 16]);
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut spool, capture(2, 2, REPOSITORY));
+    enqueue(&mut spool, capture(1, 1, REPOSITORY));
+    enqueue(&mut spool, capture(3, 3, other));
+    let mut independent = capture(4, 1, REPOSITORY);
+    independent.batch.source_instance_id = SourceInstanceId::new([3; 16]);
+    independent.cursor.source_instance_id = independent.batch.source_instance_id;
+    enqueue(&mut spool, independent);
+    let partition = CaptureDrainPartition {
+        repository: REPOSITORY,
+        integration: IntegrationId::Codex,
+        source: SourceInstanceId::new([2; 16]),
+    };
+    let publisher = FakePublisher::new([Reply::Unknown, Reply::Committed, Reply::Committed]);
+    assert!(
+        drain_capture_spool(&mut spool, REPOSITORY, &publisher)
+            .await
+            .is_err()
+    );
+    assert!(publisher.prepared.lock().unwrap().is_empty());
+    let report = drain_capture_spool_partition(&mut spool, partition, &publisher, 1)
+        .await
+        .unwrap();
+    assert!(report.outcome_unknown);
+    assert_eq!((report.committed, report.remaining), (0, 4));
+    let retained = spool
+        .pending()
+        .unwrap()
+        .into_iter()
+        .find(|e| e.batch.batch_id == CaptureBatchId::new([1; 16]))
+        .unwrap();
+    assert!(matches!(
+        retained.state,
+        PendingCaptureStateV1::Prepared { .. }
+    ));
+    let other_publisher = FakePublisher::new([Reply::Committed]);
+    let other_report = drain_capture_spool_partition(
+        &mut spool,
+        CaptureDrainPartition {
+            repository: other,
+            ..partition
+        },
+        &other_publisher,
+        1,
+    )
+    .await
+    .unwrap();
+    assert_eq!((other_report.committed, other_report.remaining), (1, 3));
+    drop(spool);
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let report = drain_capture_spool_partition(&mut spool, partition, &publisher, 1)
+        .await
+        .unwrap();
+    assert_eq!((report.committed, report.remaining), (1, 2));
+    assert!(!report.outcome_unknown);
+    {
+        let published = publisher.published.lock().unwrap();
+        assert_eq!(published[0], published[1]);
+    }
+    assert_eq!(publisher.prepared.lock().unwrap().len(), 1);
+    let report = drain_capture_spool_partition(&mut spool, partition, &publisher, 1)
+        .await
+        .unwrap();
+    assert_eq!((report.committed, report.remaining), (1, 1));
+    assert_eq!(
+        spool.pending().unwrap()[0].batch.batch_id,
+        CaptureBatchId::new([4; 16])
+    );
+    let empty = FakePublisher::new([]);
+    let report = drain_capture_spool_partition(&mut spool, partition, &empty, 1)
+        .await
+        .unwrap();
+    assert_eq!((report.committed, report.remaining), (0, 1));
+    assert!(empty.prepared.lock().unwrap().is_empty());
+    for bound in [0, 257] {
+        assert!(
+            drain_capture_spool_partition(&mut spool, partition, &empty, bound)
+                .await
+                .is_err()
+        );
+    }
+}
+
+#[tokio::test]
+async fn partition_preserves_foreign_local_intent_and_rejects_selected_local_before_preparation() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut spool, capture(1, 1, REPOSITORY));
+    let foreign = capture(2, 2, RepositoryId::new([10; 16]));
+    let local = LocalAgentRequest {
+        version: 1,
+        request_id: RequestId::new([11; 16]),
+        command: LocalAgentCommand::Capture {
+            profile: foreign.profile.clone(),
+            batch: Box::new(foreign.batch.clone()),
+        },
+    };
+    enqueue(&mut spool, foreign);
+    spool
+        .prepare_local(CaptureBatchId::new([2; 16]), local.clone())
+        .unwrap();
+    let partition = CaptureDrainPartition {
+        repository: REPOSITORY,
+        integration: IntegrationId::Codex,
+        source: SourceInstanceId::new([2; 16]),
+    };
+    let publisher = FakePublisher::new([Reply::Committed]);
+    let report = drain_capture_spool_partition(&mut spool, partition, &publisher, 1)
+        .await
+        .unwrap();
+    assert_eq!((report.committed, report.remaining), (1, 1));
+    assert_eq!(
+        spool.pending().unwrap()[0].state,
+        PendingCaptureStateV1::LocalPrepared { request: local }
+    );
+
+    enqueue(&mut spool, capture(3, 3, REPOSITORY));
+    let selected = capture(4, 4, REPOSITORY);
+    let local = LocalAgentRequest {
+        version: 1,
+        request_id: RequestId::new([12; 16]),
+        command: LocalAgentCommand::Capture {
+            profile: selected.profile.clone(),
+            batch: Box::new(selected.batch.clone()),
+        },
+    };
+    enqueue(&mut spool, selected);
+    spool
+        .prepare_local(CaptureBatchId::new([4; 16]), local)
+        .unwrap();
+    let before = spool.pending().unwrap();
+    let publisher = FakePublisher::new([]);
+    // Even a later local entry outside this call's bound blocks the selected partition.
+    assert!(
+        drain_capture_spool_partition(&mut spool, partition, &publisher, 1)
+            .await
+            .is_err()
+    );
+    assert!(publisher.prepared.lock().unwrap().is_empty());
+    assert!(publisher.published.lock().unwrap().is_empty());
+    assert_eq!(spool.pending().unwrap(), before);
+
+    for bound in [0, 257] {
+        let error = drain_capture_spool_partition(&mut spool, partition, &publisher, bound)
+            .await
+            .unwrap_err();
+        assert!(error.to_string().contains("batch bound"));
+    }
+}
+
+#[tokio::test]
+async fn partition_mismatched_receipt_retains_exact_intent_without_touching_other_source() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut spool, capture(1, 1, REPOSITORY));
+    let mut foreign = capture(2, 1, REPOSITORY);
+    foreign.batch.source_instance_id = SourceInstanceId::new([3; 16]);
+    foreign.cursor.source_instance_id = foreign.batch.source_instance_id;
+    enqueue(&mut spool, foreign);
+    let partition = CaptureDrainPartition {
+        repository: REPOSITORY,
+        integration: IntegrationId::Codex,
+        source: SourceInstanceId::new([2; 16]),
+    };
+    let publisher = FakePublisher::new([Reply::Mismatched, Reply::Committed]);
+    assert!(
+        drain_capture_spool_partition(&mut spool, partition, &publisher, 1)
+            .await
+            .is_err()
+    );
+    let retained = spool
+        .pending()
+        .unwrap()
+        .into_iter()
+        .find(|e| e.batch.batch_id == CaptureBatchId::new([1; 16]))
+        .unwrap();
+    let PendingCaptureStateV1::Prepared { request } = retained.state else {
+        panic!("durable request required")
+    };
+    drop(spool);
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let report = drain_capture_spool_partition(&mut spool, partition, &publisher, 1)
+        .await
+        .unwrap();
+    assert_eq!((report.committed, report.remaining), (1, 1));
+    assert_eq!(publisher.published.lock().unwrap()[1], request);
+    assert_eq!(publisher.prepared.lock().unwrap().len(), 1);
+    assert_eq!(
+        spool.pending().unwrap()[0].state,
+        PendingCaptureStateV1::Captured
+    );
 }
 
 #[tokio::test]
@@ -588,5 +939,80 @@ async fn killed_drainer_preserves_prepared_capture_and_releases_lease() {
     assert_eq!(
         *publisher.prepared.lock().unwrap(),
         vec![CaptureBatchId::new([2; 16])]
+    );
+}
+
+#[tokio::test]
+async fn cancelled_partition_releases_drain_lease_and_retries_exact_prepared_request() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut spool, capture(1, 1, REPOSITORY));
+    enqueue(&mut spool, capture(2, 2, RepositoryId::new([10; 16])));
+    let partition = CaptureDrainPartition {
+        repository: REPOSITORY,
+        integration: IntegrationId::Codex,
+        source: SourceInstanceId::new([2; 16]),
+    };
+    let publisher = std::sync::Arc::new(PausedPublisher {
+        inner: FakePublisher::new([]),
+        preparing: tokio::sync::Notify::new(),
+        prepare_ready: tokio::sync::Notify::new(),
+        publishing: tokio::sync::Notify::new(),
+    });
+    let worker = {
+        let publisher = publisher.clone();
+        tokio::spawn(async move {
+            drain_capture_spool_partition(&mut spool, partition, publisher.as_ref(), 1).await
+        })
+    };
+    tokio::time::timeout(
+        std::time::Duration::from_secs(10),
+        publisher.preparing.notified(),
+    )
+    .await
+    .unwrap();
+    publisher.prepare_ready.notify_one();
+    tokio::time::timeout(
+        std::time::Duration::from_secs(10),
+        publisher.publishing.notified(),
+    )
+    .await
+    .unwrap();
+    let mut observer = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let entry = observer
+        .pending()
+        .unwrap()
+        .into_iter()
+        .find(|e| e.batch.batch_id == CaptureBatchId::new([1; 16]))
+        .unwrap();
+    let PendingCaptureStateV1::Prepared { request } = entry.state else {
+        panic!("durable request required")
+    };
+    assert!(
+        drain_capture_spool_partition(&mut observer, partition, &FakePublisher::new([]), 1)
+            .await
+            .is_err()
+    );
+    for bound in [0, 257] {
+        let error =
+            drain_capture_spool_partition(&mut observer, partition, &FakePublisher::new([]), bound)
+                .await
+                .unwrap_err();
+        assert!(error.to_string().contains("batch bound"));
+    }
+    worker.abort();
+    assert!(worker.await.unwrap_err().is_cancelled());
+    drop(observer);
+    let mut restarted = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let recovery = FakePublisher::new([Reply::Committed]);
+    let report = drain_capture_spool_partition(&mut restarted, partition, &recovery, 1)
+        .await
+        .unwrap();
+    assert_eq!((report.committed, report.remaining), (1, 1));
+    assert_eq!(recovery.published.lock().unwrap()[0], request);
+    assert!(recovery.prepared.lock().unwrap().is_empty());
+    assert_eq!(
+        restarted.pending().unwrap()[0].state,
+        PendingCaptureStateV1::Captured
     );
 }

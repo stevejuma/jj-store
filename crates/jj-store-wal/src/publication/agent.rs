@@ -7,7 +7,15 @@ const MAX_AGENT_DEPENDENCIES: usize = 4096;
 struct AgentDependencyClosure {
     objects: BTreeSet<AgentObjectRef>,
     native: BTreeSet<ObjectKey>,
+    transcripts: TranscriptAppendProofs,
 }
+
+type AgentRootSnapshot = (
+    AgentRootV1,
+    BTreeSet<ObjectKey>,
+    BTreeSet<AgentObjectRef>,
+    TranscriptAppendProofs,
+);
 
 impl Coordinator {
     pub(super) async fn read_agent_object(
@@ -73,12 +81,31 @@ impl Coordinator {
         Ok((root, closure.native, closure.objects))
     }
 
+    pub(super) async fn read_agent_root_snapshot(
+        &self,
+        reference: RecordRef,
+    ) -> Result<AgentRootSnapshot> {
+        let root: AgentRootV1 = self.records.get(reference, RecordKind::AgentRoot).await?;
+        let closure = self
+            .audit_snapshot_dependencies(root.dependencies().map_err(agent_error)?, true)
+            .await?;
+        Ok((root, closure.native, closure.objects, closure.transcripts))
+    }
+
     async fn audit_agent_dependencies(
         &self,
+        pending: Vec<AgentObjectRef>,
+    ) -> Result<AgentDependencyClosure> {
+        self.audit_snapshot_dependencies(pending, false).await
+    }
+    async fn audit_snapshot_dependencies(
+        &self,
         mut pending: Vec<AgentObjectRef>,
+        append_proofs: bool,
     ) -> Result<AgentDependencyClosure> {
         let mut seen = BTreeSet::new();
         let mut native = BTreeSet::new();
+        let mut transcripts = TranscriptAppendAudit::default();
         while let Some(reference) = pending.pop() {
             if !seen.insert(reference) {
                 continue;
@@ -87,12 +114,16 @@ impl Coordinator {
                 return Err(Error::Limit("agent dependency closure"));
             }
             let object = self.read_agent_object(reference).await?;
+            if append_proofs {
+                transcripts.observe(reference, &object);
+            }
             native.extend(object.native_dependencies().map_err(agent_error)?);
             pending.extend(object.dependencies().map_err(agent_error)?);
         }
         Ok(AgentDependencyClosure {
             objects: seen,
             native,
+            transcripts: transcripts.finish(),
         })
     }
 }

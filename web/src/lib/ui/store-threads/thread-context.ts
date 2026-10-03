@@ -86,6 +86,18 @@ export function activityLinks(
     .flatMap((l) => {
       const target = l.target;
       if (target.type === "code") return baselineLinks(target.anchor, route);
+      if (target.type === "capture_gap") {
+        const hash = storeRouteToHash({
+          ...route,
+          threadId: null,
+          replyId: null,
+          page: "agents",
+          agentSessionId: null,
+          reviewThreadId: null,
+        });
+        const link = hash ? parseCommunityEntityLink(hash) : undefined;
+        return link ? [{ label: "Capture coverage gap", link }] : [];
+      }
       const hash = storeRouteToHash({
         ...route,
         threadId: null,

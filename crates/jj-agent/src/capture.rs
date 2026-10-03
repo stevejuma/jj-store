@@ -249,7 +249,6 @@ impl AgentEventBatchV1 {
         if self.schema_version != 1
             || !valid_label(&self.normalizer_version, 128)
             || self.evidence.kind != AgentObjectKind::ObservationBatch
-            || self.events.is_empty()
             || self.events.len() > 4096
         {
             return Err(Error::Invalid("agent event batch"));

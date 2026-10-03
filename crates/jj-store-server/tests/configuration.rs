@@ -67,6 +67,204 @@ fn configuration_is_bounded_strict_and_resolves_paths_without_creating_state() {
 }
 
 #[test]
+fn automatic_capture_configuration_is_explicit_local_writable_and_bounded() {
+    let root = tempfile::tempdir().unwrap();
+    let local = EXAMPLE.replace(
+        "[access]\nmode = \"authenticated\"\ninstallation = \"./installation.json\"\ncatalog = \"./repositories.json\"",
+        "[access]\nmode = \"local-trusted\"\ninstallation = \"./installation.json\"\ncatalog = \"./repositories.json\"\nrpc_socket = \"./native.sock\"\npermission = \"write\"",
+    );
+    let capture = r#"
+[agent_capture]
+enabled = true
+max_readers = 4
+rescan_seconds = 30
+max_sources = 1024
+max_pending_bytes = 67108864
+[[agent_capture.harnesses]]
+profile = "codex-cli-jsonl-v1"
+product_version = "0.156.1"
+roots = ["./transcripts"]
+"#;
+    let config = load(root.path(), &format!("{local}{capture}")).unwrap();
+    assert!(config.agent_capture.enabled);
+    assert_eq!(config.agent_capture.max_readers, 4);
+    assert_eq!(
+        config.agent_capture.harnesses[0].roots,
+        [root.path().canonicalize().unwrap().join("./transcripts")]
+    );
+    assert_eq!(
+        config.agent_capture.harnesses[0]
+            .codex_roots(None, Some(std::path::Path::new("invalid-ambient")))
+            .unwrap(),
+        config.agent_capture.harnesses[0].roots,
+    );
+    assert!(
+        !config.state_dir.exists(),
+        "config check must create no state"
+    );
+    let desktop = capture.replace("codex-cli-jsonl-v1", "codex-desktop-jsonl-v1");
+    assert!(load(root.path(), &format!("{local}{desktop}")).is_err());
+    let desktop = desktop.replace("0.156.1", "0.159.2");
+    let desktop_config = load(root.path(), &format!("{local}{desktop}")).unwrap();
+    assert_eq!(
+        desktop_config.agent_capture.harnesses[0].product_version,
+        "0.159.2"
+    );
+    for bad in [
+        capture.replace("max_readers = 4", "max_readers = 5"),
+        capture.replace("rescan_seconds = 30", "rescan_seconds = 31"),
+        capture.replace("max_sources = 1024", "max_sources = 0"),
+        capture.replace("max_pending_bytes = 67108864", "max_pending_bytes = 0"),
+        capture.replace("codex-cli-jsonl-v1", "unknown-profile"),
+        capture.replace("0.156.1", "unknown-version"),
+        capture.replace(
+            "enabled = true",
+            "enabled = true\ntoken = 'must-not-echo-secret'",
+        ),
+        capture.replace(
+            "[[agent_capture.harnesses]]",
+            "[[agent_capture.harnesses]]\nunknown = true",
+        ),
+        format!(
+            "{capture}{}",
+            &capture[capture.find("[[agent_capture.harnesses]]").unwrap()..]
+        ),
+        "\n[agent_capture]\nenabled = true\n".into(),
+    ] {
+        let error = load(root.path(), &format!("{local}{bad}"))
+            .unwrap_err()
+            .to_string();
+        assert!(!error.contains("must-not-echo-secret"));
+    }
+    assert!(load(root.path(), &format!("{EXAMPLE}{capture}")).is_err());
+    assert!(
+        load(
+            root.path(),
+            &format!(
+                "{}{capture}",
+                local.replace("permission = \"write\"", "permission = \"read\"")
+            )
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn configured_codex_locations_use_qualified_versions_and_explicit_override_precedence() {
+    use jj_store_capture::profile::CaptureProfile;
+    use jj_store_server::capture_config::HarnessConfig;
+    let root = tempfile::tempdir().unwrap();
+    let home = root.path().join("home");
+    let data = root.path().join("codex-data");
+    let mut harness = HarnessConfig {
+        profile: CaptureProfile::CodexDesktopJsonlV1,
+        product_version: "0.159.2".into(),
+        roots: Vec::new(),
+        endpoint: None,
+    };
+    assert_eq!(
+        harness.codex_roots(Some(&home), None).unwrap(),
+        vec![home.join(".codex/sessions")]
+    );
+    assert_eq!(
+        harness.codex_roots(None, Some(&data)).unwrap(),
+        vec![data.join("sessions")]
+    );
+    harness.roots.push(root.path().join("explicit"));
+    assert_eq!(harness.codex_roots(None, None).unwrap(), harness.roots);
+    harness.product_version = "0.156.1".into();
+    assert!(harness.codex_roots(None, None).is_err());
+    assert!(!home.exists());
+    assert!(!data.exists());
+}
+
+#[test]
+fn capture_api_config_rejects_credentials_remote_hosts_and_profile_confusion() {
+    use jj_store_capture::profile::CaptureProfile;
+    use jj_store_server::{
+        capture_config::HarnessConfig,
+        config::{Access, Storage},
+    };
+    let root = tempfile::tempdir().unwrap();
+    let mut config = load(root.path(), EXAMPLE).unwrap();
+    let original = toml::to_string(&config).unwrap();
+    assert!(
+        !original.contains("agent_capture"),
+        "omitted config preserves old output"
+    );
+    config.access = Access::LocalTrusted {
+        installation: root.path().join("installation.json"),
+        catalog: root.path().join("repositories.json"),
+        rpc_socket: root.path().join("native.sock"),
+        permission: Permission::Admin,
+    };
+    config.agent_capture.enabled = true;
+    config.agent_capture.harnesses.push(HarnessConfig {
+        profile: CaptureProfile::OpencodeReadOnlyApiV1,
+        product_version: "1.18.30".into(),
+        roots: Vec::new(),
+        endpoint: Some("http://127.0.0.1:4096/".into()),
+    });
+    config.validate().unwrap();
+    for bad in [
+        "http://localhost:4096/",
+        "https://remote.example/",
+        "http://user:must-not-echo-secret@127.0.0.1:4096/",
+        "http://127.0.0.1:4096/?token=must-not-echo-secret",
+        "http://127.0.0.1:4096/#fragment",
+        "http://127.0.0.1:4096/session",
+    ] {
+        config.agent_capture.harnesses[0].endpoint = Some(bad.into());
+        let error = config.validate().unwrap_err().to_string();
+        assert!(!error.contains("must-not-echo-secret"));
+    }
+    config.agent_capture.harnesses[0].endpoint = Some("http://[::1]:4096/".into());
+    config.validate().unwrap();
+    config.agent_capture.harnesses[0]
+        .roots
+        .push(root.path().join("transcripts"));
+    assert!(config.validate().is_err());
+    config.agent_capture.harnesses[0].roots.clear();
+    config.storage = Storage::Filesystem;
+    assert!(
+        config.validate().is_err(),
+        "automatic native capture needs native authority"
+    );
+    config.agent_capture.enabled = false;
+    config.validate().unwrap();
+}
+
+#[tokio::test]
+async fn unsupported_capture_reader_fails_before_server_state_creation() {
+    use jj_store_capture::profile::CaptureProfile;
+    use jj_store_server::{capture_config::HarnessConfig, config::Access, process::PreparedServer};
+    let root = tempfile::tempdir().unwrap();
+    let mut config = load(root.path(), EXAMPLE).unwrap();
+    config.access = Access::LocalTrusted {
+        installation: root.path().join("installation.json"),
+        catalog: root.path().join("repositories.json"),
+        rpc_socket: root.path().join("native.sock"),
+        permission: Permission::Write,
+    };
+    config.agent_capture.enabled = true;
+    config.agent_capture.harnesses.push(HarnessConfig {
+        profile: CaptureProfile::OpencodeExportJsonV1,
+        product_version: CaptureProfile::OpencodeExportJsonV1
+            .product_version()
+            .into(),
+        roots: Vec::new(),
+        endpoint: None,
+    });
+    let error = match PreparedServer::prepare(&config, true).await {
+        Ok(_) => panic!("unsupported reader must fail closed"),
+        Err(error) => error,
+    };
+    assert!(error.to_string().contains("capture reader unavailable"));
+    assert!(!config.state_dir.exists());
+    assert!(!root.path().join("native.sock").exists());
+}
+
+#[test]
 fn older_configuration_formats_are_explicitly_rejected() {
     let root = tempfile::tempdir().unwrap();
     let error = load(root.path(), "format = 1\n").unwrap_err().to_string();

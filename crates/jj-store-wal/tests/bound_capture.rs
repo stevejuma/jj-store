@@ -214,6 +214,189 @@ async fn capture_cas_race_reapplies_disjoint_changes_but_rejects_changed_assignm
 fn coordinator(store: Arc<Store>, guard: Arc<Guard>) -> Coordinator {
     Coordinator::new(store, REPO, Arc::new(Source), guard, Limits::default()).unwrap()
 }
+async fn diagnostic_capture(c: &Coordinator, n: u8) -> AgentDeltaRequest {
+    let root = match c.read().await.unwrap().manifest().agent_root {
+        Some(root) => root,
+        None => c.stage_agent_root(&a::AgentRootV1::empty()).await.unwrap(),
+    };
+    let base = c.agent_store(root).await.unwrap();
+    let batch = a::SanitizedObservationBatchV1 {
+        schema_version: 1,
+        batch_id: a::CaptureBatchId::new([n; 16]),
+        integration: a::IntegrationId::Codex,
+        source_instance_id: a::SourceInstanceId::new([n; 16]),
+        sanitizer_version: "agent-redaction@0.1.0".into(),
+        representation: a::SanitizedRepresentation::SanitizedNative,
+        observations: vec![a::SanitizedObservationV1 {
+            observation_id: a::ObservationId::new([n; 16]),
+            source_sequence: 1,
+            occurred_at_millis: None,
+            source_kind: a::SourceKind::Hook,
+            source_trust: a::SourceTrust::LocalUserHook,
+            payload: a::SanitizedPayloadV1::new(
+                a::SanitizedMediaType::Json,
+                br#"{"future_record":true}"#,
+            )
+            .unwrap(),
+        }],
+    };
+    let delta = c
+        .stage_agent_capture(&base, &a::NormalizerProfileV1::codex_0_156_1(), &batch, 123)
+        .await
+        .unwrap();
+    AgentDeltaRequest::new(
+        ACTOR,
+        m::RequestId::new([n; 16]),
+        m::PublicationId::new([n; 16]),
+        delta,
+        vec![n],
+    )
+    .unwrap()
+}
+#[tokio::test]
+async fn bound_diagnostic_gap_selects_atomic_evidence_and_preserves_unknown_restart_receipt() {
+    let (store, guard, c) = fixture().await;
+    let t = thread(&c, 61).await;
+    let request = bind(diagnostic_capture(&c, 62).await, &t, None);
+    let before = c.read().await.unwrap();
+    store.unknown.store(true, Ordering::SeqCst);
+    assert!(matches!(
+        c.publish_agent_delta(&request).await.unwrap(),
+        PublishOutcome::OutcomeUnknown { .. }
+    ));
+    assert_eq!(c.read().await.unwrap().digest(), before.digest());
+    let accepted = c.publish_agent_delta(&request).await.unwrap();
+    let selected = c.read().await.unwrap();
+    assert_eq!(
+        selected.manifest().published.0,
+        before.manifest().published.0 + 1
+    );
+    assert_eq!(selected.manifest().heads, before.manifest().heads);
+    let agents = c
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    assert!(
+        agents
+            .list_sessions(None, 10)
+            .await
+            .unwrap()
+            .selections
+            .is_empty()
+    );
+    let threads = c
+        .native_thread_store(selected.manifest().thread_root.unwrap())
+        .await
+        .unwrap();
+    assert!(threads.state.assignments.is_empty());
+    assert_eq!(threads.state.links.len(), 1);
+    let CollabObjectV1::ThreadLink(link) = threads
+        .graph
+        .get(*threads.state.links.values().next().unwrap())
+        .unwrap()
+    else {
+        panic!()
+    };
+    let ThreadLinkTargetV1::CaptureGap {
+        source_state,
+        event_batch,
+        binding,
+    } = &link.target
+    else {
+        panic!()
+    };
+    assert_eq!(binding, &request.thread_binding.as_ref().unwrap().binding);
+    AgentReader::new(&agents)
+        .validate_capture_gap(*source_state, *event_batch)
+        .await
+        .unwrap();
+    assert_eq!(
+        CollabObjectV1::ThreadLink(link.clone()).agent_dependencies(),
+        BTreeSet::from([*source_state, *event_batch])
+    );
+    c.checkpoint().await.unwrap();
+    let checkpointed = c.read().await.unwrap();
+    let fresh = coordinator(store, guard);
+    fresh.recover(100).await.unwrap();
+    assert_eq!(fresh.publish_agent_delta(&request).await.unwrap(), accepted);
+    assert_eq!(fresh.read().await.unwrap().digest(), checkpointed.digest());
+}
+#[tokio::test]
+async fn stale_denied_or_misleading_bound_gap_selects_neither_root() {
+    let (_, guard, c) = fixture().await;
+    let t = thread(&c, 61).await;
+    let request = bind(diagnostic_capture(&c, 62).await, &t, None);
+    let before = c.read().await.unwrap();
+    let mut misleading = request.clone();
+    misleading.request_id = m::RequestId::new([63; 16]);
+    misleading.publication_id = m::PublicationId::new([63; 16]);
+    let source_edit = misleading
+        .delta
+        .edits
+        .iter_mut()
+        .find(|e| e.catalog == a::AgentCatalogKind::Sources)
+        .unwrap();
+    let old_source = source_edit.replacement.unwrap();
+    let a::AgentObjectV1::SourceState(mut state) = c.read_agent_object(old_source).await.unwrap()
+    else {
+        panic!()
+    };
+    state.receipts[0].first_sequence = 2;
+    state.receipts[0].last_sequence = 2;
+    state.position = a::SourcePositionV1::NativeSequence { sequence: 2 };
+    let new_source = c
+        .stage_agent_object(&a::AgentObjectV1::SourceState(state))
+        .await
+        .unwrap();
+    source_edit.replacement = Some(new_source);
+    let projection_edit = misleading
+        .delta
+        .edits
+        .iter_mut()
+        .find(|e| e.catalog == a::AgentCatalogKind::Projections)
+        .unwrap();
+    let a::AgentObjectV1::ProjectionCatalog(mut view) = c
+        .read_agent_object(projection_edit.replacement.unwrap())
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    view.source_states = vec![new_source];
+    projection_edit.replacement = Some(
+        c.stage_agent_object(&a::AgentObjectV1::ProjectionCatalog(view))
+            .await
+            .unwrap(),
+    );
+    assert!(matches!(
+        c.publish_agent_delta(&misleading).await,
+        Err(wal::Error::Corrupt(_))
+    ));
+    assert_eq!(c.read().await.unwrap().digest(), before.digest());
+    guard.deny_thread.store(true, Ordering::SeqCst);
+    assert!(matches!(
+        c.publish_agent_delta(&request).await,
+        Err(wal::Error::Denied)
+    ));
+    assert_eq!(c.read().await.unwrap().digest(), before.digest());
+    guard.deny_thread.store(false, Ordering::SeqCst);
+    command(
+        &c,
+        64,
+        ThreadCommandV1::Rename {
+            thread_id: t.thread_id,
+            expected: t.version,
+            title: "Changed".into(),
+        },
+    )
+    .await;
+    let renamed = c.read().await.unwrap();
+    assert!(matches!(
+        c.publish_agent_delta(&request).await,
+        Err(wal::Error::Stale)
+    ));
+    assert_eq!(c.read().await.unwrap().digest(), renamed.digest());
+}
 async fn fixture() -> (Arc<Store>, Arc<Guard>, Coordinator) {
     let store = Arc::new(Store::default());
     let guard = Arc::new(Guard::default());

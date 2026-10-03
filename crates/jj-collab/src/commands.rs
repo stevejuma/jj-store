@@ -436,6 +436,32 @@ impl ThreadStateV1 {
                                     reassigned_from = Some(prior_thread);
                                 }
                             }
+                        } else if let ThreadLinkTargetV1::CaptureGap { binding, .. } = target {
+                            if binding.thread_id != thread_id
+                                || Some(binding.observed_thread) != old
+                                || binding.observed_assignment != *observed_primary
+                            {
+                                return Err(Error::Invalid("capture gap binding intent"));
+                            }
+                            if let Some(reference) = observed_primary {
+                                let CollabObjectV1::ThreadLink(old) = graph.get(*reference)? else {
+                                    return Err(Error::Invalid("capture gap assignment"));
+                                };
+                                let ThreadLinkTargetV1::Session {
+                                    session_id,
+                                    primary: true,
+                                    ..
+                                } = old.target
+                                else {
+                                    return Err(Error::Invalid("capture gap assignment"));
+                                };
+                                if !old.active
+                                    || self.assignments.get(&session_id) != Some(reference)
+                                    || self.links.get(&old.id) != Some(reference)
+                                {
+                                    return Err(Error::Stale);
+                                }
+                            }
                         } else if observed_primary.is_some() {
                             return Err(Error::Invalid("non-primary link assignment precondition"));
                         }

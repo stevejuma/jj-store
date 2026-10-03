@@ -347,6 +347,41 @@ test("server_composition_cannot_depend_on_cli_or_native_upstream", () => {
   );
 });
 
+test("capture_runtime_consumes_owned_interfaces_without_reverse_dependencies", () => {
+  assert.deepEqual(
+    dependencyErrors([
+      {
+        name: "jj-store-capture",
+        dependencies: [
+          "jj-agent",
+          "jj-collab",
+          "jj-store-model",
+          "jj-store-wal",
+          "jj-store-service",
+          "jj-store-rpc",
+        ].map((name) => ({ name })),
+      },
+      { name: "jj-store-server", dependencies: [{ name: "jj-store-capture" }] },
+    ]),
+    [],
+  );
+  const rejected = dependencyErrors([
+    {
+      name: "jj-store-capture",
+      dependencies: [
+        "jj-lib",
+        "jj-store-cli",
+        "jj-store-server",
+        "jj-store-jj",
+      ].map((name) => ({ name })),
+    },
+    ...["jj-agent", "jj-store-model", "jj-store-object", "jj-store-wal"].map(
+      (name) => ({ name, dependencies: [{ name: "jj-store-capture" }] }),
+    ),
+  ]);
+  assert.equal(rejected.length, 8);
+});
+
 test("http_consumes_owned_service_contracts_without_storage_or_upstream", () => {
   assert.equal(
     dependencyErrors([

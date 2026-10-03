@@ -9,6 +9,9 @@ use std::{
     process::{Child, Command, Output, Stdio},
     time::{Duration, Instant},
 };
+#[cfg(unix)]
+#[path = "server_executable/configured_capture.rs"]
+mod configured_capture;
 
 fn protected_http_client() -> reqwest::ClientBuilder {
     let mut headers = reqwest::header::HeaderMap::new();
@@ -346,6 +349,44 @@ fn local_init_creates_strict_format_two_configuration() {
     assert!(text.contains("mode = \"local-trusted\""));
     assert!(text.contains("mode = \"embedded-rustfs\""));
     assert!(!text.contains("secret_key"));
+}
+
+#[test]
+fn cold_unsupported_capture_config_check_and_startup_preserve_private_state() {
+    let fixture = Fixture::new();
+    let local = jj_store_server::config::EXAMPLE.replace(
+        "[access]\nmode = \"authenticated\"\ninstallation = \"./installation.json\"\ncatalog = \"./repositories.json\"",
+        "[access]\nmode = \"local-trusted\"\ninstallation = \"./installation.json\"\ncatalog = \"./repositories.json\"\nrpc_socket = \"./native.sock\"\npermission = \"write\"",
+    );
+    let profile = jj_store_capture::profile::CaptureProfile::OpencodeExportJsonV1;
+    let capture = format!(
+        "\n[agent_capture]\nenabled = true\n[[agent_capture.harnesses]]\nprofile = \"opencode-export-json-v1\"\nproduct_version = \"{}\"\n",
+        profile.product_version()
+    );
+    fs::write(&fixture.config, format!("{local}{capture}")).unwrap();
+    let check: serde_json::Value = serde_json::from_str(&success(
+        command()
+            .args([
+                "config",
+                "check",
+                "--config",
+                fixture.config.to_str().unwrap(),
+                "--format=json",
+            ])
+            .output()
+            .unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(check["valid"], true);
+    let output = fixture
+        .command()
+        .args(["run", "--config", fixture.config.to_str().unwrap()])
+        .output()
+        .unwrap();
+    assert!(!output.status.success());
+    assert!(String::from_utf8_lossy(&output.stderr).contains("capture reader unavailable"));
+    assert!(!fixture.root.path().join("state").exists());
+    assert!(!fixture.root.path().join("native.sock").exists());
 }
 
 #[cfg(unix)]

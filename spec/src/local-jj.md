@@ -12,20 +12,34 @@ closure; absent reply fields preserve existing canonical message and intent
 bytes.
 
 Explicit local BoundCapture carries the exact observed Thread version and
-primary assignment with the original sanitized batch/profile. It requires one
-session replacement, stages the shared link without changing lifecycle and
-selects Agent and Thread descriptors in one companion ref CAS. The Thread
-descriptor audits and retains the complete newly staged session closure before
-selection. Matching receipt replay precedes entity/source preconditions; stale
-bindings select neither root. The private spool retains this original bound
-request across unknown outcomes. Legacy unlinked capture tags, field order and
-receipts remain unchanged.
+primary assignment with the original sanitized batch/profile. It retains one
+real session replacement or a validated diagnostic-only capture gap, stages the
+shared link without changing lifecycle and selects Agent and Thread descriptors
+in one companion ref CAS. The Thread descriptor audits and retains the complete
+newly staged session closure before selection. Matching receipt replay precedes
+entity/source preconditions; stale bindings select neither root. The private
+spool retains this original bound request across unknown outcomes. Legacy
+unlinked capture tags, field order and receipts remain unchanged.
 
 M13 adds an owned companion metadata store to ordinary Git-backed JJ
 repositories. Upstream GitBackend and JJ operation publication remain code
 authority. Native repositories continue to use their existing manifest, WAL and
 immutable objects. The local profile shares the domain models, service policy
 and presentation.
+
+Explicit local capture shares the selected-alias tool-result resolver with the
+native provider. A result-only request cumulatively replaces a verified existing
+session while preserving lifecycle, previous snapshots and original receipts
+across reopen. This does not enable automatic readers for local Git folders.
+
+The shared projector also adopts qualified common native OpenCode session,
+message and tool aliases across explicitly supplied hook/API/export evidence.
+Case-sensitive native identity, complete selected-alias coverage and verified
+parent-session/tool targets are required. Ambiguous prior targets retain source
+receipts and diagnostic evidence while withholding logical entity edits. New
+captures select the integration's common projection precondition through the
+local expected-old-value publication; original receipts and historical roots
+retain their prior interpretation.
 
 ## Requirements
 
@@ -104,20 +118,21 @@ are excluded from portable transfer.
 
 The local AgentStore uses the existing canonical repository-bound immutable
 record envelope and one shared normalization, transcript and catalog engine. The
-selected domain descriptor binds the complete record-to-Git-blob inventory;
-reads audit retained membership and expose only the pinned root closure. A
-sanitized capture request binds its original batch and profile before reduction,
-so receipt replay precedes overlap checks and generated object identities do not
-alter intent. A ref race retries against the selected root; source overlap still
-fails stale. Publishing AgentStore preserves WorkStore and other domains. Native
-V1 code associations require native evidence and are rejected by this provider
-unless a native evidence provider is available. Portable association/checkpoint
-commands bind original records, exact capsule bytes and expected immutable
-selections. The provider validates source identity, operation/profile and commit
-membership, retains the complete physical Git closure and selects the evidence
-inventory alongside the AgentStore root. Missing, mismatched or unselected
-capsules fail closed. Corrections retain prior versions and require exact stale
-preconditions; receipt replay precedes those checks.
+selected version-2 domain descriptor binds the complete record-to-Git-blob
+inventory; reads audit retained membership and expose only the pinned root
+closure. A sanitized capture request binds its original batch and profile before
+reduction, so receipt replay precedes overlap checks and generated object
+identities do not alter intent. A ref race retries against the selected root;
+source overlap still fails stale. Publishing AgentStore preserves WorkStore and
+other domains. Native V1 code associations require native evidence and are
+rejected by this provider unless a native evidence provider is available.
+Portable association/checkpoint commands bind original records, exact capsule
+bytes and expected immutable selections. The provider validates source identity,
+operation/profile and commit membership, retains the complete physical Git
+closure and selects the evidence inventory alongside the AgentStore root.
+Missing, mismatched or unselected capsules fail closed. Corrections retain prior
+versions and require exact stale preconditions; receipt replay precedes those
+checks.
 
 CLI provenance publication synchronizes its complete typed request in private
 device state before companion ref CAS. The journal binds repository and actor;
@@ -378,3 +393,47 @@ legacy config remains a read-only fallback. Reads MUST NOT migrate config,
 snapshot dirty files or alter heads. Only bounded email is returned; custom
 aliases remain isolated from query evaluation. Missing/malformed email leaves
 explicit session input available.
+
+## M18 shared capture qualification
+
+The [capture completion profile](collaboration.md) strengthens the shared
+normalization/publication engine used by this provider. Diagnostic-only input
+and separately accepted partial tool updates need independent local regressions
+without changing existing request/receipt framing. The initial server discovery
+worker targets verified native repositories; serving ordinary Git-backed folders
+does not enable transcript discovery or automatic hook causality. Existing M13
+portable evidence/review gates remain prerequisites for broader local capture.
+
+Evidence-only capture selects sanitized evidence and source/projection progress
+without fictional sessions. Local reopen retains original receipts and permits
+later source capture. Separate tool captures enrich selected prior content and
+terminal state through the shared engine; request tags, intent framing and
+companion publication authority remain unchanged.
+
+Companion AgentStore supports only its canonical version-2 domain descriptor and
+schema-2 transcript append-tail pages through the same strong Git blob
+dependencies. Version-1 descriptors and schema-1 forward pages are rejected
+without upgrade, rewrite or migration. Supported pinned tail manifests remain
+independently readable after restart and Git collection. Current AgentRootV1,
+chunk, manifest and portable provenance formats remain supported. First use of
+an absent companion Agent domain still creates the current descriptor through
+explicit authorized publication; this is distinct from legacy conversion.
+
+The local provider derives the same opaque append witnesses from validated,
+retained records in the explicitly selected companion snapshot. It reuses its
+existing evidence-audit pass without a new authoritative index or metadata
+write.
+
+Bound diagnostic-only batches retain an explicit capture_gap Thread link through
+the same atomic companion ref selection and complete external Agent closure. The
+gap preserves original observed binding intent without a synthetic session or
+primary assignment. Restart and Git collection retain the evidence and exact
+receipt; later valid bound capture has independent observed preconditions.
+
+Qualified common-native Codex alias adoption uses the same pinned shared
+projector and V1 identity-join projection precondition. Different source
+channels can enrich one selected session/tool without changing original IDs,
+source cursors or receipt framing. Companion reopen and replay must preserve
+both the original metadata pin and the joined result; ambiguous aliases retain
+evidence and progress without an invented session. This shared projection
+qualification does not enable automatic discovery for filesystem-only serving.

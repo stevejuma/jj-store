@@ -1,7 +1,7 @@
 use crate::{
     AgentAliasV1, AgentEntityRefV1, AgentSessionId, IntegrationId, MessageId, MessageRole,
-    NativeEntityKind, Result, SanitizedObservationBatchV1, SanitizedPayloadV1, SessionState,
-    SourceInstanceId, ToolCallId, ToolKind, ToolState, TurnId, normalizers,
+    NativeEntityKind, Result, SanitizedPayloadV1, SessionState, SourceInstanceId, ToolCallId,
+    ToolKind, ToolState, TurnId,
 };
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
@@ -16,6 +16,9 @@ pub struct NormalizerProfileV1 {
 impl NormalizerProfileV1 {
     pub fn codex_0_156_1() -> Self {
         Self::new(IntegrationId::Codex, "0.156.1")
+    }
+    pub fn codex_desktop_0_159_2() -> Self {
+        Self::new(IntegrationId::Codex, "0.159.2")
     }
     pub fn cursor_3_22_7() -> Self {
         Self::new(IntegrationId::Cursor, "3.22.7")
@@ -54,6 +57,7 @@ impl NormalizerProfileV1 {
             && matches!(
                 (self.integration, self.product_version.as_str()),
                 (IntegrationId::Codex, "0.156.1")
+                    | (IntegrationId::Codex, "0.159.2")
                     | (IntegrationId::Cursor, "3.22.7")
                     | (IntegrationId::OpenCode, "1.18.30")
             )
@@ -173,38 +177,6 @@ pub struct NormalizationBatchV1 {
 pub struct ReducedToolsV1 {
     pub tools: Vec<NormalizedToolRecordV1>,
     pub diagnostics: Vec<NormalizationDiagnosticV1>,
-}
-
-pub fn normalize_batch(
-    profile: &NormalizerProfileV1,
-    batch: &SanitizedObservationBatchV1,
-) -> Result<NormalizationBatchV1> {
-    batch.validate()?;
-    let mut output = NormalizationBatchV1 {
-        schema_version: 1,
-        profile: profile.clone(),
-        aliases: Vec::new(),
-        records: Vec::new(),
-        diagnostics: Vec::new(),
-    };
-    if !profile.supported() {
-        output.diagnostic(
-            NormalizationDiagnosticKind::UnsupportedVersion,
-            "profile-version",
-            None,
-        );
-        return Ok(output);
-    }
-    if profile.integration != batch.integration {
-        output.diagnostic(
-            NormalizationDiagnosticKind::IntegrationMismatch,
-            "batch-integration",
-            None,
-        );
-        return Ok(output);
-    }
-    normalizers::normalize(profile, batch, &mut output)?;
-    Ok(output)
 }
 
 impl NormalizationBatchV1 {

@@ -46,3 +46,16 @@ commits = []
 # upstream = "https://jj.example.test/"
 # token_environment = "JJ_STORE_REPLICATION_TOKEN_MAIN"
 # ca_certificate = "./upstream-ca.pem"
+
+# Automatic native transcript capture is opt-in for writable LocalTrusted access.
+# Worker composition and reader qualification are tracked under M17.2.
+# [agent_capture]
+# enabled = false
+# max_readers = 4
+# rescan_seconds = 30
+# max_sources = 1024
+# max_pending_bytes = 67108864
+# [[agent_capture.harnesses]]
+# profile = "codex-cli-jsonl-v1"
+# product_version = "0.156.1"
+# roots = ["./approved-transcripts"]

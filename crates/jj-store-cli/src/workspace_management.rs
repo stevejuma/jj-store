@@ -3,8 +3,10 @@ use crate::binding::{CONNECTION_FILE, Connection};
 use jj_lib::workspace::{DefaultWorkspaceLoaderFactory, WorkspaceLoaderFactory as _};
 use jj_store_server::policy;
 use jj_store_service::local_management::{
-    Error, MAX_PATH_BYTES, VerifiedWorkspace, WorkspaceProfile, WorkspaceVerifier,
+    Error, MAX_PATH_BYTES, VerifiedCaptureWorkspace, VerifiedWorkspace, WorkspaceProfile,
+    WorkspaceVerifier,
 };
+use sha2::{Digest as _, Sha256};
 use std::path::{Path, PathBuf};
 
 pub struct NativeWorkspaceVerifier {
@@ -83,4 +85,105 @@ impl WorkspaceVerifier for NativeWorkspaceVerifier {
             profile: WorkspaceProfile::Native,
         })
     }
+    fn inspect_capture_directory(&self, path: &str) -> Result<VerifiedCaptureWorkspace, Error> {
+        let requested = Path::new(path);
+        if path.len() > MAX_PATH_BYTES || !requested.is_absolute() || path.contains('\0') {
+            return Err(Error::Invalid);
+        }
+        let directory = requested.canonicalize().map_err(|_| Error::Invalid)?;
+        if !directory.is_dir()
+            || directory
+                .to_str()
+                .is_none_or(|path| path.len() > MAX_PATH_BYTES)
+            || directory.components().any(|part| {
+                part.as_os_str().to_str().is_some_and(|name| {
+                    name.eq_ignore_ascii_case(".jj") || name.eq_ignore_ascii_case(".git")
+                })
+            })
+        {
+            return Err(Error::Invalid);
+        }
+        let mut ancestors = directory.ancestors();
+        for _ in 0..64 {
+            let root = ancestors.next().ok_or(Error::Invalid)?;
+            if repository_boundary(&root.join(".jj"))? {
+                let workspace = self.inspect(root.to_str().ok_or(Error::Invalid)?)?;
+                let digest = capture_binding_digest(&workspace)?;
+                if self.inspect(&workspace.path)? != workspace {
+                    return Err(Error::Invalid);
+                }
+                return Ok(VerifiedCaptureWorkspace {
+                    directory: path.into(),
+                    workspace,
+                    binding_digest: digest,
+                });
+            }
+            if repository_boundary(&root.join(".git"))? {
+                return Err(Error::UnsupportedProfile);
+            }
+        }
+        Err(Error::Limit)
+    }
+}
+
+fn repository_boundary(path: &Path) -> Result<bool, Error> {
+    match std::fs::symlink_metadata(path) {
+        Ok(_) => Ok(true),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
+        Err(_) => Err(Error::Unavailable),
+    }
+}
+
+fn capture_binding_digest(workspace: &VerifiedWorkspace) -> Result<[u8; 32], Error> {
+    let root = Path::new(&workspace.path);
+    let metadata = Path::new(&workspace.metadata);
+    let mut digest = Sha256::new_with_prefix(b"jj-store/capture-workspace-binding/v1\0");
+    for path in [
+        root,
+        &root.join(".jj"),
+        &root.join(".jj/working_copy"),
+        metadata,
+    ] {
+        let value = std::fs::symlink_metadata(path).map_err(|_| Error::Invalid)?;
+        if !value.is_dir() || value.file_type().is_symlink() {
+            return Err(Error::Invalid);
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::MetadataExt as _;
+            digest.update(value.dev().to_be_bytes());
+            digest.update(value.ino().to_be_bytes());
+        }
+        #[cfg(not(unix))]
+        {
+            return Err(Error::UnsupportedProfile);
+        }
+        let bytes = path.to_str().ok_or(Error::Invalid)?.as_bytes();
+        digest.update((bytes.len() as u64).to_be_bytes());
+        digest.update(bytes);
+    }
+    let pointer = root.join(".jj/repo");
+    if std::fs::symlink_metadata(&pointer)
+        .map_err(|_| Error::Invalid)?
+        .is_file()
+    {
+        let bytes =
+            policy::read_regular(&pointer, MAX_PATH_BYTES as u64).map_err(|_| Error::Invalid)?;
+        digest.update((bytes.len() as u64).to_be_bytes());
+        digest.update(bytes);
+    } else {
+        digest.update(0u64.to_be_bytes());
+    }
+    for path in [
+        metadata.join(CONNECTION_FILE),
+        metadata.join("store/native-profile"),
+        metadata.join("op_store/native-profile"),
+        metadata.join("op_heads/native-profile"),
+        metadata.join("store/type"),
+    ] {
+        let bytes = policy::read_regular(&path, 64 * 1024).map_err(|_| Error::Invalid)?;
+        digest.update((bytes.len() as u64).to_be_bytes());
+        digest.update(bytes);
+    }
+    Ok(digest.finalize().into())
 }

@@ -12,10 +12,12 @@ use jj_cli::{cli_util::CommandHelper, command_error::CommandError, ui::Ui};
 use sha2::{Digest as _, Sha256};
 use std::path::{Path, PathBuf};
 mod backend;
+mod capture;
 mod collab;
 mod provenance;
 mod types;
 use backend::{Backend, default_state, workspace_root};
+pub use capture::{CaptureArgs, CaptureCommand};
 pub use collab::{ReactionCliCommand, ThreadCliCommand};
 pub use types::{AgentArgs, AgentCommand, AgentName};
 
@@ -23,6 +25,14 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
     let Some(command) = args.command else {
         return presentation::help(ui, helper, &["agent".into()]);
     };
+    if let AgentCommand::Capture(command) = &command {
+        if args.state_dir.is_some() {
+            return Err(jj_cli::command_error::user_error(
+                "capture management does not accept --state-dir",
+            ));
+        }
+        return capture::run(ui, helper, args.format, command).await;
+    }
     let backend = Backend::open(helper)?;
     let workspace = workspace_root(helper.cwd()).map_err(error)?;
     if let Some(value) = backend.collab_action(&command).await? {
@@ -99,6 +109,7 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
     registry.refresh_environment().map_err(error)?;
     audit_installations(&mut registry).map_err(error)?;
     let (status, action) = match command {
+        AgentCommand::Capture(_) => return Err(error("capture command dispatch failed")),
         AgentCommand::Status => (registry.status().clone(), "probed"),
         AgentCommand::Enable {
             agents,

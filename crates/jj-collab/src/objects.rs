@@ -118,7 +118,14 @@ impl CollabObjectV1 {
                 })
                 .collect(),
             Self::HumanMessageRevision(v) => v.previous.into_iter().chain(v.reply_to).collect(),
-            Self::ThreadLink(v) => v.previous.into_iter().collect(),
+            Self::ThreadLink(v) => {
+                let mut dependencies: BTreeSet<_> = v.previous.into_iter().collect();
+                if let ThreadLinkTargetV1::CaptureGap { binding, .. } = &v.target {
+                    dependencies.insert(binding.observed_thread);
+                    dependencies.extend(binding.observed_assignment);
+                }
+                dependencies.into_iter().collect()
+            }
             Self::Reaction(v) => v
                 .target
                 .collab_dependencies()
@@ -151,6 +158,11 @@ impl CollabObjectV1 {
     pub fn agent_dependencies(&self) -> BTreeSet<AgentObjectRef> {
         match self {
             Self::ThreadLink(v) => match &v.target {
+                ThreadLinkTargetV1::CaptureGap {
+                    source_state,
+                    event_batch,
+                    ..
+                } => BTreeSet::from([*source_state, *event_batch]),
                 ThreadLinkTargetV1::Session { snapshot, .. } => BTreeSet::from([*snapshot]),
                 ThreadLinkTargetV1::Code { evidence, .. } => evidence.iter().copied().collect(),
                 _ => BTreeSet::new(),

@@ -36,6 +36,7 @@ pub mod work;
 
 pub mod git_bridge;
 
+pub mod capture_management;
 pub mod local_management;
 
 pub mod storage_backend;

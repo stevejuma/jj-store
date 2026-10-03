@@ -7,6 +7,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
+jj-store-capture.workspace = true
 jj-collab.workspace = true
 jj-agent.workspace = true
 jj-review.workspace = true
@@ -29,6 +30,7 @@ jj-store-wal.workspace = true
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "http2", "json"] }
 url = "2"
 sha2 = "0.10"
 hex = "0.4"
@@ -40,9 +42,6 @@ shlex = "1.3"
 tokio = { version = "1", features = ["rt-multi-thread", "time", "sync", "process", "io-util"] }
 rustix = { version = "=1.1.5", features = ["process"] }
 tonic = { version = "0.14", features = ["transport"] }
-kingfisher-core = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431" }
-kingfisher-rules = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431" }
-kingfisher-scanner = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431", default-features = false }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 keyring = { version = "3.6", features = ["apple-native"] }
@@ -62,7 +61,6 @@ path = "src/server_main.rs"
 [dev-dependencies]
 jj-store-tantivy.workspace = true
 jj-store-adapters.workspace = true
-reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "http2", "json"] }
 jj-store-http.workspace = true
 axum = { version = "0.8", features = ["json", "query"] }
 tower = { version = "0.5", features = ["util"] }

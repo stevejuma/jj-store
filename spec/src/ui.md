@@ -313,6 +313,37 @@ restoration. Choosing it retains the saved accent for other themes.
 
 ## Transient store settings
 
+JST-UI-016 installation capture management lives in Local service settings,
+independently of a selected repository. LocalTrusted bootstrap must advertise
+`local_capture_management` before any capture request. The installation-owned
+controller survives settings closure and repository navigation, closes its
+transport at application teardown, and preserves historical code selections,
+drafts and pending commands during automatic updates. Capture settings loads
+policy, harness coverage, bounded sources and publication progress on opening;
+visible five-second checks, acknowledged actions and focus/reconnect keep these
+observations current. Reads coalesce and late responses are discarded. Closing
+settings stops visible polling without losing installation-owned pending intent.
+Manual refresh remains optional; no transcript paths or native session keys are
+shown. Background reads never replay commands or replace accepted import intent.
+Agents reuses the main application's automatic committed-data refresh and common
+session response/sidebar, preserving selection and drafts. Capture actions MUST
+reflect the qualified runtime profile; deferred OpenCode/Cursor imports are not
+offered as working commands. One-time server configuration is explained in the
+disabled state; a configuration editor is deferred for the usable preview.
+Disabled, unsupported, degraded and unavailable states remain distinct. Pause
+acceptance and rescan acceptance do not claim worker drain or discovery
+completion.
+
+Controls retain the exact original generation, revision, selector and nonzero
+request ID while a control/import outcome is unknown. New durable commands are
+withheld until exact replay or matching receipt inspection resolves that intent;
+a refusal on an uncertain retry cannot erase its earlier unknown outcome. Source
+continuation requires the original runtime generation, rejects repeated
+cursors/selectors and never combines a stale or malformed page. Explicit
+inactive history import shows accepted boundary publication independently from
+live-tail coverage. Users may inspect a previous import request ID without
+selecting a different source, including when its receipt is unavailable.
+
 Settings opens from the existing profile menu and replaces the repository
 navigation and body with a jj-store-owned settings sidebar and selected section.
 The sidebar contains Appearance, Local service, Repository, Search, Storage and
@@ -1674,3 +1705,40 @@ is unavailable for remote sessions and the filesystem-only companion profile.
 
 Storage controls require explicit repository context and cannot act on the last
 selected repository while the Projects hub is open.
+
+An explicit diagnostic-only bound capture appears as a capture coverage gap in
+Thread context. Its link opens the Agent directory without inventing a session
+or review destination. Exact retained source and binding references remain
+available through the typed Thread history; no rendered source bodies or local
+paths are inferred from the gap.
+
+## M18 capture coverage and inspection
+
+[Agent capture completion](collaboration.md) adds explicit source health,
+coverage, backlog and progress to repository-owned agent/settings presentation.
+Unsupported/unbound readers, gaps, pending publication and code-attribution
+strength remain distinguishable. Exact session/transcript/checkpoint history and
+message/plan review targets require qualified persisted artifacts. SSE announces
+freshness; active views follow committed roots automatically while explicit
+historical selections retain their pins. Focused interaction/accessibility and
+cold flow evidence do not approve visual baselines.
+
+### Usable capture settings lifecycle
+
+Opening the Local service section loads capture status and sources
+automatically. A serial five-second visible refresh retains the loaded source
+count and validates all replacement continuations, waking on focus and reconnect
+and after control acknowledgements. Closure cancels ordinary observations and
+removes polling; installation-owned exact commands, original import selectors,
+receipt identity and request-ID drafts survive navigation. Late reads cannot
+replace observations from a newer view. A missing import receipt retains
+uncertainty and cannot prove rejection. Unsupported OpenCode/Cursor sources have
+no usable import action. Worker state and configuration setup use plain labels;
+receipt details remain available. Agents reuse main's automatic pinned snapshot
+updates.
+
+Runtime unavailable observations are a cumulative unsigned counter, not a count
+of tracked sources. Repeated discovery failures can exceed the 4096-source
+bound; valid counter values MUST NOT disable Capture status or controls. Queue
+counts likewise use their unsigned wire contract rather than the source bound.
+Tracked-source counts remain bounded, and malformed counters remain refused.

@@ -1,3 +1,4 @@
+import { createProductionBranchActions } from "./production-branch-actions.js";
 import { isRepositoryProjects } from "./projects-view-cache.js";
 import {
   clearProductionStoreView,
@@ -117,6 +118,8 @@ export async function initializeProductionStore(options: {
     if (options.signal.aborted) return;
     options.data.accessMode = bootstrap.access_mode;
     options.data.storageReady = bootstrap.storage.ready;
+    options.data.captureSupported =
+      bootstrap.capabilities.local_capture_management === true;
     options.data.backups = [...bootstrap.backups];
     if (!bootstrap.storage.ready) {
       options.data.status.connection = "failed";
@@ -195,4 +198,17 @@ export function destroyProductionStoreLifecycle(
   lifecycle.abort();
   disconnect();
   history.destroy();
+}
+
+export function createProductionSelections(
+  context: Parameters<typeof createProductionBranchActions>[0],
+) {
+  return {
+    selectRevision: createProductionRevisionSelector(
+      context.data,
+      context.history,
+      context.reader,
+    ),
+    branchActions: createProductionBranchActions(context),
+  };
 }

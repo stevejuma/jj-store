@@ -6,7 +6,7 @@ use jj_agent::{
     IntegrationId, NormalizedActivityRecordV1, NormalizerProfileV1, ObservationId,
     SanitizedMediaType, SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
     SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust,
-    TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1,
+    TranscriptChunkV1, TranscriptManifestV1, TranscriptStreamV1, TranscriptTailPageV2,
 };
 use jj_store_model::{EpochId, ObjectKey, OperationId, RepositoryId};
 use jj_store_object::memory::MemoryStore;
@@ -18,6 +18,91 @@ use jj_store_wal::{
 use std::{collections::BTreeMap, collections::BTreeSet, sync::Arc};
 
 const REPOSITORY: RepositoryId = RepositoryId::new([1; 16]);
+
+#[path = "agent_catalog/common_aliases.rs"]
+mod common_aliases;
+#[path = "agent_catalog/native_results.rs"]
+mod native_results;
+#[path = "agent_catalog/opencode_aliases.rs"]
+mod opencode_aliases;
+#[path = "agent_catalog/selected_tail.rs"]
+mod selected_tail;
+
+#[tokio::test]
+async fn native_desktop_messages_publish_sanitized_evidence_without_asserting_execution() {
+    let coordinator = fixture().await;
+    let selected = coordinator.read().await.unwrap();
+    let old = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let profile = NormalizerProfileV1::codex_desktop_0_159_2();
+    let mut batch = single_capture(
+        139,
+        1,
+        serde_json::json!({
+            "capture_format":"codex-jsonl/v1","product_version":"0.159.2",
+            "session_id":"00000000-0000-0000-0000-000000000001",
+            "record":{"type":"response_item","payload":{"type":"message","id":"native-message","role":"assistant","content":[{"type":"output_text","text":"Recorded response"}]}}
+        }),
+    );
+    batch.observations[0].source_kind = SourceKind::Transcript;
+    batch.observations[0].source_trust = SourceTrust::LocalTranscript;
+    let delta = coordinator
+        .stage_agent_capture(&old, &profile, &batch, 123)
+        .await
+        .unwrap();
+    let session = delta
+        .edits
+        .iter()
+        .find(|e| e.catalog == AgentCatalogKind::Sessions)
+        .unwrap();
+    let key = session.key;
+    publish_transcript_edits(&coordinator, 139, delta.edits).await;
+    assert!(
+        old.lookup(AgentCatalogKind::Sessions, key)
+            .await
+            .unwrap()
+            .is_none()
+    );
+    let selected = coordinator.read().await.unwrap();
+    let store = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let reference = store
+        .lookup(AgentCatalogKind::Sessions, key)
+        .await
+        .unwrap()
+        .unwrap();
+    let AgentObjectV1::SessionSnapshot(session) = store.read_object(reference).await.unwrap()
+    else {
+        panic!("session")
+    };
+    assert_eq!(session.state, SessionState::Discovered);
+    assert_eq!(session.evidence.len(), 1);
+    assert_eq!(session.transcripts.len(), 1);
+    assert!(session.tools.is_empty());
+    let range = store
+        .transcript_range(
+            session.transcripts[0],
+            batch.source_instance_id,
+            1,
+            None,
+            10,
+            1024,
+        )
+        .await
+        .unwrap();
+    assert_eq!(range.chunks.len(), 1);
+    assert_eq!(range.chunks[0].payload.bytes(), b"Recorded response");
+    let AgentObjectV1::ObservationBatch(evidence) =
+        store.read_object(session.evidence[0]).await.unwrap()
+    else {
+        panic!("evidence")
+    };
+    assert_eq!(evidence, batch);
+}
 
 struct Source(SourceScope);
 #[async_trait::async_trait]
@@ -438,22 +523,22 @@ async fn pinned_reads_page_catalog_relations_and_transcript_ranges() {
         .await
         .unwrap();
     let second_page = coordinator
-        .stage_agent_object(&AgentObjectV1::TranscriptPage(TranscriptPageV1 {
-            schema_version: 1,
+        .stage_agent_object(&AgentObjectV1::TranscriptTailPage(TranscriptTailPageV2 {
+            schema_version: 2,
             source_instance_id: source_id,
             source_generation: 4,
-            chunks: vec![second_chunk],
-            next: None,
+            chunks: vec![first_chunk],
+            prefix: None,
         }))
         .await
         .unwrap();
     let chunk_page = coordinator
-        .stage_agent_object(&AgentObjectV1::TranscriptPage(TranscriptPageV1 {
-            schema_version: 1,
+        .stage_agent_object(&AgentObjectV1::TranscriptTailPage(TranscriptTailPageV2 {
+            schema_version: 2,
             source_instance_id: source_id,
             source_generation: 4,
-            chunks: vec![first_chunk],
-            next: Some(second_page),
+            chunks: vec![second_chunk],
+            prefix: Some(second_page),
         }))
         .await
         .unwrap();
@@ -589,4 +674,610 @@ async fn pinned_reads_page_catalog_relations_and_transcript_ranges() {
         .unwrap();
     assert_eq!(second.chunks[0].sequence, 11);
     assert_eq!(second.next_after_sequence, None);
+}
+
+fn single_capture(
+    id: u8,
+    sequence: u64,
+    payload: serde_json::Value,
+) -> SanitizedObservationBatchV1 {
+    let mut batch = codex_batch();
+    batch.batch_id = CaptureBatchId::new([id; 16]);
+    batch.observations = vec![SanitizedObservationV1 {
+        observation_id: ObservationId::new([id; 16]),
+        source_sequence: sequence,
+        occurred_at_millis: Some(sequence as i64),
+        source_kind: SourceKind::Hook,
+        source_trust: SourceTrust::LocalUserHook,
+        payload: SanitizedPayloadV1::new(
+            SanitizedMediaType::Json,
+            &serde_json::to_vec(&payload).unwrap(),
+        )
+        .unwrap(),
+    }];
+    batch
+}
+
+async fn publish_single_capture(coordinator: &Coordinator, batch: &SanitizedObservationBatchV1) {
+    let current = coordinator.read().await.unwrap();
+    let base = coordinator
+        .agent_store(current.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let delta = coordinator
+        .stage_agent_capture(&base, &NormalizerProfileV1::codex_0_156_1(), batch, 123)
+        .await
+        .unwrap();
+    let id = batch.batch_id.as_bytes()[0];
+    let request = AgentDeltaRequest::new(
+        jj_store_model::PrincipalId::new([72; 16]),
+        jj_store_model::RequestId::new([id; 16]),
+        jj_store_model::PublicationId::new([id; 16]),
+        delta,
+        b"capture".to_vec(),
+    )
+    .unwrap();
+    let accepted = coordinator.publish_agent_delta(&request).await.unwrap();
+    assert_eq!(
+        coordinator.publish_agent_delta(&request).await.unwrap(),
+        accepted
+    );
+}
+
+#[tokio::test]
+async fn diagnostic_only_capture_retains_evidence_and_allows_later_source_progress() {
+    let coordinator = fixture().await;
+    let omitted = single_capture(81, 1, serde_json::json!({"status":"omitted"}));
+    publish_single_capture(&coordinator, &omitted).await;
+    let selected = coordinator.read().await.unwrap();
+    let diagnostic_root = selected.manifest().agent_root.unwrap();
+    let store = coordinator.agent_store(diagnostic_root).await.unwrap();
+    assert!(
+        store
+            .list_catalog(AgentCatalogKind::Sessions, None, 10)
+            .await
+            .unwrap()
+            .selections
+            .is_empty()
+    );
+    let projections = store
+        .list_catalog(AgentCatalogKind::Projections, None, 10)
+        .await
+        .unwrap();
+    let AgentObjectV1::ProjectionCatalog(projection) = store
+        .read_object(projections.selections[0].1)
+        .await
+        .unwrap()
+    else {
+        panic!("projection");
+    };
+    let AgentObjectV1::EventBatch(events) = store
+        .read_object(projection.event_batches[0])
+        .await
+        .unwrap()
+    else {
+        panic!("events");
+    };
+    assert!(events.events.is_empty());
+    assert_eq!(
+        store.read_object(events.evidence).await.unwrap(),
+        AgentObjectV1::ObservationBatch(omitted)
+    );
+    let unsupported = single_capture(
+        82,
+        2,
+        serde_json::json!({"hook_event_name":"NewNativeEvent", "session_id":"capture_session"}),
+    );
+    publish_single_capture(&coordinator, &unsupported).await;
+    publish_single_capture(
+        &coordinator,
+        &single_capture(
+            83,
+            3,
+            serde_json::json!({"hook_event_name":"SessionStart", "session_id":"capture_session"}),
+        ),
+    )
+    .await;
+    let selected = coordinator.read().await.unwrap();
+    let store = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let sources = store
+        .list_catalog(AgentCatalogKind::Sources, None, 10)
+        .await
+        .unwrap();
+    let AgentObjectV1::SourceState(source) =
+        store.read_object(sources.selections[0].1).await.unwrap()
+    else {
+        panic!("source");
+    };
+    assert_eq!(source.receipts.len(), 3);
+    assert_eq!(source.coverage.gaps, 2);
+    assert_eq!(
+        source.position,
+        jj_agent::SourcePositionV1::NativeSequence { sequence: 3 }
+    );
+    assert_eq!(
+        store
+            .list_catalog(AgentCatalogKind::Sessions, None, 10)
+            .await
+            .unwrap()
+            .selections
+            .len(),
+        1
+    );
+}
+
+#[tokio::test]
+async fn separately_published_tool_updates_preserve_content_terminal_state_and_conflict_coverage() {
+    let coordinator = fixture().await;
+    for (id, sequence, payload) in [
+        (
+            84,
+            1,
+            serde_json::json!({"hook_event_name":"PostToolUse", "session_id":"capture_session", "tool_use_id":"call_1", "tool_name":"Bash", "tool_response":{"exit_code":1,"output":"failed output"}}),
+        ),
+        (
+            85,
+            2,
+            serde_json::json!({"hook_event_name":"PreToolUse", "session_id":"capture_session", "tool_use_id":"call_1", "tool_name":"Bash", "tool_input":{"command":"test"}}),
+        ),
+        (
+            86,
+            3,
+            serde_json::json!({"hook_event_name":"PostToolUse", "session_id":"capture_session", "tool_use_id":"call_1", "tool_name":"Bash", "tool_response":{"exit_code":0,"output":"contradictory output"}}),
+        ),
+    ] {
+        publish_single_capture(&coordinator, &single_capture(id, sequence, payload)).await;
+    }
+    let selected = coordinator.read().await.unwrap();
+    let store = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let sessions = store
+        .list_catalog(AgentCatalogKind::Sessions, None, 10)
+        .await
+        .unwrap();
+    let AgentObjectV1::SessionSnapshot(session) =
+        store.read_object(sessions.selections[0].1).await.unwrap()
+    else {
+        panic!("session");
+    };
+    let AgentObjectV1::ToolSnapshot(tool) = store
+        .read_object(*session.tools.values().next().unwrap())
+        .await
+        .unwrap()
+    else {
+        panic!("tool");
+    };
+    assert_eq!(tool.state, jj_agent::ToolState::Failed);
+    assert_eq!(tool.evidence.len(), 3);
+    assert_eq!(session.coverage.gaps, 1);
+    let AgentObjectV1::Content(input) = store.read_object(tool.input.unwrap()).await.unwrap()
+    else {
+        panic!("input");
+    };
+    let AgentObjectV1::Content(output) = store.read_object(tool.output.unwrap()).await.unwrap()
+    else {
+        panic!("output");
+    };
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(input.payload.bytes()).unwrap(),
+        serde_json::json!({"command":"test"})
+    );
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(output.payload.bytes()).unwrap(),
+        serde_json::json!({"exit_code":1,"output":"failed output"})
+    );
+}
+
+#[tokio::test]
+async fn diagnostic_only_capture_rejects_unsupported_normalizer_profile_without_selection() {
+    let coordinator = fixture().await;
+    let current = coordinator.read().await.unwrap();
+    let before = current.manifest().clone();
+    let base = coordinator
+        .agent_store(before.agent_root.unwrap())
+        .await
+        .unwrap();
+    let batch = single_capture(87, 1, serde_json::json!({"status":"omitted"}));
+    let mut profile = NormalizerProfileV1::codex_0_156_1();
+    profile.product_version = "unqualified".into();
+    assert!(
+        coordinator
+            .stage_agent_capture(&base, &profile, &batch, 123)
+            .await
+            .is_err()
+    );
+    assert_eq!(coordinator.read().await.unwrap().manifest(), &before);
+    publish_single_capture(&coordinator, &batch).await;
+}
+
+struct CountedAgentSnapshot<'a> {
+    inner: &'a jj_store_wal::publication::AgentStoreSnapshot,
+    pages: std::sync::atomic::AtomicUsize,
+    chunks: std::sync::atomic::AtomicUsize,
+}
+#[async_trait::async_trait]
+impl jj_store_wal::publication::AgentSnapshotRead for CountedAgentSnapshot<'_> {
+    fn repository(&self) -> RepositoryId {
+        self.inner.repository_id()
+    }
+    fn root(&self) -> &jj_agent::AgentRootV1 {
+        self.inner.root()
+    }
+    fn transcript_boundary(
+        &self,
+        root: AgentObjectRef,
+    ) -> Option<jj_store_wal::publication::TranscriptAppendBoundary> {
+        self.inner.transcript_proofs().boundary(root)
+    }
+    async fn lookup(
+        &self,
+        kind: AgentCatalogKind,
+        key: AgentCatalogKey,
+    ) -> jj_store_wal::Result<Option<AgentObjectRef>> {
+        self.inner.lookup(kind, key).await
+    }
+    async fn read_object(&self, reference: AgentObjectRef) -> jj_store_wal::Result<AgentObjectV1> {
+        use std::sync::atomic::Ordering::Relaxed;
+        match reference.kind {
+            jj_agent::AgentObjectKind::TranscriptPage => {
+                self.pages.fetch_add(1, Relaxed);
+            }
+            jj_agent::AgentObjectKind::TranscriptChunk => {
+                self.chunks.fetch_add(1, Relaxed);
+            }
+            _ => {}
+        }
+        self.inner.read_object(reference).await
+    }
+}
+
+#[tokio::test]
+async fn transcript_append_reads_only_selected_tail_and_keeps_old_manifest_reconstructible() {
+    use std::sync::atomic::{AtomicUsize, Ordering::Relaxed};
+    let coordinator = fixture().await;
+    let mut initial = codex_batch();
+    initial.batch_id = CaptureBatchId::new([90; 16]);
+    let template = initial.observations[0].clone();
+    initial.observations = (1u64..=400).map(|sequence| {
+        let mut value = template.clone();
+        let mut id = [0; 16]; id[..8].copy_from_slice(&sequence.to_be_bytes());
+        value.observation_id = ObservationId::new(id);
+        value.source_sequence = sequence;
+        value.payload = SanitizedPayloadV1::new(SanitizedMediaType::Json,
+            &serde_json::to_vec(&serde_json::json!({"hook_event_name":"UserPromptSubmit", "session_id":"thr_demo", "turn_id":format!("turn_{sequence}"), "prompt":format!("message {sequence}")})).unwrap()).unwrap();
+        value
+    }).collect();
+    for (part, observations) in initial.observations.chunks(200).enumerate() {
+        let mut accepted = initial.clone();
+        accepted.batch_id = CaptureBatchId::new([90 + part as u8 * 2; 16]);
+        accepted.observations = observations.to_vec();
+        publish_single_capture(&coordinator, &accepted).await;
+    }
+    let selected = coordinator.read().await.unwrap();
+    let base = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let sessions = base.list_sessions(None, 10).await.unwrap();
+    let AgentObjectV1::SessionSnapshot(old_session) =
+        base.read_object(sessions.selections[0].1).await.unwrap()
+    else {
+        panic!("session")
+    };
+    let old_manifest = old_session.transcripts[0];
+    let counted = CountedAgentSnapshot {
+        inner: &base,
+        pages: AtomicUsize::new(0),
+        chunks: AtomicUsize::new(0),
+    };
+    let next = single_capture(
+        91,
+        401,
+        serde_json::json!({"hook_event_name":"UserPromptSubmit", "session_id":"thr_demo", "prompt":"new message"}),
+    );
+    let delta = jj_store_wal::publication::AgentProjector::new(&coordinator)
+        .stage_agent_capture(&counted, &NormalizerProfileV1::codex_0_156_1(), &next, 124)
+        .await
+        .unwrap();
+    assert!(
+        counted.pages.load(Relaxed) <= 1 && counted.chunks.load(Relaxed) <= 1,
+        "append read {} pages and {} old chunks",
+        counted.pages.load(Relaxed),
+        counted.chunks.load(Relaxed)
+    );
+    let request = AgentDeltaRequest::new(
+        jj_store_model::PrincipalId::new([72; 16]),
+        jj_store_model::RequestId::new([91; 16]),
+        jj_store_model::PublicationId::new([91; 16]),
+        delta,
+        b"bounded append".to_vec(),
+    )
+    .unwrap();
+    coordinator.publish_agent_delta(&request).await.unwrap();
+    let old = base
+        .transcript_range(
+            old_manifest,
+            initial.source_instance_id,
+            1,
+            Some(398),
+            10,
+            1024,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        old.chunks.iter().map(|c| c.sequence).collect::<Vec<_>>(),
+        vec![399, 400]
+    );
+    let selected = coordinator.read().await.unwrap();
+    let current = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let sessions = current.list_sessions(None, 10).await.unwrap();
+    let AgentObjectV1::SessionSnapshot(session) =
+        current.read_object(sessions.selections[0].1).await.unwrap()
+    else {
+        panic!("session")
+    };
+    let range = current
+        .transcript_range(
+            session.transcripts[0],
+            initial.source_instance_id,
+            1,
+            Some(398),
+            10,
+            1024,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        range.chunks.iter().map(|c| c.sequence).collect::<Vec<_>>(),
+        vec![399, 400, 401]
+    );
+}
+
+async fn publish_transcript_edits(
+    coordinator: &Coordinator,
+    id: u8,
+    edits: Vec<AgentCatalogEditV1>,
+) {
+    let request = AgentDeltaRequest::new(
+        jj_store_model::PrincipalId::new([72; 16]),
+        jj_store_model::RequestId::new([id; 16]),
+        jj_store_model::PublicationId::new([id; 16]),
+        jj_agent::AgentDeltaV1 {
+            schema_version: 1,
+            edits,
+        },
+        b"current transcript fixture".to_vec(),
+    )
+    .unwrap();
+    coordinator.publish_agent_delta(&request).await.unwrap();
+}
+
+#[tokio::test]
+async fn tail_append_preserves_other_streams_and_reads_only_selected_tail() {
+    use std::sync::atomic::{AtomicUsize, Ordering::Relaxed};
+    let coordinator = fixture().await;
+    let initial = codex_batch();
+    publish_single_capture(&coordinator, &initial).await;
+    let selected = coordinator.read().await.unwrap();
+    let store = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let session_entry = store.list_sessions(None, 10).await.unwrap().selections[0];
+    let AgentObjectV1::SessionSnapshot(mut session) =
+        store.read_object(session_entry.1).await.unwrap()
+    else {
+        panic!("session")
+    };
+    let AgentObjectV1::TranscriptManifest(mut manifest) =
+        store.read_object(session.transcripts[0]).await.unwrap()
+    else {
+        panic!("manifest")
+    };
+    let other_source = jj_agent::SourceInstanceId::new([125; 16]);
+    let payload =
+        SanitizedPayloadV1::new(SanitizedMediaType::Json, br#"{"message":"other"}"#).unwrap();
+    let other_chunk = coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptChunk(TranscriptChunkV1 {
+            schema_version: 1,
+            source_instance_id: other_source,
+            source_generation: 1,
+            sequence: 1,
+            payload: payload.clone(),
+        }))
+        .await
+        .unwrap();
+    let other_page = coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptTailPage(TranscriptTailPageV2 {
+            schema_version: 2,
+            source_instance_id: other_source,
+            source_generation: 1,
+            chunks: vec![other_chunk],
+            prefix: None,
+        }))
+        .await
+        .unwrap();
+    let mut other = manifest.streams[0].clone();
+    other.source_instance_id = other_source;
+    other.ordered_chunk_root = other_page;
+    other.logical_byte_length = payload.bytes().len() as u64;
+    other.record_count = 1;
+    other.gaps = 0;
+    manifest.streams.push(other);
+    session.transcripts[0] = coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptManifest(manifest))
+        .await
+        .unwrap();
+    let session_ref = coordinator
+        .stage_agent_object(&AgentObjectV1::SessionSnapshot(session))
+        .await
+        .unwrap();
+    publish_transcript_edits(
+        &coordinator,
+        126,
+        vec![AgentCatalogEditV1 {
+            catalog: AgentCatalogKind::Sessions,
+            key: session_entry.0,
+            expected: Some(session_entry.1),
+            replacement: Some(session_ref),
+        }],
+    )
+    .await;
+    let selected = coordinator.read().await.unwrap();
+    let base = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let followup = codex_followup_batch();
+    let counted = CountedAgentSnapshot {
+        inner: &base,
+        pages: AtomicUsize::new(0),
+        chunks: AtomicUsize::new(0),
+    };
+    let delta = jj_store_wal::publication::AgentProjector::new(&coordinator)
+        .stage_agent_capture(
+            &counted,
+            &NormalizerProfileV1::codex_0_156_1(),
+            &followup,
+            125,
+        )
+        .await
+        .unwrap();
+    assert_eq!(counted.pages.load(Relaxed), 1);
+    assert_eq!(counted.chunks.load(Relaxed), 1);
+    publish_transcript_edits(&coordinator, 128, delta.edits).await;
+    let selected = coordinator.read().await.unwrap();
+    let current = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let selected_session = current.list_sessions(None, 10).await.unwrap().selections[0];
+    let AgentObjectV1::SessionSnapshot(session) =
+        current.read_object(selected_session.1).await.unwrap()
+    else {
+        panic!("session")
+    };
+    let AgentObjectV1::TranscriptManifest(manifest) =
+        current.read_object(session.transcripts[0]).await.unwrap()
+    else {
+        panic!("manifest")
+    };
+    assert_eq!(manifest.streams.len(), 2);
+    assert_eq!(manifest.streams[1].ordered_chunk_root, other_page);
+    let range = current
+        .transcript_range(
+            session.transcripts[0],
+            initial.source_instance_id,
+            1,
+            None,
+            10,
+            1024,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        range.chunks.iter().map(|c| c.sequence).collect::<Vec<_>>(),
+        vec![2, 11]
+    );
+    let other = current
+        .transcript_range(session.transcripts[0], other_source, 1, None, 10, 1024)
+        .await
+        .unwrap();
+    assert_eq!(other.chunks[0].payload, payload);
+}
+
+#[tokio::test]
+async fn tail_append_ordering_cannot_be_inferred_from_an_unrelated_source_cursor() {
+    let coordinator = fixture().await;
+    let initial = codex_batch();
+    publish_single_capture(&coordinator, &initial).await;
+    let selected = coordinator.read().await.unwrap();
+    let base = coordinator
+        .agent_store(selected.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let (key, expected) = base.list_sessions(None, 10).await.unwrap().selections[0];
+    let AgentObjectV1::SessionSnapshot(mut session) = base.read_object(expected).await.unwrap()
+    else {
+        panic!("session")
+    };
+    let AgentObjectV1::TranscriptManifest(mut manifest) =
+        base.read_object(session.transcripts[0]).await.unwrap()
+    else {
+        panic!("manifest")
+    };
+    let chunk = coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptChunk(TranscriptChunkV1 {
+            schema_version: 1,
+            source_instance_id: initial.source_instance_id,
+            source_generation: 1,
+            sequence: 1000,
+            payload: SanitizedPayloadV1::new(
+                SanitizedMediaType::Json,
+                br#"{"message":"outside receipt interval"}"#,
+            )
+            .unwrap(),
+        }))
+        .await
+        .unwrap();
+    let page = coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptTailPage(TranscriptTailPageV2 {
+            schema_version: 2,
+            source_instance_id: initial.source_instance_id,
+            source_generation: 1,
+            chunks: vec![chunk],
+            prefix: None,
+        }))
+        .await
+        .unwrap();
+    manifest.streams[0].ordered_chunk_root = page;
+    manifest.streams[0].record_count = 1;
+    session.transcripts[0] = coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptManifest(manifest))
+        .await
+        .unwrap();
+    let replacement = coordinator
+        .stage_agent_object(&AgentObjectV1::SessionSnapshot(session))
+        .await
+        .unwrap();
+    publish_transcript_edits(
+        &coordinator,
+        129,
+        vec![AgentCatalogEditV1 {
+            catalog: AgentCatalogKind::Sessions,
+            key,
+            expected: Some(expected),
+            replacement: Some(replacement),
+        }],
+    )
+    .await;
+    let before = coordinator.read().await.unwrap();
+    let selected = coordinator
+        .agent_store(before.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    assert!(
+        coordinator
+            .stage_agent_capture(
+                &selected,
+                &NormalizerProfileV1::codex_0_156_1(),
+                &codex_followup_batch(),
+                125
+            )
+            .await
+            .is_err()
+    );
+    assert_eq!(
+        coordinator.read().await.unwrap().manifest(),
+        before.manifest()
+    );
 }

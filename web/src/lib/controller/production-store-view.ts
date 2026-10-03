@@ -205,10 +205,12 @@ export function productionControllerSurface(
     globalSearch?: StoreController["globalSearch"];
     referenceSearch?: StoreController["referenceSearch"];
     historyQuery?: StoreController["historyQuery"];
+    capture?: StoreController["capture"];
   },
   pause?: StoreController["actions"]["setRefreshPaused"],
 ): StoreController {
   return {
+    capture: options.capture,
     get threads() {
       return options.threads.available() ? options.threads.threads : undefined;
     },

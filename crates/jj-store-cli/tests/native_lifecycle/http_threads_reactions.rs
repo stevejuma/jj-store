@@ -367,6 +367,57 @@ async fn http_threads_reactions_keep_exact_targets_assets_signed_roots_and_recei
     )
     .await;
     assert_eq!(emoji_status, defined);
+    let gap_thread = get(&fresh, &format!("threads/{thread_id}")).await;
+    let binding = ThreadBindingV1 {
+        thread_id,
+        observed_thread: serde_json::from_value(gap_thread["thread"]["reference"].clone()).unwrap(),
+        observed_assignment: None,
+    };
+    let gap_batch = jj_agent::SanitizedObservationBatchV1 {
+        schema_version: 1,
+        batch_id: jj_agent::CaptureBatchId::new([241; 16]),
+        integration: jj_agent::IntegrationId::Codex,
+        source_instance_id: jj_agent::SourceInstanceId::new([241; 16]),
+        sanitizer_version: "mongodb-kingfisher@2.7.0/builtin-medium/v1".into(),
+        representation: jj_agent::SanitizedRepresentation::SanitizedNative,
+        observations: vec![jj_agent::SanitizedObservationV1 {
+            observation_id: jj_agent::ObservationId::new([241; 16]),
+            source_sequence: 1,
+            occurred_at_millis: None,
+            source_kind: jj_agent::SourceKind::Hook,
+            source_trust: jj_agent::SourceTrust::LocalUserHook,
+            payload: jj_agent::SanitizedPayloadV1::new(
+                jj_agent::SanitizedMediaType::Json,
+                br#"{"future_record":true}"#,
+            )
+            .unwrap(),
+        }],
+    };
+    let prepared = f
+        .session
+        .prepare_agent_capture_with_binding(
+            m::RequestId::new([241; 16]),
+            m::PublicationId::new([241; 16]),
+            &jj_agent::NormalizerProfileV1::codex_0_156_1(),
+            &gap_batch,
+            b"bound gap".to_vec(),
+            Some(&binding),
+        )
+        .await
+        .unwrap();
+    assert!(matches!(
+        f.session.publish_agent_delta(&prepared).await.unwrap(),
+        PublishOutcome::Committed(_)
+    ));
+    let gap_timeline = get(&fresh, &format!("threads/{thread_id}/timeline?limit=10")).await;
+    assert_eq!(
+        gap_timeline["items"]["events"][0]["link"]["target"]["type"],
+        "capture_gap"
+    );
+    assert_eq!(
+        gap_timeline["items"]["events"][0]["link"]["target"]["binding"],
+        json!(binding)
+    );
     let after = f.session.snapshot().await.unwrap();
     assert_eq!(after.manifest().heads, frozen.manifest().heads);
     assert_eq!(
@@ -386,6 +437,7 @@ async fn http_threads_reactions_keep_exact_targets_assets_signed_roots_and_recei
         ("threads/{thread_id}", "get", detail),
         ("threads/{thread_id}/timeline", "get", timeline),
         ("threads/{thread_id}/timeline", "get", older_events),
+        ("threads/{thread_id}/timeline", "get", gap_timeline),
         (
             "threads/{thread_id}/messages/{message_id}/revisions/{message_revision}",
             "get",

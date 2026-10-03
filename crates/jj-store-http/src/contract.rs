@@ -428,9 +428,12 @@ pub fn openapi() -> Value {
     let mut document = Document::new();
     routes::document(&mut document);
     crate::local_browser::document(&mut document);
+    crate::capture_management::document(&mut document);
     document.finish()
 }
 
+#[cfg(test)]
+mod capture_tests;
 #[cfg(test)]
 #[path = "contract/review_tests.rs"]
 mod review_tests;

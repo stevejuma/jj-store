@@ -259,6 +259,10 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     );
     let paths = doc["paths"].as_object().unwrap();
     for path in [
+        "/v1/local/capture",
+        "/v1/local/capture/sources",
+        "/v1/local/capture/control",
+        "/v1/local/capture/rescan",
         "/v1/repos/{repo}/local/workspaces",
         "/v1/repos/{repo}/local/workspaces/link",
         "/v1/repos/{repo}/local/workspaces/pick",
@@ -275,20 +279,20 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 91);
+    assert_eq!(paths.len(), 103);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        24
+        30
     );
     assert_eq!(
         paths
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        67
+        73
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {

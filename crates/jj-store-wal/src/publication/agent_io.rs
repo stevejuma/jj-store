@@ -17,6 +17,9 @@ pub trait AgentObjectIo: Send + Sync {
 pub trait AgentSnapshotRead: Send + Sync {
     fn repository(&self) -> RepositoryId;
     fn root(&self) -> &AgentRootV1;
+    fn transcript_boundary(&self, _root: AgentObjectRef) -> Option<TranscriptAppendBoundary> {
+        None
+    }
     async fn lookup(
         &self,
         catalog: AgentCatalogKind,
@@ -59,6 +62,9 @@ impl AgentSnapshotRead for AgentStoreSnapshot {
     }
     fn root(&self) -> &AgentRootV1 {
         AgentStoreSnapshot::root(self)
+    }
+    fn transcript_boundary(&self, root: AgentObjectRef) -> Option<TranscriptAppendBoundary> {
+        self.transcript_proofs().boundary(root)
     }
     async fn lookup(
         &self,

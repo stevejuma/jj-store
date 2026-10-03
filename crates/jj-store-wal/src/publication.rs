@@ -1,8 +1,12 @@
 //! One manifest CAS selects immutable native inventory, history and receipts.
 mod agent;
 mod agent_capture;
+mod agent_capture_aliases;
+mod agent_capture_binding;
 mod agent_capture_projection;
 mod agent_capture_records;
+mod agent_capture_results;
+mod agent_capture_tools;
 mod agent_capture_transcript;
 mod agent_catalog;
 mod agent_catalog_engine;
@@ -12,6 +16,9 @@ mod agent_provenance;
 mod agent_read_engine;
 mod agent_reads;
 mod agent_thread_binding;
+mod agent_transcript_audit;
+mod agent_transcript_read;
+mod agent_transcript_tail;
 mod application;
 mod collab_commands;
 mod collab_store;
@@ -61,6 +68,9 @@ pub use agent_io::{AgentObjectIo, AgentProjector, AgentSnapshotRead};
 pub use agent_read_engine::AgentReader;
 pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange, TranscriptRange};
 pub use agent_thread_binding::AgentThreadBindingV1;
+pub use agent_transcript_audit::{
+    TranscriptAppendAudit, TranscriptAppendBoundary, TranscriptAppendProofs,
+};
 pub use application::ApplicationIntent;
 pub use collab_commands::{CollabCommandError, CollabCommandReceiptV1, CollabCommandRequestV1};
 pub use collab_store::{NativeReactionStoreV1, NativeThreadStoreV1};
@@ -88,7 +98,7 @@ pub use jj_agent::{
     SanitizedMediaType, SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
     SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourcePositionV1,
     SourceTrust, ToolCallId, ToolInvocationSnapshotV1, ToolKind, ToolState, TranscriptChunkV1,
-    TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1, TurnId, normalized_event_id,
+    TranscriptManifestV1, TranscriptStreamV1, TranscriptTailPageV2, TurnId, normalized_event_id,
 };
 pub use jj_review::{
     ArtifactAnchorV1, ArtifactTargetV1, CommentId, CommentRevisionContentV1, CommentRevisionId,

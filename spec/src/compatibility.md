@@ -13,6 +13,59 @@ bytes remain unchanged, as do native manifest/WAL and companion formats. The
 collaboration read DTO adds an optional captured Work root; absent roots retain
 older response framing. Generated OpenAPI and TypeScript qualify the addition.
 
+Accepted-import recovery adds no wire or persistence format. An optional
+body-free supervised lane reuses original version-1 intent, exact source
+binding, reader cursor, sanitized spool, prepared request and native receipt
+semantics. The foreground factory binds it only to existing private
+import/control state and one retained runtime. Fair owned policy acquisition
+prevents inspection from starving recovery or imported source work; current
+authorization is rechecked after the queued acquisition. Synthetic Codex/native
+MemoryStore cold foreground and restart evidence qualify this retained
+composition. Enabled server startup, browser controls, other readers and real
+harness/RustFS release remain pending.
+
+The installation import and request-inspection routes add two local paths,
+bringing the registered inventory to 91 paths: 67 native and 24 local.
+Actor-free version-1 commands, exact original-input acceptance and separate
+accepted/tail progress are qualified through actual HTTP responses and generated
+clients. Public completion requires exact associated reader and native receipt
+evidence; volatile scheduling is not acceptance. The private version-1 import
+reader association adds `prefix_verified`, defaulting to false when absent.
+Older links remain readable but cannot prove completion until renewed
+original-source/native admission verifies retained checkpoint bytes. Verified
+upgrades retain the original ordinal, source, initial generation and immutable
+receipt. Older strict binaries reject the additive field rather than reinterpret
+it. Repository, control, source, reader cursor, publication and AgentStore
+formats retain their existing interpretation. Metadata inspection never scans
+transcripts, opens pending bodies or repairs state. This progress qualification
+alone does not establish enabled startup, accepted restart dispatch, browser
+controls or real harness/storage release. Optional retained recovery has its own
+qualification below.
+
+The additive installation rescan route and cached discovery/degradation fields
+retain device-control journal version 1 and all repository/source/spool formats.
+Rescan is a transient conditional hint rather than a durable mutation or import;
+its body carries no actor, source path or receipt identity. Actual response
+captures and generated clients qualify it with the complete existing HTTP/SSE
+inventory. Default-concurrency, real storage and live harness gates remain
+separate from explicit serial focused qualification.
+
+Additive per-harness runtime coverage retains all
+journal/repository/source/spool formats and the same 88-path inventory. Typed
+profile metadata and cached counts do not qualify unsupported readers or grant
+import/admission authority. The current prepared Codex runtime exposes at most
+two profile groups. Existing registered response captures and generated clients
+validate the added fields.
+
+Installation-local capture status and pause/resume are additive Admin HTTP
+contracts with actor-free strict commands and an optional bootstrap capability.
+Actual loopback responses qualify policy, durable receipts, runtime counters,
+replay and failures against generated OpenAPI/TypeScript. Device-control journal
+version 1 and repository/source/spool formats remain unchanged. Durable receipt
+selection and runtime transition acceptance are separate; unknown outcomes
+retain the original request. These contracts do not enable automatic startup or
+qualify import, other harnesses, browser controls or real storage acceptance.
+
 The additive application content-search endpoint exposes V1 results with full
 native source identities, current revisions, bounded excerpts and opaque
 expiring cursors. Generated OpenAPI/TypeScript and actual HTTP response captures
@@ -30,6 +83,14 @@ human message revisions, Reaction queries/commands, custom
 definitions/retirement and retained raster reads. They validate actual isolated
 MemoryStore transport responses against generated OpenAPI; this is distinct from
 persistent RustFS, cold browser and real runner evidence.
+
+The additive capture_gap Thread-link variant preserves all prior link, unlinked
+capture and prepared-request encodings. It retains source/event and observed
+binding closures through native recovery/copy and companion Git reachability.
+Older readers fail closed on the new target rather than interpreting it as a
+session. Generated OpenAPI/TypeScript, direct provider/RPC consumers and exact
+gap-context presentation are qualified independently of real harness and broader
+release acceptance.
 
 Rust 1.98.1 and edition 2024 are the qualified toolchain for managed RustFS. New
 native repositories ship first through LocalTrusted access with no user
@@ -78,6 +139,54 @@ using separate short mutation and single-publisher drain locks. An older binary
 that already owns the spool blocks new handles before queue access. New hooks
 and drainers can share state only when both follow the new lock protocol; this
 does not upgrade installed binaries or install a background recovery worker.
+
+Automatic readers add optional private `reader_metadata` generation information
+to pending V1 entries and a bounded owner-only `reader-progress/` journal.
+Legacy enqueue omits that field and retains identical serialized pending bytes.
+Older strict readers reject the additive reader field; the compatibility lease
+excludes older concurrent writers. Repository objects, RPC requests, prepared
+native/local requests and receipt interpretation do not change. Progress is
+retained after publication and repaired from sanitized pending evidence before
+request removal; the new device journal is neither repository state nor portable
+history.
+
+The additive Codex JSONL source distinguishes CLI 0.156.1 and Desktop 0.159.2
+through exact header markers. CLI `cli` and `exec` sources accept the qualified
+`codex_cli_rs`, `codex_exec` and inherited `Codex Desktop` originators; CLI
+originator inheritance does not admit the Desktop `vscode` surface. Unknown
+originators and versions remain unavailable. The previously unqualified Desktop
+configuration pin of 0.156.1 is rejected; its enum/config field names are
+unchanged. Native hook profiles, sanitized object bytes, prepared requests and
+receipts retain their prior interpretation. This source-only reader does not
+enable the server worker or claim real-harness capture qualification.
+
+Codex location resolution and incremental metadata discovery are additive
+read-only runtime capabilities with no durable format or configuration-schema
+change. Explicit roots precede CODEX_HOME and default user-home conventions; the
+scanner binds physical roots and rejects rebinding/symlink escapes. Neither
+capability enables automatic capture or qualifies other harness locations.
+
+The Desktop 0.159.2 normalization profile accepts explicitly bound sanitized
+native transcript envelopes and rejects unqualified Desktop hook interpretation.
+Existing CLI 0.156.1 hooks retain their prior bytes and meaning. Native message
+IDs and source-derived missing-ID identities have distinct namespaces. The
+transcript-specific sanitizer policy adds home/temporary and key-path privacy;
+the prior hook policy, prepared requests, receipts and repository object formats
+are unchanged. Unsupported native records remain retained sanitized evidence
+with diagnostics; richer block projection is separately gated. Native function
+and custom-tool results use a transient typed resolution boundary without adding
+persisted object kinds, event variants, prepared-request fields or wire schemas.
+Exact same-source aliases resolve retained calls and preserve their existing
+identities and terminal results. Unknown/unmatched outputs remain evidence with
+diagnostics; legacy hook interpretation and receipts are unchanged.
+
+Qualified common OpenCode aliases retain the existing V1 object and receipt
+formats. New hook/API/export captures may adopt exact case-sensitive selected
+session/message/tool IDs and additionally edit `opencode-native-alias-join/v1`
+in the existing projection catalog. The Codex common key and its UUID case rules
+are unchanged. Previously prepared bytes and prior duplicate identities remain
+retained; incomplete or ambiguous selected proof produces a diagnostic rather
+than merging existing sessions or changing the interpretation of an old receipt.
 
 Focused authenticated compatibility now covers private registry initialization,
 case-sensitive slash-separated aliases, one manual token with independent
@@ -591,3 +700,31 @@ Storage management adds versioned HTTP overview, command and report contracts
 and optional local_storage_management capability. The filesystem-only profile
 advertises no native maintenance. The private device journal is version 1;
 native manifest, checkpoint, WAL, receipt and object encodings are unchanged.
+
+The cached installation source-page profile adds one local HTTP read route to
+make 89 paths: 67 native and 22 local. Its selectors are ephemeral runtime
+references and its cached pages retain no raw paths, native session keys or
+physical proof encodings. All existing repository/native/source/spool/journal
+formats remain unchanged; typed limits are 100 page rows within at most 4096
+tracked sources. This additive read profile does not qualify explicit import,
+automatic startup, other readers or real harness/storage acceptance.
+
+The optional API snapshot publication source field is additive in the version-1
+management response. Closed owned records and generated OpenAPI/TypeScript
+contracts preserve exact uint64 positions and counts. Existing file-only rows
+keep their encoding. Current AgentStore is the only supported storage profile;
+this metadata response adds no persistence migration or compatibility reader.
+Actual native receipt/body-free HTTP samples qualify controlled OpenCode input
+on MemoryStore separately from real harness/RustFS and release qualification.
+
+The private version-1 import journal additionally accepts qualified OpenCode API
+bindings with zero byte offset and zero through 131072 logical messages. Empty
+history uses the exact initial native message-prefix digest. The original Codex
+encoding and snapshot-chain bytes remain unchanged. Other unqualified profiles
+are refused; current AgentStore remains the only supported storage profile.
+
+The M18 preview integration regenerates the combined route inventory: 103 paths,
+73 outside the installation-local prefix and 30 under `/v1/local/`. This retains
+current main's working-file, local review, Storage and Sync controls alongside
+all six installation capture routes. Earlier counts describe their historical
+slices. Native storage and capture formats remain unchanged by integration.

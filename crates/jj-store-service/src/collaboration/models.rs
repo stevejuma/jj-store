@@ -12,6 +12,7 @@ use serde::{Deserialize, Serialize};
 pub type AgentSessionIdentity = AgentSessionId;
 pub type AgentTranscriptIdentity = AgentObjectId;
 pub type AgentSourceInstanceIdentity = SourceInstanceId;
+pub type AgentIntegrationIdentity = IntegrationId;
 pub type AgentToolIdentity = ToolCallId;
 pub type AgentCheckpointIdentity = AgentCheckpointId;
 

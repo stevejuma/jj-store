@@ -295,7 +295,7 @@ impl local::Access for Binding {
 async fn binding(state: &State, repo: m::RepositoryId) -> Result<Arc<dyn local::Access>> {
     let manager = manager(state)?;
     let check = manager.clone();
-    let (folder, generation) = blocking(&state, move || check.folder(repo).map_err(map)).await?;
+    let (folder, generation) = blocking(state, move || check.folder(repo).map_err(map)).await?;
     Ok(Arc::new(Binding {
         manager,
         folder,
@@ -313,8 +313,8 @@ async fn snapshot(
 async fn capture(state: &State, repo: m::RepositoryId) -> Result<Snapshot> {
     let access = binding(state, repo).await?;
     let code = state.local_reader.heads(access).await?;
-    let manager = manager(&state)?;
-    let (metadata_commit, actor) = blocking(&state, move || {
+    let manager = manager(state)?;
+    let (metadata_commit, actor) = blocking(state, move || {
         let repo = manager.open(repo).map_err(map)?;
         let commit = repo
             .metadata_store()

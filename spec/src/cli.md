@@ -21,6 +21,12 @@ explicit binding, instead of rebuilding only legacy fields. Existing unlinked
 preparation fails closed on an unexpected binding. Explicit native bound enqueue
 and drain are qualified separately from future runner entry points.
 
+Explicit bound diagnostic-only capture accepts the validated source/projection
+delta without requiring a session edit. The private spool retains its original
+binding, prepared references and acceptance time across unknown outcomes and
+restart, then completes through the same receipt check. No alternate unbound
+request or synthetic session is substituted to unblock the queue.
+
 The native lifecycle HTTP acceptance fixture qualifies the Thread/Reaction
 transport and representative generated responses through isolated MemoryStore
 authority. It does not establish real-RustFS or jj-acp execution qualification.
@@ -192,12 +198,16 @@ complete bindings before rename. Physical metadata appears only after
 publication is acknowledged; resuming never snapshots or overwrites source
 files.
 
-Agent capture uses a separate bounded journal under the same CLI ownership
-rules. It keeps a compatibility lease on a user-restricted path outside
-checkouts, serializes each mutation with a short-lived lock, and atomically
-persists a validated sanitized batch before acknowledging reader progress, and
-then atomically records the exact principal, request ID, publication ID and
-typed AgentStore delta before publication. Restart validates pending entries; it
+Agent capture uses a separate bounded journal in the shared jj-store-capture
+runtime, reexported through the existing CLI module paths. The server can
+consume the same runtime without a CLI dependency. Extraction preserves the
+original sanitization policy, spool entries, retry identities and native/local
+publication contracts; automatic worker enablement has separate M18.2 gates. It
+keeps a compatibility lease on a user-restricted path outside checkouts,
+serializes each mutation with a short-lived lock, and atomically persists a
+validated sanitized batch before acknowledging reader progress, and then
+atomically records the exact principal, request ID, publication ID and typed
+AgentStore delta before publication. Restart validates pending entries; it
 removes only unacknowledged atomic temporary files. Changed retries, corrupt,
 symlink or unexpected entries and concurrent mutations fail closed. Bound and
 unbound enqueue use the same mutation lock and queue admission limits. Native
@@ -210,6 +220,46 @@ operating-system lock recovery and retains durable pending intent. Completion
 requires the matching prepared request/publication identity, so unprepared or
 unknown-outcome captures remain recoverable. The journal is implemented as an
 internal boundary.
+
+Reader-owned capture adds optional generation metadata to private pending V1
+entries and retains an owner-only device cursor journal in the same spool.
+Original hook/unlinked pending entries omit the field and retain their bytes.
+Reader progress follows sanitized pending durability, survives native/local
+completion and is recovered from pending evidence before restart delivery.
+Prepared requests and publication receipts remain unchanged. The journal holds
+at most 4096 records of 8 KiB, rejects changed/regressive intent and stops new
+reader admission when full without removing acknowledged progress.
+
+Codex harness settings resolve explicit roots ahead of the supplied server-user
+CODEX_HOME and default home conventions through the shared runtime. This pure
+location resolution creates no state and accepts only qualified Codex versions.
+Approved-root metadata scans resume bounded directory iterators and do not read
+transcript bodies, admit sessions or start the capture worker. Configured Codex
+startup uses these locations through the foreground server; other reader
+profiles remain separately gated.
+
+The shared runtime also exposes an opaque memory-only parked Codex reader.
+Generic parking releases the source and physical leases while retaining partial
+scans, prefix verification and the exact unacknowledged batch. Current server
+admission, native Write and unchanged durable progress are separate
+prerequisites for reuse; another owner's advanced cursor requires reopening at
+that progress. Missing or regressive progress is unavailable. This capability
+adds no CLI command or durable format and does not qualify automatic worker
+enablement. The eventual supervisor must bound parked memory independently from
+leases. Automatic supervisor parking retains only the channel reservation while
+an exact raw batch is pending, within the existing bounded noncompact frames.
+Fresh physical reacquisition rechecks current admission, exact registry/lock
+identity and source qualification; failure or cancellation retains the raw frame
+and channel. Successful acknowledgement followed by idle parking or shutdown
+releases ownership. Generic parked-reader behavior is unchanged.
+
+Fresh Codex activity may use the staged current-context server preparation
+before first source enrollment. A genuine observed start and exact file snapshot
+remain mandatory; current native directory and Write authority precede identity
+allocation and reader leases. Old starts discovered by a newly armed probe
+remain historical. Directory changes cannot lend one repository's body evidence
+to another. This adds no CLI command, worker enablement or persisted eligibility
+format; automatic activity renewal and bounded scheduling remain server gates.
 
 Repository and operator credential provisioning use the same owned lease helper
 to preserve exclusive creation while releasing the lock after the callback,
@@ -877,3 +927,540 @@ GET does not create it. Server-owned work survives request cancellation; after
 restart checks report interrupted and checkpoints resolve their original target
 from selected authority. No new CLI executable installation or service
 registration is required.
+
+Foreground external native serving transfers the exact process state-lock file
+into authoritative-storage ownership before capture can retain it. Prepared
+server drop and run-future cancellation retain the lock until the final capture
+storage lifetime releases; completed ordinary shutdown releases it after storage
+stop. Late or duplicate lock attachment fails closed. Filesystem-only serving
+retains its independent process lock and remains unavailable for native capture.
+Configured Codex startup retains this ownership through ordered capture drain.
+
+Foreground capture uses a prepared slot with disabled, unavailable and ready
+states. Disabled selection performs no capture environment/state I/O. Enabled
+resource selection validates profiles and privacy locations. Whole-server
+preparation, after owning native storage and the state lock, exclusively creates
+an absent private capture root with control and import journals and syncs it.
+Existing roots and internal resource-only preparation never repair or initialize
+missing policy. It then opens control state before installation-bound sources
+and the sanitized spool. The ready slot pins control generation and physical
+directory/lock plus installation identity, revalidates them at runtime handoff,
+and applies the latest selected pause policy before the runtime can dispatch.
+Scanner creation waits for admitted body sanitization. Unavailable capture
+preparation preserves ordinary serving. The exact ready slot starts with
+retained storage ownership and drains before storage shutdown. The ordinary
+configured foreground path supports Codex CLI/Desktop; unsupported readers
+retain their startup guard.
+
+Settled queued discovery/delivery task loss closes that owner, records one
+unavailable observation and invalidates delivery queue freshness. Pause/resume
+cannot revive a lost global lane. Explicit replacement must reverify current
+admitted source and Write authority and preserve exact pending bytes/cursors.
+This adds an internal diagnostic qualification. Typed installation management
+uses the qualified retained runtime; configured enablement and real
+storage/harness fault gates remain pending.
+
+## M18 automatic capture configuration and controls
+
+The owned runtime accepts coalesced discovery hints without storage ownership or
+policy changes. Idle root cooldowns may be advanced; an active bounded scan
+keeps its progress and schedules one fresh pass. Pause/stop discard outstanding
+hints, and lost lanes cannot restart. Cached root availability and
+degraded-source counts add no directory/Write authorization or activity proof.
+Installation HTTP rescan binds the latest device policy generation/revision
+under the existing current Admin/configuration/physical binding gate. Typed CLI
+import and inspection use retained workers; browser source/import presentation
+remains pending. Cached runtime diagnostics group qualified profiles and
+declared product versions with root/source counts, exposing no paths, session
+keys or import selectors. Current Codex group capacity is two, independent of
+configured source/reader limits.
+
+`jj agent capture --server-url <url> status|pause|resume|rescan` manages one
+explicit LocalTrusted installation through its existing local Admin HTTP API.
+This profile works outside a JJ workspace and MUST dispatch before opening any
+repository or integration registry. It rejects `--state-dir`; status and control
+MUST NOT create device state, install hooks, inspect transcripts or snapshot a
+working copy. The URL MUST be credential-free HTTP with a literal loopback
+address and no non-root path, query or fragment. No implicit endpoint selection,
+proxy, redirect, credential lookup or automatic retry is permitted.
+
+Pause/resume require explicit nonzero `--request-id`, `--generation` and
+`--expected-revision`; rescan requires the same generation/revision without a
+request identity. Generation is exactly 32 lowercase nonzero hex digits. The CLI
+forwards the typed version-1 command once without prefetching/replacing policy
+or selecting an actor. JSON output retains the shared typed result; text
+distinguishes the original receipt, latest policy and runtime request
+acceptance. A durable receipt is not completed runtime pause or drain. A control
+acknowledgement MUST bind the original request identity, generation, expected
+revision and action, with the next receipt revision and latest selected policy
+in the same generation at that revision or later. Rescan acknowledgements bind
+the exact selected generation/revision. A mismatched acknowledgement is an
+unknown outcome, never success or permission to replace the original command.
+
+The same explicit installation profile adds
+`sources --limit <1..100> [--cursor <token>]`. It reads cached per-source
+diagnostics and runtime-scoped selectors without opening a workspace or
+integration registry. Cursor input and response selectors are bounded typed
+values; a stale runtime generation requires refresh from the first page. JSON
+preserves the source page; text labels owned reader phases and cached
+observations. Import is a separate explicit command with independent native
+Write and retained source admission.
+
+The explicit installation command adds
+`import --source <selector> --generation <control-generation> --expected-revision <revision> --request-id <request>`.
+It forwards only the versioned command, without policy prefetch or automatic new
+identity. Exact acknowledgement binds every original input. Acceptance is
+durable intent, not successful transcript publication. A retry keeps the
+original selector after restart; the server resolves selected requests before
+applying new-selection stale rules. Changed reuse or a mismatched
+acknowledgement withholds success. New-request reselection cannot rewrite an
+unknown or accepted request. Receipt/progress inspection remains local Admin
+data. Dispatch uses retained bounded source workers. The command waits for
+durable acceptance separately from volatile scheduling, preserving its original
+inputs when an outcome is unknown. `import-status --request-id <request>`
+forwards one body-free inspection GET; it requires neither a repository nor a
+state directory. JSON retains the shared typed receipt/progress. Text
+distinguishes accepted history publication from continuing tail phase. Exact
+accepted replay remains inspectable while paused/stopped and after transcript
+removal. A mismatched receipt, unsupported version or impossible completed byte
+count withholds CLI success. Neither command initializes private state, starts
+an owner or retries HTTP automatically. The private server journal primitive now
+retains exact version-1 import intent and source binding across reopen and
+process exit. It shares synchronized private-file mechanics with pause controls
+while retaining its separate 2-MiB layout and receipt order. This primitive does
+not expose a command, enroll a source or authorize publication. Control layout
+and policy semantics remain unchanged.
+
+The server-side import admission guard retains manager/control coordination and
+rechecks exact original intent, current LocalTrusted Admin policy and the live
+runtime. It is a library primitive; public import and owned scheduling remain
+separate gates. No read or guard can initialize missing private state, enable
+capture or create a runtime owner.
+
+The library's owned import settlement retains the exact control and import
+selection descriptors across native admission awaits. It preserves original
+receipt replay and postselection unknown outcomes; it creates neither a command
+surface nor an ingestion owner. Native Write, exact source preparation and
+bounded frame/storage ownership remain separate requirements. Existing control
+and import formats and synchronous callbacks retain their contracts.
+
+The native source-import library now resolves the actual retained runtime
+target, prepares a bounded accepted prefix and independently admits native Write
+before selecting intent and enrolling its common source lease. Replay uses the
+original binding before stale selector rules and opens existing durable spool
+progress. Imported pipelines retain exact receipt renewal through ingestion,
+publication recovery and raw-channel parking; current consent and prefix checks
+precede body work and durable enqueue. Their private runtime target view exposes
+no binding in public observation pages and grants neither worker/frame budgets
+nor storage ownership. Retained supervisor scheduling is qualified separately.
+Automatic JSONL capture now retains receipt-backed device publication evidence
+separate from reader acknowledgements. Public import progress and typed HTTP/CLI
+commands and configured Codex startup use these retained resources.
+
+The prepared foreground composition may attach one supervised accepted-import
+recovery lane when management binds existing import metadata. On a new runtime,
+it offers exact original accepted commands to uniquely matching retained source
+slots, without another CLI/HTTP command. Original receipt/prefix, current Admin,
+configuration, private binding and native Write remain required; changed
+physical files cannot inherit consent. Durable pause is selected before dispatch
+and keeps recovery idle until resume. Frequent progress inspection cannot starve
+owned policy acquisition, ingestion or publication. Recovery shares the
+supervisor's cancellation, deadlines and ordered storage lifetime; stopped/lost
+owners cannot be recreated. Existing missing import state is never initialized.
+This optional retained composition is shared by configured Codex startup; other
+readers, browser management and real harness release remain separate gates.
+
+Original accepted import receipts acquire a separate bounded body-free reader
+association under retained original-source/native admission and the held import
+selection gate. The additive private version-1 catalog records receipt ordinal,
+source ID, initial numeric generation, physical/header digest and
+retained-prefix verification without changing the accepted receipt. Exact
+retry/reopen retain the association; later numeric continuation cannot retarget
+it. Receipt-only catalogs remain readable and explicitly unqualified until
+renewed admission reconstructs the link. Bounded journal lookup performs no
+transcript work and grants no publication authority. Public progress uses this
+private association without exposing its digests or treating it as publication
+authority.
+
+Responses MUST be bounded to 64 KiB and decoded through the exact public
+response type. Unknown versions, malformed/oversized bodies, redirects,
+transport failures and failed command acknowledgements withhold success and
+retain the original retry identity. Diagnostics expose only constant admitted
+error descriptions, never arbitrary server bodies, URLs or local paths. The
+server independently revalidates Admin/configuration/installation/policy on each
+call. Controls cannot enable configuration, initialize a journal, replace a
+runtime owner, import history or grant native publication authority. Implicit
+workspace-to-installation endpoint discovery and browser controls remain
+separate qualification work.
+
+The shared native spool has a bounded partition drain for one explicit
+repository, integration and source, with one through 256 batches per call. Other
+native/local partitions remain intact; unknown outcomes retain exact prepared
+intent, and the supervisor owns fair scheduling and authorization. Existing CLI
+drains keep their whole-spool repository/native-only preconditions. The
+unchanged report counts the entire remaining shared queue.
+
+The configured automatic capture actor uses the existing installation principal
+derivation with a fixed worker purpose. Disabled authority preparation is
+side-effect free and skips the identity file; enabled preparation requires the
+validated LocalTrusted native writable profile. In-process capture publishers
+bind that principal through the native service only after current directory,
+socket and catalog admission, and reauthorize before preparation/publication.
+The guarded server publisher repeats these checks with a fresh native Write
+request for every preparation and publication, including durable retries; it
+rejects foreign actors and returns committed receipts without a post-commit
+device-admission failure. This capability remains distinct from supervised
+startup and typed controls.
+
+Codex automatic source acquisition takes a current activity snapshot and checks
+the activity event's reconstructed directory through current native workspace,
+socket and repository-catalog admission before taking source/physical leases.
+The directory proof is repeated after acquisition and remains separate from
+publication authorization. Existing-registry lookup is read-only and generic
+source registration grants no automatic historical eligibility; a distinct
+native-session admission digest supports offline-tail recovery. These typed
+composition boundaries do not grant configuration enablement.
+
+An explicit admitted Codex source driver composes current activity/directory and
+native Write admission, source leases, latest durable source cursor, bounded
+reading, transcript sanitation, spool acknowledgement and one-batch guarded
+publication. It resumes admitted offline tails, refuses unadmitted history and
+recovers each queued Codex range from its exact qualified prefix before new
+reading. Recovery publishes one exact batch through current admission and Write
+authorization; another queued partition cannot inherit that proof. Changed or
+unavailable source evidence retains pending intent. Only constant omission
+batches may use a separately authorized reconstructed matching anchor. Source
+steps and privacy-root configuration have no raw-path/body diagnostic encoding.
+This composition remains separate from supervised automatic startup and typed
+controls.
+
+Bounded admitted Codex resume preparation uses read-only retained
+channel/session lookup and current complete-record directory reconstruction
+before taking reader leases or enrolling rotated aliases. It does not require
+the original header folder to remain linked when the verified current folder is
+linked and writable. Every acquisition rechecks current native Write, file/root
+and channel bindings. It does not acknowledge source progress, import unadmitted
+history or authorize queued/body publication through a fallback anchor.
+Scheduling and automatic server startup remain separately gated.
+
+Native publication scheduling rotates through exact pending partition heads
+using only a memory-resident turn cursor. Selection advances the turn even when
+delivery is withheld or unknown, while retained prepared bytes remain unchanged.
+Exact delivery rechecks the live same-partition order under its drain lease; a
+newly enqueued earlier batch withholds before any publisher call. Local prepared
+intent excludes its complete partition from native scheduling. These scheduling
+hints supply neither device proof nor native Write authorization. Independent
+ingress and supervised server composition remain separate gates.
+
+The explicit Codex pipeline consumes the conservative source driver and offers
+separate bounded ingress and exact selected-entry delivery. Sanitized durable
+ingress proceeds past old withheld/prepared/unknown publication, with
+independent current native admission and Write checks for every new batch.
+Delivery recovers the selected entry's own exact range and retains
+same-partition order. Old publication cannot rewind the reader or its current
+ingress anchor. Spool refusal keeps the exact unacknowledged batch; restart
+retains both the latest sanitized cursor and unresolved intent. Temporal proof
+scheduling, blocking-I/O ownership and automatic server startup remain
+separately gated.
+
+An explicit pipeline-step owner keeps its leased source, private spool and
+current authority context outside ordinary runtime execution during synchronous
+I/O. It dispatches one bounded step, retains overdue/draining work across
+deadlines and pause, and refuses concurrent replacement. Cancellation/deadlines
+preserve exact pending intent; current native Write remains mandatory after
+resume. Shutdown waits at most five seconds and retains an undrained owner on
+timeout. Known late results retain their receipt meaning. This internal owner
+closes on task loss. Supervisor resume keeps that source closed while healthy
+lanes may continue; explicit worker replacement must renew current source and
+repository admission before recovering the unread tail. Durable queued bytes and
+cursors survive loss, revocation and pause/resume. The internal owner does not
+enable automatic capture or replace the separately authorized typed management
+controls and full server lifecycle gates.
+
+An explicit configured Codex supervisor joins root discovery, genuine observed
+activity, staged current-directory admission, bounded parked ingress and exact
+native delivery. Its memory-only controller exposes bounded status and internal
+pause/resume/shutdown, retains independently draining owners and does not
+perform source I/O during disabled preparation. This API does not remove the
+configured enablement requirements or qualify authenticated management, other
+readers, pressure/fault coverage or cold harness/server gates.
+
+An explicit lifecycle driver owns a prepared Codex supervisor and schedules its
+lanes independently of callers. Internal pause/resume preserves the same owner;
+stop is terminal. Shutdown timeout retains its draining task for a later wait,
+and drop requests stop without aborting blocking source/publication owners.
+Storage teardown requires completed drain. Explicit storage-backed composition
+binds an opaque lifetime before first dispatch and retains it in discovery,
+source and delivery blocking owners and their unconsumed completions. Storage
+shutdown waits for those lifetimes before stopping embedded storage or releasing
+the installation lock; dropping storage or cancelling that wait preserves the
+same ownership. The lifetime grants no publication authority. This memory-only
+capability adds no CLI command or configured server enablement; those gates
+remain pending.
+
+The explicit runtime's cloneable status/pause/resume handle owns only its
+body-free observation and command channels. It cannot start capture, authorize
+publication, retain storage or wait for drain. Control acceptance requests a
+transition; its observed phase establishes whether pause/drain settled. Runtime
+drop stops all handles even while they remain readable during retained drain.
+Lost nonterminal observation producers report unavailable, and terminal stop
+rejects pause/resume. This capability does not implement authenticated commands,
+durable pause or configured enablement.
+
+The existing runtime constructor preserves a settled supervisor pause at handoff
+instead of dispatching into a paused owner and stopping on that refusal. No
+source is discovered, enrolled or published until explicit resume. Activity
+present before resumed arming remains historical; fresh observed activity and
+current admission are still required for automatic backfill. No new startup
+mode, configuration field or durable pause journal is introduced.
+
+The explicit capture-control journal records installation/generation-bound pause
+policy and exact actor/request receipts in private device state outside
+checkouts. Its initial bounded profile is 4096 receipts and 1 MiB. Record
+selection uses a pinned private directory/lock, bounded validated reads,
+synchronized temporary replacement and directory sync. Old receipt replay
+returns the latest policy without reversing later changes; missing or foreign
+state never initializes on ordinary open. Post-replacement I/O failure is an
+unknown outcome requiring the original request. This Rust capability grants no
+authentication, runtime action, native mutation, import or startup override; its
+management consumer requires separate composition. The guarded foreground
+factory consumes this journal with read-only policy selection at preparation and
+again at handoff; it accepts legitimate later pause/resume selections but
+refuses changed generation, installation or physical binding. Explicit policy
+initialization is separate from ordinary factory preparation; no startup mode or
+configuration override is introduced.
+
+The foreground local native Admin profile may advertise installation capture
+management when an explicit configuration path is available. Its manager derives
+the transport actor from the installation, revalidates current configuration and
+identity on each request and retains one selected journal generation and runtime
+control cell. Startup binding shares control channels only, not task or storage
+ownership. The manager's owned bounded blocking operation selects/replays device
+policy and applies its latest state under one coordination gate, surviving
+request cancellation. Durable selection and runtime request acceptance are
+reported separately. Missing or closed runtime controls cannot start another
+owner; accepted policy remains available for restart. Other readers retain their
+startup guard. The explicit local HTTP CLI profile is qualified separately;
+source import and browser coverage presentation remain composition work.
+
+Discovery and delivery task panic retains that storage lifetime and process lock
+until the exact running state is destroyed, including after a cancelled drain
+wait or dropped controller. Settled loss closes the lane. Explicit replacement
+must renew current admission to recover an unknown native receipt using its
+original Prepared request without changing queue bytes, cursor or committed
+evidence. This fault boundary adds no public control or startup override.
+
+Delivery rechecks exact source qualification, private source state and spool
+binding after directory admission. A root/state replacement during blocked
+admission withholds the unchanged queue and cursor. Restored physical state
+requires fresh qualification and current admission before explicit recovery. An
+initialized source registry whose catalog disappears stays unavailable rather
+than allocating a replacement source catalog.
+
+Automatic Codex readers recover each qualified physical/header cursor separately
+from channel-wide generation and sequence floors. Reopening unchanged archived
+and current files cannot replay acknowledged offsets. Delayed old-file appends
+retain their verified prefix and allocate a continuation above any newer channel
+generation. Refresh bounds after lease acquisition and before polling;
+atomically refuse stale automatic sanitized admission. Progress lookup preserves
+typed capacity refusals from independent spool growth before polling or
+acknowledgement. Conflicting exact parked raw batches remain withheld unchanged.
+Automatic raw-channel reservations prevent competing physical readers from
+consuming parked allocations across pause and capacity relief. Foreign registry
+bindings or replaced locks cannot transfer a reservation. Existing generic APIs,
+durable intent and receipts retain their interpretation; broader allocation,
+rotation and task-loss races remain a separate qualification gate.
+
+The explicit Codex supervisor reclaims a compact tracking slot after an owned
+step confirms its qualified physical/header binding is unavailable or changed.
+It preserves durable source identity/progress and exact pending bytes. Busy,
+draining, lost and noncompact owners cannot be evicted to admit a replacement.
+Rediscovery qualifies the current physical/header candidate independently; a new
+session needs a fresh observed start after arming. Retired memory fingerprints
+and prior capacity-refusal hints are cleared without changing the configured
+tracking bound. This does not enable guarded process startup or qualify the full
+rotation, retirement and fault matrix.
+
+An unadmitted Codex probe that definitively detects a changed prefix or
+truncation rearms on a later reserved step at the then-current file length.
+Already present starts remain historical; fresh observed activity is required
+before any admission or sanitized backfill. Retryable metadata/header/I/O errors
+retain the original probe, while admitted readers and durable queues keep their
+existing exact recovery rules. Internal pause/resume preserves these boundaries
+without enlarging tracking or resident limits. This does not enable the guarded
+process startup path.
+
+A retained parked session can stage current-directory admission when its old
+ingress anchor is revoked. Bounded context preparation precedes fresh native
+Write and reader leases, preserves exact backpressure/prefix state and changes
+the anchor only after successful handoff. Old body/queued evidence cannot borrow
+the new directory's authority. This explicit path and its supervisor composition
+do not enable server startup or client checkpoints.
+
+Configured spool refusal retains exact unacknowledged source frames within the
+resident bound. Explicit supervisor restart with a larger capacity recovers only
+admitted native sessions; unadmitted historical starts still need fresh observed
+activity. Status counts released stopped owners as zero resident/occupied
+reservations while retaining draining owners' reservations. This pressure and
+explicit restart qualification does not enable process startup or qualify a full
+durable queue, rotation, faults or cold whole-server serving.
+
+Exact prepared requests retain their bytes, actor and receipt identities when
+they fill the durable queue or their repository is revoked. Rejected later
+ingress cannot advance its cursor. Explicit worker restart retains that intent;
+restored original admission permits exact receipt resolution and frees capacity
+for independently admitted later repository batches. Resolving a lost native
+acknowledgement cannot reauthor AgentStore roots. Captured-entry preparation
+growth/headroom and full process lifecycle remain separate qualification gates.
+
+The current strict byte-limit profile withholds native publication when a
+Captured-to-Prepared replacement cannot fit, retaining the captured batch and
+cursor until explicit configured capacity relief. Automatic startup also
+requires bounded preparation headroom for newly admitted captures and honest
+management diagnostics for legacy queues; neither may evade the hard byte bound
+or replace exact accepted intent. Newly admitted automatic reader captures now
+reserve physical space for the larger native or local prepared envelope using
+trailing JSON whitespace; independent hook writers count that same space. A
+matching native runtime request may contain all 4096 permitted edits, while a
+local request duplicates its exact sanitized payload and optional binding.
+Reservation failure cannot acknowledge source bytes. This is conservative
+capacity admission, so small configured queues may admit no automatic batch. It
+does not author dependent requests early, change request/receipt identity or
+increase the configured limit. Legacy compact entries and explicit hook
+admission keep their existing byte-bound profile. Management diagnostics and
+full startup/pressure/fault qualification remain pending.
+
+Admission and preparation byte-limit refusals carry typed, body-free configured
+and required physical byte totals through admitted ingress and exact native
+delivery. Internal Codex supervisor status reports the maximum last settled
+ingress requirement, the number of affected source owners and the last settled
+delivery requirement. Successful steps clear their observations; pause retains
+them. These cached observations neither inspect the filesystem during status nor
+authorize a capacity increase, discard accepted evidence or guarantee current
+queue pressure. Compact spool preparation overflow can therefore name exact
+explicit relief without adding legacy AgentStore support. Explicit
+capacity-relief controls and UI presentation remain pending.
+
+The M18 profile in [collaboration](collaboration.md) owns agent_capture server
+configuration, LocalTrusted write admission, explicitly selected versioned
+harness roots and supervised capture. Omitted configuration remains disabled.
+Settings apply at startup; pause/resume cannot enable an unconfigured source.
+The strict format-2 agent_capture table accepts enabled, max_readers,
+rescan_seconds, max_sources, max_pending_bytes and a harnesses array. Each entry
+requires profile and product_version with optional roots or the read-only API
+endpoint. Checks resolve relative roots against the TOML directory, validate
+limits and require writable LocalTrusted native serving for enablement. They
+create no spool, rule cache, discovery registry or source files. Configured
+Codex startup initializes only absent private capture state under the server's
+native storage/state-lock lifetime. Existing damaged state degrades capture
+without repair; other reader profiles fail before creating server state. Product
+surface and live-edit qualification remain separate gates. Typed jj agent
+capture status/pause/resume/rescan/import controls use the same local service
+boundary and bounded diagnostics. Real hook/file/API qualification is distinct
+from detection/setup preview and from automatic client checkpoints.
+Implementation and release gates live in [milestones](milestones.md).
+
+The CLI-supplied capture workspace verifier resolves an existing session
+directory to its nearest physical native JJ workspace within 64 ancestors. It
+checks this installation's exact socket and preserves a device binding digest
+over physical identities and validated connection/profile bytes. Inner Git or
+invalid JJ boundaries and `.jj` metadata paths fail closed. It opens no working
+copy transaction, snapshots no files and changes no operation heads. This
+capability is independent of explicit folder-registration root inspection.
+
+Automatic Codex batch admission uses the batch's reconstructed directory rather
+than reusing the session header's initial cwd. Each changed turn context goes
+through the same native workspace/socket and current discovery-catalog checks.
+An unavailable context or a repository removed from discovery withholds
+admission. Revalidation remains required before publication, alongside the
+authorized service's independent current write policy. This adapter does not
+start a watcher, import inactive history or checkpoint a client working copy.
+
+The supported AgentStore profile uses native AgentRootV1, local descriptor
+version 2 and schema-2 transcript append tails. Legacy local descriptors and
+forward transcript pages have no compatibility or migration path. Native capture
+requires an already selected current Agent root; a missing root fails closed.
+Durable spool retries and receipts keep their existing exact-intent guarantees.
+
+### OpenCode API history preparation
+
+The retained library can prepare an exact API message-prefix import boundary
+without source enrollment, private intent writes or publication. It
+independently verifies selected history and preserves accepted boundaries across
+appended messages. Each step reads at most one existing bounded API page and
+releases raw records. Empty history has zero logical messages and zero byte
+offset; API byte positions MUST NOT be invented. Exact
+endpoint/session/directory/version and selected-prefix checks govern replay.
+This boundary alone does not qualify public selectors, import commands, worker
+delivery or configured startup.
+
+### Retained OpenCode supervision boundary
+
+Explicit library-level capture supervision admits the qualified read-only
+OpenCode API alongside Codex file sources. It uses the same reader/source
+limits, selector catalog, pause/resume/rescan and storage drain ownership. API
+source observations are body-free and do not authorize filesystem history
+imports. API delivery is independent of source reading and retains exact
+sanitized entry proofs and existing leases. Ordinary process startup remains
+withheld pending management/import/export, identity and real-harness
+qualification; library fixture acceptance cannot bypass that gate. No harness
+process is launched and no existing service is restarted.
+
+Approved API busy/retry/idle observations now advance a typed private composite
+reader checkpoint independently of message count. Empty admitted sessions retain
+zero-message progress. Reopen reconstructs historical constant status evidence
+and each message's original lifecycle/generation before allocating new status or
+tail records. Current status cannot rewrite retained publication requests. The
+source follows observed API classes only; exports and message timestamps have no
+lifecycle authority.
+
+The retained API worker now discovers across verified repository/workspace
+directories rather than relying on its default instance status map. Bounded
+project directories supply ordinary candidates; global/non-Git projects use the
+pinned bounded session metadata list because OpenCode does not persist their
+project-directory rows. Only current directory-scoped busy/retry status permits
+new automatic admission. Metadata paths remain device memory only; directory and
+native Write policy are checked before and after the status query. Existing
+admitted-session recovery still runs when new project enumeration fails.
+
+API snapshot publication inspection now selects an exact source-sequence
+boundary under the existing private inspection coordination. It reports native
+receipt coverage separately from captured acknowledgements and continuing tail
+message counts, including zero-message lifecycle transitions. Later repository
+receipts cannot cover earlier withheld status records. This internal proof is a
+prerequisite for management; it does not qualify public API import/export or
+configured OpenCode startup.
+
+Installation source management can inspect exact API snapshot publication
+coverage through the retained private spool metadata handle. It preserves cached
+source association across pause and stopped/offline harness observations, while
+requiring current installation admission before and after the bounded read.
+Missing evidence withholds coverage without repairing state or opening pending
+bodies. Library/API acceptance does not qualify enabled OpenCode process startup
+or historical API import/export.
+
+## Usable Codex capture preview
+
+The first trial uses the existing LocalTrusted foreground server and explicit
+version-qualified Codex configuration. A repeatable development setup MUST use
+an isolated native repository, linked physical workspace, current AgentStore,
+private capture state and unused loopback ports. It MUST document the browser
+URL, linked folder, exact harness version, configuration and stop command, while
+preserving main's running fixture and installed applications. Capture remains
+disabled by default. A one-time configuration/backend restart is sufficient;
+UI-based configuration and hook installation are deferred. The setup MUST reject
+unsupported versions and continue enforcing current repository/workspace
+admission. It MUST NOT import arbitrary personal history. Real trial sessions,
+controlled fixtures and the full multi-harness release are distinct evidence.
+
+### Isolated Codex preview launcher
+
+`pnpm dev:capture:setup` builds an isolated native development fixture, links
+its physical repository and enables only qualified Codex CLI capture at the
+normal known locations. It uses the existing dev UI/backend ownership checks,
+ports 7470/7472 and ignored `.local/codex-preview` state by default.
+`dev:capture` reuses it, `dev:capture:restart` replaces only the preview
+backend, and `dev:capture:stop` stops the owned preview processes while
+preserving history. The main fixture, installed binaries and unrelated services
+are untouched. CLI version is checked before startup; Desktop is a separate
+qualification gate.

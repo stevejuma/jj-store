@@ -300,6 +300,23 @@ impl Coordinator {
             return Ok(());
         };
         match target {
+            ThreadLinkTargetV1::CaptureGap {
+                source_state,
+                event_batch,
+                ..
+            } => {
+                let agents = self
+                    .agent_store(
+                        base.manifest
+                            .agent_root
+                            .ok_or(Error::Corrupt("agent source root"))?,
+                    )
+                    .await?;
+                AgentReader::new(&agents)
+                    .validate_capture_gap(*source_state, *event_batch)
+                    .await?;
+            }
+
             ThreadLinkTargetV1::Session {
                 session_id,
                 snapshot,

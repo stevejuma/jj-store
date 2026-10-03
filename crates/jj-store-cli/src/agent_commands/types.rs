@@ -17,6 +17,8 @@ pub struct AgentArgs {
 
 #[derive(Clone, Debug, Subcommand)]
 pub enum AgentCommand {
+    /// Manage one explicitly selected local server's automatic transcript capture
+    Capture(super::capture::CaptureArgs),
     /// Persistent repository Threads; execution remains separate
     Thread {
         #[command(subcommand)]

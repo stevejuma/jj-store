@@ -1,17 +1,21 @@
-use super::{string, tool_kind, value};
+use super::{
+    codex_ids::{session, turn_id},
+    string, tool_kind, value,
+};
 use crate::{
     AgentEntityRefV1, AgentSessionId, IntegrationId, MessageId, MessageRole, NativeEntityKind,
     NormalizationBatchV1, NormalizationDiagnosticKind, NormalizedActivityRecordV1,
     NormalizedMessageRecordV1, NormalizedPermissionRecordV1, NormalizedSessionStateRecordV1,
     NormalizedToolRecordV1, NormalizerProfileV1, PermissionState, Result,
-    SanitizedObservationBatchV1, SessionState, ToolCallId, ToolState, TurnId, alias, json_payload,
-    scoped, stable_id, text_payload,
+    SanitizedObservationBatchV1, SessionState, ToolCallId, ToolResultObservation, ToolState,
+    TurnId, alias, json_payload, scoped, stable_id, text_payload,
 };
 
 pub(crate) fn normalize(
-    _: &NormalizerProfileV1,
+    profile: &NormalizerProfileV1,
     batch: &SanitizedObservationBatchV1,
     output: &mut NormalizationBatchV1,
+    tool_results: &mut Vec<ToolResultObservation>,
 ) -> Result<()> {
     for observation in &batch.observations {
         let Some(value) = value(observation) else {
@@ -22,6 +26,27 @@ pub(crate) fn normalize(
             );
             continue;
         };
+        if observation.source_kind == crate::SourceKind::Transcript
+            && value.get("capture_format").is_some()
+        {
+            super::codex_transcript::record(
+                profile,
+                batch,
+                observation,
+                &value,
+                output,
+                tool_results,
+            )?;
+            continue;
+        }
+        if profile.product_version != "0.156.1" {
+            output.diagnostic(
+                NormalizationDiagnosticKind::UnsupportedVersion,
+                "codex-hook-surface",
+                Some(observation.source_sequence),
+            );
+            continue;
+        }
         let (Some(event), Some(native_session)) = (
             string(&value, &["hook_event_name"]),
             string(&value, &["session_id"]),
@@ -139,54 +164,6 @@ pub(crate) fn normalize(
         }
     }
     Ok(())
-}
-
-fn session(
-    batch: &SanitizedObservationBatchV1,
-    output: &mut NormalizationBatchV1,
-    native: &str,
-) -> AgentSessionId {
-    let id = AgentSessionId::new(stable_id(
-        batch.source_instance_id,
-        IntegrationId::Codex,
-        "session",
-        native,
-    ));
-    output.alias(alias(
-        IntegrationId::Codex,
-        batch.source_instance_id,
-        NativeEntityKind::Session,
-        native.into(),
-        AgentEntityRefV1::Session { session_id: id },
-    ));
-    id
-}
-
-fn turn_id(
-    batch: &SanitizedObservationBatchV1,
-    output: &mut NormalizationBatchV1,
-    native_session: &str,
-    native: &str,
-) -> TurnId {
-    let native = scoped(native_session, native);
-    let id = TurnId::new(stable_id(
-        batch.source_instance_id,
-        IntegrationId::Codex,
-        "turn",
-        &native,
-    ));
-    let session_id = session(batch, output, native_session);
-    output.alias(alias(
-        IntegrationId::Codex,
-        batch.source_instance_id,
-        NativeEntityKind::Turn,
-        native,
-        AgentEntityRefV1::Turn {
-            session_id,
-            turn_id: id,
-        },
-    ));
-    id
 }
 
 #[allow(clippy::too_many_arguments)]

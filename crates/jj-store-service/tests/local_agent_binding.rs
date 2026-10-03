@@ -113,6 +113,110 @@ fn bound(
     }
 }
 #[tokio::test]
+async fn bound_diagnostic_capture_retains_thread_intent_without_inventing_session() {
+    let (root, repo) = fixture();
+    let first = create(&repo, 1).await;
+    let active = thread(
+        &repo,
+        2,
+        ThreadCommandV1::Lifecycle {
+            thread_id: first.thread_id,
+            expected: first.version,
+            action: ThreadActionV1::Activate,
+        },
+    )
+    .await;
+    let first = thread(
+        &repo,
+        3,
+        ThreadCommandV1::Lifecycle {
+            thread_id: first.thread_id,
+            expected: active.version,
+            action: ThreadActionV1::Archive,
+        },
+    )
+    .await;
+    let mut gap = batch();
+    gap.observations.truncate(1);
+    gap.observations[0].payload =
+        SanitizedPayloadV1::new(SanitizedMediaType::Json, br#"{"future_record":true}"#).unwrap();
+    let request = bound(40, &first, None, gap);
+    let before = repo.metadata_store().read().unwrap().unwrap();
+    let accepted = repo.apply_agent_command(&request).await.unwrap();
+    let after = repo.metadata_store().read().unwrap().unwrap();
+    assert_eq!(after.sequence(), before.sequence() + 1);
+    let agents = repo.agent_store().await.unwrap();
+    assert!(
+        agents
+            .reads()
+            .list_sessions(None, 10)
+            .await
+            .unwrap()
+            .selections
+            .is_empty()
+    );
+    let threads = repo.thread_store().await.unwrap();
+    assert!(threads.state.assignments.is_empty());
+    assert_eq!(threads.state.links.len(), 1);
+    let link = threads
+        .object(*threads.state.links.values().next().unwrap())
+        .unwrap();
+    assert_eq!(
+        serde_json::to_value(&link).unwrap()["value"]["target"]["type"],
+        "capture_gap"
+    );
+    let current = threads.state.threads[&first.thread_id];
+    let CollabObjectV1::ThreadVersion(version) = threads.object(current).unwrap() else {
+        panic!()
+    };
+    assert_eq!(version.status, ThreadStatusV1::Archived);
+    let output = Command::new("git")
+        .arg("--git-dir")
+        .arg(root.path().join("repo/.git"))
+        .args(["gc", "--prune=now"])
+        .env("GIT_CONFIG_NOSYSTEM", "1")
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let fresh = reopen(&root.path().join("repo"));
+    assert_eq!(fresh.apply_agent_command(&request).await.unwrap(), accepted);
+    let mut next = batch();
+    next.batch_id = CaptureBatchId::new([72; 16]);
+    for observation in &mut next.observations {
+        observation.source_sequence += 1;
+    }
+    let target = ThreadCommandResultV1 {
+        version: current,
+        ..first
+    };
+    fresh
+        .apply_agent_command(&bound(41, &target, None, next))
+        .await
+        .unwrap();
+    assert_eq!(
+        fresh.thread_store().await.unwrap().state.assignments.len(),
+        1
+    );
+    assert_eq!(
+        fresh
+            .agent_store()
+            .await
+            .unwrap()
+            .reads()
+            .list_sessions(None, 10)
+            .await
+            .unwrap()
+            .selections
+            .len(),
+        1
+    );
+}
+#[tokio::test]
 async fn bound_local_capture_selects_one_ref_retains_complete_session_and_replays_after_gc() {
     let (root, repo) = fixture();
     let first = create(&repo, 1).await;
@@ -325,4 +429,76 @@ async fn bound_local_capture_reassigns_one_session_and_retains_inactive_history(
         selected.state.threads[&first.thread_id],
         initial.state.threads[&first.thread_id]
     );
+}
+#[tokio::test]
+async fn bound_gap_with_observed_assignment_preserves_the_real_session_and_rejects_stale_intent() {
+    let (_root, repo) = fixture();
+    let first = create(&repo, 1).await;
+    repo.apply_agent_command(&bound(40, &first, None, batch()))
+        .await
+        .unwrap();
+    let before = repo.thread_store().await.unwrap();
+    let assignment = *before.state.assignments.values().next().unwrap();
+    let current = before.state.threads[&first.thread_id];
+    let target = ThreadCommandResultV1 {
+        version: current,
+        ..first
+    };
+    let mut gap = batch();
+    gap.batch_id = CaptureBatchId::new([72; 16]);
+    gap.observations.truncate(1);
+    gap.observations[0].source_sequence = 11;
+    gap.observations[0].payload =
+        SanitizedPayloadV1::new(SanitizedMediaType::Json, br#"{"future_record":true}"#).unwrap();
+    let request = bound(41, &target, Some(assignment), gap);
+    let session_pin = repo
+        .agent_store()
+        .await
+        .unwrap()
+        .reads()
+        .list_sessions(None, 10)
+        .await
+        .unwrap()
+        .selections;
+    repo.apply_agent_command(&request).await.unwrap();
+    let selected = repo.thread_store().await.unwrap();
+    assert_eq!(selected.state.assignments, before.state.assignments);
+    assert_eq!(
+        repo.agent_store()
+            .await
+            .unwrap()
+            .reads()
+            .list_sessions(None, 10)
+            .await
+            .unwrap()
+            .selections,
+        session_pin
+    );
+    assert!(selected.state.links.values().any(|r| matches!(selected.object(*r).unwrap(), CollabObjectV1::ThreadLink(ThreadLinkV1 { target: ThreadLinkTargetV1::CaptureGap { binding, .. }, .. }) if binding.observed_assignment == Some(assignment))));
+    let second = create(&repo, 2).await;
+    let mut next = batch();
+    next.batch_id = CaptureBatchId::new([73; 16]);
+    next.observations = vec![next.observations.last().unwrap().clone()];
+    next.observations[0].source_sequence = 12;
+    repo.apply_agent_command(&bound(42, &second, Some(assignment), next))
+        .await
+        .unwrap();
+    let moved = repo.thread_store().await.unwrap();
+    let destination = ThreadCommandResultV1 {
+        version: moved.state.threads[&second.thread_id],
+        ..second
+    };
+    let mut stale_gap = batch();
+    stale_gap.batch_id = CaptureBatchId::new([74; 16]);
+    stale_gap.observations.truncate(1);
+    stale_gap.observations[0].source_sequence = 13;
+    stale_gap.observations[0].payload =
+        SanitizedPayloadV1::new(SanitizedMediaType::Json, br#"{"future_record":true}"#).unwrap();
+    let stale = bound(43, &destination, Some(assignment), stale_gap);
+    let pin = repo.metadata_store().read().unwrap().unwrap().commit();
+    assert_eq!(
+        repo.apply_agent_command(&stale).await.unwrap_err(),
+        LocalError::Stale
+    );
+    assert_eq!(repo.metadata_store().read().unwrap().unwrap().commit(), pin);
 }

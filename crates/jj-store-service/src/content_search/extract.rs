@@ -25,85 +25,83 @@ pub(super) async fn capture(
     if matches!(query.section, ContentSection::All | ContentSection::Threads)
         && query.project.is_none()
         && query.task.is_none()
+        && let Some(root) = manifest.thread_root
     {
-        if let Some(root) = manifest.thread_root {
-            let store = session.coordinator.native_thread_store(root).await?;
-            source_nodes = source_nodes
-                .checked_add(store.graph.objects.len())
-                .ok_or(Error::Limit)?;
-            if source_nodes > session.limits.inventory_nodes {
-                return Err(Error::Limit);
+        let store = session.coordinator.native_thread_store(root).await?;
+        source_nodes = source_nodes
+            .checked_add(store.graph.objects.len())
+            .ok_or(Error::Limit)?;
+        if source_nodes > session.limits.inventory_nodes {
+            return Err(Error::Limit);
+        }
+        let mut threads = BTreeMap::new();
+        let mut recent_rows = BTreeMap::new();
+        for (id, reference) in &store.state.threads {
+            let CollabObjectV1::ThreadVersion(t) =
+                store.graph.get(*reference).map_err(|_| Error::Corrupt)?
+            else {
+                return Err(Error::Corrupt);
+            };
+            if t.status == ThreadStatusV1::Tombstoned
+                || query.thread.is_some_and(|selected| selected != *id)
+            {
+                continue;
             }
-            let mut threads = BTreeMap::new();
-            let mut recent_rows = BTreeMap::new();
-            for (id, reference) in &store.state.threads {
-                let CollabObjectV1::ThreadVersion(t) =
-                    store.graph.get(*reference).map_err(|_| Error::Corrupt)?
-                else {
-                    return Err(Error::Corrupt);
-                };
-                if t.status == ThreadStatusV1::Tombstoned
-                    || query.thread.is_some_and(|selected| selected != *id)
-                {
-                    continue;
-                }
-                threads.insert(*id, t);
-                if (filter.is_empty() && t.status != ThreadStatusV1::Archived)
-                    || (!filter.is_empty() && matches_text(&filter, &t.title, ""))
-                {
-                    recent_rows.insert(*id, results.len());
-                    results.push(ContentHit {
-                        kind: ContentKind::Thread,
-                        id: id.to_string(),
-                        title: t.title.clone(),
-                        excerpt: format!("{:?}", t.status).to_lowercase(),
-                        actor: t.actor,
-                        at_millis: t.accepted_at_millis,
-                        revision: reference.id.to_string(),
-                        thread: Some(*id),
-                        message: None,
-                        project: None,
-                        task: None,
-                        comment: None,
-                    });
-                }
+            threads.insert(*id, t);
+            if (filter.is_empty() && t.status != ThreadStatusV1::Archived)
+                || (!filter.is_empty() && matches_text(&filter, &t.title, ""))
+            {
+                recent_rows.insert(*id, results.len());
+                results.push(ContentHit {
+                    kind: ContentKind::Thread,
+                    id: id.to_string(),
+                    title: t.title.clone(),
+                    excerpt: format!("{:?}", t.status).to_lowercase(),
+                    actor: t.actor,
+                    at_millis: t.accepted_at_millis,
+                    revision: reference.id.to_string(),
+                    thread: Some(*id),
+                    message: None,
+                    project: None,
+                    task: None,
+                    comment: None,
+                });
             }
-            for (id, reference) in &store.state.messages {
-                let CollabObjectV1::HumanMessageRevision(message) =
-                    store.graph.get(*reference).map_err(|_| Error::Corrupt)?
-                else {
-                    return Err(Error::Corrupt);
-                };
-                let Some(thread) = threads.get(&message.thread_id) else {
-                    continue;
-                };
-                let Some(body) = &message.body else { continue };
-                if filter.is_empty() {
-                    if let Some(row) = recent_rows
-                        .get(&message.thread_id)
-                        .map(|index| &mut results[*index])
-                    {
-                        if message.accepted_at_millis >= row.at_millis {
-                            row.at_millis = message.accepted_at_millis;
-                            row.excerpt = excerpt(body, "");
-                        }
-                    }
-                } else if matches_text(&filter, "", body) {
-                    results.push(ContentHit {
-                        kind: ContentKind::Message,
-                        id: id.to_string(),
-                        title: thread.title.clone(),
-                        excerpt: excerpt(body, &filter),
-                        actor: message.actor,
-                        at_millis: message.accepted_at_millis,
-                        revision: reference.id.to_string(),
-                        thread: Some(message.thread_id),
-                        message: Some(*id),
-                        project: None,
-                        task: None,
-                        comment: None,
-                    });
+        }
+        for (id, reference) in &store.state.messages {
+            let CollabObjectV1::HumanMessageRevision(message) =
+                store.graph.get(*reference).map_err(|_| Error::Corrupt)?
+            else {
+                return Err(Error::Corrupt);
+            };
+            let Some(thread) = threads.get(&message.thread_id) else {
+                continue;
+            };
+            let Some(body) = &message.body else { continue };
+            if filter.is_empty() {
+                if let Some(row) = recent_rows
+                    .get(&message.thread_id)
+                    .map(|index| &mut results[*index])
+                    && message.accepted_at_millis >= row.at_millis
+                {
+                    row.at_millis = message.accepted_at_millis;
+                    row.excerpt = excerpt(body, "");
                 }
+            } else if matches_text(&filter, "", body) {
+                results.push(ContentHit {
+                    kind: ContentKind::Message,
+                    id: id.to_string(),
+                    title: thread.title.clone(),
+                    excerpt: excerpt(body, &filter),
+                    actor: message.actor,
+                    at_millis: message.accepted_at_millis,
+                    revision: reference.id.to_string(),
+                    thread: Some(message.thread_id),
+                    message: Some(*id),
+                    project: None,
+                    task: None,
+                    comment: None,
+                });
             }
         }
     }
@@ -111,91 +109,87 @@ pub(super) async fn capture(
         query.section,
         ContentSection::All | ContentSection::Projects | ContentSection::Tasks
     ) && query.thread.is_none()
+        && let Some(root) = manifest.work_root
     {
-        if let Some(root) = manifest.work_root {
-            let work = session.coordinator.work_store(root).await?;
-            let state = work.state();
-            source_nodes = source_nodes
-                .checked_add(state.projects.len() + state.tasks.len() + state.comments.len())
-                .ok_or(Error::Limit)?;
-            if source_nodes > session.limits.inventory_nodes {
-                return Err(Error::Limit);
+        let work = session.coordinator.work_store(root).await?;
+        let state = work.state();
+        source_nodes = source_nodes
+            .checked_add(state.projects.len() + state.tasks.len() + state.comments.len())
+            .ok_or(Error::Limit)?;
+        if source_nodes > session.limits.inventory_nodes {
+            return Err(Error::Limit);
+        }
+        for p in state
+            .projects
+            .values()
+            .filter(|p| query.project.is_none_or(|id| id == p.id) && query.task.is_none())
+        {
+            if query.section != ContentSection::Tasks && matches_text(&filter, &p.title, &p.body) {
+                results.push(ContentHit {
+                    kind: ContentKind::Project,
+                    id: p.id.to_string(),
+                    title: p.title.clone(),
+                    excerpt: excerpt(&p.body, &filter),
+                    actor: p.actor.updated_by,
+                    at_millis: p.actor.updated_at_millis,
+                    revision: p.version.to_string(),
+                    thread: None,
+                    message: None,
+                    project: Some(p.id),
+                    task: None,
+                    comment: None,
+                });
             }
-            for p in state
-                .projects
-                .values()
-                .filter(|p| query.project.is_none_or(|id| id == p.id) && query.task.is_none())
+        }
+        for t in state.tasks.values().filter(|t| {
+            query.project.is_none_or(|id| id == t.project) && query.task.is_none_or(|id| id == t.id)
+        }) {
+            if (filter.is_empty() && t.state == crate::work::TaskStateV1::Done)
+                || !matches_text(&filter, &t.title, &t.body)
             {
-                if query.section != ContentSection::Tasks
-                    && matches_text(&filter, &p.title, &p.body)
-                {
-                    results.push(ContentHit {
-                        kind: ContentKind::Project,
-                        id: p.id.to_string(),
-                        title: p.title.clone(),
-                        excerpt: excerpt(&p.body, &filter),
-                        actor: p.actor.updated_by,
-                        at_millis: p.actor.updated_at_millis,
-                        revision: p.version.to_string(),
-                        thread: None,
-                        message: None,
-                        project: Some(p.id),
-                        task: None,
-                        comment: None,
-                    });
-                }
+                continue;
             }
-            for t in state.tasks.values().filter(|t| {
-                query.project.is_none_or(|id| id == t.project)
-                    && query.task.is_none_or(|id| id == t.id)
-            }) {
-                if (filter.is_empty() && t.state == crate::work::TaskStateV1::Done)
-                    || !matches_text(&filter, &t.title, &t.body)
+            results.push(ContentHit {
+                kind: ContentKind::Task,
+                id: t.id.to_string(),
+                title: t.title.clone(),
+                excerpt: excerpt(&t.body, &filter),
+                actor: t.actor.updated_by,
+                at_millis: t.actor.updated_at_millis,
+                revision: t.version.to_string(),
+                thread: None,
+                message: None,
+                project: Some(t.project),
+                task: Some(t.id),
+                comment: None,
+            });
+        }
+        if !filter.is_empty() {
+            for c in state.comments.values() {
+                let Some(body) = &c.body else { continue };
+                let Some(t) = state.tasks.get(&c.task) else {
+                    return Err(Error::Corrupt);
+                };
+                if query.project.is_some_and(|id| id != t.project)
+                    || query.task.is_some_and(|id| id != t.id)
+                    || !matches_text(&filter, "", body)
                 {
                     continue;
                 }
                 results.push(ContentHit {
-                    kind: ContentKind::Task,
-                    id: t.id.to_string(),
+                    kind: ContentKind::Comment,
+                    id: c.id.to_string(),
                     title: t.title.clone(),
-                    excerpt: excerpt(&t.body, &filter),
-                    actor: t.actor.updated_by,
-                    at_millis: t.actor.updated_at_millis,
-                    revision: t.version.to_string(),
+                    excerpt: excerpt(body, &filter),
+                    actor: c.actor.updated_by,
+                    at_millis: c.actor.updated_at_millis,
+                    revision: c.version.to_string(),
                     thread: None,
                     message: None,
                     project: Some(t.project),
                     task: Some(t.id),
-                    comment: None,
+                    comment: Some(c.id),
                 });
-            }
-            if !filter.is_empty() {
-                for c in state.comments.values() {
-                    let Some(body) = &c.body else { continue };
-                    let Some(t) = state.tasks.get(&c.task) else {
-                        return Err(Error::Corrupt);
-                    };
-                    if query.project.is_some_and(|id| id != t.project)
-                        || query.task.is_some_and(|id| id != t.id)
-                        || !matches_text(&filter, "", body)
-                    {
-                        continue;
-                    }
-                    results.push(ContentHit {
-                        kind: ContentKind::Comment,
-                        id: c.id.to_string(),
-                        title: t.title.clone(),
-                        excerpt: excerpt(body, &filter),
-                        actor: c.actor.updated_by,
-                        at_millis: c.actor.updated_at_millis,
-                        revision: c.version.to_string(),
-                        thread: None,
-                        message: None,
-                        project: Some(t.project),
-                        task: Some(t.id),
-                        comment: Some(c.id),
-                    });
-                }
             }
         }
     }

@@ -48,6 +48,17 @@ pub struct VerifiedWorkspace {
     pub profile: WorkspaceProfile,
 }
 
+/// Device-local capture admission witness; it confers no publication authority.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct VerifiedCaptureWorkspace {
+    /// Original absolute source directory, retained to recheck aliases and newly
+    /// introduced inner repository boundaries. Device-only, never an AgentStore body.
+    pub directory: String,
+    pub workspace: VerifiedWorkspace,
+    pub binding_digest: [u8; 32],
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum WorkspaceAvailability {
@@ -98,6 +109,13 @@ pub trait WorkspaceVerifier: Send + Sync {
     /// Read existing, bounded metadata only. Must not load/snapshot a working copy,
     /// initialize metadata, reconcile heads or execute programs.
     fn inspect(&self, path: &str) -> Result<VerifiedWorkspace, Error>;
+
+    /// Resolve a session directory to its nearest repository boundary and retain
+    /// an exact physical/native connection witness. Root-only implementations
+    /// cannot be used for automatic capture without qualifying this capability.
+    fn inspect_capture_directory(&self, _path: &str) -> Result<VerifiedCaptureWorkspace, Error> {
+        Err(Error::Unavailable)
+    }
 }
 
 #[async_trait::async_trait]

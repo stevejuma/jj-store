@@ -33,6 +33,39 @@ per-pin and concurrency budgets; a small cache cannot disable a valid query.
 Neither warm reads nor derived directory/reaction indexes stage or publish
 state.
 
+Installation-local capture status and pause/resume use owned service DTOs and a
+transport-independent manager. This is device policy, not a repository mutation:
+the admitted transport supplies the actor, current installation Admin authority
+is required, and the command binds a stable request, control generation and
+expected policy revision. Actor fields and unknown command fields are rejected.
+Responses separate durable policy receipt from runtime transition acceptance;
+body-free status and exact replay grant no publication, import or execution
+authority. Native AgentStore and WAL mutation semantics remain governed by their
+existing requirements.
+
+Native and local companion capture share qualified common OpenCode identity
+adoption through the owned projector. Exact selected aliases may enrich an
+existing session/message/tool; source cursors and receipts remain independent.
+The service cannot infer identity from content, directory or time, or initialize
+an automatic reader from this capability. Each provider retains its ordinary
+authorization, complete dependency audit, stable request receipt and publication
+precondition around the shared projection. Ambiguous or incomplete selected
+identity proof withholds entity edits while retaining sanitized source evidence.
+
+Installation import adds an actor-free version-1 command binding the exact
+request ID, control generation/revision and runtime source selector. It
+dispatches to an existing bounded source owner and acknowledges only
+synchronized accepted intent after native Write and original-prefix admission.
+The retained owner preserves admission/body settlement and established worker
+timing; slow preparation/body work may yield an unknown public acknowledgement
+while durable original intent remains available after settlement. Exact receipt
+replay resolves before new-selector/policy checks; unknown outcomes retain
+original input. The receipt remains device intent and grants no native
+publication. Inspection requires current installation Admin and uses only
+bounded metadata; it cannot initialize missing state, enroll history, recover
+pending bodies or create an execution/storage owner. Browser controls and
+automatic accepted-request restart dispatch remain separate gates.
+
 Application content search is an authorized read facade over one selected
 Thread/WorkStore snapshot. The service checks source inventory bounds before
 filtering and reauthorizes retained query pages. Thread directory metadata is
@@ -44,14 +77,14 @@ from the same captured graph. Agent and review content remains in its canonical
 source; UI adapters never invent transcript bodies.
 
 Explicit local BoundCapture carries the exact observed Thread version and
-primary assignment with the original sanitized batch/profile. It requires one
-session replacement, stages the shared link without changing lifecycle and
-selects Agent and Thread descriptors in one companion ref CAS. The Thread
-descriptor audits and retains the complete newly staged session closure before
-selection. Matching receipt replay precedes entity/source preconditions; stale
-bindings select neither root. The private spool retains this original bound
-request across unknown outcomes. Legacy unlinked capture tags, field order and
-receipts remain unchanged.
+primary assignment with the original sanitized batch/profile. It retains one
+real session replacement or a validated diagnostic-only capture gap, stages the
+shared link without changing lifecycle and selects Agent and Thread descriptors
+in one companion ref CAS. The Thread descriptor audits and retains the complete
+newly staged session closure before selection. Matching receipt replay precedes
+entity/source preconditions; stale bindings select neither root. The private
+spool retains this original bound request across unknown outcomes. Legacy
+unlinked capture tags, field order and receipts remain unchanged.
 
 Native capture preparation forwards an explicit optional Thread binding through
 the owned service facade. It validates typed input, derives the current actor
@@ -73,8 +106,16 @@ Local AgentStore commands retain the typed sanitized capture request as their
 intent, resolve selected receipts before running the shared reducer and use the
 same source-order and overlap policy as native capture. Their independent state
 version and canonical record inventory are selected only by companion ref CAS.
+Only the canonical local AgentStore descriptor version 2 is supported. Version 1
+descriptors fail closed without an in-memory upgrade or metadata mutation.
 Unknown outcomes preserve the original request for retry; no code operation,
 checkout or native manifest is changed by this domain command.
+
+Explicit result-only local captures resolve exact selected native aliases
+through the shared projector and retain the original request receipt through
+reopen. Unmatched outputs cannot initialize fictional sessions, and matched
+output does not change session lifecycle or prove tool success. Automatic server
+admission remains the separately governed native LocalTrusted profile.
 
 Local provenance commands retain the exact portable record, expected selection
 and bounded canonical source capsule bytes as their intent. Shared projection
@@ -754,3 +795,84 @@ or capturing native state. Service-owned typed maintenance calls use coordinator
 authority and never accept arbitrary browser manifests. Integrity has no
 mutation side effects; checkpoint publication preserves all code, settings and
 domain roots from the successful CAS base.
+
+## M18 shared capture service semantics
+
+The owned rescan command binds version, policy generation and expected revision,
+with an actor supplied independently by transport. Its response separates
+transient discovery-hint acceptance from observed status. It changes neither
+device policy receipts nor repository roots and grants no native mutation,
+history import or activity proof. Runtime status may expose bounded cached root
+availability and source-degradation observations without paths or body evidence.
+Typed per-harness coverage adds declared profile/product-version metadata and
+cached root/source counts with the same current Admin status admission. The
+current Codex runtime has at most two groups, in deterministic profile order.
+Grouping performs no source I/O or publication and grants no source selection,
+activity, import, policy or native mutation authority; aggregate counters retain
+their existing semantics. All durable journal/source/spool/native formats stay
+unchanged.
+
+The owned workspace-verifier interface has a separate capture-directory proof
+capability. Existing root-only verifiers default to unavailable for capture. The
+proof is device-local admission metadata, not a repository operation or
+authorization grant. Server admission requires current published registry
+membership and repeats the exact physical binding before publication; the
+service's current write guard remains independently required.
+
+[Capture completion](collaboration.md) retains the same service authorization
+and immutable publication boundary. Diagnostic-only capture may select evidence
+and source progress without a session, and later partial tool captures enrich
+selected prior content/terminal state. Unsupported normalizer versions and
+invalid source ordering still fail before metadata selection. Native and local
+receipt behavior and explicit Thread-binding preconditions remain
+provider-owned.
+
+Transcript reads accept only schema-2 append-tail pages through the shared
+engine. Schema-1 forward pages fail decoding and cannot be migrated by a read or
+append. Companion restart and page rollover retain exact manifests, source
+streams and receipts; a captured newer transcript cannot alter an older
+explicitly pinned read.
+
+Explicit bound capture accepts either one exact session edit or a validated
+diagnostic-only source/projection edit pair. The latter retains a capture_gap
+Thread link with original observed binding and safe evidence, while selecting no
+session or assignment. Invalid, stale, denied and misleading gap inputs select
+neither domain. Public Thread links expose this additive gap target; its source
+must belong to the authorized pinned Agent root.
+
+Native and companion capture consumers reuse the pinned common-native Codex
+alias join. Write authorization and provider publication remain independent of
+identity lookup. Local regression acceptance covers adopted session/tool IDs,
+old snapshot pins, cold companion reopen, original receipt replay and later
+source progress; it does not qualify an automatic worker or a real harness edit.
+
+Installation source pages and their selectors are read-only cached diagnostics.
+Current local Admin/configuration/installation and private journal binding are
+checked independently of repository publication authority. A selector is a
+runtime slot reference, not an admission capability or native source identity;
+retired/restarted selections cannot grant import, enrollment, cursor
+advancement, checkpointing or repository mutation. Existing
+control/source/native formats and request/receipt interpretation remain
+unchanged.
+
+Explicit inactive-history import selects device intent separately from native
+AgentStore mutation. A runtime selector identifies a candidate only; current
+native directory/socket/catalog and Write admission precede enrollment and every
+publication. Exact replay can resolve an original selector after restart, but
+the durable source binding cannot migrate to another
+physical/header/native-session witness. Receipt selection neither resets
+progress nor commits a root. Publication preserves the existing actor, prepared
+bytes, request/publication IDs, manifest CAS and receipt recovery. This planned
+flow adds no repository mutation kind, checkpoint, harness execution or
+native/source/spool format change. Its private reader association carries an
+additive retained-prefix verification flag; unverified older links cannot prove
+public completion.
+
+API snapshot source coverage is an installation Admin metadata read. The owned
+source response optionally carries receipt-backed snapshot coverage: exact
+captured/committed source sequences, captured logical count, optional committed
+logical count, history availability, outstanding range count and folded native
+receipt count. It carries no source identity, native key, path, digest, request
+identity or admission proof. Missing coverage is unavailable, not successful
+zero progress. This additive read type grants no mutation, execution or import
+consent and does not initialize journals or retry publication.

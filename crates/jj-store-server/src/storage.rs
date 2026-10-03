@@ -13,12 +13,13 @@ use serde::Serialize;
 use std::{fs::File, net::SocketAddr, sync::Arc, time::Duration};
 
 mod embedded;
+mod lifetime;
 pub use embedded::{EmbeddedStorageConfig, EmbeddedStorageRuntime};
+pub use lifetime::CaptureStorageLifetime;
+use lifetime::StorageOwner;
 
 pub struct AuthoritativeStorage {
-    store: Arc<S3Store>,
-    embedded: Option<EmbeddedStorageRuntime>,
-    _lock: Option<File>,
+    owner: StorageOwner,
 }
 
 impl AuthoritativeStorage {
@@ -41,9 +42,7 @@ impl AuthoritativeStorage {
                         .map_err(|_| Error::Config("storage client"))?,
                 );
                 Ok(Self {
-                    store,
-                    embedded: None,
-                    _lock: None,
+                    owner: StorageOwner::new(store, None, None),
                 })
             }
             Storage::EmbeddedRustfs {
@@ -90,23 +89,30 @@ impl AuthoritativeStorage {
                     return Err(error);
                 }
                 Ok(Self {
-                    store: runtime.store(),
-                    embedded: Some(runtime),
-                    _lock: Some(lock),
+                    owner: StorageOwner::new(runtime.store(), Some(runtime), Some(lock)),
                 })
             }
         }
     }
 
-    pub fn store(&self) -> Arc<S3Store> {
-        self.store.clone()
+    pub(crate) fn with_state_lock(mut self, lock: Option<File>) -> Result<Self> {
+        self.owner.adopt_lock(lock)?;
+        Ok(self)
     }
 
-    pub async fn shutdown(mut self) -> Result<()> {
-        if let Some(runtime) = self.embedded.take() {
-            runtime.shutdown().await;
-        }
-        Ok(())
+    pub fn store(&self) -> Arc<S3Store> {
+        self.owner.store()
+    }
+
+    /// Acquire before capture dispatch; this lifetime grants no service authority.
+    pub fn capture_lifetime(&self) -> CaptureStorageLifetime {
+        self.owner.capture_lifetime()
+    }
+
+    /// Waits for retained capture owners before stopping storage or releasing its lock.
+    /// Cancellation drops only this owner; outstanding lifetimes retain the resources.
+    pub async fn shutdown(self) -> Result<()> {
+        self.owner.shutdown().await
     }
 }
 

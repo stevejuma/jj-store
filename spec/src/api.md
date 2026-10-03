@@ -21,6 +21,35 @@ snapshots and current authorization remain request-bound. Root-keyed data reuse
 and exact-target reaction indexes do not retain credentials or viewer-filtered
 results and never replace cursor pinning or cold validation.
 
+`POST /v1/local/capture/rescan` adds an Admin-only conditional discovery hint.
+Its strict body contains version, control generation and expected revision; it
+selects no policy or durable receipt. The response reports acceptance and cached
+status, rather than scan completion or source admission. Paused/stopped/lost,
+disabled and stale-policy requests are refused. The same 4096-byte body and
+transport admission apply. Discovery root counts and phase, rescan pending and
+degraded-source counts are cached body-free observations; status never scans
+transcripts. Runtime harness groups add typed profile/product-version metadata
+and cached root/source counts in deterministic profile order, with no paths or
+session keys. The current Codex runtime returns at most two groups; unsupported
+profiles do not gain a runtime or qualification through this schema. Import and
+source-level coverage remain separate gates.
+
+Installation capture management uses LocalTrusted Admin-only
+`GET /v1/local/capture` and `POST /v1/local/capture/control`. Both retain exact
+authority, protocol, Origin, Fetch Metadata and body admission. Commands are
+strict actor-free versioned bodies binding a request ID, opaque control
+generation, expected revision and pause/resume action. Responses distinguish
+selected device policy, the original durable receipt, replay and runtime request
+acceptance; acceptance is not proof that pause/drain completed. Status exposes
+only bounded body-free counters and phase, with no source paths or evidence.
+Disabled status touches no capture state. The authenticated actor is derived
+from the admitted local connection and current server configuration is
+revalidated on every request. Missing/corrupt/foreign policy stays unavailable;
+controls never initialize, enable or restart a worker. Import and detailed
+source coverage use the separately governed installation routes below. CLI and
+browser controls share these typed commands and preserve original uncertain
+intent.
+
 Thread event pages include their own human revisions from the captured graph.
 Emoji pages include exact definition version references, and retained previews
 are fetched through the credential-bound client into revocable memory-only URLs.
@@ -55,8 +84,8 @@ available from the failure indicator without changing message content.
 
 The rebased HTTP inventory retains all local workspace, Search and Sync
 management routes alongside Thread, Reaction and retained-image routes. The
-merged inventory retains all 67 native routes and 18 separately scoped local
-routes. Generated contracts and response captures qualify the combined 85-path
+merged inventory retains all 67 native routes and 20 separately scoped local
+routes. Generated contracts and response captures qualify the combined 87-path
 inventory before UI composition.
 
 Native Agent capture preparation adds optional canonical ThreadBindingV1 bytes
@@ -64,6 +93,18 @@ on protobuf field 7. Empty bytes preserve legacy unlinked behavior. The server
 derives actor and acceptance time; the client checks the exact returned binding,
 request, publication and result identities. Publication retains the binding and
 selects Agent plus Thread roots atomically through the existing manifest.
+
+Codex harness-location discovery is a device-only native-capture capability. It
+does not register filesystem folders, admit a local browser repository or
+replace generation-checked local access. Metadata discovery and filesystem
+browser snapshots retain independent bindings and publication boundaries.
+
+Diagnostic-only bound capture exposes an additive capture_gap Thread-link target
+with exact source/event references and original observed binding. The same
+canonical capture request and receipt framing apply. Thread history shows the
+gap without claiming a logical session, and its context link opens the Agent
+directory. Direct gap-link commands must validate selected source/evidence
+membership before publication.
 
 Persistent Threads use Community channels as their presentation template, with
 shared conversation/composer/message/reaction semantics. The browser adapter
@@ -1546,3 +1587,75 @@ Application feedback changes presentation only. Toast dismissal never resets
 pending mutation identities, drops a draft or retries a command. Obsolete and
 cancelled reads remain silent, session changes clear protected notices, and
 confirmed state recovery removes the matching condition notice.
+
+## Installation capture source coverage and import
+
+Installation-local `GET /v1/local/capture/sources` requires current local Admin
+management, accepts only bounded limit/cursor query fields and returns typed
+cached source coverage. Pages are at most 100 rows; selectors/cursors bind a
+fresh runtime generation and monotonic slot ordinal without paths, native
+session keys or admission proofs. A last bound repository is cached metadata,
+not authorization. Disabled pages are empty without capture-state I/O; an absent
+or unexpectedly lost runtime is unavailable. Known completed stopped
+observations remain readable. Continuations tolerate current membership
+retirement/growth without reusing selectors; foreign runtime generations return
+a distinct stale selection error. This read endpoint cannot enroll sources,
+import history, advance reader cursors, publish roots or change device policy.
+
+`POST /v1/local/capture/import` is an actor-free version-1 command with
+request_id, generation, expected_revision and selector. Current local Admin and
+independent repository Write govern historical enrollment. Acknowledgement
+returns the exact durable import receipt and bounded progress, not a committed
+AgentStore root. Exact replay resolves an accepted original selector after
+restart without retargeting its source. Input, authority, stale/new versus
+known/exact requests, private state and owner semantics follow the governed gate
+in collaboration.md. Receipt/progress inspection requires current management
+admission and exposes no paths, native session keys, source proofs or raw
+content. The command dispatches once to an existing retained source owner. Its
+response requires synchronized durable acceptance; mailbox acknowledgement alone
+cannot return success. A five-second bounded acceptance observation may return
+an unknown outcome, retaining every original input for retry. Cancellation
+cannot release or recreate the source owner. Exact accepted replay returns its
+original receipt even while paused or stopped, without transcript work or
+dispatch.
+
+`GET /v1/local/capture/imports?request_id=<request>` inspects one nonzero
+request under current LocalTrusted Admin/configuration/installation admission.
+Its strict query is actor-free. Missing intent returns no receipt and cached
+pending or unavailable phase, never successful acceptance. Public receipts
+expose original command, journal ordinal, qualified profile/version and
+complete-record boundary; opaque source/reader/prefix digests and principals
+remain private. Progress uses selected, pending, running, withheld, completed or
+unavailable, with bounded accepted captured/published byte counts and separate
+tail phase/coverage. Only exact associated reader metadata and contiguous native
+receipts can establish completion. Inspection reads existing metadata without
+pending bodies, recovery, source enrollment or owner creation. Known receipts
+survive absent transcripts; missing/unqualified evidence withholds completion.
+Disabled/revoked requests do no capture-state work. Missing import journals are
+unavailable and never created by management. Configured Codex whole-server
+startup creates journals only within a fresh absent private capture root; an
+existing root is never repaired. A separately supervised metadata lane may
+recover original accepted commands when a new retained runtime discovers their
+exact physical/header bindings. Inspection itself performs no recovery dispatch.
+Configured Codex startup uses these existing typed controls; browser management
+uses installation-local, token-free protocol transport after advertised
+LocalTrusted bootstrap admission. It preserves exact uint64 values and original
+unknown control/import intent, validates response and receipt identity, and
+withholds mixed runtime source pages. Browser management cannot enable capture,
+enroll a changed selector on retry, or select repository roots. Other readers
+remain pending.
+
+`GET /v1/local/capture/sources` optionally includes `snapshot_publication` on
+API source rows. Its closed record reports source `captured_sequence`,
+`captured_logical_records`, `committed_sequence`, optional
+`committed_logical_records`, `history_available`, `outstanding_ranges` (at
+most 4096) and `receipts`. Missing or corrupt evidence omits the field; it
+cannot be represented as successful zero coverage. Zero committed messages are
+valid only with qualified receipt coverage, including empty-session lifecycle
+evidence. Source sequence is a position, not a message count. Counts remain a
+source publication observation, separate from accepted history-import boundaries
+and current activity/eligibility. A page inspects at most its 100 selected
+source associations with one metadata read under existing coordination. Current
+installation Admin, configuration and control-file admission are rechecked after
+inspection. No paths, native keys, reader source IDs or generation witnesses
+appear in the response; the read contacts no harness and reads no pending body.

@@ -5,7 +5,7 @@ use jj_agent::{
     SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
     SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust, ToolCallId,
     ToolInvocationSnapshotV1, ToolKind, ToolState, TranscriptChunkV1, TranscriptManifestV1,
-    TranscriptPageV1, TranscriptStreamV1, TurnId, decode_object, encode_object,
+    TranscriptStreamV1, TranscriptTailPageV2, TurnId, decode_object, encode_object,
 };
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -141,7 +141,7 @@ fn normalized_events_and_tool_snapshots_keep_typed_content_edges() {
 fn transcript_manifests_reconstruct_from_their_own_chunk_page_closure() {
     let chunk_ref = reference(AgentObjectKind::TranscriptChunk, 12);
     let page_ref = reference(AgentObjectKind::TranscriptPage, 13);
-    let next_page_ref = reference(AgentObjectKind::TranscriptPage, 16);
+    let prefix_page_ref = reference(AgentObjectKind::TranscriptPage, 16);
     let chunk = TranscriptChunkV1 {
         schema_version: 1,
         source_instance_id: SourceInstanceId::new([14; 16]),
@@ -150,16 +150,16 @@ fn transcript_manifests_reconstruct_from_their_own_chunk_page_closure() {
         payload: SanitizedPayloadV1::new(SanitizedMediaType::Text, b"hello\n").unwrap(),
     };
     assert!(chunk.dependencies().unwrap().is_empty());
-    let page = TranscriptPageV1 {
-        schema_version: 1,
+    let page = TranscriptTailPageV2 {
+        schema_version: 2,
         source_instance_id: SourceInstanceId::new([14; 16]),
         source_generation: 1,
         chunks: vec![chunk_ref],
-        next: Some(next_page_ref),
+        prefix: Some(prefix_page_ref),
     };
     assert_eq!(
         page.dependencies().unwrap(),
-        BTreeSet::from([chunk_ref, next_page_ref])
+        BTreeSet::from([chunk_ref, prefix_page_ref])
     );
     let manifest = TranscriptManifestV1 {
         schema_version: 1,
@@ -179,4 +179,41 @@ fn transcript_manifests_reconstruct_from_their_own_chunk_page_closure() {
         coverage: coverage(),
     };
     assert_eq!(manifest.dependencies().unwrap(), BTreeSet::from([page_ref]));
+}
+
+#[test]
+fn only_current_tail_pages_decode_and_retain_strong_prefix_dependencies() {
+    let source = SourceInstanceId::new([20; 16]);
+    let chunk = reference(AgentObjectKind::TranscriptChunk, 21);
+    let prefix = reference(AgentObjectKind::TranscriptPage, 22);
+    let old_bytes = format!(r#"{{"type":"transcript_page","value":{{"schema_version":1,"source_instance_id":"{source}","source_generation":1,"chunks":[{{"kind":"transcript_chunk","id":"{}"}}]}}}}"#, chunk.id).into_bytes();
+    assert!(decode_object(&old_bytes).is_err());
+    let mut tail = jj_agent::TranscriptTailPageV2 {
+        schema_version: 2,
+        source_instance_id: source,
+        source_generation: 1,
+        chunks: vec![chunk],
+        prefix: Some(prefix),
+    };
+    assert_eq!(
+        tail.dependencies().unwrap(),
+        BTreeSet::from([chunk, prefix])
+    );
+    let object = AgentObjectV1::TranscriptTailPage(tail.clone());
+    assert_eq!(object.kind(), AgentObjectKind::TranscriptPage);
+    assert_eq!(
+        decode_object(&encode_object(&object).unwrap()).unwrap(),
+        object
+    );
+    tail.prefix = Some(chunk);
+    assert!(tail.validate().is_err());
+    tail.prefix = None;
+    tail.schema_version = 1;
+    assert!(tail.validate().is_err());
+    tail.schema_version = 2;
+    tail.source_generation = 0;
+    assert!(tail.validate().is_err());
+    tail.source_generation = 1;
+    tail.chunks = vec![chunk; 257];
+    assert!(tail.validate().is_err());
 }

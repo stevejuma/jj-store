@@ -15,14 +15,14 @@ The collaboration transport carries optional immutable human reply parents
 without changing native operation or runner authority.
 
 Explicit local BoundCapture carries the exact observed Thread version and
-primary assignment with the original sanitized batch/profile. It requires one
-session replacement, stages the shared link without changing lifecycle and
-selects Agent and Thread descriptors in one companion ref CAS. The Thread
-descriptor audits and retains the complete newly staged session closure before
-selection. Matching receipt replay precedes entity/source preconditions; stale
-bindings select neither root. The private spool retains this original bound
-request across unknown outcomes. Legacy unlinked capture tags, field order and
-receipts remain unchanged.
+primary assignment with the original sanitized batch/profile. It retains one
+real session replacement or a validated diagnostic-only capture gap, stages the
+shared link without changing lifecycle and selects Agent and Thread descriptors
+in one companion ref CAS. The Thread descriptor audits and retains the complete
+newly staged session closure before selection. Matching receipt replay precedes
+entity/source preconditions; stale bindings select neither root. The private
+spool retains this original bound request across unknown outcomes. Legacy
+unlinked capture tags, field order and receipts remain unchanged.
 
 Native RPC preserves optional capture bindings in both preparation and delta
 publication. The durable device spool stores the explicit observed assignment
@@ -30,6 +30,11 @@ before source acknowledgment and the exact server-prepared acceptance time
 before publication. Retries after unknown outcomes do not refresh either
 precondition or identity. Empty optional fields preserve unlinked wire and spool
 encodings.
+
+Diagnostic-only preparation retains the same explicit binding in its typed
+delta. The additive gap target pins source/event evidence and observed binding;
+it never creates a primary assignment or a session. Unix RPC reconstruction and
+receipt replay must preserve both this target and the exact prepared identity.
 
 Prepared Agent delta decoding retains and validates an optional explicit Thread
 binding; it must not reconstruct the legacy fields and silently drop that
@@ -609,8 +614,10 @@ SHA-1 objects and the virtual root retain their source identities. Content reads
 prove file membership through selected commit trees. Queries run in admitted
 cancelable workers with limits on metadata, work, bytes and time. Repository
 aliases, executable settings and content-predicate revsets are not loaded.
-Missing, unrelated and ambiguous selections fail explicitly. Reads may rebuild
-derived JJ indexes but cannot publish heads, refs or checkout snapshots.
+Ancestry traversal uses upstream parent identifiers directly, retaining
+membership and work limits. Missing, unrelated and ambiguous selections fail
+explicitly. Reads may rebuild derived JJ indexes but cannot publish heads, refs
+or checkout snapshots.
 
 The local query transport serializes the same owned request variants and output
 records used by the qualified reader. Server composition shares query workers
@@ -646,3 +653,14 @@ Configuration reads MUST remain read-only, expose only the email and never load
 aliases or other configuration into query evaluation. Authenticated native
 serving MUST omit host identity hints; explicit request context remains the
 query authority.
+
+## M18 opt-in checkpoint coordinator
+
+The [M18 provenance profile](collaboration.md) keeps working-copy snapshots in
+the client JJ boundary. Transcript ingestion alone does not snapshot or
+reconcile heads. Explicit per-workspace enablement admits baselines,
+before/after/failure scopes and exact operation evidence through existing JJ
+transactions and locks. Preexisting dirty work remains a separate baseline;
+no-change observations do not manufacture code operations. Immutable provenance
+intents avoid hash cycles and late associations never rewrite published
+operation identities.

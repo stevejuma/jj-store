@@ -267,6 +267,83 @@ async fn three_root_fixture() -> (
 
     let session_id = AgentSessionId::new([20; 16]);
     let session_key = AgentCatalogKey::derive("session", session_id.as_bytes()).unwrap();
+    let transcript_source = jj_agent::SourceInstanceId::new([21; 16]);
+    let mut chunks = Vec::new();
+    for sequence in 1u64..=2 {
+        chunks.push(
+            coordinator
+                .stage_agent_object(&AgentObjectV1::TranscriptChunk(
+                    jj_agent::TranscriptChunkV1 {
+                        schema_version: 1,
+                        source_instance_id: transcript_source,
+                        source_generation: 1,
+                        sequence,
+                        payload: jj_agent::SanitizedPayloadV1::new(
+                            jj_agent::SanitizedMediaType::Json,
+                            if sequence == 1 {
+                                br#"{"message":"first"}"#
+                            } else {
+                                br#"{"message":"second"}"#
+                            },
+                        )
+                        .unwrap(),
+                    },
+                ))
+                .await
+                .unwrap(),
+        );
+    }
+    let prefix = coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptTailPage(
+            jj_agent::TranscriptTailPageV2 {
+                schema_version: 2,
+                source_instance_id: transcript_source,
+                source_generation: 1,
+                chunks: vec![chunks[0]],
+                prefix: None,
+            },
+        ))
+        .await
+        .unwrap();
+    let tail = coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptTailPage(
+            jj_agent::TranscriptTailPageV2 {
+                schema_version: 2,
+                source_instance_id: transcript_source,
+                source_generation: 1,
+                chunks: vec![chunks[1]],
+                prefix: Some(prefix),
+            },
+        ))
+        .await
+        .unwrap();
+    let transcript = coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptManifest(
+            jj_agent::TranscriptManifestV1 {
+                schema_version: 1,
+                session_id,
+                streams: vec![jj_agent::TranscriptStreamV1 {
+                    source_instance_id: transcript_source,
+                    source_generation: 1,
+                    source_format: "copy-fixture-v1".into(),
+                    decoder_version: "fixture@1".into(),
+                    sanitizer_version: "fixture@1".into(),
+                    representation: jj_agent::SanitizedRepresentation::SanitizedNative,
+                    ordered_chunk_root: tail,
+                    logical_byte_length: 39,
+                    record_count: 2,
+                    gaps: 0,
+                }],
+                coverage: CoverageV1 {
+                    completeness: CompletenessV1::Partial,
+                    gaps: 0,
+                    redacted_fields: 0,
+                    truncated: false,
+                },
+            },
+        ))
+        .await
+        .unwrap();
     let session = coordinator
         .stage_agent_object(&AgentObjectV1::SessionSnapshot(AgentSessionSnapshotV1 {
             schema_version: 1,
@@ -276,7 +353,7 @@ async fn three_root_fixture() -> (
             parent_session_id: None,
             evidence: Vec::new(),
             event_batches: Vec::new(),
-            transcripts: Vec::new(),
+            transcripts: vec![transcript],
             tools: BTreeMap::new(),
             coverage: CoverageV1 {
                 completeness: CompletenessV1::Complete,
@@ -433,6 +510,27 @@ async fn native_copy_restores_code_agent_review_and_installs_manifest_last() {
             .await
             .unwrap(),
         Some(session)
+    );
+    let agent = restored.agent_store(agent_root).await.unwrap();
+    let AgentObjectV1::SessionSnapshot(selected_session) =
+        agent.read_object(session).await.unwrap()
+    else {
+        panic!("session")
+    };
+    let range = agent
+        .transcript_range(
+            selected_session.transcripts[0],
+            jj_agent::SourceInstanceId::new([21; 16]),
+            1,
+            None,
+            10,
+            1024,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        range.chunks.iter().map(|c| c.sequence).collect::<Vec<_>>(),
+        vec![1, 2]
     );
     let review_root = snapshot
         .manifest()

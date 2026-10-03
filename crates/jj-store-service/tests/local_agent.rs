@@ -6,6 +6,10 @@ use jj_store_wal::publication::*;
 use jj_store_wal::records::{RecordKind, Records};
 use std::{process::Command, sync::Arc};
 
+#[path = "local_agent/native_results.rs"]
+mod native_results;
+#[path = "local_agent/opencode_aliases.rs"]
+mod opencode_aliases;
 #[path = "local_agent/portable_review.rs"]
 mod portable_review;
 
@@ -475,4 +479,175 @@ async fn git_carrier_preserves_native_record_bytes_and_repository_bound_ids() {
         .await
         .unwrap();
     assert_ne!(root.digest, other.digest);
+}
+
+#[tokio::test]
+async fn diagnostic_and_partial_tool_captures_survive_local_restart_without_state_loss() {
+    let (root, repo) = fixture();
+    let mut capture = batch();
+    capture.observations.truncate(1);
+    capture.observations[0].payload =
+        SanitizedPayloadV1::new(SanitizedMediaType::Json, br#"{"status":"omitted"}"#).unwrap();
+    let omitted = request(90, capture.clone());
+    let original = repo.apply_agent_command(&omitted).await.unwrap();
+    assert!(
+        repo.agent_store()
+            .await
+            .unwrap()
+            .reads()
+            .list_sessions(None, 20)
+            .await
+            .unwrap()
+            .selections
+            .is_empty()
+    );
+    let restarted = reopen(&root.path().join("repo"));
+    assert_eq!(
+        restarted.apply_agent_command(&omitted).await.unwrap(),
+        original
+    );
+    for (id, sequence, payload) in [
+        (
+            91,
+            2,
+            serde_json::json!({"hook_event_name":"PostToolUse", "session_id":"partial_session", "tool_use_id":"call_1", "tool_name":"Bash", "tool_response":{"exit_code":1,"output":"failure"}}),
+        ),
+        (
+            92,
+            3,
+            serde_json::json!({"hook_event_name":"PreToolUse", "session_id":"partial_session", "tool_use_id":"call_1", "tool_name":"Bash", "tool_input":{"command":"test"}}),
+        ),
+    ] {
+        capture.batch_id = CaptureBatchId::new([id; 16]);
+        capture.observations[0].observation_id = ObservationId::new([id; 16]);
+        capture.observations[0].source_sequence = sequence;
+        capture.observations[0].payload = SanitizedPayloadV1::new(
+            SanitizedMediaType::Json,
+            &serde_json::to_vec(&payload).unwrap(),
+        )
+        .unwrap();
+        restarted
+            .apply_agent_command(&request(id, capture.clone()))
+            .await
+            .unwrap();
+    }
+    let store = reopen(&root.path().join("repo"))
+        .agent_store()
+        .await
+        .unwrap();
+    let (_, selected) = session(&store).await;
+    let AgentObjectV1::ToolSnapshot(tool) = store
+        .object(*selected.tools.values().next().unwrap())
+        .await
+        .unwrap()
+    else {
+        panic!("tool");
+    };
+    assert_eq!(tool.state, ToolState::Failed);
+    assert!(tool.input.is_some());
+    assert!(tool.output.is_some());
+    assert_eq!(tool.evidence.len(), 2);
+    let sources = store
+        .reads()
+        .list_catalog(AgentCatalogKind::Sources, None, 20)
+        .await
+        .unwrap();
+    let AgentObjectV1::SourceState(source) = store.object(sources.selections[0].1).await.unwrap()
+    else {
+        panic!("source");
+    };
+    assert_eq!(source.coverage.gaps, 1);
+    assert_eq!(source.receipts.len(), 3);
+}
+
+#[tokio::test]
+async fn transcript_tail_rollover_preserves_pinned_history_after_local_restart() {
+    let (root, repo) = fixture();
+    let mut capture = batch();
+    let template = capture.observations[0].clone();
+    capture.batch_id = CaptureBatchId::new([93; 16]);
+    capture.observations = (1u64..=256).map(|sequence| {
+        let mut value = template.clone();
+        let mut id = [0;16]; id[..8].copy_from_slice(&sequence.to_be_bytes());
+        value.observation_id = ObservationId::new(id);
+        value.source_sequence = sequence;
+        value.payload = SanitizedPayloadV1::new(SanitizedMediaType::Json,
+            &serde_json::to_vec(&serde_json::json!({"hook_event_name":"UserPromptSubmit", "session_id":"thr_demo", "turn_id":format!("t_{sequence}"), "prompt":format!("message {sequence}")})).unwrap()).unwrap();
+        value
+    }).collect();
+    repo.apply_agent_command(&request(93, capture.clone()))
+        .await
+        .unwrap();
+    let old = repo.agent_store().await.unwrap();
+    let (_, old_session) = session(&old).await;
+    let AgentObjectV1::TranscriptManifest(old_manifest) =
+        old.object(old_session.transcripts[0]).await.unwrap()
+    else {
+        panic!("manifest")
+    };
+    let old_tail = old_manifest.streams[0].ordered_chunk_root;
+    let AgentObjectV1::TranscriptTailPage(page) = old.object(old_tail).await.unwrap() else {
+        panic!("tail")
+    };
+    assert_eq!(page.chunks.len(), 256);
+    let mut next = template;
+    next.source_sequence = 257;
+    next.observation_id = ObservationId::new([94; 16]);
+    next.payload = SanitizedPayloadV1::new(SanitizedMediaType::Json, br#"{"hook_event_name":"UserPromptSubmit","session_id":"thr_demo","turn_id":"t_257","prompt":"after rollover"}"#).unwrap();
+    capture.batch_id = CaptureBatchId::new([94; 16]);
+    capture.observations = vec![next];
+    let intent = request(94, capture.clone());
+    let receipt = repo.apply_agent_command(&intent).await.unwrap();
+    let cold = reopen(&root.path().join("repo"));
+    assert_eq!(cold.apply_agent_command(&intent).await.unwrap(), receipt);
+    let current = cold.agent_store().await.unwrap();
+    let (_, current_session) = session(&current).await;
+    let AgentObjectV1::TranscriptManifest(manifest) = current
+        .object(current_session.transcripts[0])
+        .await
+        .unwrap()
+    else {
+        panic!("manifest")
+    };
+    let AgentObjectV1::TranscriptTailPage(page) = current
+        .object(manifest.streams[0].ordered_chunk_root)
+        .await
+        .unwrap()
+    else {
+        panic!("tail")
+    };
+    assert_eq!(page.prefix, Some(old_tail));
+    assert_eq!(page.chunks.len(), 1);
+    let range = current
+        .reads()
+        .transcript_range(
+            current_session.transcripts[0],
+            capture.source_instance_id,
+            1,
+            Some(255),
+            10,
+            1024,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        range.chunks.iter().map(|c| c.sequence).collect::<Vec<_>>(),
+        vec![256, 257]
+    );
+    let pinned = old
+        .reads()
+        .transcript_range(
+            old_session.transcripts[0],
+            capture.source_instance_id,
+            1,
+            Some(255),
+            10,
+            1024,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        pinned.chunks.iter().map(|c| c.sequence).collect::<Vec<_>>(),
+        vec![256]
+    );
 }

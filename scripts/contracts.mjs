@@ -57,7 +57,48 @@ if (mode === "--check") {
   const directory = await mkdtemp(join(tmpdir(), "jj-store-contract-"));
   try {
     const samples = [];
-    for (const [fixture, variable, binary = "native_lifecycle"] of [
+    for (const [
+      fixture,
+      variable,
+      binary = "native_lifecycle",
+      packageName = "jj-store-cli",
+    ] of [
+      [
+        "imports::import_acceptance_progress_and_replay_are_actual_http_contracts",
+        "JJ_STORE_CAPTURE_IMPORT_CONTRACT_CAPTURE",
+        "capture_management",
+        "jj-store-server",
+      ],
+      [
+        "api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free",
+        "JJ_STORE_CAPTURE_SNAPSHOT_CONTRACT_CAPTURE",
+        "capture_management",
+        "jj-store-server",
+      ],
+      [
+        "sources::source_pages_are_bounded_cached_and_hold_no_admission_proofs",
+        "JJ_STORE_CAPTURE_SOURCES_CONTRACT_CAPTURE",
+        "capture_management",
+        "jj-store-server",
+      ],
+      [
+        "coverage::harness_coverage_is_bounded_cached_and_contains_no_roots",
+        "JJ_STORE_CAPTURE_COVERAGE_CONTRACT_CAPTURE",
+        "capture_management",
+        "jj-store-server",
+      ],
+      [
+        "rescan::rescan_is_conditional_actor_free_and_preserves_device_policy",
+        "JJ_STORE_CAPTURE_RESCAN_CONTRACT_CAPTURE",
+        "capture_management",
+        "jj-store-server",
+      ],
+      [
+        "http::local_capture_http_derives_actor_revalidates_authority_and_captures_contracts",
+        "JJ_STORE_CAPTURE_MANAGEMENT_CONTRACT_CAPTURE",
+        "capture_management",
+        "jj-store-server",
+      ],
       [
         "filesystem_runtime_registers_and_reads_without_native_storage",
         "JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE",
@@ -124,7 +165,7 @@ if (mode === "--check") {
           "--quiet",
           "--locked",
           "-p",
-          "jj-store-cli",
+          packageName,
           "--test",
           binary,
           fixture,

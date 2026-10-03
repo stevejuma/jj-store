@@ -3,6 +3,8 @@ import { resolve, relative, isAbsolute } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 
+import { historicalTaskMapping } from "./progress-mapping.mjs";
+
 export const ledgerPath = "spec/src/milestones.md";
 const jjOutputLimit = 16 * 1024 * 1024;
 const statuses = new Set([
@@ -65,7 +67,10 @@ export function validateLedger({
   }
   const { tasks, entries } = parsed;
   const byId = new Map(tasks.map((t) => [t.id, t]));
-  const evidence = new Map(entries.map((e) => [e.id, e]));
+  const mappedTasks = historicalTaskMapping(source, byId, errors);
+  const evidence = new Map(
+    entries.map((e) => [e.id, { ...e, tasks: mappedTasks(e) }]),
+  );
   const removedFiles = new Set(entries.flatMap((e) => e.removed_files ?? []));
   const removedTests = new Set(entries.flatMap((e) => e.removed_tests ?? []));
   if (!tasks.length) errors.push("ledger has no tasks");
@@ -88,7 +93,7 @@ export function validateLedger({
       errors.push("invalid evidence ID");
     if (!Array.isArray(entry.tasks) || !entry.tasks.length)
       errors.push(`${entry.id}: missing task references`);
-    for (const task of entry.tasks ?? [])
+    for (const task of mappedTasks(entry))
       if (!byId.has(task)) errors.push(`${entry.id}: unknown task ${task}`);
     for (const key of ["date", "kind", "versions", "formats"])
       if (!entry[key]) errors.push(`${entry.id}: missing ${key}`);

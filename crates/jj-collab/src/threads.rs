@@ -166,6 +166,11 @@ impl HumanMessageRevisionV1 {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadLinkTargetV1 {
+    CaptureGap {
+        source_state: AgentObjectRef,
+        event_batch: AgentObjectRef,
+        binding: ThreadBindingV1,
+    },
     Session {
         session_id: AgentSessionId,
         snapshot: AgentObjectRef,
@@ -205,6 +210,19 @@ impl ThreadLinkV1 {
             return Err(Error::Invalid("new inactive Thread link"));
         }
         match &self.target {
+            ThreadLinkTargetV1::CaptureGap {
+                source_state,
+                event_batch,
+                binding,
+            } => {
+                binding.validate()?;
+                if binding.thread_id != self.thread_id
+                    || source_state.kind != jj_agent::AgentObjectKind::SourceState
+                    || event_batch.kind != jj_agent::AgentObjectKind::EventBatch
+                {
+                    return Err(Error::Invalid("capture gap link"));
+                }
+            }
             ThreadLinkTargetV1::Session { snapshot, .. }
                 if snapshot.kind != jj_agent::AgentObjectKind::SessionSnapshot =>
             {

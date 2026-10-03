@@ -5,6 +5,217 @@ behavior. [milestones.md](../spec/src/milestones.md) is the single
 implementation progress ledger. The [original attachment](reference/README.md)
 is archived unchanged as non-normative reference material.
 
+## Agent capture: usable local preview
+
+Replanned 3 October 2026 at the user's request. This replaces the previous
+execution order of finishing all readers and M18.3–M18.7 before delivering a
+usable capture feature. Canonical requirements remain in `spec/src`; the only
+status/evidence ledger is [milestones.md](../spec/src/milestones.md).
+
+### First outcome
+
+Open the current application, use Codex normally in a repository directory or
+another physical JJ workspace linked to this local server, and see its captured
+session, messages and tool activity appear in Agents automatically. Settings
+shows whether capture is enabled, observing sources, paused, catching up or
+unavailable. Pause, resume, rescan and the existing Codex history import are
+usable without repeatedly clicking Refresh.
+
+The first preview supports LocalTrusted native repositories and current
+AgentStore only. Configured profiles are Codex CLI 0.156.1 and Codex Desktop
+0.159.2. The CLI installed during this review is 0.156.1. Desktop version and
+actual transcript format must be checked before advertising that surface in the
+preview. A filesystem-only companion repository remains outside automatic
+capture. Do not silently ingest every session under a watched directory: active
+sessions require an exact linked repository/workspace; inactive history requires
+an explicit import. Watching stays disabled until server configuration enables
+selected harnesses. Existing personal transcripts are not a test fixture.
+
+### Reuse what exists
+
+| Area             | Existing foundation                                                                                                                       | Work needed for the preview                                                    |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Codex worker     | Configured startup, known locations/overrides, directory/workspace admission, active backfill, bounded tailing, durable spool and restart | Integrate with current main and prove the real preview path                    |
+| History          | Explicit Codex import, retained original intent, recovery and receipt-backed progress                                                     | Keep the existing feature usable; do not wait for OpenCode history             |
+| Capture settings | Status, sources, pause/resume/rescan/import, typed client and unknown-outcome handling                                                    | Automatic loading/freshness, clear state labels, capability-aware actions      |
+| Agents           | Recorded sessions and common response/tool presentation                                                                                   | Reuse main's newer repository/project Agents views and automatic refresh       |
+| OpenCode         | Qualified library/API acquisition, active supervision, identity joins and exact prefix preparation                                        | Preserve completed work; defer configured startup and unfinished import/export |
+| Main application | Automatic updates, scoped Agents sidebar, newer settings, UI development commands and desktop host                                        | Rebase and preserve these improvements rather than recreate them               |
+
+The delay came from treating a broad completion roadmap as a prerequisite for
+trying capture. Eighty capture changes now exist beyond the common ancestor,
+including repeated recovery/publication qualification and another reader. The
+execution target is now the supported Codex workflow, visible in the current UI.
+New hardening work enters this target only when it fixes an observed preview
+failure or protects an existing required safety boundary.
+
+### Delivery order
+
+#### 1. Preserve work and rebase onto current main
+
+Execution uses new workspace `jj-store-codex-preview`, initially based on main
+`soytvzqt` / `89243006`, then integrated onto `rsouwqrt` / `c8b7ea72` and
+refreshed onto committed main `zulyxxpy` / `90d119e0` on 4 October. The original
+capture tip is retained at `codex/capture-before-preview`; its net verified
+changes are rebased as one integration slice, avoiding replay of 81 historical
+ledger edits. Desktop keeps M17, capture tasks use M18 and historical evidence
+uses the explicit ledger mapping. The parked OpenCode draft remains excluded.
+
+The unfinished OpenCode API import draft is retained at Jujutsu change
+`ovlvtqrl`, bookmark `codex/deferred-opencode-history`; it is excluded from the
+preview working change. Its two integration regressions currently fail because
+inactive API sessions receive no import selector. The draft is incomplete and
+must not be treated as a buildable feature or merged to obtain the preview.
+
+At review, the last committed main revision is `wllxluns` / `0400ae22`; main's
+working change `vssplolt` contains active desktop/glass edits. The common
+ancestor is `lwqssrow` / `2852a3e3`. Main has 51 committed changes and capture
+has 80 changes beyond it, with 40 changed paths in common. Recompute these facts
+immediately before integration; counts alone do not establish conflicts.
+
+1. Snapshot both workspace states and pin the selected committed main revision,
+   capture tip, draft and current JJ operation. Keep the draft bookmark intact.
+2. Rebase the verified capture branch and this plan onto the latest verified
+   committed main revision in an isolated JJ workspace or integration change. Do
+   not rewrite or check out main's active working change. If its edits land
+   during integration, review the delta and update the destination before final
+   acceptance.
+3. Resolve shared controller/lifecycle/settings files in favor of current main's
+   architecture, then add capture ownership and routes. Preserve scoped Agents,
+   automatic refresh, appearance, desktop, Storage and Sync behavior. Regenerate
+   OpenAPI/TypeScript after reconciling route registration; do not hand-merge
+   generated output. Keep main's released dependency versions unless an exact
+   incompatibility requires an owned fix.
+4. Resolve the milestone collision: main M17 owns desktop; this branch's
+   historical M17 owns capture. Reserve M18 for capture if still free. Keep
+   every historical evidence ID and payload intact and add an explicit
+   old-to-new task mapping for capture evidence in the ledger/governance
+   checker. Preserve both parents' evidence and their order, deduplicate only
+   byte-identical entries, and verify no evidence was dropped. Do not reclassify
+   desktop evidence as capture or rewrite historical task fields to make a merge
+   appear clean.
+5. Run focused integration checks for the actual conflicts and shared consumers.
+   Record the merged format/contract inventory and outstanding failures. A clean
+   rebase alone is not acceptance.
+
+Exit: a conflict-free integrated branch with the current application, preserved
+main work, isolated draft, reconciled ledger and passing affected checks.
+
+#### 2. Prioritize the UI
+
+Use the existing production Capture settings and current main Agents views.
+Inspect Community and then Design Core before changing presentation; maintain
+repository ownership and provenance for any copied presentation.
+
+- Load capture status and the first source page when settings opens. Refresh
+  visible capture status/source/import observations on a bounded five-second
+  schedule, after acknowledged actions and on focus/reconnect. Coalesce reads,
+  cancel stale responses and stop visible polling on closure/disposal.
+- Show enabled/disabled, paused/running, waiting for activity, catching up,
+  published and unavailable states in plain language. Keep advanced request IDs
+  and receipt detail available without making them the main workflow. Show
+  configured harness/version support and a useful disabled-state setup hint.
+- Preserve exact pending commands, their original revision/generation/selector,
+  drafts, pagination and uncertainty. Background reads never resend a command,
+  resolve an unknown outcome from a missing receipt, or retarget an import.
+- Disable unavailable harness actions. Do not offer OpenCode/Cursor history
+  import because a generic source row happens to expose an import button.
+- Reuse main's automatic repository/project Agents updates after publication.
+  Retain the selected session, reply/edit drafts and historical code selection.
+  Show new captured content without a mandatory manual refresh or navigation
+  reset. Keep permission, empty, loading and unavailable states usable.
+- Exercise the actual Settings-to-Agents flow with keyboard and accessibility
+  checks, and a fresh browser process. Visual baselines remain a separate
+  review.
+
+Exit: the UI visibly follows new captures and worker controls while preserving
+user state. No new conversation/review architecture is required for this slice.
+
+#### 3. Make local setup runnable
+
+Use main's `dev:ui` and backend-only build/restart workflow after integration.
+Prepare an isolated ignored fixture and unused loopback ports; do not reset,
+replace or restart the currently running main fixture or installed desktop app.
+Build the explicit development binary once for this integrated branch.
+
+Add a small repeatable preview setup command/runbook that creates or uses a
+preview-owned native repository and linked physical workspace, ensures current
+AgentStore is enabled using existing commands, and writes the selected supported
+`agent_capture` server configuration. Show the exact config and how to stop the
+preview. Explicit test roots isolate fixture tests; normal qualified harness
+locations are exercised only for the deliberately created trial session, with
+native repository matching still enforced. Configuration requires restarting the
+preview backend once; pause/resume remain runtime controls.
+
+First setup may be a command plus a clear Settings explanation. A server-config
+editor, hook-installation wizard and one-click enable switch are deferred. Do
+not invent settings endpoints just to avoid a documented one-time setup step.
+
+Exit: reproducible local setup, a reachable browser URL, and a linked folder in
+which the user can start the qualified Codex harness normally.
+
+#### 4. Prove the user journey and hand over the preview
+
+Use the real development server and embedded RustFS with a disposable native
+repository. Record a supported Codex CLI session with distinctive harmless
+content (and a small edit if the harness is already available and authorized).
+Verify directory discovery, publication and display in Agents; append another
+message and observe automatic UI refresh. Exercise pause/resume and restart the
+preview backend, confirming the same session, no duplicate acknowledged content
+and retained pending intent. Check another physical workspace of the linked
+repository, an unrelated directory refusal, and one explicit Codex historical
+import. Current permission/redaction/unknown-outcome tests remain required.
+
+Qualify Codex Desktop independently only when the actual version matches. If
+that check fails, expose CLI-only availability and retain the Desktop gap;
+unknown versions must not be enabled just to obtain a green preview. If a model
+session requires a user interaction, keep the preview running and present the
+single concrete trial step instead of spending another cycle on unrelated
+backend features. Controlled fixtures remain useful but are not labeled real
+harness acceptance.
+
+Hand over the browser URL, linked test folder, selected harness/version, setup
+and stop commands, and a short checklist: start session, watch Agents update,
+pause/resume, restart and inspect retained content. Leave the preview available
+for user testing. Broader completion stays deferred after this handoff.
+
+### Deferred work
+
+| Work                                                                                                                        | Reason and re-entry condition                                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenCode configured worker, inactive API history, consent/restart integration, exact API completion and exported JSON files | Not needed for the working Codex preview; resume after feedback, preserving the parked draft and completed libraries                               |
+| Cursor transcript reader, product/version coverage and common identity joins                                                | Additional harness; resume when the Codex user journey is accepted                                                                                 |
+| M18.3 complete block/plan/child-agent/compaction model and replay/renormalization                                           | Existing messages/tools are sufficient to try capture; resume as a separate conversation milestone                                                 |
+| M18.4 automatic checkpoints, edit causality and shared owned producer scopes                                                | Do not claim transcript observation proves code authorship; resume separately                                                                      |
+| Full M18.5 multi-harness release matrix and remaining platform/cold qualification                                           | Keep the narrow Codex real-service/browser/restart proof above; defer the full release gate                                                        |
+| M18.6 advanced inspection/search, exact message/plan reviews, immutable feedback dispatch                                   | Existing Agents browsing is the preview; expand after use                                                                                          |
+| M18.7 collaboration archives, portable carriers, broader deployment/privacy policy and purge                                | Separate release scope; existing local privacy/admission rules remain mandatory                                                                    |
+| Configuration editor, hook setup wizard and additional platforms                                                            | One documented local setup is enough for the preview                                                                                               |
+| Cold debug sanitizer/native preparation optimization and clearer body-free history selection/refusal                        | Functional linked capture/import is qualified; reduce observed multi-minute preparation and unlinked unknown-command friction after trial feedback |
+| Official ACP Rust SDK adoption                                                                                              | Not a required capture outcome                                                                                                                     |
+
+Legacy AgentStore support and migration are excluded, not queued for later.
+Existing implemented features are preserved. Deferral does not authorize removal
+of current privacy, directory matching, Write, bounded-resource, durable receipt
+or manifest publication guarantees.
+
+### Verification budget and stop condition
+
+This planning change runs documentation formatting, spec validation, spec-first
+and ledger checks only. During execution, start with each changed boundary's
+regression. UI-only work uses `web:check`, the capture controller tests, Capture
+settings stories and affected Agents/browser tests. Run Rust package checks and
+named capture tests only for changed Rust boundaries. Shared route generation
+requires the registered contract inventory. Rebase touches independent layers,
+so record its actual overlap before selecting the complete directly affected
+consumer suites. No root aggregate lanes by default.
+
+The preview is ready when the integrated browser and real local service satisfy
+steps 2–4 and the user has a runnable URL/folder. A UI mock or an isolated
+library test is insufficient. This does not mark the full capture roadmap
+complete. The ledger records scope and evidence; this document supplies
+execution order.
+
 ## Summary
 
 Create `/Users/stevejuma/code/lapismd/jj-store` as an independent Rust workspace

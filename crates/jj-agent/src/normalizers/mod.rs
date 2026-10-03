@@ -1,18 +1,26 @@
 mod codex;
+mod codex_ids;
+mod codex_tool_result;
+mod codex_transcript;
 mod cursor;
 mod cursor_tool;
 mod opencode;
+mod opencode_snapshot;
 mod opencode_tools;
 
-use crate::{NormalizationBatchV1, NormalizerProfileV1, Result, SanitizedObservationBatchV1};
+use crate::{
+    NormalizationBatchV1, NormalizerProfileV1, Result, SanitizedObservationBatchV1,
+    ToolResultObservation,
+};
 
 pub(crate) fn normalize(
     profile: &NormalizerProfileV1,
     batch: &SanitizedObservationBatchV1,
     output: &mut NormalizationBatchV1,
+    tool_results: &mut Vec<ToolResultObservation>,
 ) -> Result<()> {
     match profile.integration {
-        crate::IntegrationId::Codex => codex::normalize(profile, batch, output),
+        crate::IntegrationId::Codex => codex::normalize(profile, batch, output, tool_results),
         crate::IntegrationId::Cursor => cursor::normalize(profile, batch, output),
         crate::IntegrationId::OpenCode => opencode::normalize(profile, batch, output),
         crate::IntegrationId::OwnedController => unreachable!("unsupported profile returned early"),

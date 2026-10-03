@@ -1,4 +1,4 @@
-use super::agent::agent_error;
+use super::agent_capture_tools::merge_selected_tool;
 use super::*;
 use jj_agent::{
     AgentContentV1, AgentEventBatchV1, AgentEventV1, AgentObjectV1, AgentSessionId,
@@ -23,9 +23,10 @@ pub(super) struct TranscriptChunkSelection {
 
 pub(super) async fn stage_capture_objects(
     coordinator: &dyn AgentObjectIo,
+    base: &dyn AgentSnapshotRead,
     profile: &NormalizerProfileV1,
     source: &SanitizedObservationBatchV1,
-    normalized: &NormalizationBatchV1,
+    normalized: &mut NormalizationBatchV1,
 ) -> Result<CaptureObjects> {
     let evidence = coordinator
         .stage_agent_object(&AgentObjectV1::ObservationBatch(source.clone()))
@@ -94,11 +95,6 @@ pub(super) async fn stage_capture_objects(
         };
         events.push(event);
     }
-    if events.is_empty() {
-        return Err(agent_error(jj_agent::Error::Invalid(
-            "empty normalized capture",
-        )));
-    }
     let event_batch = coordinator
         .stage_agent_object(&AgentObjectV1::EventBatch(AgentEventBatchV1 {
             schema_version: 1,
@@ -108,24 +104,36 @@ pub(super) async fn stage_capture_objects(
         }))
         .await?;
     let mut tools: BTreeMap<_, BTreeMap<_, _>> = BTreeMap::new();
-    for tool in normalized.reduce_tools().tools {
+    let reduced = normalized.reduce_tools();
+    normalized.diagnostics.extend(reduced.diagnostics);
+    for tool in reduced.tools {
         let input = stage_optional_content(coordinator, tool.input.as_ref()).await?;
         let output = stage_optional_content(coordinator, tool.output.as_ref()).await?;
         let session_tools = tools.entry(tool.session_id).or_default();
+        let mut snapshot = ToolInvocationSnapshotV1 {
+            schema_version: 1,
+            tool_call_id: tool.tool_call_id,
+            session_id: tool.session_id,
+            turn_id: tool.turn_id,
+            native_name: tool.native_name,
+            kind: tool.kind,
+            state: tool.state,
+            attempts: BTreeSet::new(),
+            input,
+            output,
+            evidence: vec![evidence],
+        };
+        if merge_selected_tool(base, &mut snapshot).await? {
+            normalized
+                .diagnostics
+                .push(jj_agent::NormalizationDiagnosticV1 {
+                    kind: jj_agent::NormalizationDiagnosticKind::ConflictingTerminalState,
+                    code: "tool-terminal-conflict".into(),
+                    source_sequence: Some(tool.source_sequence),
+                });
+        }
         let reference = coordinator
-            .stage_agent_object(&AgentObjectV1::ToolSnapshot(ToolInvocationSnapshotV1 {
-                schema_version: 1,
-                tool_call_id: tool.tool_call_id,
-                session_id: tool.session_id,
-                turn_id: tool.turn_id,
-                native_name: tool.native_name,
-                kind: tool.kind,
-                state: tool.state,
-                attempts: BTreeSet::new(),
-                input,
-                output,
-                evidence: vec![evidence],
-            }))
+            .stage_agent_object(&AgentObjectV1::ToolSnapshot(snapshot))
             .await?;
         session_tools.insert(tool.tool_call_id, reference);
     }

@@ -3,7 +3,6 @@ use super::*;
 use super::{agent::agent_error, agent_catalog::catalog_root};
 use jj_agent::{
     AgentCatalogKey, AgentCatalogKind, AgentIndexPageV1, AgentRelationSubjectV1, SourceInstanceId,
-    TranscriptChunkV1,
 };
 const MAX_LIST: usize = 256;
 const MAX_CATALOG_PAGES: usize = 16_512;
@@ -19,10 +18,10 @@ impl<'a> AgentReader<'a> {
     fn root(&self) -> &AgentRootV1 {
         self.snapshot.root()
     }
-    async fn read_object(&self, reference: AgentObjectRef) -> Result<AgentObjectV1> {
+    pub(super) async fn read_object(&self, reference: AgentObjectRef) -> Result<AgentObjectV1> {
         self.snapshot.read_object(reference).await
     }
-    async fn lookup(
+    pub(super) async fn lookup(
         &self,
         catalog: AgentCatalogKind,
         key: AgentCatalogKey,
@@ -206,55 +205,14 @@ impl AgentReader<'_> {
                 value.source_instance_id == source && value.source_generation == generation
             })
             .ok_or(Error::Stale)?;
-        let mut page = Some(stream.ordered_chunk_root);
-        let mut seen = BTreeSet::new();
-        let mut chunks: Vec<TranscriptChunkV1> = Vec::with_capacity(limit);
-        let mut bytes = 0;
-        let mut previous = None;
-        while let Some(reference) = page {
-            if !seen.insert(reference) || seen.len() > MAX_STREAM_PAGES {
-                return Err(Error::Limit("agent transcript pages"));
-            }
-            let current = match self.read_object(reference).await? {
-                AgentObjectV1::TranscriptPage(value) => value,
-                _ => return Err(Error::Corrupt("agent transcript page kind")),
-            };
-            if current.source_instance_id != source || current.source_generation != generation {
-                return Err(Error::Corrupt("agent transcript stream identity"));
-            }
-            for chunk in current.chunks {
-                let chunk = match self.read_object(chunk).await? {
-                    AgentObjectV1::TranscriptChunk(value) => value,
-                    _ => return Err(Error::Corrupt("agent transcript chunk kind")),
-                };
-                if chunk.source_instance_id != source
-                    || chunk.source_generation != generation
-                    || previous.is_some_and(|value| chunk.sequence <= value)
-                {
-                    return Err(Error::Corrupt("agent transcript chunk order"));
-                }
-                previous = Some(chunk.sequence);
-                if after_sequence.is_some_and(|value| chunk.sequence <= value) {
-                    continue;
-                }
-                if chunks.len() == limit || bytes + chunk.payload.bytes().len() > max_bytes {
-                    if chunks.is_empty() {
-                        return Err(Error::Limit("agent transcript record"));
-                    }
-                    return Ok(TranscriptRange {
-                        next_after_sequence: chunks.last().map(|value| value.sequence),
-                        chunks,
-                    });
-                }
-                bytes += chunk.payload.bytes().len();
-                chunks.push(chunk);
-            }
-            page = current.next;
-        }
-        Ok(TranscriptRange {
-            chunks,
-            next_after_sequence: None,
-        })
+        super::agent_transcript_read::read_range(
+            self.snapshot,
+            stream,
+            after_sequence,
+            limit,
+            max_bytes,
+        )
+        .await
     }
 }
 
