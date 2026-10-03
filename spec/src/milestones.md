@@ -133,9 +133,9 @@ shared-package release qualification does not alter those original Git gates.
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                |
-| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003                                                                                                                                                                                                                                                                                                                               |
+| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004                                                                                                                                                                                                                                                                                                                    |
 | M17.1       | In progress | M8a.4                   | JST-DESK-003                                                                                                                                                                            | Opt-in bounded parent-pipe service supervision                                                                                 | Retain real RustFS and ordinary process evidence                                               | E-DESK-001,E-DESK-003                                                                                                                                                                                                                                                                                                                                          |
-| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003                                                                                                                                                                                                                                                                                                                               |
+| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004                                                                                                                                                                                                                                                                                                                    |
 | M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003                                                                                                                                                                                                                                                                                                                                          |
 | M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                            | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                              |
 
@@ -49097,6 +49097,86 @@ and named tests are checked by the progress gate.
     ],
     "scope": "Focused CLI/service lifecycle, native host, cold real-runtime/package smoke and all directly affected UI consumers. Full regular foreground and governance suites qualify shared extracted startup/scanners; all14 direct UI families qualify the shared fixture repair. Root aggregates, full Rust workspace, unrelated storage/browser suites and release qualification remain out of scope.",
     "next": "Land verified rebased stack in clean main, preserve paired app/resources and persistent Application Support state, verify relocation, then forget desktop and move its checkout to Trash. Continue the pending M17 gates from main."
+  },
+  {
+    "id": "E-DESK-004",
+    "tasks": ["M17", "M17.2"],
+    "date": "2026-10-03",
+    "kind": "desktop-workspace-retirement",
+    "revision": "wukmpoml (enclosing change)",
+    "versions": "macOS ARM64; JJ0.45.1; Rust1.98.1; pnpm10.32.1. The independently locked debug Tauri app and real RustFS pair from E-DESK-003 are retained in main.",
+    "formats": "No product or persistence change. Rebased foundation91a46ab0, chrome96d84e82 and verified integrationf00002ae descend from main67040334. Main tree retains all prior work. Application Support installation/configuration/device port files compare byte-identical by SHA256; origin remains127.0.0.1:57653.",
+    "files": [
+      "spec/src/milestones.md",
+      "spec/src/desktop.md",
+      "desktop/README.md",
+      "desktop/tests/managed_runtime.rs",
+      "desktop/tauri.conf.json",
+      "scripts/desktop.mjs"
+    ],
+    "tests": [
+      "desktop/tests/managed_runtime.rs#real_managed_runtime_restarts_preserves_origin_and_rejects_occupied_port"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj rebase -r wukmpoml -o yuzrmrwx; jj --no-pager diff --from default@ --to desktop@- --summary",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main clean before landing; empty main change advanced to verified stack with an identical tree and no conflicting ancestors."
+      },
+      {
+        "command": "cp -cR /Users/stevejuma/code/lapismd/jj-store-desktop/desktop/target desktop/target; cp -cR /Users/stevejuma/code/lapismd/jj-store-desktop/desktop/resources desktop/resources",
+        "result": "pass",
+        "failures": 0,
+        "note": "APFS clones retain usable app, host cache, paired jj-store/custom jj/RustFS and current212-asset built UI under main before retirement. Isolated service build target remains under ignored .local/desktop-integration-target; active main development binary untouched."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:validate; pnpm check:ui-ownership; pnpm check:architecture (main)",
+        "result": "pass",
+        "failures": 0,
+        "note": "125tasks;5validators/22chapters/152requirements; ownership passes;823modules within current budgets. Main tree consumers validated after landing."
+      },
+      {
+        "command": "JJ_STORE_DESKTOP_TEST_RESOURCES=/Users/stevejuma/code/lapismd/jj-store/desktop/resources cargo test --manifest-path desktop/Cargo.toml --locked --no-default-features --test managed_runtime -- --ignored --exact real_managed_runtime_restarts_preserves_origin_and_rejects_occupied_port",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 from main paths with real paired RustFS, restart, stable origin, occupied-port refusal and retained configuration/identity. /tmp/jj-desktop-integration-main-runtime.log."
+      },
+      {
+        "command": "desktop/target/debug/bundle/macos/jj-store.app/Contents/MacOS/jj-store-desktop (main, default persistent state); CUA getApp exact bundle path; Cmd+Q; process/session/port checks",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual relocated WKWebView renders updated Projects/Agents at original57653. Host/service/RustFS executable paths all resolve under main; device settings, installation identity and configuration hashes unchanged. Quit returns0; owned45335/45699/45740 and listener absent. One initial CUA timeout and ambiguous bundle ID resolved by exact bundle path; stale input state refreshed before Quit. /tmp/jj-desktop-integration-main-relocation.log."
+      },
+      {
+        "command": "jj --no-pager st; jj --no-pager diff --from desktop@ --to default@ --summary; jj --no-pager log -r \"(::desktop@ ~ ::default@) & ~empty()\" --no-graph; pgrep owned old-checkout processes",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before retirement both tracked trees clean/identical; no unique nonempty changes and no owned processes in old checkout. Only its empty working leaf is outside main ancestry. Native app artifacts retained first; unrelated main34614/34630 development service/RustFS and95352 Vite remain running."
+      },
+      {
+        "command": "jj workspace forget desktop; trash -v /Users/stevejuma/code/lapismd/jj-store-desktop; trash -v /private/tmp/jj-desktop-integration-native.OUg8YL",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only desktop registration removed. Exact checkout and disposable native smoke state moved recoverably to ~/.Trash/jj-store-desktop and ~/.Trash/jj-desktop-integration-native.OUg8YL. Other workspaces retained; old checkout path absent."
+      },
+      {
+        "command": "CUA getApp /Users/stevejuma/code/lapismd/jj-store/desktop/target/debug/bundle/macos/jj-store.app after retirement; verify process paths and SHA256 state equality",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean native launch left running from main, still57653; host is detached from shell with parent1 and owns its current service/RustFS. No process executable references removed checkout. Persistent Application Support state and independent main UI fixture remain retained."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:validate; pnpm exec prettier --check spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Retirement evidence validates125tasks and5validators/22chapters/152requirements; canonical ledger formatting passes. Documentation-only cleanup evidence requires no further product-suite escalation."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Only verified workspace landing, usable debug-app relocation and retirement are complete. M17 remains In progress: native drag/double-click, accessibility, render handshake, folder bridge, dirty-edit protection and signed/release/DMG flows retain E-DESK-003 pending gates. Root aggregates/full Rust and unrelated UI/storage suites out of scope. No installation reset, user repository migration, public release or visual baseline approval.",
+    "next": "Continue M17 from main; use retained desktop/resources and debug app for local iteration. Keep remaining native and distribution gates explicit."
   }
 ]
 ```
