@@ -3,7 +3,10 @@ import { LocalEventParser } from "../api/local-events.js";
 import { HttpLocalCodeDataSource } from "./http-local-code-data-source.js";
 import { HttpLocalWorkDataSource } from "./http-local-work-data-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
-import type { LocalCapabilities } from "./repository-profile.js";
+import {
+  unavailableNativeManagement,
+  type LocalCapabilities,
+} from "./repository-profile.js";
 import type { AgentDetail } from "./repository-read-types.js";
 export class HttpLocalStoreDataSource
   extends HttpLocalCodeDataSource
@@ -59,10 +62,7 @@ export class HttpLocalStoreDataSource
       typed_mutations: [],
       conflict_resolution_actions: [],
       conflict_upload_bytes: 0,
-      local_workspace_links: false,
-      local_folder_picker: false,
-      local_sync_management: false,
-      local_search_management: false,
+      ...unavailableNativeManagement,
     };
   }
   private async agent<T extends { snapshot: Model<"LocalAgentSnapshot"> }>(

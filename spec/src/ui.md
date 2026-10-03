@@ -1552,3 +1552,16 @@ Sync Overview opens the shared reconciliation dialog from a freshly captured
 current head set, with an explicit base selector. The underlying historical
 route remains retained. Uncertain mutations survive dialog/Settings closure and
 prevent a replacement command until the original receipt is recovered.
+
+Storage has Overview and Maintenance tabs. Overview reads current manifest
+readiness and checkpoint coverage without starting maintenance. Maintenance
+shows the captured repository/epoch/position/digest and bounded report.
+Integrity checks run explicitly. Checkpoint preparation shows a fixed target,
+followed by an explicit Publish checkpoint action. Operation reports survive
+Settings closure and service restart; interrupted integrity checks require an
+explicit new run. Unknown checkpoint outcomes offer status recovery or retry of
+the same target. A browser request failure retains its request identity. Storage
+is unavailable for remote sessions and the filesystem-only companion profile.
+
+Storage controls require explicit repository context and cannot act on the last
+selected repository while the Projects hub is open.

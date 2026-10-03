@@ -81,6 +81,7 @@ export function productionStoreView(
     },
     settings: {
       searchSettings: data.searchSettings,
+      storageSettings: data.storageSettings,
       syncSettings: data.syncSettings,
       workspaceLinks: data.workspaceLinks,
       workspaceLinksState: data.workspaceLinksState,

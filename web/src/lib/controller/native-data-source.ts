@@ -58,6 +58,7 @@ export interface StoreDataSource {
   readonly threads?: import("./thread-types.js").ThreadTransport;
   readonly profile?: RepositoryProfile;
   readonly searchSettings?: import("./search-settings.js").SearchSettingsTransport;
+  readonly storage?: import("./storage-settings.js").StorageTransport;
   readonly sync?: import("./sync-settings.js").SyncTransport;
   readonly localWorkspaces?: import("./workspace-link-types.js").WorkspaceLinkTransport;
   readonly work?: import("./projects-hub-types.js").WorkBrowseTransport;

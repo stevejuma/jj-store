@@ -1,4 +1,5 @@
 import { emptySearchSettings } from "../../web/src/lib/controller/search-settings.js";
+import { emptyStorageSettings } from "../../web/src/lib/controller/storage-settings.js";
 import { emptySyncSettings } from "../../web/src/lib/controller/sync-settings.js";
 import { emptyWorkspaceLinks } from "../../web/src/lib/controller/workspace-link-types.js";
 import type {
@@ -89,6 +90,7 @@ export function createInMemoryStoreSettings(options: {
       return {
         ...emptyWorkspaceLinks(),
         searchSettings: emptySearchSettings(),
+        storageSettings: emptyStorageSettings(),
         syncSettings: emptySyncSettings(),
         capabilities: capabilities(search),
         snapshot: {
@@ -139,6 +141,9 @@ export const unavailableManagementActions = {
   stopSyncWait() {},
   async refreshSyncSettings() {},
   async controlSync() {},
+  async refreshStorage() {},
+  async startStorage() {},
+  async retryStorage() {},
   setSearchDraft() {},
   cancelSearchDraft() {},
   async refreshSearchSettings() {},

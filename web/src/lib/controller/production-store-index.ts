@@ -1,26 +1,45 @@
 import { snapshotOperation } from "./repository-profile.js";
 import { createProductionSearchSettings } from "./production-search-settings.js";
+import { createProductionStorageSettings } from "./production-storage-settings.js";
 import { createProductionSyncSettings } from "./production-sync-settings.js";
 import { createProductionWorkspaceLinks } from "./production-workspace-links.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import { storeErrorMessage } from "./http-store-data-source.js";
+import type { StoreRoute } from "./contracts.js";
 
-export function createProductionStoreSettings(options: {
+export function createProductionStoreSettings(input: {
   data: ProductionStoreState;
   source: () => StoreDataSource;
-  operation: () => string | null;
+  operation?: () => string | null;
+  route?: () => StoreRoute;
   version: () => number;
   current: (ticket: number, source: StoreDataSource) => boolean;
   restore: () => Promise<void>;
 }) {
+  const options = {
+    ...input,
+    operation:
+      input.operation ?? (() => input.route?.().snapshotOperationId ?? null),
+  };
   const { data } = options;
   const search = createProductionSearchSettings(options);
+  const storage = createProductionStorageSettings({
+    ...options,
+    hasRepositoryContext: () => {
+      const route = options.route?.();
+      return (
+        !route ||
+        (!route.projectsHub && route.repository === options.source().repository)
+      );
+    },
+  });
   const sync = createProductionSyncSettings(options);
   const workspaces = createProductionWorkspaceLinks(options);
 
   function clear() {
     workspaces.clear();
+    storage.clear();
     sync.clear();
     search.clear();
     data.capabilities = null;
@@ -103,9 +122,18 @@ export function createProductionStoreSettings(options: {
     await Promise.all([
       refreshSearch(),
       workspaces.refreshWorkspaceLinks(),
+      storage.refreshStorage(),
       sync.refreshSyncSettings(),
       search.refreshSearchSettings(),
     ]);
   }
-  return { ...workspaces, ...sync, ...search, clear, refresh, prepareIndex };
+  return {
+    ...workspaces,
+    ...storage,
+    ...sync,
+    ...search,
+    clear,
+    refresh,
+    prepareIndex,
+  };
 }

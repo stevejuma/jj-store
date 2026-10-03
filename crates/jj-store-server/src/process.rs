@@ -338,6 +338,24 @@ impl PreparedServer {
         } else {
             None
         };
+        let local_storage = match (&http_access, &host) {
+            (
+                jj_store_http::Access::LocalTrusted {
+                    principal,
+                    permission: jj_store_service::auth::Permission::Admin,
+                    ..
+                },
+                Some(host),
+            ) => Some(Arc::new(crate::storage_management::Manager::new(
+                state.clone(),
+                Arc::new(jj_store_service::storage_backend::NativeStorageBackend {
+                    host: host.clone(),
+                    principal: *principal,
+                }),
+            )?)
+                as Arc<dyn jj_store_service::storage_management::StorageManager>),
+            _ => None,
+        };
         let http = HttpApi::with_search(
             host,
             state.join("native-reads"),
@@ -365,6 +383,7 @@ impl PreparedServer {
                     })
                 })
                 .flatten(),
+                local_storage,
                 local_folder_picker: picker,
                 local_repositories,
                 local_workspaces,

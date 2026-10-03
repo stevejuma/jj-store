@@ -38,6 +38,8 @@ pub mod git_bridge;
 
 pub mod local_management;
 
+pub mod storage_backend;
+pub mod storage_management;
 pub mod sync_management;
 
 pub mod search_management;

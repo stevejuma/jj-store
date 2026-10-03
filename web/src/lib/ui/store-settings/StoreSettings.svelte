@@ -5,6 +5,7 @@
   import StoreAppearance from "../store-appearance/StoreAppearance.svelte";
   import StoreRepositorySettings from "./StoreRepositorySettings.svelte";
   import StoreSyncReconciliation from "./StoreSyncReconciliation.svelte";
+  import StoreStorageSettings from "./StoreStorageSettings.svelte";
   import StoreSyncSettings from "./StoreSyncSettings.svelte";
   import StoreSearchSettings from "./StoreSearchSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
@@ -43,6 +44,18 @@
       >
     {:else if section === "repository"}
       <StoreRepositorySettings {controller} />
+    {:else if section === "storage"}
+      <StoreStorageSettings
+        settings={controller.state.settings.storageSettings}
+        supported={Boolean(
+          controller.state.settings.capabilities?.local_storage_management &&
+          !controller.state.route.projectsHub &&
+          controller.state.route.repository === controller.state.repository.id,
+        )}
+        onRefresh={controller.actions.refreshStorage}
+        onStart={controller.actions.startStorage}
+        onRetry={controller.actions.retryStorage}
+      />
     {:else if section === "sync"}
       <StoreSyncSettings
         settings={controller.state.settings.syncSettings}

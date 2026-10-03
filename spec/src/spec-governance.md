@@ -604,6 +604,16 @@ native-browser acceptance verifies the server's unchanged asset limits.
 
 ## Local-management qualification
 
+Storage's positive integrity and restart acceptance uses
+`scripts/storage-browser-acceptance.mjs` with a fresh bounded native repository
+and an explicitly selected real RustFS executable. It qualifies exact prepared
+targets, publication, complete integrity reports and report persistence through
+two service/storage restarts. The runner owns its temporary state and processes,
+registers repositories while the service is stopped, and cleans up afterward.
+The test requires this fixture; a larger demo may legitimately exhaust the
+unchanged audit budget and MUST report incomplete rather than healthy. Record
+that result separately from successful full verification of the bounded fixture.
+
 The registered local workspace capture fixture is
 `content_acceptance::http_acceptance::local_management::local_workspace_management_requires_local_admin_and_captures_contracts`.
 It exercises the actual list/link handlers, current repository authorization,

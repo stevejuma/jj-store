@@ -1571,3 +1571,50 @@ async fn selected_reader_keeps_exact_committed_refs_and_inventory_across_checkpo
     );
     assert!(first[0].inventory(store, 1).await.is_err());
 }
+
+#[tokio::test]
+async fn maintenance_reuses_captured_target_and_reports_covering_checkpoint() {
+    let (store, c) = fixture().await;
+    committed(c.publish(&request(1, &[0], 1)).await.unwrap());
+    let target = c.capture_maintenance().await.unwrap();
+    let saved = serde_json::to_vec(&target).unwrap();
+    committed(c.publish(&request(2, &[1], 2)).await.unwrap());
+    let target = serde_json::from_slice(&saved).unwrap();
+    let audit = c.recover_target(&target, 100).await.unwrap();
+    assert_eq!(audit.manifest().published, WalPosition(1));
+    assert!(matches!(
+        c.recover_target(&target, 0).await,
+        Err(wal::Error::Limit(_))
+    ));
+    store.arm("/manifest.json", Fault::Before);
+    assert!(matches!(
+        c.checkpoint_target(&target).await,
+        Err(wal::Error::OutcomeUnknown)
+    ));
+    assert_eq!(
+        c.checkpoint_coverage(&target).await.unwrap(),
+        CheckpointCoverage::NotCovered
+    );
+    // Retrying after reconstructing the owner reuses the saved target.
+    let c = coordinator(store.clone());
+    store.arm("/manifest.json", Fault::After);
+    c.checkpoint_target(&target).await.unwrap();
+    let restarted = coordinator(store);
+    assert_eq!(
+        restarted.checkpoint_coverage(&target).await.unwrap(),
+        CheckpointCoverage::Selected
+    );
+    restarted.checkpoint().await.unwrap();
+    assert_eq!(
+        restarted.checkpoint_coverage(&target).await.unwrap(),
+        CheckpointCoverage::Covered
+    );
+    restarted.checkpoint_target(&target).await.unwrap();
+    assert_eq!(
+        restarted.read().await.unwrap().manifest().published,
+        WalPosition(2)
+    );
+    let mut corrupt = target.clone();
+    corrupt.captured.revision += 1;
+    assert!(restarted.checkpoint_target(&corrupt).await.is_err());
+}

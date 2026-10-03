@@ -869,3 +869,11 @@ explicit author email and retain existing standard-alias isolation.
 The registered local-management HTTP capture includes explicit Sync barrier
 capture, reached/pending waits, invalid targets and LocalTrusted-only admission.
 These browser controls preserve the existing CLI finite-frontier semantics.
+
+The local server composes native Storage management only for LocalTrusted
+administrators. A bounded private journal under the configured process state
+directory persists captures and reports with atomic owner-only writes and fsync.
+GET does not create it. Server-owned work survives request cancellation; after
+restart checks report interrupted and checkpoints resolve their original target
+from selected authority. No new CLI executable installation or service
+registration is required.

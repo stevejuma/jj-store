@@ -16,6 +16,9 @@ use crate::mutations::{
 use crate::review_mutations::{apply as review_command_apply, status as review_command_status};
 use crate::search::{Query as SearchQuery, search, search_status};
 use crate::search_management::{control_search, local_search_settings, save_search_settings};
+use crate::storage_management::{
+    local_storage_command, local_storage_operation, local_storage_overview,
+};
 use crate::sync_management::{
     local_sync_barrier, local_sync_control, local_sync_status, local_sync_wait,
 };
@@ -277,6 +280,9 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/local/search", local_search_settings, Empty, jj_store_service::search_management::LocalSearchSettings, Reply::Json(200)),
             (post, "/repos/{repo}/local/search/save", save_search_settings, Empty, jj_store_service::search_management::LocalSearchSettings, Reply::Json(200)),
             (post, "/repos/{repo}/local/search/control", control_search, Empty, jj_store_service::search_management::LocalSearchSettings, Reply::Json(200)),
+            (get, "/repos/{repo}/local/storage", local_storage_overview, Empty, jj_store_service::storage_management::StorageOverview, Reply::Json(200)),
+            (post, "/repos/{repo}/local/storage/operations", local_storage_command, Empty, jj_store_service::storage_management::StorageOperation, Reply::Json(200)),
+            (get, "/repos/{repo}/local/storage/operations/{request_id}", local_storage_operation, Empty, jj_store_service::storage_management::StorageOperation, Reply::Json(200)),
             (get, "/repos/{repo}/local/sync", local_sync_status, Empty, jj_store_service::sync_management::LocalSyncStatus, Reply::Json(200)),
             (post, "/repos/{repo}/local/sync/barrier", local_sync_barrier, Empty, jj_store_service::replication_control::BarrierV1, Reply::Json(200)),
             (post, "/repos/{repo}/local/sync/wait", local_sync_wait, Empty, jj_store_service::sync_management::LocalSyncWait, Reply::Json(200)),
@@ -363,6 +369,10 @@ pub(super) fn document(doc: &mut Document) {
     );
     doc.body::<jj_store_service::search_management::SearchCommand>(
         "/v1/repos/{repo}/local/search/control",
+        "post",
+    );
+    doc.body::<jj_store_service::storage_management::StorageCommand>(
+        "/v1/repos/{repo}/local/storage/operations",
         "post",
     );
     doc.body::<jj_store_service::sync_management::SyncCommand>(

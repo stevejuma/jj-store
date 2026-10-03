@@ -112,7 +112,7 @@ export function createProductionStoreController(
   const settings = createProductionStoreSettings({
     data,
     source: activeSource,
-    operation: () => history.route.snapshotOperationId,
+    route: () => history.route,
     version: () => version,
     current,
     restore: reader.restorePage,

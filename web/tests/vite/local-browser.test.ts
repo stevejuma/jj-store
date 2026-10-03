@@ -532,3 +532,18 @@ test("physical_save_preserves_selection_and_never_retries_or_advances_code", asy
   assert.equal(calls.filter((c) => c.url.endsWith("snapshot")).length, 1);
   source.close();
 });
+
+test("filesystem_profile_never_advertises_native_storage_maintenance", async () => {
+  const source = new HttpLocalStoreDataSource(repository, async () =>
+    json({
+      version: 1,
+      profile: head.profile,
+      code_browse: true,
+      local_storage_management: true,
+    }),
+  );
+  const capabilities = await source.capabilities();
+  assert.equal(capabilities.local_storage_management, false);
+  assert.equal("storage" in source, false);
+  source.close();
+});

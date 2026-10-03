@@ -535,3 +535,12 @@ IDs; collaboration content IDs remain separate. A newer selected tombstone or
 moderation state suppresses historical reaction disclosure without changing an
 older explicit read pin. Resolver reads do not publish or reconcile repository
 state.
+
+Local maintenance captures one checked manifest and digest before work.
+Integrity audits that exact capture under the coordinator history, inventory,
+byte and time bounds; an exhausted bound is incomplete, never healthy.
+Checkpoint preparation persists that capture in the private device journal
+before dispatch. Repeated publish and status requests retain it, even after
+disconnect or restart. Selected authority distinguishes the exact checkpoint
+from coverage by a newer checkpoint; coverage does not prove that the original
+write succeeded. Neither path prunes retained records or replaces a newer tail.

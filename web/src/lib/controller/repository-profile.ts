@@ -64,6 +64,7 @@ export type LocalCapabilities = Model<"LocalRepositoryCapabilities"> & {
   conflict_upload_bytes: 0;
   local_workspace_links: false;
   local_folder_picker: false;
+  local_storage_management: false;
   local_sync_management: false;
   local_search_management: false;
 };
@@ -85,3 +86,11 @@ export function validateLocalHead(
   if (value.actor) fullId(value.actor, 32);
   return { ...value, profile: "git_sha1_jj045" };
 }
+
+export const unavailableNativeManagement = {
+  local_workspace_links: false,
+  local_folder_picker: false,
+  local_storage_management: false,
+  local_sync_management: false,
+  local_search_management: false,
+} as const;

@@ -103,6 +103,9 @@ export function createProductionStoreActions(options: {
     refreshSearchSettings: options.settings.refreshSearchSettings,
     saveSearchSettings: options.settings.saveSearchSettings,
     controlSearch: options.settings.controlSearch,
+    refreshStorage: options.settings.refreshStorage,
+    startStorage: options.settings.startStorage,
+    retryStorage: options.settings.retryStorage,
     controlSync: options.settings.controlSync,
     prepareIndex: options.settings.prepareIndex,
     async loadMore(collection) {

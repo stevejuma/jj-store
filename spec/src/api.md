@@ -1496,3 +1496,16 @@ The Settings reconciliation entry reuses the native preview/apply/status routes
 and captures a current head independently from the historical browsing pin.
 Transport failures after dispatch remain unknown; closing a presentation cannot
 replace its request. Confirmed reconciliation uses automatic refresh semantics.
+
+LocalTrusted native administrators may read `/local/storage`, submit versioned
+`/local/storage/operations` commands, and read a bounded operation by request
+ID. Commands are check, prepare_checkpoint, publish_checkpoint and
+cancel_checkpoint; no paths, shell commands or browser-authored manifests are
+accepted. A private durable journal allows cancellation only before checkpoint
+dispatch, retains up to 128 operation identities per repository with bounded
+bytes, one unresolved operation per repository and one running maintenance
+worker per service, and rejects identity reuse with different intent. GET does
+not create the journal or start a check. Reports expose captured position,
+limits, phase and exact/covering checkpoint selection; checkpoint authority
+remains the manifest. Operations continue independently of HTTP request
+cancellation.

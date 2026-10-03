@@ -29,9 +29,11 @@
         ? "Local service"
         : section === "repository"
           ? "Repository"
-          : section === "sync"
-            ? "Sync"
-            : "Search",
+          : section === "storage"
+            ? "Storage"
+            : section === "sync"
+              ? "Sync"
+              : "Search",
   );
   const PageIcon = $derived(
     section === "appearance"
@@ -40,9 +42,11 @@
         ? ServerIcon
         : section === "repository"
           ? DatabaseIcon
-          : section === "sync"
-            ? RefreshCwIcon
-            : SearchIcon,
+          : section === "storage"
+            ? DatabaseIcon
+            : section === "sync"
+              ? RefreshCwIcon
+              : SearchIcon,
   );
 </script>
 

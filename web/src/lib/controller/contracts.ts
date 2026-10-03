@@ -99,6 +99,7 @@ export interface StoreRepositorySummary {
 }
 export interface StoreSettingsState extends WorkspaceLinkSettings {
   readonly searchSettings: import("./search-settings.js").SearchSettings;
+  readonly storageSettings: import("./storage-settings.js").StorageSettings;
   readonly syncSettings: import("./sync-settings.js").SyncSettings;
   readonly capabilities: RepositoryCapabilities | null;
   readonly snapshot: Head | null;
@@ -203,6 +204,11 @@ export interface StoreController {
     waitForSync(capture: boolean): Promise<void>;
     stopSyncWait(): void;
     refreshSyncSettings(): Promise<void>;
+    refreshStorage(): Promise<void>;
+    startStorage(
+      action: import("./storage-settings.js").StorageAction,
+    ): Promise<void>;
+    retryStorage(): Promise<void>;
     controlSync(action: import("./sync-settings.js").SyncAction): Promise<void>;
     loadMore(
       collection:

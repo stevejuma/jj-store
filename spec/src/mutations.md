@@ -748,3 +748,9 @@ for physical Save. Snapshot is independently authorized.
 Local Sync barrier capture and bounded waits reuse the existing owned
 replication control types. They grant no repository mutation or upstream
 configuration authority and cannot silently capture replacement targets.
+
+Storage maintenance binds the current LocalTrusted administrator before reading
+or capturing native state. Service-owned typed maintenance calls use coordinator
+authority and never accept arbitrary browser manifests. Integrity has no
+mutation side effects; checkpoint publication preserves all code, settings and
+domain roots from the successful CAS base.

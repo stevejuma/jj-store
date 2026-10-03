@@ -5,16 +5,19 @@ import {
   type Client,
   type Model,
 } from "../api/client.js";
+import { HttpStorageSettings } from "./storage-settings.js";
 import { HttpSyncSettings } from "./sync-settings.js";
 import { HttpWorkspaceLinks } from "./http-workspace-links.js";
 
 /** Repository transports share the repository's admitted client. */
 export class HttpRepositoryTransports {
   readonly searchSettings: HttpSearchSettings;
+  readonly storage: HttpStorageSettings;
   readonly sync: HttpSyncSettings;
   readonly localWorkspaces: HttpWorkspaceLinks;
   constructor(private client: Client) {
     this.searchSettings = new HttpSearchSettings(client);
+    this.storage = new HttpStorageSettings(client);
     this.sync = new HttpSyncSettings(client);
     this.localWorkspaces = new HttpWorkspaceLinks(client);
   }

@@ -5,6 +5,7 @@ import type {
 import type { AgentDetail } from "./repository-read-types.js";
 import type { CodeSnapshot as Snapshot } from "./repository-profile.js";
 import { emptySearchSettings } from "./search-settings.js";
+import { emptyStorageSettings } from "./storage-settings.js";
 import { emptySyncSettings } from "./sync-settings.js";
 import {
   emptyWorkspaceLinks,
@@ -43,6 +44,7 @@ type MutableStatus = {
 
 export interface ProductionStoreState extends WorkspaceLinkSettings {
   searchSettings: import("./search-settings.js").SearchSettings;
+  storageSettings: import("./storage-settings.js").StorageSettings;
   syncSettings: import("./sync-settings.js").SyncSettings;
   accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   storageReady: boolean;
@@ -142,6 +144,7 @@ export function createProductionStoreState(): ProductionStoreState {
   const state: ProductionStoreState = $state({
     ...emptyWorkspaceLinks(),
     searchSettings: emptySearchSettings(),
+    storageSettings: emptyStorageSettings(),
     syncSettings: emptySyncSettings(),
     accessMode: "bootstrapping",
     storageReady: false,

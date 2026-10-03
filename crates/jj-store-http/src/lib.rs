@@ -16,6 +16,7 @@ mod review_mutations;
 mod routes;
 mod search;
 mod search_management;
+mod storage_management;
 mod sync_management;
 mod work;
 pub use search::{SearchIndex, SearchRegistry};
@@ -100,6 +101,7 @@ pub struct Config {
     pub registry: Option<Arc<dyn RepositoryRegistry>>,
     pub local_repositories: Option<Arc<dyn jj_store_service::local_browser::LocalRepositories>>,
     pub local_search: Option<Arc<dyn jj_store_service::search_management::SearchManager>>,
+    pub local_storage: Option<Arc<dyn jj_store_service::storage_management::StorageManager>>,
     pub local_sync: Option<Arc<dyn jj_store_service::sync_management::SyncManager>>,
     pub local_workspaces: Option<Arc<dyn jj_store_service::local_management::WorkspaceManager>>,
     pub local_folder_picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
@@ -127,6 +129,7 @@ impl Default for Config {
             registry: None,
             local_workspaces: None,
             local_repositories: None,
+            local_storage: None,
             local_sync: None,
             local_search: None,
             local_folder_picker: None,

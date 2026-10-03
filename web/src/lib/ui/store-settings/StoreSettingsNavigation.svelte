@@ -26,6 +26,7 @@
     { id: "service", label: "Local service", icon: ServerIcon },
     { id: "repository", label: "Repository", icon: DatabaseIcon },
     { id: "search", label: "Search", icon: SearchIcon },
+    { id: "storage", label: "Storage", icon: DatabaseIcon },
     { id: "sync", label: "Sync", icon: RefreshCwIcon },
   ] as const;
 </script>

@@ -27,6 +27,8 @@ pub(crate) struct Capabilities {
     pub local_search_management: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub local_sync_management: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub local_storage_management: Option<bool>,
     pub typed_mutations: Vec<String>,
     pub mutation_request_bytes: usize,
     pub conflict_upload_bytes: u64,
@@ -148,6 +150,15 @@ impl From<&Config> for Capabilities {
                 ))
             .then_some(true),
             local_search_management: (config.local_search.is_some()
+                && matches!(
+                    config.access,
+                    Access::LocalTrusted {
+                        permission: jj_store_service::auth::Permission::Admin,
+                        ..
+                    }
+                ))
+            .then_some(true),
+            local_storage_management: (config.local_storage.is_some()
                 && matches!(
                     config.access,
                     Access::LocalTrusted {

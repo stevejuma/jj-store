@@ -586,3 +586,8 @@ Local-management contract samples cover the additive SyncBarrier and
 LocalSyncWait browser endpoints, including pending and reached outcomes with
 unchanged full issuer/epoch identities. Native persistence formats are
 unchanged.
+
+Storage management adds versioned HTTP overview, command and report contracts
+and optional local_storage_management capability. The filesystem-only profile
+advertises no native maintenance. The private device journal is version 1;
+native manifest, checkpoint, WAL, receipt and object encodings are unchanged.

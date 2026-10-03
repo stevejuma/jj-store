@@ -116,12 +116,12 @@ shared-package release qualification does not alter those original Git gates.
 | M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093                                                                                                                                                                                            |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | -                                                                                                                                                                                                                                                                                                                                                              |
-| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060                                                                                                                                                                                                                                                   |
+| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014                                                                                                                                                                                                                               |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                                              | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049                                                                                                                                                                                                                                                                                                                         |
 | M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                                      | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-063                                                                                                                                                                                                                                                                       |
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation                       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                            |
 | M14.4       | Done        | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                                  | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild                               | E-M14-009,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
-| M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                                      | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery                               | -                                                                                                                                                                                                                                                                                                                                                              |
+| M14.5       | Done        | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                                      | Storage integrity and non-destructive checkpoints                                                                              | Retain bounded maintenance and cold restart coverage                                           | E-M14-014                                                                                                                                                                                                                                                                                                                                                      |
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                                 | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing                  | E-M14-008,E-M14-010,E-M14-011,E-M14-012,E-M14-013                                                                                                                                                                                                                                                                                                              |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                                  | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities                        | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007 | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032                                                                                                                          |
@@ -49537,10 +49537,326 @@ and named tests are checked by the progress gate.
     ],
     "result": "pending",
     "remaining": [
-      "Storage overview, integrity and checkpoints are the next implementation slice. Expanded real-peer Sync pressure/fault qualification and visual baselines are separate gates; agent management is excluded."
+      "Storage overview, integrity and checkpoints are delivered in E-M14-014. Expanded real-peer Sync pressure/fault qualification and visual baselines are separate gates; agent management is excluded."
     ],
     "scope": "Configured native Sync UI and shared mutation-dialog consumers. Generated-contract captures required by new HTTP endpoints. Main development service is untouched. No full root aggregate, full Rust workspace, expanded two-instance replication/soak, agent management or visual-baseline approval.",
-    "next": "Implement Storage overview, integrity and exact-target checkpoints."
+    "next": "Retain captured Sync and reconciliation coverage; expanded real-peer qualification remains separate."
+  },
+  {
+    "id": "E-M14-014",
+    "tasks": ["M14", "M14.5"],
+    "date": "2026-10-03",
+    "kind": "native-storage-management",
+    "revision": "enclosing Jujutsu change lmurxoml",
+    "before": "At Sync commit 2c5ab73d the Storage section, maintenance HTTP API and durable exact-target operations were absent. New WAL target failed compilation with 10 missing-API errors; new controller test failed module import.",
+    "versions": "JJ 0.45.1; Rust 1.98.1; Svelte 5; pnpm 10.32.1; existing Design Core source-validation installation retained; no dependency change.",
+    "formats": "Additive optional native LocalTrusted Storage capability and versioned overview/operation contracts. Private device maintenance journal V1 outside checkout content; 128 identities/4 MiB per repository. Existing native object, manifest, checkpoint, WAL and receipt encodings unchanged.",
+    "files": [
+      "catalog/components/store-application/StoreStorageSettings.stories.svelte",
+      "catalog/controller/in-memory-store-settings.svelte.ts",
+      "catalog/fixtures/StorageSettingsFixture.svelte",
+      "crates/jj-store-cli/tests/native_lifecycle/http_local_management.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_storage_management.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-http/src/storage_management.rs",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/src/storage_management/journal.rs",
+      "crates/jj-store-server/src/storage_management/mod.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/storage_backend.rs",
+      "crates/jj-store-service/src/storage_management.rs",
+      "crates/jj-store-wal/src/publication/maintenance.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/tests/publication.rs",
+      "schemas/openapi.json",
+      "scripts/storage-browser-acceptance.mjs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-local-store-data-source.ts",
+      "web/src/lib/controller/http-repository-transports.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-storage-settings.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-index.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/repository-profile.ts",
+      "web/src/lib/controller/storage-settings.ts",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsNavigation.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
+      "web/src/lib/ui/store-settings/StoreStoragePosition.svelte",
+      "web/src/lib/ui/store-settings/StoreStorageSettings.svelte",
+      "web/src/lib/ui/store-settings/model.ts",
+      "web/tests/browser/local-storage.spec.ts",
+      "web/tests/real/storage-maintenance.spec.ts",
+      "web/tests/vite/local-browser.test.ts",
+      "web/tests/vite/production-storage-settings.test.ts"
+    ],
+    "tests": [
+      "crates/jj-store-wal/tests/publication.rs#maintenance_reuses_captured_target_and_reports_covering_checkpoint",
+      "crates/jj-store-cli/tests/native_lifecycle/http_local_management.rs#local_workspace_management_requires_local_admin_and_captures_contracts",
+      "web/tests/vite/production-storage-settings.test.ts#storage retains an uncertain command identity and never recaptures its checkpoint",
+      "web/tests/real/storage-maintenance.spec.ts#native Storage keeps exact checkpoint targets through cold restart and verifies captured data"
+    ],
+    "runs": [
+      {
+        "command": "cargo test --locked -p jj-store-wal --test publication maintenance_reuses_captured_target_and_reports_covering_checkpoint (before)",
+        "result": "fail",
+        "failures": 10,
+        "note": "Missing captured maintenance APIs; /tmp/jj-local-management-storage-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-storage-settings.test.ts (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Missing controller module; /tmp/jj-local-management-storage-ui-before.log."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-wal --test publication maintenance_reuses_captured_target_and_reports_covering_checkpoint",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1; target survives serialization, newer writes, lost manifest acknowledgement, coordinator reconstruction and covering checkpoint; bounded incomplete audit and digest corruption rejected."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-wal",
+        "result": "pass",
+        "failures": 0,
+        "note": "Full relevant WAL suite passes. Escalated because shared checkpoint/recovery primitives affect publication consumers. /tmp/jj-local-management-storage-wal-suite.log."
+      },
+      {
+        "command": "cargo check --locked -p jj-store-service",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pass."
+      },
+      {
+        "command": "cargo check --locked -p jj-store-service -p jj-store-http -p jj-store-server (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Composition initially referenced the configuration enum principal instead of the resolved HTTP local identity; corrected."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle local_workspace_management_requires_local_admin_and_captures_contracts (initial Storage fixture)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Ambiguous Error import corrected; then GET fixture retained POST Content-Type and correctly received 400. Removed only the invalid header; no admission change."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle local_workspace_management_requires_local_admin_and_captures_contracts (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1; real native coordinator over deterministic storage. GET creates no journal, prepare changes no manifest, restart retains target, selected checkpoint preserves heads/position/receipts, integrity completes, budget exhaustion reports incomplete, interrupted check and cancellation are retained. Remote/read-only denied; arbitrary paths rejected. /tmp/jj-local-management-storage-http-final.log."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated from registered endpoints."
+      },
+      {
+        "command": "pnpm web:check (initial)",
+        "result": "fail",
+        "failures": 8,
+        "note": "Request-only StorageCommand schema is inline; corrected frontend type to derive from generated endpoint request, rather than Model components."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 diagnostics; 160 catalog modules pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-storage-settings.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-sync-settings.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 13/13; final added definite rejection and incomplete report assertions recorded below."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreStorageSettings.stories.svelte (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Vite optimized the new shield-check icon during the run, reloaded tests and failed virtual CSS imports. Fresh process with completed dependency optimization passes."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreStorageSettings.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "5/5 keyboard/interaction/accessibility stories pass; visual-pending."
+      },
+      {
+        "command": "pnpm check:architecture (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "301 line local-profile source exceeded 300; moved shared unavailable-native-management capability values to owning profile model."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; pnpm spec:validate; pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "834 web modules; 16 package boundaries; canonical checks pass."
+      },
+      {
+        "command": "rustfmt --edition 2024 changed Rust files; pnpm exec prettier --write changed frontend/spec files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Targeted formatting."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-wal (final timeout boundary)",
+        "result": "pass",
+        "failures": 0,
+        "note": "90/90 pass after retaining end-to-end time bounds around initial reads and restored capture validation. /tmp/jj-local-management-storage-wal-final.log."
+      },
+      {
+        "command": "cargo check --locked -p jj-store-service -p jj-store-http -p jj-store-server (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected boundary compilation passes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-storage-settings.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-sync-settings.test.ts (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "14/14 pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/local-browser.test.ts web/tests/vite/history-query-transport.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "19/19 including explicit native-maintenance denial for the filesystem-only profile."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-wal --test publication maintenance_reuses_captured_target_and_reports_covering_checkpoint (lost-write extension)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1; before-write unknown remains not covered; reconstructed coordinator retries the same target. After-write acknowledgement loss resolves exact selection."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle local_workspace_management_requires_local_admin_and_captures_contracts (service worker bound)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 after bounding service-owned maintenance to one running worker across repositories."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "159 actual HTTP/SSE responses conform, generated files match, 7 contract tests and contract type check pass."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-storage.spec.ts (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Built UI succeeded with existing chunk-size warning. Preview server startup hit the 30-second Cargo/build-lock deadline; no browser assertions ran."
+      },
+      {
+        "command": "cargo build --locked -p jj-store-http --example browser_preview; pnpm exec playwright test --config .scratch/storage.playwright.config.ts web/tests/browser/local-storage.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 fresh production bundle/server; equivalent ignored config launches the prebuilt preview directly. Lost reply recovers exact target after newer overview position, Settings navigation retains intent, mobile no overflow and axe pass."
+      },
+      {
+        "command": "pnpm exec prettier --check changed Storage frontend/test files; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting and 125-task progress bookkeeping pass."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7570 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_REAL_TEST=web/tests/real/storage-maintenance.spec.ts pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Full demo checkpoint target survived real service/RustFS restart, selected correctly and preserved heads/position. Integrity correctly reported incomplete at the configured 30-second bound for position 99; the positive-path test incorrectly expected this larger fixture to finish. Dedicated bounded fixture retains the strict verified-data assertion. Cold 1254 ms, restart 5207 ms, 177840 KiB RSS; fixture cleaned up. /tmp/jj-local-management-storage-real.log."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7570 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs node scripts/storage-browser-acceptance.mjs (initial and diagnostic retry)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both failed before browser assertions: macOS temporary-directory socket exceeded SUN_LEN. Added bounded server-log diagnostics before cleanup, then shortened the isolated temporary path. /tmp/jj-local-management-storage-focused-real.log and /tmp/jj-local-management-storage-focused-real-diagnostic.log."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7570 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs node scripts/storage-browser-acceptance.mjs (short-path retry)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Server started and native repository initialized. Repository registration correctly rejected the running service owner lock; harness now registers after stopping its owned service. /tmp/jj-local-management-storage-focused-real-final.log."
+      },
+      {
+        "command": "pnpm check:architecture (repository-context guard and first extraction)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Central controller reached 303 then 301 counted lines. Moved route/context derivation to the owning Settings factory without relaxing the 300-line budget."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/controller/production-store-index.ts web/src/lib/controller/production-store-controller.svelte.ts scripts/storage-browser-acceptance.mjs web/tests/real/storage-maintenance.spec.ts; pnpm check:architecture; pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final route extraction: 835 modules; 0 Svelte errors/warnings. Storage unavailable at Projects hub; active native repository context required."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-storage-settings.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-sync-settings.test.ts (context guard)",
+        "result": "pass",
+        "failures": 0,
+        "note": "15/15 before route factory extraction; /tmp/jj-local-management-storage-context-unit.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-storage-settings.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-sync-settings.test.ts web/tests/vite/production-store-workspaces.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "23/23 with Settings route factory extraction and repository-context regression. /tmp/jj-local-management-storage-unit-context-final.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/storage.playwright.config.ts web/tests/browser/local-storage.spec.ts (context guard)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 cold built UI/preview; lost reply recovery, captured target, mobile/axe and Projects-hub unavailable assertion. /tmp/jj-local-management-storage-browser-context-final.log."
+      },
+      {
+        "command": "pnpm catalog:check; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 diagnostics; 160 catalog modules; UI ownership validator passes."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7570 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs node scripts/storage-browser-acceptance.mjs (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 real-RustFS browser test in 28.1 seconds after cold native fixture startup. Exact prepared target and request survive service/RustFS restart; explicit publication retains heads/position; bounded integrity completes; second restart retains completed integrity and exact selected checkpoint report. Historical route, mobile reload/navigation, no overflow, axe and no page errors pass. Isolated service and fixture cleaned up. Positive-path test requires this small fixture instead of assuming the large demo fits the 30-second budget. /tmp/jj-local-management-storage-focused-real-register-final.log."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:validate; pnpm spec:first (new acceptance runner)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Progress and canonical validation passed. Spec-first rejected the new tooling file until spec-governance.md documented the bounded native fixture, owned lifecycle and distinction from larger incomplete audits; added the owning chapter without weakening the gate."
+      },
+      {
+        "command": "pnpm exec prettier --check all changed frontend, test, generated-contract and specification files",
+        "result": "pass",
+        "failures": 0,
+        "note": "All matched files use Prettier style before the final governance evidence addition."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/spec-governance.md spec/src/milestones.md; pnpm check:progress; pnpm spec:validate; pnpm spec:first; pnpm check:architecture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "125-task evidence bookkeeping passes; 5 validators, 22 chapters, 152 requirements; spec-first accepts 44 protected files with 8 canonical chapters; 835-module architecture passes. M14.5 complete for the qualified maintenance scope; M14/M14.6/M14.7 remain separately gated."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Native Storage overview, bounded integrity, prepared checkpoint publication/cancel and exact-target recovery. Checks are read-only; checkpoints only select immutable folded data through manifest CAS. Full WAL suite justified by shared coordinator behavior; focused UI and native HTTP consumers only. Root aggregates, agents, backup/restore, pruning, replication pressure/soak and visual-baseline approval remain outside this slice. The large demo integrity audit reached its 30-second bound and remains explicitly incomplete; positive full-audit evidence applies to the bounded native fixture. The configured limits were not relaxed.",
+    "next": "Retain maintenance regression coverage; remaining M14 agent, integrated settings and expanded Sync qualification are separate work."
   }
 ]
 ```

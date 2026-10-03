@@ -19,7 +19,9 @@ mod collab_targets;
 mod collaboration;
 mod domains;
 mod git_interop;
+mod maintenance;
 mod native_copy;
+pub use maintenance::CheckpointCoverage;
 mod reader;
 mod replication;
 mod replication_agent;
@@ -1389,81 +1391,21 @@ impl Coordinator {
             .map(|record| record.into_transaction())
             .collect())
     }
-    pub async fn checkpoint(&self) -> Result<ManifestSnapshot> {
-        tokio::time::timeout(self.limits.timeout, async {
-            let captured = self.read().await?;
-            let checkpoint = self
-                .records
-                .put(
-                    RecordKind::Checkpoint,
-                    None,
-                    &Checkpoint {
-                        captured: captured.manifest.clone(),
-                        captured_digest: captured.digest,
-                    },
-                )
-                .await?;
-            for _ in 0..self.limits.cas_attempts {
-                let base = self.read().await?;
-                if base.manifest.epoch != captured.manifest.epoch {
-                    return Err(Error::Stale);
-                }
-                // Do not replace a checkpoint already ahead of the captured one.
-                if let Some(existing) = base.manifest.checkpoint {
-                    let existing: Checkpoint =
-                        self.records.get(existing, RecordKind::Checkpoint).await?;
-                    if existing.captured.published >= captured.manifest.published {
-                        return Ok(base);
-                    }
-                }
-                let manifest = Manifest {
-                    revision: base
-                        .manifest
-                        .revision
-                        .checked_add(1)
-                        .ok_or(Error::Limit("manifest revision"))?,
-                    checkpoint: Some(checkpoint),
-                    ..base.manifest
-                };
-                let bytes = records::encode(&manifest, MAX_MANIFEST)?;
-                let upload = StagedUpload::from_bytes(&bytes, MAX_MANIFEST).await?;
-                match self
-                    .records
-                    .store
-                    .put(
-                        &self.manifest_key(),
-                        Condition::Matches(base.version),
-                        &upload,
-                    )
-                    .await?
-                {
-                    WriteOutcome::Applied(version) => {
-                        return Ok(ManifestSnapshot {
-                            manifest,
-                            digest: records::digest(&bytes),
-                            version,
-                        });
-                    }
-                    WriteOutcome::PreconditionFailed => continue,
-                    WriteOutcome::Unknown => {
-                        let latest = self.read().await.map_err(|_| Error::OutcomeUnknown)?;
-                        if latest.manifest.checkpoint == Some(checkpoint) {
-                            return Ok(latest);
-                        }
-                        return Err(Error::OutcomeUnknown);
-                    }
-                }
-            }
-            Err(Error::Contended)
-        })
-        .await
-        .map_err(|_| Error::OutcomeUnknown)?
-    }
     /// Cold integrity recovery reads only selected records. No process cache or
     /// local index is needed. Limits make incomplete verification an error.
     pub async fn recover(&self, max_entries: usize) -> Result<ManifestSnapshot> {
         tokio::time::timeout(self.limits.timeout, async {
-            let snapshot = self.read().await?;
+            self.recover_snapshot(self.read().await?, max_entries).await
+        })
+        .await
+        .map_err(|_| Error::Limit("recovery time"))?
+    }
+    async fn recover_snapshot(
+        &self,
+        snapshot: ManifestSnapshot,
+        max_entries: usize,
+    ) -> Result<ManifestSnapshot> {
+        tokio::time::timeout(self.limits.timeout, async {
             let manifest = &snapshot.manifest;
             if manifest.published.0 > max_entries as u64 {
                 return Err(Error::Limit("recovery history"));
