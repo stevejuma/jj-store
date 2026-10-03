@@ -859,3 +859,9 @@ format-2 installation. They require LocalTrusted embedded storage, literal
 loopback and a pipe on stdin. Launch-only bundle-path and origin overrides never
 persist or alter credentials. Owner EOF enters the same bounded shutdown as
 interrupt/termination. See [desktop](desktop.md).
+
+Native browser qualification MUST verify that authenticated query metadata omits
+host identity hints. Registered-folder identity fallback remains an adapter
+read; it MUST NOT invoke installed JJ/Git commands, migrate configuration or
+alter recorded/physical repository state. CLI query arguments continue to supply
+explicit author email and retain existing standard-alias isolation.

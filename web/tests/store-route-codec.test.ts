@@ -317,3 +317,23 @@ test("applied history queries retain frozen time and reject unpinned or incompat
     "invalid",
   );
 });
+
+test("multiline history URLs round trip while other controls remain invalid", () => {
+  const multiline = {
+    ...route,
+    historyQuery: 'mutable() &\n\tdescription("fix")',
+    historyTime: 12345,
+  };
+  assert.deepEqual(storeRouteFromHash(storeRouteToHash(multiline)!), {
+    kind: "route",
+    route: multiline,
+  });
+  for (const control of ["%01", "%0B", "%7F"]) {
+    assert.equal(
+      storeRouteFromHash(
+        `#/repos/${repository}/log?at_op=${operation}&history_query=a${control}b`,
+      ).kind,
+      "invalid",
+    );
+  }
+});

@@ -135,3 +135,45 @@
     );
   }}>{#snippet template()}<HistoryQueryFixture />{/snippet}</Story
 >
+
+<Story
+  name="Multiline query and session email override"
+  play={async ({ canvas, canvasElement }) => {
+    await userEvent.click(canvas.getByText("Query context and syntax"));
+    const email = canvas.getByRole("textbox", {
+      name: "Author email for mine()",
+    });
+    await waitFor(() => expect(email).toHaveValue("fixture@example.invalid"));
+    await userEvent.clear(email);
+    await userEvent.type(email, "manual@example.invalid");
+    const input = canvas.getByRole("searchbox", { name: "Filter JJ history" });
+    await userEvent.click(input);
+    await userEvent.type(input, "mutable() &");
+    await userEvent.keyboard("{Escape}{Enter}");
+    await userEvent.keyboard('description("fix")');
+    await userEvent.keyboard("{Escape}{Control>}{Enter}{/Control}");
+    await waitFor(() =>
+      expect(
+        canvas.getByRole("status", { name: "Applied history query" }),
+      ).toHaveTextContent('mutable() & description("fix")'),
+    );
+    await expect(canvasElement.querySelectorAll(".cm-line").length).toBe(2);
+    const alias = canvasElement.querySelector(".history-query-alias")!;
+    await expect(
+      canvasElement.ownerDocument.defaultView!.getComputedStyle(alias).color,
+    ).not.toBe(
+      canvasElement.ownerDocument.defaultView!.getComputedStyle(input).color,
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Refresh current head" }),
+    );
+    await expect(email).toHaveValue("manual@example.invalid");
+    await userEvent.clear(email);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Refresh current head" }),
+    );
+    await expect(email).toHaveValue("");
+  }}
+>
+  {#snippet template()}<HistoryQueryFixture />{/snippet}
+</Story>

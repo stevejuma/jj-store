@@ -1,5 +1,6 @@
 //! Query editor metadata and diagnostics for the pinned JJ language.
 mod aliases;
+pub mod identity;
 pub mod operations;
 pub use aliases::standard_aliases;
 use schemars::JsonSchema;
@@ -40,6 +41,9 @@ pub struct QueryInfo {
     pub operators: Vec<String>,
     pub operation_fields: Vec<String>,
     pub unsupported: Vec<String>,
+    /// Device identity hint, available only in LocalTrusted query metadata.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub default_user_email: Option<String>,
 }
 pub fn info(local: bool) -> QueryInfo {
     let unsupported: Vec<String> = if local {
@@ -88,6 +92,7 @@ pub fn info(local: bool) -> QueryInfo {
         .map(String::from)
         .collect(),
         unsupported,
+        default_user_email: None,
     }
 }
 pub fn require_context(

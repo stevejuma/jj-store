@@ -24,6 +24,7 @@
       value={query.draft}
       inputMode="custom"
       density="compact"
+      focusAppearance="borderless"
       ariaLabel={operations ? "Filter operation history" : "Filter JJ history"}
       placeholder={operations
         ? 'description:"rebase" user:steve'
@@ -35,7 +36,7 @@
     >
       {#snippet actions()}<Button
           size="sm"
-          variant="ghost"
+          variant="secondary"
           onclick={() => void query.run()}
           aria-label="Run history query">Search</Button
         >{/snippet}
@@ -86,9 +87,10 @@
           </p>{/if}
       {/if}
       <p>
-        Queries use the displayed operation snapshot. Enter searches;
-        Ctrl/⌘+Enter searches while completions are open. Escape closes
-        completions. Invalid drafts keep the previous results.
+        Queries use the displayed operation snapshot. Enter adds a line;
+        Ctrl/⌘+Enter or Search runs the query. Enter accepts an active
+        completion. Escape closes completions. Invalid drafts keep the previous
+        results.
       </p>
     </details>
     {#if query.pending}<p role="status">Searching history…</p>{/if}

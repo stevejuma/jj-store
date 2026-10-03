@@ -40,7 +40,7 @@ shared-package release qualification does not alter those original Git gates.
 | M4.7        | Done        | M4.6                    | JST-UI-004                                                                                                                                                                              | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                                            | E-UI-004,E-UI-029,E-UI-044,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                   |
 | M4.8        | Done        | M4.7                    | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks            | Visual review pending; live UI remains deferred                                                | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                        |
 | M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                                 | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                                            | E-UI-007,E-UI-008,E-UI-063,E-UI-065,E-UI-066,E-UI-067,E-UI-068                                                                                                                                                                                                                                                                                                 |
-| M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                                     | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                                          | E-M4-018,E-UI-090,E-UI-091                                                                                                                                                                                                                                                                                                                                     |
+| M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                                     | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                                          | E-M4-018,E-UI-090,E-UI-091,E-UI-092                                                                                                                                                                                                                                                                                                                            |
 | M4.11       | Deferred    | M4.10                   | JST-API-004,JST-API-005,JST-UI-005                                                                                                                                                      | Shared authenticated connection and final registry-only browser acceptance                                                     | Future shared/package release                                                                  | E-UI-011                                                                                                                                                                                                                                                                                                                                                       |
 | M4.12       | Deferred    | M4.11                   | JST-API-002,JST-API-003,JST-UI-005                                                                                                                                                      | Shared-deployment route/SSE finalization against registry-only dependencies                                                    | Future shared/package release                                                                  | E-UI-012                                                                                                                                                                                                                                                                                                                                                       |
 | M4.13       | Deferred    | M4.11                   | JST-API-002,JST-UI-006                                                                                                                                                                  | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                                 | Future Design Core release                                                                     | E-UI-013,E-UI-014,E-UI-015,E-UI-083                                                                                                                                                                                                                                                                                                                            |
@@ -113,7 +113,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                             | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                           | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                             |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                             | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025                                                                                                                                                                                                                              |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091                                                                                                                                                                                                              |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                             | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092                                                                                                                                                                                                     |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                   | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060                                                                                                                                                                                                                                                   |
@@ -25401,7 +25401,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
+        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -37335,7 +37335,7 @@ and named tests are checked by the progress gate.
         "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
         "result": "pass",
         "failures": 0,
-        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+        "note": "Fresh served app on 7460 displays 87e1cd5d\u20268fb9 and 20d6c008\u2026ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
       },
       {
         "command": "pnpm check:progress",
@@ -47141,7 +47141,7 @@ and named tests are checked by the progress gate.
         "command": "python3 /tmp/jj-land-resolve.py; jj resolve --list; pnpm exec prettier --write (11 resolved files)",
         "result": "pass",
         "failures": 0,
-        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main’s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
+        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main\u2019s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
       },
       {
         "command": "pnpm install --no-frozen-lockfile --lockfile=false; compare installed tooltip-content.svelte to landed Design Core source",
@@ -47279,7 +47279,7 @@ and named tests are checked by the progress gate.
         "command": "python3 parent evidence and main dependency/runtime metadata audit",
         "result": "pass",
         "failures": 0,
-        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main’s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
+        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main\u2019s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
       },
       {
         "command": "pnpm test:storybook catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
@@ -49177,6 +49177,146 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "Only verified workspace landing, usable debug-app relocation and retirement are complete. M17 remains In progress: native drag/double-click, accessibility, render handshake, folder bridge, dirty-edit protection and signed/release/DMG flows retain E-DESK-003 pending gates. Root aggregates/full Rust and unrelated UI/storage suites out of scope. No installation reset, user repository migration, public release or visual baseline approval.",
     "next": "Continue M17 from main; use retained desktop/resources and debug app for local iteration. Keep remaining native and distribution gates explicit."
+  },
+  {
+    "id": "E-UI-092",
+    "tasks": ["M4.10", "M13.4"],
+    "date": "2026-10-03",
+    "kind": "history-query-multiline-feedback-and-local-identity",
+    "revision": "enclosing Jujutsu change wmkpkslo",
+    "before": "Main jj-store wmkpkslo/18b51a68 and Design Core snktqqso/57ce147c are clean. Browser inspection finds token classes with ordinary foreground colors and focused pill shadow. Exact new multiline editor regression fails1/4; multiline URL regression fails1/12. Shared compact error lacks invalid styling and diagnostic spacing. User requests direct main-workspace changes and excludes Design Core visual tests. jjbutler current component is read-only and single-line; unrelated changes preserved.",
+    "versions": "JJ0.45.1; Rust1.98.1; pnpm10.32.1; Svelte5/CodeMirror6; macOS ARM64. Design Core0.1.2 source-validation main snktqqso; registry-portable app range ^0.2.0 retained. etcetera0.11.0 and whoami2.1.3 reuse existing locked versions. Qualified source Design Core commit04b1ec1ba7e7.",
+    "formats": "Optional LocalTrusted QueryInfo.default_user_email; explicit context remains query authority. Host JJ_EMAIL/user config then registered repository secure/legacy JJ then Git fallback. Bounded read-only email hints; no alias evaluation/config migration. Multiline query URL whitespace allowed; other controls rejected. No manifest/object/WAL/receipt/companion formats change. Email stays session-only and manual empty/override wins. Registry-only Design Core consumption still requires normal release.",
+    "files": [
+      "Cargo.lock",
+      "catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+      "catalog/fixtures/HistoryQueryFixture.svelte",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-jj/Cargo.toml",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/query/language/identity.rs",
+      "crates/jj-store-jj/src/query/language/mod.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/history-query-route.ts",
+      "web/src/lib/controller/history-query-types.ts",
+      "web/src/lib/controller/history-query.svelte.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/ui/store-history-query/StoreHistoryQuery.svelte",
+      "web/src/lib/ui/store-history-query/history-language.ts",
+      "web/src/lib/ui/store-history-query/history-query.css",
+      "web/tests/browser/history-query.spec.ts",
+      "web/tests/store-route-codec.test.ts",
+      "web/tests/vite/history-language.test.ts",
+      "web/tests/vite/history-query.test.ts"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Registry-only Design Core installation still requires a normal package release; existing source-validation setup retained. Visual baselines remain pending and excluded by user."
+    ],
+    "scope": "Shared source component crosses repositories, so full required Design Core nonvisual checks apply. App reader context changes justify complete catalog-unit controller lane; native/local language, graph and HTTP contracts remain focused. Root app aggregates, full Rust workspace, unrelated runtime/RustFS and screenshot baseline comparisons are out of scope. Visual tests explicitly excluded; no publishing or release. All requested functional changes and main runtime verification are complete; pending result refers only to registry-only release qualification retained from E-UI-090. Before-state failures are recorded without relabeling.",
+    "next": "Requested main changes and runtime feedback are qualified and committed separately. Registry release and wider M13 work remain separate gates.",
+    "runs": [
+      {
+        "command": "CUA read-only DOM styles on user main7460 tab; inspect Community, Design Core and jjbutler source",
+        "result": "pass",
+        "failures": 0,
+        "note": "Token span colors equal ordinary foreground; focused pill3px ring. jjbutler uses single-line search input. No reference source modified."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/history-language.test.ts; pnpm exec tsx --test web/tests/store-route-codec.test.ts (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "One multiline transaction failure and one multiline URL failure. /tmp/history-language-before.log and /tmp/history-route-before.log."
+      },
+      {
+        "command": "pnpm test:storybook src/shared/filter/search-filter-bar (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3files/10stories pass. New test initially misplaced the cursor by userEvent.type refocusing contenteditable; keyboard continuation fixes test interaction without changing assertions. /tmp/history-dc-focused.log."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-jj --lib query::language; cargo check --locked -p jj-store-jj -p jj-store-http",
+        "result": "pass",
+        "failures": 0,
+        "note": "5language/identity cases pass. Repaired initial Backend API compile error; fallback fixture initially used invalid Git single-quote syntax and now uses valid Git config. /tmp/history-rust-focused.log and /tmp/history-rust-check.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/history-query.test.ts web/tests/vite/history-language.test.ts web/tests/vite/history-query-transport.test.ts; pnpm exec tsx --test web/tests/store-route-codec.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "11focused cases and12route cases pass. Initial route fixture used incompatible operation-comparison/log state; preserved its valid Op Log state. /tmp/history-app-unit.log and /tmp/history-route-after.log."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test local_browser; cargo test --locked -p jj-store-cli --test native_lifecycle graph_acceptance",
+        "result": "pass",
+        "failures": 0,
+        "note": "7local cases and18native graph cases pass. /tmp/history-local-browser.log and /tmp/history-native-graph.log."
+      },
+      {
+        "command": "pnpm install --ignore-scripts --lockfile=false; pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source-validation dependency refreshed using existing ignored hook; registry manifest/lock preserved. Contracts regenerated after Rust API repair. Early type checks before generation correctly rejected missing metadata field; reruns follow generation."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-jj --lib query::language (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 cases including read-only secure-config binding and foreign-path rejection. /tmp/history-rust-focused.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit; pnpm test:storybook catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "55files/314controller tests and4history interaction/accessibility stories pass. Initial/default, delayed manual override, explicit empty, retry and disposed metadata qualified. /tmp/history-app-full-controller.log and /tmp/history-app-stories.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; pnpm spec:first; pnpm spec:validate; pnpm check:progress; changed-file Prettier check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors/warnings;156catalog modules,823architecture modules,16packages,125tasks,22chapters/152requirements. Repaired bookkeeping key commands->runs and mapped owning architecture/CLI chapters after initial gates. /tmp/history-{web-check,catalog-check,architecture,ownership,boundaries,spec-first,spec-validate,progress,format-final}.log."
+      },
+      {
+        "command": "pnpm contracts:generate; pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated contract matches;153actual HTTP/SSE responses conform;7contract tests pass. Native authenticated metadata asserts no host identity hint. /tmp/history-contracts.log and /tmp/history-contracts-check.log."
+      },
+      {
+        "command": "pnpm web:build; node scripts/browser-fixtures.mjs; cargo build --locked -p jj-store-http --example browser_preview; pnpm exec playwright test --config .scratch/history-query.playwright.config.ts web/tests/browser/history-query.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "2cold cases under strict production CSP pass. Ignored config changes only startup to the freshly built identical production browser_preview binary, avoiding Cargo lock waiting. Original run failed1case because Playwright fill converted indentation to NBSP; browser exercises unindented newline while unit tests retain literal tabs/spaces. Next original start timed out30s awaiting Cargo rebuild. Final starts a fresh isolated7458host and proves visible colors, multiline/URL, diagnostics, manual metadata and restored mine() with explicit default. /tmp/history-cold-browser-prebuilt.log."
+      },
+      {
+        "command": "Design Core pnpm checks; pnpm check:types; focused search family; STORYBOOK_PORT=9370 pnpm test:ai-chat-browser; SHADCN_STORYBOOK_PORT=9370 pnpm test:shadcn:pointer",
+        "result": "pass",
+        "failures": 0,
+        "note": "715unit,3Turbo,645story interaction/accessibility,14workspace pointer,11shell pointer,3AI cold and35shadcn cold cases pass with existing1skip. Original aggregate stopped on2AI dev-host story-readiness timeouts; cold static rerun resolves both. Specs/format/types/static build/audit pass. Visual comparisons explicitly excluded; baselines unchanged. Shared public source justifies complete nonvisual source lanes. /tmp/history-dc-*.log."
+      },
+      {
+        "command": "pnpm dev:backend:build; pnpm dev:ui; CUA live main7460 verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Latest main backend rebuilt; backend63916 and Vite63917 running from main with .local/dev-demo preserved. Live optional email default present (value not logged). Existing browser held old same-version module cache; Network.enable and ignoreCache reload loaded current component, then cache defaults restored. Two-line valid query succeeds, invalid draft retains accepted URL. Focused input has transparent border/no shadow, pink error tint and8px diagnostic margin; resting secondary Search background visible. Screenshot .scratch/history-feedback/main-query-error.jpg. No reset/reseed or unrelated runtime restart."
+      },
+      {
+        "command": "Design Core pnpm spec:check; changed-file Prettier check; pnpm pack --pack-destination .local/packages; app cargo fmt --check --package jj-store-jj --package jj-store-http; final ledger checks",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source spec, formatting and pack pass. Ledger initially rejected pass with recorded before-state failures/deferred registry release; pending bookkeeping accurately retains the separate package gate. No requested functional work remains."
+      }
+    ]
   }
 ]
 ```

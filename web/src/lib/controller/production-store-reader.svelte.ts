@@ -34,16 +34,23 @@ interface ReaderContext {
 export function createProductionStoreReaders(
   context: Omit<ReaderContext, "operation"> & { begin(): number },
 ) {
+  const historyQuery = createHistoryQuery(context);
   return {
-    reader: createProductionStoreReader({
-      ...context,
-      operation: () => context.history.route.snapshotOperationId,
-    }),
-    historyQuery: createHistoryQuery(context),
+    reader: createProductionStoreReader(
+      {
+        ...context,
+        operation: () => context.history.route.snapshotOperationId,
+      },
+      historyQuery.prepare,
+    ),
+    historyQuery,
   };
 }
 
-export function createProductionStoreReader(context: ReaderContext) {
+export function createProductionStoreReader(
+  context: ReaderContext,
+  prepareHistory?: () => Promise<void>,
+) {
   const { data, history } = context;
   const fileReader = createProductionFileReader(context);
   const collaboration = createProductionStoreCollaboration(context);
@@ -101,6 +108,8 @@ export function createProductionStoreReader(context: ReaderContext) {
               : undefined;
     data.status.graph = more ? "refreshing" : "loading";
     try {
+      if (history.route.historyQuery) await prepareHistory?.();
+      if (!context.current(ticket, source)) return;
       data.graphAtTimeMillis ??= history.route.historyTime ?? Date.now();
       const value = await readGraph(
         source,

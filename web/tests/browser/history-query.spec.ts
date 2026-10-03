@@ -51,6 +51,32 @@ test("cold native history search highlights, completes and retains invalid draft
   await input.press("Enter");
   await expect(input).toHaveText("mutable()");
   await expect(page.locator(".history-query-alias")).toBeVisible();
+  await input.click();
+  await expect(page.locator(".cv-search-filter-bar__search-pill")).toHaveCSS(
+    "box-shadow",
+    "none",
+  );
+  await expect(page.locator(".cv-search-filter-bar__search-pill")).toHaveCSS(
+    "border-top-color",
+    "rgba(0, 0, 0, 0)",
+  );
+  const ordinaryBackground = await page
+    .locator(".cv-search-filter-bar__search-pill")
+    .evaluate((e) => getComputedStyle(e).backgroundColor);
+  await expect(page.locator(".history-query-alias")).not.toHaveCSS(
+    "color",
+    await input.evaluate((e) => getComputedStyle(e).color),
+  );
+  await input.fill('mutable() &\ndescription("binary")');
+  await input.press("ControlOrMeta+Enter");
+  await expect
+    .poll(() =>
+      new URLSearchParams(new URL(page.url()).hash.split("?")[1]).get(
+        "history_query",
+      ),
+    )
+    .toBe('mutable() &\ndescription("binary")');
+  await expect(input.locator(".cm-line")).toHaveCount(2);
   await input.fill('description("binary")');
   await page.getByRole("button", { name: "Run history query" }).click();
   await expect
@@ -69,6 +95,14 @@ test("cold native history search highlights, completes and retains invalid draft
     "Showing previous results. Close the quoted description.",
   );
   await expect(input).toHaveAttribute("aria-invalid", "true");
+  await expect(
+    page.locator(".cv-search-filter-bar__search-pill"),
+  ).not.toHaveCSS("background-color", ordinaryBackground);
+  expect(
+    await page
+      .getByRole("alert")
+      .evaluate((e) => parseFloat(getComputedStyle(e).marginTop)),
+  ).toBeGreaterThan(0);
   expect(new URL(page.url()).hash).toBe(applied);
   expect(
     requests.every((url) => url.searchParams.get("at_op") === operation),
@@ -207,6 +241,7 @@ test("cold local-folder history uses pinned custom grammars and local query tran
         operators: ["::", "&"],
         operation_fields: ["description", "user", "from"],
         unsupported: ["files", "at_operation"],
+        default_user_email: "local@example.invalid",
       };
     else if (kind === "references")
       data = {
@@ -237,9 +272,26 @@ test("cold local-folder history uses pinned custom grammars and local query tran
       },
     });
   });
-  await page.goto(`/#/repos/${repo}/log?at_op=${operation}`);
+  await page.goto(
+    `/#/repos/${repo}/log?at_op=${operation}&history_query=mine%28%29&history_time=12345`,
+  );
+  await expect
+    .poll(() =>
+      calls.some(
+        (call) =>
+          call.request.kind === "graph" &&
+          call.request.query[0].revset === "mine()" &&
+          call.request.query[0].user_email === "local@example.invalid",
+      ),
+    )
+    .toBe(true);
   const input = page.getByRole("searchbox", { name: "Filter JJ history" });
   await expect(input).toBeVisible();
+  await page.getByText("Query context and syntax", { exact: true }).click();
+  await expect(
+    page.getByRole("textbox", { name: "Author email for mine()" }),
+  ).toHaveValue("local@example.invalid");
+  await page.getByText("Query context and syntax", { exact: true }).click();
   await input.fill("mutable()");
   await page.getByRole("button", { name: "Run history query" }).click();
   await expect
@@ -247,7 +299,8 @@ test("cold local-folder history uses pinned custom grammars and local query tran
       calls.some(
         (call) =>
           call.request.kind === "graph" &&
-          call.request.query[0].revset === "mutable()",
+          call.request.query[0].revset === "mutable()" &&
+          call.request.query[0].user_email === "local@example.invalid",
       ),
     )
     .toBe(true);

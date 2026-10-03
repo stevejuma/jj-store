@@ -4004,6 +4004,7 @@ dependencies = [
  "async-trait",
  "blake2",
  "chrono",
+ "etcetera 0.11.0",
  "futures 0.3.34",
  "gix",
  "jj-lib",
@@ -4025,6 +4026,7 @@ dependencies = [
  "tonic",
  "tonic-prost",
  "tonic-prost-build",
+ "whoami",
 ]
 
 [[package]]

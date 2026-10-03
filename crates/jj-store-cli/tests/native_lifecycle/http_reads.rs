@@ -128,6 +128,9 @@ async fn http_contract_capture_matches_registered_routes() {
     ] {
         let (status, body) = json(&router, &f.f.reader, &path).await;
         assert_eq!(status, StatusCode::OK, "{path}: {body}");
+        if template == "query-info" {
+            assert!(body["data"].get("default_user_email").is_none(), "authenticated metadata must not disclose host identity");
+        }
         record(template, "get", status.as_u16(), "application/json", body);
     }
     for (kind, key) in [

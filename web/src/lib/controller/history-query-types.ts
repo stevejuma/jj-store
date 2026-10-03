@@ -8,6 +8,8 @@ export interface HistoryQueryController {
   readonly info: HistoryQueryInfo | null;
   setDraft(value: string): void;
   setEmail(value: string): void;
+  /** Load the session identity hint before initial or explicit history reads. */
+  prepare(): Promise<void>;
   run(): Promise<void>;
   clear(): void;
   dispose(): void;

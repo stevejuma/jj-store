@@ -1532,3 +1532,11 @@ and explicit catalog selections use the same production shell.
 Catalog fixtures for unavailable reviews explicitly omit the optional review
 reader. Repository profile alone does not imply unsupported reads; qualified
 local repository readers retain their existing review capability.
+
+History query editors MUST preserve multiline whitespace and use visible
+semantic syntax colors. Enter inserts a line or accepts an active completion;
+Ctrl/Command+Enter and Search execute. Borderless focus retains the caret;
+invalid drafts tint the input with spaced diagnostics and keep prior results.
+The session-only author email initially uses query metadata's optional default;
+manual edits, including empty values, MUST win across metadata/head refreshes.
+Email MUST remain absent from URLs and persisted UI state.

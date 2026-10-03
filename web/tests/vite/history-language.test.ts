@@ -5,6 +5,7 @@ import { ensureSyntaxTree } from "@codemirror/language";
 import {
   historyCompletion,
   historyLanguage,
+  historyExtensions,
   insideQueryString,
 } from "../../src/lib/ui/store-history-query/history-language.js";
 import type { HistoryQueryInfo } from "../../src/lib/controller/history-query-types.js";
@@ -81,4 +82,14 @@ test("lexical grammar highlights functions, aliases, operators and quoted values
       "variableName.function",
     ]),
   );
+});
+
+test("history editor preserves pasted multiline revsets", () => {
+  const text = 'mutable() &\n description("fix")';
+  const state = EditorState.create({
+    extensions: historyExtensions("revset", info, [], () => {}),
+  });
+  expect(
+    state.update({ changes: { from: 0, insert: text } }).newDoc.toString(),
+  ).toBe(text);
 });

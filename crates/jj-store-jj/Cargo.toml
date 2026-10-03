@@ -23,6 +23,8 @@ tempfile = "3"
 thiserror = "2"
 futures = "0.3"
 gix = "=0.87.1"
+etcetera = "0.11"
+whoami = "2.1"
 tokio-util = { version = "0.7", features = ["compat"] }
 
 [dev-dependencies]

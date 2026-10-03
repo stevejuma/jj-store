@@ -20,10 +20,16 @@ export function createHistoryQuery(context: {
 }): HistoryQueryController {
   let draft = $state(context.history.route.historyQuery ?? "");
   let email = $state("");
+  let emailEdited = false;
   let error = $state("");
   let pending = $state(false);
   let info = $state<HistoryQueryInfo | null>(null);
   let sequence = 0;
+  let metadata: {
+    source: StoreDataSource;
+    operation: string;
+    promise: Promise<void>;
+  } | null = null;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let abort = new AbortController();
   let repository = context.history.route.repository;
@@ -56,6 +62,8 @@ export function createHistoryQuery(context: {
     if (repository !== route.repository) {
       repository = route.repository;
       email = "";
+      emailEdited = false;
+      context.data.historyEmail = "";
       info = null;
     }
   });
@@ -68,23 +76,47 @@ export function createHistoryQuery(context: {
       !["log", "oplog"].includes(route.page)
     )
       return;
-    const source = context.source(),
-      ticket = context.version(),
-      operation = route.snapshotOperationId;
-    if (source.queryInfo)
-      void source
-        .queryInfo(operation)
-        .then((value) => {
-          if (
-            context.current(ticket, source) &&
-            context.history.route.snapshotOperationId === operation
-          )
-            info = value;
-        })
-        .catch((cause) => {
-          if (context.current(ticket, source)) error = storeErrorMessage(cause);
-        });
+    void prepare();
   });
+  function prepare(): Promise<void> {
+    const source = context.source(),
+      operation = context.history.route.snapshotOperationId;
+    if (!operation || !source.queryInfo) return Promise.resolve();
+    if (metadata?.source === source && metadata.operation === operation)
+      return metadata.promise;
+    const request = { source, operation, promise: Promise.resolve() };
+    metadata = request;
+    request.promise = source
+      .queryInfo(operation)
+      .then((value) => {
+        if (
+          metadata !== request ||
+          context.source() !== source ||
+          context.history.route.snapshotOperationId !== operation ||
+          context.data.status.connection !== "connected"
+        ) {
+          if (metadata === request) metadata = null;
+          return;
+        }
+        info = value;
+        if (!emailEdited) {
+          email = value.default_user_email ?? "";
+          context.data.historyEmail = email;
+        }
+      })
+      .catch((cause) => {
+        if (metadata === request) {
+          metadata = null;
+          if (
+            context.source() === source &&
+            context.history.route.snapshotOperationId === operation &&
+            context.data.status.connection === "connected"
+          )
+            error = storeErrorMessage(cause);
+        }
+      });
+    return request.promise;
+  }
   async function run() {
     clearTimeout(timer);
     const route = context.history.route;
@@ -94,10 +126,18 @@ export function createHistoryQuery(context: {
       !["log", "oplog"].includes(route.page)
     )
       return;
+    const identity = scope,
+      textBeforeMetadata = draft.trim();
+    if (context.source().queryInfo) await prepare();
+    if (
+      identity !== scope ||
+      draft.trim() !== textBeforeMetadata ||
+      context.data.status.connection !== "connected"
+    )
+      return;
     const text = draft.trim(),
       source = context.source(),
       ticket = context.begin();
-    const identity = scope;
     const request = ++sequence;
     abort.abort();
     abort = new AbortController();
@@ -184,9 +224,11 @@ export function createHistoryQuery(context: {
     },
     setDraft,
     setEmail(value) {
+      emailEdited = true;
       email = value;
       setDraft(draft);
     },
+    prepare,
     run,
     clear() {
       invalidate();
@@ -196,7 +238,10 @@ export function createHistoryQuery(context: {
     },
     dispose() {
       invalidate();
+      metadata = null;
       email = "";
+      emailEdited = false;
+      context.data.historyEmail = "";
       info = null;
       error = "";
     },

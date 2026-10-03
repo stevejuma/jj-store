@@ -206,7 +206,21 @@ impl Executor {
             Box::pin(async move {
                 let context = Context::open(access, operation, budget, limits).await?;
                 let value = match request {
-                    Request::QueryInfo => Response::QueryInfo(crate::query::language::info(true)),
+                    Request::QueryInfo => {
+                        let mut info = crate::query::language::info(true);
+                        let git = context
+                            .repo
+                            .store()
+                            .backend()
+                            .downcast_ref::<jj_lib::git_backend::GitBackend>()
+                            .ok_or(Error::Unavailable)?
+                            .git_repo();
+                        info.default_user_email = crate::query::language::identity::local_email(
+                            context.access.binding.metadata_path(),
+                            &git,
+                        );
+                        Response::QueryInfo(info)
+                    }
                     Request::Graph(request, page) => {
                         graphs::validate(
                             &request,

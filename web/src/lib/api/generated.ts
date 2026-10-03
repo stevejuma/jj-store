@@ -1823,6 +1823,8 @@ export interface components {
       operators: string[];
       operation_fields: string[];
       unsupported: string[];
+      /** @description Device identity hint, available only in LocalTrusted query metadata. */
+      default_user_email?: string | null;
     };
     Callable: {
       name: string;

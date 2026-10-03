@@ -7,10 +7,9 @@ import {
   autocompletion,
   acceptCompletion,
   completionKeymap,
-  completionStatus,
   type CompletionContext,
 } from "@codemirror/autocomplete";
-import { EditorState, Prec } from "@codemirror/state";
+import { Prec } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import type { HistoryQueryInfo } from "../../controller/history-query-types.js";
@@ -158,17 +157,6 @@ export function historyExtensions(
   return [
     historyLanguage(kind, info),
     highlighting,
-    EditorState.transactionFilter.of((transaction) =>
-      transaction.docChanged && /[\r\n]/.test(transaction.newDoc.toString())
-        ? {
-            changes: {
-              from: 0,
-              to: transaction.startState.doc.length,
-              insert: transaction.newDoc.toString().replace(/[\r\n]+/g, " "),
-            },
-          }
-        : transaction,
-    ),
     autocompletion({
       override: [historyCompletion(kind, info, symbols)],
       icons: false,
@@ -186,14 +174,6 @@ export function historyExtensions(
           },
         },
         ...completionKeymap,
-        {
-          key: "Enter",
-          run: (view) => {
-            if (completionStatus(view.state) === "active") return false;
-            run();
-            return true;
-          },
-        },
       ]),
     ),
   ];

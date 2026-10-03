@@ -1150,5 +1150,11 @@ async fn query_info(
     args: Input<Selection>,
 ) -> Result<Response> {
     let read = pinned(&context, &state, input(args)?.at_op).await?;
-    envelope(&state, &read, q::language::info(false)).await
+    let mut info = q::language::info(false);
+    if matches!(state.config.access, crate::Access::LocalTrusted { .. }) {
+        info.default_user_email = tokio::task::spawn_blocking(q::language::identity::host_email)
+            .await
+            .map_err(|_| Error::unavailable())?;
+    }
+    envelope(&state, &read, info).await
 }

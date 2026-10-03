@@ -576,3 +576,8 @@ persistence format changes. Operation filters remain an owned metadata language;
 they do not claim JJ commit revset semantics. Design Core custom-language
 support is qualified against source in an ignored temporary dependency setup;
 registry-only consumption awaits a release containing that generic extension.
+
+Optional LocalTrusted `default_user_email` is an additive QueryInfo hint; it
+neither persists identity nor changes explicit query semantics. Authenticated
+serving omits it. Multiline URLs preserve query whitespace within the existing
+byte bound while other control characters remain rejected.

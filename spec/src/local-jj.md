@@ -369,3 +369,12 @@ pagination, actual operation parents and exact continuation bindings. Reads MUST
 preserve operation-head files, physical dirty files and companion selections.
 Custom aliases and local content/cross-operation predicate qualification remain
 deferred.
+
+Registered-folder query metadata MAY default author email from host JJ
+configuration (JJ_EMAIL and normal JJ user paths), then the registered
+repository's JJ configuration, then Git configuration. JJ 0.45 secure repository
+config is read only when its metadata binds the registered repository path;
+legacy config remains a read-only fallback. Reads MUST NOT migrate config,
+snapshot dirty files or alter heads. Only bounded email is returned; custom
+aliases remain isolated from query evaluation. Missing/malformed email leaves
+explicit session input available.

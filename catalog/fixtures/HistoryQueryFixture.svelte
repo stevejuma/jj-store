@@ -63,6 +63,7 @@
       "from",
     ],
     unsupported: [],
+    default_user_email: "fixture@example.invalid",
   };
   const source = {
     repository,

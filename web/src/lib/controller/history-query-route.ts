@@ -18,7 +18,7 @@ export function historyQueryFromParams(
   if (
     historyQuery !== null &&
     (!historyQuery.trim() ||
-      /[\u0000-\u001f]/u.test(historyQuery) ||
+      /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(historyQuery) ||
       new TextEncoder().encode(historyQuery).length > 4096)
   )
     return null;

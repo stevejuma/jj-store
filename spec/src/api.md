@@ -1472,3 +1472,10 @@ Review transport availability is expressed by its optional reader, rather than
 being inferred from a repository profile. Unsupported catalog fixtures omit that
 reader explicitly; the typed production application props do not alter HTTP
 admission, read envelopes or review persistence.
+
+QueryInfo MAY include optional `default_user_email` only for LocalTrusted
+serving. The trimmed value is bounded to 1024 bytes and excludes control
+characters. Missing, malformed or unavailable configuration omits the hint;
+authenticated native serving MUST omit host identity. This additive metadata
+never changes request identity, admission, operation pins or explicit query
+context. Multiline query whitespace retains the existing 4096-byte bound.

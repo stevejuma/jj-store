@@ -28612,7 +28612,11 @@
             "type": "array",
             "items": { "type": "string" }
           },
-          "unsupported": { "type": "array", "items": { "type": "string" } }
+          "unsupported": { "type": "array", "items": { "type": "string" } },
+          "default_user_email": {
+            "type": ["string", "null"],
+            "description": "Device identity hint, available only in LocalTrusted query metadata."
+          }
         },
         "required": [
           "version",

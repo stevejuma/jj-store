@@ -610,3 +610,9 @@ serves the existing production web bundle through its managed LocalTrusted
 listener. It has no dependencies on upstream JJ, model, WAL, storage or service
 crates. The root Cargo workspace excludes the host. See [desktop](desktop.md)
 for lifetime and qualification contracts.
+
+Local identity hints remain inside the JJ adapter's read-only query metadata
+boundary. Host configuration discovery and registered-folder JJ/Git fallback
+MUST expose only bounded email; evaluator settings, aliases, storage, model and
+WAL remain independent. HTTP composition admits the hint only for LocalTrusted
+serving. Configuration reading MUST NOT invoke migration or publication.

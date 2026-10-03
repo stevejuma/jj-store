@@ -25,21 +25,21 @@
   padding: 0.25rem;
 }
 .history-query-string {
-  color: var(--code-string, var(--ui-foreground));
+  color: var(--ui-form-code-string, var(--cv-code-string, #92400e));
 }
 .history-query-function,
 .history-query-field {
-  color: var(--code-function, var(--ui-primary));
+  color: var(--ui-form-code-function, var(--cv-code-function, #075985));
 }
 .history-query-alias {
-  color: var(--code-keyword, var(--ui-primary));
+  color: var(--ui-form-code-keyword, var(--cv-code-keyword, #5b21b6));
 }
 .history-query-operator {
-  color: var(--code-operator, var(--ui-muted-foreground));
+  color: var(--ui-form-code-operator, var(--cv-code-keyword, #5b21b6));
 }
 .history-query-literal {
-  color: var(--code-number, var(--ui-foreground));
+  color: var(--ui-form-code-value, var(--cv-code-constant, #0e726a));
 }
 .history-query-symbol {
-  color: var(--code-variable, var(--ui-foreground));
+  color: var(--ui-form-code-property, var(--cv-code-property, #1d4ed8));
 }

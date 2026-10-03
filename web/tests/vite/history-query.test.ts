@@ -7,7 +7,7 @@ import type { StoreDataSource } from "../../src/lib/controller/native-data-sourc
 
 const repository = "11".repeat(16),
   operation = "22".repeat(64);
-function fixture() {
+function fixture(queryInfo?: StoreDataSource["queryInfo"]) {
   const data = createProductionStoreState();
   data.status.connection = "connected";
   data.graphAtTimeMillis = 12345;
@@ -55,6 +55,7 @@ function fixture() {
     repository,
     profile: "native",
     graph,
+    queryInfo,
   } as unknown as StoreDataSource;
   const query = createHistoryQuery({
     data,
@@ -152,4 +153,81 @@ test("operation text uses operation metadata transport and email stays out of ro
     "author@example.invalid",
   );
   f.query.dispose();
+});
+
+test("metadata defaults are loaded before queries and cannot overwrite manual email", async () => {
+  const metadata = {
+    version: 1,
+    jj_version: "0.45.1",
+    max_query_bytes: 4096,
+    callables: [],
+    aliases: [],
+    operators: [],
+    operation_fields: [],
+    unsupported: [],
+    default_user_email: "host@example.invalid",
+  };
+  const source = vi.fn(async () => metadata);
+  const f = fixture(source);
+  f.query.setDraft("mine()");
+  await f.query.run();
+  expect(f.query.email).toBe("host@example.invalid");
+  expect(f.graph).toHaveBeenCalledWith(
+    "log",
+    expect.objectContaining({ userEmail: "host@example.invalid" }),
+  );
+  f.query.setEmail("");
+  await f.query.prepare();
+  expect(f.query.email).toBe("");
+  expect(source).toHaveBeenCalledTimes(1);
+  f.query.dispose();
+  let resolve!: (value: typeof metadata) => void;
+  const delayed = fixture(
+    () =>
+      new Promise((done) => {
+        resolve = done;
+      }),
+  );
+  const pending = delayed.query.prepare();
+  delayed.query.setEmail("manual@example.invalid");
+  resolve(metadata);
+  await pending;
+  expect(delayed.query.email).toBe("manual@example.invalid");
+  delayed.query.dispose();
+});
+
+test("failed or disconnected metadata can retry and disposed metadata cannot apply", async () => {
+  const value = {
+    version: 1,
+    jj_version: "0.45.1",
+    max_query_bytes: 4096,
+    callables: [],
+    aliases: [],
+    operators: [],
+    operation_fields: [],
+    unsupported: [],
+    default_user_email: "retry@example.invalid",
+  };
+  const reader = vi
+    .fn()
+    .mockRejectedValueOnce(new Error("offline"))
+    .mockResolvedValue(value);
+  const f = fixture(reader);
+  await f.query.prepare();
+  await f.query.prepare();
+  expect(f.query.email).toBe("retry@example.invalid");
+  expect(reader).toHaveBeenCalledTimes(2);
+  f.query.dispose();
+  let resolve!: (result: typeof value) => void;
+  const delayed = fixture(
+    () =>
+      new Promise((done) => {
+        resolve = done;
+      }),
+  );
+  const pending = delayed.query.prepare();
+  delayed.query.dispose();
+  resolve(value);
+  await pending;
+  expect(delayed.query.email).toBe("");
 });
