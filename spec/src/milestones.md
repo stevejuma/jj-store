@@ -49857,6 +49857,65 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "Native Storage overview, bounded integrity, prepared checkpoint publication/cancel and exact-target recovery. Checks are read-only; checkpoints only select immutable folded data through manifest CAS. Full WAL suite justified by shared coordinator behavior; focused UI and native HTTP consumers only. Root aggregates, agents, backup/restore, pruning, replication pressure/soak and visual-baseline approval remain outside this slice. The large demo integrity audit reached its 30-second bound and remains explicitly incomplete; positive full-audit evidence applies to the bounded native fixture. The configured limits were not relaxed.",
     "next": "Retain maintenance regression coverage; remaining M14 agent, integrated settings and expanded Sync qualification are separate work."
+  },
+  {
+    "id": "E-GOV-002",
+    "tasks": ["Bootstrap"],
+    "date": "2026-10-03",
+    "kind": "integrated-workspace-retirement-review",
+    "revision": "enclosing Jujutsu change wllxluns",
+    "before": "Eleven registered jj-store workspaces. After loading the current shared operations, main is clean at006cf352 with integrated parent11b12681. Nine secondary checkouts are empty and conflict-free; agent-capture snapshots an OpenCode API history import draft across10files and81nonempty changes outside main ancestry. The user authorizes integrated-workspace Trash retirement and requests the pending-work list.",
+    "versions": "macOS ARM64; JJ0.45.1; /usr/bin/trash recoverable macOS removal. Existing main Vite/native service and desktop runtime reused without a cleanup-triggered restart.",
+    "formats": "Only workspace registrations and recoverable checkout locations change. No product, schema, object, WAL, receipt, installation, fixture or repository format changes. All integrated implementation parents remain ancestors of main. agent-capture and its pending history/draft remain intact.",
+    "files": ["spec/src/milestones.md"],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager workspace list; python3 - (workspace inventory/status snapshots and before-ledger capture); jj --no-pager --ignore-working-copy diff --summary -r ovlvtqrl; jj version; trash --help",
+        "result": "pass",
+        "failures": 0,
+        "note": "Inspected all11registered checkouts and sibling .jj/repo pointers. Every status succeeds without a stale refresh. Main and nine retirement candidates are clean; capture contains8Rust source/test changes and2canonical chapter changes.81nonempty changes outside main comprise80ancestors plus the current draft. Before/after proof files are under ignored .scratch/workspace-review."
+      },
+      {
+        "command": "jj --no-pager --ignore-working-copy log with workspaces() and quoted full workspace@ symbols (initial exploratory ancestry queries)",
+        "result": "fail",
+        "failures": 31,
+        "note": "One unsupported workspaces() function query and30quoted-full-symbol queries failed to resolve. These are command-syntax mistakes, not product failures. Corrected ancestry checks use pinned commit IDs and supported default@/agent-capture@ workspace syntax."
+      },
+      {
+        "command": "python3 - (pinned commit ancestry audit, main symlink/text-reference scan and exact retirement preflight); lsof -nP -Fpcftn; ps -axo pid=,ppid=,command=",
+        "result": "pass",
+        "failures": 0,
+        "note": "For each of9candidates, the implementation parent is in main ancestry and the only unique change is its empty conflict-free working leaf. Fresh statuses confirm no dirty/untracked tracked changes. No process uses a candidate checkout; no main symlink or current source reference depends on it. Main native desktop and development processes belong to main. Trash destination names are collision-free."
+      },
+      {
+        "command": "jj --no-pager workspace forget dev-annotations local-browser local-completion local-management local-settings native-project-tasks projects-hub repo-tabs-edit threads-reactions",
+        "result": "pass",
+        "failures": 0,
+        "note": "Removed only the9verified integrated registrations. Default and agent-capture retained; no change abandonment, history rewriting, merge, or pending-work integration."
+      },
+      {
+        "command": "trash -v /Users/stevejuma/code/lapismd/jj-store-dev-annotations /Users/stevejuma/code/lapismd/jj-store-local-browser /Users/stevejuma/code/lapismd/jj-store-local-completion /Users/stevejuma/code/lapismd/jj-store-local-management /Users/stevejuma/code/lapismd/jj-store-local-settings /Users/stevejuma/code/lapismd/jj-store-native-project-tasks /Users/stevejuma/code/lapismd/jj-store-projects-hub /Users/stevejuma/code/lapismd/jj-store-repo-tabs-edit /Users/stevejuma/code/lapismd/jj-store-threads-reactions",
+        "result": "pass",
+        "failures": 0,
+        "note": "All9exact directories moved recoverably to matching names under ~/.Trash, including their ignored artifacts. No permanent deletion or Trash emptying."
+      },
+      {
+        "command": "python3 - (post-retirement path/registration/runtime verification); jj --no-pager st; curl --fail --silent --output /dev/null --write-out UI-HTTP-status http://127.0.0.1:7460/; lsof -nP -iTCP:7460 -iTCP:7462 -sTCP:LISTEN",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only default and agent-capture remain registered. All9source paths are absent and Trash folders present. runtime.json SHA256 matches preflight; its owned PIDs remain alive. Main UI returnsHTTP200, Vite39014 and backend39013 listen on7460/7462. Main tracked tree is clean before the ledger-only entry."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:first; pnpm spec:validate; python3 - (before/after evidence comparison)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting,125-task progress bookkeeping, spec-first (no protected production change), and5validators/22chapters/152requirements pass. All306previous parsed evidence entries remain identical. Only E-GOV-002 is appended; task statuses unchanged."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Workspace review and authorized recoverable retirement only. Pending capture work is retained rather than promoted to integration acceptance. Canonical task/milestone statuses and all previous evidence stay unchanged. Product suites, Rust builds, browser/visual tests, reset/reseed, other repositories and unrelated service operations are out of scope.",
+    "next": "agent-capture is the sole remaining secondary app workspace: finish and verify explicit OpenCode API history import work, then separately qualify its branch integration. Main development fixture and native desktop installation remain available."
   }
 ]
 ```
