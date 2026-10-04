@@ -10,8 +10,13 @@
     controller,
     onHide,
     onLink,
-  }: { controller: TerminalController; onHide(): void; onLink(): void } =
-    $props();
+    onMaximize,
+  }: {
+    controller: TerminalController;
+    onHide(): void;
+    onLink(): void;
+    onMaximize(): void;
+  } = $props();
   let sessions = $derived(
     controller.sessions.filter(
       (s) => s.target.repository === controller.repository,
@@ -42,15 +47,16 @@
 >
   <div class="store-terminal-toolbar">
     <div class="store-terminal-tab-actions">
-      <div class="store-terminal-tabs" role="tablist" aria-label="Terminals">
-        {#each sessions as session, i (session.id)}
-          <div
-            class="store-terminal-tab"
-            class:active={session.id === active?.id}
-          >
+      <div class="store-terminal-tab-strip">
+        <!-- The grid visually inlines close controls without nesting interactive
+             buttons or putting non-tab controls inside the accessible tablist. -->
+        <div class="store-terminal-tabs" role="tablist" aria-label="Terminals">
+          {#each sessions as session, i (session.id)}
             <button
               type="button"
               role="tab"
+              class="store-terminal-tab"
+              style:grid-column={i + 1}
               aria-selected={session.id === active?.id}
               tabindex={session.id === active?.id ? 0 : -1}
               aria-controls="store-terminal-panel"
@@ -60,20 +66,21 @@
               >{session.title || "Shell"}
               {i + 1}{session.exited ? " · Exited" : ""}</button
             >
-          </div>
+          {/each}
+        </div>
+        {#each sessions as session, i (session.id)}
+          <Button
+            dataUiComponent="terminal-header-action"
+            class="store-terminal-close-tab"
+            style={`grid-column: ${i + 1}`}
+            aria-label={`Close terminal ${i + 1}`}
+            disabled={session.closing}
+            onclick={() => controller.close(session.id)}><X /></Button
+          >
         {/each}
       </div>
-      {#if active}<Button
-          variant="ghost"
-          size="icon-sm"
-          class="store-terminal-close-tab"
-          aria-label={`Close terminal ${sessions.indexOf(active) + 1}`}
-          disabled={active.closing}
-          onclick={() => controller.close(active.id)}><X /></Button
-        >{/if}
       <Button
-        variant="default"
-        size="icon-sm"
+        dataUiComponent="terminal-header-action"
         class="store-terminal-new-tab"
         aria-label="New terminal"
         disabled={!controller.targetId || controller.busy}
@@ -82,17 +89,18 @@
     </div>
     <div class="store-terminal-window-actions">
       <Button
-        variant="ghost"
-        size="icon-sm"
+        dataUiComponent="terminal-header-action"
         aria-label={controller.maximized
           ? "Restore terminal"
           : "Maximize terminal"}
-        onclick={() => (controller.maximized = !controller.maximized)}
+        onclick={() => {
+          controller.maximized = !controller.maximized;
+          if (controller.maximized) onMaximize();
+        }}
         >{#if controller.maximized}<Minimize />{:else}<Maximize />{/if}</Button
       >
       <Button
-        variant="ghost"
-        size="icon-sm"
+        dataUiComponent="terminal-header-action"
         aria-label="Hide terminal panel"
         onclick={onHide}><X /></Button
       >
@@ -118,11 +126,6 @@
     class="store-terminal-panel"
   >
     {#if active}
-      <div class="store-terminal-path" title={active.target.path}>
-        {active.target.path}{#if active.exited}<span role="status"
-            >Session exited</span
-          >{/if}
-      </div>
       <TerminalViewport session={active} {controller} />
     {:else if controller.loading}<p class="store-terminal-empty" role="status">
         Loading linked folders…

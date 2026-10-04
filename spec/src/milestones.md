@@ -139,7 +139,7 @@ shared-package release qualification does not alter those original Git gates.
 | M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                                            | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                                                         | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                                                      | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| M17.5 | Partial | M17.2 | JST-DESK-006,JST-UI-002,JST-UI-006,JST-SEC-005 | Desktop repository terminal and retained shell sessions | Native terminal qualified; retain M16 registry and M17.2 host prerequisites | E-DESK-007,E-DESK-008 |
+| M17.5 | Partial | M17.2 | JST-DESK-006,JST-UI-002,JST-UI-006,JST-SEC-005 | Desktop repository terminal and retained shell sessions | Native terminal qualified; retain M16 registry and M17.2 host prerequisites | E-DESK-007,E-DESK-008,E-DESK-009 |
 | M18         | In progress | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Codex, Cursor CLI and OpenCode usable capture; Desktop live gate remains                                                       | Complete Desktop live gate; extended roadmap remains Deferred                                  | E-M17-001,E-M17-002,E-M17-003,E-M17-004,E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-001,E-M18-013,E-M18-017 |
 | M18.0       | Done        | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Canonical gap traceability, agreed defaults and explicit qualification gates                                                   | Start M18.1 exact capture regressions                                                          | E-M17-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.1       | Done        | M18.0                   | JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023                                                                                                                                                                      | Diagnostic-only publication, cross-batch reduction and bounded append                                                          | Start M18.2 configured local capture runtime and readers                                       | E-M17-002,E-M17-003,E-M17-004,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -73723,6 +73723,130 @@ entries.
   "remaining": [],
   "scope": "User-authorized persistent main review restart only. Existing runtime ownership checks select the main backend/UI and their storage child; installed commands, independent daemons, source repository migration, fixture reset and visual baselines remain out of scope. Qualified feature/contract/cold evidence remains E-M13-028; this documentation-only slice records actual review readiness.",
   "next": "Review server-native creation and both independent conversion controls in main at http://127.0.0.1:7460/. Remaining portable/code profiles and broader M13 gates stay separate."
+},
+{
+  "id": "E-DESK-009",
+  "tasks": [
+    "M17",
+    "M17.5"
+  ],
+  "date": "2026-10-04",
+  "kind": "desktop-terminal-header-refinement",
+  "revision": "enclosing Jujutsu change tknuwyuq",
+  "before": "Five exact terminal-header stories fail: separate close button, 4px separator, maximize leaves details open, and missing tab hover in light/dark. Main simultaneously contains an unrelated active conversion merge, so implementation uses isolated terminal-polish workspace from nrwwnrqz.",
+  "files": [
+    "catalog/components/store-terminal/TerminalHeader.stories.svelte",
+    "catalog/fixtures/TerminalFixture.svelte",
+    "docs/ui-provenance.json",
+    "spec/src/api.md",
+    "spec/src/desktop.md",
+    "spec/src/milestones.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/store-application/StoreApplicationMain.svelte",
+    "web/src/lib/ui/store-terminal/StoreTerminalDock.svelte",
+    "web/src/lib/ui/store-terminal/StoreTerminalWorkspace.svelte",
+    "web/src/lib/ui/store-terminal/TerminalViewport.svelte",
+    "web/src/lib/ui/store-terminal/terminal.css"
+  ],
+  "runs": [
+    {
+      "command": "pnpm test:storybook catalog/components/store-terminal/TerminalHeader.stories.svelte (initial dependency setup)",
+      "result": "fail",
+      "failures": 1,
+      "note": "A symlink to main node_modules cannot load Storybook setup under the isolated Vite root; no product tests ran. Frozen offline install also rejected the existing ignored local hook checksum. Replaced symlink with an APFS clone of existing installed dependencies; tracked manifests/lock unchanged, original install.log retained."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-terminal/TerminalHeader.stories.svelte (before)",
+      "result": "fail",
+      "failures": 5,
+      "note": "before.log:5/5 reproduce requested UI gaps."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-terminal/TerminalHeader.stories.svelte (initial after)",
+      "result": "fail",
+      "failures": 1,
+      "note": "after.log:4 pass; keyboard tab navigation exposes pre-existing TerminalViewport autofocus stealing focus. Retain tab focus on session switch rather than weakening assertion."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-terminal/TerminalHeader.stories.svelte (after focus repair)",
+      "result": "pass",
+      "failures": 0,
+      "note": "after-focus.log:5/5 pass including native browser pointer CSS hover checks in light and dark themes."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-terminal/Terminal.stories.svelte catalog/components/store-terminal/TerminalHeader.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "terminal-stories.log:9/9 interaction/accessibility checks in a fresh Vite/Chromium process. Inline close geometry, inactive tab close, arrow/End navigation, directory row removal/tooltip retention, one-pixel separator with keyboard resize, maximize/restore sidebar callback, hover, original sessions/folder/hide/collapse/IME/paste/copy behaviors pass. No axe suppressions or visual baselines."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check (initial and final); pnpm check:ui-ownership; pnpm check:architecture (initial and final); pnpm spec:validate; focused pnpm exec prettier --write/--check",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-check-final/catalog-check-final:0 errors/warnings,187 catalog modules. ownership.log passes; architecture-final:942 modules; spec-validate:22 chapters/168 requirements; format-check passes. Community ActivityTabs and Design Core public Button/Resizable contracts inspected first; intentional Button host identity provides terminal-specific controls. Terminal uses default one-pixel Resizable handle and retains its hit area."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first (initial)",
+      "result": "fail",
+      "failures": 2,
+      "note": "progress.log passes137 tasks. spec-first.log reports two missing mapped chapters for UI/API and provenance/governance. Added local-only maximize authority and public presentation-contract notes to the required chapters."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; focused document Prettier (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-first-final:8 protected files/5 canonical chapters. spec-validate-final:22 chapters/168 requirements. Focused formatting passes; all420 historical ledger entries preserved unchanged."
+    },
+    {
+      "command": "pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-build.log:production frontend build passes. Existing CSS/global and chunk-size warnings retained; no Rust build or host behavior change."
+    },
+    {
+      "command": "jj rebase -r tknuwyuq -o rryrrvzz; jj edit tknuwyuq; jj rebase -s tknuwyuq -o qvtsvzty; preserve both canonical additions and historical ledger objects",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main completed its unrelated conversion merge and review-startup record. Rebasing onto final main1175e0df required only additive ledger/governance resolutions; all425 main evidence objects remain unchanged. Production terminal files are byte-identical to original verified880f1e87."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-terminal/Terminal.stories.svelte catalog/components/store-terminal/TerminalHeader.stories.svelte; pnpm web:check; pnpm check:architecture; pnpm check:progress; pnpm spec:first; pnpm web:build (after integration)",
+      "result": "pass",
+      "failures": 0,
+      "note": "integrated-stories9/9 in fresh Chromium/Vite, integrated-web-check zero diagnostics, architecture948 modules, progress137 tasks, spec-first8 protected files/5 chapters, integrated-web-build passes. Final parent startup record changes documentation only."
+    },
+    {
+      "command": "node scripts/desktop.mjs stage --server-dir <existing main bundled runtime, then main target/debug> --rustfs-runtime <existing explicit runtime> --web-root /Users/stevejuma/code/lapismd/jj-store-terminal-polish/web/dist; pnpm dlx @tauri-apps/cli@2.11.4 bundle --debug --bundles app",
+      "result": "pass",
+      "failures": 0,
+      "note": "desktop-stage-preview/bundle-preview and desktop-stage-integrated/bundle-integrated logs pass. Preview bundle was not launched; final combined212-asset UI uses main rebuilt backend from independently qualified conversion merge. No Rust build/test run for this UI-only change."
+    },
+    {
+      "command": "CUA Quit and reopen main jj-store.app; show terminal; open details; maximize; restore; native accessibility and appearance inspection",
+      "result": "pass",
+      "failures": 0,
+      "note": "Cold native WKWebView with existing installation at127.0.0.1:57653. Confirmed old shell idle/no jobs; Quit removed app50857/service50866/runtime50867/shell51586. Reopened same registered repository with updated bundled assets and fresh idle shell. Accessible terminal tablist and separate inline close button retained; duplicate path row absent. Details changed expanded\u2192collapsed on maximize and stayed collapsed after restore. Thin top divider and leading close placement inspected; no visual baseline approval. App remains open with terminal for review."
+    },
+    {
+      "command": "jj new tknuwyuq in main; SHA-256 verified evidence copy; jj workspace forget terminal-polish; remove exact temporary workspace; jj edit tknuwyuq in main",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main advanced from1175e0df to terminal slice without a new merge. Temporary workspace was clean after commit;36 evidence files copied byte-identically into main .local/terminal-polish-evidence before deleting only jj-store-terminal-polish. Other workspaces/services untouched. Final record is completed in the same enclosing terminal change."
+    },
+    {
+      "command": "pnpm web:build; SHA-256 comparison of main frontend and running bundle; pnpm spec:first; pnpm spec:validate; pnpm check:progress; focused pnpm exec prettier --check (final main)",
+      "result": "pass",
+      "failures": 0,
+      "note": "main-web-build passes. bundle-parity.json confirms all213 files, including manifest, match the updated app bundle exactly. main-spec-first8 protected files/5 chapters; main-spec-validate22 chapters/168 requirements; main-progress137 tasks; main-format passes. All425 prior main ledger objects preserved; only terminal evidence and its task link appended."
+    }
+  ],
+  "versions": "macOS ARM64; pnpm10.32.1; Vitest4.1.11; existing locally substituted Design Core dependency for validation only.",
+  "formats": "No native IPC, API, repository, storage, credential or persistence change.",
+  "scope": "Narrow terminal UI refinement and direct shell integration only. Existing parent native PTY qualification remains E-DESK-007. Root aggregates, Rust builds/tests, unrelated stories, package publication and screenshot/visual baselines are out of scope. M17.5 remains Partial because wider host and registry qualification is separate. Final landing is on main after the separate conversion integration and startup record; the temporary terminal-polish workspace is retired. Cold native UI review and focused integrated checks pass.",
+  "result": "pass",
+  "remaining": [],
+  "next": "Retain wider M17/registry qualification separately; keep the refreshed desktop app open for user review."
 }
 ]
 ```

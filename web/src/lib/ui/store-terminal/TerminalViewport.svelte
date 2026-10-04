@@ -57,7 +57,11 @@
   });
   $effect(() => {
     session.id;
-    void tick().then(() => input?.focus({ preventScroll: true }));
+    void tick().then(() => {
+      // Selecting a tab must retain focus for continued arrow-key navigation.
+      if (document.activeElement?.getAttribute("role") !== "tab")
+        input?.focus({ preventScroll: true });
+    });
   });
   onMount(() => {
     const copy = (event: ClipboardEvent) =>

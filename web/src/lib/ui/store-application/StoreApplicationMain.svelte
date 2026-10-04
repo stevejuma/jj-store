@@ -71,6 +71,7 @@
     onLink={() => {
       linkFolder();
     }}
+    onMaximize={() => detailsRail.close()}
     onRefresh={() => {
       void controller.actions.refresh();
     }}

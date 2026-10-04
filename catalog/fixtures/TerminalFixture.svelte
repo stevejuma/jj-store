@@ -22,6 +22,8 @@
   let repository = $state("repo-a");
   let draft = $state("");
   let linked = $state(false);
+  let detailsOpen = $state(true);
+  const layout = { onMaximize: () => (detailsOpen = false) };
 </script>
 
 <div
@@ -33,7 +35,15 @@
     >
     <StoreTerminalToggle />
   </nav>
-  <StoreTerminalWorkspace {repository} {bridge} onLink={() => (linked = true)}>
+  {#if detailsOpen}<aside aria-label="Details sidebar">
+      Repository details
+    </aside>{/if}
+  <StoreTerminalWorkspace
+    {repository}
+    {bridge}
+    {...layout}
+    onLink={() => (linked = true)}
+  >
     <div style="padding: 1rem">
       <h1>{repository}</h1>
       <label>Retained draft <textarea bind:value={draft}></textarea></label

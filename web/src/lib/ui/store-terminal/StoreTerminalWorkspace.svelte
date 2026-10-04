@@ -24,6 +24,7 @@
     enabled = true,
     onLink,
     onRefresh = () => {},
+    onMaximize = () => {},
     bridge = nativeTerminalBridge(),
     children,
   }: {
@@ -32,6 +33,7 @@
     enabled?: boolean;
     onLink(): void;
     onRefresh?: () => void;
+    onMaximize?: () => void;
     bridge?: TerminalBridge;
     children: Snippet;
   } = $props();
@@ -180,6 +182,7 @@
         {#if shown}<StoreTerminalDock
             {controller}
             onHide={hide}
+            {onMaximize}
             {onLink}
           />{/if}
       </Resizable.Pane>

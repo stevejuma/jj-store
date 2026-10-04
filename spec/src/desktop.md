@@ -121,7 +121,14 @@ The desktop header MUST place a terminal toggle beside the right-sidebar toggle,
 using a bottom-panel icon whose filled region and accessible expanded state
 track the dock. No terminal footer bar is shown. The terminal toolbar uses a
 muted surface, rounded tabs and add control, with maximize and hide controls at
-the right. The Svelte dock provides repository/folder-bound tabs, keyboard and
+the right. Each tab has an inline leading close button that remains separately
+operable from selection. Tab selection retains focus for arrow-key navigation.
+Tabs and toolbar buttons MUST have visible hover and keyboard focus states in
+light and dark themes. The resize separator MUST be a single visible pixel while
+retaining pointer and keyboard resizing. The folder path is available through
+the tab tooltip, without a duplicate row above shell output. Maximizing MUST
+close the far-right details sidebar; restoring the dock does not reopen that
+sidebar. The Svelte dock provides repository/folder-bound tabs, keyboard and
 pointer resizing, maximize/restore, Cmd+J, IME, selection/copy, bracketed paste
 and readable terminal text. Multiple eligible folders require a choice; one is
 selected automatically. Only versioned dock geometry is persisted. Existing

@@ -941,3 +941,10 @@ audits under publication.md. Qualification must retain source operation/metadata
 pins, full history and exact evidence, explicit mapping reports and source-safe
 failure/recovery evidence. Primitive tests do not enable conversion capability
 or complete durable publication, browser or cold RustFS acceptance.
+
+Terminal header refinements use Design Core's public Button host identity for an
+application-owned control family and the default one-pixel Resizable separator.
+Inline close placement shares CSS grid columns with the tablist without nesting
+interactive controls or admitting non-tab children. Buzz reference attribution
+stays in `docs/ui-provenance.json`; hover, keyboard focus and accessibility
+evidence remains separate from visual-baseline approval.

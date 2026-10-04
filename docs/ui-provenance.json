@@ -2070,7 +2070,7 @@
       {
         "local": "web/src/lib/ui/store-terminal/terminal.css",
         "source": "desktop/src/shared/styles/globals/terminal.css; desktop/src/features/terminal/TerminalSubstrate.tsx",
-        "changes": "Repository-owned muted toolbar, rounded terminal tabs and add control, trailing window actions; header toggle follows Community sidebar geometry with a bottom indicator."
+        "changes": "Repository-owned muted toolbar, rounded terminal tabs with inline leading close controls, stronger hover/focus states and trailing window actions; a one-pixel resize separator retains its hit area. Header toggle follows Community sidebar geometry with a bottom indicator. Accessible tablist and close controls remain separate in the DOM and share CSS grid columns."
       }
     ]
   }
