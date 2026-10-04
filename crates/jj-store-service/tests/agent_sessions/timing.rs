@@ -1,6 +1,101 @@
 use super::*;
 
 #[tokio::test]
+async fn tool_duration_uses_exact_call_and_result_evidence_without_inventing_status() {
+    for profile in [
+        NormalizerProfileV1::codex_0_156_1(),
+        NormalizerProfileV1::codex_desktop_0_159_2(),
+    ] {
+        let fixture = fixture().await;
+        let mut source = transcript_batch(&profile);
+        source.observations.clear();
+        let pairs = [
+            (
+                "complete",
+                Some("2024-01-02T03:05:00Z"),
+                Some("2024-01-02T03:05:01.250Z"),
+            ),
+            ("missing", Some("2024-01-02T03:05:00Z"), None),
+            ("malformed", Some("bad date"), Some("2024-01-02T03:05:01Z")),
+            (
+                "backwards",
+                Some("2024-01-02T03:05:02Z"),
+                Some("2024-01-02T03:05:01Z"),
+            ),
+            (
+                "zero",
+                Some("2024-01-02T03:05:00Z"),
+                Some("2024-01-02T03:05:00Z"),
+            ),
+        ];
+        for (call, start, end) in pairs {
+            for (timestamp, payload) in [
+                (
+                    start,
+                    serde_json::json!({"type":"function_call", "call_id":call, "name":call,"arguments":"{}"}),
+                ),
+                (
+                    end,
+                    serde_json::json!({"type":"function_call_output", "call_id":call, "output":"recorded output"}),
+                ),
+            ] {
+                let index = source.observations.len();
+                let mut record = serde_json::json!({"type":"response_item", "payload":payload});
+                if let Some(timestamp) = timestamp {
+                    record["timestamp"] = timestamp.into();
+                }
+                source.observations.push(SanitizedObservationV1 {
+                    observation_id: ObservationId::new([100 + index as u8;16]),
+                    source_sequence: index as u64 + 1, occurred_at_millis:None,
+                    source_kind:SourceKind::Transcript, source_trust:SourceTrust::LocalTranscript,
+                    payload:SanitizedPayloadV1::new(SanitizedMediaType::Json, &serde_json::to_vec(&serde_json::json!({"capture_format":"codex-jsonl/v1", "product_version":profile.product_version, "session_id":"native-tool-timing", "record":record})).unwrap()).unwrap(),
+                });
+            }
+        }
+        let request = fixture
+            .session
+            .prepare_agent_capture(
+                m::RequestId::new([111; 16]),
+                m::PublicationId::new([112; 16]),
+                &profile,
+                &source,
+                b"tool duration".to_vec(),
+            )
+            .await
+            .unwrap();
+        fixture.session.publish_agent_delta(&request).await.unwrap();
+        let pager =
+            AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+        let page = pager.begin(fixture.session.clone(), 10).await.unwrap();
+        let detail = pager
+            .detail(fixture.session.clone(), page.sessions[0].session_id)
+            .await
+            .unwrap();
+        let activity = serde_json::to_value(&detail.activity).unwrap();
+        let tools = activity
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|v| v["type"] == "tool")
+            .map(|v| &v["tool"])
+            .collect::<Vec<_>>();
+        assert_eq!(tools.len(), 5);
+        let tool = |name: &str| *tools.iter().find(|v| v["native_name"] == name).unwrap();
+        assert_eq!(tool("complete")["duration_millis"].as_u64(), Some(1250));
+        assert_eq!(tool("complete")["state"], "unknown");
+        for name in ["missing", "malformed", "backwards"] {
+            assert!(tool(name)["duration_millis"].is_null());
+        }
+        assert_eq!(tool("zero")["duration_millis"].as_u64(), Some(0));
+        assert_eq!(detail.snapshot, page.snapshot);
+        assert_eq!(
+            pager.begin(fixture.session, 10).await.unwrap().snapshot,
+            page.snapshot
+        );
+    }
+}
+
+#[tokio::test]
 async fn codex_transcript_timing_recovers_existing_sanitized_native_timestamps() {
     for profile in [
         NormalizerProfileV1::codex_0_156_1(),

@@ -70784,6 +70784,175 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Per-message API/read projection and owned Agent response presentation only; no milestone promotion. Native immutable capture data and companion history preserved; current recorded source generation1 supports chunk timing, unsupported generations remain unknown. No reimport/reset/publication, installed-tool change or unrelated service restart. Strict Clippy baseline warnings, the interrupted unrelated full contract inventory, visual approval and full harness release gates are outside this narrow acceptance; their unresolved status is retained in the runs and next action.",
   "next": "Use the refreshed preview Agent response. Timestamp data is available for already captured selected messages; retain unknown times and separate broader harness, strict baseline lint and visual qualification work."
+},
+{
+  "id": "E-M18-008",
+  "tasks": [
+    "M9.4",
+    "M9.5",
+    "M18.8"
+  ],
+  "requirements": [
+    "JST-COLLAB-002",
+    "JST-COLLAB-004",
+    "JST-COLLAB-005",
+    "JST-API-001",
+    "JST-API-006",
+    "JST-LOCAL-001",
+    "JST-UI-006"
+  ],
+  "date": "2026-10-04",
+  "kind": "Recorded tool durations, padding before tool icons and simplified session times",
+  "revision": "enclosing Jujutsu change rvkzvqxz",
+  "before": "Clean main rvkzvqxz/1163ba3e above upuyqosu/f6f69419; preview clean. Both existing exec tools in selected session lack duration fields. Exact native duration regression fails once. Initial tool-group stories fail twice for missing inset/duration. User then asks to remove Started prefix; its exact Agent response story fails once. Subsequent user inspection identifies zero row padding before tool icons despite an 8px outer-group inset; strengthened icon regression captures that boundary.",
+  "versions": "JJ 0.45.1; Rust 1.98.1; Chrono 0.4.45; Svelte 5.57.1; qualified Codex CLI0.156.1/Desktop0.159.2 profiles retained; released Design Core ToolCalls stats extension used.",
+  "formats": "Additive optional nonnegative duration_millis in AgentToolActivity version1. Exact selected event observations provide ordered call/result endpoints or timed hook lifecycle endpoints; source/profile/sequence and monotonic times must match. Missing, malformed, ambiguous, over-bound evidence stays absent. Zero remains known. Unknown/failed outcomes stay unchanged. No immutable object, source cursor, capture recovery, receipt or native/local publication format changes.",
+  "files": [
+    "catalog/components/store-application/AgentToolGroups.stories.svelte",
+    "catalog/components/store-application/agent-sidebar-play.ts",
+    "catalog/fixtures/agent-tool-groups.ts",
+    "crates/jj-store-service/src/collaboration/agent_details.rs",
+    "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
+    "crates/jj-store-service/src/collaboration/agent_tool_timing.rs",
+    "crates/jj-store-service/src/collaboration/models.rs",
+    "crates/jj-store-service/src/collaboration.rs",
+    "crates/jj-store-service/tests/agent_sessions/timing.rs",
+    "crates/jj-store-service/tests/local_agent/timing.rs",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/collaboration.md",
+    "spec/src/compatibility.md",
+    "spec/src/local-jj.md",
+    "spec/src/mutations.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/collaboration/presentation.ts",
+    "web/src/lib/ui/store-collaboration/StoreAgentSessionRow.svelte",
+    "web/src/lib/ui/store-collaboration/StoreAgentTools.svelte",
+    "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+    "web/tests/collaboration-presentation.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; read parent guidance, JJ skill and owning canonical chapters; inspect Community rich tool presentation and Design Core ToolCalls/CSS; pnpm exec tsx .local/agent-tool-duration/live.ts before",
+      "result": "pass",
+      "failures": 0,
+      "note": "Clean main/preview; native selected revision113/state39; two untimed tools. Proof files retain IDs/times/status only, no transcript content or credentials."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test agent_sessions timing::tool_duration_uses_exact_call_and_result_evidence_without_inventing_status --locked -- --exact (before/after) (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before fails once (None versus1250); after passes for both CLI/Desktop. Known1250, zero, unknown missing/malformed/reversed cases and immutable snapshot retained. Logs before-rust.log and after-rust.log. Before failure preserved."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test agent_sessions timing::tool_duration_uses_exact_call_and_result_evidence_without_inventing_status --locked -- --exact (before/after) (after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Before fails once (None versus1250); after passes for both CLI/Desktop. Known1250, zero, unknown missing/malformed/reversed cases and immutable snapshot retained. Logs before-rust.log and after-rust.log. Before failure preserved."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte (before and first after) (before)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Before two failures/five passes; first after seven passes. User clarification reveals the first inset assertion measured outer-group offset, not padding inside the trigger. Strengthened regression and corrected row styling follow; this first pass alone is not final acceptance."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte (before and first after) (after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Before two failures/five passes; first after seven passes. User clarification reveals the first inset assertion measured outer-group offset, not padding inside the trigger. Strengthened regression and corrected row styling follow; this first pass alone is not final acceptance."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCollaboration.stories.svelte -t Agent (Started-prefix before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "One failure/three passes/five skips confirms unwanted Started prefix. Existing assertion updated to requested time-only text; relative time/full-date tooltip preserved."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t Grouped rows align (icon-padding before)",
+      "result": "pass",
+      "failures": 0,
+      "note": "The name filter selected zero tests (seven skips), so no regression acceptance claimed. Replaced with complete exact tool-group family, whose strengthened before-icon assertion fails once; subsequent final family qualifies the correction. icon-padding-before.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --lib collaboration::agent_ --locked; cargo test -p jj-store-service --test agent_sessions --locked; cargo test -p jj-store-service --test local_agent timing --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final three timing units, complete affected native binary eight tests and three companion timing tests pass. Failed hook spans, unmatched/missing/source/profile/duplicate/restarted/backward evidence remain unknown. Local call/result cross separate captures; old pin remains untimed and current pin gains1250ms. units-final.log/native-final.log/local-final.log."
+    },
+    {
+      "command": "cargo check -p jj-store-service --all-targets --locked; pnpm dev:backend:build (initial/final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Service all-target check and explicit development binaries pass. Existing macOS compact-unwind linker warning retained. No installed executable changed. Initial preview restart overlapped initial build; definitive live proof uses completed final build and final restart."
+    },
+    {
+      "command": "pnpm contracts:generate (initial/final); pnpm test:contracts; affected native/local HTTP capture tests; node .local/agent-tool-duration/validate-contracts.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both exact LocalTrusted HTTP consumers pass; 34 actual responses conform, untimed hook/manual fixtures retain absent durations. Seven contract units and contract TypeScript check pass. Live known durations conform separately. Full unrelated contract inventory and root aggregate lanes are outside the targeted impact surface."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/collaboration-presentation.test.ts; pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Seven presentation units and both type checks pass with zero diagnostics. Duration formatter retains subsecond/zero values and rejects unknown, negative, noninteger or unsafe values."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Twenty direct session-row/layout/menu story interactions and accessibility checks pass after removing Started. Final icon correction reruns all direct story families below. No visual baseline approval."
+    },
+    {
+      "command": "jj describe -m Inset agent tool rows and show captured tool durations; jj rebase -r uqwlnutu -o rvkzvqxz; jj workspace update-stale; preview-only pnpm dev:backend:restart with JJ_STORE_DEV_ROOT, ports7470/7472 and explicit main-built development binary paths",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main owns implementation. Clean preview is a descendant refreshed for source HMR. Only preview backend replaced; fixture/native state and main7460/7462/native desktop preserved. Final tree identity checked after commit."
+    },
+    {
+      "command": "pnpm exec tsx .local/agent-tool-duration/live.ts after; Python before/after snapshot/identity/status assertions; Cua fresh background tab, DOM metadata and screenshot",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both existing exec calls gain13153ms and464ms without changing snapshot revision113/state39 or tool status/IDs. DOM confirms duration immediately precedes chevron; six session rows show relative times only, retaining full-date tooltips. Temporary tab closed. Initial browser proof records outer-group inset; final icon proof is recorded below."
+    },
+    {
+      "command": "Final icon-padding story family, live user-tab measurements and screenshot",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final four direct story families:27 interactions/accessibility checks pass. Actual live user tab measures paddingInlineStart8px and iconInset8px INSIDE both tool triggers, rootInset0; message padding8px. Duration remains immediately before chevron. Screenshot icon-padding.png and DOM proof icon-padding.json. User tabs, drafts, route/preferences untouched; temporary proof tab closed."
+    },
+    {
+      "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; pnpm format:rust:check; focused Prettier; pnpm spec:first; pnpm spec:validate; pnpm check:progress; historical evidence-prefix check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final architecture, owned UI, package boundaries, Rust formatting, changed-file Prettier, spec-first, canonical validation and136-task progress pass.405 historical evidence objects and raw prefix retained. Governance draft issue corrected; root aggregates/full workspace/release/visual baseline qualification not run under targeted policy."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte (strengthened icon regression before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "One failure/six passes proves actual row padding before icon is zero. Corrected padding from outer group to actual grouped/standalone trigger; icon-padding-regression.log."
+    },
+    {
+      "command": "pnpm check:progress (draft evidence)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Draft runs used unsupported pending values and combined failure counts with final pass results. Split before failures from after passes and replaced all placeholders with actual results; no historical evidence edited. progress-first.log."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check (after final icon correction)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both final type checks zero errors/warnings; catalog175-module boundary passes. web-check-icon.log and catalog-check-icon.log."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Tool timing and directly affected Agent list/transcript presentation only; no milestone promotion, evidence rewrite, reimport/reset, publication, installed-tool change or unrelated restart. Full release/harness qualification, root aggregates/full Rust workspace, unrelated contract inventory and visual baseline approval are outside narrow acceptance. Prior strict Clippy baseline warnings remain separately recorded in E-M18-007; this slice runs affected all-target check.",
+  "next": "Use refreshed preview. Known recorded duration appears before each tool detail chevron; padding belongs inside each row before its icon. Unknown timing stays absent; broader release and visual qualification remain separate."
 }
 ]
 ```

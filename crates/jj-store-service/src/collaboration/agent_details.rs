@@ -131,6 +131,7 @@ pub(crate) async fn load_activity(
     code: &[AgentCodeAssociation],
 ) -> Result<(Vec<AgentActivity>, bool)> {
     let mut events = Vec::new();
+    let mut tool_timings = super::agent_tool_timing::ToolTimings::default();
     let mut truncated = false;
     for reference in &session.event_batches {
         let AgentObjectV1::EventBatch(batch) =
@@ -151,6 +152,7 @@ pub(crate) async fn load_activity(
                 truncated = true;
                 break;
             }
+            tool_timings.observe(&evidence, &batch.normalizer_version, &event);
             let occurred_at_millis = match &event {
                 AgentEventV1::MessageCompleted { event_id, .. } => {
                     super::agent_session_timing::event_at_millis(
@@ -252,7 +254,13 @@ pub(crate) async fn load_activity(
                 if tool.tool_call_id != tool_call_id || tool.session_id != session.session_id {
                     return Err(Error::Corrupt);
                 }
-                let (tool, content_bytes) = tool_activity(store, *reference, tool, code).await?;
+                let duration = if truncated {
+                    None
+                } else {
+                    tool_timings.duration(tool_call_id)
+                };
+                let (tool, content_bytes) =
+                    tool_activity(store, *reference, tool, code, duration).await?;
                 if bytes
                     .checked_add(content_bytes)
                     .is_none_or(|value| value > MAX_ACTIVITY_BYTES)
@@ -321,6 +329,13 @@ pub(crate) async fn load_activity(
     {
         tool.observed_paths = observed_paths;
     }
+    if truncated {
+        for item in &mut output {
+            if let AgentActivity::Tool { tool, .. } = item {
+                tool.duration_millis = None;
+            }
+        }
+    }
     Ok((output, truncated))
 }
 
@@ -337,6 +352,7 @@ async fn tool_activity(
     reference: AgentObjectRef,
     tool: ToolInvocationSnapshotV1,
     code: &[AgentCodeAssociation],
+    duration_millis: Option<u64>,
 ) -> Result<(AgentToolActivity, usize)> {
     let input = load_optional_content(store, tool.input).await?;
     let output = load_optional_content(store, tool.output).await?;
@@ -352,6 +368,7 @@ async fn tool_activity(
             native_name: tool.native_name,
             kind: tool.kind,
             state: tool.state,
+            duration_millis,
             input,
             output,
             observed_paths: Vec::new(),

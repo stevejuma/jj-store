@@ -2315,6 +2315,16 @@ over-bound evidence never borrows another message's timestamp. Read projection
 changes neither immutable content/evidence nor publication and recovery
 identity.
 
+Tool activity exposes optional `duration_millis` only from ordered start and end
+observations matched to the exact selected tool events. Qualified Codex
+CLI/Desktop call and result records provide an observed invocation span even
+when outcome remains unknown; timed Pending/Running and terminal hook events use
+the same bounded projection. Both endpoints must belong to the same source and
+normalizer. Missing or malformed endpoints, reversed times, repeated ends,
+source changes and activity truncation leave duration absent. Timing never
+changes tool status or borrows session/message/ingestion times. Native and
+companion-pinned reads share this projection without rewriting stored objects.
+
 Session detail also returns the exact immutable observation-batch, event-batch
 and tool-snapshot IDs selected by that session; tool links retain their full
 stable tool-call IDs. Selected transcript manifests expand only into stream

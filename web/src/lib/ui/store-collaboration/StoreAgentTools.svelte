@@ -4,7 +4,10 @@
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import { useDrafts } from "../../appearance/drafts.svelte.js";
-  import { anchorAgentTool } from "../../collaboration/presentation.js";
+  import {
+    anchorAgentTool,
+    agentToolDuration,
+  } from "../../collaboration/presentation.js";
   import StoreAgentToolDetail from "./StoreAgentToolDetail.svelte";
   import StoreAgentToolReview from "./StoreAgentToolReview.svelte";
   let {
@@ -54,6 +57,16 @@
   {#if entry}<StoreAgentToolDetail tool={entry.tool} {patches} />{/if}
 {/snippet}
 
+{#snippet timing(call: { id?: string })}
+  {@const tool = call.id ? byId.get(call.id)?.tool : undefined}
+  {@const duration = agentToolDuration(tool?.duration_millis)}
+  {#if duration}<span
+      data-ui-part="agent-tool-duration"
+      title={`Recorded tool duration: ${tool?.duration_millis}ms`}
+      >{duration}</span
+    >{/if}
+{/snippet}
+
 <Chat.ToolCalls
   label={items.length > 1 ? "Tool calls" : "Tool activity"}
   defaultExpanded={initialExpanded}
@@ -66,6 +79,10 @@
       tool.observed_paths[0] ??
       Chat.toolCallTarget(tool.input?.content),
     detail,
+    stats:
+      agentToolDuration(tool.duration_millis) !== undefined
+        ? timing
+        : undefined,
   }))}
 >
   {#snippet callWrapper(call, children)}

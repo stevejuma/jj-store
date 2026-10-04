@@ -167,4 +167,9 @@
     max-width: 42rem;
     margin-inline: 0;
   }
+
+  .store-agent-transcript__tools :global([data-ai-chat-part="group-trigger"]),
+  .store-agent-transcript__tools :global([data-ai-chat-part="call-trigger"]) {
+    padding-inline-start: 0.5rem;
+  }
 </style>

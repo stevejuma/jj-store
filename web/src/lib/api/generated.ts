@@ -2655,6 +2655,8 @@ export interface components {
       native_name: string;
       kind: components["schemas"]["ToolKind"];
       state: components["schemas"]["ToolState"];
+      /** Format: uint64 */
+      duration_millis?: number | null;
       input: components["schemas"]["AgentContent"] | null;
       output: components["schemas"]["AgentContent"] | null;
       observed_paths: string[];

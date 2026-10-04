@@ -132,6 +132,17 @@ export function formatAgentSessionDuration(durationMs: number): string {
   return `${seconds}s`;
 }
 
+export function agentToolDuration(
+  duration: number | bigint | null | undefined,
+): string | undefined {
+  if (duration == null) return undefined;
+  const millis = Number(duration);
+  if (!Number.isSafeInteger(millis) || millis < 0) return undefined;
+  if (millis < 1000) return `${millis}ms`;
+  if (millis < 60_000) return `${Number((millis / 1000).toFixed(2))}s`;
+  return formatAgentSessionDuration(millis);
+}
+
 export function principalMember(principal: string): CommunityMemberModel {
   const local = principal === "local" || principal.endsWith("local");
   return {

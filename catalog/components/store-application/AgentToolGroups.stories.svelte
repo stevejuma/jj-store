@@ -29,6 +29,11 @@
     const group = heading.closest('[data-ui-component="ai-chat-tool-calls"]')!;
     const message = c.getAllByRole("article")[0]!;
     await expect(
+      heading
+        .querySelector('[data-ui-part="group-icon"]')!
+        .getBoundingClientRect().left - heading.getBoundingClientRect().left,
+    ).toBeCloseTo(8, 0);
+    await expect(
       Math.abs(
         group.getBoundingClientRect().left -
           message.getBoundingClientRect().left,
@@ -43,6 +48,12 @@
     const checkSpacing = async () => {
       await waitFor(() => {
         for (let index = 0; index < calls.length; index++) {
+          expect(
+            triggers[index]!.querySelector(
+              '[data-ui-part="call-status"]',
+            )!.getBoundingClientRect().left -
+              triggers[index]!.getBoundingClientRect().left,
+          ).toBeCloseTo(8, 0);
           expect(
             Math.abs(
               triggers[index]!.getBoundingClientRect().left -
@@ -63,6 +74,12 @@
       });
     };
     await checkSpacing();
+    const single = c.getByRole("button", { name: "Show details for Search" });
+    await expect(
+      single
+        .querySelector('[data-ui-part="call-status"]')!
+        .getBoundingClientRect().left - single.getBoundingClientRect().left,
+    ).toBeCloseTo(8, 0);
     for (const tool of calls) {
       tool.scrollIntoView({ block: "center" });
       await userEvent.hover(
@@ -97,6 +114,44 @@
     await checkSpacing();
     await userEvent.click(triggers[1]!);
     await checkSpacing();
+  }}
+/>
+
+<Story
+  name="Recorded durations precede the chevron without changing tool status"
+  play={async ({ canvasElement }) => {
+    const c = await openSession(canvasElement);
+    await userEvent.click(
+      c.getByRole("button", { name: "Expand 3 tool calls" }),
+    );
+    for (const [name, duration, status] of [
+      ["apply_patch", "1.25s", "unknown"],
+      ["Bash", "250ms", "error"],
+      ["Read", "0ms", "complete"],
+    ]) {
+      const trigger = c.getByRole("button", {
+        name: `Show details for ${name}`,
+      });
+      const timing = within(trigger).getByText(duration!, { exact: true });
+      const chevron = trigger.querySelector('[data-ui-part="detail-chevron"]')!;
+      await expect(
+        timing.nextElementSibling?.getAttribute("data-ui-part") ??
+          timing.parentElement?.nextElementSibling?.getAttribute(
+            "data-ui-part",
+          ),
+      ).toBe("detail-chevron");
+      await expect(timing.getBoundingClientRect().right).toBeLessThanOrEqual(
+        chevron.getBoundingClientRect().left,
+      );
+      await expect(
+        trigger.querySelector('[data-ui-part="call-status"]'),
+      ).toHaveAttribute("data-status", status!);
+    }
+    await expect(
+      c
+        .getByRole("button", { name: "Show details for Search" })
+        .querySelector('[data-ui-part="call-stats"]'),
+    ).toBeNull();
   }}
 />
 

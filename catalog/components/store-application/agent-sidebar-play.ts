@@ -23,7 +23,7 @@ export async function agentSidebarPlay({
     "src",
     "/agent-icons/codex.svg",
   );
-  await expect(sessionCard).toHaveTextContent("Started");
+  await expect(sessionCard).not.toHaveTextContent("Started");
   await expect(sessionCard).toHaveTextContent("5m");
   await expect(
     within(sessionCard).getByLabelText("1 transcripts"),

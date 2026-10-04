@@ -170,3 +170,50 @@ async fn message_timing_remains_companion_pinned_across_later_capture() {
         5
     );
 }
+
+#[tokio::test]
+async fn tool_duration_waits_for_selected_result_and_remains_companion_pinned() {
+    let (_root, repo) = fixture();
+    let mut source = batch();
+    source.observations.truncate(1);
+    let observation = &mut source.observations[0];
+    observation.occurred_at_millis = None;
+    observation.source_kind = SourceKind::Transcript;
+    observation.source_trust = SourceTrust::LocalTranscript;
+    observation.payload=SanitizedPayloadV1::new(SanitizedMediaType::Json,br#"{"capture_format":"codex-jsonl/v1","product_version":"0.156.1","session_id":"local-tool-timing","record":{"timestamp":"2024-01-02T03:05:00Z","type":"response_item","payload":{"type":"custom_tool_call","call_id":"call","name":"exec","input":"safe fixture"}}}"#).unwrap();
+    repo.apply_agent_command(&request(110, source.clone()))
+        .await
+        .unwrap();
+    let pin = repo.metadata_store().read().unwrap().unwrap().commit();
+    let page = repo.browser_agent_sessions(pin, 20, None).await.unwrap();
+    let detail = repo
+        .browser_agent_session(pin, page.sessions[0].session_id)
+        .await
+        .unwrap();
+    let tools = serde_json::to_value(&detail.activity).unwrap();
+    assert!(tools[0]["tool"]["duration_millis"].is_null());
+    source.batch_id = CaptureBatchId::new([111; 16]);
+    source.observations[0].observation_id = ObservationId::new([112; 16]);
+    source.observations[0].source_sequence = 2;
+    source.observations[0].payload=SanitizedPayloadV1::new(SanitizedMediaType::Json,br#"{"capture_format":"codex-jsonl/v1","product_version":"0.156.1","session_id":"local-tool-timing","record":{"timestamp":"2024-01-02T03:05:01.250Z","type":"response_item","payload":{"type":"custom_tool_call_output","call_id":"call","output":"recorded result"}}}"#).unwrap();
+    repo.apply_agent_command(&request(111, source))
+        .await
+        .unwrap();
+    let current = repo.metadata_store().read().unwrap().unwrap().commit();
+    let later = repo
+        .browser_agent_session(current, detail.session.session_id)
+        .await
+        .unwrap();
+    let tools = serde_json::to_value(&later.activity).unwrap();
+    assert_eq!(tools[0]["tool"]["duration_millis"].as_u64(), Some(1250));
+    assert_eq!(tools[0]["tool"]["state"], "unknown");
+    assert_eq!(
+        serde_json::to_value(
+            repo.browser_agent_session(pin, detail.session.session_id)
+                .await
+                .unwrap()
+        )
+        .unwrap(),
+        serde_json::to_value(detail).unwrap()
+    );
+}

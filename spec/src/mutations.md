@@ -1,10 +1,11 @@
 # Typed mutations
 
-Agent session timing is a bounded read projection over exact selected event
-evidence. Recovering qualified Codex JSONL timestamps from sanitized payloads
-does not stage or publish objects, alter immutable evidence or capture recovery
-identities, replay receipts, or enroll sources. Native manifest and local
-companion pins retain their existing authorization and publication behavior.
+Agent session, message and tool duration timing are bounded read projections
+over exact selected event evidence. Recovering qualified Codex JSONL timestamps
+from sanitized payloads does not stage or publish objects, alter immutable
+evidence or capture recovery identities, replay receipts, or enroll sources.
+Native manifest and local companion pins retain their existing authorization and
+publication behavior.
 
 LocalTrusted Admin configuration editing may persist installation-wide protected
 bookmark names and full commit identities. These rules apply to every native

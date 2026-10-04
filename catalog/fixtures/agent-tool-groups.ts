@@ -21,18 +21,21 @@ const tool = (byte: string, name: string, state: Tool["state"]): Tool => ({
 
 export const groupedAgentActivity: readonly Activity[] = [
   agentDetail.activity[0]!,
-  original,
+  {
+    ...original,
+    tool: { ...original.tool, state: "unknown", duration_millis: 1250 },
+  },
   {
     type: "tool",
     sequence: 3,
     event_id: "e1".repeat(16),
-    tool: tool("e1", "Bash", "failed"),
+    tool: { ...tool("e1", "Bash", "failed"), duration_millis: 250 },
   },
   {
     type: "tool",
     sequence: 4,
     event_id: "e2".repeat(16),
-    tool: tool("e2", "Read", "succeeded"),
+    tool: { ...tool("e2", "Read", "succeeded"), duration_millis: 0 },
   },
   { ...agentDetail.activity[2]!, sequence: 5 },
   {

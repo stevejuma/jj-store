@@ -81,32 +81,13 @@ pub(super) fn event_at_millis(
 // Earlier JSONL readers preserve the native timestamp in the immutable payload,
 // leaving the optional observation field empty. Recover only matched evidence;
 // do not rewrite capture batches or their durable recovery identities.
-fn observed_at_millis(
+pub(super) fn observed_at_millis(
     evidence: &SanitizedObservationBatchV1,
     normalizer: &str,
     observation: &SanitizedObservationV1,
 ) -> Option<i64> {
     observation.occurred_at_millis.or_else(|| {
-        if evidence.integration != IntegrationId::Codex
-            || evidence.representation != SanitizedRepresentation::SanitizedNative
-            || observation.source_kind != SourceKind::Transcript
-            || observation.source_trust != SourceTrust::LocalTranscript
-            || observation.payload.media_type() != SanitizedMediaType::Json
-        {
-            return None;
-        }
-        let profile = [
-            NormalizerProfileV1::codex_0_156_1(),
-            NormalizerProfileV1::codex_desktop_0_159_2(),
-        ]
-        .into_iter()
-        .find(|profile| profile.identity() == normalizer)?;
-        let value: serde_json::Value = serde_json::from_slice(observation.payload.bytes()).ok()?;
-        if value["capture_format"].as_str() != Some("codex-jsonl/v1")
-            || value["product_version"].as_str() != Some(&profile.product_version)
-        {
-            return None;
-        }
+        let value = codex_record(evidence, normalizer, observation)?;
         let timestamp = value.get("record")?.get("timestamp")?.as_str()?;
         if timestamp.len() > 64 {
             return None;
@@ -115,6 +96,34 @@ fn observed_at_millis(
             .ok()
             .map(|time| time.timestamp_millis())
     })
+}
+
+pub(super) fn codex_record(
+    evidence: &SanitizedObservationBatchV1,
+    normalizer: &str,
+    observation: &SanitizedObservationV1,
+) -> Option<serde_json::Value> {
+    if evidence.integration != IntegrationId::Codex
+        || evidence.representation != SanitizedRepresentation::SanitizedNative
+        || observation.source_kind != SourceKind::Transcript
+        || observation.source_trust != SourceTrust::LocalTranscript
+        || observation.payload.media_type() != SanitizedMediaType::Json
+    {
+        return None;
+    }
+    let profile = [
+        NormalizerProfileV1::codex_0_156_1(),
+        NormalizerProfileV1::codex_desktop_0_159_2(),
+    ]
+    .into_iter()
+    .find(|profile| profile.identity() == normalizer)?;
+    let value: serde_json::Value = serde_json::from_slice(observation.payload.bytes()).ok()?;
+    if value["capture_format"].as_str() != Some("codex-jsonl/v1")
+        || value["product_version"].as_str() != Some(&profile.product_version)
+    {
+        return None;
+    }
+    Some(value)
 }
 
 fn timing_event(

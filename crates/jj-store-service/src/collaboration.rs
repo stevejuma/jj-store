@@ -5,6 +5,7 @@ mod agent_details;
 pub(crate) use agent_details::load_activity;
 mod agent_relations;
 mod agent_session_timing;
+mod agent_tool_timing;
 pub(crate) use agent_session_timing::resolve as session_timing;
 mod agent_transcript_timing;
 pub(crate) use agent_transcript_timing::present_chunks;

@@ -660,6 +660,13 @@ generations remain unknown. Recovery inspects at most 4,096 selected events and
 retains the original cursor/root pin across pages. Times never derive from
 sequence numbers, session start, filesystem metadata or ingestion.
 
+Tool activity adds optional nonnegative `duration_millis`, omitted when the
+exact selected start/end evidence cannot prove an ordered span. Qualified Codex
+call/result timestamps and explicit timed hook lifecycle endpoints preserve
+source/profile identity and the 4,096-event bound. Duration may be known while
+outcome remains unknown. Native and companion pins retain the original state; no
+storage, normalization or receipt encoding changes.
+
 The detail route accepts one canonical full stable session ID. It resolves that
 key only through the current selected AgentStore session catalog and returns 404
 when no matching selection exists. Its response repeats the exact read snapshot

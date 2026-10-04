@@ -88,9 +88,7 @@
           tone={session.state === "active" ? "success" : "neutral"}
           >{session.state}</CommunityChip
         >{#if timing}<span class="store-collaboration__agent-start"
-            >Started <CommunityRelativeTime
-              timestamp={timing.startedAt}
-            /></span
+            ><CommunityRelativeTime timestamp={timing.startedAt} /></span
           >{/if}<span class="store-collaboration__agent-metrics"
           ><span
             class="store-collaboration__metric"

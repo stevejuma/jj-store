@@ -938,15 +938,20 @@ Markdown, prompt disclosures, reactions, message order or virtualization.
 Adjacent recorded tool calls form a single expandable Design Core ToolCalls
 group, in native order. Messages, capture gaps and other recorded events
 separate groups. Each call retains its own details, native copy menu, review
-anchor, reply actions and draft. Tool groups start at the visible message edge,
-including its owned horizontal bleed. The heading icon and individual status
-icons share that edge. Closed calls retain compact, contiguous rows; expanded
-details occupy only their own call. Inline discussion contexts size to their
-content and do not create a scroll viewport around each call or clip its hover
-toolbar. The transcript owns scrolling, and the full toolbar remains pointer
-reachable across row boundaries. Failed calls show their error status without an
-extra resting “Tool failed” label; expanded details retain the actual error
-output. Open review threads compose the owned Community chat composer with exact
+anchor, reply actions and draft. Tool groups retain the message's outer edge and
+owned horizontal bleed. Their heading and individual call contents have the same
+0.5rem logical start padding inside each trigger before its icon, as messages
+have before their avatars. The hover surface includes this padding. Each known
+captured tool duration appears immediately before its detail chevron, including
+failed or outcome-unknown calls. Subsecond spans use milliseconds; unknown
+durations remain absent and zero is displayed. Timing does not change the
+recorded status. Closed calls retain compact, contiguous rows; expanded details
+occupy only their own call. Inline discussion contexts size to their content and
+do not create a scroll viewport around each call or clip its hover toolbar. The
+transcript owns scrolling, and the full toolbar remains pointer reachable across
+row boundaries. Failed calls show their error status without an extra resting
+“Tool failed” label; expanded details retain the actual error output. Open
+review threads compose the owned Community chat composer with exact
 optimistic-concurrency actions; resolved threads remove the composer and expose
 Reopen. The detail headers distinguish the selected native code snapshot from
 the independent AgentStore or ReviewStore root. An unknown review outcome
@@ -1003,10 +1008,11 @@ stale fingerprints never trigger an implicit reread or partial publication.
 M9.5 collaboration cards use the same bordered row structure and metadata/action
 placement as Branches and Op Log. Agent cards show the integration avatar, name,
 state, captured start and compact captured duration when exact timing exists.
-Full identifiers use labelled copy controls. Agent detail reuses Community
-message/tool compositions, exposes the related native change in its header and
-renders a changed-file diff inside a tool only when an exact code association or
-recorded path ties that tool to the file.
+Session rows show only the relative start time, without a “Started” prefix, and
+retain the full-date tooltip. Full identifiers use labelled copy controls. Agent
+detail reuses Community message/tool compositions, exposes the related native
+change in its header and renders a changed-file diff inside a tool only when an
+exact code association or recorded path ties that tool to the file.
 
 The complete Agent or Review card surface selects its detail except for nested
 copy and action controls. Integration artwork appears in the leading identity

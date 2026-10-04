@@ -1,5 +1,10 @@
 # Compatibility and release
 
+AgentStore tool activity adds optional `duration_millis` to version-1 read DTOs.
+Absent fields retain unknown timing; zero is a known duration. Generated
+OpenAPI/TypeScript and affected native/local HTTP consumers qualify known and
+absent values. Tool state and immutable native/local encodings remain unchanged.
+
 AgentStore message activity and recorded transcript read DTOs add optional
 `occurred_at_millis` fields while retaining response version 1 and the existing
 route inventory. Missing fields remain compatible and mean unknown time; current

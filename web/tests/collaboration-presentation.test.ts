@@ -6,6 +6,7 @@ import type { RepositoryLogRevision } from "../src/lib/projects/repository-log.j
 import { agentAvatarUrl } from "../src/lib/collaboration/agent-avatar.js";
 import {
   agentMember,
+  agentToolDuration,
   agentMessageTimestamp,
   transcriptMessage,
   agentSessionTiming,
@@ -16,6 +17,23 @@ import {
   reviewCommentRows,
   reviewPatchMatchesLine,
 } from "../src/lib/collaboration/presentation.js";
+
+test("tool durations preserve subsecond precision and omit unknown or unsafe values", () => {
+  assert.equal(agentToolDuration(0), "0ms");
+  assert.equal(agentToolDuration(250n), "250ms");
+  assert.equal(agentToolDuration(1250), "1.25s");
+  assert.equal(agentToolDuration(125000), "2m 5s");
+  for (const value of [
+    null,
+    undefined,
+    -1,
+    NaN,
+    Infinity,
+    1.5,
+    9007199254740993n,
+  ])
+    assert.equal(agentToolDuration(value), undefined);
+});
 import { revisionCollaboration } from "../src/lib/collaboration/revision-collaboration.js";
 
 function summary(

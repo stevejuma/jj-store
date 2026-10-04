@@ -94,6 +94,8 @@ pub struct AgentToolActivity {
     pub native_name: String,
     pub kind: ToolKind,
     pub state: ToolState,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duration_millis: Option<u64>,
     pub input: Option<AgentContent>,
     pub output: Option<AgentContent>,
     pub observed_paths: Vec<String>,

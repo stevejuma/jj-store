@@ -33076,6 +33076,11 @@
           "native_name": { "type": "string" },
           "kind": { "$ref": "#/components/schemas/ToolKind" },
           "state": { "$ref": "#/components/schemas/ToolState" },
+          "duration_millis": {
+            "type": ["integer", "null"],
+            "format": "uint64",
+            "minimum": 0
+          },
           "input": {
             "anyOf": [
               { "$ref": "#/components/schemas/AgentContent" },
