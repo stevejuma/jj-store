@@ -29,6 +29,21 @@ export function createProductionRefresh(options: {
   return {
     async refresh(automatic = false) {
       void options.refreshThreadNavigation?.();
+      if (history.route.page === "threads") {
+        const active = options.source(),
+          route = history.route;
+        const captured = await active.snapshot(true);
+        await threads.refresh();
+        if (
+          options.source() === active &&
+          history.route === route &&
+          threads.threads.status !== "failed"
+        ) {
+          data.head = captured;
+          data.heads = [...captured.heads];
+        }
+        return;
+      }
       if (await threads.refresh()) return;
       if (history.route.page === "projects") {
         await projects.refresh();

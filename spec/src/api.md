@@ -1992,3 +1992,9 @@ recovery flow. Continuations preserve lexical order and hydrate only page
 targets. A different embedded operation or nonempty description search keeps its
 previous bounded dispatch until separately indexed. Reference DTOs, signed
 cursors and preparation task contracts are unchanged.
+## Application freshness ownership
+
+Successful Threads refresh accepts its current authority watermark independently
+of the retained historical code selection. Fresh snapshot reads invalidate only
+the live snapshot key; exact operation-bound content keeps its cache entry.
+

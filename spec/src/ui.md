@@ -2043,3 +2043,10 @@ Automatic repository refresh queues updates while preparation is being observed,
 so a periodic reload cannot discard the task after five seconds. Explicit
 navigation still stops obsolete observations; terminal preparation releases the
 refresh guard.
+
+## Event-driven freshness migration
+
+The application freshness migration preserves explicit historical selections,
+prepared commands and exact unknown request identities. Threads accepts a
+successfully refreshed head independently of its route pin, preventing one
+publication from repeatedly refreshing unchanged conversations.

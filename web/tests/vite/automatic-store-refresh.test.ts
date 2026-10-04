@@ -77,6 +77,25 @@ test("historical code pins stay fixed while fresh collaboration roots reload", a
   expect(f.data.head?.published_seq).toBe(2);
   expect(f.restore).toHaveBeenCalledTimes(1);
 });
+test("a successful Threads refresh accepts freshness without moving its code pin", async () => {
+  const f = fixture();
+  f.history.replace({ ...f.history.route, page: "threads" });
+  const threads = {
+    threads: { status: "ready" },
+    refresh: vi.fn(async () => true),
+  };
+  const refreshing = createProductionRefresh({
+    data: f.data,
+    history: f.history,
+    source: () => f.source,
+    threads,
+    refreshThreadNavigation: async () => {},
+  } as unknown as Parameters<typeof createProductionRefresh>[0]);
+  await refreshing.refresh(true);
+  expect(f.data.head?.published_seq).toBe(2);
+  expect(f.history.route.snapshotOperationId).toBe(old);
+  expect(threads.refresh).toHaveBeenCalledTimes(1);
+});
 test("a late head cannot replace a newer page selection", async () => {
   const f = fixture();
   let resolve!: (value: Head) => void;
