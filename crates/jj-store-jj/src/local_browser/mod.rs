@@ -163,7 +163,8 @@ impl Request {
             self,
             Self::Commit { .. }
                 | Self::Graph(GraphRequest::Log { .. } | GraphRequest::Evolution { .. }, _)
-        )
+        ) || matches!(self, Self::References(r) if r.query.is_empty()
+            && matches!(r.kind, references::Kind::Changes | references::Kind::All))
     }
     /// Ordinary scoped reads can reuse ready point membership while retaining
     /// their bounded cold reader. Bare file IDs have no selected tree proof.

@@ -679,3 +679,17 @@ select that cold path; authorization, corrupt selection and reader errors must
 not fall back. Complete large-scale and lifecycle qualification is deferred;
 focused equivalence, low-visit and source-preservation regressions remain
 required.
+
+Prepared local generations MUST retain an ordered visible change-to-commit
+projection constructed from JJ's index commit/change stream, without rehydrating
+Git commit bodies. Admit membership, projection keys/targets and reverse labels
+before allocation. Unfiltered Changes and All reference pages at that exact
+operation MUST seek this projection and selected bookmarks before hydration,
+including backward/deep anchors and exact change lookup. Preserve lexical keys,
+divergence, sorted target identities, explicit conflict terms, workspace labels
+and complete-result semantics; hydrate only the selected page's targets. Hidden
+rewrites and later commits cannot become visible changes. These queries require
+preparation when cold. Nonempty description search and an embedded reference
+operation different from the outer selection retain their existing separately
+bounded reader pending indexed filtering/operation lookup. No source or wire
+format changes; comprehensive large-scale qualification stays deferred.

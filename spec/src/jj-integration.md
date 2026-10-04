@@ -915,3 +915,11 @@ construct a graph RepoLoader or repeat retained commit-edge proof. Existing
 ordinary byte/work/deadline and selected-tree grants still apply. Required
 prepared-history kinds retain cold rebuild-required semantics; optional scoped
 kinds may use their ordinary reader only when the generation is absent.
+
+Local visibility preparation MAY stream commit/change pairs directly from the
+verified JJ index to construct ordered visible-reference identities. Reserve
+projection growth before traversal and retain it with the generation. Unfiltered
+change/all reference windows use a fresh scoped Store, seek before target
+hydration and need no graph RepoLoader. The wrapper rejects a different embedded
+operation. Preserve ordinary output/record/work limits and retain full search
+matching on the existing bounded path until indexed filtering is delivered.

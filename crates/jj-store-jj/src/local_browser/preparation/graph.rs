@@ -155,6 +155,18 @@ pub(super) async fn load(
 }
 
 impl Prepared {
+    pub(in super::super) fn reference_changes(
+        &self,
+    ) -> &BTreeMap<String, super::visibility::VisibleChange> {
+        &self.resident.visibility.references
+    }
+    pub(in super::super) fn workspace_names(
+        &self,
+        id: m::GitSha1Id,
+        budget: &Budget,
+    ) -> Result<Vec<String>> {
+        self.resident.visibility.workspace_names(id, budget)
+    }
     pub(in super::super) fn annotations(
         &self,
         id: m::GitSha1Id,
@@ -279,6 +291,9 @@ impl Executor {
                     graphs::validate(graph, page, 0, &budget)?;
                 }
                 let operation = prepared.snapshot.operation;
+                if matches!(&request, Request::References(r) if r.operation != operation) {
+                    return Err(Error::NotCommitted);
+                }
                 let mut context = Context::open(
                     access,
                     operation,
@@ -306,7 +321,7 @@ impl Executor {
                     budget.clone(),
                     limits,
                 );
-                if !request.needs_prepared_index() {
+                if !matches!(&request, Request::Commit { .. } | Request::Graph(_, _)) {
                     // Indexed point membership admits only selected commits;
                     // their tree/file grants still cross the scoped backend.
                     // No graph repository or ancestry proof is needed here.

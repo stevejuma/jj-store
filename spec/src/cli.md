@@ -1747,3 +1747,11 @@ loss, preserve exact terms/content, reject later commits and mismatched file
 IDs, and leave source extra heads unchanged. These focused checks are delivery
 evidence; complete large-repository and cold lifecycle qualification is
 deferred.
+
+Prepared reference-page regression MUST compare Changes/All forward, backward,
+deep and exact windows with ordinary local semantics, including divergent
+changes, hidden rewrites and conflicted bookmarks. With a history-visit cap
+below the visible closure, hydration stays within selected-page targets;
+source-index loss, later operations and differing embedded selections remain
+explicitly tested. Complete pressure/browser/lifecycle qualification is
+deferred.

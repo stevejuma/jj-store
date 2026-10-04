@@ -1,4 +1,5 @@
 //! Bounded bookmark and visible-change lookup at one local operation.
+mod prepared;
 use super::*;
 use serde::Deserialize;
 use std::collections::{BTreeMap, BTreeSet};
@@ -95,6 +96,9 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     }
     if request.kind == Kind::Bookmarks && request.query.is_empty() {
         return bookmark_window(&context, &view, &request).await;
+    }
+    if request.query.is_empty() && context.access.prepared.is_some() {
+        return prepared::read(&context, &view, &request).await;
     }
     let mut entries = vec![];
     if request.kind != Kind::Changes {
@@ -445,12 +449,15 @@ impl Context {
         let mut targets = vec![];
         for id in ids {
             let commit = self.commit_dto(id).await?;
-            let workspaces = view
-                .wc_commit_ids
-                .iter()
-                .filter(|(_, target)| **target == id)
-                .map(|(name, _)| name.clone())
-                .collect();
+            let workspaces = if let Some(prepared) = &self.access.prepared {
+                prepared.workspace_names(id, &self.budget)?
+            } else {
+                view.wc_commit_ids
+                    .iter()
+                    .filter(|(_, target)| **target == id)
+                    .map(|(name, _)| name.clone())
+                    .collect()
+            };
             targets.push(Target {
                 commit: id,
                 change: commit.change_id,

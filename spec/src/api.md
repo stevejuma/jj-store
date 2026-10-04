@@ -1963,3 +1963,11 @@ preparation. Generation/authorization/selection errors propagate explicitly;
 there is no fallback that admits unrelated or later Git objects. These readers
 change no HTTP request, response, schema or capability. Their comprehensive
 transport/browser qualification remains in the later bounded-read slice.
+
+Local unfiltered Changes/All reference queries whose embedded operation equals
+the outer operation use prepared ordered visibility. When cold they return the
+existing exact-operation rebuild-required response, allowing the existing
+recovery flow. Continuations preserve lexical order and hydrate only page
+targets. A different embedded operation or nonempty description search keeps its
+previous bounded dispatch until separately indexed. Reference DTOs, signed
+cursors and preparation task contracts are unchanged.

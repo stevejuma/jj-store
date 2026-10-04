@@ -83,6 +83,15 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
         .json()
         .await
         .unwrap();
+    let references = json!({"operation":operation,"cursor":null,
+        "request":{"kind":"references","query":{"operation":operation,
+            "query":"","exact":null,"kind":"changes","limit":1,
+            "anchor":null,"direction":"forward"}}});
+    let cold_references = post(&query_path, references.clone()).send().await.unwrap();
+    assert_eq!(cold_references.status(), reqwest::StatusCode::CONFLICT);
+    let cold_references: Value = cold_references.json().await.unwrap();
+    assert_eq!(cold_references["code"], "index_rebuild_required");
+    assert_eq!(cold_references["local_snapshot"]["operation"], operation);
     let task: Value = post(
         &format!("/local/repos/{id}/index/tasks"),
         json!({"operation":operation}),
@@ -138,6 +147,55 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     };
     assert!(stats(&warm) < stats(&cold), "cold={cold}, warm={warm}");
     assert!(stats(&warm) <= 3, "{warm}");
+    let first: Value = post(&query_path, references.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(
+        first["data"]["data"]["references"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    assert!(stats(&first) <= 3, "{first}");
+    assert!(first["next_cursor"].is_string());
+    let mut resumed = references.clone();
+    resumed["cursor"] = first["next_cursor"].clone();
+    let next: Value = post(&query_path, resumed)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(next["snapshot"], first["snapshot"]);
+    assert_ne!(
+        next["data"]["data"]["references"],
+        first["data"]["data"]["references"]
+    );
+    let mut backward = references;
+    backward["cursor"] = next["previous_cursor"].clone();
+    let previous: Value = post(&query_path, backward)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(
+        previous["data"]["data"]["references"],
+        first["data"]["data"]["references"]
+    );
     // Even a valid replacement protobuf cannot trigger ordinary fallback from
     // a corrupt ready generation. SimpleOpStore does not hash filenames.
     let access: Arc<dyn q::Access> = Arc::new(ReadBinding(folder.join(".jj/repo")));

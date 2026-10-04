@@ -16,9 +16,14 @@ pub(super) struct Visibility {
     heads: BTreeSet<b::CommitId>,
     visible: BTreeSet<m::GitSha1Id>,
     changes: Box<dyn ChangeIdIndex>,
+    pub(in super::super) references: BTreeMap<String, VisibleChange>,
     bookmarks: BTreeMap<m::GitSha1Id, Vec<Bookmark>>,
     workspaces: BTreeMap<m::GitSha1Id, Vec<String>>,
     _memory: Lease,
+}
+pub(in super::super) struct VisibleChange {
+    pub(in super::super) change: m::ChangeId,
+    pub(in super::super) commits: Vec<m::GitSha1Id>,
 }
 impl Visibility {
     pub(super) async fn build(
@@ -38,8 +43,10 @@ impl Visibility {
             .ok_or(Error::Incomplete)?;
         // Reserve membership nodes, head IDs and every potential reverse label
         // before growth, including name replication across conflict terms.
+        // In addition to visible membership, reserve ordered textual keys,
+        // change/target vectors and map allocation before projection growth.
         let mut bytes =
-            u64::from(index.num_commits()) * 96 + view.head_ids.len() as u64 * 128 + 1024 * 1024;
+            u64::from(index.num_commits()) * 384 + view.head_ids.len() as u64 * 128 + 1024 * 1024;
         for (name, target) in &view.local_bookmarks {
             bytes += label_weight(name, None, target, &source.budget)?;
         }
@@ -70,17 +77,32 @@ impl Visibility {
         let set = index
             .evaluate_revset(&expression, source.loader.store())
             .map_err(|_| Error::Unavailable)?;
-        let mut stream = set.stream_graph();
+        let mut stream = set.commit_change_ids();
         let mut visible = BTreeSet::new();
-        while let Some((id, edges)) = stream.try_next().await.map_err(|_| Error::Unavailable)? {
+        let mut references = BTreeMap::new();
+        while let Some((id, change)) = stream.try_next().await.map_err(|_| Error::Unavailable)? {
             if visible.len() % 256 == 0 {
                 source.budget.authorize(&source.pin).await?;
             }
-            source.budget.work(32 + edges.len())?;
+            source.budget.work(32)?;
             if visible.len() >= index.num_commits() as usize {
                 return Err(Error::Corrupt);
             }
-            visible.insert(git_id(&id)?);
+            let id = git_id(&id)?;
+            let change = m::ChangeId::from_slice(change.as_bytes()).map_err(|_| Error::Corrupt)?;
+            visible.insert(id);
+            references
+                .entry(format!("change:{change}"))
+                .or_insert_with(|| VisibleChange {
+                    change,
+                    commits: vec![],
+                })
+                .commits
+                .push(id);
+        }
+        for targets in references.values_mut() {
+            source.budget.work(targets.commits.len() * 32)?;
+            targets.commits.sort_unstable();
         }
         // Preserve the upstream prefix index and ordered target offsets. With
         // no heads its bit set has no parent traversal; visibility is overlaid.
@@ -99,6 +121,7 @@ impl Visibility {
             heads,
             visible,
             changes,
+            references,
             bookmarks: BTreeMap::new(),
             workspaces: BTreeMap::new(),
             _memory: memory,
@@ -173,6 +196,19 @@ impl Visibility {
             .unwrap_or_default();
         budget.work(1 + bookmarks.len() + workspaces.len())?;
         Ok((bookmarks.to_vec(), workspaces.to_vec()))
+    }
+    pub(in super::super) fn workspace_names(
+        &self,
+        id: m::GitSha1Id,
+        budget: &Budget,
+    ) -> Result<Vec<String>> {
+        let names = self
+            .workspaces
+            .get(&id)
+            .map(Vec::as_slice)
+            .unwrap_or_default();
+        budget.work(1 + names.len())?;
+        Ok(names.to_vec())
     }
 }
 fn label_weight(

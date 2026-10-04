@@ -10,6 +10,8 @@ mod prepared_details;
 mod prepared_points;
 #[path = "local_browser/prepared_points_http.rs"]
 mod prepared_points_http;
+#[path = "local_browser/prepared_references.rs"]
+mod prepared_references;
 #[path = "local_browser/reviews.rs"]
 mod review_acceptance;
 #[path = "local_browser/scoped_differences.rs"]

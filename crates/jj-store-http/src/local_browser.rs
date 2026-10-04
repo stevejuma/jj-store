@@ -530,7 +530,10 @@ async fn query(
         operation: query.operation,
     };
     let data = match query.request {
-        request if request.can_use_prepared_index() => {
+        request
+            if request.can_use_prepared_index()
+                && !matches!(&request, local::Request::References(r) if r.operation != query.operation) =>
+        {
             match state
                 .local_tasks
                 .read(access.clone(), query.operation, request.clone())
