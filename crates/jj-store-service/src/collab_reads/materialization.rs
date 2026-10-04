@@ -70,8 +70,9 @@ pub(super) enum Data {
     Review(Arc<wal::publication::ReviewStoreSelection>),
     Work(Arc<WorkData>),
 }
-pub(super) struct WorkData {
+pub(crate) struct WorkData {
     pub state: wal::publication::WorkStateV1,
+    pub projection: crate::work::projection::Projection,
     pub objects: usize,
     pub bytes: usize,
 }
@@ -142,10 +143,13 @@ pub(super) async fn load(session: &NativeSession, root: RecordRef) -> Result<Arc
             let bytes = serde_json::to_vec(&(&state.projects, &state.tasks, &state.comments))
                 .map_err(|_| Error::Corrupt)?
                 .len();
+            let projection =
+                crate::work::projection::Projection::new(state).map_err(|_| Error::Corrupt)?;
             Data::Work(Arc::new(WorkData {
                 state: state.clone(),
                 objects: store.object_count(),
-                bytes,
+                bytes: bytes + projection.bytes,
+                projection,
             }))
         }
         _ => return Err(Error::Corrupt),
@@ -180,6 +184,45 @@ impl Cache {
             clock,
             entries: Mutex::default(),
         }
+    }
+    pub(crate) async fn work(
+        &self,
+        session: &NativeSession,
+        epoch: m::EpochId,
+        root: Option<RecordRef>,
+    ) -> crate::work::Result<Arc<WorkData>> {
+        use crate::work::Error as E;
+        let data = match root {
+            Some(root) => {
+                let data = self
+                    .get(session, epoch, root)
+                    .await
+                    .map_err(|error| match error {
+                        Error::Denied => E::Denied,
+                        Error::Limit => E::Limit,
+                        Error::Corrupt => E::Corrupt,
+                        _ => E::Unavailable,
+                    })?;
+                match data.as_ref() {
+                    Data::Work(data) => data.clone(),
+                    _ => return Err(E::Corrupt),
+                }
+            }
+            None => {
+                let state = wal::publication::WorkStateV1::default();
+                let projection = crate::work::projection::Projection::new(&state)?;
+                Arc::new(WorkData {
+                    state,
+                    projection,
+                    objects: 0,
+                    bytes: 0,
+                })
+            }
+        };
+        if data.objects > session.limits.inventory_nodes {
+            return Err(E::Limit);
+        }
+        Ok(data)
     }
     pub(super) async fn get(
         &self,

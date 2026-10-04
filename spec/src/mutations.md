@@ -59,6 +59,13 @@ per-pin and concurrency budgets; a small cache cannot disable a valid query.
 Neither warm reads nor derived directory/reaction indexes stage or publish
 state.
 
+WorkStore browse and detail pins share immutable root data and derived ordered
+keys, counts and searchable fields. Query continuations retain keys rather than
+prehydrated rows; fresh request authorization, inventory admission and epoch
+checks still apply. These read-only projections never retain actors, guards,
+credentials or accepted command state, and do not change publication, durable
+receipts or domain capacities.
+
 Native/local resident LRU eviction releases only disposable prepared read
 handles. It cannot cancel accepted commands, discard durable receipts, change
 native or companion selections, or replace the operation captured by an active

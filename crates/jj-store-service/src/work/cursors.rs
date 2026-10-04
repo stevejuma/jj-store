@@ -1,7 +1,7 @@
 //! Opaque query-bound continuations retain audited immutable snapshots only.
 use super::*;
 use crate::auth::Clock;
-use jj_store_wal::publication::WorkStateV1;
+use crate::collab_reads::WorkData;
 use std::{
     collections::{BTreeMap, BTreeSet},
     sync::{Arc, Mutex},
@@ -9,38 +9,8 @@ use std::{
 
 pub(super) struct Pin {
     pub snapshot: WorkReadSnapshot,
-    pub state: WorkStateV1,
-}
-impl Pin {
-    fn bytes(&self) -> usize {
-        let entities =
-            self.state.projects.len() + self.state.tasks.len() + self.state.comments.len();
-        entities * 2048
-            + self
-                .state
-                .projects
-                .values()
-                .map(|p| p.body.len())
-                .sum::<usize>()
-            + self
-                .state
-                .tasks
-                .values()
-                .map(|t| t.body.len())
-                .sum::<usize>()
-            + self
-                .state
-                .comments
-                .values()
-                .map(|c| c.body.as_ref().map_or(0, String::len))
-                .sum::<usize>()
-            + self
-                .state
-                .projects
-                .values()
-                .map(|p| p.repositories.len() * 128)
-                .sum::<usize>()
-    }
+    pub data: Arc<WorkData>,
+    pub selection: Option<super::projection::Selection>,
 }
 struct Entry<Q> {
     pin: Arc<Pin>,
@@ -122,15 +92,21 @@ impl<Q: CursorQuery> Registry<Q> {
         let expires = now.checked_add(300).ok_or(Error::Limit)?;
         let mut entries = self.entries.lock().map_err(|_| Error::Unavailable)?;
         entries.retain(|_, entry| now < entry.expires);
-        let mut seen = BTreeSet::new();
+        let mut seen_pins = BTreeSet::new();
+        let mut seen_data = BTreeSet::new();
         let mut bytes = 0usize;
         for retained in entries
             .values()
             .map(|e| &e.pin)
             .chain(std::iter::once(&pin))
         {
-            if seen.insert(Arc::as_ptr(retained) as usize) {
-                bytes = bytes.checked_add(retained.bytes()).ok_or(Error::Limit)?;
+            if seen_data.insert(Arc::as_ptr(&retained.data) as usize) {
+                bytes = bytes.checked_add(retained.data.bytes).ok_or(Error::Limit)?;
+            }
+            if seen_pins.insert(Arc::as_ptr(retained) as usize) {
+                bytes = bytes
+                    .checked_add(retained.selection.as_ref().map_or(0, |keys| keys.bytes()))
+                    .ok_or(Error::Limit)?;
             }
         }
         if entries.len() >= 64 || bytes > 64 * 1024 * 1024 {

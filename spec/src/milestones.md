@@ -101,7 +101,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                                                     | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                                            | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                                                      | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                                                    | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-094,E-READ-029 |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                                                    | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-094,E-READ-029,E-READ-030 |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                                                   | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                                                       | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                                           | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -78503,6 +78503,105 @@ entries.
     "web/tests/vite/projects-repositories.test.ts#directory retries retain an error episode until successful recovery, including queued reads",
     "web/tests/vite/local-browser.test.ts#local_review_reads_reject_foreign_companion_snapshots",
     "web/tests/vite/projects-hub.test.ts#refresh becomes busy before discovery and remains busy through reads"
+  ]
+},
+{
+  "id": "E-READ-030",
+  "tasks": [
+    "M11.4",
+    "M13.4"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change mrumlvxk",
+  "kind": "Root-bound native WorkStore order/count/search projections and selected-window summary hydration",
+  "versions": "Rust1.98.1; jj-lib0.45.1; macOS ARM64. Existing bounded collaboration cache and WorkStore capacities retained.",
+  "formats": "Authoritative WorkStore records, native/companion snapshots, wire DTOs and opaque cursor format unchanged. Native first pages share audited root data keyed by repository/epoch/root; browse cursors retain compact matching keys. Local browse uses the same window projector but still reconstructs each request.",
+  "files": [
+    "crates/jj-store-service/src/collab_reads/materialization.rs",
+    "crates/jj-store-service/src/collab_reads.rs",
+    "crates/jj-store-service/src/work/browse.rs",
+    "crates/jj-store-service/src/work/browse_tests.rs",
+    "crates/jj-store-service/src/work/cursors.rs",
+    "crates/jj-store-service/src/work/projection.rs",
+    "crates/jj-store-service/src/work/reads.rs",
+    "crates/jj-store-service/src/work.rs",
+    "crates/jj-store-service/tests/work_store/cache.rs",
+    "crates/jj-store-service/tests/work_store.rs",
+    "docs/implementation-plan.md",
+    "spec/src/architecture.md",
+    "spec/src/mutations.md",
+    "spec/src/projects.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-WORK-005",
+    "JST-WORK-009",
+    "JST-MUT-001"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-service --lib --locked work_browse_hydrates_only_the_returned_window -- --nocapture (initial fixture)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Fixture imported a WorkActorV1 type not exported by WAL. Repaired fixture through the existing ProjectV1 serde contract; no product/dependency change. work-window-before.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --lib --locked work_browse_hydrates_only_the_returned_window -- --nocapture (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "One-row offset89/query matches100rows and eagerly hydrates100summaries. Exact red baseline after fixture repair: work-window-before-after-fixture.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --lib --locked work_browse_hydrates_only_the_returned_window -- --nocapture (after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "1pass. Deep project/task windows hydrate only returned rows while preserving complete-root matches, counts, identity ordering and tombstone handling. work-window-after.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test work_store --locked work_first_pages_share_selected_roots_and_enforce_fresh_limits -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "1pass. Concurrent warm browse/detail perform0WorkStore object reads; fresh lower inventory admission rejects warm and retained pages; a new root reloads and old query keys/counts remain pinned. work-cache-after.log."
+    },
+    {
+      "command": "cargo check -p jj-store-service -p jj-store-http -p jj-store-rpc --lib --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected package and direct HTTP/RPC libraries pass/28.95s; unchanged public contracts. work-packages-030.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test work_store --test local_work --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "15pass:5native/10local direct WorkStore consumers, filtering/counts/pins/receipts/staging/identity/GC/expiry. work-consumers-030.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test native_collab --locked native_work_comment_reactions_pin_versions_authorize_and_survive_cold_sessions -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "1pass/0.21s. Direct WorkComment reaction consumer remains exact-version/home-authorized through cold sessions. work-reactions-030.log."
+    },
+    {
+      "command": "cargo fmt -p jj-store-service -- --check; pnpm exec prettier --write spec/src/projects.md spec/src/mutations.md spec/src/architecture.md docs/implementation-plan.md; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Focused formatting passes;11protected files/4chapters,5validators/23chapters/172requirements and138task bookkeeping pass. Logs work-rust-format-030.log/work-doc-format-030.log/work-spec-first-030.log/work-spec-030.log/work-progress-030.log. No UI/RustFS/root aggregates or comprehensive qualification rerun."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Cross-request local WorkStore root reuse, repository card aggregate/selected-tip summaries, application content search projections, native immutable additional-operation construction and prepared local operation/prefix/comparison/deep/native RPC delivery remain open.",
+    "Native root cache retention is capped at64MiB plus the existing64MiB cursor registry; ordered keys and normalized fields are included in charges. Delivery tests are small deterministic regressions, not combined retained-root pressure or isolated RSS qualification.",
+    "Complete combined contracts/integration, cold production browser, Linux/native large fixtures, release latency/RSS, restart/revocation/publication/fault/real-RustFS, registry-only and Help/source-review refresh remain the separate later qualification slice. No milestone promotion; main/original dev services/Linux source/visual baselines untouched."
+  ],
+  "next": "Continue lightweight repository cards and shared local/root-bound application search delivery in this retained workspace; comprehensive verification stays deferred.",
+  "scope": "Remove repeated native WorkStore reconstruction, repeated sorting and quadratic summary count scans; hydrate only selected native/local browse windows under existing authority/capacity contracts.",
+  "tests": [
+    "crates/jj-store-service/src/work/browse_tests.rs#work_browse_hydrates_only_the_returned_window",
+    "crates/jj-store-service/tests/work_store/cache.rs#work_first_pages_share_selected_roots_and_enforce_fresh_limits",
+    "crates/jj-store-service/tests/work_store.rs#work_browse_filters_complete_roots_and_pins_summary_counts",
+    "crates/jj-store-service/tests/local_work.rs#local_browser_browse_uses_complete_root_and_explicit_committed_pin",
+    "crates/jj-store-service/tests/native_collab.rs#native_work_comment_reactions_pin_versions_authorize_and_survive_cold_sessions"
   ]
 }
 ]

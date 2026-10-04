@@ -8,6 +8,9 @@ use jj_store_service::{
 };
 use std::sync::Arc;
 
+#[path = "work_store/cache.rs"]
+mod cache;
+
 const REPO: m::RepositoryId = m::RepositoryId::new([1; 16]);
 const ACTOR: m::PrincipalId = m::PrincipalId::new([2; 16]);
 async fn fixture() -> (Arc<MemoryStore>, Arc<NativeSession>) {

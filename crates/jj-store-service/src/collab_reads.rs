@@ -11,8 +11,8 @@ use jj_store_wal::{
     self as wal,
     publication::{AgentStoreSelection, CollabTargetReaderV1, ReviewStoreSelection},
 };
-pub(crate) use materialization::Cache;
 pub use materialization::ReadScope;
+pub(crate) use materialization::{Cache, WorkData};
 use materialization::{Data, ReactionData, ThreadData};
 use serde::{Deserialize, Serialize};
 use std::{

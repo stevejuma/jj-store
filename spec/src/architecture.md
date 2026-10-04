@@ -729,3 +729,13 @@ directory reads to two across refresh and canceled generations. The shared local
 review snapshot validator preserves repository, profile and companion pin checks
 for every directory and review consumer. Viewport observation and cancellation
 do not alter transport admission or authorize linked repositories.
+
+The WorkStore pager reuses validated immutable root data through the service's
+bounded collaboration materialization cache. Ordered keys, normalized searchable
+fields and one-pass aggregate counts remain derived service projections. Fresh
+captured manifest envelopes and request limits stay outside the cache; native
+continuations retain query-matching keys and share the underlying root charge.
+Local browse hydrates only its selected window with the same projector; shared
+local reconstruction and application search indexes remain separate delivery
+work. No domain format, storage authority or upstream JJ import moves into the
+service.

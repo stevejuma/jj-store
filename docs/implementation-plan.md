@@ -56,14 +56,15 @@ qualification slice unless a delivery changes its own documentation tooling.
 Passing focused checks does not complete the plan's acceptance or promote a
 milestone.
 
-Delivery evidence E-READ-025 through E-READ-029 covers prepared local point and
+Delivery evidence E-READ-025 through E-READ-030 covers prepared local point and
 visible-reference reads, native retained visibility/reverse labels, shared idle
-resident eviction, and viewport-owned repository metadata reads. Visible card
-loading still uses the existing bounded metadata pages; lightweight server
-summaries and collaboration/search projections remain delivery work. Native
-immutable additional-operation construction and local operation/deep lookup are
-also still pending. These focused deliveries do not complete the later combined
-qualification gate.
+resident eviction, viewport-owned repository metadata reads, and native
+root-bound WorkStore projections with selected-window summary hydration. Visible
+card loading still uses the existing bounded metadata pages; lightweight server
+summaries, cross-request local WorkStore root reuse and application search
+projections remain delivery work. Native immutable additional-operation
+construction and local operation/deep lookup are also still pending. These
+focused deliveries do not complete the later combined qualification gate.
 
 ### Deferred complete qualification
 

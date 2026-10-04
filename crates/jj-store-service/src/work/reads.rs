@@ -6,7 +6,6 @@ use crate::{
     auth::{Clock, Permission},
     native::NativeSession,
 };
-use jj_store_wal::publication::WorkStateV1;
 use serde::Serialize;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
@@ -14,11 +13,19 @@ use tokio::sync::Semaphore;
 pub struct WorkPager {
     pub(super) registry: Registry<WorkCursorQuery>,
     pub(super) permits: Semaphore,
+    pub(super) cache: crate::collab_reads::Cache,
 }
 impl WorkPager {
     pub fn new(clock: Arc<dyn Clock>) -> Self {
         Self {
-            registry: Registry::new(clock),
+            registry: Registry::new(clock.clone()),
+            cache: crate::collab_reads::Cache::new(
+                crate::collab_pages::Limits {
+                    encoded_collab_bytes: 64 * 1024 * 1024,
+                    ..Default::default()
+                },
+                clock,
+            ),
             permits: Semaphore::new(8),
         }
     }
@@ -37,10 +44,10 @@ impl WorkPager {
             self.registry
                 .lookup(session.repository, &WorkCursorQuery::Page(query.clone()))?
         } else {
-            (capture_pin(&session).await?, 0)
+            (Arc::new(self.capture_pin(&session).await?), 0)
         };
         authorize_pin(&session, &pin).await?;
-        let state = &pin.state;
+        let state = &pin.data.state;
         let mut page = WorkPage {
             version: 1,
             snapshot: pin.snapshot.clone(),
@@ -63,7 +70,13 @@ impl WorkPager {
             );
             page.tasks.push(task.clone());
             take_page(
-                state.comments.values().filter(|c| c.task == id),
+                pin.data
+                    .projection
+                    .task_comments
+                    .get(&id)
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|id| state.comments.get(id)),
                 offset,
                 query.limit,
                 &mut page.comments,
@@ -73,7 +86,13 @@ impl WorkPager {
             page.projects
                 .push(state.projects.get(&id).ok_or(Error::NotFound)?.clone());
             take_page(
-                state.tasks.values().filter(|t| t.project == id),
+                pin.data
+                    .projection
+                    .project_tasks
+                    .get(&id)
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|id| state.tasks.get(id)),
                 offset,
                 query.limit,
                 &mut page.tasks,
@@ -101,6 +120,9 @@ impl WorkPager {
 }
 pub(super) async fn authorize_pin(session: &NativeSession, pin: &Pin) -> Result<()> {
     session.principal(Permission::Read).await?;
+    if pin.data.objects > session.limits.inventory_nodes {
+        return Err(Error::Limit);
+    }
     if session.snapshot().await?.manifest().epoch != pin.snapshot.epoch {
         return Err(Error::CursorReset);
     }
@@ -135,23 +157,26 @@ pub(crate) fn take_page<'a, T: Serialize + Clone + 'a>(
     Ok((count, false))
 }
 
-pub(super) async fn capture_pin(session: &NativeSession) -> Result<Arc<Pin>> {
-    session.principal(Permission::Read).await?;
-    let current = session.snapshot().await?;
-    let manifest = current.manifest();
-    let state = match manifest.work_root {
-        Some(root) => session.coordinator.work_store(root).await?.state().clone(),
-        None => WorkStateV1::default(),
-    };
-    Ok(Arc::new(Pin {
-        snapshot: WorkReadSnapshot {
-            repo_id: session.repository,
-            epoch: manifest.epoch,
-            published_seq: manifest.published,
-            manifest_revision: manifest.revision,
-            work_root: manifest.work_root.map(|r| r.digest),
-            work_state_version: manifest.work_state_version,
-        },
-        state,
-    }))
+impl WorkPager {
+    pub(super) async fn capture_pin(&self, session: &NativeSession) -> Result<Pin> {
+        session.principal(Permission::Read).await?;
+        let current = session.snapshot().await?;
+        let manifest = current.manifest();
+        let data = self
+            .cache
+            .work(session, manifest.epoch, manifest.work_root)
+            .await?;
+        Ok(Pin {
+            snapshot: WorkReadSnapshot {
+                repo_id: session.repository,
+                epoch: manifest.epoch,
+                published_seq: manifest.published,
+                manifest_revision: manifest.revision,
+                work_root: manifest.work_root.map(|r| r.digest),
+                work_state_version: manifest.work_state_version,
+            },
+            data,
+            selection: None,
+        })
+    }
 }

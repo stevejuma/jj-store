@@ -155,6 +155,20 @@ Filters and continuations bind the exact query and retained root. The hub keeps
 independent home snapshots and visibly reports partial discovery, failed homes
 and remaining pages. Linked repository metadata never grants code access.
 
+Native WorkStore first pages MUST reuse a bounded validated projection keyed by
+repository, epoch and selected immutable root. The projection retains data only,
+with ordered entity keys, normalized searchable fields and counts computed in
+one pass over each catalog. Each first browse query filters compact keys from
+the complete root, then hydrates only its returned window. Its opaque
+continuations retain those ordered matching keys, so deep pages neither rebuild
+summaries nor repeat sorting, body normalization or count scans. Multiple pins
+of one root share its charge; query-key storage is charged separately. Every
+request retains fresh authorization, inventory limits and epoch checks. Cache
+loss, expiry and new selected roots cannot broaden a query or hide failed
+reconstruction. Local browse uses the same selected-window projection;
+cross-request local root reuse and comprehensive capacity/pressure qualification
+remain separate slices.
+
 The installation directory includes Projects, Tasks, Reviews, Agents and
 Repositories. The sidebar reads unfiltered projects independently from main-view
 queries and nests active linked repositories. Reviews remain owned by
