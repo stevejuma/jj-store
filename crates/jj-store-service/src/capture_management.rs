@@ -98,6 +98,7 @@ pub enum CaptureHarnessProfile {
     CodexCliJsonlV1,
     CodexDesktopJsonlV1,
     CursorDesktopTranscriptV1,
+    CursorCliTranscriptV1,
     OpencodeReadOnlyApiV1,
     OpencodeExportJsonV1,
 }

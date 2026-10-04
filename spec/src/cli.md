@@ -1530,3 +1530,10 @@ Credential environment/OS names and private-file paths in this inventory are
 references only. The Settings API neither reads their credential contents nor
 accepts literal secret values. Search source field omissions use established
 extraction defaults; current clients submit the complete typed configuration.
+
+The configured local capture extension adds independently qualified Cursor
+Desktop 3.22.7 and CLI 2026.09.26-dd393fe, with an explicit transcript mode in
+owned Cursor hook setup. That mode provides current binding/lifecycle without
+replaying hook messages alongside transcript messages. OpenCode 1.18.30 uses the
+configured read-only loopback API. All settings are editable under Agents and
+apply on the next backend startup; capture never starts a harness.

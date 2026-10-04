@@ -4,7 +4,7 @@ async fn configuration_saves_are_conditional_private_and_leave_capture_state_unt
     let f = Fixture::new(false).await;
     let initial = f.manager.settings(f.actor).await.unwrap();
     assert!(!initial.desired.enabled && !initial.restart_required);
-    assert_eq!(initial.defaults.len(), 2);
+    assert_eq!(initial.defaults.len(), 5);
     let original: toml::Value =
         toml::from_str(&fs::read_to_string(f.source.root.path().join("server.toml")).unwrap())
             .unwrap();
@@ -131,4 +131,48 @@ async fn configuration_revalidates_admin_identity_lock_and_regular_file() {
         Err(Error::Unavailable)
     );
     assert_eq!(before, f.bytes());
+}
+
+#[tokio::test]
+async fn cursor_and_opencode_settings_round_trip_without_starting_capture() {
+    let f = Fixture::new(false).await;
+    let initial = f.manager.settings(f.actor).await.unwrap();
+    let mut configuration = initial.desired.clone();
+    configuration.harnesses = initial.defaults.clone();
+    for harness in &mut configuration.harnesses {
+        if harness.profile == CaptureHarnessProfile::OpencodeReadOnlyApiV1 {
+            harness.endpoint = Some("http://127.0.0.1:4096/".into());
+        }
+    }
+    let saved = f
+        .manager
+        .save_settings(
+            f.actor,
+            SaveCaptureSettings {
+                version: 1,
+                expected_revision: initial.revision,
+                configuration: configuration.clone(),
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(saved.desired, configuration);
+    assert!(saved.restart_required);
+    assert_eq!(
+        f.manager.settings(f.actor).await.unwrap().desired,
+        configuration
+    );
+    assert!(!f.config.state_dir.join("agent-capture").exists());
+    let loaded = Config::load(&f.source.root.path().join("server.toml")).unwrap();
+    assert_eq!(loaded.agent_capture.harnesses.len(), 5);
+    assert_eq!(
+        loaded
+            .agent_capture
+            .harnesses
+            .last()
+            .unwrap()
+            .endpoint
+            .as_deref(),
+        Some("http://127.0.0.1:4096/")
+    );
 }

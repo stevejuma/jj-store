@@ -44,6 +44,27 @@ pub struct HarnessConfig {
     pub endpoint: Option<String>,
 }
 impl HarnessConfig {
+    pub fn roots(&self, home: Option<&Path>, codex_home: Option<&Path>) -> Result<Vec<PathBuf>> {
+        match self.profile {
+            CaptureProfile::CodexCliJsonlV1 | CaptureProfile::CodexDesktopJsonlV1 => {
+                self.codex_roots(home, codex_home)
+            }
+            CaptureProfile::CursorDesktopTranscriptV1 | CaptureProfile::CursorCliTranscriptV1 => {
+                if !self.roots.is_empty() {
+                    return Ok(self.roots.clone());
+                }
+                let data = std::env::var_os("CURSOR_DATA_DIR")
+                    .map(PathBuf::from)
+                    .or_else(|| home.map(|p| p.join(".cursor")))
+                    .ok_or(Error::Config("Cursor capture home unavailable"))?;
+                Ok(vec![data.join("projects")])
+            }
+            CaptureProfile::OpencodeReadOnlyApiV1 => Ok(vec![]),
+            CaptureProfile::OpencodeExportJsonV1 => {
+                Err(Error::Config("capture export unavailable"))
+            }
+        }
+    }
     /// Pure root selection; callers must separately enable and prepare capture.
     pub fn codex_roots(
         &self,

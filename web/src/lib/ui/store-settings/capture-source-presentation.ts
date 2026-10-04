@@ -44,6 +44,7 @@ export const captureSourceHarnesses = [
 const integrations = {
   "codex-cli-jsonl-v1": "codex",
   "codex-desktop-jsonl-v1": "codex",
+  "cursor-cli-transcript-v1": "cursor",
   "cursor-desktop-transcript-v1": "cursor",
   "opencode-read-only-api-v1": "open_code",
   "opencode-export-json-v1": "open_code",

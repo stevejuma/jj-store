@@ -81,6 +81,7 @@ export interface CaptureManagement {
 export const captureProfiles = {
   "codex-cli-jsonl-v1": "Codex CLI",
   "codex-desktop-jsonl-v1": "Codex Desktop",
+  "cursor-cli-transcript-v1": "Cursor CLI",
   "cursor-desktop-transcript-v1": "Cursor Desktop",
   "opencode-read-only-api-v1": "OpenCode API",
   "opencode-export-json-v1": "OpenCode export",

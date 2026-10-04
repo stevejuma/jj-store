@@ -3,37 +3,77 @@
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
+  import { Input } from "@lapismd/design-core/shadcn/input";
   import { Textarea } from "@lapismd/design-core/shadcn/textarea";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import { agentAvatarUrl } from "../../collaboration/agent-avatar.js";
   import type { CaptureManagement } from "../../controller/capture-types.js";
-  let { management, busy }: { management: CaptureManagement; busy: boolean } =
-    $props();
+  let {
+    management,
+    busy,
+    harness = "codex",
+  }: {
+    management: CaptureManagement;
+    busy: boolean;
+    harness?: "codex" | "cursor" | "open_code";
+  } = $props();
   const settings = $derived(management.state.settings);
   let open = $state(true);
-  const codex = {
-    id: "codex",
-    name: "Codex",
-    handle: "codex",
-    initials: "CX",
+  const name = $derived(
+    harness === "open_code"
+      ? "OpenCode"
+      : harness === "cursor"
+        ? "Cursor"
+        : "Codex",
+  );
+  const member = $derived({
+    id: harness,
+    name,
+    handle: harness,
+    initials: name.slice(0, 2),
     kind: "agent" as const,
-    avatarUrl: agentAvatarUrl("codex"),
-  };
-  const harnesses = [
-    {
-      name: "Codex CLI",
-      profile: "codex-cli-jsonl-v1",
-      enabled: "cli",
-      roots: "cliRoots",
-    },
-    {
-      name: "Codex Desktop",
-      profile: "codex-desktop-jsonl-v1",
-      enabled: "desktop",
-      roots: "desktopRoots",
-    },
-  ] as const;
+    avatarUrl: agentAvatarUrl(harness),
+  });
+  const profiles = {
+    codex: [
+      {
+        name: "Codex CLI",
+        profile: "codex-cli-jsonl-v1",
+        enabled: "cli",
+        roots: "cliRoots",
+      },
+      {
+        name: "Codex Desktop",
+        profile: "codex-desktop-jsonl-v1",
+        enabled: "desktop",
+        roots: "desktopRoots",
+      },
+    ],
+    cursor: [
+      {
+        name: "Cursor Desktop",
+        profile: "cursor-desktop-transcript-v1",
+        enabled: "cursorDesktop",
+        roots: "cursorDesktopRoots",
+      },
+      {
+        name: "Cursor CLI",
+        profile: "cursor-cli-transcript-v1",
+        enabled: "cursorCli",
+        roots: "cursorCliRoots",
+      },
+    ],
+    open_code: [
+      {
+        name: "OpenCode",
+        profile: "opencode-read-only-api-v1",
+        enabled: "openCode",
+        roots: "openCodeEndpoint",
+      },
+    ],
+  } as const;
+  const harnesses = $derived(profiles[harness]);
 </script>
 
 <Collapsible.Root class="store-capture-harness" bind:open>
@@ -44,12 +84,13 @@
         type="button"
         variant="ghost"
         class="store-capture-harness__trigger"
-        aria-label="Codex configuration"
+        aria-label={`${name} configuration`}
       >
-        <CommunityMemberAvatar member={codex} size="small" decorative />
+        <CommunityMemberAvatar {member} size="small" decorative />
         <span class="store-capture-harness__label"
-          >Codex <span class="store-settings__row-description"
-            >CLI and Desktop</span
+          >{name}
+          <span class="store-settings__row-description"
+            >{harness === "open_code" ? "Local API" : "CLI and Desktop"}</span
           ></span
         >
         <ChevronRightIcon data-icon="inline-end" aria-hidden="true" />
@@ -70,7 +111,11 @@
               ><Field.Description id={`capture-${h.enabled}-help`}
                 >Qualified version {settings.value.defaults.find(
                   (d) => d.profile === h.profile,
-                )?.product_version}. Inactive history requires explicit import.</Field.Description
+                )?.product_version}. {harness === "codex"
+                  ? "Inactive history requires explicit import."
+                  : harness === "cursor"
+                    ? "Requires one-time Cursor hook setup. History import is deferred."
+                    : "Connects to an existing local API. History import is deferred."}</Field.Description
               ></Field.Content
             >
             <Switch
@@ -88,27 +133,47 @@
           >
             <Field.Content
               ><Field.Label for={`capture-${h.roots}`}
-                >{h.name} folders</Field.Label
+                >{h.name}
+                {harness === "open_code"
+                  ? "API endpoint"
+                  : "folders"}</Field.Label
               ><Field.Description id={`capture-${h.roots}-help`}
-                >One absolute folder per line, up to 16. Leave empty to use
-                these server defaults:{#each settings.value.defaults.find((d) => d.profile === h.profile)?.roots ?? [] as root}<br
-                  /><code>{root}</code>{/each}</Field.Description
+                >{#if harness === "open_code"}A credential-free loopback URL for
+                  your running OpenCode API.{:else}One absolute folder per line,
+                  up to 16. Leave empty to use these server defaults:{#each settings.value.defaults.find((d) => d.profile === h.profile)?.roots ?? [] as root}<br
+                    /><code>{root}</code>{/each}{/if}</Field.Description
               ></Field.Content
             >
-            <Textarea
-              class="store-settings__input"
-              id={`capture-${h.roots}`}
-              aria-describedby={`capture-${h.roots}-help`}
-              rows={2}
-              maxlength={65552}
-              spellcheck={false}
-              value={settings.draft[h.roots]}
-              disabled={busy || !settings.draft[h.enabled]}
-              oninput={(event) =>
-                management.configure({
-                  [h.roots]: event.currentTarget.value,
-                })}
-            />
+            {#if harness === "open_code"}
+              <Input
+                id={`capture-${h.roots}`}
+                class="store-settings__input"
+                aria-describedby={`capture-${h.roots}-help`}
+                type="url"
+                placeholder="http://127.0.0.1:4096/"
+                value={settings.draft.openCodeEndpoint}
+                disabled={busy || !settings.draft.openCode}
+                oninput={(event) =>
+                  management.configure({
+                    openCodeEndpoint: event.currentTarget.value,
+                  })}
+              />
+            {:else}
+              <Textarea
+                class="store-settings__input"
+                id={`capture-${h.roots}`}
+                aria-describedby={`capture-${h.roots}-help`}
+                rows={2}
+                maxlength={65552}
+                spellcheck={false}
+                value={settings.draft[h.roots]}
+                disabled={busy || !settings.draft[h.enabled]}
+                oninput={(event) =>
+                  management.configure({
+                    [h.roots]: event.currentTarget.value,
+                  })}
+              />
+            {/if}
           </Field.Field>
         {/each}
       </Field.Group>

@@ -190,3 +190,61 @@ test("configuration can save while an ordinary runtime observation is waiting", 
   await observation;
   f.management.destroy();
 });
+
+test("Cursor Desktop, CLI and OpenCode settings preserve roots, endpoint and versions", () => {
+  const s = captureSettings(false);
+  const additions = [
+    {
+      profile: "cursor-desktop-transcript-v1",
+      product_version: "3.22.7",
+      roots: ["/tmp/cursor/projects"],
+    },
+    {
+      profile: "cursor-cli-transcript-v1",
+      product_version: "2026.09.26-dd393fe",
+      roots: ["/tmp/cursor/projects"],
+    },
+    {
+      profile: "opencode-read-only-api-v1",
+      product_version: "1.18.30",
+      roots: [],
+      endpoint: "http://127.0.0.1:4096/",
+    },
+  ];
+  const defaults = s.defaults;
+  const d = {
+    ...captureConfigDraft(s.desired),
+    enabled: true,
+    cursorDesktop: true,
+    cursorCli: true,
+    openCode: true,
+    cursorDesktopRoots: "/tmp/desktop/projects",
+    cursorCliRoots: "/tmp/cli/projects",
+    openCodeEndpoint: "http://127.0.0.1:4096/",
+  };
+  const c = captureConfigValue(d, defaults);
+  expect(c.harnesses).toHaveLength(4);
+  expect(c.harnesses[1]).toMatchObject({
+    profile: additions[0].profile,
+    roots: ["/tmp/desktop/projects"],
+  });
+  expect(c.harnesses[2]).toMatchObject({
+    profile: additions[1].profile,
+    product_version: additions[1].product_version,
+    roots: ["/tmp/cli/projects"],
+  });
+  expect(c.harnesses[3]).toMatchObject({
+    endpoint: "http://127.0.0.1:4096/",
+    roots: [],
+  });
+  expect(captureConfigDraft(c)).toMatchObject(d);
+  for (const endpoint of [
+    "https://example.com/",
+    "http://localhost:4096/",
+    "http://user:secret@127.0.0.1:4096/",
+    "http://127.0.0.1:4096/session",
+  ])
+    expect(() =>
+      captureConfigValue({ ...d, openCodeEndpoint: endpoint }, defaults),
+    ).toThrow();
+});

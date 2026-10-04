@@ -6,6 +6,9 @@ import { requireCapture } from "./capture-validation.js";
 export const configurableProfiles = [
   "codex-cli-jsonl-v1",
   "codex-desktop-jsonl-v1",
+  "cursor-desktop-transcript-v1",
+  "cursor-cli-transcript-v1",
+  "opencode-read-only-api-v1",
 ] as const;
 export type CaptureSaveSettings = Exact<
   NonNullable<
@@ -18,6 +21,12 @@ export type CaptureDraft = {
   desktop: boolean;
   cliRoots: string;
   desktopRoots: string;
+  cursorDesktop: boolean;
+  cursorCli: boolean;
+  openCode: boolean;
+  cursorDesktopRoots: string;
+  cursorCliRoots: string;
+  openCodeEndpoint: string;
   readers: string;
   interval: string;
   sources: string;
@@ -60,6 +69,16 @@ export function captureConfigDraft(
     desktop: c.harnesses.some((h) => h.profile === configurableProfiles[1]),
     cliRoots: roots(configurableProfiles[0]),
     desktopRoots: roots(configurableProfiles[1]),
+    cursorDesktop: c.harnesses.some(
+      (h) => h.profile === configurableProfiles[2],
+    ),
+    cursorCli: c.harnesses.some((h) => h.profile === configurableProfiles[3]),
+    openCode: c.harnesses.some((h) => h.profile === configurableProfiles[4]),
+    cursorDesktopRoots: roots(configurableProfiles[2]),
+    cursorCliRoots: roots(configurableProfiles[3]),
+    openCodeEndpoint:
+      c.harnesses.find((h) => h.profile === configurableProfiles[4])
+        ?.endpoint ?? "",
     readers: String(c.max_readers),
     interval: String(c.rescan_seconds),
     sources: String(c.max_sources),
@@ -88,6 +107,27 @@ function roots(text: string) {
     );
   return values;
 }
+function captureEndpoint(text: string): string {
+  const message =
+    "Use a credential-free local API URL, such as http://127.0.0.1:4096/.";
+  let url: URL;
+  try {
+    url = new URL(text.trim());
+  } catch {
+    throw new Error(message);
+  }
+  if (
+    !["http:", "https:"].includes(url.protocol) ||
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash ||
+    url.pathname !== "/" ||
+    !(url.hostname === "[::1]" || /^127(?:\.\d{1,3}){3}$/.test(url.hostname))
+  )
+    throw new Error(message);
+  return url.href;
+}
 export function captureConfigValue(
   d: CaptureDraft,
   defaults: Model<"CaptureHarnessSetting">[],
@@ -100,7 +140,14 @@ export function captureConfigValue(
       );
     return n;
   };
-  if (d.enabled && !d.cli && !d.desktop)
+  const selected = [d.cli, d.desktop, d.cursorDesktop, d.cursorCli, d.openCode];
+  const folders = [
+    d.cliRoots,
+    d.desktopRoots,
+    d.cursorDesktopRoots,
+    d.cursorCliRoots,
+  ];
+  if (d.enabled && !selected.some(Boolean))
     throw new Error("Select at least one harness before enabling capture.");
   return {
     enabled: d.enabled,
@@ -109,7 +156,7 @@ export function captureConfigValue(
     max_sources: integer(d.sources, 4096, "Tracked sources"),
     max_pending_bytes: integer(d.bytes, 67108864, "Pending byte budget"),
     harnesses: configurableProfiles.flatMap((profile, i) => {
-      if (!(i === 0 ? d.cli : d.desktop)) return [];
+      if (!selected[i]) return [];
       const version = defaults.find(
         (h) => h.profile === profile,
       )?.product_version;
@@ -119,7 +166,8 @@ export function captureConfigValue(
         {
           profile,
           product_version: version,
-          roots: roots(i === 0 ? d.cliRoots : d.desktopRoots),
+          roots: i === 4 ? [] : roots(folders[i]),
+          ...(i === 4 ? { endpoint: captureEndpoint(d.openCodeEndpoint) } : {}),
         },
       ];
     }),
@@ -141,14 +189,15 @@ export function validateCaptureSettings(v: Model<"LocalCaptureSettings">) {
       /^[a-f0-9]{64}$/.test(v.revision) &&
       typeof v.restart_required === "boolean" &&
       Array.isArray(v.defaults) &&
-      v.defaults.length === 2,
+      v.defaults.length >= 2 &&
+      v.defaults.length <= configurableProfiles.length,
   );
   for (const c of [v.desired, v.effective]) {
     requireCapture(
       c &&
         typeof c.enabled === "boolean" &&
         Array.isArray(c.harnesses) &&
-        c.harnesses.length <= 2 &&
+        c.harnesses.length <= configurableProfiles.length &&
         new Set(c.harnesses.map((h) => h.profile)).size === c.harnesses.length,
     );
     for (const h of c.harnesses)
@@ -158,13 +207,16 @@ export function validateCaptureSettings(v: Model<"LocalCaptureSettings">) {
         ) &&
           Array.isArray(h.roots) &&
           h.roots.every((s) => typeof s === "string") &&
+          (h.profile === "opencode-read-only-api-v1" || h.endpoint == null) &&
           h.product_version ===
             v.defaults.find((x) => x.profile === h.profile)?.product_version,
       );
     const parsed = captureConfigValue(captureConfigDraft(c), v.defaults);
     requireCapture(sameCaptureConfiguration(parsed, c));
   }
-  requireCapture(new Set(v.defaults.map((h) => h.profile)).size === 2);
+  requireCapture(
+    new Set(v.defaults.map((h) => h.profile)).size === v.defaults.length,
+  );
   for (const h of v.defaults) {
     requireCapture(
       configurableProfiles.includes(

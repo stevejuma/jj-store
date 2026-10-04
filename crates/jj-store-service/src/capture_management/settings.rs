@@ -9,6 +9,9 @@ pub struct CaptureHarnessSetting {
     pub product_version: String,
     #[schemars(length(max = 16))]
     pub roots: Vec<CaptureRootPath>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[schemars(length(max = 4096))]
+    pub endpoint: Option<String>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -22,7 +25,7 @@ pub struct CaptureConfiguration {
     pub max_sources: usize,
     #[schemars(range(min = 1, max = 67108864))]
     pub max_pending_bytes: u64,
-    #[schemars(length(max = 2))]
+    #[schemars(length(max = 5))]
     pub harnesses: Vec<CaptureHarnessSetting>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -35,7 +38,7 @@ pub struct LocalCaptureSettings {
     pub effective: CaptureConfiguration,
     pub restart_required: bool,
     /// Resolved process defaults, also available before capture is enabled.
-    #[schemars(length(max = 2))]
+    #[schemars(length(max = 5))]
     pub defaults: Vec<CaptureHarnessSetting>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]

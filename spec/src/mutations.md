@@ -906,3 +906,8 @@ Per-message AgentStore timestamps are bounded read projections over exact
 selected observations and message content. They retain native and companion pins
 and never rewrite immutable evidence, recovery identities, receipts or
 publication state.
+
+Cursor and OpenCode capture settings use the same revision-conditional local
+Admin save, saved/effective snapshots and restart requirement as Codex. Editing
+profiles, approved roots or the local API endpoint never enrolls a source,
+executes a harness, or bypasses repository/workspace admission.

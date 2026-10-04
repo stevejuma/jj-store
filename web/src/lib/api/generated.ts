@@ -5634,12 +5634,14 @@ export interface components {
       profile: components["schemas"]["CaptureHarnessProfile"];
       product_version: string;
       roots: components["schemas"]["CaptureRootPath"][];
+      endpoint?: string | null;
     };
     /** @enum {string} */
     CaptureHarnessProfile:
       | "codex-cli-jsonl-v1"
       | "codex-desktop-jsonl-v1"
       | "cursor-desktop-transcript-v1"
+      | "cursor-cli-transcript-v1"
       | "opencode-read-only-api-v1"
       | "opencode-export-json-v1";
     /** @description Startup-selected directory metadata, not a discovered transcript file. */
@@ -29171,10 +29173,12 @@ export interface operations {
                 | "codex-cli-jsonl-v1"
                 | "codex-desktop-jsonl-v1"
                 | "cursor-desktop-transcript-v1"
+                | "cursor-cli-transcript-v1"
                 | "opencode-read-only-api-v1"
                 | "opencode-export-json-v1";
               product_version: string;
               roots: string[];
+              endpoint?: string | null;
             }[];
           };
         };

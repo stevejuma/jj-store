@@ -21,6 +21,11 @@ fn profile(value: CaptureProfile) -> Result<CaptureHarnessProfile, Error> {
     Ok(match value {
         CaptureProfile::CodexCliJsonlV1 => CaptureHarnessProfile::CodexCliJsonlV1,
         CaptureProfile::CodexDesktopJsonlV1 => CaptureHarnessProfile::CodexDesktopJsonlV1,
+        CaptureProfile::CursorDesktopTranscriptV1 => {
+            CaptureHarnessProfile::CursorDesktopTranscriptV1
+        }
+        CaptureProfile::CursorCliTranscriptV1 => CaptureHarnessProfile::CursorCliTranscriptV1,
+        CaptureProfile::OpencodeReadOnlyApiV1 => CaptureHarnessProfile::OpencodeReadOnlyApiV1,
         _ => return Err(Error::Invalid),
     })
 }
@@ -40,6 +45,7 @@ fn wire(config: &AgentCaptureConfig) -> Result<CaptureConfiguration, Error> {
                 Ok(CaptureHarnessSetting {
                     profile: profile(h.profile)?,
                     product_version: h.product_version.clone(),
+                    endpoint: h.endpoint.clone(),
                     roots: h
                         .roots
                         .iter()
@@ -70,6 +76,15 @@ fn native(value: &CaptureConfiguration) -> Result<AgentCaptureConfig, Error> {
                     CaptureHarnessProfile::CodexDesktopJsonlV1 => {
                         CaptureProfile::CodexDesktopJsonlV1
                     }
+                    CaptureHarnessProfile::CursorDesktopTranscriptV1 => {
+                        CaptureProfile::CursorDesktopTranscriptV1
+                    }
+                    CaptureHarnessProfile::CursorCliTranscriptV1 => {
+                        CaptureProfile::CursorCliTranscriptV1
+                    }
+                    CaptureHarnessProfile::OpencodeReadOnlyApiV1 => {
+                        CaptureProfile::OpencodeReadOnlyApiV1
+                    }
                     _ => return Err(Error::Invalid),
                 };
                 for root in &h.roots {
@@ -90,7 +105,7 @@ fn native(value: &CaptureConfiguration) -> Result<AgentCaptureConfig, Error> {
                     profile,
                     product_version: h.product_version.clone(),
                     roots: h.roots.iter().map(|r| PathBuf::from(&r.0)).collect(),
-                    endpoint: None,
+                    endpoint: h.endpoint.clone(),
                 })
             })
             .collect::<Result<_, _>>()?,
@@ -125,6 +140,9 @@ impl SettingsFile {
         let defaults = [
             CaptureProfile::CodexCliJsonlV1,
             CaptureProfile::CodexDesktopJsonlV1,
+            CaptureProfile::CursorDesktopTranscriptV1,
+            CaptureProfile::CursorCliTranscriptV1,
+            CaptureProfile::OpencodeReadOnlyApiV1,
         ]
         .into_iter()
         .map(|p| {
@@ -135,9 +153,10 @@ impl SettingsFile {
                 endpoint: None,
             };
             let roots = h
-                .codex_roots(home.as_deref(), codex_home.as_deref())
+                .roots(home.as_deref(), codex_home.as_deref())
                 .map_err(|_| Error::Unavailable)?;
             Ok(CaptureHarnessSetting {
+                endpoint: None,
                 profile: profile(p)?,
                 product_version: h.product_version,
                 roots: roots

@@ -226,6 +226,7 @@ fn profile_name(profile: CaptureHarnessProfile) -> &'static str {
         CaptureHarnessProfile::CodexCliJsonlV1 => "Codex CLI",
         CaptureHarnessProfile::CodexDesktopJsonlV1 => "Codex Desktop",
         CaptureHarnessProfile::CursorDesktopTranscriptV1 => "Cursor Desktop",
+        CaptureHarnessProfile::CursorCliTranscriptV1 => "Cursor CLI",
         CaptureHarnessProfile::OpencodeReadOnlyApiV1 => "OpenCode API",
         CaptureHarnessProfile::OpencodeExportJsonV1 => "OpenCode export",
     }

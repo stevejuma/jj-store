@@ -33,7 +33,7 @@
       key: "interval",
       label: "Discovery interval (seconds)",
       max: 30,
-      help: "Check watched folders every 1–30 seconds.",
+      help: "Check configured sources every 1–30 seconds.",
     },
     {
       key: "sources",
@@ -141,6 +141,16 @@
           </Field.Group>
         </div>
         <StoreCaptureHarnessConfiguration {management} {busy} />
+        <StoreCaptureHarnessConfiguration
+          {management}
+          {busy}
+          harness="cursor"
+        />
+        <StoreCaptureHarnessConfiguration
+          {management}
+          {busy}
+          harness="open_code"
+        />
         <div class="store-settings__action-row">
           <div>
             <strong>Save configuration</strong>

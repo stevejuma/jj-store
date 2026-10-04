@@ -92,6 +92,7 @@ pub(super) fn profile(profile: jj_store_capture::profile::CaptureProfile) -> Cap
         P::CodexCliJsonlV1 => CaptureHarnessProfile::CodexCliJsonlV1,
         P::CodexDesktopJsonlV1 => CaptureHarnessProfile::CodexDesktopJsonlV1,
         P::CursorDesktopTranscriptV1 => CaptureHarnessProfile::CursorDesktopTranscriptV1,
+        P::CursorCliTranscriptV1 => CaptureHarnessProfile::CursorCliTranscriptV1,
         P::OpencodeReadOnlyApiV1 => CaptureHarnessProfile::OpencodeReadOnlyApiV1,
         P::OpencodeExportJsonV1 => CaptureHarnessProfile::OpencodeExportJsonV1,
     }

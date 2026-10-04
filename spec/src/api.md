@@ -1777,3 +1777,11 @@ Configuration observations and saves MUST remain available while transcript
 inspection occupies the runtime control gate. They use bounded file reads and
 the shared settings-file lock independently from capture journals, spools or
 worker command ownership.
+
+Capture configuration accepts the two Codex profiles, separate Cursor Desktop
+and CLI transcript profiles, and OpenCode read-only API (at most five selected
+profiles). Harness settings carry an optional endpoint only for OpenCode; that
+profile requires an explicit credential-free literal-loopback root URL and no
+filesystem roots. Cursor profiles expose resolved roots and independently
+qualified product versions. Existing saved/effective revision, conditional-save
+and restart semantics remain unchanged. Export is not editable or enabled.

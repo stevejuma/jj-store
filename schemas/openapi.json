@@ -29541,6 +29541,7 @@
                                 "codex-cli-jsonl-v1",
                                 "codex-desktop-jsonl-v1",
                                 "cursor-desktop-transcript-v1",
+                                "cursor-cli-transcript-v1",
                                 "opencode-read-only-api-v1",
                                 "opencode-export-json-v1"
                               ]
@@ -29559,12 +29560,16 @@
                                 "maxLength": 4096
                               },
                               "maxItems": 16
+                            },
+                            "endpoint": {
+                              "type": ["string", "null"],
+                              "maxLength": 4096
                             }
                           },
                           "additionalProperties": false,
                           "required": ["profile", "product_version", "roots"]
                         },
-                        "maxItems": 2
+                        "maxItems": 5
                       }
                     },
                     "additionalProperties": false,
@@ -40207,7 +40212,7 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/CaptureHarnessSetting" },
             "description": "Resolved process defaults, also available before capture is enabled.",
-            "maxItems": 2
+            "maxItems": 5
           }
         },
         "required": [
@@ -40251,7 +40256,7 @@
           "harnesses": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/CaptureHarnessSetting" },
-            "maxItems": 2
+            "maxItems": 5
           }
         },
         "required": [
@@ -40277,7 +40282,8 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/CaptureRootPath" },
             "maxItems": 16
-          }
+          },
+          "endpoint": { "type": ["string", "null"], "maxLength": 4096 }
         },
         "required": ["profile", "product_version", "roots"]
       },
@@ -40287,6 +40293,7 @@
           "codex-cli-jsonl-v1",
           "codex-desktop-jsonl-v1",
           "cursor-desktop-transcript-v1",
+          "cursor-cli-transcript-v1",
           "opencode-read-only-api-v1",
           "opencode-export-json-v1"
         ]

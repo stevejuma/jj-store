@@ -11,144 +11,144 @@ retains its original completed prerequisites M11.1-M11.3: native storage,
 authorized commands and repository browser acceptance. The additional hub and
 shared-package release qualification does not alter those original Git gates.
 
-| ID          | Status      | Depends                 | Requirements                                                                                                                                                                            | Gate                                                                                                                           | Next                                                                                           | Evidence                                                                                                                                                                                                                                                                                                                                                       |
-| ----------- | ----------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Bootstrap   | Done        | -                       | JST-GOV-001,JST-GOV-002,JST-GOV-003,JST-GOV-004,JST-GOV-005,JST-GOV-006,JST-GOV-007                                                                                                     | Spec, ledger, skeleton, gates and independent commit                                                                           | Maintain governance each slice                                                                 | E-BOOT-001,E-BOOT-002,E-GOV-001 |
-| Bootstrap.1 | Done        | -                       | JST-GOV-001,JST-GOV-004,JST-GOV-006                                                                                                                                                     | Reference checksum, requirements, progress checker negative tests                                                              | Governance maintained each slice                                                               | E-BOOT-001,E-BOOT-002 |
-| M0          | Done        | Bootstrap               | JST-COMPAT-001,JST-COMPAT-002                                                                                                                                                           | Compiled extension and exact RustFS contract qualified                                                                         | Maintain pinned compatibility probes                                                           | E-M0-001,E-M0-002 |
-| M0.1        | Done        | Bootstrap               | JST-COMPAT-001                                                                                                                                                                          | Pin references/licenses and complete trait/codec matrix                                                                        | Re-audit on upstream upgrades                                                                  | E-M0-001 |
-| M0.2        | Done        | M0.1                    | JST-JJ-001,JST-JJ-002,JST-ID-002                                                                                                                                                        | Compile custom CLI/RPC context and query spikes; golden IDs                                                                    | Retain probes across upstream changes                                                          | E-M0-002 |
-| M0.3        | Done        | M0.1                    | JST-OBJ-002                                                                                                                                                                             | Real image create/CAS/range/restart/fault qualification                                                                        | Requalify topology or image changes                                                            | E-M0-001 |
-| M1          | Done        | M0                      | JST-ID-001,JST-ID-003,JST-OBJ-001,JST-OBJ-003                                                                                                                                           | Complete lossless objects and streamed storage                                                                                 | Maintain codec and storage conformance                                                         | E-M1-001,E-M1-002 |
-| M1.1        | Done        | M0                      | JST-ID-003,JST-ID-004,JST-ID-005                                                                                                                                                        | All native variants and golden identities                                                                                      | Retain V1 fixtures across codec changes                                                        | E-M1-001 |
-| M1.2        | Done        | M0                      | JST-OBJ-001,JST-OBJ-003,JST-OBJ-004                                                                                                                                                     | Fault fake and real streamed immutable object transport                                                                        | Retain real RustFS and fault-store conformance                                                 | E-M1-002 |
-| M2          | Done        | M1                      | JST-PUB-001,JST-PUB-006                                                                                                                                                                 | Publication fault matrix and cold replay pass                                                                                  | Retain publication and cold recovery conformance                                               | E-M2-001,E-M2-002 |
-| M2.1        | Done        | M1                      | JST-PUB-001,JST-PUB-002                                                                                                                                                                 | Complete inventory and unique candidate CAS                                                                                    | Retain publication and cold recovery conformance                                               | E-M2-001,E-M2-002 |
-| M2.2        | Done        | M2.1                    | JST-PUB-003,JST-PUB-004,JST-PUB-005                                                                                                                                                     | Retry receipts and unknown outcome recovery                                                                                    | Retain publication and cold recovery conformance                                               | E-M2-002 |
-| M2.3        | Done        | M2.2                    | JST-PUB-006                                                                                                                                                                             | Checkpoint equivalence and cache-free restart                                                                                  | Retain publication and cold recovery conformance                                               | E-M2-002 |
-| M3          | Done        | M2                      | JST-JJ-001,JST-JJ-002,JST-CLI-001,JST-SEC-001                                                                                                                                           | Native CLI/server vertical slice with authentication                                                                           | Implement M4 pinned read sessions                                                              | E-M3-001,E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015,E-UI-044 |
-| M3.1        | Done        | M2                      | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                                                                                                                                         | Revocable tokens and transport authorization                                                                                   | Retain native slice acceptance                                                                 | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014 |
-| M3.2        | Done        | M3.1                    | JST-JJ-001,JST-JJ-004,JST-JJ-005                                                                                                                                                        | Create edit describe log restart op-log evolog; multi-workspace                                                                | Retain native slice acceptance                                                                 | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014 |
-| M3.3        | Done        | M3.2                    | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                                                                                                                                         | Custom command presentation and capability parity                                                                              | Retain native slice acceptance                                                                 | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015,E-UI-050 |
-| M4          | Deferred    | M3                      | JST-API-001,JST-API-005                                                                                                                                                                 | Registry-only/shared-deployment browser finalization beyond the functional local application                                   | Future shared/package release                                                                  | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-M4-018,E-SCOPE-001,E-UI-007,E-UI-008,E-UI-016,E-UI-017,E-UI-018 |
-| M4.1        | Done        | M3                      | JST-API-001,JST-API-002,JST-JJ-003                                                                                                                                                      | Pinned three-graph reads with zero GET publications                                                                            | Retain pinned read conformance                                                                 | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014 |
-| M4.2        | Done        | M4.1                    | JST-API-003,JST-API-006                                                                                                                                                                 | Committed SSE and generated API contract deployment qualification                                                              | Retain real RustFS/TLS SSE conformance                                                         | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001,E-UI-028 |
-| M4.3        | Deferred    | M4.1,M5,M6              | JST-API-004,JST-API-005                                                                                                                                                                 | Shared/authenticated browser and separately packaged dependency finalization                                                   | Future shared/package release                                                                  | E-SCOPE-001,E-UI-007,E-UI-008,E-M4-018,E-UI-016,E-UI-017,E-UI-018 |
-| M4.4        | Done        | Bootstrap               | JST-UI-001                                                                                                                                                                              | Isolated catalog types, interaction/a11y and static build                                                                      | Implement shell stories                                                                        | E-UI-001 |
-| M4.5        | Done        | M4.4                    | JST-UI-002                                                                                                                                                                              | Community shell mechanics and navigation acceptance                                                                            | Implement repository fixture views                                                             | E-UI-002 |
-| M4.6        | Done        | M4.5                    | JST-UI-003                                                                                                                                                                              | Native fixture graph/file/diff drill-down and accessibility                                                                    | Visual review; live UI remains deferred                                                        | E-UI-003 |
-| M4.7        | Done        | M4.6                    | JST-UI-004                                                                                                                                                                              | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                                            | E-UI-004,E-UI-029,E-UI-044,E-UI-048,E-UI-049 |
-| M4.8        | Done        | M4.7                    | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks            | Visual review pending; live UI remains deferred                                                | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028 |
-| M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                                 | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                                            | E-UI-007,E-UI-008,E-UI-063,E-UI-065,E-UI-066,E-UI-067,E-UI-068 |
-| M4.10 | Done | M4.9 | JST-API-001,JST-API-002,JST-API-006 | Bounded bookmark, directory metadata and operation-change contracts | Implement M4.11 authenticated browser data/controller | E-M4-018,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095 |
-| M4.11       | Deferred    | M4.10                   | JST-API-004,JST-API-005,JST-UI-005                                                                                                                                                      | Shared authenticated connection and final registry-only browser acceptance                                                     | Future shared/package release                                                                  | E-UI-011 |
-| M4.12       | Deferred    | M4.11                   | JST-API-002,JST-API-003,JST-UI-005                                                                                                                                                      | Shared-deployment route/SSE finalization against registry-only dependencies                                                    | Future shared/package release                                                                  | E-UI-012 |
-| M4.13       | Deferred    | M4.11                   | JST-API-002,JST-UI-006                                                                                                                                                                  | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                                 | Future Design Core release                                                                     | E-UI-013,E-UI-014,E-UI-015,E-UI-083 |
-| M4.14       | Deferred    | M4.12,M4.13             | JST-API-003,JST-API-004,JST-API-005                                                                                                                                                     | Registry-resolved shared deployment browser acceptance                                                                         | Future shared/package release                                                                  | E-UI-016 |
-| M4.15       | Done        | M4.9,M6.1               | JST-UI-007                                                                                                                                                                              | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes                        | Retain LocalTrusted and authenticated search acceptance                                        | E-UI-017,E-UI-024,E-UI-028 |
-| M4.16       | Done        | M4.9,M5.3               | JST-UI-008                                                                                                                                                                              | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                             | Retain mutation acceptance; implement M4.17 conflicts                                          | E-UI-018,E-UI-026,E-UI-028 |
-| M4.17       | Done        | M4.16,M5.3              | JST-UI-009                                                                                                                                                                              | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening                          | Retain conflict-editor and real-repository acceptance                                          | E-UI-019 |
-| M4.18       | Done        | M4.15,M8a.4             | JST-UI-012                                                                                                                                                                              | Transient Community-styled settings reports existing local, repository and search state and prepares an exact index            | Retain regression coverage; visual review remains separate                                     | E-UI-030,E-UI-031,E-UI-063 |
-| M4.19       | Done        | M4.9,M4.10              | JST-UI-013,JST-API-002,JST-UI-005                                                                                                                                                       | Exact workspace identities, pinned routes, focused interaction/a11y and cold browser acceptance                                | Retain workspace regressions; visual review remains separate                                   | E-UI-032 |
-| M4.20       | Done        | M4.19                   | JST-UI-014,JST-UI-002,JST-UI-003,JST-UI-005                                                                                                                                             | Right-rail destinations, ordered pill tabs, responsive overflow, focused interaction/a11y and cold browser acceptance          | Retain navigation and workspace regressions; visual review remains separate                    | E-UI-033,E-UI-048,E-UI-049 |
-| M4.21       | Done        | M4.20                   | JST-UI-003,JST-UI-005,JST-API-002                                                                                                                                                       | Compact workspace-row comparison picker, native Op Log cards, independent copy and focused interaction/a11y/browser acceptance | Retain exact-parent and workspace regressions; visual review remains separate                  | E-UI-034 |
-| M4.22       | Done        | M4.21                   | JST-UI-014,JST-UI-003,JST-UI-008,JST-API-005                                                                                                                                            | Restore selection-aware rail actions with focused interaction, accessibility and browser evidence                              | Retain selection and capability regressions; visual review remains separate                    | E-UI-035 |
-| M4.23       | Done        | M4.22                   | JST-UI-008,JST-UI-014,JST-API-005                                                                                                                                                       | Centered commit-selector content, oval ID chips and zero section margin; focused interaction/accessibility acceptance          | Retain picker/navigation regressions; visual review stays separate                             | E-UI-036 |
-| M4.24       | Done        | M4.23,M4.17             | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                                       | Conflict sheet, highlighted editor and accept-all controls; focused and cold browser evidence                                  | Retain merge and shell regressions; visual review remains separate                             | E-UI-037 |
-| M4.25       | Done        | M4.23                   | JST-UI-008,JST-API-005                                                                                                                                                                  | Aligned selector ID columns, smaller labels and bottom-right time; focused interaction/accessibility acceptance                | Retain picker regressions; visual review stays separate                                        | E-UI-038 |
-| M4.26       | Done        | M4.24                   | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                                       | Full-height conflict file browser and header actions; focused and cold browser acceptance                                      | Retain conflict layout/draft regressions; visual review stays separate                         | E-UI-039 |
-| M4.27       | Done        | M4.25                   | JST-UI-008,JST-API-005                                                                                                                                                                  | Commit selector time/chips beneath title and stacked Git/JJ column; focused interaction/accessibility acceptance               | Retain picker regressions; visual review stays separate                                        | E-UI-040 |
-| M4.28       | Done        | M4.27                   | JST-UI-003,JST-UI-005,JST-UI-009,JST-UI-014,JST-API-002                                                                                                                                 | Native Evo Log column, independent pinned anchor/history and chrome alignment; focused and cold browser acceptance             | Retain evolution and chrome regressions; visual review remains separate                        | E-UI-041 |
-| M4.29       | Done        | M4.28                   | JST-UI-008,JST-API-005                                                                                                                                                                  | File editor and prose composers remove native focus ring under served asset policy; focused and cold browser acceptance        | Retain editor/composer focus regressions; visual review remains separate                       | E-UI-042,E-UI-048,E-UI-049 |
-| M4.30       | Done        | M4.29                   | JST-UI-008,JST-API-005                                                                                                                                                                  | Root navigation clears file edit presentation and workspace guard; focused and cold browser acceptance                         | Retain file navigation/edit regressions; visual review remains separate                        | E-UI-043,E-M11-006,E-UI-048,E-UI-049 |
-| M4.31       | In progress | M4.30                   | JST-UI-019,JST-UI-005,JST-API-005                                                                                                                                                       | Scoped notification lifetimes, inline validation boundaries and cold toast acceptance                                          | Complete released Design Core dependency acceptance after source qualification                 | E-UI-096,E-UI-097                                                                                                                                                                                                                                                                                                                                              |
-| M5          | Done        | M4.1                    | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                                     | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                                     | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028 |
-| M5.1        | Done        | M4.1                    | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                                               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028 |
-| M5.2        | Done        | M5.1                    | JST-MUT-003                                                                                                                                                                             | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                                      | E-M5-005 |
-| M5.3        | Done        | M5.1                    | JST-MUT-004                                                                                                                                                                             | Atomic stale-safe resolution with native conflict variants                                                                     | Retain mutation conformance; proceed to M6                                                     | E-M5-006,E-M5-007,E-M5-008 |
-| M6          | Done        | M5                      | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                 | Replay-equivalent searchable projection with freshness                                                                         | Retain snapshot, search and deployment conformance                                             | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010 |
-| M6.1        | Done        | M5                      | JST-ADAPT-001,JST-ADAPT-002                                                                                                                                                             | Ordered committed reader and durable replay-safe checkpoints                                                                   | Implement Tantivy projection and search                                                        | E-M6-001 |
-| M6.2        | Done        | M6.1                    | JST-ADAPT-003,JST-ADAPT-004                                                                                                                                                             | Tantivy crash/rebuild/generation and revocation tests                                                                          | Retain snapshot, search and deployment conformance                                             | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010 |
-| M8a         | Deferred    | M6                      | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-005,JST-SEC-006                                                                                                                                   | LocalTrusted macOS release is complete; backup, provider and cross-platform children remain deferred                           | Future backup/shared/platform release                                                          | E-SCOPE-001,E-M8A-001,E-M8A-002,E-M8A-003,E-M8A-004 |
-| M8a.1       | Done        | M6                      | JST-COMPAT-003,JST-SEC-005                                                                                                                                                              | Local examples, graceful/abrupt restart, startup-fault diagnostics, request budgets and macOS release acceptance               | Retain local release acceptance                                                                | E-SCOPE-001,E-M8A-004,E-M8A-006 |
-| M8a.2       | Done        | M6                      | JST-COMPAT-005,JST-OBJ-005                                                                                                                                                              | A0: Rust 1.98.1, exact embedded RustFS pin, lifecycle starter, capability report and platform plan                             | Implement A1 format-2 local authority lifecycle                                                | E-M8A-001 |
-| M8a.3       | Done        | M8a.2                   | JST-OBJ-005,JST-CLI-005                                                                                                                                                                 | A1: strict format-2 configuration, local initialization, locked volume, sentinel and managed storage lifecycle                 | Retain local lifecycle acceptance                                                              | E-M8A-002,E-M8A-006 |
-| M8a.4       | Done        | M8a.3                   | JST-SEC-006,JST-API-007,JST-UI-010,JST-CLI-005                                                                                                                                          | A2: LocalTrusted policy, Unix RPC, loopback HTTP protections, bootstrap/catalog and local application                          | Retain LocalTrusted acceptance                                                                 | E-M8A-003 |
-| M8a.5       | Deferred    | M8a.4                   | JST-ADAPT-006,JST-COMPAT-005                                                                                                                                                            | A3: wal-copy projection and pinned generic-S3 transfer qualification                                                           | Future backup release                                                                          | - |
-| M8a.6       | Deferred    | M8a.5                   | JST-ADAPT-006,JST-CLI-005,JST-COMPAT-005                                                                                                                                                | A4: immutable verified inventories/certificates, fault qualification and offline restore                                       | Future backup/restore release                                                                  | - |
-| M8a.7       | Deferred    | M8a.6                   | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-006,JST-UI-010                                                                                                                                    | A5: Linux packaging plus external/authenticated/provider release qualification                                                 | Future shared and cross-platform release                                                       | - |
-| M8a.8       | Done        | M8a.4                   | JST-SEC-007,JST-API-008,JST-UI-011,JST-CLI-006                                                                                                                                          | Manual-token multi-repository discovery, independent repository policy and browser selection                                   | Retain focused authenticated discovery acceptance                                              | E-M8A-005 |
-| M7          | Deferred    | M8a                     | JST-ADAPT-005                                                                                                                                                                           | Complete read-only replica through applied position                                                                            | After first release                                                                            | - |
-| M7.1        | Deferred    | M8a.4                   | JST-ADAPT-006                                                                                                                                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                                         | Future backup release after local application                                                  | - |
-| M8b         | Deferred    | M8a                     | JST-COMPAT-004                                                                                                                                                                          | Verified lossless import with source safety                                                                                    | Separate migration release                                                                     | - |
-| M9          | Done        | M8a.4                   | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-003,JST-COLLAB-004,JST-COLLAB-005,JST-COLLAB-006,JST-COLLAB-007                                                                                | Repository-native agent activity and exact review discussions in the LocalTrusted application                                  | Retain bounded local collaboration acceptance                                                  | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-032,E-M9-033,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039 |
-| M9.1        | Done        | M8a.4                   | JST-PUB-007,JST-PUB-008                                                                                                                                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                           | Implement AgentStore typed root objects                                                        | E-M9-001 |
-| M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034 |
-| M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023 |
-| M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035,E-M18-006 |
-| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-099,E-M18-006 |
-| M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                                          | E-M9-033 |
-| M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013                | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014 |
-| M10.1       | Done        | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                                  | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                                    | E-M10-001,E-M10-010,E-M10-013 |
-| M10.2       | Done        | M10.1                   | JST-REPL-002,JST-REPL-003,JST-REPL-005                                                                                                                                                  | Durable origin streams, causal catalogs and authored publication integration                                                   | Retain origin authority and idempotent receipt regressions                                     | E-M10-002,E-M10-013 |
-| M10.3       | Done        | M10.2                   | JST-REPL-004,JST-REPL-005,JST-REPL-006                                                                                                                                                  | Verified one-way transfer, atomic import, durable acknowledgements and lost-response recovery                                  | Retain verified transfer and lost-response regressions                                         | E-M10-003,E-M10-005,E-M10-006,E-M10-010,E-M10-013 |
-| M10.4       | Done        | M10.3                   | JST-REPL-007,JST-REPL-013                                                                                                                                                               | Bidirectional native operation-head integration, distinct workspaces and explicit reconciliation                               | Retain explicit reconciliation RPC/CLI acceptance                                              | E-M10-003,E-M10-007,E-M10-013 |
-| M10.5       | Done        | M10.4                   | JST-REPL-008,JST-REPL-009,JST-REPL-013                                                                                                                                                  | AgentStore and ReviewStore accepted-fact convergence under reordered and duplicate delivery                                    | Retain collaboration delivery permutation regressions                                          | E-M10-004,E-M10-013 |
-| M10.6       | Done        | M10.5                   | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                                  | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration                  | Retain bootstrap, migration and zero-upstream regressions                                      | E-M10-008,E-M10-010,E-M10-013 |
-| M10.7       | Done        | M10.6                   | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                                     | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration                   | Retain active profile; expanded hardening stays deferred to M10.8.                             | E-M10-009,E-M10-010,E-M10-013,E-M10-014 |
-| M10.8       | Deferred    | M10.7                   | JST-REPL-011,JST-REPL-012                                                                                                                                                               | Expanded pressure/fault soak, browser UI, cold two-instance RustFS, archive/export and topology qualification                  | Future replication hardening                                                                   | - |
-| M11         | In progress | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                                 | Native project home, linked repositories, tasks and discussion                                                                 | Complete M11.4 package qualification and visual review                                         | E-M11-001,E-M11-002,E-M11-003,E-M11-004,E-M11-006,E-M11-007,E-M11-008 |
-| M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003 |
-| M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002 |
-| M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004 |
-| M11.4 | In progress | M11.3 | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015 | Installation Projects hub, full-root browse and cold browser acceptance | Shared-package qualification; visual baselines pending | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-094 |
-| M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010 |
-| M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001 |
-| M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002 |
-| M12.3       | Done        | M12.2                   | JST-GIT-004,JST-GIT-008                                                                                                                                                                 | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                                    | E-M12-003,E-M12-004,E-M12-006 |
-| M12.4       | Done        | M12.3                   | JST-GIT-005,JST-GIT-006                                                                                                                                                                 | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                                    | E-M12-005,E-M12-006 |
-| M12.5       | Done        | M12.4                   | JST-GIT-007                                                                                                                                                                             | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                                    | E-M12-006,E-M12-008,E-M12-009 |
-| M12.6       | Done        | M12.5                   | JST-GIT-001,JST-GIT-005                                                                                                                                                                 | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                                    | E-M12-007,E-M12-009 |
-| M12.7       | Done        | M12.6                   | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                                     | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Maintain cold native Git acceptance                                                            | E-M12-008,E-M12-010 |
-| M13         | In progress | M12                     | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Complete qualified local Git-backed collaboration profile                                                                      | Complete portable review/capture, indexed search, code-command and conversion gates            | E-M13-001,E-M13-002,E-M13-012,E-M13-022 |
-| M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                             | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                   | E-M13-001 |
-| M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                           | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050 |
-| M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                             | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034 |
-| M13.4 | In progress | M13.2 | JST-LOCAL-004,JST-LOCAL-005 | Filesystem-only server, local UI and recoverable code commands | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095 |
-| M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | - |
-| M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | - |
-| M14 | In progress | M4.18 | JST-UI-012,JST-UI-016 | Local settings, profile-aware device links and safe maintenance | Implement M14.3 agent setup and automatic recovery | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016 |
-| M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                                              | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049 |
-| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                                      | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-063 |
-| M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation                       | E-M14-004,E-M14-005 |
-| M14.4       | Done        | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                                  | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild                               | E-M14-009,E-M14-010,E-M14-011,E-M14-012,E-M14-016 |
-| M14.5       | Done        | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                                      | Storage integrity and non-destructive checkpoints                                                                              | Retain bounded maintenance and cold restart coverage                                           | E-M14-014 |
-| M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                                 | Configured sync status and controls in Settings                                                                                | Retain typed upstream/worker editing; qualify remaining sync integration                  | E-M14-008,E-M14-010,E-M14-011,E-M14-012,E-M14-013,E-M14-016 |
-| M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                                  | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities                        | - |
-| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007 | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032 |
-| M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                                              | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                                            | E-M15-001,E-M15-005,E-M15-016 |
-| M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016 |
-| M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064 |
-| M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | - |
-| M15.5 | In progress | M15.3 | JST-COLLAB-016,JST-GOV-008,JST-UI-017 | Owned Community channel/forum templates, Threads navigation and native workspace search | Retain interaction/cold UI and qualify remaining full flow | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089,E-UI-094,E-UI-095,E-UI-098 |
-| M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025 |
-| M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | - |
-| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089 |
-| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                              |
-| M17.1       | In progress | M8a.4                   | JST-DESK-003                                                                                                                                                                            | Opt-in bounded parent-pipe service supervision                                                                                 | Retain real RustFS and ordinary process evidence                                               | E-DESK-001,E-DESK-003                                                                                                                                                                                                                                                                                                                                          |
-| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                              |
-| M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                    |
-| M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                            | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                              |
+| ID          | Status      | Depends                 | Requirements                                                                                                                                                                                                      | Gate                                                                                                                           | Next                                                                                           | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ----------- | ----------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bootstrap   | Done        | -                       | JST-GOV-001,JST-GOV-002,JST-GOV-003,JST-GOV-004,JST-GOV-005,JST-GOV-006,JST-GOV-007                                                                                                                               | Spec, ledger, skeleton, gates and independent commit                                                                           | Maintain governance each slice                                                                 | E-BOOT-001,E-BOOT-002,E-GOV-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Bootstrap.1 | Done        | -                       | JST-GOV-001,JST-GOV-004,JST-GOV-006                                                                                                                                                                               | Reference checksum, requirements, progress checker negative tests                                                              | Governance maintained each slice                                                               | E-BOOT-001,E-BOOT-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| M0          | Done        | Bootstrap               | JST-COMPAT-001,JST-COMPAT-002                                                                                                                                                                                     | Compiled extension and exact RustFS contract qualified                                                                         | Maintain pinned compatibility probes                                                           | E-M0-001,E-M0-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M0.1        | Done        | Bootstrap               | JST-COMPAT-001                                                                                                                                                                                                    | Pin references/licenses and complete trait/codec matrix                                                                        | Re-audit on upstream upgrades                                                                  | E-M0-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M0.2        | Done        | M0.1                    | JST-JJ-001,JST-JJ-002,JST-ID-002                                                                                                                                                                                  | Compile custom CLI/RPC context and query spikes; golden IDs                                                                    | Retain probes across upstream changes                                                          | E-M0-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M0.3        | Done        | M0.1                    | JST-OBJ-002                                                                                                                                                                                                       | Real image create/CAS/range/restart/fault qualification                                                                        | Requalify topology or image changes                                                            | E-M0-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M1          | Done        | M0                      | JST-ID-001,JST-ID-003,JST-OBJ-001,JST-OBJ-003                                                                                                                                                                     | Complete lossless objects and streamed storage                                                                                 | Maintain codec and storage conformance                                                         | E-M1-001,E-M1-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M1.1        | Done        | M0                      | JST-ID-003,JST-ID-004,JST-ID-005                                                                                                                                                                                  | All native variants and golden identities                                                                                      | Retain V1 fixtures across codec changes                                                        | E-M1-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M1.2        | Done        | M0                      | JST-OBJ-001,JST-OBJ-003,JST-OBJ-004                                                                                                                                                                               | Fault fake and real streamed immutable object transport                                                                        | Retain real RustFS and fault-store conformance                                                 | E-M1-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M2          | Done        | M1                      | JST-PUB-001,JST-PUB-006                                                                                                                                                                                           | Publication fault matrix and cold replay pass                                                                                  | Retain publication and cold recovery conformance                                               | E-M2-001,E-M2-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M2.1        | Done        | M1                      | JST-PUB-001,JST-PUB-002                                                                                                                                                                                           | Complete inventory and unique candidate CAS                                                                                    | Retain publication and cold recovery conformance                                               | E-M2-001,E-M2-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M2.2        | Done        | M2.1                    | JST-PUB-003,JST-PUB-004,JST-PUB-005                                                                                                                                                                               | Retry receipts and unknown outcome recovery                                                                                    | Retain publication and cold recovery conformance                                               | E-M2-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M2.3        | Done        | M2.2                    | JST-PUB-006                                                                                                                                                                                                       | Checkpoint equivalence and cache-free restart                                                                                  | Retain publication and cold recovery conformance                                               | E-M2-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M3          | Done        | M2                      | JST-JJ-001,JST-JJ-002,JST-CLI-001,JST-SEC-001                                                                                                                                                                     | Native CLI/server vertical slice with authentication                                                                           | Implement M4 pinned read sessions                                                              | E-M3-001,E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015,E-UI-044                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| M3.1        | Done        | M2                      | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                                                                                                                                                                   | Revocable tokens and transport authorization                                                                                   | Retain native slice acceptance                                                                 | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M3.2        | Done        | M3.1                    | JST-JJ-001,JST-JJ-004,JST-JJ-005                                                                                                                                                                                  | Create edit describe log restart op-log evolog; multi-workspace                                                                | Retain native slice acceptance                                                                 | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| M3.3        | Done        | M3.2                    | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                                                                                                                                                                   | Custom command presentation and capability parity                                                                              | Retain native slice acceptance                                                                 | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| M4          | Deferred    | M3                      | JST-API-001,JST-API-005                                                                                                                                                                                           | Registry-only/shared-deployment browser finalization beyond the functional local application                                   | Future shared/package release                                                                  | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-M4-018,E-SCOPE-001,E-UI-007,E-UI-008,E-UI-016,E-UI-017,E-UI-018                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| M4.1        | Done        | M3                      | JST-API-001,JST-API-002,JST-JJ-003                                                                                                                                                                                | Pinned three-graph reads with zero GET publications                                                                            | Retain pinned read conformance                                                                 | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M4.2        | Done        | M4.1                    | JST-API-003,JST-API-006                                                                                                                                                                                           | Committed SSE and generated API contract deployment qualification                                                              | Retain real RustFS/TLS SSE conformance                                                         | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001,E-UI-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| M4.3        | Deferred    | M4.1,M5,M6              | JST-API-004,JST-API-005                                                                                                                                                                                           | Shared/authenticated browser and separately packaged dependency finalization                                                   | Future shared/package release                                                                  | E-SCOPE-001,E-UI-007,E-UI-008,E-M4-018,E-UI-016,E-UI-017,E-UI-018                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M4.4        | Done        | Bootstrap               | JST-UI-001                                                                                                                                                                                                        | Isolated catalog types, interaction/a11y and static build                                                                      | Implement shell stories                                                                        | E-UI-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.5        | Done        | M4.4                    | JST-UI-002                                                                                                                                                                                                        | Community shell mechanics and navigation acceptance                                                                            | Implement repository fixture views                                                             | E-UI-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.6        | Done        | M4.5                    | JST-UI-003                                                                                                                                                                                                        | Native fixture graph/file/diff drill-down and accessibility                                                                    | Visual review; live UI remains deferred                                                        | E-UI-003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.7        | Done        | M4.6                    | JST-UI-004                                                                                                                                                                                                        | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                                            | E-UI-004,E-UI-029,E-UI-044,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| M4.8        | Done        | M4.7                    | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                                                                  | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks            | Visual review pending; live UI remains deferred                                                | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                                                           | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                                            | E-UI-007,E-UI-008,E-UI-063,E-UI-065,E-UI-066,E-UI-067,E-UI-068                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                                                               | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                                          | E-M4-018,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| M4.11       | Deferred    | M4.10                   | JST-API-004,JST-API-005,JST-UI-005                                                                                                                                                                                | Shared authenticated connection and final registry-only browser acceptance                                                     | Future shared/package release                                                                  | E-UI-011                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.12       | Deferred    | M4.11                   | JST-API-002,JST-API-003,JST-UI-005                                                                                                                                                                                | Shared-deployment route/SSE finalization against registry-only dependencies                                                    | Future shared/package release                                                                  | E-UI-012                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.13       | Deferred    | M4.11                   | JST-API-002,JST-UI-006                                                                                                                                                                                            | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                                 | Future Design Core release                                                                     | E-UI-013,E-UI-014,E-UI-015,E-UI-083                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M4.14       | Deferred    | M4.12,M4.13             | JST-API-003,JST-API-004,JST-API-005                                                                                                                                                                               | Registry-resolved shared deployment browser acceptance                                                                         | Future shared/package release                                                                  | E-UI-016                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.15       | Done        | M4.9,M6.1               | JST-UI-007                                                                                                                                                                                                        | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes                        | Retain LocalTrusted and authenticated search acceptance                                        | E-UI-017,E-UI-024,E-UI-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| M4.16       | Done        | M4.9,M5.3               | JST-UI-008                                                                                                                                                                                                        | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                             | Retain mutation acceptance; implement M4.17 conflicts                                          | E-UI-018,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| M4.17       | Done        | M4.16,M5.3              | JST-UI-009                                                                                                                                                                                                        | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening                          | Retain conflict-editor and real-repository acceptance                                          | E-UI-019                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.18       | Done        | M4.15,M8a.4             | JST-UI-012                                                                                                                                                                                                        | Transient Community-styled settings reports existing local, repository and search state and prepares an exact index            | Retain regression coverage; visual review remains separate                                     | E-UI-030,E-UI-031,E-UI-063                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| M4.19       | Done        | M4.9,M4.10              | JST-UI-013,JST-API-002,JST-UI-005                                                                                                                                                                                 | Exact workspace identities, pinned routes, focused interaction/a11y and cold browser acceptance                                | Retain workspace regressions; visual review remains separate                                   | E-UI-032                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.20       | Done        | M4.19                   | JST-UI-014,JST-UI-002,JST-UI-003,JST-UI-005                                                                                                                                                                       | Right-rail destinations, ordered pill tabs, responsive overflow, focused interaction/a11y and cold browser acceptance          | Retain navigation and workspace regressions; visual review remains separate                    | E-UI-033,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| M4.21       | Done        | M4.20                   | JST-UI-003,JST-UI-005,JST-API-002                                                                                                                                                                                 | Compact workspace-row comparison picker, native Op Log cards, independent copy and focused interaction/a11y/browser acceptance | Retain exact-parent and workspace regressions; visual review remains separate                  | E-UI-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.22       | Done        | M4.21                   | JST-UI-014,JST-UI-003,JST-UI-008,JST-API-005                                                                                                                                                                      | Restore selection-aware rail actions with focused interaction, accessibility and browser evidence                              | Retain selection and capability regressions; visual review remains separate                    | E-UI-035                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.23       | Done        | M4.22                   | JST-UI-008,JST-UI-014,JST-API-005                                                                                                                                                                                 | Centered commit-selector content, oval ID chips and zero section margin; focused interaction/accessibility acceptance          | Retain picker/navigation regressions; visual review stays separate                             | E-UI-036                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.24       | Done        | M4.23,M4.17             | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                                                                 | Conflict sheet, highlighted editor and accept-all controls; focused and cold browser evidence                                  | Retain merge and shell regressions; visual review remains separate                             | E-UI-037                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.25       | Done        | M4.23                   | JST-UI-008,JST-API-005                                                                                                                                                                                            | Aligned selector ID columns, smaller labels and bottom-right time; focused interaction/accessibility acceptance                | Retain picker regressions; visual review stays separate                                        | E-UI-038                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.26       | Done        | M4.24                   | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                                                                 | Full-height conflict file browser and header actions; focused and cold browser acceptance                                      | Retain conflict layout/draft regressions; visual review stays separate                         | E-UI-039                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.27       | Done        | M4.25                   | JST-UI-008,JST-API-005                                                                                                                                                                                            | Commit selector time/chips beneath title and stacked Git/JJ column; focused interaction/accessibility acceptance               | Retain picker regressions; visual review stays separate                                        | E-UI-040                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.28       | Done        | M4.27                   | JST-UI-003,JST-UI-005,JST-UI-009,JST-UI-014,JST-API-002                                                                                                                                                           | Native Evo Log column, independent pinned anchor/history and chrome alignment; focused and cold browser acceptance             | Retain evolution and chrome regressions; visual review remains separate                        | E-UI-041                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M4.29       | Done        | M4.28                   | JST-UI-008,JST-API-005                                                                                                                                                                                            | File editor and prose composers remove native focus ring under served asset policy; focused and cold browser acceptance        | Retain editor/composer focus regressions; visual review remains separate                       | E-UI-042,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| M4.30       | Done        | M4.29                   | JST-UI-008,JST-API-005                                                                                                                                                                                            | Root navigation clears file edit presentation and workspace guard; focused and cold browser acceptance                         | Retain file navigation/edit regressions; visual review remains separate                        | E-UI-043,E-M11-006,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| M4.31       | In progress | M4.30                   | JST-UI-019,JST-UI-005,JST-API-005                                                                                                                                                                                 | Scoped notification lifetimes, inline validation boundaries and cold toast acceptance                                          | Complete released Design Core dependency acceptance after source qualification                 | E-UI-096,E-UI-097                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M5          | Done        | M4.1                    | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                                                               | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                                     | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| M5.1        | Done        | M4.1                    | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                                                               | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                                               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M5.2        | Done        | M5.1                    | JST-MUT-003                                                                                                                                                                                                       | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                                      | E-M5-005                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M5.3        | Done        | M5.1                    | JST-MUT-004                                                                                                                                                                                                       | Atomic stale-safe resolution with native conflict variants                                                                     | Retain mutation conformance; proceed to M6                                                     | E-M5-006,E-M5-007,E-M5-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| M6          | Done        | M5                      | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                                           | Replay-equivalent searchable projection with freshness                                                                         | Retain snapshot, search and deployment conformance                                             | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M6.1        | Done        | M5                      | JST-ADAPT-001,JST-ADAPT-002                                                                                                                                                                                       | Ordered committed reader and durable replay-safe checkpoints                                                                   | Implement Tantivy projection and search                                                        | E-M6-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M6.2        | Done        | M6.1                    | JST-ADAPT-003,JST-ADAPT-004                                                                                                                                                                                       | Tantivy crash/rebuild/generation and revocation tests                                                                          | Retain snapshot, search and deployment conformance                                             | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| M8a         | Deferred    | M6                      | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-005,JST-SEC-006                                                                                                                                                             | LocalTrusted macOS release is complete; backup, provider and cross-platform children remain deferred                           | Future backup/shared/platform release                                                          | E-SCOPE-001,E-M8A-001,E-M8A-002,E-M8A-003,E-M8A-004                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M8a.1       | Done        | M6                      | JST-COMPAT-003,JST-SEC-005                                                                                                                                                                                        | Local examples, graceful/abrupt restart, startup-fault diagnostics, request budgets and macOS release acceptance               | Retain local release acceptance                                                                | E-SCOPE-001,E-M8A-004,E-M8A-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| M8a.2       | Done        | M6                      | JST-COMPAT-005,JST-OBJ-005                                                                                                                                                                                        | A0: Rust 1.98.1, exact embedded RustFS pin, lifecycle starter, capability report and platform plan                             | Implement A1 format-2 local authority lifecycle                                                | E-M8A-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M8a.3       | Done        | M8a.2                   | JST-OBJ-005,JST-CLI-005                                                                                                                                                                                           | A1: strict format-2 configuration, local initialization, locked volume, sentinel and managed storage lifecycle                 | Retain local lifecycle acceptance                                                              | E-M8A-002,E-M8A-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M8a.4       | Done        | M8a.3                   | JST-SEC-006,JST-API-007,JST-UI-010,JST-CLI-005                                                                                                                                                                    | A2: LocalTrusted policy, Unix RPC, loopback HTTP protections, bootstrap/catalog and local application                          | Retain LocalTrusted acceptance                                                                 | E-M8A-003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M8a.5       | Deferred    | M8a.4                   | JST-ADAPT-006,JST-COMPAT-005                                                                                                                                                                                      | A3: wal-copy projection and pinned generic-S3 transfer qualification                                                           | Future backup release                                                                          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M8a.6       | Deferred    | M8a.5                   | JST-ADAPT-006,JST-CLI-005,JST-COMPAT-005                                                                                                                                                                          | A4: immutable verified inventories/certificates, fault qualification and offline restore                                       | Future backup/restore release                                                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M8a.7       | Deferred    | M8a.6                   | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-006,JST-UI-010                                                                                                                                                              | A5: Linux packaging plus external/authenticated/provider release qualification                                                 | Future shared and cross-platform release                                                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M8a.8       | Done        | M8a.4                   | JST-SEC-007,JST-API-008,JST-UI-011,JST-CLI-006                                                                                                                                                                    | Manual-token multi-repository discovery, independent repository policy and browser selection                                   | Retain focused authenticated discovery acceptance                                              | E-M8A-005                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M7          | Deferred    | M8a                     | JST-ADAPT-005                                                                                                                                                                                                     | Complete read-only replica through applied position                                                                            | After first release                                                                            | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M7.1        | Deferred    | M8a.4                   | JST-ADAPT-006                                                                                                                                                                                                     | Asynchronous verified S3 backup remains independent from passive serving and promotion                                         | Future backup release after local application                                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M8b         | Deferred    | M8a                     | JST-COMPAT-004                                                                                                                                                                                                    | Verified lossless import with source safety                                                                                    | Separate migration release                                                                     | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M9          | Done        | M8a.4                   | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-003,JST-COLLAB-004,JST-COLLAB-005,JST-COLLAB-006,JST-COLLAB-007                                                                                                          | Repository-native agent activity and exact review discussions in the LocalTrusted application                                  | Retain bounded local collaboration acceptance                                                  | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-032,E-M9-033,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| M9.1        | Done        | M8a.4                   | JST-PUB-007,JST-PUB-008                                                                                                                                                                                           | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                           | Implement AgentStore typed root objects                                                        | E-M9-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                                      | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                                                         | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                                                    | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035,E-M18-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                                                    | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-099,E-M18-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                                                                      | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                                          | E-M9-033                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013                                          | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| M10.1       | Done        | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                                                            | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                                    | E-M10-001,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M10.2       | Done        | M10.1                   | JST-REPL-002,JST-REPL-003,JST-REPL-005                                                                                                                                                                            | Durable origin streams, causal catalogs and authored publication integration                                                   | Retain origin authority and idempotent receipt regressions                                     | E-M10-002,E-M10-013                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M10.3       | Done        | M10.2                   | JST-REPL-004,JST-REPL-005,JST-REPL-006                                                                                                                                                                            | Verified one-way transfer, atomic import, durable acknowledgements and lost-response recovery                                  | Retain verified transfer and lost-response regressions                                         | E-M10-003,E-M10-005,E-M10-006,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M10.4       | Done        | M10.3                   | JST-REPL-007,JST-REPL-013                                                                                                                                                                                         | Bidirectional native operation-head integration, distinct workspaces and explicit reconciliation                               | Retain explicit reconciliation RPC/CLI acceptance                                              | E-M10-003,E-M10-007,E-M10-013                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M10.5       | Done        | M10.4                   | JST-REPL-008,JST-REPL-009,JST-REPL-013                                                                                                                                                                            | AgentStore and ReviewStore accepted-fact convergence under reordered and duplicate delivery                                    | Retain collaboration delivery permutation regressions                                          | E-M10-004,E-M10-013                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M10.6       | Done        | M10.5                   | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                                                            | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration                  | Retain bootstrap, migration and zero-upstream regressions                                      | E-M10-008,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M10.7       | Done        | M10.6                   | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                                                               | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration                   | Retain active profile; expanded hardening stays deferred to M10.8.                             | E-M10-009,E-M10-010,E-M10-013,E-M10-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| M10.8       | Deferred    | M10.7                   | JST-REPL-011,JST-REPL-012                                                                                                                                                                                         | Expanded pressure/fault soak, browser UI, cold two-instance RustFS, archive/export and topology qualification                  | Future replication hardening                                                                   | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M11         | In progress | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                                                           | Native project home, linked repositories, tasks and discussion                                                                 | Complete M11.4 package qualification and visual review                                         | E-M11-001,E-M11-002,E-M11-003,E-M11-004,E-M11-006,E-M11-007,E-M11-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                                                     | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                                            | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                                                      | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                                                    | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-094                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                                                   | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                                                       | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                                           | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M12.3       | Done        | M12.2                   | JST-GIT-004,JST-GIT-008                                                                                                                                                                                           | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                                    | E-M12-003,E-M12-004,E-M12-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M12.4       | Done        | M12.3                   | JST-GIT-005,JST-GIT-006                                                                                                                                                                                           | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                                    | E-M12-005,E-M12-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M12.5       | Done        | M12.4                   | JST-GIT-007                                                                                                                                                                                                       | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                                    | E-M12-006,E-M12-008,E-M12-009                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M12.6       | Done        | M12.5                   | JST-GIT-001,JST-GIT-005                                                                                                                                                                                           | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                                    | E-M12-007,E-M12-009                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M12.7       | Done        | M12.6                   | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                                                               | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Maintain cold native Git acceptance                                                            | E-M12-008,E-M12-010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M13         | In progress | M12                     | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                                               | Complete qualified local Git-backed collaboration profile                                                                      | Complete portable review/capture, indexed search, code-command and conversion gates            | E-M13-001,E-M13-002,E-M13-012,E-M13-022                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                                                       | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                                                     | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                                                       | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                                                     | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                                               | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                                             | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                                                                        | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                                                                | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-063                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                                          | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation                       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M14.4       | Done        | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                                                            | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild                               | E-M14-009,E-M14-010,E-M14-011,E-M14-012,E-M14-016                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M14.5       | Done        | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                                                                | Storage integrity and non-destructive checkpoints                                                                              | Retain bounded maintenance and cold restart coverage                                           | E-M14-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                                                           | Configured sync status and controls in Settings                                                                                | Retain typed upstream/worker editing; qualify remaining sync integration                       | E-M14-008,E-M14-010,E-M14-011,E-M14-012,E-M14-013,E-M14-016                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                                                            | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities                        | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007                           | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                                                                        | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                                            | E-M15-001,E-M15-005,E-M15-016                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                                                    | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                                                    | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                                                    | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                                             | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089,E-UI-094,E-UI-095,E-UI-098                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                                           | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                                                        | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                                            | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                                                  | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M17.1       | In progress | M8a.4                   | JST-DESK-003                                                                                                                                                                                                      | Opt-in bounded parent-pipe service supervision                                                                                 | Retain real RustFS and ordinary process evidence                                               | E-DESK-001,E-DESK-003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                                            | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                                                         | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                                                      | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M18         | In progress | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Deliver a usable Codex preview; retain extended roadmap as Deferred                                                            | Usable CLI preview delivered; additional harnesses and broader roadmap remain Deferred         | E-M17-001,E-M17-002,E-M17-003,E-M17-004,E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-001,E-M18-013 |
-| M18.0       | Done        | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Canonical gap traceability, agreed defaults and explicit qualification gates                                                   | Start M18.1 exact capture regressions                                                          | E-M17-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.1       | Done        | M18.0                   | JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023                                                                                                                                                                      | Diagnostic-only publication, cross-batch reduction and bounded append                                                          | Start M18.2 configured local capture runtime and readers                                       | E-M17-002,E-M17-003,E-M17-004,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| M18.2       | Partial     | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-029,JST-COLLAB-030                                                                                                                         | Codex capture and management qualified; additional readers Deferred                                                            | Reuse completed Codex path in M18.8; defer OpenCode and Cursor completion                      | E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-021,E-M17-022,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-005,E-M18-013 |
-| M18.3       | Deferred    | M18.2                   | JST-COLLAB-024                                                                                                                                                                                                    | Complete conversations, exact message/plan reviews and versioned replay                                                        | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.4       | Deferred    | M18.3                   | JST-COLLAB-025                                                                                                                                                                                                    | Separately opted-in checkpoint scopes and common canonical producer                                                            | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015 |
+| M18.0       | Done        | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Canonical gap traceability, agreed defaults and explicit qualification gates                                                   | Start M18.1 exact capture regressions                                                          | E-M17-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M18.1       | Done        | M18.0                   | JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023                                                                                                                                                                      | Diagnostic-only publication, cross-batch reduction and bounded append                                                          | Start M18.2 configured local capture runtime and readers                                       | E-M17-002,E-M17-003,E-M17-004,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| M18.2       | Partial     | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-029,JST-COLLAB-030                                                                                                                         | Codex capture and management qualified; additional readers Deferred                                                            | Reuse completed Codex path in M18.8; defer OpenCode and Cursor completion                      | E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-021,E-M17-022,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-005,E-M18-013                     |
+| M18.3       | Deferred    | M18.2                   | JST-COLLAB-024                                                                                                                                                                                                    | Complete conversations, exact message/plan reviews and versioned replay                                                        | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M18.4       | Deferred    | M18.3                   | JST-COLLAB-025                                                                                                                                                                                                    | Separately opted-in checkpoint scopes and common canonical producer                                                            | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -207,7 +207,6 @@ conversion. The pending capability gates are explicit in
 
 Entries record actual runs. Pending entries do not establish completion. Files
 and named tests are checked by the progress gate.
-
 
 ## Retained source encodings
 
@@ -1819,20 +1818,21 @@ encoding variants; the authoritative evidence array uses main's encodings.
 Desktop retains M17. Capture uses M18 after the integration onto committed main.
 Historical E-M17-* evidence is immutable; only task lookup uses the explicit
 family mapping below. E-DESK-* and all other evidence keep their original tasks.
-Both parent evidence sequences are preserved, deduplicating only identical entries.
+Both parent evidence sequences are preserved, deduplicating only identical
+entries.
 
 | Historical evidence family | Original task | Current task |
-| --- | --- | --- |
-| E-M17-* | M17 | M18 |
-| E-M17-* | M17.0 | M18.0 |
-| E-M17-* | M17.1 | M18.1 |
-| E-M17-* | M17.2 | M18.2 |
-| E-M17-* | M17.3 | M18.3 |
-| E-M17-* | M17.4 | M18.4 |
-| E-M17-* | M17.5 | M18.5 |
-| E-M17-* | M17.6 | M18.6 |
-| E-M17-* | M17.7 | M18.7 |
-| E-M17-* | M17.8 | M18.8 |
+| -------------------------- | ------------- | ------------ |
+| E-M17-*                    | M17           | M18          |
+| E-M17-*                    | M17.0         | M18.0        |
+| E-M17-*                    | M17.1         | M18.1        |
+| E-M17-*                    | M17.2         | M18.2        |
+| E-M17-*                    | M17.3         | M18.3        |
+| E-M17-*                    | M17.4         | M18.4        |
+| E-M17-*                    | M17.5         | M18.5        |
+| E-M17-*                    | M17.6         | M18.6        |
+| E-M17-*                    | M17.7         | M18.7        |
+| E-M17-*                    | M17.8         | M18.8        |
 
 ```json
 [
@@ -67672,1348 +67672,1339 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
     "remaining": [],
     "scope": "User requested a functional feature plan with UI prioritized, extras Deferred, and rebasing against main. Existing Codex startup/readers/history/recovery and UI are reused. M17.2 is Partial for the larger reader scope; M17.3-M17.7 Deferred. M17.8 is the independent usable-preview gate. Rebase, automatic freshness, isolated setup and actual Codex/service/browser/restart qualification remain pending implementation. This entry accepts planning only; product tests, UI/Rust builds, root aggregate suites, deployment and restarts are out of scope. The verified prefix boundary remains in the preview ancestry; unfinished OpenCode integration is parked. Main active state and existing services preserved. Documentation-only replan acceptance complete. The next implementation step is rebase against the newly rechecked committed main followed by UI work. No rebase or preview startup performed in this planning change."
   },
-{
-  "id": "E-M18-001",
-  "tasks": [
-    "M18",
-    "M18.8"
-  ],
-  "date": "2026-10-04",
-  "kind": "integration-ui-preview",
-  "revision": "enclosing JJ change nlstmlwq",
-  "files": [
-    "Cargo.lock",
-    "Cargo.toml",
-    "README.md",
-    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-    "catalog/fixtures/CaptureSettingsFixture.svelte",
-    "catalog/fixtures/capture-management.ts",
-    "crates/jj-agent/src/activity.rs",
-    "crates/jj-agent/src/capture.rs",
-    "crates/jj-agent/src/indexes.rs",
-    "crates/jj-agent/src/lib.rs",
-    "crates/jj-agent/src/normalization.rs",
-    "crates/jj-agent/src/normalize.rs",
-    "crates/jj-agent/src/normalizers/codex.rs",
-    "crates/jj-agent/src/normalizers/codex_ids.rs",
-    "crates/jj-agent/src/normalizers/codex_tool_result.rs",
-    "crates/jj-agent/src/normalizers/codex_transcript.rs",
-    "crates/jj-agent/src/normalizers/mod.rs",
-    "crates/jj-agent/src/normalizers/opencode.rs",
-    "crates/jj-agent/src/normalizers/opencode_snapshot.rs",
-    "crates/jj-agent/src/objects.rs",
-    "crates/jj-agent/src/reducer.rs",
-    "crates/jj-agent/src/tool_result.rs",
-    "crates/jj-agent/src/transcript.rs",
-    "crates/jj-agent/tests/activity.rs",
-    "crates/jj-agent/tests/codex_transcript.rs",
-    "crates/jj-agent/tests/opencode_snapshots.rs",
-    "crates/jj-collab/src/capture_binding.rs",
-    "crates/jj-collab/src/commands.rs",
-    "crates/jj-collab/src/objects.rs",
-    "crates/jj-collab/src/threads.rs",
-    "crates/jj-store-capture/Cargo.toml",
-    "crates/jj-store-capture/src/agent_capture/budget.rs",
-    "crates/jj-store-capture/src/agent_capture.rs",
-    "crates/jj-store-capture/src/agent_capture_binding.rs",
-    "crates/jj-store-capture/src/agent_capture_enqueue.rs",
-    "crates/jj-store-capture/src/agent_capture_files.rs",
-    "crates/jj-store-capture/src/agent_capture_intent.rs",
-    "crates/jj-store-capture/src/agent_capture_lock.rs",
-    "crates/jj-store-capture/src/agent_publication/drain.rs",
-    "crates/jj-store-capture/src/agent_publication/exact.rs",
-    "crates/jj-store-capture/src/agent_publication/schedule.rs",
-    "crates/jj-store-capture/src/agent_publication.rs",
-    "crates/jj-store-capture/src/agent_sanitization.rs",
-    "crates/jj-store-capture/src/codex_activity/scan.rs",
-    "crates/jj-store-capture/src/codex_activity.rs",
-    "crates/jj-store-capture/src/codex_discovery/scanner.rs",
-    "crates/jj-store-capture/src/codex_discovery.rs",
-    "crates/jj-store-capture/src/codex_import/binding.rs",
-    "crates/jj-store-capture/src/codex_import/reader.rs",
-    "crates/jj-store-capture/src/codex_import/scan.rs",
-    "crates/jj-store-capture/src/codex_import.rs",
-    "crates/jj-store-capture/src/codex_resume.rs",
-    "crates/jj-store-capture/src/codex_source.rs",
-    "crates/jj-store-capture/src/codex_transcript/context.rs",
-    "crates/jj-store-capture/src/codex_transcript/file.rs",
-    "crates/jj-store-capture/src/codex_transcript/poll.rs",
-    "crates/jj-store-capture/src/codex_transcript/progress.rs",
-    "crates/jj-store-capture/src/codex_transcript/recovery/identity.rs",
-    "crates/jj-store-capture/src/codex_transcript/recovery.rs",
-    "crates/jj-store-capture/src/codex_transcript.rs",
-    "crates/jj-store-capture/src/lib.rs",
-    "crates/jj-store-capture/src/local_agent_publication.rs",
-    "crates/jj-store-capture/src/opencode_checkpoint.rs",
-    "crates/jj-store-capture/src/opencode_ingress.rs",
-    "crates/jj-store-capture/src/opencode_snapshot.rs",
-    "crates/jj-store-capture/src/path_policy.rs",
-    "crates/jj-store-capture/src/profile.rs",
-    "crates/jj-store-capture/src/reader_progress/history.rs",
-    "crates/jj-store-capture/src/reader_progress/source.rs",
-    "crates/jj-store-capture/src/reader_progress/spool.rs",
-    "crates/jj-store-capture/src/reader_progress.rs",
-    "crates/jj-store-capture/src/reader_progress_files.rs",
-    "crates/jj-store-capture/src/reader_publication/catalog/tests.rs",
-    "crates/jj-store-capture/src/reader_publication/catalog.rs",
-    "crates/jj-store-capture/src/reader_publication/files.rs",
-    "crates/jj-store-capture/src/reader_publication/inspection.rs",
-    "crates/jj-store-capture/src/reader_publication/projection.rs",
-    "crates/jj-store-capture/src/reader_publication/ranges.rs",
-    "crates/jj-store-capture/src/reader_publication/snapshot.rs",
-    "crates/jj-store-capture/src/reader_publication/spool.rs",
-    "crates/jj-store-capture/src/reader_publication.rs",
-    "crates/jj-store-capture/src/service_agent_publication.rs",
-    "crates/jj-store-capture/src/source_registry/acquisition.rs",
-    "crates/jj-store-capture/src/source_registry/catalog/opencode_index.rs",
-    "crates/jj-store-capture/src/source_registry/catalog.rs",
-    "crates/jj-store-capture/src/source_registry/codex.rs",
-    "crates/jj-store-capture/src/source_registry/files/contents.rs",
-    "crates/jj-store-capture/src/source_registry/files.rs",
-    "crates/jj-store-capture/src/source_registry/import.rs",
-    "crates/jj-store-capture/src/source_registry/opencode.rs",
-    "crates/jj-store-capture/src/source_registry/parking/pinned.rs",
-    "crates/jj-store-capture/src/source_registry/parking.rs",
-    "crates/jj-store-capture/src/source_registry.rs",
-    "crates/jj-store-capture/src/state_lease.rs",
-    "crates/jj-store-capture/src/transcript_sanitization.rs",
-    "crates/jj-store-capture/tests/codex_activity.rs",
-    "crates/jj-store-capture/tests/codex_bound_source.rs",
-    "crates/jj-store-capture/tests/codex_context.rs",
-    "crates/jj-store-capture/tests/codex_discovery.rs",
-    "crates/jj-store-capture/tests/codex_import/boundaries.rs",
-    "crates/jj-store-capture/tests/codex_import/identity.rs",
-    "crates/jj-store-capture/tests/codex_import/reader.rs",
-    "crates/jj-store-capture/tests/codex_import.rs",
-    "crates/jj-store-capture/tests/codex_recovery.rs",
-    "crates/jj-store-capture/tests/codex_resume.rs",
-    "crates/jj-store-capture/tests/codex_transcript.rs",
-    "crates/jj-store-capture/tests/opencode_checkpoint.rs",
-    "crates/jj-store-capture/tests/opencode_ingress.rs",
-    "crates/jj-store-capture/tests/opencode_recovery_index.rs",
-    "crates/jj-store-capture/tests/opencode_snapshot.rs",
-    "crates/jj-store-capture/tests/reader_progress/headroom.rs",
-    "crates/jj-store-capture/tests/reader_progress/source.rs",
-    "crates/jj-store-capture/tests/reader_progress.rs",
-    "crates/jj-store-capture/tests/reader_publication/generations.rs",
-    "crates/jj-store-capture/tests/reader_publication/inspection.rs",
-    "crates/jj-store-capture/tests/reader_publication/mixed.rs",
-    "crates/jj-store-capture/tests/reader_publication/mod.rs",
-    "crates/jj-store-capture/tests/reader_publication/paths.rs",
-    "crates/jj-store-capture/tests/reader_publication/process.rs",
-    "crates/jj-store-capture/tests/reader_publication.rs",
-    "crates/jj-store-capture/tests/snapshot_publication.rs",
-    "crates/jj-store-capture/tests/source_parking/reservations.rs",
-    "crates/jj-store-capture/tests/source_parking.rs",
-    "crates/jj-store-capture/tests/source_registry.rs",
-    "crates/jj-store-capture/tests/source_registry_import/leases.rs",
-    "crates/jj-store-capture/tests/source_registry_import/loss.rs",
-    "crates/jj-store-capture/tests/source_registry_import/restart.rs",
-    "crates/jj-store-capture/tests/source_registry_import.rs",
-    "crates/jj-store-capture/tests/source_registry_policy.rs",
-    "crates/jj-store-capture/tests/transcript_sanitization.rs",
-    "crates/jj-store-cli/Cargo.toml",
-    "crates/jj-store-cli/src/agent_capture.rs",
-    "crates/jj-store-cli/src/agent_capture_files.rs",
-    "crates/jj-store-cli/src/agent_commands/capture/client.rs",
-    "crates/jj-store-cli/src/agent_commands/capture/imports.rs",
-    "crates/jj-store-cli/src/agent_commands/capture/sources.rs",
-    "crates/jj-store-cli/src/agent_commands/capture.rs",
-    "crates/jj-store-cli/src/agent_commands/types.rs",
-    "crates/jj-store-cli/src/agent_commands.rs",
-    "crates/jj-store-cli/src/agent_publication.rs",
-    "crates/jj-store-cli/src/agent_sanitization.rs",
-    "crates/jj-store-cli/src/lib.rs",
-    "crates/jj-store-cli/src/local_agent_publication.rs",
-    "crates/jj-store-cli/src/state_lease.rs",
-    "crates/jj-store-cli/src/workspace_management.rs",
-    "crates/jj-store-cli/tests/agent_capture_publication/scheduling.rs",
-    "crates/jj-store-cli/tests/agent_capture_publication.rs",
-    "crates/jj-store-cli/tests/capture_cli/fixture.rs",
-    "crates/jj-store-cli/tests/capture_cli/imports.rs",
-    "crates/jj-store-cli/tests/capture_cli/sources.rs",
-    "crates/jj-store-cli/tests/capture_cli/transport.rs",
-    "crates/jj-store-cli/tests/capture_cli.rs",
-    "crates/jj-store-cli/tests/capture_import_cli.rs",
-    "crates/jj-store-cli/tests/local_browser.rs",
-    "crates/jj-store-cli/tests/native_lifecycle/http_collaboration.rs",
-    "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
-    "crates/jj-store-cli/tests/native_lifecycle/http_threads_reactions.rs",
-    "crates/jj-store-cli/tests/server_executable/configured_capture/helpers.rs",
-    "crates/jj-store-cli/tests/server_executable/configured_capture.rs",
-    "crates/jj-store-cli/tests/server_executable.rs",
-    "crates/jj-store-cli/tests/workspace_management.rs",
-    "crates/jj-store-http/src/capture_management/imports.rs",
-    "crates/jj-store-http/src/capture_management.rs",
-    "crates/jj-store-http/src/contract/capture_tests.rs",
-    "crates/jj-store-http/src/contract/tests.rs",
-    "crates/jj-store-http/src/contract.rs",
-    "crates/jj-store-http/src/dto.rs",
-    "crates/jj-store-http/src/lib.rs",
-    "crates/jj-store-http/src/local_browser.rs",
-    "crates/jj-store-jj/src/local_browser/operations.rs",
-    "crates/jj-store-rpc/tests/collab.rs",
-    "crates/jj-store-server/Cargo.toml",
-    "crates/jj-store-server/src/capture_admission.rs",
-    "crates/jj-store-server/src/capture_authority/publisher.rs",
-    "crates/jj-store-server/src/capture_authority.rs",
-    "crates/jj-store-server/src/capture_config.rs",
-    "crates/jj-store-server/src/capture_control_state/catalog.rs",
-    "crates/jj-store-server/src/capture_control_state/pinned.rs",
-    "crates/jj-store-server/src/capture_control_state/tests.rs",
-    "crates/jj-store-server/src/capture_control_state.rs",
-    "crates/jj-store-server/src/capture_import_state/catalog.rs",
-    "crates/jj-store-server/src/capture_import_state/hex_codec.rs",
-    "crates/jj-store-server/src/capture_import_state/reader.rs",
-    "crates/jj-store-server/src/capture_import_state/selected.rs",
-    "crates/jj-store-server/src/capture_import_state/tests/reader.rs",
-    "crates/jj-store-server/src/capture_import_state/tests/reader_verification.rs",
-    "crates/jj-store-server/src/capture_import_state/tests.rs",
-    "crates/jj-store-server/src/capture_import_state/types.rs",
-    "crates/jj-store-server/src/capture_import_state.rs",
-    "crates/jj-store-server/src/capture_journal_files/metadata.rs",
-    "crates/jj-store-server/src/capture_journal_files/publication.rs",
-    "crates/jj-store-server/src/capture_journal_files.rs",
-    "crates/jj-store-server/src/capture_management/authority.rs",
-    "crates/jj-store-server/src/capture_management/import_dispatch.rs",
-    "crates/jj-store-server/src/capture_management/import_policy.rs",
-    "crates/jj-store-server/src/capture_management/import_progress.rs",
-    "crates/jj-store-server/src/capture_management/import_recovery.rs",
-    "crates/jj-store-server/src/capture_management/import_renewal.rs",
-    "crates/jj-store-server/src/capture_management/import_settlement.rs",
-    "crates/jj-store-server/src/capture_management/imports.rs",
-    "crates/jj-store-server/src/capture_management/report.rs",
-    "crates/jj-store-server/src/capture_management/rescan.rs",
-    "crates/jj-store-server/src/capture_management/sources.rs",
-    "crates/jj-store-server/src/capture_management/tests/import_policy/safety.rs",
-    "crates/jj-store-server/src/capture_management/tests/import_policy.rs",
-    "crates/jj-store-server/src/capture_management/tests/import_settlement.rs",
-    "crates/jj-store-server/src/capture_management/tests/native_import/ownership.rs",
-    "crates/jj-store-server/src/capture_management/tests/native_import/prefix_progress.rs",
-    "crates/jj-store-server/src/capture_management/tests/native_import/reader_binding.rs",
-    "crates/jj-store-server/src/capture_management/tests/native_import.rs",
-    "crates/jj-store-server/src/capture_management/tests/rescan.rs",
-    "crates/jj-store-server/src/capture_management/tests/scheduled_import/handoff.rs",
-    "crates/jj-store-server/src/capture_management/tests/scheduled_import/restart/recovery.rs",
-    "crates/jj-store-server/src/capture_management/tests/scheduled_import/restart.rs",
-    "crates/jj-store-server/src/capture_management/tests/scheduled_import.rs",
-    "crates/jj-store-server/src/capture_management/tests/sources.rs",
-    "crates/jj-store-server/src/capture_management/tests.rs",
-    "crates/jj-store-server/src/capture_management.rs",
-    "crates/jj-store-server/src/capture_runtime/control.rs",
-    "crates/jj-store-server/src/capture_runtime/imports.rs",
-    "crates/jj-store-server/src/capture_runtime/rescan.rs",
-    "crates/jj-store-server/src/capture_runtime/sources.rs",
-    "crates/jj-store-server/src/capture_runtime/targets.rs",
-    "crates/jj-store-server/src/capture_runtime.rs",
-    "crates/jj-store-server/src/capture_source/acquire.rs",
-    "crates/jj-store-server/src/capture_source/import/parking.rs",
-    "crates/jj-store-server/src/capture_source/import/pipeline.rs",
-    "crates/jj-store-server/src/capture_source/import.rs",
-    "crates/jj-store-server/src/capture_source/ingress.rs",
-    "crates/jj-store-server/src/capture_source/parking/acquire.rs",
-    "crates/jj-store-server/src/capture_source/parking/current.rs",
-    "crates/jj-store-server/src/capture_source/parking.rs",
-    "crates/jj-store-server/src/capture_source/pipeline.rs",
-    "crates/jj-store-server/src/capture_source/recovery.rs",
-    "crates/jj-store-server/src/capture_source/resume/eligibility.rs",
-    "crates/jj-store-server/src/capture_source/resume.rs",
-    "crates/jj-store-server/src/capture_source.rs",
-    "crates/jj-store-server/src/capture_supervisor/delivery.rs",
-    "crates/jj-store-server/src/capture_supervisor/discovery/observations.rs",
-    "crates/jj-store-server/src/capture_supervisor/discovery/tests.rs",
-    "crates/jj-store-server/src/capture_supervisor/discovery.rs",
-    "crates/jj-store-server/src/capture_supervisor/imports.rs",
-    "crates/jj-store-server/src/capture_supervisor/lifetime.rs",
-    "crates/jj-store-server/src/capture_supervisor/opencode/delivery.rs",
-    "crates/jj-store-server/src/capture_supervisor/opencode/discovery.rs",
-    "crates/jj-store-server/src/capture_supervisor/opencode/scheduling.rs",
-    "crates/jj-store-server/src/capture_supervisor/opencode/source.rs",
-    "crates/jj-store-server/src/capture_supervisor/opencode/tests.rs",
-    "crates/jj-store-server/src/capture_supervisor/opencode.rs",
-    "crates/jj-store-server/src/capture_supervisor/recovery.rs",
-    "crates/jj-store-server/src/capture_supervisor/scheduling.rs",
-    "crates/jj-store-server/src/capture_supervisor/source/import.rs",
-    "crates/jj-store-server/src/capture_supervisor/source/tests.rs",
-    "crates/jj-store-server/src/capture_supervisor/source.rs",
-    "crates/jj-store-server/src/capture_supervisor/sources.rs",
-    "crates/jj-store-server/src/capture_supervisor/status/harness.rs",
-    "crates/jj-store-server/src/capture_supervisor/status.rs",
-    "crates/jj-store-server/src/capture_supervisor/tests/observations.rs",
-    "crates/jj-store-server/src/capture_supervisor/tests/rebinding.rs",
-    "crates/jj-store-server/src/capture_supervisor/tests/running_loss.rs",
-    "crates/jj-store-server/src/capture_supervisor/tests.rs",
-    "crates/jj-store-server/src/capture_supervisor.rs",
-    "crates/jj-store-server/src/capture_worker/executor/faults.rs",
-    "crates/jj-store-server/src/capture_worker/executor/tests.rs",
-    "crates/jj-store-server/src/capture_worker/executor.rs",
-    "crates/jj-store-server/src/capture_worker.rs",
-    "crates/jj-store-server/src/config/format-2-example.toml",
-    "crates/jj-store-server/src/config/types.rs",
-    "crates/jj-store-server/src/config.rs",
-    "crates/jj-store-server/src/installation.rs",
-    "crates/jj-store-server/src/lib.rs",
-    "crates/jj-store-server/src/opencode_import.rs",
-    "crates/jj-store-server/src/opencode_read_api/discovery.rs",
-    "crates/jj-store-server/src/opencode_read_api.rs",
-    "crates/jj-store-server/src/opencode_source/conversion.rs",
-    "crates/jj-store-server/src/opencode_source/ingress.rs",
-    "crates/jj-store-server/src/opencode_source/lifecycle.rs",
-    "crates/jj-store-server/src/opencode_source/publication.rs",
-    "crates/jj-store-server/src/opencode_source/recovery.rs",
-    "crates/jj-store-server/src/opencode_source/snapshot.rs",
-    "crates/jj-store-server/src/opencode_source.rs",
-    "crates/jj-store-server/src/policy.rs",
-    "crates/jj-store-server/src/process/authority.rs",
-    "crates/jj-store-server/src/process/capture/selection.rs",
-    "crates/jj-store-server/src/process/capture/state.rs",
-    "crates/jj-store-server/src/process/capture.rs",
-    "crates/jj-store-server/src/process/preparation.rs",
-    "crates/jj-store-server/src/process/running.rs",
-    "crates/jj-store-server/src/process/tests/capture_factory/controls.rs",
-    "crates/jj-store-server/src/process/tests/capture_factory/foreground.rs",
-    "crates/jj-store-server/src/process/tests/capture_factory/import_recovery.rs",
-    "crates/jj-store-server/src/process/tests/capture_factory/management.rs",
-    "crates/jj-store-server/src/process/tests/capture_factory/startup.rs",
-    "crates/jj-store-server/src/process/tests/capture_factory.rs",
-    "crates/jj-store-server/src/process/tests.rs",
-    "crates/jj-store-server/src/process.rs",
-    "crates/jj-store-server/src/storage/lifetime/tests/attachment.rs",
-    "crates/jj-store-server/src/storage/lifetime/tests.rs",
-    "crates/jj-store-server/src/storage/lifetime.rs",
-    "crates/jj-store-server/src/storage.rs",
-    "crates/jj-store-server/tests/capture_activation.rs",
-    "crates/jj-store-server/tests/capture_activity.rs",
-    "crates/jj-store-server/tests/capture_admission.rs",
-    "crates/jj-store-server/tests/capture_authority.rs",
-    "crates/jj-store-server/tests/capture_control_state/capacity.rs",
-    "crates/jj-store-server/tests/capture_control_state/safety.rs",
-    "crates/jj-store-server/tests/capture_control_state.rs",
-    "crates/jj-store-server/tests/capture_import_state/capacity.rs",
-    "crates/jj-store-server/tests/capture_import_state/cold.rs",
-    "crates/jj-store-server/tests/capture_import_state/safety.rs",
-    "crates/jj-store-server/tests/capture_import_state.rs",
-    "crates/jj-store-server/tests/capture_management/api_snapshot.rs",
-    "crates/jj-store-server/tests/capture_management/coverage.rs",
-    "crates/jj-store-server/tests/capture_management/http.rs",
-    "crates/jj-store-server/tests/capture_management/http_admission.rs",
-    "crates/jj-store-server/tests/capture_management/imports/inspection.rs",
-    "crates/jj-store-server/tests/capture_management/imports.rs",
-    "crates/jj-store-server/tests/capture_management/rescan.rs",
-    "crates/jj-store-server/tests/capture_management/sources.rs",
-    "crates/jj-store-server/tests/capture_management.rs",
-    "crates/jj-store-server/tests/capture_parking/generations.rs",
-    "crates/jj-store-server/tests/capture_parking.rs",
-    "crates/jj-store-server/tests/capture_pipeline.rs",
-    "crates/jj-store-server/tests/capture_pipeline_worker.rs",
-    "crates/jj-store-server/tests/capture_reanchor/progress.rs",
-    "crates/jj-store-server/tests/capture_reanchor/race.rs",
-    "crates/jj-store-server/tests/capture_reanchor.rs",
-    "crates/jj-store-server/tests/capture_recovery.rs",
-    "crates/jj-store-server/tests/capture_resume.rs",
-    "crates/jj-store-server/tests/capture_runtime/controls.rs",
-    "crates/jj-store-server/tests/capture_runtime/draining.rs",
-    "crates/jj-store-server/tests/capture_runtime/rescan.rs",
-    "crates/jj-store-server/tests/capture_runtime/storage.rs",
-    "crates/jj-store-server/tests/capture_runtime.rs",
-    "crates/jj-store-server/tests/capture_source/fixture.rs",
-    "crates/jj-store-server/tests/capture_source/progress_capacity.rs",
-    "crates/jj-store-server/tests/capture_source.rs",
-    "crates/jj-store-server/tests/capture_supervisor/backlog.rs",
-    "crates/jj-store-server/tests/capture_supervisor/blocked.rs",
-    "crates/jj-store-server/tests/capture_supervisor/capacity.rs",
-    "crates/jj-store-server/tests/capture_supervisor/generations.rs",
-    "crates/jj-store-server/tests/capture_supervisor/headroom.rs",
-    "crates/jj-store-server/tests/capture_supervisor/raw_channels.rs",
-    "crates/jj-store-server/tests/capture_supervisor/raw_handoff.rs",
-    "crates/jj-store-server/tests/capture_supervisor/rearming.rs",
-    "crates/jj-store-server/tests/capture_supervisor/rotation.rs",
-    "crates/jj-store-server/tests/capture_supervisor/saturation.rs",
-    "crates/jj-store-server/tests/capture_supervisor/task_loss.rs",
-    "crates/jj-store-server/tests/capture_supervisor.rs",
-    "crates/jj-store-server/tests/configuration.rs",
-    "crates/jj-store-server/tests/opencode_discovery.rs",
-    "crates/jj-store-server/tests/opencode_import.rs",
-    "crates/jj-store-server/tests/opencode_lifecycle.rs",
-    "crates/jj-store-server/tests/opencode_publication.rs",
-    "crates/jj-store-server/tests/opencode_read_api/fixture.rs",
-    "crates/jj-store-server/tests/opencode_read_api.rs",
-    "crates/jj-store-server/tests/opencode_source/fixture.rs",
-    "crates/jj-store-server/tests/opencode_source/scheduling.rs",
-    "crates/jj-store-server/tests/opencode_source.rs",
-    "crates/jj-store-server/tests/opencode_supervisor.rs",
-    "crates/jj-store-service/src/capture_management/imports.rs",
-    "crates/jj-store-service/src/capture_management/sources.rs",
-    "crates/jj-store-service/src/capture_management.rs",
-    "crates/jj-store-service/src/collaboration/models.rs",
-    "crates/jj-store-service/src/content_search/cursors.rs",
-    "crates/jj-store-service/src/content_search/extract.rs",
-    "crates/jj-store-service/src/lib.rs",
-    "crates/jj-store-service/src/local_management.rs",
-    "crates/jj-store-service/src/local_repository/agent_descriptor.rs",
-    "crates/jj-store-service/src/local_repository/agent_store.rs",
-    "crates/jj-store-service/src/local_repository/agent_thread_binding.rs",
-    "crates/jj-store-service/src/local_repository/collab_commands.rs",
-    "crates/jj-store-service/tests/agent_sessions.rs",
-    "crates/jj-store-service/tests/local_agent/native_results.rs",
-    "crates/jj-store-service/tests/local_agent/opencode_aliases.rs",
-    "crates/jj-store-service/tests/local_agent.rs",
-    "crates/jj-store-service/tests/local_agent_binding.rs",
-    "crates/jj-store-wal/src/publication/agent.rs",
-    "crates/jj-store-wal/src/publication/agent_capture.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_aliases/catalog.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_aliases/catalog_tests.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_aliases/remap.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_aliases.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_binding.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_projection.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_records.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_results.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_tools.rs",
-    "crates/jj-store-wal/src/publication/agent_capture_transcript.rs",
-    "crates/jj-store-wal/src/publication/agent_catalog.rs",
-    "crates/jj-store-wal/src/publication/agent_io.rs",
-    "crates/jj-store-wal/src/publication/agent_read_engine.rs",
-    "crates/jj-store-wal/src/publication/agent_thread_binding.rs",
-    "crates/jj-store-wal/src/publication/agent_transcript_audit.rs",
-    "crates/jj-store-wal/src/publication/agent_transcript_read.rs",
-    "crates/jj-store-wal/src/publication/agent_transcript_tail.rs",
-    "crates/jj-store-wal/src/publication/collab_commands.rs",
-    "crates/jj-store-wal/src/publication.rs",
-    "crates/jj-store-wal/tests/agent_catalog/common_aliases.rs",
-    "crates/jj-store-wal/tests/agent_catalog/native_results.rs",
-    "crates/jj-store-wal/tests/agent_catalog/opencode_aliases.rs",
-    "crates/jj-store-wal/tests/agent_catalog/selected_tail.rs",
-    "crates/jj-store-wal/tests/agent_catalog.rs",
-    "crates/jj-store-wal/tests/bound_capture.rs",
-    "crates/jj-store-wal/tests/native_copy.rs",
-    "docs/capture-preview.md",
-    "docs/implementation-plan.md",
-    "package.json",
-    "schemas/openapi.json",
-    "scripts/check-boundaries.mjs",
-    "scripts/check-progress.mjs",
-    "scripts/contracts.mjs",
-    "scripts/dev-capture.mjs",
-    "scripts/governance.test.mjs",
-    "scripts/progress-mapping.mjs",
-    "scripts/progress-mapping.test.mjs",
-    "spec/src/adapters.md",
-    "spec/src/api.md",
-    "spec/src/architecture.md",
-    "spec/src/cli.md",
-    "spec/src/collaboration.md",
-    "spec/src/compatibility.md",
-    "spec/src/jj-integration.md",
-    "spec/src/local-jj.md",
-    "spec/src/milestones.md",
-    "spec/src/mutations.md",
-    "spec/src/publication.md",
-    "spec/src/security.md",
-    "spec/src/spec-governance.md",
-    "spec/src/ui.md",
-    "spec/src/verification.md",
-    "spec-validator.config.mjs",
-    "web/src/lib/api/generated.ts",
-    "web/src/lib/controller/capture-errors.ts",
-    "web/src/lib/controller/capture-http.ts",
-    "web/src/lib/controller/capture-management.svelte.ts",
-    "web/src/lib/controller/capture-observations.ts",
-    "web/src/lib/controller/capture-presentation.ts",
-    "web/src/lib/controller/capture-refresh.ts",
-    "web/src/lib/controller/capture-response-validation.ts",
-    "web/src/lib/controller/capture-snapshot-validation.ts",
-    "web/src/lib/controller/capture-types.ts",
-    "web/src/lib/controller/capture-validation.ts",
-    "web/src/lib/controller/contracts.ts",
-    "web/src/lib/controller/production-capture-management.ts",
-    "web/src/lib/controller/production-store-controller.svelte.ts",
-    "web/src/lib/controller/production-store-lifecycle.svelte.ts",
-    "web/src/lib/controller/production-store-state.svelte.ts",
-    "web/src/lib/controller/production-store-view.ts",
-    "web/src/lib/ui/store-settings/StoreCaptureDiagnostics.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
-    "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
-    "web/src/lib/ui/store-threads/thread-context.ts",
-    "web/tests/browser/local-capture-settings.spec.ts",
-    "web/tests/vite/capture-freshness.test.ts",
-    "web/tests/vite/capture-management.test.ts",
-    "web/tests/vite/production-capture-management.test.ts",
-    "web/tests/vite/thread-context.test.ts"
-  ],
-  "tests": [
-    "scripts/progress-mapping.test.mjs#historical_capture_tasks_map_without_rewriting_evidence",
-    "crates/jj-store-wal/tests/agent_catalog/selected_tail.rs#selected_cached_agent_reader_retains_audited_append_witnesses",
-    "web/tests/vite/capture-freshness.test.ts#visible capture loads polls coalesces and stops on closure",
-    "web/tests/vite/capture-freshness.test.ts#background observations retain exact uncertain control intent",
-    "web/tests/vite/capture-freshness.test.ts#background refresh retains every loaded source page",
-    "crates/jj-store-capture/tests/codex_transcript.rs#codex_cli_exec_and_inherited_desktop_originator_keep_cli_surface_checks",
-    "crates/jj-store-server/tests/capture_management/imports.rs#import_acceptance_progress_and_replay_are_actual_http_contracts",
-    "web/tests/vite/capture-management.test.ts#cumulative unavailable observations do not disable capture controls"
-  ],
-  "runs": [
-    {
-      "command": "node --test scripts/progress-mapping.test.mjs (before)",
-      "result": "fail",
-      "failures": 4,
-      "note": ""
-    },
-    {
-      "command": "node --test scripts/progress-mapping.test.mjs scripts/governance.test.mjs",
-      "result": "pass",
-      "failures": 0,
-      "note": "32 tests"
-    },
-    {
-      "command": "pnpm contracts:generate (before merge repair)",
-      "result": "fail",
-      "failures": 1,
-      "note": "missing cached append witnesses"
-    },
-    {
-      "command": "cargo test -p jj-store-wal --test agent_catalog selected_cached_agent_reader_retains_audited_append_witnesses --locked (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "same missing witness field compile boundary"
-    },
-    {
-      "command": "pnpm contracts:generate",
-      "result": "pass",
-      "failures": 0,
-      "note": "103 paths, 30 local-prefix paths"
-    },
-    {
-      "command": "cargo check -p jj-store-cli -p jj-store-server --all-targets --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": ""
-    },
-    {
-      "command": "cargo test -p jj-store-wal --test agent_catalog --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "26 tests"
-    },
-    {
-      "command": "cargo test -p jj-store-server --lib process::tests::capture_factory --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "10 tests including cold startup/lifetime/recovery"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts (before)",
-      "result": "fail",
-      "failures": 4,
-      "note": ""
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/production-capture-management.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "18 tests; original single-flight test revised to await both coalesced reads after delivery"
-    },
-    {
-      "command": "pnpm contracts:check (first run)",
-      "result": "fail",
-      "failures": 1,
-      "note": "cold import acknowledgement is unknown; exact standalone target reproduces 503 and is now qualified through original receipt/replay"
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management imports::import_acceptance_progress_and_replay_are_actual_http_contracts --locked -- --exact (before cold recovery assertion)",
-      "result": "fail",
-      "failures": 1,
-      "note": ""
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (shared dependencies)",
-      "result": "fail",
-      "failures": 1,
-      "note": "browser import of another workspace dependencies failed"
-    },
-    {
-      "command": "pnpm install --offline --frozen-lockfile",
-      "result": "fail",
-      "failures": 1,
-      "note": "tracked pnpm hook checksum absent from registry lock"
-    },
-    {
-      "command": "pnpm install --offline --frozen-lockfile --ignore-pnpmfile",
-      "result": "pass",
-      "failures": 0,
-      "note": ""
-    },
-    {
-      "command": "pnpm web:check (registry Design Core)",
-      "result": "fail",
-      "failures": 10,
-      "note": "seven inherited main surfaces require local upstream APIs absent from released 0.2.0"
-    },
-    {
-      "command": "pnpm install --offline --no-frozen-lockfile",
-      "result": "pass",
-      "failures": 0,
-      "note": "reuses tracked main local Design Core hook; tracked registry lock restored verbatim; temporary local preview qualification"
-    },
-    {
-      "command": "pnpm web:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "0 errors/warnings with main-equivalent upstream validation setup"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (automatic load before async assertions)",
-      "result": "fail",
-      "failures": 2,
-      "note": ""
-    },
-    {
-      "command": "node scripts/browser-fixtures.mjs",
-      "result": "pass",
-      "failures": 0,
-      "note": ""
-    },
-    {
-      "command": "pnpm web:build",
-      "result": "pass",
-      "failures": 0,
-      "note": ""
-    },
-    {
-      "command": "pnpm check:boundaries",
-      "result": "pass",
-      "failures": 0,
-      "note": ""
-    },
-    {
-      "command": "cargo fmt --all",
-      "result": "pass",
-      "failures": 0,
-      "note": ""
-    },
-    {
-      "command": "pnpm exec prettier --write affected TS/Svelte/scripts/canonical chapters excluding historical ledger",
-      "result": "pass",
-      "failures": 0,
-      "note": ""
-    },
-    {
-      "command": "cargo test -p jj-store-capture --test codex_transcript codex_cli_exec_and_inherited_desktop_originator_keep_cli_surface_checks --locked -- --exact (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Pinned real CLI exec/originator metadata was refused"
-    },
-    {
-      "command": "cargo test -p jj-store-capture --test codex_transcript --test codex_bound_source --test codex_activity --test codex_import --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "39 tests; exec and inherited Desktop originator accepted only on pinned CLI surface"
-    },
-    {
-      "command": "cargo check -p jj-store-capture --all-targets --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "Affected reader boundary"
-    },
-    {
-      "command": "pnpm dev:backend:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "Explicit workspace binaries; linker compact-unwind size diagnostic retained"
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free --locked -- --exact (before 120-second cold observation)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Original 60-second cold native preparation observation timed out"
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free --locked -- --exact",
-      "result": "pass",
-      "failures": 0,
-      "note": "92.53 seconds; bounded 120-second cold observation, assertions unchanged"
-    },
-    {
-      "command": "pnpm contracts:check (replay before bounded exact-body busy retry)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Original receipt completed but immediate replay returned documented 409 capture_control_busy"
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management imports::import_acceptance_progress_and_replay_are_actual_http_contracts --locked -- --exact (120-second observation)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Cold completion expired; 167.93 seconds total"
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management imports::import_acceptance_progress_and_replay_are_actual_http_contracts --locked -- --exact (preview paused)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Same 120-second cold completion failure without active preview capture; 128.96 seconds total"
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management imports::import_acceptance_progress_and_replay_are_actual_http_contracts --locked -- --exact (240-second cold observation)",
-      "result": "pass",
-      "failures": 0,
-      "note": "194.98 seconds; production acknowledgement remains five seconds; original receipt, boundary, replay, actor/privacy and one journal-entry assertions retained"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-management.test.ts -t 'cumulative unavailable observations do not disable capture controls' (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Normal locations exceeded 4096 cumulative unavailable observations; resource counters remain separately bounded"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/production-capture-management.test.ts (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "19 tests including unsigned cumulative-counter acceptance and resource/negative refusals"
-    },
-    {
-      "command": "pnpm web:check (main 90d119e0)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Zero errors/warnings; inherited temporary Design Core validation setup"
-    },
-    {
-      "command": "pnpm web:build (main 90d119e0)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Fresh built UI"
-    },
-    {
-      "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-capture-settings.spec.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "Three cold Capture browser scenarios including unavailable=14000; 15.2 seconds"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before unavailable-observations label assertion)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Six pass; one stale exact text assertion"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Seven interaction/accessibility scenarios; 9.88 seconds; visual-pending"
-    },
-    {
-      "command": "node --test scripts/governance.test.mjs scripts/progress-mapping.test.mjs (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "32 tests; desktop M17 remains distinct from capture M18"
-    },
-    {
-      "command": "pnpm spec:first (capture runbook before protected-doc mapping)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Unmapped docs/capture-preview.md; owning chapters and mapping added"
-    },
-    {
-      "command": "pnpm spec:first (after runbook mapping)",
-      "result": "pass",
-      "failures": 0,
-      "note": "446 protected files, 14 canonical chapters"
-    },
-    {
-      "command": "pnpm spec:validate",
-      "result": "pass",
-      "failures": 0,
-      "note": "Five validators, 22 chapters, 166 requirements"
-    },
-    {
-      "command": "pnpm check:architecture",
-      "result": "pass",
-      "failures": 0,
-      "note": "866 modules; production controller below 300 lines"
-    },
-    {
-      "command": "pnpm check:ui-ownership",
-      "result": "pass",
-      "failures": 0,
-      "note": "Repository-owned presentation"
-    },
-    {
-      "command": "cargo fmt --all; pnpm format:rust:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Workspace and embedded-runtime formatting"
-    },
-    {
-      "command": "pnpm exec prettier --write affected documents/scripts/TS/Svelte/JSON excluding historical ledger",
-      "result": "pass",
-      "failures": 0,
-      "note": "58 changed paths, followed by final three handoff documents; historical raw evidence remains unchanged"
-    },
-    {
-      "command": "pnpm check:progress (before final close)",
-      "result": "pass",
-      "failures": 0,
-      "note": "135 tasks; evidence bookkeeping only"
-    },
-    {
-      "command": "pnpm dev:capture:setup; pnpm dev:capture:restart (explicit embedded RustFS executable)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Isolated native fixture .local/codex-preview; ports7470/7472; retained fixture and HMR"
-    },
-    {
-      "command": "target/debug/jj workspace add secondary (disposable native trial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Workspace created but snapshot saw existing native request concurrency; no destructive recovery"
-    },
-    {
-      "command": "JJ_CONFIG=/dev/null target/debug/jj --no-pager -R .local/codex-preview/secondary workspace update-stale",
-      "result": "pass",
-      "failures": 0,
-      "note": "Recovered disposable secondary physical native workspace"
-    },
-    {
-      "command": "codex exec/resume 0.156.1 (deliberately created alpha/beta/gamma/delta, secondary, unlinked and history trials)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Two active native session identities; gamma physical file edit; automatic UI updates and retained selection/draft; unrelated trial bodies withheld; seeded sessions are not real harness qualification"
-    },
-    {
-      "command": "LocalTrusted Capture control/API inspection and CUA pause/resume journey",
-      "result": "pass",
-      "failures": 0,
-      "note": "Paused revision1 withheld delta; paused backend restart retained identical detail; resumed revision2 published delta exactly once; malformed manually constructed31-character Resume ID was refused before valid original request126f0289e9f94ba4b2917ba375fc0990"
-    },
-    {
-      "command": "CUA Import history for source4; inspect original3c9396b517f145568776150354ba5a78",
-      "result": "pass",
-      "failures": 0,
-      "note": "Click selected deliberate unlinked trial. Unknown acknowledgement retained; no accepted receipt or body publication. Receipt absence is not definitive rejection. Source-selection/refusal UX remains deferred"
-    },
-    {
-      "command": "rustc .local/integration/trial-source-order.rs; .local/integration/trial-source-order",
-      "result": "pass",
-      "failures": 0,
-      "note": "Production metadata scanner reproduces known trial order; reads only the four deliberately-created trial headers; source2 is linked history and source4 is unlinked"
-    },
-    {
-      "command": "POST /v1/local/capture/import using .local/integration/linked-history-command.json; GET original import status",
-      "result": "pass",
-      "failures": 0,
-      "note": "Distinct explicit linked command aeadff33d0fc4d7ca668cc781e23565b accepted200; source2; ordinal1; exact79990-byte/15-source-record boundary; completed with one publication receipt"
-    },
-    {
-      "command": "Python LocalTrusted detail/transcript assertions for three real admitted sessions",
-      "result": "pass",
-      "failures": 0,
-      "note": "Native sessions41ffb0d2c68320aeb63a8713fe38d6a6,8237dd0f725d7102301bff779b9948d0,a05168b21f11ad2757c9ec6553e3f483; record counts13/5/3; distinct response markers once; unlinked-refusal bodies absent"
-    },
-    {
-      "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:capture:restart (final retention)",
-      "result": "pass",
-      "failures": 0,
-      "note": "All three session/snapshot/transcript identities and record counts unchanged after resumed restart; original completed import receipt retained; transient409 busy while cold recovery is recorded"
-    },
-    {
-      "command": "sample preview backend1second; CUA selected Agents and scrolled virtualized transcript; saved capture-preview.jpg",
-      "result": "pass",
-      "failures": 0,
-      "note": "Read-only diagnostic shows repeated owned import-policy work; UI visibly retains gamma/delta and six sessions; preview tab retained as deliverable"
-    },
-    {
-      "command": "pnpm contracts:check (qualified final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Complete registered103-route inventory, actual HTTP/SSE samples, seven contract-tool tests and generated-client TypeScript; shared route generation required full directly affected consumers 221 actual HTTP/SSE responses conform."
-    },
-    {
-      "command": "Python raw evidence comparison against both latest-main integration snapshots",
-      "result": "pass",
-      "failures": 0,
-      "note": "392 historical raw objects and payloads preserved;393 total including E-M18-001"
-    },
-    {
-      "command": "pnpm check:progress (first close attempt)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Pass evidence cannot carry deferred gaps in remaining; moved those unchanged caveats to scope because narrow M18.8 gates are qualified and broader M18 is incomplete."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate (sealed handoff documents/ledger)",
-      "result": "pass",
-      "failures": 0,
-      "note": "446 protected paths/14 canonical chapters; five validators/22 chapters/166 requirements"
-    },
-    {
-      "command": "pnpm exec prettier --check docs/capture-preview.md docs/implementation-plan.md spec/src/verification.md scripts/dev-capture.mjs spec-validator.config.mjs web/tests/vite/capture-management.test.ts catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-      "result": "pass",
-      "failures": 0,
-      "note": "All final edited documents and regression surfaces formatted"
-    },
-    {
-      "command": "pnpm check:progress (after keeping deferred scope distinct from narrow preview acceptance)",
-      "result": "pass",
-      "failures": 0,
-      "note": "135 tasks; M18.8 Done, broader M18 In progress with Partial/Deferred children"
-    },
-    {
-      "command": "GET /v1/local/capture with bounded exact read retries after final backend restart",
-      "result": "pass",
-      "failures": 0,
-      "note": "Four attempts observed retained generation3957df423c2f9c4f152bf50d877e70c4/revision2/pausedfalse; transient409 busy remains a documented cold observation"
-    },
-    {
-      "command": "CUA reload/navigation and disposable preview cleanup",
-      "result": "pass",
-      "failures": 0,
-      "note": "Original unlinked unknown request/command remains saved in .local/integration and ledger; no rejection inferred. Cleared trial-only volatile view by reload; main Projects/Agents navigation and captured responses remain usable. Locator failure after collapsing rows was recovered with fresh AX target."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "versions": "JJ 0.45.1; Codex CLI 0.156.1; pnpm 10.32.1; committed main90d119e0; temporary inherited Design Core0.1.2 local source; registry manifests/lock preserved; pinned official Codex source b412ff32c417f855c2b2d1581b77058eed87c84b",
-  "formats": "Current AgentStore only; native/capture formats unchanged; combined OpenAPI103 routes(30 local,73 other); historical M17 capture task fields preserved via explicit M18 mapping;392 historical evidence objects including latest main E-UI-094 preserved plus this entry.",
-  "scope": "New codex-preview workspace integrated onto latest committed main90d119e0. Original capture stack/main working copy/OpenCode draft preserved. Functional CLI-only native preview, automatic UI freshness, isolated repeatable setup and real native RustFS/edit/history/restart evidence. Root aggregates and full roadmap qualification out of scope. Deferred limitations: Codex Desktop, OpenCode configured/history/export, Cursor, complete conversations/replay, automatic provenance/checkpoints, advanced review/search/archive, broader release/platform/deployment remain Deferred. Cold debug native sanitizer/preparation takes more than two minutes; performance optimization Deferred. Body-free history source ordinals can select an unlinked trial; admission withholds it but unknown pre-acceptance command can remain unresolved. Source-selection and deterministic refusal UX Deferred; retain exact original request. Registry-only Design Core UI release qualification and visual baselines remain open; local preview uses inherited documented temporary validation hook.",
-  "next": "Try the running CLI-only preview at http://127.0.0.1:7470/ using docs/capture-preview.md; gather feedback before reopening deferred work."
-},
-{
-  "id": "E-M18-002",
-  "tasks": [
-    "M18",
-    "M18.8"
-  ],
-  "date": "2026-10-04",
-  "kind": "ui-settings",
-  "revision": "enclosing JJ change zmyqspmo",
-  "files": [
-    "catalog/components/store-application/SettingsNavigation.stories.svelte",
-    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-    "catalog/fixtures/CaptureSettingsFixture.svelte",
-    "docs/capture-preview.md",
-    "docs/implementation-plan.md",
-    "spec/src/collaboration.md",
-    "spec/src/ui.md",
-    "web/src/lib/ui/store-application/StoreApplication.svelte",
-    "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureDiagnostics.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
-    "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreSettingsNavigation.svelte",
-    "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
-    "web/src/lib/ui/store-settings/StoreSettingsRepository.svelte",
-    "web/src/lib/ui/store-settings/model.ts",
-    "web/tests/browser/local-capture-settings.spec.ts",
-    "spec/src/milestones.md",
-    "spec/src/api.md",
-    "spec/src/architecture.md",
-    "spec/src/cli.md"
-  ],
-  "tests": [
-    "web/tests/browser/local-capture-settings.spec.ts#cold capture controls preserve intent and snapshot",
-    "web/tests/browser/local-capture-settings.spec.ts#visible capture follows observations and stops when settings closes"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; jj describe -m \"Align agent capture settings with settings navigation and rows\"",
-      "result": "pass",
-      "failures": 0,
-      "note": "Clean preview change; main and other services preserved; enclosing change zmyqspmo"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte -t \"Shared settings rows and action columns\"; repeat with -t shared-settings-rows",
-      "result": "pass",
-      "failures": 0,
-      "note": "Both name filters skipped all stories, so they are not acceptance evidence; reran complete affected story file"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before implementation)",
-      "result": "fail",
-      "failures": 1,
-      "note": "7 existing stories passed; added shared-row/Agents regression failed because Agents heading was absent"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte (first after)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Navigation4 passed; Capture suite import failed transiently in Vite/Tailwind virtual CSS transformation; independently repeated affected Capture suite successfully"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (retry, then final icons/notices)",
-      "result": "pass",
-      "failures": 0,
-      "note": "8 stories passed; before/after functional regression1/0; all shared action-column, controls, receipts, unavailable and draft scenarios passed"
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/SettingsNavigation.stories.svelte (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "4 stories passed including dedicated installation Agents entry/no repository picker; existing navigation scenarios retained"
-    },
-    {
-      "command": "pnpm web:check (initial and final); pnpm web:build (initial and final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "0 errors/warnings in type check; built bundle plus asset manifest passed; existing large-chunk warnings retained"
-    },
-    {
-      "command": "pnpm catalog:check (first)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Testing Library role options do not support Playwright exact:true; corrected new fixture selectors to anchored names"
-    },
-    {
-      "command": "pnpm catalog:check (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "0 errors/warnings; catalog boundaries166 modules passed"
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (initial)",
-      "result": "pass",
-      "failures": 0,
-      "note": "3 cold built-bundle tests passed using existing compiled disposable browser host and previously captured HTTP fixtures; no Rust compilation"
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (added geometry)",
-      "result": "fail",
-      "failures": 1,
-      "note": "New exact-text source locator timed out because source label includes version/binding children; retained label match corrected;2 other tests passed"
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (geometry correction)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Axe observed enabled history button during public Button disabled-opacity transition; added enabled and settled-opacity waits before accessibility inspection;2 other tests passed"
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (settled)",
-      "result": "pass",
-      "failures": 0,
-      "note": "3 passed; desktop/right and mobile/stacked column geometry; desktop/mobile Axe0 violations; no horizontal overflow; exact pending intent and request draft retained; polling stops on leaving Agents and closure"
-    },
-    {
-      "command": "pnpm check:ui-ownership; pnpm check:architecture; pnpm check:boundaries",
-      "result": "pass",
-      "failures": 0,
-      "note": "UI ownership passed; architecture867 modules;17 package boundaries"
-    },
-    {
-      "command": "pnpm exec prettier --write changed Svelte, TypeScript and scope documents; pnpm exec prettier --check changed files (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "New anchored navigation selectors needed formatting; formatted both affected tests"
-    },
-    {
-      "command": "pnpm exec prettier --check changed files (after formatting)",
-      "result": "pass",
-      "failures": 0,
-      "note": "All matched files formatted; final test-only opacity wait formatted subsequently"
-    },
-    {
-      "command": "curl -fsSI --max-time 10 http://127.0.0.1:7470/; GET transformed StoreSettingsNavigation.svelte",
-      "result": "pass",
-      "failures": 0,
-      "note": "Running preview responds200 and serves Agents navigation through existing HMR process"
-    },
-    {
-      "command": "CUA preview AX/DOM/rebind/screenshot; native Codex fallback",
-      "result": "fail",
-      "failures": 1,
-      "note": "In-app tab1 focus-emulation timed out and screenshot reset the tool; native Codex access was refused by tool safety. No user app actions applied. Built browser evidence remains distinct from live visual qualification."
-    },
-    {
-      "command": "pnpm spec:first (first)",
-      "result": "fail",
-      "failures": 3,
-      "note": "Documentation/plan and shared UI change maps also require api, architecture and cli chapters; added scoped presentation/preview descriptions"
-    },
-    {
-      "command": "pnpm check:progress (first)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Ledger named-test matcher accepts fn/test declarations, not Story names; retained story coverage in actual run notes and removed unsupported named-story references"
-    },
-    {
-      "command": "pnpm spec:validate",
-      "result": "pass",
-      "failures": 0,
-      "note": "5 validators;22 chapters;166 requirements"
-    },
-    {
-      "command": "pnpm spec:first (after mapped documentation)",
-      "result": "pass",
-      "failures": 0,
-      "note": "18 protected paths/6 canonical chapters"
-    },
-    {
-      "command": "pnpm check:progress (after named-test correction)",
-      "result": "pass",
-      "failures": 0,
-      "note": "135 tasks; historical evidence retained"
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "versions": "JJ0.45.1;pnpm10.32.1;Codex CLI0.156.1; inherited Design Core local validation source unchanged",
-  "formats": "Current AgentStore and capture API unchanged; all393 historical evidence objects preserved byte-for-byte; UI-only settings composition",
-  "scope": "Dedicated installation Agents section; shared rows, actions, public Alert/Empty/Field components and optional header refresh. Root aggregate/Rust suites out of scope under targeted UI policy. Visual baselines remain visual-pending; live in-app visual inspection unavailable due browser connection. Existing backend busy/cold performance caveat unchanged. User-requested configured root paths follow as a separate cross-layer slice.",
-  "next": "Expose actual configured CLI capture roots in typed status and these shared settings rows; preserve existing backend configuration and authorization."
-},
-{
-  "id": "E-M18-003",
-  "tasks": [
-    "M18",
-    "M18.8"
-  ],
-  "date": "2026-10-04",
-  "kind": "capture-settings",
-  "revision": "enclosing JJ change kyvxzyzu",
-  "files": [
-    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-    "catalog/fixtures/capture-management.ts",
-    "crates/jj-store-http/src/contract/capture_tests.rs",
-    "crates/jj-store-server/src/capture_management/report.rs",
-    "crates/jj-store-server/src/capture_management.rs",
-    "crates/jj-store-server/src/capture_runtime/control.rs",
-    "crates/jj-store-server/src/capture_runtime/sources.rs",
-    "crates/jj-store-server/src/capture_runtime.rs",
-    "crates/jj-store-server/src/capture_supervisor/tests/observations.rs",
-    "crates/jj-store-server/src/capture_supervisor.rs",
-    "crates/jj-store-server/tests/capture_management/coverage.rs",
-    "crates/jj-store-server/tests/capture_management/http.rs",
-    "crates/jj-store-server/tests/capture_management/imports/inspection.rs",
-    "crates/jj-store-server/tests/capture_management/imports.rs",
-    "crates/jj-store-server/tests/capture_management/rescan.rs",
-    "crates/jj-store-service/src/capture_management.rs",
-    "docs/capture-preview.md",
-    "schemas/openapi.json",
-    "scripts/contracts.mjs",
-    "scripts/dev-capture.mjs",
-    "spec/src/api.md",
-    "spec/src/architecture.md",
-    "spec/src/cli.md",
-    "spec/src/collaboration.md",
-    "spec/src/compatibility.md",
-    "spec/src/mutations.md",
-    "spec/src/spec-governance.md",
-    "spec/src/ui.md",
-    "web/src/lib/api/generated.ts",
-    "web/src/lib/controller/capture-root-validation.ts",
-    "web/src/lib/controller/capture-validation.ts",
-    "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureRoots.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
-    "web/tests/browser/local-capture-settings.spec.ts",
-    "web/tests/vite/capture-management.test.ts",
-    "spec/src/milestones.md"
-  ],
-  "tests": [
-    "crates/jj-store-server/tests/capture_management/coverage.rs#harness_coverage_is_bounded_cached_and_reports_configured_roots",
-    "crates/jj-store-server/src/capture_supervisor/tests/observations.rs#configured_roots_retain_default_home_override_and_explicit_selection",
-    "crates/jj-store-server/tests/capture_management/imports/inspection.rs#missing_reader_link_and_unqualified_publication_withhold_completion_without_repair",
-    "crates/jj-store-http/src/contract/capture_tests.rs#capture_management_contract_is_installation_local_and_actor_free",
-    "web/tests/vite/capture-management.test.ts#configured harness roots are bounded absolute paths with honest counts",
-    "web/tests/browser/local-capture-settings.spec.ts#cold capture controls preserve intent and snapshot",
-    "web/tests/browser/local-capture-settings.spec.ts#visible capture follows observations and stops when settings closes"
-  ],
-  "removed_tests": [
-    "crates/jj-store-server/tests/capture_management/coverage.rs#harness_coverage_is_bounded_cached_and_contains_no_roots"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; jj --no-pager diff; jj --no-pager log",
-      "result": "pass",
-      "failures": 0,
-      "note": "Preview workspace only; no unrelated edits; original main preserved."
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management --locked coverage::harness_coverage_is_bounded_cached_and_reports_configured_roots -- --exact (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Expected missing configured_roots regression: null instead of exact configured paths."
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management --locked coverage::harness_coverage_is_bounded_cached_and_reports_configured_roots -- --exact (after)",
-      "result": "pass",
-      "failures": 0,
-      "note": "1 test; exact CLI/Desktop paths, paused-directory rename and no GET directory I/O; transcript file secrecy retained."
-    },
-    {
-      "command": "cargo test -p jj-store-server --lib --locked configured_roots_retain_default_home_override_and_explicit_selection (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "New fixture used a different pending capacity than configured; corrected fixture to its existing spool capacity."
-    },
-    {
-      "command": "cargo test -p jj-store-server --lib --locked configured_roots_retain_default_home_override_and_explicit_selection (corrected)",
-      "result": "pass",
-      "failures": 0,
-      "note": "1 test; default HOME, CODEX_HOME override and explicit roots; no directory creation."
-    },
-    {
-      "command": "cargo test -p jj-store-server --lib --locked capture_runtime",
-      "result": "pass",
-      "failures": 0,
-      "note": "4 control/source cached-observation tests passed."
-    },
-    {
-      "command": "cargo test -p jj-store-http --lib capture_management_contract_is_installation_local_and_actor_free --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "1 schema test;16 directory roots and4096 character path bound; actor-free contract retained."
-    },
-    {
-      "command": "pnpm contracts:generate; pnpm contracts:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Generated OpenAPI/TypeScript match;221 actual HTTP/SSE responses conform;7 tooling tests and TypeScript contract consumer passed. Complete contract inventory required by changed public response and fixture registration."
-    },
-    {
-      "command": "cargo check -p jj-store-service -p jj-store-http -p jj-store-server --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "Affected Rust package checks passed."
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management --locked",
-      "result": "fail",
-      "failures": 1,
-      "note": "13 passed; import-inspection setup incorrectly unwrapped a cold Unknown acknowledgement."
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management --locked imports::inspection::missing_reader_link_and_unqualified_publication_withhold_completion_without_repair -- --exact (retry before correction)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Same Unknown acknowledgement reproduced without changing product code. Fixed setup to observe original request and require exact completed receipt; never resend with a new identity."
-    },
-    {
-      "command": "pnpm web:check (initial and final); pnpm catalog:check; pnpm web:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "Web/catalog0 errors/warnings;166 catalog modules; production bundle and asset manifest passed; existing chunk warning retained."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte (first tabs run)",
-      "result": "fail",
-      "failures": 6,
-      "note": "Top-level tab sections retained h3 headings; Axe heading-order failures. Corrected Sources/Imports headings to h2."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte (after)",
-      "result": "pass",
-      "failures": 0,
-      "note": "14 passed:10 Capture/4 Navigation. Actual root paths, tabs, retained drafts, exact pending retries across tabs, action geometry and accessibility."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-management.test.ts web/tests/vite/capture-freshness.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "17 passed; root validation and observation lifecycle."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-management.test.ts (after helper extraction)",
-      "result": "pass",
-      "failures": 0,
-      "note": "11 passed; bounded absolute unique paths/counts and absent metadata remain accepted explicitly."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (first tabs run)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Settled-opacity wait targeted source Import action after explicit import opened Imports. Retargeted Refresh import status;2 other tests passed."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (corrected)",
-      "result": "pass",
-      "failures": 0,
-      "note": "3 cold built-bundle tests; desktop/mobile Axe0; aligned/stacked rows and no overflow; actual root fixture, draft retention, polling across tabs and teardown. Existing compiled disposable browser host; no substituted product runtime evidence."
-    },
-    {
-      "command": "pnpm check:architecture (first, then first extraction)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Response validator exceeded300 counted lines at319, then301; extracted root paths and coverage field list to focused helper."
-    },
-    {
-      "command": "pnpm check:architecture (after extraction); pnpm check:ui-ownership; pnpm check:boundaries",
-      "result": "pass",
-      "failures": 0,
-      "note": "869 modules; ownership validator;17 package boundaries."
-    },
-    {
-      "command": "cargo fmt --all; cargo fmt --all -- --check; pnpm exec prettier --write changed UI/tests/specs; pnpm exec prettier --check changed non-Rust files excluding historical milestones ledger",
-      "result": "pass",
-      "failures": 0,
-      "note": "Formatting passed without rewriting archived ledger entries."
-    },
-    {
-      "command": "pnpm dev:backend:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "Preview CLI/server binaries rebuilt; existing compact-unwind linker warning retained."
-    },
-    {
-      "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:capture:restart",
-      "result": "pass",
-      "failures": 0,
-      "note": "Only isolated preview backend restarted; Vite HMR and complete fixture/history preserved; ports7470/7472."
-    },
-    {
-      "command": "Python urllib GET http://127.0.0.1:7470/v1/local/capture with X-Jj-Store-Protocol:1; bounded three reads",
-      "result": "fail",
-      "failures": 3,
-      "note": "All three proper reads returned existing409 capture_control_busy. Initial exploratory requests missing protocol or complete Fetch Metadata correctly returned403; admission remained intact."
-    },
-    {
-      "command": "CUA tab2: profile > Settings > Agents; inspect AX; save .local/integration/agents-settings-tabs-live.png",
-      "result": "pass",
-      "failures": 0,
-      "note": "Live Capture shows /Users/stevejuma/.codex/sessions, four shared tabs and dedicated Agents sidebar. Intermittent busy source read retains available root snapshot and disables commands. User historical repository route retained. No native-app retry or capture mutation."
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management --locked imports::inspection::missing_reader_link_and_unqualified_publication_withhold_completion_without_repair -- --exact (corrected)",
-      "result": "pass",
-      "failures": 0,
-      "note": "1 cold test passed; exact original completed receipt required before corrupting reader/publication evidence. Removed now-unused short-settlement helper; final binary verifies no new dead-code warning."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; cargo fmt --all -- --check; pnpm exec prettier --check spec/src/architecture.md spec/src/spec-governance.md",
-      "result": "pass",
-      "failures": 0,
-      "note": "Spec-first30 protected paths/8 chapters before final added test files;5 validators/22 chapters/166 requirements;135 tasks; changed documents/Rust format passed."
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management --locked (final complete binary)",
-      "result": "pass",
-      "failures": 0,
-      "note": "14 passed;0 failed. Corrected cold inspection requires original completed receipt; unused setup helper removed; no new dead-code warning."
-    },
-    {
-      "command": "pnpm spec:first (final); evidence-preservation/ledger-structure scripts",
-      "result": "pass",
-      "failures": 0,
-      "note": "30 protected files/9 canonical chapters;395 entries including this slice; all394 historical evidence objects retained byte-for-byte;39 unique files."
-    },
-    {
-      "command": "pnpm check:progress (final pass ledger); pnpm exec prettier --check .local/integration/e-m18-003.json",
-      "result": "pass",
-      "failures": 0,
-      "note": "135 tasks; new evidence entry formatting passed; historical ledger formatting and objects preserved."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "versions": "JJ0.45.1;Codex CLI0.156.1;pnpm10.32.1; inherited Design Core temporary local validation unchanged",
-  "formats": "Current AgentStore only; native/capture persistence formats unchanged. Additive optional bounded configured_roots status metadata;221 actual HTTP/SSE response contracts. All394 earlier evidence objects preserved byte-for-byte.",
-  "scope": "Four Agents settings tabs with shared rows/action columns, one observation owner, retained drafts and exact pending actions. Actual startup-resolved directory roots under unchanged LocalTrusted Admin admission, including HOME/CODEX_HOME and explicit selections. Complete contract lane required; root aggregates, unrelated UI/Rust suites out of scope. Stories remain visual-pending; no baseline approval. Existing cold sanitizer performance and intermittent capture busy remain deferred; broader M18 harness/release scope unchanged.",
-  "next": "Try Settings > Agents in the running preview; gather tab/roots feedback before reopening deferred capture performance or harness work."
-},
-{
+  {
+    "id": "E-M18-001",
+    "tasks": ["M18", "M18.8"],
+    "date": "2026-10-04",
+    "kind": "integration-ui-preview",
+    "revision": "enclosing JJ change nlstmlwq",
+    "files": [
+      "Cargo.lock",
+      "Cargo.toml",
+      "README.md",
+      "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+      "catalog/fixtures/CaptureSettingsFixture.svelte",
+      "catalog/fixtures/capture-management.ts",
+      "crates/jj-agent/src/activity.rs",
+      "crates/jj-agent/src/capture.rs",
+      "crates/jj-agent/src/indexes.rs",
+      "crates/jj-agent/src/lib.rs",
+      "crates/jj-agent/src/normalization.rs",
+      "crates/jj-agent/src/normalize.rs",
+      "crates/jj-agent/src/normalizers/codex.rs",
+      "crates/jj-agent/src/normalizers/codex_ids.rs",
+      "crates/jj-agent/src/normalizers/codex_tool_result.rs",
+      "crates/jj-agent/src/normalizers/codex_transcript.rs",
+      "crates/jj-agent/src/normalizers/mod.rs",
+      "crates/jj-agent/src/normalizers/opencode.rs",
+      "crates/jj-agent/src/normalizers/opencode_snapshot.rs",
+      "crates/jj-agent/src/objects.rs",
+      "crates/jj-agent/src/reducer.rs",
+      "crates/jj-agent/src/tool_result.rs",
+      "crates/jj-agent/src/transcript.rs",
+      "crates/jj-agent/tests/activity.rs",
+      "crates/jj-agent/tests/codex_transcript.rs",
+      "crates/jj-agent/tests/opencode_snapshots.rs",
+      "crates/jj-collab/src/capture_binding.rs",
+      "crates/jj-collab/src/commands.rs",
+      "crates/jj-collab/src/objects.rs",
+      "crates/jj-collab/src/threads.rs",
+      "crates/jj-store-capture/Cargo.toml",
+      "crates/jj-store-capture/src/agent_capture/budget.rs",
+      "crates/jj-store-capture/src/agent_capture.rs",
+      "crates/jj-store-capture/src/agent_capture_binding.rs",
+      "crates/jj-store-capture/src/agent_capture_enqueue.rs",
+      "crates/jj-store-capture/src/agent_capture_files.rs",
+      "crates/jj-store-capture/src/agent_capture_intent.rs",
+      "crates/jj-store-capture/src/agent_capture_lock.rs",
+      "crates/jj-store-capture/src/agent_publication/drain.rs",
+      "crates/jj-store-capture/src/agent_publication/exact.rs",
+      "crates/jj-store-capture/src/agent_publication/schedule.rs",
+      "crates/jj-store-capture/src/agent_publication.rs",
+      "crates/jj-store-capture/src/agent_sanitization.rs",
+      "crates/jj-store-capture/src/codex_activity/scan.rs",
+      "crates/jj-store-capture/src/codex_activity.rs",
+      "crates/jj-store-capture/src/codex_discovery/scanner.rs",
+      "crates/jj-store-capture/src/codex_discovery.rs",
+      "crates/jj-store-capture/src/codex_import/binding.rs",
+      "crates/jj-store-capture/src/codex_import/reader.rs",
+      "crates/jj-store-capture/src/codex_import/scan.rs",
+      "crates/jj-store-capture/src/codex_import.rs",
+      "crates/jj-store-capture/src/codex_resume.rs",
+      "crates/jj-store-capture/src/codex_source.rs",
+      "crates/jj-store-capture/src/codex_transcript/context.rs",
+      "crates/jj-store-capture/src/codex_transcript/file.rs",
+      "crates/jj-store-capture/src/codex_transcript/poll.rs",
+      "crates/jj-store-capture/src/codex_transcript/progress.rs",
+      "crates/jj-store-capture/src/codex_transcript/recovery/identity.rs",
+      "crates/jj-store-capture/src/codex_transcript/recovery.rs",
+      "crates/jj-store-capture/src/codex_transcript.rs",
+      "crates/jj-store-capture/src/lib.rs",
+      "crates/jj-store-capture/src/local_agent_publication.rs",
+      "crates/jj-store-capture/src/opencode_checkpoint.rs",
+      "crates/jj-store-capture/src/opencode_ingress.rs",
+      "crates/jj-store-capture/src/opencode_snapshot.rs",
+      "crates/jj-store-capture/src/path_policy.rs",
+      "crates/jj-store-capture/src/profile.rs",
+      "crates/jj-store-capture/src/reader_progress/history.rs",
+      "crates/jj-store-capture/src/reader_progress/source.rs",
+      "crates/jj-store-capture/src/reader_progress/spool.rs",
+      "crates/jj-store-capture/src/reader_progress.rs",
+      "crates/jj-store-capture/src/reader_progress_files.rs",
+      "crates/jj-store-capture/src/reader_publication/catalog/tests.rs",
+      "crates/jj-store-capture/src/reader_publication/catalog.rs",
+      "crates/jj-store-capture/src/reader_publication/files.rs",
+      "crates/jj-store-capture/src/reader_publication/inspection.rs",
+      "crates/jj-store-capture/src/reader_publication/projection.rs",
+      "crates/jj-store-capture/src/reader_publication/ranges.rs",
+      "crates/jj-store-capture/src/reader_publication/snapshot.rs",
+      "crates/jj-store-capture/src/reader_publication/spool.rs",
+      "crates/jj-store-capture/src/reader_publication.rs",
+      "crates/jj-store-capture/src/service_agent_publication.rs",
+      "crates/jj-store-capture/src/source_registry/acquisition.rs",
+      "crates/jj-store-capture/src/source_registry/catalog/opencode_index.rs",
+      "crates/jj-store-capture/src/source_registry/catalog.rs",
+      "crates/jj-store-capture/src/source_registry/codex.rs",
+      "crates/jj-store-capture/src/source_registry/files/contents.rs",
+      "crates/jj-store-capture/src/source_registry/files.rs",
+      "crates/jj-store-capture/src/source_registry/import.rs",
+      "crates/jj-store-capture/src/source_registry/opencode.rs",
+      "crates/jj-store-capture/src/source_registry/parking/pinned.rs",
+      "crates/jj-store-capture/src/source_registry/parking.rs",
+      "crates/jj-store-capture/src/source_registry.rs",
+      "crates/jj-store-capture/src/state_lease.rs",
+      "crates/jj-store-capture/src/transcript_sanitization.rs",
+      "crates/jj-store-capture/tests/codex_activity.rs",
+      "crates/jj-store-capture/tests/codex_bound_source.rs",
+      "crates/jj-store-capture/tests/codex_context.rs",
+      "crates/jj-store-capture/tests/codex_discovery.rs",
+      "crates/jj-store-capture/tests/codex_import/boundaries.rs",
+      "crates/jj-store-capture/tests/codex_import/identity.rs",
+      "crates/jj-store-capture/tests/codex_import/reader.rs",
+      "crates/jj-store-capture/tests/codex_import.rs",
+      "crates/jj-store-capture/tests/codex_recovery.rs",
+      "crates/jj-store-capture/tests/codex_resume.rs",
+      "crates/jj-store-capture/tests/codex_transcript.rs",
+      "crates/jj-store-capture/tests/opencode_checkpoint.rs",
+      "crates/jj-store-capture/tests/opencode_ingress.rs",
+      "crates/jj-store-capture/tests/opencode_recovery_index.rs",
+      "crates/jj-store-capture/tests/opencode_snapshot.rs",
+      "crates/jj-store-capture/tests/reader_progress/headroom.rs",
+      "crates/jj-store-capture/tests/reader_progress/source.rs",
+      "crates/jj-store-capture/tests/reader_progress.rs",
+      "crates/jj-store-capture/tests/reader_publication/generations.rs",
+      "crates/jj-store-capture/tests/reader_publication/inspection.rs",
+      "crates/jj-store-capture/tests/reader_publication/mixed.rs",
+      "crates/jj-store-capture/tests/reader_publication/mod.rs",
+      "crates/jj-store-capture/tests/reader_publication/paths.rs",
+      "crates/jj-store-capture/tests/reader_publication/process.rs",
+      "crates/jj-store-capture/tests/reader_publication.rs",
+      "crates/jj-store-capture/tests/snapshot_publication.rs",
+      "crates/jj-store-capture/tests/source_parking/reservations.rs",
+      "crates/jj-store-capture/tests/source_parking.rs",
+      "crates/jj-store-capture/tests/source_registry.rs",
+      "crates/jj-store-capture/tests/source_registry_import/leases.rs",
+      "crates/jj-store-capture/tests/source_registry_import/loss.rs",
+      "crates/jj-store-capture/tests/source_registry_import/restart.rs",
+      "crates/jj-store-capture/tests/source_registry_import.rs",
+      "crates/jj-store-capture/tests/source_registry_policy.rs",
+      "crates/jj-store-capture/tests/transcript_sanitization.rs",
+      "crates/jj-store-cli/Cargo.toml",
+      "crates/jj-store-cli/src/agent_capture.rs",
+      "crates/jj-store-cli/src/agent_capture_files.rs",
+      "crates/jj-store-cli/src/agent_commands/capture/client.rs",
+      "crates/jj-store-cli/src/agent_commands/capture/imports.rs",
+      "crates/jj-store-cli/src/agent_commands/capture/sources.rs",
+      "crates/jj-store-cli/src/agent_commands/capture.rs",
+      "crates/jj-store-cli/src/agent_commands/types.rs",
+      "crates/jj-store-cli/src/agent_commands.rs",
+      "crates/jj-store-cli/src/agent_publication.rs",
+      "crates/jj-store-cli/src/agent_sanitization.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/src/local_agent_publication.rs",
+      "crates/jj-store-cli/src/state_lease.rs",
+      "crates/jj-store-cli/src/workspace_management.rs",
+      "crates/jj-store-cli/tests/agent_capture_publication/scheduling.rs",
+      "crates/jj-store-cli/tests/agent_capture_publication.rs",
+      "crates/jj-store-cli/tests/capture_cli/fixture.rs",
+      "crates/jj-store-cli/tests/capture_cli/imports.rs",
+      "crates/jj-store-cli/tests/capture_cli/sources.rs",
+      "crates/jj-store-cli/tests/capture_cli/transport.rs",
+      "crates/jj-store-cli/tests/capture_cli.rs",
+      "crates/jj-store-cli/tests/capture_import_cli.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_collaboration.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_threads_reactions.rs",
+      "crates/jj-store-cli/tests/server_executable/configured_capture/helpers.rs",
+      "crates/jj-store-cli/tests/server_executable/configured_capture.rs",
+      "crates/jj-store-cli/tests/server_executable.rs",
+      "crates/jj-store-cli/tests/workspace_management.rs",
+      "crates/jj-store-http/src/capture_management/imports.rs",
+      "crates/jj-store-http/src/capture_management.rs",
+      "crates/jj-store-http/src/contract/capture_tests.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/local_browser.rs",
+      "crates/jj-store-jj/src/local_browser/operations.rs",
+      "crates/jj-store-rpc/tests/collab.rs",
+      "crates/jj-store-server/Cargo.toml",
+      "crates/jj-store-server/src/capture_admission.rs",
+      "crates/jj-store-server/src/capture_authority/publisher.rs",
+      "crates/jj-store-server/src/capture_authority.rs",
+      "crates/jj-store-server/src/capture_config.rs",
+      "crates/jj-store-server/src/capture_control_state/catalog.rs",
+      "crates/jj-store-server/src/capture_control_state/pinned.rs",
+      "crates/jj-store-server/src/capture_control_state/tests.rs",
+      "crates/jj-store-server/src/capture_control_state.rs",
+      "crates/jj-store-server/src/capture_import_state/catalog.rs",
+      "crates/jj-store-server/src/capture_import_state/hex_codec.rs",
+      "crates/jj-store-server/src/capture_import_state/reader.rs",
+      "crates/jj-store-server/src/capture_import_state/selected.rs",
+      "crates/jj-store-server/src/capture_import_state/tests/reader.rs",
+      "crates/jj-store-server/src/capture_import_state/tests/reader_verification.rs",
+      "crates/jj-store-server/src/capture_import_state/tests.rs",
+      "crates/jj-store-server/src/capture_import_state/types.rs",
+      "crates/jj-store-server/src/capture_import_state.rs",
+      "crates/jj-store-server/src/capture_journal_files/metadata.rs",
+      "crates/jj-store-server/src/capture_journal_files/publication.rs",
+      "crates/jj-store-server/src/capture_journal_files.rs",
+      "crates/jj-store-server/src/capture_management/authority.rs",
+      "crates/jj-store-server/src/capture_management/import_dispatch.rs",
+      "crates/jj-store-server/src/capture_management/import_policy.rs",
+      "crates/jj-store-server/src/capture_management/import_progress.rs",
+      "crates/jj-store-server/src/capture_management/import_recovery.rs",
+      "crates/jj-store-server/src/capture_management/import_renewal.rs",
+      "crates/jj-store-server/src/capture_management/import_settlement.rs",
+      "crates/jj-store-server/src/capture_management/imports.rs",
+      "crates/jj-store-server/src/capture_management/report.rs",
+      "crates/jj-store-server/src/capture_management/rescan.rs",
+      "crates/jj-store-server/src/capture_management/sources.rs",
+      "crates/jj-store-server/src/capture_management/tests/import_policy/safety.rs",
+      "crates/jj-store-server/src/capture_management/tests/import_policy.rs",
+      "crates/jj-store-server/src/capture_management/tests/import_settlement.rs",
+      "crates/jj-store-server/src/capture_management/tests/native_import/ownership.rs",
+      "crates/jj-store-server/src/capture_management/tests/native_import/prefix_progress.rs",
+      "crates/jj-store-server/src/capture_management/tests/native_import/reader_binding.rs",
+      "crates/jj-store-server/src/capture_management/tests/native_import.rs",
+      "crates/jj-store-server/src/capture_management/tests/rescan.rs",
+      "crates/jj-store-server/src/capture_management/tests/scheduled_import/handoff.rs",
+      "crates/jj-store-server/src/capture_management/tests/scheduled_import/restart/recovery.rs",
+      "crates/jj-store-server/src/capture_management/tests/scheduled_import/restart.rs",
+      "crates/jj-store-server/src/capture_management/tests/scheduled_import.rs",
+      "crates/jj-store-server/src/capture_management/tests/sources.rs",
+      "crates/jj-store-server/src/capture_management/tests.rs",
+      "crates/jj-store-server/src/capture_management.rs",
+      "crates/jj-store-server/src/capture_runtime/control.rs",
+      "crates/jj-store-server/src/capture_runtime/imports.rs",
+      "crates/jj-store-server/src/capture_runtime/rescan.rs",
+      "crates/jj-store-server/src/capture_runtime/sources.rs",
+      "crates/jj-store-server/src/capture_runtime/targets.rs",
+      "crates/jj-store-server/src/capture_runtime.rs",
+      "crates/jj-store-server/src/capture_source/acquire.rs",
+      "crates/jj-store-server/src/capture_source/import/parking.rs",
+      "crates/jj-store-server/src/capture_source/import/pipeline.rs",
+      "crates/jj-store-server/src/capture_source/import.rs",
+      "crates/jj-store-server/src/capture_source/ingress.rs",
+      "crates/jj-store-server/src/capture_source/parking/acquire.rs",
+      "crates/jj-store-server/src/capture_source/parking/current.rs",
+      "crates/jj-store-server/src/capture_source/parking.rs",
+      "crates/jj-store-server/src/capture_source/pipeline.rs",
+      "crates/jj-store-server/src/capture_source/recovery.rs",
+      "crates/jj-store-server/src/capture_source/resume/eligibility.rs",
+      "crates/jj-store-server/src/capture_source/resume.rs",
+      "crates/jj-store-server/src/capture_source.rs",
+      "crates/jj-store-server/src/capture_supervisor/delivery.rs",
+      "crates/jj-store-server/src/capture_supervisor/discovery/observations.rs",
+      "crates/jj-store-server/src/capture_supervisor/discovery/tests.rs",
+      "crates/jj-store-server/src/capture_supervisor/discovery.rs",
+      "crates/jj-store-server/src/capture_supervisor/imports.rs",
+      "crates/jj-store-server/src/capture_supervisor/lifetime.rs",
+      "crates/jj-store-server/src/capture_supervisor/opencode/delivery.rs",
+      "crates/jj-store-server/src/capture_supervisor/opencode/discovery.rs",
+      "crates/jj-store-server/src/capture_supervisor/opencode/scheduling.rs",
+      "crates/jj-store-server/src/capture_supervisor/opencode/source.rs",
+      "crates/jj-store-server/src/capture_supervisor/opencode/tests.rs",
+      "crates/jj-store-server/src/capture_supervisor/opencode.rs",
+      "crates/jj-store-server/src/capture_supervisor/recovery.rs",
+      "crates/jj-store-server/src/capture_supervisor/scheduling.rs",
+      "crates/jj-store-server/src/capture_supervisor/source/import.rs",
+      "crates/jj-store-server/src/capture_supervisor/source/tests.rs",
+      "crates/jj-store-server/src/capture_supervisor/source.rs",
+      "crates/jj-store-server/src/capture_supervisor/sources.rs",
+      "crates/jj-store-server/src/capture_supervisor/status/harness.rs",
+      "crates/jj-store-server/src/capture_supervisor/status.rs",
+      "crates/jj-store-server/src/capture_supervisor/tests/observations.rs",
+      "crates/jj-store-server/src/capture_supervisor/tests/rebinding.rs",
+      "crates/jj-store-server/src/capture_supervisor/tests/running_loss.rs",
+      "crates/jj-store-server/src/capture_supervisor/tests.rs",
+      "crates/jj-store-server/src/capture_supervisor.rs",
+      "crates/jj-store-server/src/capture_worker/executor/faults.rs",
+      "crates/jj-store-server/src/capture_worker/executor/tests.rs",
+      "crates/jj-store-server/src/capture_worker/executor.rs",
+      "crates/jj-store-server/src/capture_worker.rs",
+      "crates/jj-store-server/src/config/format-2-example.toml",
+      "crates/jj-store-server/src/config/types.rs",
+      "crates/jj-store-server/src/config.rs",
+      "crates/jj-store-server/src/installation.rs",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/opencode_import.rs",
+      "crates/jj-store-server/src/opencode_read_api/discovery.rs",
+      "crates/jj-store-server/src/opencode_read_api.rs",
+      "crates/jj-store-server/src/opencode_source/conversion.rs",
+      "crates/jj-store-server/src/opencode_source/ingress.rs",
+      "crates/jj-store-server/src/opencode_source/lifecycle.rs",
+      "crates/jj-store-server/src/opencode_source/publication.rs",
+      "crates/jj-store-server/src/opencode_source/recovery.rs",
+      "crates/jj-store-server/src/opencode_source/snapshot.rs",
+      "crates/jj-store-server/src/opencode_source.rs",
+      "crates/jj-store-server/src/policy.rs",
+      "crates/jj-store-server/src/process/authority.rs",
+      "crates/jj-store-server/src/process/capture/selection.rs",
+      "crates/jj-store-server/src/process/capture/state.rs",
+      "crates/jj-store-server/src/process/capture.rs",
+      "crates/jj-store-server/src/process/preparation.rs",
+      "crates/jj-store-server/src/process/running.rs",
+      "crates/jj-store-server/src/process/tests/capture_factory/controls.rs",
+      "crates/jj-store-server/src/process/tests/capture_factory/foreground.rs",
+      "crates/jj-store-server/src/process/tests/capture_factory/import_recovery.rs",
+      "crates/jj-store-server/src/process/tests/capture_factory/management.rs",
+      "crates/jj-store-server/src/process/tests/capture_factory/startup.rs",
+      "crates/jj-store-server/src/process/tests/capture_factory.rs",
+      "crates/jj-store-server/src/process/tests.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/src/storage/lifetime/tests/attachment.rs",
+      "crates/jj-store-server/src/storage/lifetime/tests.rs",
+      "crates/jj-store-server/src/storage/lifetime.rs",
+      "crates/jj-store-server/src/storage.rs",
+      "crates/jj-store-server/tests/capture_activation.rs",
+      "crates/jj-store-server/tests/capture_activity.rs",
+      "crates/jj-store-server/tests/capture_admission.rs",
+      "crates/jj-store-server/tests/capture_authority.rs",
+      "crates/jj-store-server/tests/capture_control_state/capacity.rs",
+      "crates/jj-store-server/tests/capture_control_state/safety.rs",
+      "crates/jj-store-server/tests/capture_control_state.rs",
+      "crates/jj-store-server/tests/capture_import_state/capacity.rs",
+      "crates/jj-store-server/tests/capture_import_state/cold.rs",
+      "crates/jj-store-server/tests/capture_import_state/safety.rs",
+      "crates/jj-store-server/tests/capture_import_state.rs",
+      "crates/jj-store-server/tests/capture_management/api_snapshot.rs",
+      "crates/jj-store-server/tests/capture_management/coverage.rs",
+      "crates/jj-store-server/tests/capture_management/http.rs",
+      "crates/jj-store-server/tests/capture_management/http_admission.rs",
+      "crates/jj-store-server/tests/capture_management/imports/inspection.rs",
+      "crates/jj-store-server/tests/capture_management/imports.rs",
+      "crates/jj-store-server/tests/capture_management/rescan.rs",
+      "crates/jj-store-server/tests/capture_management/sources.rs",
+      "crates/jj-store-server/tests/capture_management.rs",
+      "crates/jj-store-server/tests/capture_parking/generations.rs",
+      "crates/jj-store-server/tests/capture_parking.rs",
+      "crates/jj-store-server/tests/capture_pipeline.rs",
+      "crates/jj-store-server/tests/capture_pipeline_worker.rs",
+      "crates/jj-store-server/tests/capture_reanchor/progress.rs",
+      "crates/jj-store-server/tests/capture_reanchor/race.rs",
+      "crates/jj-store-server/tests/capture_reanchor.rs",
+      "crates/jj-store-server/tests/capture_recovery.rs",
+      "crates/jj-store-server/tests/capture_resume.rs",
+      "crates/jj-store-server/tests/capture_runtime/controls.rs",
+      "crates/jj-store-server/tests/capture_runtime/draining.rs",
+      "crates/jj-store-server/tests/capture_runtime/rescan.rs",
+      "crates/jj-store-server/tests/capture_runtime/storage.rs",
+      "crates/jj-store-server/tests/capture_runtime.rs",
+      "crates/jj-store-server/tests/capture_source/fixture.rs",
+      "crates/jj-store-server/tests/capture_source/progress_capacity.rs",
+      "crates/jj-store-server/tests/capture_source.rs",
+      "crates/jj-store-server/tests/capture_supervisor/backlog.rs",
+      "crates/jj-store-server/tests/capture_supervisor/blocked.rs",
+      "crates/jj-store-server/tests/capture_supervisor/capacity.rs",
+      "crates/jj-store-server/tests/capture_supervisor/generations.rs",
+      "crates/jj-store-server/tests/capture_supervisor/headroom.rs",
+      "crates/jj-store-server/tests/capture_supervisor/raw_channels.rs",
+      "crates/jj-store-server/tests/capture_supervisor/raw_handoff.rs",
+      "crates/jj-store-server/tests/capture_supervisor/rearming.rs",
+      "crates/jj-store-server/tests/capture_supervisor/rotation.rs",
+      "crates/jj-store-server/tests/capture_supervisor/saturation.rs",
+      "crates/jj-store-server/tests/capture_supervisor/task_loss.rs",
+      "crates/jj-store-server/tests/capture_supervisor.rs",
+      "crates/jj-store-server/tests/configuration.rs",
+      "crates/jj-store-server/tests/opencode_discovery.rs",
+      "crates/jj-store-server/tests/opencode_import.rs",
+      "crates/jj-store-server/tests/opencode_lifecycle.rs",
+      "crates/jj-store-server/tests/opencode_publication.rs",
+      "crates/jj-store-server/tests/opencode_read_api/fixture.rs",
+      "crates/jj-store-server/tests/opencode_read_api.rs",
+      "crates/jj-store-server/tests/opencode_source/fixture.rs",
+      "crates/jj-store-server/tests/opencode_source/scheduling.rs",
+      "crates/jj-store-server/tests/opencode_source.rs",
+      "crates/jj-store-server/tests/opencode_supervisor.rs",
+      "crates/jj-store-service/src/capture_management/imports.rs",
+      "crates/jj-store-service/src/capture_management/sources.rs",
+      "crates/jj-store-service/src/capture_management.rs",
+      "crates/jj-store-service/src/collaboration/models.rs",
+      "crates/jj-store-service/src/content_search/cursors.rs",
+      "crates/jj-store-service/src/content_search/extract.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/local_management.rs",
+      "crates/jj-store-service/src/local_repository/agent_descriptor.rs",
+      "crates/jj-store-service/src/local_repository/agent_store.rs",
+      "crates/jj-store-service/src/local_repository/agent_thread_binding.rs",
+      "crates/jj-store-service/src/local_repository/collab_commands.rs",
+      "crates/jj-store-service/tests/agent_sessions.rs",
+      "crates/jj-store-service/tests/local_agent/native_results.rs",
+      "crates/jj-store-service/tests/local_agent/opencode_aliases.rs",
+      "crates/jj-store-service/tests/local_agent.rs",
+      "crates/jj-store-service/tests/local_agent_binding.rs",
+      "crates/jj-store-wal/src/publication/agent.rs",
+      "crates/jj-store-wal/src/publication/agent_capture.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_aliases/catalog.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_aliases/catalog_tests.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_aliases/remap.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_aliases.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_binding.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_projection.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_records.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_results.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_tools.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_transcript.rs",
+      "crates/jj-store-wal/src/publication/agent_catalog.rs",
+      "crates/jj-store-wal/src/publication/agent_io.rs",
+      "crates/jj-store-wal/src/publication/agent_read_engine.rs",
+      "crates/jj-store-wal/src/publication/agent_thread_binding.rs",
+      "crates/jj-store-wal/src/publication/agent_transcript_audit.rs",
+      "crates/jj-store-wal/src/publication/agent_transcript_read.rs",
+      "crates/jj-store-wal/src/publication/agent_transcript_tail.rs",
+      "crates/jj-store-wal/src/publication/collab_commands.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/tests/agent_catalog/common_aliases.rs",
+      "crates/jj-store-wal/tests/agent_catalog/native_results.rs",
+      "crates/jj-store-wal/tests/agent_catalog/opencode_aliases.rs",
+      "crates/jj-store-wal/tests/agent_catalog/selected_tail.rs",
+      "crates/jj-store-wal/tests/agent_catalog.rs",
+      "crates/jj-store-wal/tests/bound_capture.rs",
+      "crates/jj-store-wal/tests/native_copy.rs",
+      "docs/capture-preview.md",
+      "docs/implementation-plan.md",
+      "package.json",
+      "schemas/openapi.json",
+      "scripts/check-boundaries.mjs",
+      "scripts/check-progress.mjs",
+      "scripts/contracts.mjs",
+      "scripts/dev-capture.mjs",
+      "scripts/governance.test.mjs",
+      "scripts/progress-mapping.mjs",
+      "scripts/progress-mapping.test.mjs",
+      "spec/src/adapters.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "spec-validator.config.mjs",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/capture-errors.ts",
+      "web/src/lib/controller/capture-http.ts",
+      "web/src/lib/controller/capture-management.svelte.ts",
+      "web/src/lib/controller/capture-observations.ts",
+      "web/src/lib/controller/capture-presentation.ts",
+      "web/src/lib/controller/capture-refresh.ts",
+      "web/src/lib/controller/capture-response-validation.ts",
+      "web/src/lib/controller/capture-snapshot-validation.ts",
+      "web/src/lib/controller/capture-types.ts",
+      "web/src/lib/controller/capture-validation.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-capture-management.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/ui/store-settings/StoreCaptureDiagnostics.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+      "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
+      "web/src/lib/ui/store-threads/thread-context.ts",
+      "web/tests/browser/local-capture-settings.spec.ts",
+      "web/tests/vite/capture-freshness.test.ts",
+      "web/tests/vite/capture-management.test.ts",
+      "web/tests/vite/production-capture-management.test.ts",
+      "web/tests/vite/thread-context.test.ts"
+    ],
+    "tests": [
+      "scripts/progress-mapping.test.mjs#historical_capture_tasks_map_without_rewriting_evidence",
+      "crates/jj-store-wal/tests/agent_catalog/selected_tail.rs#selected_cached_agent_reader_retains_audited_append_witnesses",
+      "web/tests/vite/capture-freshness.test.ts#visible capture loads polls coalesces and stops on closure",
+      "web/tests/vite/capture-freshness.test.ts#background observations retain exact uncertain control intent",
+      "web/tests/vite/capture-freshness.test.ts#background refresh retains every loaded source page",
+      "crates/jj-store-capture/tests/codex_transcript.rs#codex_cli_exec_and_inherited_desktop_originator_keep_cli_surface_checks",
+      "crates/jj-store-server/tests/capture_management/imports.rs#import_acceptance_progress_and_replay_are_actual_http_contracts",
+      "web/tests/vite/capture-management.test.ts#cumulative unavailable observations do not disable capture controls"
+    ],
+    "runs": [
+      {
+        "command": "node --test scripts/progress-mapping.test.mjs (before)",
+        "result": "fail",
+        "failures": 4,
+        "note": ""
+      },
+      {
+        "command": "node --test scripts/progress-mapping.test.mjs scripts/governance.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "32 tests"
+      },
+      {
+        "command": "pnpm contracts:generate (before merge repair)",
+        "result": "fail",
+        "failures": 1,
+        "note": "missing cached append witnesses"
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test agent_catalog selected_cached_agent_reader_retains_audited_append_witnesses --locked (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "same missing witness field compile boundary"
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "103 paths, 30 local-prefix paths"
+      },
+      {
+        "command": "cargo check -p jj-store-cli -p jj-store-server --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test agent_catalog --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "26 tests"
+      },
+      {
+        "command": "cargo test -p jj-store-server --lib process::tests::capture_factory --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "10 tests including cold startup/lifetime/recovery"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts (before)",
+        "result": "fail",
+        "failures": 4,
+        "note": ""
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/production-capture-management.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "18 tests; original single-flight test revised to await both coalesced reads after delivery"
+      },
+      {
+        "command": "pnpm contracts:check (first run)",
+        "result": "fail",
+        "failures": 1,
+        "note": "cold import acknowledgement is unknown; exact standalone target reproduces 503 and is now qualified through original receipt/replay"
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management imports::import_acceptance_progress_and_replay_are_actual_http_contracts --locked -- --exact (before cold recovery assertion)",
+        "result": "fail",
+        "failures": 1,
+        "note": ""
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (shared dependencies)",
+        "result": "fail",
+        "failures": 1,
+        "note": "browser import of another workspace dependencies failed"
+      },
+      {
+        "command": "pnpm install --offline --frozen-lockfile",
+        "result": "fail",
+        "failures": 1,
+        "note": "tracked pnpm hook checksum absent from registry lock"
+      },
+      {
+        "command": "pnpm install --offline --frozen-lockfile --ignore-pnpmfile",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm web:check (registry Design Core)",
+        "result": "fail",
+        "failures": 10,
+        "note": "seven inherited main surfaces require local upstream APIs absent from released 0.2.0"
+      },
+      {
+        "command": "pnpm install --offline --no-frozen-lockfile",
+        "result": "pass",
+        "failures": 0,
+        "note": "reuses tracked main local Design Core hook; tracked registry lock restored verbatim; temporary local preview qualification"
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings with main-equivalent upstream validation setup"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (automatic load before async assertions)",
+        "result": "fail",
+        "failures": 2,
+        "note": ""
+      },
+      {
+        "command": "node scripts/browser-fixtures.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm exec prettier --write affected TS/Svelte/scripts/canonical chapters excluding historical ledger",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "cargo test -p jj-store-capture --test codex_transcript codex_cli_exec_and_inherited_desktop_originator_keep_cli_surface_checks --locked -- --exact (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Pinned real CLI exec/originator metadata was refused"
+      },
+      {
+        "command": "cargo test -p jj-store-capture --test codex_transcript --test codex_bound_source --test codex_activity --test codex_import --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "39 tests; exec and inherited Desktop originator accepted only on pinned CLI surface"
+      },
+      {
+        "command": "cargo check -p jj-store-capture --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected reader boundary"
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Explicit workspace binaries; linker compact-unwind size diagnostic retained"
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free --locked -- --exact (before 120-second cold observation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Original 60-second cold native preparation observation timed out"
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "92.53 seconds; bounded 120-second cold observation, assertions unchanged"
+      },
+      {
+        "command": "pnpm contracts:check (replay before bounded exact-body busy retry)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Original receipt completed but immediate replay returned documented 409 capture_control_busy"
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management imports::import_acceptance_progress_and_replay_are_actual_http_contracts --locked -- --exact (120-second observation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cold completion expired; 167.93 seconds total"
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management imports::import_acceptance_progress_and_replay_are_actual_http_contracts --locked -- --exact (preview paused)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Same 120-second cold completion failure without active preview capture; 128.96 seconds total"
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management imports::import_acceptance_progress_and_replay_are_actual_http_contracts --locked -- --exact (240-second cold observation)",
+        "result": "pass",
+        "failures": 0,
+        "note": "194.98 seconds; production acknowledgement remains five seconds; original receipt, boundary, replay, actor/privacy and one journal-entry assertions retained"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-management.test.ts -t 'cumulative unavailable observations do not disable capture controls' (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Normal locations exceeded 4096 cumulative unavailable observations; resource counters remain separately bounded"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/production-capture-management.test.ts (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 tests including unsigned cumulative-counter acceptance and resource/negative refusals"
+      },
+      {
+        "command": "pnpm web:check (main 90d119e0)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings; inherited temporary Design Core validation setup"
+      },
+      {
+        "command": "pnpm web:build (main 90d119e0)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh built UI"
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-capture-settings.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three cold Capture browser scenarios including unavailable=14000; 15.2 seconds"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before unavailable-observations label assertion)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Six pass; one stale exact text assertion"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven interaction/accessibility scenarios; 9.88 seconds; visual-pending"
+      },
+      {
+        "command": "node --test scripts/governance.test.mjs scripts/progress-mapping.test.mjs (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "32 tests; desktop M17 remains distinct from capture M18"
+      },
+      {
+        "command": "pnpm spec:first (capture runbook before protected-doc mapping)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Unmapped docs/capture-preview.md; owning chapters and mapping added"
+      },
+      {
+        "command": "pnpm spec:first (after runbook mapping)",
+        "result": "pass",
+        "failures": 0,
+        "note": "446 protected files, 14 canonical chapters"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five validators, 22 chapters, 166 requirements"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "866 modules; production controller below 300 lines"
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Repository-owned presentation"
+      },
+      {
+        "command": "cargo fmt --all; pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Workspace and embedded-runtime formatting"
+      },
+      {
+        "command": "pnpm exec prettier --write affected documents/scripts/TS/Svelte/JSON excluding historical ledger",
+        "result": "pass",
+        "failures": 0,
+        "note": "58 changed paths, followed by final three handoff documents; historical raw evidence remains unchanged"
+      },
+      {
+        "command": "pnpm check:progress (before final close)",
+        "result": "pass",
+        "failures": 0,
+        "note": "135 tasks; evidence bookkeeping only"
+      },
+      {
+        "command": "pnpm dev:capture:setup; pnpm dev:capture:restart (explicit embedded RustFS executable)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Isolated native fixture .local/codex-preview; ports7470/7472; retained fixture and HMR"
+      },
+      {
+        "command": "target/debug/jj workspace add secondary (disposable native trial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Workspace created but snapshot saw existing native request concurrency; no destructive recovery"
+      },
+      {
+        "command": "JJ_CONFIG=/dev/null target/debug/jj --no-pager -R .local/codex-preview/secondary workspace update-stale",
+        "result": "pass",
+        "failures": 0,
+        "note": "Recovered disposable secondary physical native workspace"
+      },
+      {
+        "command": "codex exec/resume 0.156.1 (deliberately created alpha/beta/gamma/delta, secondary, unlinked and history trials)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two active native session identities; gamma physical file edit; automatic UI updates and retained selection/draft; unrelated trial bodies withheld; seeded sessions are not real harness qualification"
+      },
+      {
+        "command": "LocalTrusted Capture control/API inspection and CUA pause/resume journey",
+        "result": "pass",
+        "failures": 0,
+        "note": "Paused revision1 withheld delta; paused backend restart retained identical detail; resumed revision2 published delta exactly once; malformed manually constructed31-character Resume ID was refused before valid original request126f0289e9f94ba4b2917ba375fc0990"
+      },
+      {
+        "command": "CUA Import history for source4; inspect original3c9396b517f145568776150354ba5a78",
+        "result": "pass",
+        "failures": 0,
+        "note": "Click selected deliberate unlinked trial. Unknown acknowledgement retained; no accepted receipt or body publication. Receipt absence is not definitive rejection. Source-selection/refusal UX remains deferred"
+      },
+      {
+        "command": "rustc .local/integration/trial-source-order.rs; .local/integration/trial-source-order",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production metadata scanner reproduces known trial order; reads only the four deliberately-created trial headers; source2 is linked history and source4 is unlinked"
+      },
+      {
+        "command": "POST /v1/local/capture/import using .local/integration/linked-history-command.json; GET original import status",
+        "result": "pass",
+        "failures": 0,
+        "note": "Distinct explicit linked command aeadff33d0fc4d7ca668cc781e23565b accepted200; source2; ordinal1; exact79990-byte/15-source-record boundary; completed with one publication receipt"
+      },
+      {
+        "command": "Python LocalTrusted detail/transcript assertions for three real admitted sessions",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native sessions41ffb0d2c68320aeb63a8713fe38d6a6,8237dd0f725d7102301bff779b9948d0,a05168b21f11ad2757c9ec6553e3f483; record counts13/5/3; distinct response markers once; unlinked-refusal bodies absent"
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:capture:restart (final retention)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three session/snapshot/transcript identities and record counts unchanged after resumed restart; original completed import receipt retained; transient409 busy while cold recovery is recorded"
+      },
+      {
+        "command": "sample preview backend1second; CUA selected Agents and scrolled virtualized transcript; saved capture-preview.jpg",
+        "result": "pass",
+        "failures": 0,
+        "note": "Read-only diagnostic shows repeated owned import-policy work; UI visibly retains gamma/delta and six sessions; preview tab retained as deliverable"
+      },
+      {
+        "command": "pnpm contracts:check (qualified final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Complete registered103-route inventory, actual HTTP/SSE samples, seven contract-tool tests and generated-client TypeScript; shared route generation required full directly affected consumers 221 actual HTTP/SSE responses conform."
+      },
+      {
+        "command": "Python raw evidence comparison against both latest-main integration snapshots",
+        "result": "pass",
+        "failures": 0,
+        "note": "392 historical raw objects and payloads preserved;393 total including E-M18-001"
+      },
+      {
+        "command": "pnpm check:progress (first close attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Pass evidence cannot carry deferred gaps in remaining; moved those unchanged caveats to scope because narrow M18.8 gates are qualified and broader M18 is incomplete."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate (sealed handoff documents/ledger)",
+        "result": "pass",
+        "failures": 0,
+        "note": "446 protected paths/14 canonical chapters; five validators/22 chapters/166 requirements"
+      },
+      {
+        "command": "pnpm exec prettier --check docs/capture-preview.md docs/implementation-plan.md spec/src/verification.md scripts/dev-capture.mjs spec-validator.config.mjs web/tests/vite/capture-management.test.ts catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All final edited documents and regression surfaces formatted"
+      },
+      {
+        "command": "pnpm check:progress (after keeping deferred scope distinct from narrow preview acceptance)",
+        "result": "pass",
+        "failures": 0,
+        "note": "135 tasks; M18.8 Done, broader M18 In progress with Partial/Deferred children"
+      },
+      {
+        "command": "GET /v1/local/capture with bounded exact read retries after final backend restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four attempts observed retained generation3957df423c2f9c4f152bf50d877e70c4/revision2/pausedfalse; transient409 busy remains a documented cold observation"
+      },
+      {
+        "command": "CUA reload/navigation and disposable preview cleanup",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original unlinked unknown request/command remains saved in .local/integration and ledger; no rejection inferred. Cleared trial-only volatile view by reload; main Projects/Agents navigation and captured responses remain usable. Locator failure after collapsing rows was recovered with fresh AX target."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "JJ 0.45.1; Codex CLI 0.156.1; pnpm 10.32.1; committed main90d119e0; temporary inherited Design Core0.1.2 local source; registry manifests/lock preserved; pinned official Codex source b412ff32c417f855c2b2d1581b77058eed87c84b",
+    "formats": "Current AgentStore only; native/capture formats unchanged; combined OpenAPI103 routes(30 local,73 other); historical M17 capture task fields preserved via explicit M18 mapping;392 historical evidence objects including latest main E-UI-094 preserved plus this entry.",
+    "scope": "New codex-preview workspace integrated onto latest committed main90d119e0. Original capture stack/main working copy/OpenCode draft preserved. Functional CLI-only native preview, automatic UI freshness, isolated repeatable setup and real native RustFS/edit/history/restart evidence. Root aggregates and full roadmap qualification out of scope. Deferred limitations: Codex Desktop, OpenCode configured/history/export, Cursor, complete conversations/replay, automatic provenance/checkpoints, advanced review/search/archive, broader release/platform/deployment remain Deferred. Cold debug native sanitizer/preparation takes more than two minutes; performance optimization Deferred. Body-free history source ordinals can select an unlinked trial; admission withholds it but unknown pre-acceptance command can remain unresolved. Source-selection and deterministic refusal UX Deferred; retain exact original request. Registry-only Design Core UI release qualification and visual baselines remain open; local preview uses inherited documented temporary validation hook.",
+    "next": "Try the running CLI-only preview at http://127.0.0.1:7470/ using docs/capture-preview.md; gather feedback before reopening deferred work."
+  },
+  {
+    "id": "E-M18-002",
+    "tasks": ["M18", "M18.8"],
+    "date": "2026-10-04",
+    "kind": "ui-settings",
+    "revision": "enclosing JJ change zmyqspmo",
+    "files": [
+      "catalog/components/store-application/SettingsNavigation.stories.svelte",
+      "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+      "catalog/fixtures/CaptureSettingsFixture.svelte",
+      "docs/capture-preview.md",
+      "docs/implementation-plan.md",
+      "spec/src/collaboration.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureDiagnostics.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+      "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsNavigation.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsRepository.svelte",
+      "web/src/lib/ui/store-settings/model.ts",
+      "web/tests/browser/local-capture-settings.spec.ts",
+      "spec/src/milestones.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md"
+    ],
+    "tests": [
+      "web/tests/browser/local-capture-settings.spec.ts#cold capture controls preserve intent and snapshot",
+      "web/tests/browser/local-capture-settings.spec.ts#visible capture follows observations and stops when settings closes"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Align agent capture settings with settings navigation and rows\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean preview change; main and other services preserved; enclosing change zmyqspmo"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte -t \"Shared settings rows and action columns\"; repeat with -t shared-settings-rows",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both name filters skipped all stories, so they are not acceptance evidence; reran complete affected story file"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before implementation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "7 existing stories passed; added shared-row/Agents regression failed because Agents heading was absent"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte (first after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Navigation4 passed; Capture suite import failed transiently in Vite/Tailwind virtual CSS transformation; independently repeated affected Capture suite successfully"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (retry, then final icons/notices)",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 stories passed; before/after functional regression1/0; all shared action-column, controls, receipts, unavailable and draft scenarios passed"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/SettingsNavigation.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 stories passed including dedicated installation Agents entry/no repository picker; existing navigation scenarios retained"
+      },
+      {
+        "command": "pnpm web:check (initial and final); pnpm web:build (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings in type check; built bundle plus asset manifest passed; existing large-chunk warnings retained"
+      },
+      {
+        "command": "pnpm catalog:check (first)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Testing Library role options do not support Playwright exact:true; corrected new fixture selectors to anchored names"
+      },
+      {
+        "command": "pnpm catalog:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings; catalog boundaries166 modules passed"
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 cold built-bundle tests passed using existing compiled disposable browser host and previously captured HTTP fixtures; no Rust compilation"
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (added geometry)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New exact-text source locator timed out because source label includes version/binding children; retained label match corrected;2 other tests passed"
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (geometry correction)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Axe observed enabled history button during public Button disabled-opacity transition; added enabled and settled-opacity waits before accessibility inspection;2 other tests passed"
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (settled)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 passed; desktop/right and mobile/stacked column geometry; desktop/mobile Axe0 violations; no horizontal overflow; exact pending intent and request draft retained; polling stops on leaving Agents and closure"
+      },
+      {
+        "command": "pnpm check:ui-ownership; pnpm check:architecture; pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "UI ownership passed; architecture867 modules;17 package boundaries"
+      },
+      {
+        "command": "pnpm exec prettier --write changed Svelte, TypeScript and scope documents; pnpm exec prettier --check changed files (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New anchored navigation selectors needed formatting; formatted both affected tests"
+      },
+      {
+        "command": "pnpm exec prettier --check changed files (after formatting)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All matched files formatted; final test-only opacity wait formatted subsequently"
+      },
+      {
+        "command": "curl -fsSI --max-time 10 http://127.0.0.1:7470/; GET transformed StoreSettingsNavigation.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Running preview responds200 and serves Agents navigation through existing HMR process"
+      },
+      {
+        "command": "CUA preview AX/DOM/rebind/screenshot; native Codex fallback",
+        "result": "fail",
+        "failures": 1,
+        "note": "In-app tab1 focus-emulation timed out and screenshot reset the tool; native Codex access was refused by tool safety. No user app actions applied. Built browser evidence remains distinct from live visual qualification."
+      },
+      {
+        "command": "pnpm spec:first (first)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Documentation/plan and shared UI change maps also require api, architecture and cli chapters; added scoped presentation/preview descriptions"
+      },
+      {
+        "command": "pnpm check:progress (first)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Ledger named-test matcher accepts fn/test declarations, not Story names; retained story coverage in actual run notes and removed unsupported named-story references"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 validators;22 chapters;166 requirements"
+      },
+      {
+        "command": "pnpm spec:first (after mapped documentation)",
+        "result": "pass",
+        "failures": 0,
+        "note": "18 protected paths/6 canonical chapters"
+      },
+      {
+        "command": "pnpm check:progress (after named-test correction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "135 tasks; historical evidence retained"
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "JJ0.45.1;pnpm10.32.1;Codex CLI0.156.1; inherited Design Core local validation source unchanged",
+    "formats": "Current AgentStore and capture API unchanged; all393 historical evidence objects preserved byte-for-byte; UI-only settings composition",
+    "scope": "Dedicated installation Agents section; shared rows, actions, public Alert/Empty/Field components and optional header refresh. Root aggregate/Rust suites out of scope under targeted UI policy. Visual baselines remain visual-pending; live in-app visual inspection unavailable due browser connection. Existing backend busy/cold performance caveat unchanged. User-requested configured root paths follow as a separate cross-layer slice.",
+    "next": "Expose actual configured CLI capture roots in typed status and these shared settings rows; preserve existing backend configuration and authorization."
+  },
+  {
+    "id": "E-M18-003",
+    "tasks": ["M18", "M18.8"],
+    "date": "2026-10-04",
+    "kind": "capture-settings",
+    "revision": "enclosing JJ change kyvxzyzu",
+    "files": [
+      "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+      "catalog/fixtures/capture-management.ts",
+      "crates/jj-store-http/src/contract/capture_tests.rs",
+      "crates/jj-store-server/src/capture_management/report.rs",
+      "crates/jj-store-server/src/capture_management.rs",
+      "crates/jj-store-server/src/capture_runtime/control.rs",
+      "crates/jj-store-server/src/capture_runtime/sources.rs",
+      "crates/jj-store-server/src/capture_runtime.rs",
+      "crates/jj-store-server/src/capture_supervisor/tests/observations.rs",
+      "crates/jj-store-server/src/capture_supervisor.rs",
+      "crates/jj-store-server/tests/capture_management/coverage.rs",
+      "crates/jj-store-server/tests/capture_management/http.rs",
+      "crates/jj-store-server/tests/capture_management/imports/inspection.rs",
+      "crates/jj-store-server/tests/capture_management/imports.rs",
+      "crates/jj-store-server/tests/capture_management/rescan.rs",
+      "crates/jj-store-service/src/capture_management.rs",
+      "docs/capture-preview.md",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "scripts/dev-capture.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/mutations.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/capture-root-validation.ts",
+      "web/src/lib/controller/capture-validation.ts",
+      "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureRoots.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+      "web/tests/browser/local-capture-settings.spec.ts",
+      "web/tests/vite/capture-management.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-server/tests/capture_management/coverage.rs#harness_coverage_is_bounded_cached_and_reports_configured_roots",
+      "crates/jj-store-server/src/capture_supervisor/tests/observations.rs#configured_roots_retain_default_home_override_and_explicit_selection",
+      "crates/jj-store-server/tests/capture_management/imports/inspection.rs#missing_reader_link_and_unqualified_publication_withhold_completion_without_repair",
+      "crates/jj-store-http/src/contract/capture_tests.rs#capture_management_contract_is_installation_local_and_actor_free",
+      "web/tests/vite/capture-management.test.ts#configured harness roots are bounded absolute paths with honest counts",
+      "web/tests/browser/local-capture-settings.spec.ts#cold capture controls preserve intent and snapshot",
+      "web/tests/browser/local-capture-settings.spec.ts#visible capture follows observations and stops when settings closes"
+    ],
+    "removed_tests": [
+      "crates/jj-store-server/tests/capture_management/coverage.rs#harness_coverage_is_bounded_cached_and_contains_no_roots"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager diff; jj --no-pager log",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preview workspace only; no unrelated edits; original main preserved."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management --locked coverage::harness_coverage_is_bounded_cached_and_reports_configured_roots -- --exact (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Expected missing configured_roots regression: null instead of exact configured paths."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management --locked coverage::harness_coverage_is_bounded_cached_and_reports_configured_roots -- --exact (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 test; exact CLI/Desktop paths, paused-directory rename and no GET directory I/O; transcript file secrecy retained."
+      },
+      {
+        "command": "cargo test -p jj-store-server --lib --locked configured_roots_retain_default_home_override_and_explicit_selection (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New fixture used a different pending capacity than configured; corrected fixture to its existing spool capacity."
+      },
+      {
+        "command": "cargo test -p jj-store-server --lib --locked configured_roots_retain_default_home_override_and_explicit_selection (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 test; default HOME, CODEX_HOME override and explicit roots; no directory creation."
+      },
+      {
+        "command": "cargo test -p jj-store-server --lib --locked capture_runtime",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 control/source cached-observation tests passed."
+      },
+      {
+        "command": "cargo test -p jj-store-http --lib capture_management_contract_is_installation_local_and_actor_free --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 schema test;16 directory roots and4096 character path bound; actor-free contract retained."
+      },
+      {
+        "command": "pnpm contracts:generate; pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI/TypeScript match;221 actual HTTP/SSE responses conform;7 tooling tests and TypeScript contract consumer passed. Complete contract inventory required by changed public response and fixture registration."
+      },
+      {
+        "command": "cargo check -p jj-store-service -p jj-store-http -p jj-store-server --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust package checks passed."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "13 passed; import-inspection setup incorrectly unwrapped a cold Unknown acknowledgement."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management --locked imports::inspection::missing_reader_link_and_unqualified_publication_withhold_completion_without_repair -- --exact (retry before correction)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Same Unknown acknowledgement reproduced without changing product code. Fixed setup to observe original request and require exact completed receipt; never resend with a new identity."
+      },
+      {
+        "command": "pnpm web:check (initial and final); pnpm catalog:check; pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web/catalog0 errors/warnings;166 catalog modules; production bundle and asset manifest passed; existing chunk warning retained."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte (first tabs run)",
+        "result": "fail",
+        "failures": 6,
+        "note": "Top-level tab sections retained h3 headings; Axe heading-order failures. Corrected Sources/Imports headings to h2."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "14 passed:10 Capture/4 Navigation. Actual root paths, tabs, retained drafts, exact pending retries across tabs, action geometry and accessibility."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-management.test.ts web/tests/vite/capture-freshness.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "17 passed; root validation and observation lifecycle."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-management.test.ts (after helper extraction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "11 passed; bounded absolute unique paths/counts and absent metadata remain accepted explicitly."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (first tabs run)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Settled-opacity wait targeted source Import action after explicit import opened Imports. Retargeted Refresh import status;2 other tests passed."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 cold built-bundle tests; desktop/mobile Axe0; aligned/stacked rows and no overflow; actual root fixture, draft retention, polling across tabs and teardown. Existing compiled disposable browser host; no substituted product runtime evidence."
+      },
+      {
+        "command": "pnpm check:architecture (first, then first extraction)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Response validator exceeded300 counted lines at319, then301; extracted root paths and coverage field list to focused helper."
+      },
+      {
+        "command": "pnpm check:architecture (after extraction); pnpm check:ui-ownership; pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "869 modules; ownership validator;17 package boundaries."
+      },
+      {
+        "command": "cargo fmt --all; cargo fmt --all -- --check; pnpm exec prettier --write changed UI/tests/specs; pnpm exec prettier --check changed non-Rust files excluding historical milestones ledger",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting passed without rewriting archived ledger entries."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preview CLI/server binaries rebuilt; existing compact-unwind linker warning retained."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:capture:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only isolated preview backend restarted; Vite HMR and complete fixture/history preserved; ports7470/7472."
+      },
+      {
+        "command": "Python urllib GET http://127.0.0.1:7470/v1/local/capture with X-Jj-Store-Protocol:1; bounded three reads",
+        "result": "fail",
+        "failures": 3,
+        "note": "All three proper reads returned existing409 capture_control_busy. Initial exploratory requests missing protocol or complete Fetch Metadata correctly returned403; admission remained intact."
+      },
+      {
+        "command": "CUA tab2: profile > Settings > Agents; inspect AX; save .local/integration/agents-settings-tabs-live.png",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live Capture shows /Users/stevejuma/.codex/sessions, four shared tabs and dedicated Agents sidebar. Intermittent busy source read retains available root snapshot and disables commands. User historical repository route retained. No native-app retry or capture mutation."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management --locked imports::inspection::missing_reader_link_and_unqualified_publication_withhold_completion_without_repair -- --exact (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 cold test passed; exact original completed receipt required before corrupting reader/publication evidence. Removed now-unused short-settlement helper; final binary verifies no new dead-code warning."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; cargo fmt --all -- --check; pnpm exec prettier --check spec/src/architecture.md spec/src/spec-governance.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first30 protected paths/8 chapters before final added test files;5 validators/22 chapters/166 requirements;135 tasks; changed documents/Rust format passed."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management --locked (final complete binary)",
+        "result": "pass",
+        "failures": 0,
+        "note": "14 passed;0 failed. Corrected cold inspection requires original completed receipt; unused setup helper removed; no new dead-code warning."
+      },
+      {
+        "command": "pnpm spec:first (final); evidence-preservation/ledger-structure scripts",
+        "result": "pass",
+        "failures": 0,
+        "note": "30 protected files/9 canonical chapters;395 entries including this slice; all394 historical evidence objects retained byte-for-byte;39 unique files."
+      },
+      {
+        "command": "pnpm check:progress (final pass ledger); pnpm exec prettier --check .local/integration/e-m18-003.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "135 tasks; new evidence entry formatting passed; historical ledger formatting and objects preserved."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "JJ0.45.1;Codex CLI0.156.1;pnpm10.32.1; inherited Design Core temporary local validation unchanged",
+    "formats": "Current AgentStore only; native/capture persistence formats unchanged. Additive optional bounded configured_roots status metadata;221 actual HTTP/SSE response contracts. All394 earlier evidence objects preserved byte-for-byte.",
+    "scope": "Four Agents settings tabs with shared rows/action columns, one observation owner, retained drafts and exact pending actions. Actual startup-resolved directory roots under unchanged LocalTrusted Admin admission, including HOME/CODEX_HOME and explicit selections. Complete contract lane required; root aggregates, unrelated UI/Rust suites out of scope. Stories remain visual-pending; no baseline approval. Existing cold sanitizer performance and intermittent capture busy remain deferred; broader M18 harness/release scope unchanged.",
+    "next": "Try Settings > Agents in the running preview; gather tab/roots feedback before reopening deferred capture performance or harness work."
+  },
+  {
     "id": "E-UI-095",
     "tasks": ["M14", "M15.5", "M4.10", "M13.4"],
     "date": "2026-10-04",
@@ -69293,7 +69284,7 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
     "scope": "User-requested refinements in main, preserving earlier settings/sidebar work. One owned reusable row provides whole-row copy, circular success/failure feedback and independent guarded navigation; long explanatory text remains readable. History search uses standard input palette and darker selected header grey, with Settings-form query context and icon workspace picker. UI-only targeted policy: affected stories/type checks plus cold built-asset native/local browser flows; root aggregate and Rust lanes are out of scope. Existing registry-only release qualification and visual baselines remain pending; no milestone status promotion. Follow-up hardens the row hit area during active pointer presses and adds replayable reduced-motion-aware tick feedback. Earlier false-positive row-target test is explicitly corrected.",
     "next": "Retain these focused regressions and the main Vite HMR preview; registry-only dependency qualification and visual baseline approval remain separate existing gates."
   },
-{
+  {
     "id": "E-UI-096",
     "tasks": ["M4.31"],
     "date": "2026-10-04",
@@ -69467,7 +69458,7 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
     "scope": "Production notification service/root, Settings, repository and command feedback, thread/task/review actions and their direct consumers. Source public API/CSS required Design Core full nonvisual lanes, recorded in its verification chapter. Consumer follows the targeted UI policy: root aggregates, Rust/RustFS/native desktop storage suites and schema generation are out of scope. Cold browser uses an isolated static server on127.0.0.1:7568 serving this built web/dist with the exact STRICT_CSP from assets.rs and captured mocked APIs; it is not native runtime or storage qualification. Registry publication/consumer range refresh and visual baselines remain separate; no existing milestone promoted.",
     "next": "Release the separately committed Design Core extension and validate registry-resolved consumption in a separately authorized release slice. M4.31 remains in progress for that gate; OS delivery and notification history remain deferred."
   },
-{
+  {
     "id": "E-UI-097",
     "tasks": ["M4.31"],
     "date": "2026-10-04",
@@ -69600,7 +69591,7 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
     "scope": "User-authorized main integration and temporary-workspace retirement. Existing source qualification is inherited unchanged; only merged consumer surfaces and their direct regressions rerun under targeted UI policy. Root aggregates, Rust/native/storage qualification, screenshot comparisons and visual baselines are out of scope. M4.31 remains in progress for released Design Core registry consumption; no milestone promoted and no package published.",
     "next": "Retain main notification regressions. Release and registry-only consumer acceptance remain the separately governed M4.31 follow-up; OS delivery and persistent history remain deferred."
   },
-{
+  {
     "id": "E-UI-098",
     "tasks": ["M14", "M15.5"],
     "date": "2026-10-04",
@@ -69682,2120 +69673,2172 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
     "scope": "Copyability defaults off and is explicitly enabled for identifiers/hashes or supplied internal destinations. Plain statuses/counts/descriptions stay non-interactive. Grid action slots preserve copy alignment without an empty focusable button. UI-only targeted policy: focused affected stories, types, browser geometry and governance checks; root aggregates, Rust lanes and built-bundle qualification out of scope. Visual baselines and existing registry release qualification remain separate; no milestone status promoted.",
     "next": "Retain the focused copy eligibility and interaction regressions; main HMR stays available for review."
   },
-{
-  "id": "E-M18-004",
-  "tasks": [
-    "M18",
-    "M18.8",
-    "M4.31"
-  ],
-  "date": "2026-10-04",
-  "kind": "capture-notification-rebase",
-  "revision": "enclosing JJ change krnstxms",
-  "files": [
-    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-    "catalog/fixtures/CaptureSettingsFixture.svelte",
-    "spec/src/api.md",
-    "spec/src/collaboration.md",
-    "spec/src/spec-governance.md",
-    "spec/src/ui.md",
-    "spec/src/verification.md",
-    "web/src/lib/controller/capture-management.svelte.ts",
-    "web/src/lib/controller/capture-observations.ts",
-    "web/src/lib/notifications/notification-recovery.svelte.ts",
-    "web/src/lib/ui/store-notifications/StoreNotice.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
-    "web/tests/browser/local-capture-settings.spec.ts",
-    "web/tests/vite/capture-freshness.test.ts",
-    "spec/src/milestones.md"
-  ],
-  "tests": [
-    "web/tests/vite/capture-freshness.test.ts#capture conditions recover only after complete successful observations",
-    "web/tests/browser/local-capture-settings.spec.ts#capture notifications retain dismissal and drafts until observed recovery",
-    "web/tests/browser/local-capture-settings.spec.ts#cold capture controls preserve intent and snapshot",
-    "web/tests/browser/notifications.spec.ts#operational toasts deduplicate, retain dismissal and clear on recovery"
-  ],
-  "runs": [
-    {
-      "command": "jj rebase capture stack onto eb25eacb; targeted JJ status/log/diff and spec-conflict resolution",
-      "result": "pass",
-      "failures": 0,
-      "note": "Rebased nlstmlwq, zmyqspmo and bookmarked kyvxzyzu variant onto clean main. Combined API, governance and verification requirements; preserved all 315 main and 395 capture evidence entries verbatim, 399 unique entries. Main M4.31 and JST-UI-019 retained. Old capture tip bookmarked separately."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before dependency refresh)",
-      "result": "fail",
-      "failures": 11,
-      "note": "11 failed plus 11 errors from old cached Design Core NotificationToasts API; refreshed existing temporary local validation dependency."
-    },
-    {
-      "command": "pnpm install --offline --frozen-lockfile --force",
-      "result": "fail",
-      "failures": 1,
-      "note": "Existing local pnpmfile hook checksum differs from lockfile; no tracked dependency edits."
-    },
-    {
-      "command": "pnpm install --offline --lockfile=false --ignore-scripts",
-      "result": "pass",
-      "failures": 0,
-      "note": "Refreshed existing documented temporary foundation source-validation setup; package manifests/lockfile unchanged, no publication."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before implementation, refreshed dependency)",
-      "result": "fail",
-      "failures": 1,
-      "note": "10 passed, 1 failed; new scoped-notification regression could not find Capture request unavailable dismissal."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "6 passed, 1 failed; complete successful observations did not clear the capture error."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/production-capture-management.test.ts web/tests/vite/notification-service.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "27 passed; complete observed recovery, partial failure retention, uncertain original commands, producer transport and scoped notification lifecycle."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/StoreSettingsNavigation.stories.svelte catalog/components/store-application/StoreNotifications.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
-      "result": "fail",
-      "failures": 1,
-      "note": "Incorrect project name; corrected to storybook and actual SettingsNavigation filename."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/StoreSettingsNavigation.stories.svelte catalog/components/store-application/StoreNotifications.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
-      "result": "pass",
-      "failures": 0,
-      "note": "25 passed in three existing selected files; nonexistent navigation filename was not selected. Includes all 11 capture stories with portal feedback, no inline duplication, dismissal across refresh/remount and recovery."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/SettingsNavigation.stories.svelte",
-      "result": "pass",
-      "failures": 0,
-      "note": "4 passed; actual navigation family separately selected, total 29 direct stories qualified."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-store-events.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "13 direct controller integration tests passed; total 40 unit tests."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check; pnpm web:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "Web/catalog 0 errors and warnings; 169 catalog modules; production asset manifest passes. Existing bundle-size and timing warnings retained."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts notifications.spec.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "5 cold built-bundle tests passed in fresh disposable browser_preview service: capture controls, capability gating, scoped dismissal/recovery/drafts, observation teardown and generic toasts. Desktop/mobile Axe zero violations and notification geometry within viewport."
-    },
-    {
-      "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
-      "result": "pass",
-      "failures": 0,
-      "note": "883 UI modules; 17 package boundaries; ownership validator passed."
-    },
-    {
-      "command": "pnpm exec prettier --write changed UI/tests/specs; pnpm exec prettier --check changed files excluding historical milestones ledger (initial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Only merged verification paragraph formatting flagged; formatted it without changing semantics."
-    },
-    {
-      "command": "node --input-type=module (owned preview Vite-only refresh via existing process helpers)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Preview had cached the pre-refresh Design Core API and was blank on first reload. Ownership-checked restart of only Vite cleared its cache; backend PID, fixture, captured transcripts and historical repository route preserved."
-    },
-    {
-      "command": "CUA tab 2: reload; profile > Settings > Agents; Refresh capture; save .local/rebase-notifications/agents-notifications-live.png",
-      "result": "pass",
-      "failures": 0,
-      "note": "Live four-tab Agents page loads, configured /Users/stevejuma/.codex/sessions root visible; real intermittent capture busy error appears once as a dismissible toast, with no inline error duplication. No capture mutation."
-    },
-    {
-      "command": "jj diff --from codex/capture-before-notification-rebase --to @ --name-only; evidence-preservation script",
-      "result": "pass",
-      "failures": 0,
-      "note": "No Rust source, public schema, generated contract, persistence or capture runtime changes. All 399 historical evidence objects preserved byte-for-byte."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check changed files excluding historical ledger",
-      "result": "pass",
-      "failures": 0,
-      "note": "Spec-first 10 protected paths/5 canonical chapters; 5 validators/22 chapters/167 requirements; 136 tasks; final changed-file formatting passes."
-    },
-    {
-      "command": "pnpm spec:first --base eb25eacb78b1047e6fdb23e785b3796b593abeed --head 65e55df3da8245e00fc3b434936231d8d1393d6a (preview workspace)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Explicit range uses Git discovery, unavailable in secondary JJ workspace. Ordinary JJ-aware spec-first passes; reran the complete range from colocated main below."
-    },
-    {
-      "command": "jj --no-pager st; jj rebase -r @ -o krnstxms; jj --no-pager st (main workspace)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Main still clean on eb25eacb before integration. Advanced its empty tkwpktrq change onto verified feature tip; 352 added/119 modified/1 removed files, no conflicts; main clean afterwards. All existing main history retained."
-    },
-    {
-      "command": "pnpm spec:first --base eb25eacb78b1047e6fdb23e785b3796b593abeed --head 65e55df3da8245e00fc3b434936231d8d1393d6a (colocated main workspace)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Complete rebased integration gate passed: 457 protected files/14 canonical chapters. Same combined tree, no substitute tests."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "versions": "JJ 0.45.1; pnpm 10.32.1; Svelte 5; Vitest 4.1.11; Playwright 1.63.0; existing temporary Design Core source validation refreshed, registry release qualification deferred under M4.31.",
-  "formats": "Current AgentStore only. Rust code, public schemas/generated contracts, capture persistence and exact pending request identities unchanged. Main and capture ledger histories preserved verbatim.",
-  "scope": "UI/controller notification follow-up to already qualified capture stack, rebased on main eb25eacb. Installation-scoped condition notices for operational failures and timed information outcomes; validation/unavailable-content/unknown receipt recovery contextual. Direct UI/controller and cold browser lanes only; Rust/full contract/root aggregate lanes out of scope because their boundary trees are identical. Broader M18 harness/release scope unchanged; existing intermittent capture busy/performance deferred. Stories visual-pending; no baseline approval, push, release or installed service changes.",
-  "next": "Main workspace now contains the rebased capture preview and notification integration. Use Settings > Agents in the preserved isolated preview; defer additional harness, capture performance and registry-release qualification as already governed."
-},
-{
-  "id": "E-UI-099",
-  "tasks": [
-    "M9.5"
-  ],
-  "requirements": [
-    "JST-COLLAB-005",
-    "JST-UI-015"
-  ],
-  "date": "2026-10-04",
-  "kind": "Generic agent prompt markup disclosures",
-  "revision": "enclosing Jujutsu change tkwpktrq",
-  "before": "Main clean at krnstxms/f8fc1731. Both production activity and recorded-chunk story regressions fail because arbitrary context elements have no disclosure controls.",
-  "versions": "JJ 0.45.1; Node 24.10.0; pnpm 10.32.1; Mira 0.0.2; locked Svelte 5, Storybook 10.5.7, Vitest 4.1.11, Playwright 1.63.0 and bits-ui 2.19.4. Existing Design Core 0.1.2 source-validation setup inherited unchanged; registry release qualification remains deferred under M4.31.",
-  "formats": "Application-owned Mira remark/rehype/component extension only. Captured source, native identities, storage, public schemas, request/receipt identities and copy values remain unchanged. No dependency or foundational source changes.",
-  "files": [
-    "catalog/components/store-application/AgentPromptMarkup.stories.svelte",
-    "catalog/fixtures/AgentPromptFixture.svelte",
-    "catalog/fixtures/agent-prompt-markup.ts",
-    "spec/src/api.md",
-    "spec/src/collaboration.md",
-    "spec/src/spec-governance.md",
-    "spec/src/ui.md",
-    "web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte",
-    "web/src/lib/ui/community-message/CommunityMessage.svelte",
-    "web/src/lib/ui/community-message/props.ts",
-    "web/src/lib/ui/store-collaboration/StoreAgentContext.svelte",
-    "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
-    "web/src/lib/ui/store-collaboration/StorePromptElement.svelte",
-    "web/src/lib/ui/store-collaboration/prompt-element-ranges.ts",
-    "web/src/lib/ui/store-collaboration/prompt-elements-extension.ts",
-    "web/src/lib/ui/store-collaboration/remark-prompt-elements.ts",
-    "web/tests/browser/agent-prompt-markup.spec.ts",
-    "web/tests/vite/prompt-elements.test.ts",
-    "spec/src/milestones.md"
-  ],
-  "tests": [],
-  "runs": [
-    {
-      "command": "pnpm search remark xml --json; package metadata and README review for remark-mdx and remark-directive",
-      "result": "pass",
-      "failures": 0,
-      "note": "No suitable drop-in tolerant XML prompt renderer found. Directive syntax differs; MDX imposes JSX/expression syntax. Research retained in ignored .local/xml-plugin-research.json, remark-mdx-readme.md and remark-directive-readme.md."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (before)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Both activity and recorded chunk paths lack the arbitrary <harness:context> disclosure. .local/agent-prompt-markup/before.log."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (repair runs)",
-      "result": "fail",
-      "failures": 10,
-      "note": "Four repair runs: 3 sanitizer marker failures, 3 normalized-link assertions, 2 immediate collapse visibility assertions, 2 incorrect unmount assertions. Safe filtering strips className on div; switch marker to inert title. Bits UI retains hidden content, so await hidden visibility. Final exact run below passes."
-    },
-    {
-      "command": "pnpm catalog:check (before fixture fixes)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Fixture media_type widened to string; an embedded script-like fixture string confused Svelte diagnostics. Add literal typing and move sample to TypeScript fixture; no diagnostic suppression."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/prompt-elements.test.ts (initial)",
-      "result": "pass",
-      "failures": 0,
-      "note": "7 parser boundary tests."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/AgentComments.stories.svelte",
-      "result": "fail",
-      "failures": 2,
-      "note": "24 unchanged direct consumer stories pass; 2 new prompt collapse assertions fail and 2 other new stories pass. Only the new assertions were repaired; no subsequent production change. .local/agent-prompt-markup/stories.log."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "5 interactions/accessibility pass: arbitrary nesting, recorded chunks, malformed and code literals, inert attributes/cross-section references, default safe HTML behavior. Stories remain visual-pending. .local/agent-prompt-markup/after.log."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/prompt-elements.test.ts web/tests/vite/agent-timeline.test.ts web/tests/vite/projects-agent-response.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "13 tests across 3 files. Generic Unicode names/attributes, balance/escape/depth/code boundaries and direct timeline/response consumers. .local/agent-prompt-markup/units.log."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Final web and catalog checks: 0 errors/0 warnings, catalog boundaries 172 modules. Web check run before and after sanitizer-marker repair; catalog rerun after both fixture errors and ordinary-renderer fixture addition."
-    },
-    {
-      "command": "pnpm web:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "Fresh production bundle and manifest generated. .local/agent-prompt-markup/build.log."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts agent-prompt-markup.spec.ts (first run)",
-      "result": "fail",
-      "failures": 3,
-      "note": "Initial ignored config used the preview executable, whose compiled asset path points to the older preview bundle irrespective of cwd. Corrected to existing main executable; no Rust rebuild."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts agent-prompt-markup.spec.ts (repair runs)",
-      "result": "fail",
-      "failures": 4,
-      "note": "Three subsequent runs: 2 unopened Copy submenu failures; 1 touch/mobile fixture failure because viewport-only emulation retains desktop hover actions clipped by the existing sidebar header; 1 full-document mobile Axe run exposes existing landmark-one-main/page-has-heading-one findings while main is hidden behind the response sidebar. Use actual touch emulation and scope Axe to changed transcript. Document-level mobile landmarks remain a separate UI gap."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts agent-prompt-markup.spec.ts (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "3 cold built-bundle tests pass. Desktop activity and touch-mobile recorded chunks prove Markdown before/inside/between/after, keyboard disclosures, measured virtual row growth/no overlap, exact original Copy message, no horizontal page overflow and transcript-scoped Axe. Third test proves inert tags/attributes/no network leaks and visible malformed/indented fallback. .local/agent-prompt-markup/browser.log."
-    },
-    {
-      "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
-      "result": "pass",
-      "failures": 0,
-      "note": "890 UI modules, 17 packages, 1 ownership validator/22 chapters/167 requirements."
-    },
-    {
-      "command": "pnpm exec prettier --write <changed production, fixture, test and canonical chapter files>; pnpm exec prettier --check <same files>",
-      "result": "pass",
-      "failures": 0,
-      "note": "All new/changed source and canonical paragraphs formatted. Historical milestone ledger encodings retained verbatim; only the new evidence entry is formatted."
-    },
-    {
-      "command": "jj rebase -r @ -o tkwpktrq (empty codex-preview workspace); CUA reload7470 and inspect live Codex session",
-      "result": "pass",
-      "failures": 0,
-      "note": "Preview clean before rebase; source refreshed through Vite HMR with backend/fixture untouched. Actual captured <environment_context>, <filesystem> and <cwd> disclosures expand into nested controls and original content. Screenshot .local/agent-prompt-markup/live-preview.png; tab retained for user review."
-    },
-    {
-      "command": "pnpm spec:first (initial updated ledger)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Mapped web scope also requires api.md. Add a browser/transport boundary paragraph preserving exact recorded text and identity; no schema generation needed."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (final updated canonical chapters and ledger)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Spec-first:14 protected files/5 canonical chapters; validation:5 validators/22 chapters/167 requirements; progress:136 tasks. All historical evidence retained; no milestone status promoted."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "UI-only targeted policy: exact prompt stories and units plus direct agent consumers, focused types, ownership/boundaries and cold built-bundle tests. No root aggregate, Rust, contract generation, dependency refresh, publication, baseline approval, installed-service or data reset work. Case-sensitive balanced markup supports arbitrary names and literal attributes; fenced/indented/inline/escaped examples remain literal. Initially collapsed state is transient. Full-document mobile main/heading findings and existing desktop-hover clipping under viewport-only mobile emulation are separately recorded; scoped transcript accessibility passes.",
-  "next": "Retain the exact prompt and direct-consumer regressions. Preview7470 has the extension and an expanded real captured context for review. Document-level mobile landmark/heading qualification remains separate from this transcript scope."
-},
-{
-  "id": "E-M18-005",
-  "tasks": [
-    "M18.2"
-  ],
-  "requirements": [
-    "JST-COLLAB-017",
-    "JST-UI-012",
-    "JST-API-006",
-    "JST-GOV-003",
-    "JST-GOV-009"
-  ],
-  "date": "2026-10-04",
-  "kind": "Editable installation-local capture configuration",
-  "revision": "enclosing Jujutsu change qnyktnvp",
-  "before": "Main clean at qnyktnvp/54a71872, parent69d0db17. Agents settings expose resolved roots and pause/rescan/history commands but no capture configuration inputs. The disabled view requires manual TOML editing. Existing HMR restart regenerates ui-server.toml from the base fixture and loses app-saved settings.",
-  "versions": "JJ0.45.1; Node24.10.0; pnpm10.32.1; Rust1.98.1; locked Svelte5, Storybook10.5.7, Vitest4.1.11 and Playwright1.63.0. Qualified Codex CLI0.156.1 and Desktop0.159.2 only. Inherited Design Core source-validation/release boundary unchanged.",
-  "formats": "Configuration format2 and capture journal/source/spool/import/native AgentStore formats unchanged. Additive actor-free version1 GET/POST /v1/local/capture/settings; SHA256 exact file revisions; saved/startup-effective/default-root reporting; shared settings-file lock and bounded synchronized atomic TOML replacement. Unrelated TOML values retained; formatting/comments normalized as in the existing search editor. Credentials and arbitrary TOML are excluded.",
-  "files": [
-    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-    "catalog/fixtures/CaptureSettingsFixture.svelte",
-    "catalog/fixtures/capture-management.ts",
-    "crates/jj-store-http/src/capture_management.rs",
-    "crates/jj-store-http/src/capture_management/settings.rs",
-    "crates/jj-store-http/src/contract/capture_tests.rs",
-    "crates/jj-store-server/src/capture_management.rs",
-    "crates/jj-store-server/src/capture_management/authority.rs",
-    "crates/jj-store-server/src/capture_management/settings.rs",
-    "crates/jj-store-server/src/capture_management/tests.rs",
-    "crates/jj-store-server/tests/capture_management.rs",
-    "crates/jj-store-server/tests/capture_management/http.rs",
-    "crates/jj-store-server/tests/capture_management/settings.rs",
-    "crates/jj-store-service/src/capture_management.rs",
-    "crates/jj-store-service/src/capture_management/settings.rs",
-    "schemas/openapi.json",
-    "scripts/dev-ui.mjs",
-    "scripts/dev-ui.test.mjs",
-    "spec/src/api.md",
-    "spec/src/cli.md",
-    "spec/src/collaboration.md",
-    "spec/src/compatibility.md",
-    "spec/src/milestones.md",
-    "spec/src/mutations.md",
-    "spec/src/spec-governance.md",
-    "spec/src/ui.md",
-    "web/src/lib/api/generated.ts",
-    "web/src/lib/controller/capture-configuration.ts",
-    "web/src/lib/controller/capture-http.ts",
-    "web/src/lib/controller/capture-management.svelte.ts",
-    "web/src/lib/controller/capture-observations.ts",
-    "web/src/lib/controller/capture-settings-management.ts",
-    "web/src/lib/controller/capture-types.ts",
-    "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
-    "web/tests/browser/local-capture-settings.spec.ts",
-    "web/tests/vite/capture-settings.test.ts"
-  ],
-  "tests": [
-    "crates/jj-store-server/tests/capture_management/settings.rs#configuration_saves_are_conditional_private_and_leave_capture_state_untouched",
-    "crates/jj-store-server/tests/capture_management/settings.rs#configuration_revalidates_admin_identity_lock_and_regular_file",
-    "crates/jj-store-server/src/capture_management/tests.rs#configuration_remains_editable_while_capture_inspection_holds_the_runtime_gate",
-    "crates/jj-store-server/tests/capture_management/http.rs#local_capture_http_derives_actor_revalidates_authority_and_captures_contracts",
-    "crates/jj-store-http/src/contract/capture_tests.rs#capture_management_contract_is_installation_local_and_actor_free"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; read tracked/parent guidance and owning collaboration/API/UI/CLI/desktop chapters; inspect Community then Design Core Settings controls",
-      "result": "pass",
-      "failures": 0,
-      "note": "Clean main and preview; no unrelated work changed. Narrow target: edit disabled local capture, revision-safe persistence, retained drafts and restart-selected configuration."
-    },
-    {
-      "command": "cargo check -p jj-store-server -p jj-store-http --locked (initial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "AgentCaptureConfig validation needs Access and Storage. Validate the replacement through the containing Config rather than calling a zero-argument method."
-    },
-    {
-      "command": "pnpm contracts:generate; pnpm contracts:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Generated OpenAPI/TypeScript, 224 actual HTTP/SSE responses and 7 contract-tool tests pass. Full registered capture lane required because routes/schemas share an inventory. Existing registered capture HTTP fixture includes GET/POST settings, stale revision, actor injection and foreign Origin; body limits remain4096 except bounded settings144KiB. No runner changes."
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management settings:: --locked; cargo test -p jj-store-server --test capture_management --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "2 exact new settings tests, then all16 direct capture-management regressions. Admin/current identity, same-file lock, stale/malformed/unsupported roots/version/profile rejection, regular-file policy, preservation of unrelated config and journal bytes, saved versus effective and no initialization while disabled. Full binary took92.59s; no full Rust workspace suite."
-    },
-    {
-      "command": "cargo test -p jj-store-server --lib configuration_remains_editable_while_capture_inspection_holds_the_runtime_gate --locked (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Test dropped its temporary Fixture through an underscore destructure, removing configuration before observation. Retain the fixture binding."
-    },
-    {
-      "command": "cargo test -p jj-store-server --lib configuration_remains_editable_while_capture_inspection_holds_the_runtime_gate --locked (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "1 test proves settings read/save independent from occupied runtime inspection gate, retaining policy. Configuration files use their own shared advisory lock, never a worker/journal lock."
-    },
-    {
-      "command": "cargo check -p jj-store-server -p jj-store-http -p jj-store-service --locked (final); cargo fmt --all",
-      "result": "pass",
-      "failures": 0,
-      "note": "Affected packages compile. Final server/UI backend rebuilt from explicit local binary paths."
-    },
-    {
-      "command": "cargo clippy -p jj-store-server -p jj-store-http -p jj-store-service --all-targets --locked -- -D warnings; same with --no-deps",
-      "result": "fail",
-      "failures": 2,
-      "note": "Supplemental strict Clippy diagnostics remain open: unchanged jj-store-jj/src/query/language/identity.rs:108 and jj-store-service/src/collab_reads/materialization.rs:203 collapsible_if warnings. They are outside this configuration slice. No source allowances or unrelated fixes applied; focused package check/tests pass."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (initial checks)",
-      "result": "fail",
-      "failures": 3,
-      "note": "Initial web4 errors: request bodies are generated inline, so use operation-derived Exact type. Initial catalog13 errors/1 warning: same type issue, Testing Library exact option and initial prop capture. Next catalog boundary rejects direct API fixture import; expose production presentation type through capture-types. All repaired."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "0 errors/0 warnings; catalog172 modules. Editing uses existing Field/Switch/Input/Textarea controls, Settings rows/action columns and shared notices."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-settings.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-freshness.test.ts web/tests/vite/production-capture-management.test.ts (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "25 pass, one existing synchronous single-flight expectation fails because absent settings transport added an unnecessary await. Only await when a settings transport exists."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-settings.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-freshness.test.ts web/tests/vite/production-capture-management.test.ts (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "27 tests/4 files. Disabled editing, retained drafts, external revisions, unknown response reconciliation, validated bounds, no runtime mutations while restart pending, and configuration save while a runtime observation waits. Separate commandBusy/saving state prevents ordinary observations from disabling the editor; epochs reject stale config observations."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-      "result": "pass",
-      "failures": 0,
-      "note": "14 stories pass including3 new edit/stale/unknown scenarios, Settings columns, tab retention and existing capture direct consumers. Initial enabled prop warning repaired with untrack. Stories remain visual-pending."
-    },
-    {
-      "command": "pnpm web:build; pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts local-capture-settings.spec.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "Final fresh production bundle, all5 cold direct browser tests pass. New disabled editor saves typed fields, retains drafts across refresh/tabs, shows defaults and restart state, passes scoped Axe and mobile no-overflow. Existing no-auth/capability/notification/freshness checks retained. Uses main compiled preview asset host; mocked UI transport evidence is separate from actual service persistence."
-    },
-    {
-      "command": "node --test scripts/dev-ui.test.mjs; pnpm test:dev:ui",
-      "result": "pass",
-      "failures": 0,
-      "note": "6 preflight tests pass, including exact matching HMR fixture retention and missing retained-file refusal. Shared restart helper changed, so escalate to its existing full isolated native HMR startup lane: actual proxy writes/SSE, Svelte/TS/CSS HMR without reload, backend-only restart retains Vite PID, wrong Origin/Host rejection and owned stop all pass; temporary service cleaned and fixture retained."
-    },
-    {
-      "command": "pnpm dev:backend:build; explicit preview JJ_STORE_DEV_ROOT/JJ_STORE_DEV_PORT/JJ_STORE_DEV_BACKEND_PORT/JJ_STORE_DEV_SERVER/JJ_STORE_DEV_RUSTFS_RUNTIME pnpm dev:backend:restart; jj rebase/update-stale; CUA live editor save/restart/restore",
-      "result": "pass",
-      "failures": 0,
-      "note": "Main executable rebuilt; only isolated preview7470/7472 restarted. Real UI saved readers4→3, restart reports desired/effective3 and no pending configuration; restore4 and restart reports desired/effective4. Fixture/installation/control-policy SHA256 hashes stay identical. First restart used stale preview helper and reset the temporary edit; snapshot main and refresh preview, then repeat successfully with fixed helper. .local/capture-settings-live.json contains proof; screenshot .local/capture-settings-live.png; preview tab retained. Main running fixture and installed services untouched."
-    },
-    {
-      "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
-      "result": "pass",
-      "failures": 0,
-      "note": "893 UI modules;17 package boundaries;1 ownership validator/22 chapters/167 requirements."
-    },
-    {
-      "command": "pnpm spec:first (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Mapped service/HTTP scope also requires compatibility.md and mutations.md. Add typed conditional config and format/publication boundaries."
-    },
-    {
-      "command": "cargo test -p jj-store-http capture_management_contract_is_installation_local_and_actor_free --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "Exact installation-local contract schema/actor/body regression passes."
-    },
-    {
-      "command": "pnpm exec prettier --write <changed TS/Svelte/JS and canonical chapters>; cargo fmt --all",
-      "result": "pass",
-      "failures": 0,
-      "note": "Formatting applied throughout implementation and repairs. Keep prior evidence bytes intact; format only this new JSON entry."
-    },
-    {
-      "command": "pnpm exec prettier --check <all changed TS/Svelte/JS/JSON and canonical chapters except historical ledger>; cargo fmt --all -- --check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Final formatting checks pass. New evidence entry uses formatted JSON; historic ledger encodings retained verbatim."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Spec-first31 protected files/8 canonical chapters; validation5 validators/22 chapters/167 requirements; progress136 tasks. M18.2 remains Partial; no full milestone or visual baseline promoted."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Narrow editing acceptance: typed current LocalTrusted Admin configuration, saved/effective/default roots, bounded crash-aware persistence, shared-column editor, stale/unknown drafts and real next-start selection. Runtime pause/rescan/import commands and all durable capture state remain independent. Supplemental strict Clippy warnings are inherited diagnostics outside the gate. The live preview still reports capture_management_unavailable for runtime observations; its worker recovery/availability is not qualified by a settings save. Full M18 multi-harness release, native desktop bundle/lifecycle, arbitrary server/credential editing, hot worker replacement and visual baseline approval remain outside this slice. No root aggregate or installed-service reset/publication.",
-  "next": "Use Settings → Agents → Configuration in preview7470. Save config and restart this selected backend; desktop applies saved config on Quit/reopen with a rebuilt app bundle. Keep the reader limit restored to4. Investigate the retained fixture worker-unavailable diagnostic separately; do not repair journals or infer runtime health from effective config. Continue deferred M18 scope only under its owning gates."
-},
-{
-  "id": "E-M14-016",
-  "tasks": [
-    "M14",
-    "M14.4",
-    "M14.6"
-  ],
-  "requirements": [
-    "JST-UI-012",
-    "JST-UI-016",
-    "JST-UI-019",
-    "JST-API-001",
-    "JST-API-006",
-    "JST-CLI-005",
-    "JST-REPL-011",
-    "JST-MUT-003"
-  ],
-  "date": "2026-10-04",
-  "kind": "Complete supported operational configuration editors",
-  "revision": "enclosing Jujutsu change ylxwsusl",
-  "before": "Clean main ylxwsusl/9f7571b1 above qnyktnvp/1367c5d4; clean codex-preview workspace above the same parent. Only Agents and basic Search are editable. Resource budgets, installation protection, replication configuration and seven Search worker/extraction fields have no controls. Remaining launch/storage configuration is not visible. Narrow acceptance: section-safe persistence, retained drafts, explicit running values, every supported operational field, read-only infrastructure coverage and saved selection on next startup. Final review found generic notices inherited the route scope; align them to a stable installation scope so a dismissed unchanged condition cannot replay on repository navigation.",
-  "versions": "JJ0.45.1; Node24.10.0; pnpm10.32.1; pinned Rust and locked Svelte5/Storybook10.5.7/Vitest4.1.11/Playwright1.63.0. Dependency versions unchanged.",
-  "formats": "Format2 configuration and all native object/WAL/manifest/capture/credential formats unchanged. Additive actor-free version1 GET/POST /v1/local/settings and capability. Search DTOs expose seven existing bounded worker/extraction fields with established defaults. Exact SHA256 file revisions and common settings lock; normalized TOML values and synchronized same-directory replacement. Credential references only; no secret values or arbitrary TOML editing.",
-  "files": [
-    "catalog/components/store-application/StoreSearchSettings.stories.svelte",
-    "catalog/components/store-application/StoreServerSettings.stories.svelte",
-    "catalog/fixtures/SearchSettingsFixture.svelte",
-    "catalog/fixtures/ServerSettingsFixture.svelte",
-    "catalog/fixtures/search-settings.ts",
-    "catalog/fixtures/server-settings.ts",
-    "crates/jj-store-cli/tests/native_lifecycle/search_settings.rs",
-    "crates/jj-store-http/src/contract.rs",
-    "crates/jj-store-http/src/dto.rs",
-    "crates/jj-store-http/src/lib.rs",
-    "crates/jj-store-http/src/server_settings.rs",
-    "crates/jj-store-server/src/capture_management/authority.rs",
-    "crates/jj-store-server/src/capture_management.rs",
-    "crates/jj-store-server/src/lib.rs",
-    "crates/jj-store-server/src/process/preparation.rs",
-    "crates/jj-store-server/src/search_management/file.rs",
-    "crates/jj-store-server/src/server_settings/inventory.rs",
-    "crates/jj-store-server/src/server_settings.rs",
-    "crates/jj-store-server/tests/capture_management/server_settings.rs",
-    "crates/jj-store-server/tests/capture_management.rs",
-    "crates/jj-store-service/src/lib.rs",
-    "crates/jj-store-service/src/search_management.rs",
-    "crates/jj-store-service/src/server_settings.rs",
-    "schemas/openapi.json",
-    "scripts/contracts.mjs",
-    "spec/src/api.md",
-    "spec/src/cli.md",
-    "spec/src/compatibility.md",
-    "spec/src/milestones.md",
-    "spec/src/mutations.md",
-    "spec/src/replication.md",
-    "spec/src/spec-governance.md",
-    "spec/src/ui.md",
-    "web/src/lib/api/generated.ts",
-    "web/src/lib/controller/contracts.ts",
-    "web/src/lib/controller/production-local-configuration.ts",
-    "web/src/lib/controller/production-store-controller.svelte.ts",
-    "web/src/lib/controller/production-store-lifecycle.svelte.ts",
-    "web/src/lib/controller/production-store-state.svelte.ts",
-    "web/src/lib/controller/production-store-view.ts",
-    "web/src/lib/controller/search-advanced.ts",
-    "web/src/lib/controller/search-settings.ts",
-    "web/src/lib/controller/server-configuration.ts",
-    "web/src/lib/controller/server-settings.svelte.ts",
-    "web/src/lib/ui/store-settings/StoreConfigurationEditor.svelte",
-    "web/src/lib/ui/store-settings/StoreConfigurationFields.svelte",
-    "web/src/lib/ui/store-settings/StoreDeploymentConfiguration.svelte",
-    "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
-    "web/src/lib/ui/store-settings/StoreSearchAdvanced.svelte",
-    "web/src/lib/ui/store-settings/StoreSearchConfiguration.svelte",
-    "web/src/lib/ui/store-settings/StoreSearchSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreStorageSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreSyncConfiguration.svelte",
-    "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
-    "web/tests/browser/local-server-settings.spec.ts",
-    "web/tests/vite/production-search-settings.test.ts",
-    "web/tests/vite/server-settings.test.ts"
-  ],
-  "tests": [
-    "crates/jj-store-server/tests/capture_management/server_settings.rs#saves_preserve_other_sections_and_apply_only_at_restart",
-    "crates/jj-store-server/tests/capture_management/server_settings.rs#settings_revalidate_authority_budgets_locks_and_regular_files",
-    "crates/jj-store-server/tests/capture_management/server_settings.rs#http_settings_contracts_are_actor_free_conditional_and_local_admin_only",
-    "crates/jj-store-cli/tests/native_lifecycle/search_settings.rs#local_search_save_apply_rebuild_disable_and_restart_preserve_authority_and_pins"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; read tracked/parent AGENTS, jj-jujutsu skill, owning API/UI/CLI/replication/mutations/desktop requirements and M14/M18 ledger; inspect Community then Design Core",
-      "result": "pass",
-      "failures": 0,
-      "note": "Clean before state; existing Search/Capture forms reused. No relevant memory facts used."
-    },
-    {
-      "command": "cargo check -p jj-store-server -p jj-store-http --locked (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Missing axum::Json import in new HTTP module; corrected."
-    },
-    {
-      "command": "cargo fmt --all; cargo check -p jj-store-server -p jj-store-http --locked (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Affected server/HTTP and direct service/RPC/search dependencies compile."
-    },
-    {
-      "command": "pnpm contracts:generate",
-      "result": "pass",
-      "failures": 0,
-      "note": "Generated OpenAPI and TypeScript; additive settings routes and Search limits."
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management server_settings:: --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "Three persistence/auth/actual-HTTP regressions pass. Saving does not initialize capture state, contact peers or change authority; re-created manager selects desired values at startup."
-    },
-    {
-      "command": "cargo test -p jj-store-cli --test native_lifecycle local_search_save_apply_rebuild_disable_and_restart_preserve_authority_and_pins --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "One exact Search lifecycle regression now changes all seven advanced fields; validated save, Apply, rebuild/retry and restart while preserving manifest and retained read pins. macOS linker emitted existing compact-unwind size diagnostic."
-    },
-    {
-      "command": "pnpm web:check (first)",
-      "result": "fail",
-      "failures": 3,
-      "note": "Missing equal import and Svelte state variable shadowing; corrected."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "No errors or warnings; catalog boundaries175 modules."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/server-settings.test.ts web/tests/vite/production-search-settings.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "Initial14 tests across2 files."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/server-settings.test.ts web/tests/vite/production-search-settings.test.ts web/tests/vite/production-capture-management.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "18 tests across3 files including seven advanced Search bounds, installation availability, section preservation, dirty base revisions, unknown outcomes and obsolete GET rejection."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreServerSettings.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte (first)",
-      "result": "fail",
-      "failures": 5,
-      "note": "Four new stories caught role=status on a dd; move status to nested span. Advanced Search had duplicate fields/IDs from insertion; remove duplicate."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreServerSettings.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "20 direct interaction/accessibility stories pass; visual-pending."
-    },
-    {
-      "command": "pnpm check:architecture (first and intermediate)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Main controller grew beyond300 counted lines (308 then304). Extract installation configuration factory and shared teardown; do not change limits."
-    },
-    {
-      "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
-      "result": "pass",
-      "failures": 0,
-      "note": "905 production modules,17 package boundaries and ownership validator pass."
-    },
-    {
-      "command": "pnpm web:build; pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts local-server-settings.spec.ts local-capture-settings.spec.ts (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Seven pass; final mobile fixture tried to click hidden desktop navigation at390px. Navigate before reducing viewport; rerun. New controls scoped Axe check itself passes."
-    },
-    {
-      "command": "pnpm dev:backend:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "Development binaries built; installed tools untouched. Existing macOS compact-unwind linker diagnostic retained."
-    },
-    {
-      "command": "pnpm contracts:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Full registered lane required because settings routes/Search schema and capture registration share the public inventory. 237 actual HTTP/SSE responses,7 contract-tool tests and generated TypeScript pass. This is a focused contract surface, not a full repository suite."
-    },
-    {
-      "command": "pnpm web:build; pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts local-server-settings.spec.ts (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Three cold built-bundle editor/advanced-Search/scoped-Axe/mobile checks pass. Previous five Capture regressions passed in the first combined run. Viewport set back to desktop before hidden-sidebar navigation in test; scoped controls qualified at390px."
-    },
-    {
-      "command": "cargo test -p jj-store-server --test capture_management server_settings:: --locked (after inventory completion and final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Three tests pass, including explicit absent TLS and disabled backup inventory. Public DTO unchanged, so completed contract generation need not repeat."
-    },
-    {
-      "command": "pnpm check:architecture; pnpm format:rust:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "905 modules;300-line ownership limit retained, Rust formatting passes. Root aggregates/full Rust workspace/Clippy out of scope under targeted policy."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (initial)",
-      "result": "pass",
-      "failures": 0,
-      "note": "51 protected files/8 chapters,5 validators/22 chapters/167 requirements and136 progress tasks pass."
-    },
-    {
-      "command": "pnpm dev:backend:build; jj --no-pager st; jj -R /Users/stevejuma/code/lapismd/jj-store-codex-preview rebase -r @ -d ylxwsusl; jj -R /Users/stevejuma/code/lapismd/jj-store-codex-preview workspace update-stale",
-      "result": "pass",
-      "failures": 0,
-      "note": "Main development binaries rebuilt; clean preview placed on this slice. Main running7460/7462 fixture and installed tools untouched. Existing native linker diagnostic retained."
-    },
-    {
-      "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:backend:restart (preview; three runs)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Initial new backend, then activation of UI-saved3, then restore8. Native fixture preserved and Search ready. Existing loaded tab needed a reload to fetch the newly advertised startup capability."
-    },
-    {
-      "command": "pnpm exec tsx .local/server-settings-live.ts after-save; pnpm exec tsx .local/server-settings-live.ts after-restart (initial)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Read-only proof client omitted a complete Fetch Metadata tuple. Normal admission correctly denied it; add expected Origin plus same-origin site/mode and empty destination. Admission code unchanged."
-    },
-    {
-      "command": "Cua live Settings save8\u21923; pnpm exec tsx .local/server-settings-live.ts after-restart; Cua restore3\u21928; pnpm exec tsx .local/server-settings-live.ts after-restore-save; preview restart; pnpm exec tsx .local/server-settings-live.ts after-restore-restart; fixture/identity hash comparison",
-      "result": "pass",
-      "failures": 0,
-      "note": "Actual UI shows saved3/running8; first restart desired/effective3 and no pending config. Restore saved8/running3; second restart desired/effective8 with no pending config. .local/server-settings-live.json records typed proof. Fixture/installation hashes unchanged; retained capture control matches its previous qualified reference. Screenshot .local/server-settings-live.png; preview tab retained."
-    },
-    {
-      "command": "python3 .local/server-settings-format-check.py; pnpm exec prettier --write selected changed files",
-      "result": "pass",
-      "failures": 0,
-      "note": "Changed source/catalog/contract/canonical documents formatted. Full-file ledger formatting initially caused broad historical whitespace changes; discard those changes, preserve historical evidence verbatim and format/check only the new evidence object. Historical ledger reformat is outside this slice."
-    },
-    {
-      "command": "pnpm exec prettier --write web/src/lib/ui/store-settings/StoreConfigurationEditor.svelte spec/src/ui.md",
-      "result": "pass",
-      "failures": 0,
-      "note": "Final installation notification scope correction and canonical behavior formatted."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreServerSettings.stories.svelte",
-      "result": "pass",
-      "failures": 0,
-      "note": "All5 direct server configuration stories pass after stable installation notification scope correction; visual baselines remain pending."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/notification-service.test.ts web/tests/vite/server-settings.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "13 tests in2 files pass, including scoped episode dismissal and retained settings drafts."
-    },
-    {
-      "command": "pnpm web:check; pnpm spec:first; pnpm spec:validate; pnpm check:progress; python3 .local/server-settings-format-check.py (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "After final notification scope correction: zero Svelte errors/warnings; spec-first51 protected files/8 chapters;5 validators/22 chapters/167 requirements;136 progress tasks; focused source and evidence formatting pass. Root aggregates remain out of scope."
-    },
-    {
-      "command": "python3 ledger append script (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Local helper used a nonexistent commands key. No source write occurred; corrected to the existing runs key and preserved all historical ledger bytes."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Supported operational configuration editing and complete read-only deployment inventory. Existing runtime health, storage migration, native desktop lifecycle/bundle, launch reconfiguration, backup execution and full M14/M18 acceptance remain independent. No root aggregate or installed service changes, reset, publication or visual baseline approval.",
-  "next": "Try preview7470 Settings: Local service/Limits and Launch, Repository/Protection, Sync/Configuration, Search/Advanced, Storage/Configuration. Operational saves apply after next startup; Search uses explicit Apply. Keep preview concurrency restored to8. Full M14/M18, native desktop bundle/lifecycle and capture-runtime unavailable recovery remain separate gates."
-},
-{
-  "id": "E-M18-006",
-  "tasks": ["M9.4", "M9.5", "M18.8"],
-  "requirements": [
-    "JST-COLLAB-002",
-    "JST-COLLAB-004",
-    "JST-COLLAB-005",
-    "JST-API-001",
-    "JST-MUT-003"
-  ],
-  "date": "2026-10-04",
-  "kind": "Recover recorded Codex session timing",
-  "revision": "enclosing Jujutsu change slzksssp",
-  "before": "Clean main above ylxwsusl/edab2326. Current preview7470 Agents list has6 rows;3 captured Codex sessions have null first/last timing, while3 seeded hook sessions have values. JSONL sanitization intentionally preserves native timestamps inside payloads and leaves occurred_at_millis absent; the shared bounded timing projection reads only that absent field. Exact regression requires native CLI/Desktop list/detail timestamps from selected sanitized evidence without reimport or root publication.",
-  "versions": "JJ0.45.1; locked Chrono0.4.45 reused as a service dependency with std and no default features. Existing product/normalizer profiles unchanged.",
-  "formats": "No public DTO/schema, canonical encoding, native/local metadata, evidence, receipt, cursor, capture parser/recovery or source identity changes. Existing event-ID matching,4,096-event timing bound and optional millisecond fields retained. Qualified sanitized Codex JSONL record timestamps decode as RFC3339; explicit observation timestamps win; missing/malformed/unsupported evidence stays unknown.",
-  "files": [
-    "Cargo.lock",
-    "crates/jj-store-service/Cargo.toml",
-    "crates/jj-store-service/src/collaboration/agent_session_timing/tests.rs",
-    "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
-    "crates/jj-store-service/tests/agent_sessions/timing.rs",
-    "crates/jj-store-service/tests/agent_sessions.rs",
-    "crates/jj-store-service/tests/local_agent/timing.rs",
-    "crates/jj-store-service/tests/local_agent.rs",
-    "spec/src/api.md",
-    "spec/src/architecture.md",
-    "spec/src/collaboration.md",
-    "spec/src/mutations.md",
-    "spec/src/milestones.md",
-    "spec/src/local-jj.md"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; inspect canonical chapters/ledger, current Cua page and Community/Design Core timing references; pnpm exec tsx .local/agent-session-timing/live.ts before",
-      "result": "pass",
-      "failures": 0,
-      "note": "Observed exactly3 missing captured Codex timing pairs. API proof stored in .local/agent-session-timing/before.json; no raw transcript or credential output."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions codex_transcript_timing_recovers_existing_sanitized_native_timestamps --locked (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Test child module needed an explicit path attribute; fixed test registration."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions codex_transcript_timing_recovers_existing_sanitized_native_timestamps --locked (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Exact regression fails with first activity None instead of1704164645123; published sanitized record retains timestamp but optional observation field is empty."
-    },
-    {
-      "command": "cargo check -p jj-store-service; cargo fmt --all; cargo check -p jj-store-service --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "Service and direct owned dependencies compile; lock adds only the existing Chrono dependency edge."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions codex_transcript_timing_recovers_existing_sanitized_native_timestamps --locked (after)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Exact regression passes for both CLI0.156.1 and Desktop0.159.2. Millisecond fractions, UTC offsets, out-of-order matched records and ignored unsupported records qualified; list/detail and manifest pin unchanged."
-    },
-    {
-      "command": "cargo test -p jj-store-service --lib --test agent_sessions --test local_agent timing --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "4 tests pass:2 timestamp guards,1 native CLI/Desktop list/detail regression,1 local companion pin regression. Unknown/malformed timestamps, wrong envelope profile/source/integration and safe omissions remain absent; explicit timestamp precedence retained; historical local pin retains old timing after later capture."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions session_detail --locked; cargo test -p jj-store-service --test local_agent browser_agent_presentation_pins_metadata_and_transcript_membership --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "3 native existing detail/timing/bounded-activity regressions and1 local existing browser presentation/membership regression pass."
-    },
-    {
-      "command": "pnpm exec prettier --write spec/src/api.md spec/src/collaboration.md spec/src/mutations.md spec/src/architecture.md; pnpm exec prettier --check spec/src/api.md spec/src/collaboration.md; pnpm check:architecture; pnpm check:boundaries",
-      "result": "pass",
-      "failures": 0,
-      "note": "Canonical formatting and dependency boundaries17 packages pass. Supplementary architecture905 modules unchanged. No UI component changes; UI type/build/Storybook and contract generation lanes are out of scope. Root aggregates/full Rust workspace not run."
-    },
-    {
-      "command": "pnpm dev:backend:build; pnpm format:rust:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Development CLI/server and direct service consumers build with the locked dependency edge. Existing macOS compact-unwind linker diagnostic is informational; installed executables untouched. Rust formatting passes."
-    },
-    {
-      "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:backend:restart (preview cwd)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Only selected preview backend replaced; Vite and fixture retained, Search ready. Main7460/7462 runtime not restarted."
-    },
-    {
-      "command": "pnpm exec tsx .local/agent-session-timing/live.ts after; Python before/after assertions; Cua fresh background Agents tab, AX and screenshot",
-      "result": "pass",
-      "failures": 0,
-      "note": "All6 list rows now show captured start/duration. The3 recovered Codex durations are17m26s,34s,3s. Native manifest/AgentStore snapshot, session IDs, states and evidence/event counts remain identical; previous3 hook timing pairs unchanged. Cold fresh page uses retained historical code operation. Screenshot .local/agent-session-timing/after.png. Temporary proof tab closed; existing review page retained."
-    },
-    {
-      "command": "pnpm exec prettier --write spec/src/local-jj.md .local/agent-session-timing/evidence.json; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check changed canonical chapters and new evidence",
-      "result": "pass",
-      "failures": 0,
-      "note": "Spec-first8 protected files/6 chapters;5 validators/22 chapters/167 requirements;136 progress tasks. Milestones retain existing status; focused formatting passes. Historical ledger prefix preserved."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Timing read projection and current preview verification only. Full harness release, capture runtime recovery, native desktop packaging and visual baselines remain separate. No user repository reimport, evidence rewrite, reset, installed-tool change or unrelated service restart.",
-  "next": "Use current Agents list; captured start/duration derive from exact selected recorded activity, including previously published Codex records. Preserve deferred harness and broader qualification scope."
-},
-{
-  "id": "E-M18-007",
-  "tasks": ["M9.4", "M9.5", "M18.8"],
-  "requirements": [
-    "JST-COLLAB-002",
-    "JST-COLLAB-004",
-    "JST-COLLAB-005",
-    "JST-API-001",
-    "JST-LOCAL-001",
-    "JST-UI-006"
-  ],
-  "date": "2026-10-04",
-  "kind": "Captured message occurrence times in agent response transcripts",
-  "revision": "enclosing Jujutsu change upuyqosu",
-  "before": "Clean main upuyqosu/73ed9ca2 above session timing slice slzksssp/72ebebc7. Existing captured session 41ffb0d2c68320aeb63a8713fe38d6a6 has 13 messages with no API occurrence field; UI displays sequence numbers. Exact native regression fails with four unknown times instead of two known/two unknown times. Native timestamps already exist in immutable sanitized observation payloads.",
-  "versions": "JJ 0.45.1; Rust 1.98.1; existing Chrono 0.4.45 and Svelte 5.57.1. Existing Codex CLI 0.156.1/Desktop 0.159.2 qualified normalizer profiles retained.",
-  "formats": "Additive optional occurred_at_millis fields on AgentActivity.Message and AgentTranscriptChunk; HTTP version 1 retained. Exact selected normalized event IDs match sanitized observations. Explicit observation time wins over qualified RFC3339 recovery. Chunks additionally match current source-generation-1 identity/sequence and exact selected message content under a 4096-event bound. Missing/malformed/unmatched/unsupported evidence stays unknown. Native objects, local companion metadata, capture/recovery identities, cursor framing and receipt/publication formats unchanged.",
-  "files": [
-    "catalog/components/store-application/AgentPromptMarkup.stories.svelte",
-    "catalog/fixtures/AgentPromptFixture.svelte",
-    "crates/jj-store-service/src/collaboration/agent_details.rs",
-    "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
-    "crates/jj-store-service/src/collaboration/agent_transcript_timing.rs",
-    "crates/jj-store-service/src/collaboration/agent_transcripts.rs",
-    "crates/jj-store-service/src/collaboration/models.rs",
-    "crates/jj-store-service/src/collaboration.rs",
-    "crates/jj-store-service/src/local_repository/browser_agents/transcripts.rs",
-    "crates/jj-store-service/tests/agent_sessions/timing.rs",
-    "crates/jj-store-service/tests/agent_sessions.rs",
-    "crates/jj-store-service/tests/local_agent/timing.rs",
-    "schemas/openapi.json",
-    "spec/src/api.md",
-    "spec/src/collaboration.md",
-    "spec/src/local-jj.md",
-    "spec/src/mutations.md",
-    "spec/src/ui.md",
-    "web/src/lib/api/generated.ts",
-    "web/src/lib/collaboration/presentation.ts",
-    "web/src/lib/ui/community-message/CommunityMessageMeta.svelte",
-    "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
-    "web/tests/collaboration-presentation.test.ts",
-    "spec/src/milestones.md",
-    "spec/src/compatibility.md"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; read tracked/parent guidance and JJ skill; inspect owning canonical chapters/ledger, Community timed-row and Design Core MessageMetadata sources; pnpm exec tsx .local/agent-message-timing/live.ts before",
-      "result": "pass",
-      "failures": 0,
-      "note": "Before proof: all 13 selected messages lack times. Main and preview initially clean. Recorded repository/AgentStore snapshot revision 113, state version 39; no transcript content or credentials written to proof."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions message_timing_matches_selected_evidence --locked (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Exact regression fails: [None,None,None,None] instead of two captured times followed by two unknowns. .local/agent-message-timing/before.log."
-    },
-    {
-      "command": "Update canonical requirements with additive DTOs; cargo fmt --all; cargo test -p jj-store-service --test agent_sessions message_timing_matches_selected_evidence --locked (after)",
-      "result": "pass",
-      "failures": 0,
-      "note": "CLI/Desktop exact regression passes. Fractions, offsets, user/assistant messages, malformed/missing times, content and read pins retained; transcript continuation times match activity. .local/agent-message-timing/after.log."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions --test local_agent --lib timing --locked (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "New local test compared a DTO without PartialEq. Corrected the test to compare complete serialized detail values; production DTO unchanged for equality. .local/agent-message-timing/timing-tests.log."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions --test local_agent --lib timing --locked (corrected)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Six timestamp guards/native/local timing tests pass. Companion historical detail/page times remain exact after later capture; explicit observation timestamp overrides malformed native timestamp. .local/agent-message-timing/timing-tests-final.log."
-    },
-    {
-      "command": "pnpm contracts:generate; pnpm web:check (first concurrent generation/check)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Generation passes. Early UI check saw the old generated DTO before generation finished and reported two missing fields. Final helper accepts lossless bigint values and retains Date range/safe integer guards. .local/agent-message-timing/web-check.log."
-    },
-    {
-      "command": "pnpm exec tsx --test web/tests/collaboration-presentation.test.ts; pnpm web:check; pnpm catalog:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Six direct presentation tests pass; web/catalog report zero errors and warnings, catalog 175 modules. Unknown times do not infer from sequence/session. Recorded fallback retains Markdown and ISO occurrence time."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (first)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Two stories failed because the matcher did not accept a regex as an attribute value. Corrected to match the actual title attribute; production date formatting unchanged. Four other stories passed. .local/agent-message-timing/stories.log."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (corrected and final); pnpm web:check (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "All six story interactions/accessibility checks pass, including activity and chunk timestamps, full-date title, nested XML/Markdown, inert markup and explicitly unknown time. Final web check zero errors/warnings. .local/agent-message-timing/stories-complete.log and web-check-complete.log. Visual baselines remain unapproved."
-    },
-    {
-      "command": "pnpm contracts:check (interrupted)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Full inventory began because DTO generation is shared, then was stopped with SIGTERM/143 while unrelated capture import/snapshot fixtures exercised long recovery bounds. No full inventory pass claimed. Replaced by directly affected native/local HTTP captures plus live known-time responses under the controlling targeted policy. .local/agent-message-timing/contracts.log."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions --locked; cargo test -p jj-store-service --test local_agent timing --locked; cargo test -p jj-store-service --test local_agent browser_agent_presentation_pins_metadata_and_transcript_membership --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "Complete affected native test binary: seven pass. Two local timing tests and existing local browser membership test pass. Native explicit hook timestamps, unknown/manual transcript fields, bounded activity and pinned continuations retained. Logs native-final.log, local-final.log, local-presentation.log."
-    },
-    {
-      "command": "cargo clippy -p jj-store-service --all-targets --locked -- -D warnings; cargo clippy -p jj-store-service --all-targets --no-deps --locked -- -D warnings",
-      "result": "fail",
-      "failures": 2,
-      "note": "Strict Clippy blocked by unchanged collapsible_if warnings in jj-store-jj/src/query/language/identity.rs:108, then service collab_reads/materialization.rs:203. Neither belongs to this slice and neither was edited/suppressed. Both failures retained; no strict lint pass claimed. Logs clippy.log and clippy-focused.log."
-    },
-    {
-      "command": "cargo check -p jj-store-service --all-targets --locked; pnpm dev:backend:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "Affected all-target service check and locked CLI/server build pass. Existing macOS compact-unwind linker warning retained. Installed tools, main development runtime and native desktop processes untouched."
-    },
-    {
-      "command": "JJ_STORE_COLLABORATION_CONTRACT_CAPTURE=.local/agent-message-timing/native-contract.json cargo test -p jj-store-cli --test native_lifecycle http_collaboration_acceptance::local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_credentials --locked -- --exact; JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE=.local/agent-message-timing/local-contract.json cargo test -p jj-store-cli --test local_browser filesystem_runtime_registers_and_reads_without_native_storage --locked -- --exact",
-      "result": "pass",
-      "failures": 0,
-      "note": "Both actual HTTP consumers pass. Native cursor root and local companion admission preserved. Captures contain 34 responses; their untimed hook/manual records correctly retain unknown fields."
-    },
-    {
-      "command": "node .local/agent-message-timing/validate-contracts.mjs (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "All response schema validation passed, but proof script incorrectly assumed untimed hook/manual fixtures would contain timestamps. Source inspection confirms occurred_at_millis absent and generation 5 manual chunks unqualified. Corrected fixture expectation to unknown; live qualified timestamps validated separately."
-    },
-    {
-      "command": "node .local/agent-message-timing/validate-contracts.mjs; pnpm test:contracts; pnpm contracts:generate (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "34 actual native/local HTTP responses conform and untimed fixtures remain unknown. Seven contract units and contract TypeScript check pass. Final generation produces the same additive fields; no route inventory change."
-    },
-    {
-      "command": "jj describe -m Show captured timestamps on agent transcript messages; jj rebase -r uqwlnutu -o upuyqosu; jj workspace update-stale (clean preview)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Main owns all implementation. Clean preview descendant refreshed onto the same change for live HMR verification; final clean ancestry verified after commit."
-    },
-    {
-      "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:backend:restart (preview cwd)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Only selected preview backend restarted. Vite, fixture and all native state preserved; Search ready. Main7460/7462 and native desktop left running."
-    },
-    {
-      "command": "pnpm exec tsx .local/agent-message-timing/live.ts after; Python before/after assertions; Cua fresh preview tab and Agent response navigation, DOM timestamps and screenshots",
-      "result": "pass",
-      "failures": 0,
-      "note": "All 13 existing messages and 13 chunks now have occurrence times; exact message/event/sequence/role identity, session summary and snapshot unchanged at revision113/state39. Live detail/transcript responses conform to generated schemas. Visible reply times include 00:08:04,00:08:20,00:14:36 in local BST; semantic datetime retains exact UTC milliseconds, tooltip full date and timezone. Current repository Agents route presents its list; UI verification opens the selected session through Projects Agents. Screenshots after.png and replies.png. Temporary tab closed and initial details-rail preference restored."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (first)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Spec validation passed. Spec-first required compatibility.md for generated schema changes; added the owning additive-response contract. Progress rejected outside-slice baseline/release qualifications listed as remaining feature gaps; moved them to explicit scope/next boundaries without claiming them passed. Narrow message timestamp acceptance has no remaining gaps."
-    },
-    {
-      "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; pnpm format:rust:check; focused Prettier on changed UI/stories/specs and standalone evidence; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
-      "result": "pass",
-      "failures": 0,
-      "note": "Architecture, owned UI, 17-package boundaries and Rust formatting pass. Final spec-first, canonical validation, 136-task progress and focused document/evidence formatting pass. Existing historical ledger bytes retained. Strict baseline lint/full inventory/visual/harness qualifications remain explicitly outside narrow feature acceptance; root aggregates/full Rust and unrelated UI/browser suites not run."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Per-message API/read projection and owned Agent response presentation only; no milestone promotion. Native immutable capture data and companion history preserved; current recorded source generation1 supports chunk timing, unsupported generations remain unknown. No reimport/reset/publication, installed-tool change or unrelated service restart. Strict Clippy baseline warnings, the interrupted unrelated full contract inventory, visual approval and full harness release gates are outside this narrow acceptance; their unresolved status is retained in the runs and next action.",
-  "next": "Use the refreshed preview Agent response. Timestamp data is available for already captured selected messages; retain unknown times and separate broader harness, strict baseline lint and visual qualification work."
-},
-{
-  "id": "E-M18-008",
-  "tasks": [
-    "M9.4",
-    "M9.5",
-    "M18.8"
-  ],
-  "requirements": [
-    "JST-COLLAB-002",
-    "JST-COLLAB-004",
-    "JST-COLLAB-005",
-    "JST-API-001",
-    "JST-API-006",
-    "JST-LOCAL-001",
-    "JST-UI-006"
-  ],
-  "date": "2026-10-04",
-  "kind": "Recorded tool durations, padding before tool icons and simplified session times",
-  "revision": "enclosing Jujutsu change rvkzvqxz",
-  "before": "Clean main rvkzvqxz/1163ba3e above upuyqosu/f6f69419; preview clean. Both existing exec tools in selected session lack duration fields. Exact native duration regression fails once. Initial tool-group stories fail twice for missing inset/duration. User then asks to remove Started prefix; its exact Agent response story fails once. Subsequent user inspection identifies zero row padding before tool icons despite an 8px outer-group inset; strengthened icon regression captures that boundary.",
-  "versions": "JJ 0.45.1; Rust 1.98.1; Chrono 0.4.45; Svelte 5.57.1; qualified Codex CLI0.156.1/Desktop0.159.2 profiles retained; released Design Core ToolCalls stats extension used.",
-  "formats": "Additive optional nonnegative duration_millis in AgentToolActivity version1. Exact selected event observations provide ordered call/result endpoints or timed hook lifecycle endpoints; source/profile/sequence and monotonic times must match. Missing, malformed, ambiguous, over-bound evidence stays absent. Zero remains known. Unknown/failed outcomes stay unchanged. No immutable object, source cursor, capture recovery, receipt or native/local publication format changes.",
-  "files": [
-    "catalog/components/store-application/AgentToolGroups.stories.svelte",
-    "catalog/components/store-application/agent-sidebar-play.ts",
-    "catalog/fixtures/agent-tool-groups.ts",
-    "crates/jj-store-service/src/collaboration/agent_details.rs",
-    "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
-    "crates/jj-store-service/src/collaboration/agent_tool_timing.rs",
-    "crates/jj-store-service/src/collaboration/models.rs",
-    "crates/jj-store-service/src/collaboration.rs",
-    "crates/jj-store-service/tests/agent_sessions/timing.rs",
-    "crates/jj-store-service/tests/local_agent/timing.rs",
-    "schemas/openapi.json",
-    "spec/src/api.md",
-    "spec/src/collaboration.md",
-    "spec/src/compatibility.md",
-    "spec/src/local-jj.md",
-    "spec/src/mutations.md",
-    "spec/src/ui.md",
-    "web/src/lib/api/generated.ts",
-    "web/src/lib/collaboration/presentation.ts",
-    "web/src/lib/ui/store-collaboration/StoreAgentSessionRow.svelte",
-    "web/src/lib/ui/store-collaboration/StoreAgentTools.svelte",
-    "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
-    "web/tests/collaboration-presentation.test.ts",
-    "spec/src/milestones.md"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; read parent guidance, JJ skill and owning canonical chapters; inspect Community rich tool presentation and Design Core ToolCalls/CSS; pnpm exec tsx .local/agent-tool-duration/live.ts before",
-      "result": "pass",
-      "failures": 0,
-      "note": "Clean main/preview; native selected revision113/state39; two untimed tools. Proof files retain IDs/times/status only, no transcript content or credentials."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions timing::tool_duration_uses_exact_call_and_result_evidence_without_inventing_status --locked -- --exact (before/after) (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Before fails once (None versus1250); after passes for both CLI/Desktop. Known1250, zero, unknown missing/malformed/reversed cases and immutable snapshot retained. Logs before-rust.log and after-rust.log. Before failure preserved."
-    },
-    {
-      "command": "cargo test -p jj-store-service --test agent_sessions timing::tool_duration_uses_exact_call_and_result_evidence_without_inventing_status --locked -- --exact (before/after) (after)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Before fails once (None versus1250); after passes for both CLI/Desktop. Known1250, zero, unknown missing/malformed/reversed cases and immutable snapshot retained. Logs before-rust.log and after-rust.log. Before failure preserved."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte (before and first after) (before)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Before two failures/five passes; first after seven passes. User clarification reveals the first inset assertion measured outer-group offset, not padding inside the trigger. Strengthened regression and corrected row styling follow; this first pass alone is not final acceptance."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte (before and first after) (after)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Before two failures/five passes; first after seven passes. User clarification reveals the first inset assertion measured outer-group offset, not padding inside the trigger. Strengthened regression and corrected row styling follow; this first pass alone is not final acceptance."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCollaboration.stories.svelte -t Agent (Started-prefix before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "One failure/three passes/five skips confirms unwanted Started prefix. Existing assertion updated to requested time-only text; relative time/full-date tooltip preserved."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t Grouped rows align (icon-padding before)",
-      "result": "pass",
-      "failures": 0,
-      "note": "The name filter selected zero tests (seven skips), so no regression acceptance claimed. Replaced with complete exact tool-group family, whose strengthened before-icon assertion fails once; subsequent final family qualifies the correction. icon-padding-before.log."
-    },
-    {
-      "command": "cargo test -p jj-store-service --lib collaboration::agent_ --locked; cargo test -p jj-store-service --test agent_sessions --locked; cargo test -p jj-store-service --test local_agent timing --locked",
-      "result": "pass",
-      "failures": 0,
-      "note": "Final three timing units, complete affected native binary eight tests and three companion timing tests pass. Failed hook spans, unmatched/missing/source/profile/duplicate/restarted/backward evidence remain unknown. Local call/result cross separate captures; old pin remains untimed and current pin gains1250ms. units-final.log/native-final.log/local-final.log."
-    },
-    {
-      "command": "cargo check -p jj-store-service --all-targets --locked; pnpm dev:backend:build (initial/final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Service all-target check and explicit development binaries pass. Existing macOS compact-unwind linker warning retained. No installed executable changed. Initial preview restart overlapped initial build; definitive live proof uses completed final build and final restart."
-    },
-    {
-      "command": "pnpm contracts:generate (initial/final); pnpm test:contracts; affected native/local HTTP capture tests; node .local/agent-tool-duration/validate-contracts.mjs",
-      "result": "pass",
-      "failures": 0,
-      "note": "Both exact LocalTrusted HTTP consumers pass; 34 actual responses conform, untimed hook/manual fixtures retain absent durations. Seven contract units and contract TypeScript check pass. Live known durations conform separately. Full unrelated contract inventory and root aggregate lanes are outside the targeted impact surface."
-    },
-    {
-      "command": "pnpm exec tsx --test web/tests/collaboration-presentation.test.ts; pnpm web:check; pnpm catalog:check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Seven presentation units and both type checks pass with zero diagnostics. Duration formatter retains subsecond/zero values and rejects unknown, negative, noninteger or unsafe values."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
-      "result": "pass",
-      "failures": 0,
-      "note": "Twenty direct session-row/layout/menu story interactions and accessibility checks pass after removing Started. Final icon correction reruns all direct story families below. No visual baseline approval."
-    },
-    {
-      "command": "jj describe -m Inset agent tool rows and show captured tool durations; jj rebase -r uqwlnutu -o rvkzvqxz; jj workspace update-stale; preview-only pnpm dev:backend:restart with JJ_STORE_DEV_ROOT, ports7470/7472 and explicit main-built development binary paths",
-      "result": "pass",
-      "failures": 0,
-      "note": "Main owns implementation. Clean preview is a descendant refreshed for source HMR. Only preview backend replaced; fixture/native state and main7460/7462/native desktop preserved. Final tree identity checked after commit."
-    },
-    {
-      "command": "pnpm exec tsx .local/agent-tool-duration/live.ts after; Python before/after snapshot/identity/status assertions; Cua fresh background tab, DOM metadata and screenshot",
-      "result": "pass",
-      "failures": 0,
-      "note": "Both existing exec calls gain13153ms and464ms without changing snapshot revision113/state39 or tool status/IDs. DOM confirms duration immediately precedes chevron; six session rows show relative times only, retaining full-date tooltips. Temporary tab closed. Initial browser proof records outer-group inset; final icon proof is recorded below."
-    },
-    {
-      "command": "Final icon-padding story family, live user-tab measurements and screenshot",
-      "result": "pass",
-      "failures": 0,
-      "note": "Final four direct story families:27 interactions/accessibility checks pass. Actual live user tab measures paddingInlineStart8px and iconInset8px INSIDE both tool triggers, rootInset0; message padding8px. Duration remains immediately before chevron. Screenshot icon-padding.png and DOM proof icon-padding.json. User tabs, drafts, route/preferences untouched; temporary proof tab closed."
-    },
-    {
-      "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; pnpm format:rust:check; focused Prettier; pnpm spec:first; pnpm spec:validate; pnpm check:progress; historical evidence-prefix check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Final architecture, owned UI, package boundaries, Rust formatting, changed-file Prettier, spec-first, canonical validation and136-task progress pass.405 historical evidence objects and raw prefix retained. Governance draft issue corrected; root aggregates/full workspace/release/visual baseline qualification not run under targeted policy."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte (strengthened icon regression before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "One failure/six passes proves actual row padding before icon is zero. Corrected padding from outer group to actual grouped/standalone trigger; icon-padding-regression.log."
-    },
-    {
-      "command": "pnpm check:progress (draft evidence)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Draft runs used unsupported pending values and combined failure counts with final pass results. Split before failures from after passes and replaced all placeholders with actual results; no historical evidence edited. progress-first.log."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (after final icon correction)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Both final type checks zero errors/warnings; catalog175-module boundary passes. web-check-icon.log and catalog-check-icon.log."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Tool timing and directly affected Agent list/transcript presentation only; no milestone promotion, evidence rewrite, reimport/reset, publication, installed-tool change or unrelated restart. Full release/harness qualification, root aggregates/full Rust workspace, unrelated contract inventory and visual baseline approval are outside narrow acceptance. Prior strict Clippy baseline warnings remain separately recorded in E-M18-007; this slice runs affected all-target check.",
-  "next": "Use refreshed preview. Known recorded duration appears before each tool detail chevron; padding belongs inside each row before its icon. Unknown timing stays absent; broader release and visual qualification remain separate."
-},
-{
-  "id": "E-M18-009",
-  "tasks": [
-    "M9.5",
-    "M18.8"
-  ],
-  "date": "2026-10-04",
-  "revision": "enclosing Jujutsu change xrpomkus",
-  "kind": "Compact, highlighted, borderless XML prompt rows with explicit child indentation",
-  "versions": "Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; existing CodeMirror XML and Lezer highlight parsers; released Design Core Collapsible/Button and safe Mira preview.",
-  "formats": "Presentation-only internal prompt metadata now carries guarded label/closing/compact values after safe Markdown sanitization. No source, transport/schema, persisted transcript, review-anchor, capture or server format changes. Arbitrary tags and attributes are escaped token text; one source-line Markdown leaf renders inline, other bodies retain disclosures.",
-  "files": [
-    "catalog/components/store-application/AgentPromptMarkup.stories.svelte",
-    "catalog/components/store-application/AgentToolGroups.stories.svelte",
-    "catalog/components/store-application/agent-tool-duration-play.ts",
-    "spec/src/api.md",
-    "spec/src/collaboration.md",
-    "spec/src/ui.md",
-    "web/src/lib/ui/store-collaboration/StorePromptElement.svelte",
-    "web/src/lib/ui/store-collaboration/StorePromptTag.svelte",
-    "web/src/lib/ui/store-collaboration/prompt-elements-extension.ts",
-    "web/src/lib/ui/store-collaboration/prompt-tag-tokens.ts",
-    "web/src/lib/ui/store-collaboration/remark-prompt-elements.ts",
-    "web/tests/browser/agent-prompt-markup.spec.ts",
-    "web/tests/vite/prompt-elements.test.ts",
-    "spec/src/milestones.md"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; read tracked/parent guidance, JJ skill, canonical UI/API/collaboration chapters and milestones; inspect Community Markdown presentation and Design Core Button/highlight tokens",
-      "result": "pass",
-      "failures": 0,
-      "note": "Main change xrpomkus continues the authorized XML slice. Preview is a clean descendant. All implementation belongs to main. No unrelated changes, server resets or installed executables touched."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (initial compact regression)",
-      "result": "fail",
-      "failures": 1,
-      "note": "before.log: six existing stories pass; compact/highlighting story fails once before implementation."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (initial after)",
-      "result": "fail",
-      "failures": 3,
-      "note": "stories.log: fragmented token spans changed accessible names for attribute-bearing triggers. Four pass; fixed by explicit aria-label preserving the exact original opening tag."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (accessible-name correction)",
-      "result": "pass",
-      "failures": 0,
-      "note": "stories-corrected.log: all seven interaction/accessibility stories pass before subsequent indentation/border/attribute requests."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (initial cold build)",
-      "result": "fail",
-      "failures": 2,
-      "note": "browser.log: desktop/mobile fail Axe contrast, tag name #22863a on inherited inline-code background #f4f5f7, ratio4.24. Inert/malformed scenario passes. Copy, Markdown, keyboard and virtualization assertions pass before Axe."
-    },
-    {
-      "command": "pnpm check:architecture (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "architecture.log: preceding slice left AgentToolGroups story at413 counted lines after its late icon assertions, exceeding400. Historical E-M18-008 remains unchanged. Extracted existing duration play function into owned catalog helper; behavior unchanged."
-    },
-    {
-      "command": "pnpm spec:first (first)",
-      "result": "fail",
-      "failures": 1,
-      "note": "spec-first.log: UI change requires mapped api.md alongside ui.md. Updated mapped API paragraph without transport/schema changes; corrected run passes."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (indentation regression)",
-      "result": "fail",
-      "failures": 1,
-      "note": "indent-before.log: six pass, new hierarchy assertion fails. Live before measurement independently confirms parent label1056px, compact child1046px, disclosed child1067px; only10px body padding and1px row border."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte (first indentation after)",
-      "result": "fail",
-      "failures": 2,
-      "note": "stories-final.log:12 pass, compact geometry and attribute contrast fail. Exact tool family all seven passes. Neutral attribute palette changed to distinct constant token; mix toward foreground fixes lighter story surface contrast."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (subsequent indentation checks)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Each of stories-indent-final.log, stories-verified.log and stories-diagnostic.log records one compact geometry failure and six passes. Diagnostics show parent label586.1875px versus child346px: catalog lacked justify-start utility output. Replaced utility-dependent trigger layout with explicit owned CSS and retained16px geometry assertion; temporary diagnostic logging removed."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (first hierarchy build)",
-      "result": "fail",
-      "failures": 2,
-      "note": "browser-latest.log: desktop observes15px due transparent1px Button border; mobile asynchronous separate bounding-box reads encounter remount. Removed trigger border and made geometry read atomic within current subtree; assertions remain16px plus aligned sibling labels."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (first borderless build)",
-      "result": "fail",
-      "failures": 2,
-      "note": "browser-verified.log: functional/copy/geometry checks pass; Axe rejects tag color on highlighted message surface (#e5e5e6 ratio3.67) and mobile hover surface. Names mix20% toward foreground, attributes15%; no global palette change or weakened accessibility checks."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/prompt-elements.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "units.log and units-final.log: eight parser/token units pass. Generic arbitrary/Unicode names, inert attributes, exact character reconstruction, malformed syntax, nesting/code/reference boundaries preserved. No added dependency."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "stories-accepted.log: all seven interactions and Axe checks pass. Compact children and deeper leaf labels indent16px per level, align with disclosed siblings, keep closing tags/inline Markdown without buttons, retain <=4px sibling gaps and borderless rows; distinct attribute/string/name colors. Nested and multiline disclosures remain keyboard accessible."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte",
-      "result": "pass",
-      "failures": 0,
-      "note": "tool-stories.log and stories-final.log: exact seven direct tool stories pass after duration play helper extraction, preserving prior icon padding and timing behavior. No broader tool changes."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (initial/final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Both affected type checks pass with zero errors/warnings; latest catalog176-module boundary. web-check-verified.log and catalog-check-verified.log. No Rust source, schema or contract generation changed."
-    },
-    {
-      "command": "pnpm web:build (initial/final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "All builds pass, including build-accepted.log. Existing chunk-size warning retained. Production asset manifest generated; no Rust binary rebuild. Required cold browser verification consumes final built UI via existing explicit browser_preview executable on isolated7458."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (final cold build)",
-      "result": "pass",
-      "failures": 0,
-      "note": "browser-contrast.log and final browser-accepted.log: three scenarios pass, covering desktop activity, touch-mobile recorded chunks and inert/malformed sections. Real built-asset router, exact clipboard source, safe links/code, keyboard expand/collapse, virtual-row resizing, no overlap/viewport overflow, child indentation and Axe all qualify this surface. Fresh isolated service stopped by Playwright."
-    },
-    {
-      "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; focused Prettier; pnpm spec:first; pnpm spec:validate",
-      "result": "pass",
-      "failures": 0,
-      "note": "Architecture908-module, UI ownership, package boundaries, changed-file formatting and canonical/mapped chapter checks pass. Final style-only correction consumes the same narrow surface. Root aggregates/full Rust/full browser inventory remain out of scope."
-    },
-    {
-      "command": "jj --no-pager st; jj workspace update-stale (clean preview); Cua live DOM geometry, syntax colors and screenshot",
-      "result": "pass",
-      "failures": 0,
-      "note": "Preview7470 HMR synchronized from main. Actual Focus view measures parent393px, compact children409px, grandchildren425px; all row and trigger borders0. Attribute type blue, name green, quoted value navy. Current user view opened transient disclosures for inspection; route, source, drafts, settings, preferences unchanged. Temporary proof tab closed. Screenshot .local/agent-xml-compact/after.png and geometry.json; no visual baseline approval."
-    },
-    {
-      "command": "pnpm check:progress; final architecture check; historical evidence-prefix assertions",
-      "result": "pass",
-      "failures": 0,
-      "note": "progress-final.log:136 tasks pass. architecture-accepted.log:908-module source limits pass after final CSS. All406 prior evidence objects and raw prefix remain unchanged; no milestone status promoted. Main slice committed with explicit JJ message and clean preview refreshed afterward."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "XML transcript presentation and direct tool-story source-size correction only. No milestone promotion, historical evidence rewrite, Rust build, reimport/reset, service installation, main-runtime restart or publication. Root aggregates, full browser/Storybook inventories, unrelated packages and visual baseline approval are out of scope under targeted verification policy.",
-  "next": "Use refreshed preview7470. Broader harness/release and visual-baseline qualification remain separately governed."
-},
-{
-  "id": "E-M18-010",
-  "tasks": [
-    "M18.8"
-  ],
-  "date": "2026-10-04",
-  "revision": "enclosing Jujutsu change truyzyxr",
-  "kind": "Usable capture loading, grouped Codex settings and harness-filtered source table",
-  "versions": "Node24.10.0; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; released Design Core Skeleton, Collapsible, Button, Table, Select and Badge; existing browser_preview binary.",
-  "formats": "UI and ordinary-read policy only. Existing CaptureSettings, CaptureStatus, CaptureSourcePage and receipt contracts remain unchanged. GET capture_control_busy retries at most five attempts with150/300/450/600ms delays, cancellable on closure. POST commands retain exact identity and are never automatically retried. Harness filtering is local presentation over loaded sources; paths/native keys remain absent from source rows.",
-  "files": [
-    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-    "catalog/components/store-application/capture-harness-play.ts",
-    "catalog/components/store-application/capture-loading-play.ts",
-    "catalog/fixtures/CaptureSettingsFixture.svelte",
-    "catalog/fixtures/capture-management.ts",
-    "spec/src/api.md",
-    "spec/src/collaboration.md",
-    "spec/src/ui.md",
-    "spec/src/milestones.md",
-    "web/src/lib/controller/capture-errors.ts",
-    "web/src/lib/controller/capture-http.ts",
-    "web/src/lib/controller/capture-observations.ts",
-    "web/src/lib/controller/capture-settings-management.ts",
-    "web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureHarnessConfiguration.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureLoading.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
-    "web/tests/browser/local-capture-loading.spec.ts",
-    "web/tests/browser/local-capture-settings.spec.ts",
-    "web/tests/vite/capture-freshness.test.ts",
-    "web/tests/vite/capture-observation-http.test.ts"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; jj --no-pager workspace list; read tracked/parent AGENTS, JJ and shadcn-svelte skills, owning canonical UI/API/collaboration chapters and milestone ledger; inspect Community settings and released Design Core primitives",
-      "result": "pass",
-      "failures": 0,
-      "note": "Main continued authorized slice truyzyxr; clean preview uqwlnutu. Memory quick lookup gave no task-specific implementation evidence. All tracked edits belong to this slice."
-    },
-    {
-      "command": "Admitted live GET /v1/local/capture/settings, /v1/local/capture and /v1/local/capture/sources?limit=100 with protocol and same-origin Fetch Metadata headers",
-      "result": "pass",
-      "failures": 0,
-      "note": "Saved/effective settings are valid. Initial status/source409 capture_control_busy is transient worker coordination; four admitted busy reads precede200 within approximately400ms. Missing admission headers correctly403; no bypass. Artifacts .local/agent-settings-loading/{settings-before,status-before,sources-before,status-admitted}.json."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (loading before)",
-      "result": "fail",
-      "failures": 2,
-      "note": "stories-before.log:14 existing stories pass, two new loading/busy regressions fail before implementation."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-observation-http.test.ts web/tests/vite/capture-freshness.test.ts (before)",
-      "result": "fail",
-      "failures": 4,
-      "note": "units-before.log: seven tests pass; four retry/loading regressions fail. Two expected pre-implementation rejected-read diagnostics recorded; after runs have no unhandled errors."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (loading after)",
-      "result": "pass",
-      "failures": 0,
-      "note": "stories-after.log:16 interactions/accessibility stories pass; initial fixture captured-prop warnings subsequently corrected with untrack."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (harness before)",
-      "result": "fail",
-      "failures": 3,
-      "note": "harness-before.log:15 pass. Group/table regressions and updated table-layout expectation fail before implementation."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (intermediate harness after)",
-      "result": "fail",
-      "failures": 2,
-      "note": "harness-after.log:16 pass. Corrected test assumptions about collapse animation and Select button/listbox semantics; no forced interactions or weakened assertions."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (intermediate verified/accepted)",
-      "result": "fail",
-      "failures": 1,
-      "note": "stories-verified.log and stories-accepted.log:17 pass, one fails from pointer-events lock during Select closing animation. Wait for restored pointer interaction before next click; test still proves exact selected import source."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "stories-final.log:18 stories pass. Loading and real refusal notifications, draft retention, keyboard Codex disclosure/avatar, semantic source table, mixed harness filters/stable labels, styled counts, empty filter coverage, qualified import guards and exact selector all pass. Visual-pending remains."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-observation-http.test.ts web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-settings.test.ts web/tests/vite/production-capture-management.test.ts (after/verified)",
-      "result": "pass",
-      "failures": 0,
-      "note": "units-after.log and units-verified.log:31 tests across five files pass, no unhandled diagnostics. Retries are bounded, GET-only and cancellable; real refusals/unknown commands retain guarded state and stable identity."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (initial/intermediate)",
-      "result": "fail",
-      "failures": 7,
-      "note": "Initial web check passed; catalog had two fixture prop-capture warnings. Intermediate web had one $state shadowing error; catalog had five Testing Library API errors and one nonreactive fixture warning. Corrected captureState naming, documented role/label APIs, fixture untrack and reactive accepted-command state. Recorded logs retained."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (accepted)",
-      "result": "pass",
-      "failures": 0,
-      "note": "web-check-verified.log and catalog-check-accepted.log: zero errors/warnings; catalog178-module boundaries pass. Production stays independent of catalog. No contract generation required."
-    },
-    {
-      "command": "pnpm check:architecture (initial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "architecture.log:407 counted story lines exceed400. Existing layout/loading plays extracted into owned catalog helpers; all behavior and assertions retained."
-    },
-    {
-      "command": "pnpm check:architecture (verified/final); pnpm check:ui-ownership; pnpm check:boundaries; pnpm spec:first; pnpm spec:validate",
-      "result": "pass",
-      "failures": 0,
-      "note": "architecture-final.log:912 modules pass. Ownership, package boundaries and protected-source/spec mappings pass; canonical validation has22 chapters167 requirements. Focused formatting uses changed UI/controller/test/doc files; historical ledger never whole-file formatted."
-    },
-    {
-      "command": "pnpm web:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "build.log: fresh production bundle and asset manifest pass; existing chunk-size warning retained. No Rust build. Cold tests use existing explicit target/debug/examples/browser_preview on isolated7458, then Playwright stops it."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/agent-settings-loading/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "browser.log: all seven cold tests pass. Real built router verifies delayed initial loads, skeletons and visible disabled controls, two Busy refusals then recovery for each read with no unavailable toast; Codex collapse/draft/global controls; table border/radius, mixed filters/counts/stable exact-selector imports; mobile scroll/no viewport overflow; notification dismissal and pending intent; lifecycle polling and capability gate; Axe passes."
-    },
-    {
-      "command": "jj rebase -r uqwlnutu -d truyzyxr; jj workspace update-stale (clean preview); Cua live DOM and screenshots",
-      "result": "pass",
-      "failures": 0,
-      "note": "Preview7470 source refreshed without backend/main-runtime restart. Real local configuration shows global settings plus avatar-bearing Codex CLI/Desktop disclosure. Sources show4 loaded/observed; Cursor filter shows0 rows while retaining total4. No false unavailable toast; no real config/control/import submitted. Screenshot .local/agent-settings-loading/sources-preview.png. Temporary proof tab is closed after inspection; user tab retained."
-    },
-    {
-      "command": "pnpm check:progress; pnpm catalog:check (final); focused pnpm exec prettier --check; final historical evidence-prefix assertions",
-      "result": "pass",
-      "failures": 0,
-      "note": "progress.log:136 tasks pass. catalog-check-final-accepted.log: zero errors/warnings,178-module boundaries pass. format-check.log: all21 changed source/test/chapter files pass; append-only ledger excluded from whole-file formatting. All407 prior evidence objects and their raw JSON prefix retained. configuration-preview.png also records collapsed Codex/global separation. Temporary proof tab closed; user tab remains open."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Installation Agents settings and their direct controller observations only. Existing user/main-runtime/desktop processes and server config untouched. No Rust build, harness reader change, reimport/reset, installation or publication. Root aggregates, full browser/Storybook/Rust inventory, other harness qualification and visual baseline approval are out of scope under the targeted verification policy. No milestone promoted.",
-  "next": "Try Configuration and Sources in refreshed preview7470. Retain focused loading/group/filter/notification regressions; broader harness and release work stays deferred."
-},
-{
-  "id": "E-M18-011",
-  "tasks": [
-    "M18.8"
-  ],
-  "date": "2026-10-04",
-  "revision": "enclosing Jujutsu change vsusztpy",
-  "kind": "Source-table avatars, combined filters, icon history actions and observation freshness footer",
-  "versions": "Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; released Design Core Table/Select/Button/Badge; owned CommunityMemberAvatar and CommunityRelativeTime; existing browser_preview executable.",
-  "formats": "Presentation and internal installation-controller metadata only. sourcesObservedAt is browser-clock milliseconds on validated accepted coverage/paging; null until acceptance. No wire/schema/server/persisted transcript changes. Source filters preserve selectors, unfiltered coverage and cursors. No per-source activity/modification timestamps are inferred.",
-  "files": [
-    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-    "catalog/components/store-application/capture-harness-play.ts",
-    "catalog/components/store-application/capture-source-table-play.ts",
-    "spec/src/api.md",
-    "spec/src/collaboration.md",
-    "spec/src/ui.md",
-    "spec/src/milestones.md",
-    "web/src/lib/controller/capture-management.svelte.ts",
-    "web/src/lib/controller/capture-observations.ts",
-    "web/src/lib/controller/capture-types.ts",
-    "web/src/lib/ui/store-settings/StoreCaptureSourceFilters.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSourceFooter.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
-    "web/src/lib/ui/store-settings/capture-source-presentation.ts",
-    "web/tests/browser/local-capture-loading.spec.ts",
-    "web/tests/vite/capture-freshness.test.ts"
-  ],
-  "tests": [
-    "web/tests/vite/capture-freshness.test.ts#source observation time advances only after accepted coverage",
-    "web/tests/vite/capture-freshness.test.ts#source paging advances observation time only for a validated page"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; jj describe -m \"Refine capture sources with harness avatars, status filters and freshness footer\"; read owning UI/API/collaboration chapters and ledger; inspect Community runtime relative-time presentation and released Design Core table/button exports",
-      "result": "pass",
-      "failures": 0,
-      "note": "Clean main started at vsusztpy after96ffe099. Current source contract has no per-source update timestamp. Quick memory search provides no task-specific implementation facts. New UI remains owned; no sibling source imports."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "stories-before.log:18 existing stories pass; new source avatar/external-status-filter/icon/footer regression fails before implementation."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "units-before.log:8 existing tests pass; new accepted observation-time regression fails before implementation."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (after)",
-      "result": "fail",
-      "failures": 1,
-      "note": "stories-after.log:18 pass, one old row-count assertion includes a newly added spanning footer. Corrected assertions to count body rows and independently verify footer; no product assertions removed."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "stories-final.log:19 stories pass including interaction/accessibility. First cells identify Codex/Cursor with owned avatars; filters outside border combine over stable source labels; import is icon-only with accessible name; footer spans4 columns and uses shared relative time; exact import selector and prior draft/notification/loading guards retained. Visual-pending remains."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-settings.test.ts web/tests/vite/capture-observation-http.test.ts web/tests/vite/production-capture-management.test.ts (after/final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "units-after.log:32 pass; units-final.log:33 across five files pass with paging freshness added. First successful source observation and accepted continuation update browser time; Busy, real unavailable and rejected duplicate paging retain previous timestamp and selected coverage."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (initial/final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "web-check-final.log and catalog-check-final.log: zero errors/warnings; catalog179-module boundary passes. No generated contract change or Rust lane required."
-    },
-    {
-      "command": "pnpm web:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "build.log: fresh production bundle and asset manifest pass; existing chunk-size warning retained. Cold UI uses explicit existing target/debug/examples/browser_preview without Rust rebuild."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "browser.log: all7 cold tests pass. New table regression measures both filters above/outside border and trailing alignment, avatar first-cell image, combined Codex/degraded filtering, icon-only accessible history button,4-column footer and datetime; desktop/mobile Axe, narrow-screen containment, exact selector, drafts, notifications, loading/retry and polling lifetime remain qualified. Isolated7458 service stopped by Playwright."
-    },
-    {
-      "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership; focused pnpm exec prettier --write/--check",
-      "result": "pass",
-      "failures": 0,
-      "note": "architecture-final.log:916 modules; boundaries.log:17 packages; ownership.log and format-check.log pass. Production table/filter/footer helpers stay under governed source budgets and independent of catalog. Ledger never whole-file formatted."
-    },
-    {
-      "command": "pnpm spec:first (initial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "spec-first.log: changing capture-types internal controller metadata requires mapped API chapter. Added explicit browser-only successful observation-time semantics to canonical API chapter; no schema or public response change."
-    },
-    {
-      "command": "pnpm spec:first (final); pnpm spec:validate",
-      "result": "pass",
-      "failures": 0,
-      "note": "spec-first-final.log and spec-validate.log pass with UI/API/collaboration owning chapters. Canonical requirements distinguish accepted coverage freshness from transcript/file/server update time."
-    },
-    {
-      "command": "jj rebase -r uqwlnutu -d vsusztpy; jj workspace update-stale (clean preview); Cua live table DOM/screenshot",
-      "result": "pass",
-      "failures": 0,
-      "note": "Preview7470 shows Codex avatars, two trailing filters above rounded table, icon imports and full-width footer with current coverage,4 shown/loaded/observed and Updated just now. .local/capture-source-table/after.png saved after ready observation. Temporary proof tab closed; user tab retained. No real capture/import/config command submitted; existing main/desktop/backend processes unchanged."
-    },
-    {
-      "command": "pnpm check:progress; prior evidence object/raw-prefix preservation assertions",
-      "result": "pass",
-      "failures": 0,
-      "note": "progress.log:136 tasks pass. All408 prior evidence objects and raw JSON prefix preserved; ledger not whole-file formatted."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Agents source-table presentation and its internal observation metadata only. No milestone promotion, historical evidence rewrite, server configuration mutation, real history import, Rust build, service reset/install/restart or publication. Root aggregates, full browser/Storybook/Rust inventories, new harness qualification and visual baseline approval remain out of scope under targeted verification.",
-  "next": "Use refreshed preview7470. Source update time describes accepted coverage reads; per-source event/modification timing would need separately qualified server evidence."
-},
-{
-  "id": "E-M18-012",
-  "tasks": [
-    "M18.8"
-  ],
-  "date": "2026-10-04",
-  "revision": "enclosing Jujutsu change mpsxrmoz",
-  "kind": "Compact source repository navigation, retained-refresh footer spinner and fair bounded coverage observations",
-  "versions": "Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; Rust1.98.1/macOS ARM64; released Design Core Table/Spinner; existing browser_preview and development RustFS executables.",
-  "formats": "UI first-cell repository links and3-column colspan only; fair one-second acquisition of existing management mutex for status/source/receipt reads. Commands, held physical journals, owned blocking cancellation, authorization, wire schemas, native roots and source formats unchanged. Browser observation freshness remains accepted-read time.",
-  "files": [
-    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-    "catalog/components/store-application/capture-source-table-play.ts",
-    "catalog/fixtures/CaptureSettingsFixture.svelte",
-    "crates/jj-store-server/src/capture_management/imports.rs",
-    "crates/jj-store-server/src/capture_management/observation.rs",
-    "crates/jj-store-server/src/capture_management/sources.rs",
-    "crates/jj-store-server/src/capture_management/tests/observations.rs",
-    "crates/jj-store-server/src/capture_management/tests.rs",
-    "crates/jj-store-server/src/capture_management.rs",
-    "docs/capture-preview.md",
-    "spec/src/api.md",
-    "spec/src/cli.md",
-    "spec/src/collaboration.md",
-    "spec/src/ui.md",
-    "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSourceFooter.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSourceIdentity.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
-    "web/src/lib/ui/store-settings/StoreSettings.svelte",
-    "web/tests/browser/local-capture-loading.spec.ts",
-    "spec/src/milestones.md"
-  ],
-  "tests": [
-    "crates/jj-store-server/src/capture_management/tests/observations.rs#cached_observations_queue_before_later_import_work",
-    "crates/jj-store-server/src/capture_management/tests/observations.rs#queued_observation_rechecks_current_authority",
-    "crates/jj-store-server/src/capture_management/tests/observations.rs#timed_out_or_cancelled_observation_releases_its_queue_place"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; read canonical UI/API/CLI/collaboration and milestone chapters; inspect Community then released Design Core Table/Spinner; CDP live capture request timings",
-      "result": "pass",
-      "failures": 0,
-      "note": "Clean main mpsxrmoz after4eff7363. Sources are worker watch-channel catalogs, not request-triggered transcript scans. Persisted private source identities/cursors are separate from reconstructed runtime coverage. Live settings reads8-10ms; status/sources repeatedly409 Busy with150/300/450/600ms backoff and5s fallback polling."
-    },
-    {
-      "command": "cargo test --locked -p jj-store-server --lib capture_management::tests::observations (before)",
-      "result": "fail",
-      "failures": 3,
-      "note": "rust-before.log: all3 new queue, authority and cancellation regressions fail because reads try-lock immediately."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before)",
-      "result": "fail",
-      "failures": 2,
-      "note": "stories-before.log:18 pass/2 fail; separate repository header persists and refreshing footer has no spinner."
-    },
-    {
-      "command": "cargo test --locked -p jj-store-server --lib capture_management::tests::observations (after and final); cargo check --locked -p jj-store-server",
-      "result": "pass",
-      "failures": 0,
-      "note": "rust-regression.log and rust-regression-final.log:3 pass. FIFO tests cover status/source/receipt reads preceding later import waiters, current authority after queue admission, one-second Busy and cancellation queue cleanup. rust-check.log passes. Existing linker unwind warning retained."
-    },
-    {
-      "command": "cargo test --locked -p jj-store-server --test capture_management source_pages_",
-      "result": "pass",
-      "failures": 0,
-      "note": "rust-http-sources.log:2 pass for bounded cached pages and current actor/configuration/installation/physical-journal withholding. No wire/schema/generated response change."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "stories-accepted.log:21 pass including interaction/accessibility. First-cell icon repository link preserves callback identity; no repository column;3-column footer; spinner retains rows and clears on ready; unsaved Agent draft blocks navigation without clearing the draft."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-settings.test.ts web/tests/vite/capture-observation-http.test.ts web/tests/vite/production-capture-management.test.ts",
-      "result": "pass",
-      "failures": 0,
-      "note": "units.log:33 pass across5 direct capture files, preserving pending request identity, accepted source freshness and cancellation."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts (initial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "browser.log:7 pass/1 fail. New navigation fixture omitted repository from bootstrap, so the expected named repository was absent. Added explicit linked bootstrap only for the navigation scenario; retained actual route and authorization assertions."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold source refresh retains coverage\"; pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "browser-regression.log:1 pass; browser-final.log:8 pass cold. Actual production Settings repository link closes Settings and selects authorized files page; gated source refresh retains rows and accepted datetime, shows footer spinner and clears it. Existing loading/busy, drafts, exact imports, notification dismissal, polling lifetime, desktop/mobile/Axe and narrow containment remain qualified. Isolated7458 service stopped; no Rust rebuild for browser fixture."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership; focused Prettier and rustfmt --check",
-      "result": "pass",
-      "failures": 0,
-      "note": "web-check-final.log/catalog-check.log: zero errors/warnings,179-module catalog boundary. architecture-final.log:917 modules; boundaries.log:17 packages; ownership.log and format-check.log pass. Initial redundant link role warning and rustfmt module-order diagnostics corrected. Ledger never whole-file formatted."
-    },
-    {
-      "command": "pnpm web:build (final); pnpm spec:first; pnpm spec:validate; pnpm dev:backend:build",
-      "result": "pass",
-      "failures": 0,
-      "note": "build-final.log passes with existing chunk-size warning. spec-first.log:17 protected files/4 owning chapters; spec-validate.log:22 chapters/167 requirements. backend-build.log passes with existing linker warning; checkout-only CLI/server binaries, no installed executable replacement."
-    },
-    {
-      "command": "jj rebase -r uqwlnutu -d mpsxrmoz; jj workspace update-stale; explicit development executable/runtime paths pnpm dev:capture:restart in preview; CDP timing/DOM/screenshot",
-      "result": "pass",
-      "failures": 0,
-      "note": "Preview7470/7472 backend restarted using main target/debug/jj-store and existing embedded runtime. Vite retained, isolated fixture/history preserved, main service/desktop untouched. Live4 source pages all200 with80/109/137/138ms response latency; whole observed settings/status/source chains about130-200ms. This is warm read evidence, not a cold-import guarantee. Real compact table shows repo links under titles and3-column footer. after.jpg and live-timings.json saved; temporary proof tab closed and user tab retained. No real Import/Pause/Rescan/config save submitted."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check docs/capture-preview.md spec/src/api.md spec/src/cli.md spec/src/collaboration.md spec/src/ui.md (final after plan-note restoration)",
-      "result": "pass",
-      "failures": 0,
-      "note": "17 protected files/5 mapped chapters,22 chapters/167 requirements and136 tasks validated. Focused documentation formatting passes. All409 prior evidence objects and raw JSON prefix preserved; only E-M18-012/E-M18-013 updated. Extra broad diagnostic failures remain explicit; root aggregates, other harness/release qualification and visual baseline approval remain outside this narrow acceptance."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Narrow source-table/coverage-read slice only. No milestone promotion, new reader, historical evidence rewrite, wire generation, installed binary/service/main-runtime changes, real import/config command, reset, publication or visual baseline approval. Additional server-library survey failures are recorded independently in E-M18-013; this entry does not claim a full Rust-suite pass. Cold sanitizer/import preparation remains explicitly Deferred in the agreed preview plan.",
-  "next": "Use compact Sources in preview7470; retain focused queue/navigation/spinner coverage. Broader cold sanitizer and timed import qualification stays in E-M18-013 and the deferred roadmap."
-},
-{
-  "id": "E-M18-013",
-  "tasks": [
-    "M18",
-    "M18.2"
-  ],
-  "date": "2026-10-04",
-  "revision": "enclosing Jujutsu change mpsxrmoz",
-  "kind": "Separate broad server-library diagnostic and baseline cold-publication timeout reproduction",
-  "versions": "Rust1.98.1/macOS ARM64 debug profile; same checked-in native sanitizer and retained capture fixtures.",
-  "formats": "Diagnostic evidence only; no assertion, timeout, worker ownership, sanitizer, persistence or wire format weakened. Previous three management production files temporarily selected from parent vsusztpy for baseline compilation, then restored byte-for-byte from task backup before final queue regression.",
-  "files": [
-    "spec/src/milestones.md",
-    "docs/capture-preview.md",
-    "crates/jj-store-server/src/capture_management/tests/scheduled_import.rs",
-    "crates/jj-store-server/src/capture_management/tests/scheduled_import/handoff.rs",
-    "crates/jj-store-server/src/capture_supervisor/opencode/tests.rs",
-    "crates/jj-store-server/src/capture_supervisor/tests.rs"
-  ],
-  "tests": [
-    "crates/jj-store-server/src/capture_management/tests/scheduled_import.rs#accepted_source_refuses_other_request_without_replacing_original_owned_work"
-  ],
-  "runs": [
-    {
-      "command": "cargo test --locked -p jj-store-server --lib",
-      "result": "fail",
-      "failures": 15,
-      "note": "rust-lib.log:95 passed/15 failed/110 total,863.14s. Escalated beyond focused read checks to inspect all existing control/import/runtime/storage consumers sharing the coordination boundary. Thirteen scheduled-import cases fail publication/readiness deadlines (12 at shared published helper scheduled_import.rs:76; one at handoff.rs:47); OpenCode publication did not enter gate; source-degradation readiness times out. New observation regressions, existing cancellation/revocation/physical-journal, foreground, storage lifetime and cold running-loss ownership tests pass. No full-library pass is claimed."
-    },
-    {
-      "command": "cargo test --locked -p jj-store-server --lib capture_management::tests::scheduled_import::accepted_source_refuses_other_request_without_replacing_original_owned_work -- --exact --nocapture (current)",
-      "result": "fail",
-      "failures": 1,
-      "note": "rust-import-regression.log: same scheduled_import.rs:76 ten-second publication wait expires; process finishes166.43s because retained cold owner drains. No control/source observation is performed after scheduling in this scenario."
-    },
-    {
-      "command": "Temporarily select parent production management status/source/import read implementations via jj file show -r @-; cargo test --locked -p jj-store-server --lib capture_management::tests::scheduled_import::accepted_source_refuses_other_request_without_replacing_original_owned_work -- --exact --nocapture (baseline); restore and verify saved source bytes",
-      "result": "fail",
-      "failures": 1,
-      "note": "rust-import-baseline.log: identical scheduled_import.rs:76 Elapsed failure with pre-change try-lock implementations; process finishes122.71s. This representative cold publication failure predates the queue change. Other broad failures were not individually baseline reproduced and remain unqualified. Current implementation restored after baseline compilation; final three queue regressions pass."
-    },
-    {
-      "command": "pnpm spec:first (after deferred-plan clarification)",
-      "result": "fail",
-      "failures": 1,
-      "note": "JST-GOV-002: docs/implementation-plan.md mapped to architecture.md, which this narrow slice does not change. The extra plan note duplicated existing Deferred scope and was restored from parent instead of expanding the implementation."
-    },
-    {
-      "command": "jj restore --from @- -- docs/implementation-plan.md; verify original ledger prefix and all409 prior evidence objects",
-      "result": "pass",
-      "failures": 0,
-      "note": "Removed only this task's redundant plan edit. Existing cold sanitizer deferral stays unchanged in the accepted plan; current diagnostics remain in E-M18-013 and docs/capture-preview.md. All409 original objects and their raw JSON prefix retained."
-    }
-  ],
-  "result": "fail",
-  "remaining": [
-    "Cold debug sanitizer/import publication qualification and the 13 scheduled import deadline failures remain Deferred in the agreed preview roadmap; one representative is baseline-reproduced.",
-    "The separate OpenCode publication-gate and source-degradation readiness failures remain unqualified; assess independently before claiming broad server/harness completion."
-  ],
-  "scope": "Separate broad diagnostic, not the narrow Sources UI/read acceptance E-M18-012. Existing user-requested usable preview and UI priority retain explicit deferred cold sanitizer/native preparation optimization. No milestone promotion, weakened test, new publication guarantee, installation or reset. Every test process and isolated UI fixture has exited.",
-  "next": "Keep these failures visible. Reopen cold sanitizer/setup and affected publication/readiness qualification as a separate deferred slice; preserve the assertions and gate/ownership contracts."
-},
-{
-  "id": "E-M18-014",
-  "tasks": [
-    "M18.8"
-  ],
-  "date": "2026-10-04",
-  "revision": "enclosing Jujutsu change ltmupmlx",
-  "kind": "Searchable multiple-status CommandView for installation capture sources",
-  "versions": "Svelte 5.57.1; installed released Design Core 0.1.2 CommandView/Popover/Button; Vitest 4.1.11; Playwright 1.63.0; existing isolated browser_preview binary.",
-  "formats": "UI-local status arrays only: union of statuses intersects the selected harness over loaded coverage. Existing sources, selectors, import commands, cursor and observed counts unchanged. No server/configuration/public-wire format change.",
-  "files": [
-    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
-    "catalog/components/store-application/capture-source-table-play.ts",
-    "catalog/components/store-application/capture-status-command-play.ts",
-    "web/src/lib/ui/store-settings/StoreCaptureSourceFilters.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureStatusFilter.svelte",
-    "web/src/lib/ui/store-settings/capture-source-presentation.ts",
-    "web/tests/browser/local-capture-loading.spec.ts",
-    "spec/src/ui.md",
-    "spec/src/api.md",
-    "spec/src/milestones.md"
-  ],
-  "tests": [
-    "web/tests/browser/local-capture-loading.spec.ts#cold grouped Codex configuration and harness-filtered source table retain identities"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; read owning UI/API/governance and milestone chapters; inspect CommunityProjectsActivityFilter then released Design Core CommandView/Popover and official shadcn command/combobox documentation",
-      "result": "pass",
-      "failures": 0,
-      "note": "Main workspace clean after 5e440835. New repository-owned composition uses existing released primitives and source status inventory; Community is a design reference without copied implementation or dependency."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte -t \"Source status command searches\" (before selection attempt)",
-      "result": "pass",
-      "failures": 0,
-      "note": "All 22 scenarios skipped because generated test names use PascalCase. This is not accepted regression evidence; the complete exact story file was run next."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "before.log: 21 pass / 1 fail. New SourceStatusCommandSearchesTogglesAndCombinesMultipleSelections cannot find searchable command input in the former single-select control."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (initial after); same file -t SourceStatusCommand",
-      "result": "fail",
-      "failures": 1,
-      "note": "stories.log: 21 pass / 1 fail because Command input uses its owning Root label for the accessible name. Set that label explicitly. exact.log then reached the harness-switch/reopen step and failed during Select exit pointer suppression; added the existing bounded pointer-readiness assertion without weakening interaction checks."
-    },
-    {
-      "command": "pnpm catalog:check (initial and intermediate)",
-      "result": "fail",
-      "failures": 6,
-      "note": "catalog-check.log: six inappropriate testing-library exact properties. Removed them; string role queries remain exact by default. catalog-check-final.log exposed one remaining multiline instance, then corrected it. No production diagnostic suppression."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold grouped Codex configuration\" (initial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "browser.log: open command popup lacked landmark/dialog semantics and failed Axe region rule. Added labelled dialog semantics to the Popover content. Keyboard and multi-status selection assertions had already passed; Axe assertions retained."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (accepted)",
-      "result": "pass",
-      "failures": 0,
-      "note": "stories-accepted.log: all 22 direct capture scenarios pass, with interaction/accessibility. New regression covers search, Enter selection, toggling both directions, union/intersection, checked state and accessible descriptions, retained loaded/observed counts, empty results, Escape focus return, selection preservation, query reset and All statuses clearing."
-    },
-    {
-      "command": "pnpm web:build (initial and final); pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold grouped Codex configuration\" (final and accepted)",
-      "result": "pass",
-      "failures": 0,
-      "note": "build-final.log passes with existing chunk-size/plugin timing diagnostics. browser-final.log and browser-accepted.log each pass the exact cold production Sources journey using a freshly launched isolated fixture. Accepted run includes multiple selection/search/reset, desktop and open mobile popup Axe, popup viewport containment, stable labels/counts and exact imported original selector. Desktop/mobile screenshots under .local/capture-source-table/browser-results; fixture exited."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (accepted); pnpm check:architecture; pnpm check:ui-ownership; focused changed-file Prettier check",
-      "result": "pass",
-      "failures": 0,
-      "note": "Zero web/catalog errors or warnings; catalog 180 modules; web architecture 919 modules; ownership and focused formatting pass. UI-only slice: no Rust, root aggregates, full browser or repository Storybook inventories. Visual baselines remain unapproved."
-    },
-    {
-      "command": "pnpm spec:first (initial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Missing mapped api.md chapter for protected web changes. Added the existing API boundary: filters only present loaded observations and cannot change query/paging/selector authority."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate (after mapped API clarification)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Eight protected files / two canonical chapters; 22 chapters / 167 requirements validated. UI chapter owns multiple-status search, any-status matching, clear behavior and focus. Existing milestone statuses retained."
-    },
-    {
-      "command": "jj rebase -r uqwlnutu -d ltmupmlx; jj workspace update-stale",
-      "result": "pass",
-      "failures": 0,
-      "note": "Updated the clean preview workspace to this main UI slice; existing Vite HMR can serve it without backend restart or fixture reset. No real import, configuration write, installed service change or publication."
-    },
-    {
-      "command": "pnpm check:progress (initial)",
-      "result": "fail",
-      "failures": 2,
-      "note": "Ledger named-test validator accepts test declarations, not exported Storybook play helpers or bare file paths. Replaced those references with the exact checked-in Playwright test declaration; Storybook regression names remain documented in runs."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate; focused Prettier (final with ledger)",
-      "result": "pass",
-      "failures": 0,
-      "note": "Eight protected files / three canonical chapters (including milestone ledger),22 chapters/167 requirements; changed documentation/UI formatting passes. Existing 411 evidence objects and raw JSON prefix preserved."
-    },
-    {
-      "command": "pnpm check:progress (accepted); final historical evidence preservation audit",
-      "result": "pass",
-      "failures": 0,
-      "note": "136 tasks validated; all411 prior evidence objects/raw JSON prefix unchanged. Milestone statuses and prior deferred/broad diagnostic evidence retained."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Narrow Sources status-filter presentation only. Prior 411 evidence objects/raw prefix preserved; no milestone promotion or alteration of prior E-M18-013 broad diagnostic/deferred scope. Backend work, aggregate testing, additional harnesses and visual-baseline approval remain out of scope.",
-  "next": "Use the searchable multi-select in the main/preview Agents Sources tab; retain normal capture/settings refresh and import behavior."
-},
-{
-  "id": "E-M18-015",
-  "tasks": [
-    "M18.8"
-  ],
-  "date": "2026-10-04",
-  "revision": "enclosing Jujutsu change rxzwlukn",
-  "kind": "Searchable multiple-repository source filter composed with status and harness",
-  "versions": "Svelte5.57.1; installed released Design Core0.1.2 CommandView/Popover/Button; Vitest4.1.11; Playwright1.63.0; existing isolated browser_preview executable.",
-  "formats": "UI-local repository selection arrays and shared owned command-filter composition only. Exact last-bound repository IDs, explicit unknown selection, unique options from all loaded rows. Native roots, source selectors/cursors, wire formats, imports, cached coverage counts and server policy unchanged.",
-  "files": [
-    "catalog/components/store-application/StoreCaptureSources.stories.svelte",
-    "catalog/components/store-application/capture-repository-command-play.ts",
-    "catalog/fixtures/CaptureSettingsFixture.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureCommandFilter.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSourceFilters.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
-    "web/src/lib/ui/store-settings/StoreCaptureStatusFilter.svelte",
-    "web/src/lib/ui/store-settings/capture-source-presentation.ts",
-    "web/tests/browser/local-capture-loading.spec.ts",
-    "spec/src/ui.md",
-    "spec/src/api.md",
-    "spec/src/milestones.md"
-  ],
-  "tests": [
-    "web/tests/browser/local-capture-loading.spec.ts#cold repository source filtering composes with status and harness filters",
-    "web/tests/browser/local-capture-loading.spec.ts#cold grouped Codex configuration and harness-filtered source table retain identities"
-  ],
-  "runs": [
-    {
-      "command": "jj --no-pager st; read current Sources UI/API requirements and inspect CommunityProjectFilesRepositoryCommand followed by the released/owned command composition",
-      "result": "pass",
-      "failures": 0,
-      "note": "Main clean after a7b9879b. Reused existing owned status control as a common CommandView composition, retaining the status component entrypoint. Repository names use the existing catalog resolver; options retain full cached IDs and display compact ID context. No Community runtime/source dependency."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte -t SourceRepositoryCommand (before)",
-      "result": "fail",
-      "failures": 1,
-      "note": "before.log: exact new repository regression fails because the repository filter is absent;22 unrelated existing scenarios skipped. New test later moved to its own Sources story file for the catalog line budget."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (initial after)",
-      "result": "pass",
-      "failures": 0,
-      "note": "stories.log:23 pass. New play exercises keyboard search, multiple repositories, unknown binding, toggling, status intersection, preserved counts/labels, empty combined results and All repositories reset."
-    },
-    {
-      "command": "pnpm check:architecture (initial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "Capture Settings story module reached406 counted lines against400 maximum. Restored its prior unchanged content and placed the new repository scenario in StoreCaptureSources.stories.svelte; no budget or checker weakened."
-    },
-    {
-      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/StoreCaptureSources.stories.svelte (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "stories-final.log:23 pass across both direct story files with interaction/accessibility; existing status search/toggles/focus and source import/navigation guards still pass."
-    },
-    {
-      "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold (repository source filtering|grouped Codex configuration)\" (initial)",
-      "result": "fail",
-      "failures": 1,
-      "note": "browser.log:1 pass/1 fail. New repository case interacted before first source coverage was accepted, during initial component handoff. Added explicit accepted3-row/current-coverage readiness assertions before querying and choosing repository options; original selection assertion retained."
-    },
-    {
-      "command": "pnpm web:build; pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold (repository source filtering|grouped Codex configuration)\" (final)",
-      "result": "pass",
-      "failures": 0,
-      "note": "build.log passes with existing chunk-size warning. browser-final.log:2 cold passes in newly launched isolated fixture. Repository selections use exact cached identities and intersect with harness/status; options remain available independently of other filters, search resets without retargeting, unknown binding/empty state/clear work. Desktop and390px open popup Axe and containment pass. Existing original-selector import and status keyboard behavior pass. Screenshots copied to .local/capture-repository-filter/after.png; fixture exited."
-    },
-    {
-      "command": "pnpm web:check; pnpm catalog:check (initial/final); pnpm check:architecture (after story extraction); pnpm check:ui-ownership; focused changed-file Prettier",
-      "result": "pass",
-      "failures": 0,
-      "note": "Zero web/catalog errors/warnings;182-module catalog boundary;922-module web architecture; UI ownership and formatting pass. New shared control stays repository-owned and uses released Design Core. Root aggregates, Rust, full app/browser/catalog inventories and visual baselines are outside this UI-only slice."
-    },
-    {
-      "command": "pnpm spec:first; pnpm spec:validate",
-      "result": "pass",
-      "failures": 0,
-      "note": "Nine protected files/two owning chapters;22 chapters/167 requirements. UI/API chapters specify loaded-only repository filtering, full identity matching, unique options, unknown observation semantics and no access/query/paging authority change."
-    },
-    {
-      "command": "jj rebase -r uqwlnutu -d rxzwlukn; jj workspace update-stale; screenshot inspection",
-      "result": "pass",
-      "failures": 0,
-      "note": "Clean preview workspace follows main UI change through existing Vite HMR. No backend restart, real capture/import/config mutation, fixture reset, installation or publication."
-    },
-    {
-      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; focused canonical formatting (final with ledger)",
-      "result": "pass",
-      "failures": 0,
-      "note": "136 tasks;9 protected files/3 canonical chapters;22 chapters/167 requirements validated. Existing412 evidence objects and raw JSON prefix preserved, with no milestone promotion."
-    }
-  ],
-  "result": "pass",
-  "remaining": [],
-  "scope": "Narrow Sources repository filter and direct shared status-command presentation only. All412 prior evidence objects/raw JSON prefix preserved; milestone statuses unchanged, prior E-M18-013 broad diagnostics/deferred work retained. No claim of a full repository, Rust or multi-harness release pass.",
-  "next": "Use repository/harness/status filters in main and preview Sources settings; filters describe loaded coverage and do not enroll or authorize sources."
-}
+  {
+    "id": "E-M18-004",
+    "tasks": ["M18", "M18.8", "M4.31"],
+    "date": "2026-10-04",
+    "kind": "capture-notification-rebase",
+    "revision": "enclosing JJ change krnstxms",
+    "files": [
+      "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+      "catalog/fixtures/CaptureSettingsFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/capture-management.svelte.ts",
+      "web/src/lib/controller/capture-observations.ts",
+      "web/src/lib/notifications/notification-recovery.svelte.ts",
+      "web/src/lib/ui/store-notifications/StoreNotice.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+      "web/tests/browser/local-capture-settings.spec.ts",
+      "web/tests/vite/capture-freshness.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/vite/capture-freshness.test.ts#capture conditions recover only after complete successful observations",
+      "web/tests/browser/local-capture-settings.spec.ts#capture notifications retain dismissal and drafts until observed recovery",
+      "web/tests/browser/local-capture-settings.spec.ts#cold capture controls preserve intent and snapshot",
+      "web/tests/browser/notifications.spec.ts#operational toasts deduplicate, retain dismissal and clear on recovery"
+    ],
+    "runs": [
+      {
+        "command": "jj rebase capture stack onto eb25eacb; targeted JJ status/log/diff and spec-conflict resolution",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebased nlstmlwq, zmyqspmo and bookmarked kyvxzyzu variant onto clean main. Combined API, governance and verification requirements; preserved all 315 main and 395 capture evidence entries verbatim, 399 unique entries. Main M4.31 and JST-UI-019 retained. Old capture tip bookmarked separately."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before dependency refresh)",
+        "result": "fail",
+        "failures": 11,
+        "note": "11 failed plus 11 errors from old cached Design Core NotificationToasts API; refreshed existing temporary local validation dependency."
+      },
+      {
+        "command": "pnpm install --offline --frozen-lockfile --force",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing local pnpmfile hook checksum differs from lockfile; no tracked dependency edits."
+      },
+      {
+        "command": "pnpm install --offline --lockfile=false --ignore-scripts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refreshed existing documented temporary foundation source-validation setup; package manifests/lockfile unchanged, no publication."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before implementation, refreshed dependency)",
+        "result": "fail",
+        "failures": 1,
+        "note": "10 passed, 1 failed; new scoped-notification regression could not find Capture request unavailable dismissal."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "6 passed, 1 failed; complete successful observations did not clear the capture error."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/production-capture-management.test.ts web/tests/vite/notification-service.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "27 passed; complete observed recovery, partial failure retention, uncertain original commands, producer transport and scoped notification lifecycle."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/StoreSettingsNavigation.stories.svelte catalog/components/store-application/StoreNotifications.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Incorrect project name; corrected to storybook and actual SettingsNavigation filename."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/StoreSettingsNavigation.stories.svelte catalog/components/store-application/StoreNotifications.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "25 passed in three existing selected files; nonexistent navigation filename was not selected. Includes all 11 capture stories with portal feedback, no inline duplication, dismissal across refresh/remount and recovery."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/SettingsNavigation.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 passed; actual navigation family separately selected, total 29 direct stories qualified."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-store-events.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 direct controller integration tests passed; total 40 unit tests."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web/catalog 0 errors and warnings; 169 catalog modules; production asset manifest passes. Existing bundle-size and timing warnings retained."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts notifications.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 cold built-bundle tests passed in fresh disposable browser_preview service: capture controls, capability gating, scoped dismissal/recovery/drafts, observation teardown and generic toasts. Desktop/mobile Axe zero violations and notification geometry within viewport."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "883 UI modules; 17 package boundaries; ownership validator passed."
+      },
+      {
+        "command": "pnpm exec prettier --write changed UI/tests/specs; pnpm exec prettier --check changed files excluding historical milestones ledger (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Only merged verification paragraph formatting flagged; formatted it without changing semantics."
+      },
+      {
+        "command": "node --input-type=module (owned preview Vite-only refresh via existing process helpers)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preview had cached the pre-refresh Design Core API and was blank on first reload. Ownership-checked restart of only Vite cleared its cache; backend PID, fixture, captured transcripts and historical repository route preserved."
+      },
+      {
+        "command": "CUA tab 2: reload; profile > Settings > Agents; Refresh capture; save .local/rebase-notifications/agents-notifications-live.png",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live four-tab Agents page loads, configured /Users/stevejuma/.codex/sessions root visible; real intermittent capture busy error appears once as a dismissible toast, with no inline error duplication. No capture mutation."
+      },
+      {
+        "command": "jj diff --from codex/capture-before-notification-rebase --to @ --name-only; evidence-preservation script",
+        "result": "pass",
+        "failures": 0,
+        "note": "No Rust source, public schema, generated contract, persistence or capture runtime changes. All 399 historical evidence objects preserved byte-for-byte."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check changed files excluding historical ledger",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first 10 protected paths/5 canonical chapters; 5 validators/22 chapters/167 requirements; 136 tasks; final changed-file formatting passes."
+      },
+      {
+        "command": "pnpm spec:first --base eb25eacb78b1047e6fdb23e785b3796b593abeed --head 65e55df3da8245e00fc3b434936231d8d1393d6a (preview workspace)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Explicit range uses Git discovery, unavailable in secondary JJ workspace. Ordinary JJ-aware spec-first passes; reran the complete range from colocated main below."
+      },
+      {
+        "command": "jj --no-pager st; jj rebase -r @ -o krnstxms; jj --no-pager st (main workspace)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main still clean on eb25eacb before integration. Advanced its empty tkwpktrq change onto verified feature tip; 352 added/119 modified/1 removed files, no conflicts; main clean afterwards. All existing main history retained."
+      },
+      {
+        "command": "pnpm spec:first --base eb25eacb78b1047e6fdb23e785b3796b593abeed --head 65e55df3da8245e00fc3b434936231d8d1393d6a (colocated main workspace)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Complete rebased integration gate passed: 457 protected files/14 canonical chapters. Same combined tree, no substitute tests."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "JJ 0.45.1; pnpm 10.32.1; Svelte 5; Vitest 4.1.11; Playwright 1.63.0; existing temporary Design Core source validation refreshed, registry release qualification deferred under M4.31.",
+    "formats": "Current AgentStore only. Rust code, public schemas/generated contracts, capture persistence and exact pending request identities unchanged. Main and capture ledger histories preserved verbatim.",
+    "scope": "UI/controller notification follow-up to already qualified capture stack, rebased on main eb25eacb. Installation-scoped condition notices for operational failures and timed information outcomes; validation/unavailable-content/unknown receipt recovery contextual. Direct UI/controller and cold browser lanes only; Rust/full contract/root aggregate lanes out of scope because their boundary trees are identical. Broader M18 harness/release scope unchanged; existing intermittent capture busy/performance deferred. Stories visual-pending; no baseline approval, push, release or installed service changes.",
+    "next": "Main workspace now contains the rebased capture preview and notification integration. Use Settings > Agents in the preserved isolated preview; defer additional harness, capture performance and registry-release qualification as already governed."
+  },
+  {
+    "id": "E-UI-099",
+    "tasks": ["M9.5"],
+    "requirements": ["JST-COLLAB-005", "JST-UI-015"],
+    "date": "2026-10-04",
+    "kind": "Generic agent prompt markup disclosures",
+    "revision": "enclosing Jujutsu change tkwpktrq",
+    "before": "Main clean at krnstxms/f8fc1731. Both production activity and recorded-chunk story regressions fail because arbitrary context elements have no disclosure controls.",
+    "versions": "JJ 0.45.1; Node 24.10.0; pnpm 10.32.1; Mira 0.0.2; locked Svelte 5, Storybook 10.5.7, Vitest 4.1.11, Playwright 1.63.0 and bits-ui 2.19.4. Existing Design Core 0.1.2 source-validation setup inherited unchanged; registry release qualification remains deferred under M4.31.",
+    "formats": "Application-owned Mira remark/rehype/component extension only. Captured source, native identities, storage, public schemas, request/receipt identities and copy values remain unchanged. No dependency or foundational source changes.",
+    "files": [
+      "catalog/components/store-application/AgentPromptMarkup.stories.svelte",
+      "catalog/fixtures/AgentPromptFixture.svelte",
+      "catalog/fixtures/agent-prompt-markup.ts",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte",
+      "web/src/lib/ui/community-message/CommunityMessage.svelte",
+      "web/src/lib/ui/community-message/props.ts",
+      "web/src/lib/ui/store-collaboration/StoreAgentContext.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/src/lib/ui/store-collaboration/StorePromptElement.svelte",
+      "web/src/lib/ui/store-collaboration/prompt-element-ranges.ts",
+      "web/src/lib/ui/store-collaboration/prompt-elements-extension.ts",
+      "web/src/lib/ui/store-collaboration/remark-prompt-elements.ts",
+      "web/tests/browser/agent-prompt-markup.spec.ts",
+      "web/tests/vite/prompt-elements.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm search remark xml --json; package metadata and README review for remark-mdx and remark-directive",
+        "result": "pass",
+        "failures": 0,
+        "note": "No suitable drop-in tolerant XML prompt renderer found. Directive syntax differs; MDX imposes JSX/expression syntax. Research retained in ignored .local/xml-plugin-research.json, remark-mdx-readme.md and remark-directive-readme.md."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both activity and recorded chunk paths lack the arbitrary <harness:context> disclosure. .local/agent-prompt-markup/before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (repair runs)",
+        "result": "fail",
+        "failures": 10,
+        "note": "Four repair runs: 3 sanitizer marker failures, 3 normalized-link assertions, 2 immediate collapse visibility assertions, 2 incorrect unmount assertions. Safe filtering strips className on div; switch marker to inert title. Bits UI retains hidden content, so await hidden visibility. Final exact run below passes."
+      },
+      {
+        "command": "pnpm catalog:check (before fixture fixes)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Fixture media_type widened to string; an embedded script-like fixture string confused Svelte diagnostics. Add literal typing and move sample to TypeScript fixture; no diagnostic suppression."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/prompt-elements.test.ts (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "7 parser boundary tests."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/AgentComments.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "24 unchanged direct consumer stories pass; 2 new prompt collapse assertions fail and 2 other new stories pass. Only the new assertions were repaired; no subsequent production change. .local/agent-prompt-markup/stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 interactions/accessibility pass: arbitrary nesting, recorded chunks, malformed and code literals, inert attributes/cross-section references, default safe HTML behavior. Stories remain visual-pending. .local/agent-prompt-markup/after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/prompt-elements.test.ts web/tests/vite/agent-timeline.test.ts web/tests/vite/projects-agent-response.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 tests across 3 files. Generic Unicode names/attributes, balance/escape/depth/code boundaries and direct timeline/response consumers. .local/agent-prompt-markup/units.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web and catalog checks: 0 errors/0 warnings, catalog boundaries 172 modules. Web check run before and after sanitizer-marker repair; catalog rerun after both fixture errors and ordinary-renderer fixture addition."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh production bundle and manifest generated. .local/agent-prompt-markup/build.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts agent-prompt-markup.spec.ts (first run)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial ignored config used the preview executable, whose compiled asset path points to the older preview bundle irrespective of cwd. Corrected to existing main executable; no Rust rebuild."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts agent-prompt-markup.spec.ts (repair runs)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Three subsequent runs: 2 unopened Copy submenu failures; 1 touch/mobile fixture failure because viewport-only emulation retains desktop hover actions clipped by the existing sidebar header; 1 full-document mobile Axe run exposes existing landmark-one-main/page-has-heading-one findings while main is hidden behind the response sidebar. Use actual touch emulation and scope Axe to changed transcript. Document-level mobile landmarks remain a separate UI gap."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts agent-prompt-markup.spec.ts (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 cold built-bundle tests pass. Desktop activity and touch-mobile recorded chunks prove Markdown before/inside/between/after, keyboard disclosures, measured virtual row growth/no overlap, exact original Copy message, no horizontal page overflow and transcript-scoped Axe. Third test proves inert tags/attributes/no network leaks and visible malformed/indented fallback. .local/agent-prompt-markup/browser.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "890 UI modules, 17 packages, 1 ownership validator/22 chapters/167 requirements."
+      },
+      {
+        "command": "pnpm exec prettier --write <changed production, fixture, test and canonical chapter files>; pnpm exec prettier --check <same files>",
+        "result": "pass",
+        "failures": 0,
+        "note": "All new/changed source and canonical paragraphs formatted. Historical milestone ledger encodings retained verbatim; only the new evidence entry is formatted."
+      },
+      {
+        "command": "jj rebase -r @ -o tkwpktrq (empty codex-preview workspace); CUA reload7470 and inspect live Codex session",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preview clean before rebase; source refreshed through Vite HMR with backend/fixture untouched. Actual captured <environment_context>, <filesystem> and <cwd> disclosures expand into nested controls and original content. Screenshot .local/agent-prompt-markup/live-preview.png; tab retained for user review."
+      },
+      {
+        "command": "pnpm spec:first (initial updated ledger)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped web scope also requires api.md. Add a browser/transport boundary paragraph preserving exact recorded text and identity; no schema generation needed."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (final updated canonical chapters and ledger)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first:14 protected files/5 canonical chapters; validation:5 validators/22 chapters/167 requirements; progress:136 tasks. All historical evidence retained; no milestone status promoted."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only targeted policy: exact prompt stories and units plus direct agent consumers, focused types, ownership/boundaries and cold built-bundle tests. No root aggregate, Rust, contract generation, dependency refresh, publication, baseline approval, installed-service or data reset work. Case-sensitive balanced markup supports arbitrary names and literal attributes; fenced/indented/inline/escaped examples remain literal. Initially collapsed state is transient. Full-document mobile main/heading findings and existing desktop-hover clipping under viewport-only mobile emulation are separately recorded; scoped transcript accessibility passes.",
+    "next": "Retain the exact prompt and direct-consumer regressions. Preview7470 has the extension and an expanded real captured context for review. Document-level mobile landmark/heading qualification remains separate from this transcript scope."
+  },
+  {
+    "id": "E-M18-005",
+    "tasks": ["M18.2"],
+    "requirements": [
+      "JST-COLLAB-017",
+      "JST-UI-012",
+      "JST-API-006",
+      "JST-GOV-003",
+      "JST-GOV-009"
+    ],
+    "date": "2026-10-04",
+    "kind": "Editable installation-local capture configuration",
+    "revision": "enclosing Jujutsu change qnyktnvp",
+    "before": "Main clean at qnyktnvp/54a71872, parent69d0db17. Agents settings expose resolved roots and pause/rescan/history commands but no capture configuration inputs. The disabled view requires manual TOML editing. Existing HMR restart regenerates ui-server.toml from the base fixture and loses app-saved settings.",
+    "versions": "JJ0.45.1; Node24.10.0; pnpm10.32.1; Rust1.98.1; locked Svelte5, Storybook10.5.7, Vitest4.1.11 and Playwright1.63.0. Qualified Codex CLI0.156.1 and Desktop0.159.2 only. Inherited Design Core source-validation/release boundary unchanged.",
+    "formats": "Configuration format2 and capture journal/source/spool/import/native AgentStore formats unchanged. Additive actor-free version1 GET/POST /v1/local/capture/settings; SHA256 exact file revisions; saved/startup-effective/default-root reporting; shared settings-file lock and bounded synchronized atomic TOML replacement. Unrelated TOML values retained; formatting/comments normalized as in the existing search editor. Credentials and arbitrary TOML are excluded.",
+    "files": [
+      "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+      "catalog/fixtures/CaptureSettingsFixture.svelte",
+      "catalog/fixtures/capture-management.ts",
+      "crates/jj-store-http/src/capture_management.rs",
+      "crates/jj-store-http/src/capture_management/settings.rs",
+      "crates/jj-store-http/src/contract/capture_tests.rs",
+      "crates/jj-store-server/src/capture_management.rs",
+      "crates/jj-store-server/src/capture_management/authority.rs",
+      "crates/jj-store-server/src/capture_management/settings.rs",
+      "crates/jj-store-server/src/capture_management/tests.rs",
+      "crates/jj-store-server/tests/capture_management.rs",
+      "crates/jj-store-server/tests/capture_management/http.rs",
+      "crates/jj-store-server/tests/capture_management/settings.rs",
+      "crates/jj-store-service/src/capture_management.rs",
+      "crates/jj-store-service/src/capture_management/settings.rs",
+      "schemas/openapi.json",
+      "scripts/dev-ui.mjs",
+      "scripts/dev-ui.test.mjs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/capture-configuration.ts",
+      "web/src/lib/controller/capture-http.ts",
+      "web/src/lib/controller/capture-management.svelte.ts",
+      "web/src/lib/controller/capture-observations.ts",
+      "web/src/lib/controller/capture-settings-management.ts",
+      "web/src/lib/controller/capture-types.ts",
+      "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+      "web/tests/browser/local-capture-settings.spec.ts",
+      "web/tests/vite/capture-settings.test.ts"
+    ],
+    "tests": [
+      "crates/jj-store-server/tests/capture_management/settings.rs#configuration_saves_are_conditional_private_and_leave_capture_state_untouched",
+      "crates/jj-store-server/tests/capture_management/settings.rs#configuration_revalidates_admin_identity_lock_and_regular_file",
+      "crates/jj-store-server/src/capture_management/tests.rs#configuration_remains_editable_while_capture_inspection_holds_the_runtime_gate",
+      "crates/jj-store-server/tests/capture_management/http.rs#local_capture_http_derives_actor_revalidates_authority_and_captures_contracts",
+      "crates/jj-store-http/src/contract/capture_tests.rs#capture_management_contract_is_installation_local_and_actor_free"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; read tracked/parent guidance and owning collaboration/API/UI/CLI/desktop chapters; inspect Community then Design Core Settings controls",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean main and preview; no unrelated work changed. Narrow target: edit disabled local capture, revision-safe persistence, retained drafts and restart-selected configuration."
+      },
+      {
+        "command": "cargo check -p jj-store-server -p jj-store-http --locked (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "AgentCaptureConfig validation needs Access and Storage. Validate the replacement through the containing Config rather than calling a zero-argument method."
+      },
+      {
+        "command": "pnpm contracts:generate; pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI/TypeScript, 224 actual HTTP/SSE responses and 7 contract-tool tests pass. Full registered capture lane required because routes/schemas share an inventory. Existing registered capture HTTP fixture includes GET/POST settings, stale revision, actor injection and foreign Origin; body limits remain4096 except bounded settings144KiB. No runner changes."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management settings:: --locked; cargo test -p jj-store-server --test capture_management --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 exact new settings tests, then all16 direct capture-management regressions. Admin/current identity, same-file lock, stale/malformed/unsupported roots/version/profile rejection, regular-file policy, preservation of unrelated config and journal bytes, saved versus effective and no initialization while disabled. Full binary took92.59s; no full Rust workspace suite."
+      },
+      {
+        "command": "cargo test -p jj-store-server --lib configuration_remains_editable_while_capture_inspection_holds_the_runtime_gate --locked (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Test dropped its temporary Fixture through an underscore destructure, removing configuration before observation. Retain the fixture binding."
+      },
+      {
+        "command": "cargo test -p jj-store-server --lib configuration_remains_editable_while_capture_inspection_holds_the_runtime_gate --locked (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 test proves settings read/save independent from occupied runtime inspection gate, retaining policy. Configuration files use their own shared advisory lock, never a worker/journal lock."
+      },
+      {
+        "command": "cargo check -p jj-store-server -p jj-store-http -p jj-store-service --locked (final); cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected packages compile. Final server/UI backend rebuilt from explicit local binary paths."
+      },
+      {
+        "command": "cargo clippy -p jj-store-server -p jj-store-http -p jj-store-service --all-targets --locked -- -D warnings; same with --no-deps",
+        "result": "fail",
+        "failures": 2,
+        "note": "Supplemental strict Clippy diagnostics remain open: unchanged jj-store-jj/src/query/language/identity.rs:108 and jj-store-service/src/collab_reads/materialization.rs:203 collapsible_if warnings. They are outside this configuration slice. No source allowances or unrelated fixes applied; focused package check/tests pass."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial checks)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial web4 errors: request bodies are generated inline, so use operation-derived Exact type. Initial catalog13 errors/1 warning: same type issue, Testing Library exact option and initial prop capture. Next catalog boundary rejects direct API fixture import; expose production presentation type through capture-types. All repaired."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/0 warnings; catalog172 modules. Editing uses existing Field/Switch/Input/Textarea controls, Settings rows/action columns and shared notices."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-settings.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-freshness.test.ts web/tests/vite/production-capture-management.test.ts (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "25 pass, one existing synchronous single-flight expectation fails because absent settings transport added an unnecessary await. Only await when a settings transport exists."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-settings.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-freshness.test.ts web/tests/vite/production-capture-management.test.ts (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "27 tests/4 files. Disabled editing, retained drafts, external revisions, unknown response reconciliation, validated bounds, no runtime mutations while restart pending, and configuration save while a runtime observation waits. Separate commandBusy/saving state prevents ordinary observations from disabling the editor; epochs reject stale config observations."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "14 stories pass including3 new edit/stale/unknown scenarios, Settings columns, tab retention and existing capture direct consumers. Initial enabled prop warning repaired with untrack. Stories remain visual-pending."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts local-capture-settings.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final fresh production bundle, all5 cold direct browser tests pass. New disabled editor saves typed fields, retains drafts across refresh/tabs, shows defaults and restart state, passes scoped Axe and mobile no-overflow. Existing no-auth/capability/notification/freshness checks retained. Uses main compiled preview asset host; mocked UI transport evidence is separate from actual service persistence."
+      },
+      {
+        "command": "node --test scripts/dev-ui.test.mjs; pnpm test:dev:ui",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 preflight tests pass, including exact matching HMR fixture retention and missing retained-file refusal. Shared restart helper changed, so escalate to its existing full isolated native HMR startup lane: actual proxy writes/SSE, Svelte/TS/CSS HMR without reload, backend-only restart retains Vite PID, wrong Origin/Host rejection and owned stop all pass; temporary service cleaned and fixture retained."
+      },
+      {
+        "command": "pnpm dev:backend:build; explicit preview JJ_STORE_DEV_ROOT/JJ_STORE_DEV_PORT/JJ_STORE_DEV_BACKEND_PORT/JJ_STORE_DEV_SERVER/JJ_STORE_DEV_RUSTFS_RUNTIME pnpm dev:backend:restart; jj rebase/update-stale; CUA live editor save/restart/restore",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main executable rebuilt; only isolated preview7470/7472 restarted. Real UI saved readers4→3, restart reports desired/effective3 and no pending configuration; restore4 and restart reports desired/effective4. Fixture/installation/control-policy SHA256 hashes stay identical. First restart used stale preview helper and reset the temporary edit; snapshot main and refresh preview, then repeat successfully with fixed helper. .local/capture-settings-live.json contains proof; screenshot .local/capture-settings-live.png; preview tab retained. Main running fixture and installed services untouched."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "893 UI modules;17 package boundaries;1 ownership validator/22 chapters/167 requirements."
+      },
+      {
+        "command": "pnpm spec:first (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped service/HTTP scope also requires compatibility.md and mutations.md. Add typed conditional config and format/publication boundaries."
+      },
+      {
+        "command": "cargo test -p jj-store-http capture_management_contract_is_installation_local_and_actor_free --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact installation-local contract schema/actor/body regression passes."
+      },
+      {
+        "command": "pnpm exec prettier --write <changed TS/Svelte/JS and canonical chapters>; cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting applied throughout implementation and repairs. Keep prior evidence bytes intact; format only this new JSON entry."
+      },
+      {
+        "command": "pnpm exec prettier --check <all changed TS/Svelte/JS/JSON and canonical chapters except historical ledger>; cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final formatting checks pass. New evidence entry uses formatted JSON; historic ledger encodings retained verbatim."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first31 protected files/8 canonical chapters; validation5 validators/22 chapters/167 requirements; progress136 tasks. M18.2 remains Partial; no full milestone or visual baseline promoted."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Narrow editing acceptance: typed current LocalTrusted Admin configuration, saved/effective/default roots, bounded crash-aware persistence, shared-column editor, stale/unknown drafts and real next-start selection. Runtime pause/rescan/import commands and all durable capture state remain independent. Supplemental strict Clippy warnings are inherited diagnostics outside the gate. The live preview still reports capture_management_unavailable for runtime observations; its worker recovery/availability is not qualified by a settings save. Full M18 multi-harness release, native desktop bundle/lifecycle, arbitrary server/credential editing, hot worker replacement and visual baseline approval remain outside this slice. No root aggregate or installed-service reset/publication.",
+    "next": "Use Settings → Agents → Configuration in preview7470. Save config and restart this selected backend; desktop applies saved config on Quit/reopen with a rebuilt app bundle. Keep the reader limit restored to4. Investigate the retained fixture worker-unavailable diagnostic separately; do not repair journals or infer runtime health from effective config. Continue deferred M18 scope only under its owning gates."
+  },
+  {
+    "id": "E-M14-016",
+    "tasks": ["M14", "M14.4", "M14.6"],
+    "requirements": [
+      "JST-UI-012",
+      "JST-UI-016",
+      "JST-UI-019",
+      "JST-API-001",
+      "JST-API-006",
+      "JST-CLI-005",
+      "JST-REPL-011",
+      "JST-MUT-003"
+    ],
+    "date": "2026-10-04",
+    "kind": "Complete supported operational configuration editors",
+    "revision": "enclosing Jujutsu change ylxwsusl",
+    "before": "Clean main ylxwsusl/9f7571b1 above qnyktnvp/1367c5d4; clean codex-preview workspace above the same parent. Only Agents and basic Search are editable. Resource budgets, installation protection, replication configuration and seven Search worker/extraction fields have no controls. Remaining launch/storage configuration is not visible. Narrow acceptance: section-safe persistence, retained drafts, explicit running values, every supported operational field, read-only infrastructure coverage and saved selection on next startup. Final review found generic notices inherited the route scope; align them to a stable installation scope so a dismissed unchanged condition cannot replay on repository navigation.",
+    "versions": "JJ0.45.1; Node24.10.0; pnpm10.32.1; pinned Rust and locked Svelte5/Storybook10.5.7/Vitest4.1.11/Playwright1.63.0. Dependency versions unchanged.",
+    "formats": "Format2 configuration and all native object/WAL/manifest/capture/credential formats unchanged. Additive actor-free version1 GET/POST /v1/local/settings and capability. Search DTOs expose seven existing bounded worker/extraction fields with established defaults. Exact SHA256 file revisions and common settings lock; normalized TOML values and synchronized same-directory replacement. Credential references only; no secret values or arbitrary TOML editing.",
+    "files": [
+      "catalog/components/store-application/StoreSearchSettings.stories.svelte",
+      "catalog/components/store-application/StoreServerSettings.stories.svelte",
+      "catalog/fixtures/SearchSettingsFixture.svelte",
+      "catalog/fixtures/ServerSettingsFixture.svelte",
+      "catalog/fixtures/search-settings.ts",
+      "catalog/fixtures/server-settings.ts",
+      "crates/jj-store-cli/tests/native_lifecycle/search_settings.rs",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/server_settings.rs",
+      "crates/jj-store-server/src/capture_management/authority.rs",
+      "crates/jj-store-server/src/capture_management.rs",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/process/preparation.rs",
+      "crates/jj-store-server/src/search_management/file.rs",
+      "crates/jj-store-server/src/server_settings/inventory.rs",
+      "crates/jj-store-server/src/server_settings.rs",
+      "crates/jj-store-server/tests/capture_management/server_settings.rs",
+      "crates/jj-store-server/tests/capture_management.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/search_management.rs",
+      "crates/jj-store-service/src/server_settings.rs",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/replication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-local-configuration.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/search-advanced.ts",
+      "web/src/lib/controller/search-settings.ts",
+      "web/src/lib/controller/server-configuration.ts",
+      "web/src/lib/controller/server-settings.svelte.ts",
+      "web/src/lib/ui/store-settings/StoreConfigurationEditor.svelte",
+      "web/src/lib/ui/store-settings/StoreConfigurationFields.svelte",
+      "web/src/lib/ui/store-settings/StoreDeploymentConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchAdvanced.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreStorageSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      "web/tests/browser/local-server-settings.spec.ts",
+      "web/tests/vite/production-search-settings.test.ts",
+      "web/tests/vite/server-settings.test.ts"
+    ],
+    "tests": [
+      "crates/jj-store-server/tests/capture_management/server_settings.rs#saves_preserve_other_sections_and_apply_only_at_restart",
+      "crates/jj-store-server/tests/capture_management/server_settings.rs#settings_revalidate_authority_budgets_locks_and_regular_files",
+      "crates/jj-store-server/tests/capture_management/server_settings.rs#http_settings_contracts_are_actor_free_conditional_and_local_admin_only",
+      "crates/jj-store-cli/tests/native_lifecycle/search_settings.rs#local_search_save_apply_rebuild_disable_and_restart_preserve_authority_and_pins"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; read tracked/parent AGENTS, jj-jujutsu skill, owning API/UI/CLI/replication/mutations/desktop requirements and M14/M18 ledger; inspect Community then Design Core",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean before state; existing Search/Capture forms reused. No relevant memory facts used."
+      },
+      {
+        "command": "cargo check -p jj-store-server -p jj-store-http --locked (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Missing axum::Json import in new HTTP module; corrected."
+      },
+      {
+        "command": "cargo fmt --all; cargo check -p jj-store-server -p jj-store-http --locked (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected server/HTTP and direct service/RPC/search dependencies compile."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI and TypeScript; additive settings routes and Search limits."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management server_settings:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three persistence/auth/actual-HTTP regressions pass. Saving does not initialize capture state, contact peers or change authority; re-created manager selects desired values at startup."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle local_search_save_apply_rebuild_disable_and_restart_preserve_authority_and_pins --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "One exact Search lifecycle regression now changes all seven advanced fields; validated save, Apply, rebuild/retry and restart while preserving manifest and retained read pins. macOS linker emitted existing compact-unwind size diagnostic."
+      },
+      {
+        "command": "pnpm web:check (first)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Missing equal import and Svelte state variable shadowing; corrected."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "No errors or warnings; catalog boundaries175 modules."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/server-settings.test.ts web/tests/vite/production-search-settings.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial14 tests across2 files."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/server-settings.test.ts web/tests/vite/production-search-settings.test.ts web/tests/vite/production-capture-management.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "18 tests across3 files including seven advanced Search bounds, installation availability, section preservation, dirty base revisions, unknown outcomes and obsolete GET rejection."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreServerSettings.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte (first)",
+        "result": "fail",
+        "failures": 5,
+        "note": "Four new stories caught role=status on a dd; move status to nested span. Advanced Search had duplicate fields/IDs from insertion; remove duplicate."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreServerSettings.stories.svelte catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreStorageSettings.stories.svelte catalog/components/store-application/StoreSyncSettings.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "20 direct interaction/accessibility stories pass; visual-pending."
+      },
+      {
+        "command": "pnpm check:architecture (first and intermediate)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Main controller grew beyond300 counted lines (308 then304). Extract installation configuration factory and shared teardown; do not change limits."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "905 production modules,17 package boundaries and ownership validator pass."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts local-server-settings.spec.ts local-capture-settings.spec.ts (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Seven pass; final mobile fixture tried to click hidden desktop navigation at390px. Navigate before reducing viewport; rerun. New controls scoped Axe check itself passes."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Development binaries built; installed tools untouched. Existing macOS compact-unwind linker diagnostic retained."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Full registered lane required because settings routes/Search schema and capture registration share the public inventory. 237 actual HTTP/SSE responses,7 contract-tool tests and generated TypeScript pass. This is a focused contract surface, not a full repository suite."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts local-server-settings.spec.ts (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three cold built-bundle editor/advanced-Search/scoped-Axe/mobile checks pass. Previous five Capture regressions passed in the first combined run. Viewport set back to desktop before hidden-sidebar navigation in test; scoped controls qualified at390px."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_management server_settings:: --locked (after inventory completion and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three tests pass, including explicit absent TLS and disabled backup inventory. Public DTO unchanged, so completed contract generation need not repeat."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "905 modules;300-line ownership limit retained, Rust formatting passes. Root aggregates/full Rust workspace/Clippy out of scope under targeted policy."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "51 protected files/8 chapters,5 validators/22 chapters/167 requirements and136 progress tasks pass."
+      },
+      {
+        "command": "pnpm dev:backend:build; jj --no-pager st; jj -R /Users/stevejuma/code/lapismd/jj-store-codex-preview rebase -r @ -d ylxwsusl; jj -R /Users/stevejuma/code/lapismd/jj-store-codex-preview workspace update-stale",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main development binaries rebuilt; clean preview placed on this slice. Main running7460/7462 fixture and installed tools untouched. Existing native linker diagnostic retained."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:backend:restart (preview; three runs)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial new backend, then activation of UI-saved3, then restore8. Native fixture preserved and Search ready. Existing loaded tab needed a reload to fetch the newly advertised startup capability."
+      },
+      {
+        "command": "pnpm exec tsx .local/server-settings-live.ts after-save; pnpm exec tsx .local/server-settings-live.ts after-restart (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Read-only proof client omitted a complete Fetch Metadata tuple. Normal admission correctly denied it; add expected Origin plus same-origin site/mode and empty destination. Admission code unchanged."
+      },
+      {
+        "command": "Cua live Settings save8\u21923; pnpm exec tsx .local/server-settings-live.ts after-restart; Cua restore3\u21928; pnpm exec tsx .local/server-settings-live.ts after-restore-save; preview restart; pnpm exec tsx .local/server-settings-live.ts after-restore-restart; fixture/identity hash comparison",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual UI shows saved3/running8; first restart desired/effective3 and no pending config. Restore saved8/running3; second restart desired/effective8 with no pending config. .local/server-settings-live.json records typed proof. Fixture/installation hashes unchanged; retained capture control matches its previous qualified reference. Screenshot .local/server-settings-live.png; preview tab retained."
+      },
+      {
+        "command": "python3 .local/server-settings-format-check.py; pnpm exec prettier --write selected changed files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed source/catalog/contract/canonical documents formatted. Full-file ledger formatting initially caused broad historical whitespace changes; discard those changes, preserve historical evidence verbatim and format/check only the new evidence object. Historical ledger reformat is outside this slice."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-settings/StoreConfigurationEditor.svelte spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final installation notification scope correction and canonical behavior formatted."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreServerSettings.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All5 direct server configuration stories pass after stable installation notification scope correction; visual baselines remain pending."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/notification-service.test.ts web/tests/vite/server-settings.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 tests in2 files pass, including scoped episode dismissal and retained settings drafts."
+      },
+      {
+        "command": "pnpm web:check; pnpm spec:first; pnpm spec:validate; pnpm check:progress; python3 .local/server-settings-format-check.py (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "After final notification scope correction: zero Svelte errors/warnings; spec-first51 protected files/8 chapters;5 validators/22 chapters/167 requirements;136 progress tasks; focused source and evidence formatting pass. Root aggregates remain out of scope."
+      },
+      {
+        "command": "python3 ledger append script (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Local helper used a nonexistent commands key. No source write occurred; corrected to the existing runs key and preserved all historical ledger bytes."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Supported operational configuration editing and complete read-only deployment inventory. Existing runtime health, storage migration, native desktop lifecycle/bundle, launch reconfiguration, backup execution and full M14/M18 acceptance remain independent. No root aggregate or installed service changes, reset, publication or visual baseline approval.",
+    "next": "Try preview7470 Settings: Local service/Limits and Launch, Repository/Protection, Sync/Configuration, Search/Advanced, Storage/Configuration. Operational saves apply after next startup; Search uses explicit Apply. Keep preview concurrency restored to8. Full M14/M18, native desktop bundle/lifecycle and capture-runtime unavailable recovery remain separate gates."
+  },
+  {
+    "id": "E-M18-006",
+    "tasks": ["M9.4", "M9.5", "M18.8"],
+    "requirements": [
+      "JST-COLLAB-002",
+      "JST-COLLAB-004",
+      "JST-COLLAB-005",
+      "JST-API-001",
+      "JST-MUT-003"
+    ],
+    "date": "2026-10-04",
+    "kind": "Recover recorded Codex session timing",
+    "revision": "enclosing Jujutsu change slzksssp",
+    "before": "Clean main above ylxwsusl/edab2326. Current preview7470 Agents list has6 rows;3 captured Codex sessions have null first/last timing, while3 seeded hook sessions have values. JSONL sanitization intentionally preserves native timestamps inside payloads and leaves occurred_at_millis absent; the shared bounded timing projection reads only that absent field. Exact regression requires native CLI/Desktop list/detail timestamps from selected sanitized evidence without reimport or root publication.",
+    "versions": "JJ0.45.1; locked Chrono0.4.45 reused as a service dependency with std and no default features. Existing product/normalizer profiles unchanged.",
+    "formats": "No public DTO/schema, canonical encoding, native/local metadata, evidence, receipt, cursor, capture parser/recovery or source identity changes. Existing event-ID matching,4,096-event timing bound and optional millisecond fields retained. Qualified sanitized Codex JSONL record timestamps decode as RFC3339; explicit observation timestamps win; missing/malformed/unsupported evidence stays unknown.",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-service/Cargo.toml",
+      "crates/jj-store-service/src/collaboration/agent_session_timing/tests.rs",
+      "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
+      "crates/jj-store-service/tests/agent_sessions/timing.rs",
+      "crates/jj-store-service/tests/agent_sessions.rs",
+      "crates/jj-store-service/tests/local_agent/timing.rs",
+      "crates/jj-store-service/tests/local_agent.rs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/mutations.md",
+      "spec/src/milestones.md",
+      "spec/src/local-jj.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; inspect canonical chapters/ledger, current Cua page and Community/Design Core timing references; pnpm exec tsx .local/agent-session-timing/live.ts before",
+        "result": "pass",
+        "failures": 0,
+        "note": "Observed exactly3 missing captured Codex timing pairs. API proof stored in .local/agent-session-timing/before.json; no raw transcript or credential output."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions codex_transcript_timing_recovers_existing_sanitized_native_timestamps --locked (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Test child module needed an explicit path attribute; fixed test registration."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions codex_transcript_timing_recovers_existing_sanitized_native_timestamps --locked (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact regression fails with first activity None instead of1704164645123; published sanitized record retains timestamp but optional observation field is empty."
+      },
+      {
+        "command": "cargo check -p jj-store-service; cargo fmt --all; cargo check -p jj-store-service --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Service and direct owned dependencies compile; lock adds only the existing Chrono dependency edge."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions codex_transcript_timing_recovers_existing_sanitized_native_timestamps --locked (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression passes for both CLI0.156.1 and Desktop0.159.2. Millisecond fractions, UTC offsets, out-of-order matched records and ignored unsupported records qualified; list/detail and manifest pin unchanged."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --test agent_sessions --test local_agent timing --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 tests pass:2 timestamp guards,1 native CLI/Desktop list/detail regression,1 local companion pin regression. Unknown/malformed timestamps, wrong envelope profile/source/integration and safe omissions remain absent; explicit timestamp precedence retained; historical local pin retains old timing after later capture."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions session_detail --locked; cargo test -p jj-store-service --test local_agent browser_agent_presentation_pins_metadata_and_transcript_membership --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 native existing detail/timing/bounded-activity regressions and1 local existing browser presentation/membership regression pass."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/collaboration.md spec/src/mutations.md spec/src/architecture.md; pnpm exec prettier --check spec/src/api.md spec/src/collaboration.md; pnpm check:architecture; pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical formatting and dependency boundaries17 packages pass. Supplementary architecture905 modules unchanged. No UI component changes; UI type/build/Storybook and contract generation lanes are out of scope. Root aggregates/full Rust workspace not run."
+      },
+      {
+        "command": "pnpm dev:backend:build; pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Development CLI/server and direct service consumers build with the locked dependency edge. Existing macOS compact-unwind linker diagnostic is informational; installed executables untouched. Rust formatting passes."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:backend:restart (preview cwd)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only selected preview backend replaced; Vite and fixture retained, Search ready. Main7460/7462 runtime not restarted."
+      },
+      {
+        "command": "pnpm exec tsx .local/agent-session-timing/live.ts after; Python before/after assertions; Cua fresh background Agents tab, AX and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "All6 list rows now show captured start/duration. The3 recovered Codex durations are17m26s,34s,3s. Native manifest/AgentStore snapshot, session IDs, states and evidence/event counts remain identical; previous3 hook timing pairs unchanged. Cold fresh page uses retained historical code operation. Screenshot .local/agent-session-timing/after.png. Temporary proof tab closed; existing review page retained."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/local-jj.md .local/agent-session-timing/evidence.json; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check changed canonical chapters and new evidence",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first8 protected files/6 chapters;5 validators/22 chapters/167 requirements;136 progress tasks. Milestones retain existing status; focused formatting passes. Historical ledger prefix preserved."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Timing read projection and current preview verification only. Full harness release, capture runtime recovery, native desktop packaging and visual baselines remain separate. No user repository reimport, evidence rewrite, reset, installed-tool change or unrelated service restart.",
+    "next": "Use current Agents list; captured start/duration derive from exact selected recorded activity, including previously published Codex records. Preserve deferred harness and broader qualification scope."
+  },
+  {
+    "id": "E-M18-007",
+    "tasks": ["M9.4", "M9.5", "M18.8"],
+    "requirements": [
+      "JST-COLLAB-002",
+      "JST-COLLAB-004",
+      "JST-COLLAB-005",
+      "JST-API-001",
+      "JST-LOCAL-001",
+      "JST-UI-006"
+    ],
+    "date": "2026-10-04",
+    "kind": "Captured message occurrence times in agent response transcripts",
+    "revision": "enclosing Jujutsu change upuyqosu",
+    "before": "Clean main upuyqosu/73ed9ca2 above session timing slice slzksssp/72ebebc7. Existing captured session 41ffb0d2c68320aeb63a8713fe38d6a6 has 13 messages with no API occurrence field; UI displays sequence numbers. Exact native regression fails with four unknown times instead of two known/two unknown times. Native timestamps already exist in immutable sanitized observation payloads.",
+    "versions": "JJ 0.45.1; Rust 1.98.1; existing Chrono 0.4.45 and Svelte 5.57.1. Existing Codex CLI 0.156.1/Desktop 0.159.2 qualified normalizer profiles retained.",
+    "formats": "Additive optional occurred_at_millis fields on AgentActivity.Message and AgentTranscriptChunk; HTTP version 1 retained. Exact selected normalized event IDs match sanitized observations. Explicit observation time wins over qualified RFC3339 recovery. Chunks additionally match current source-generation-1 identity/sequence and exact selected message content under a 4096-event bound. Missing/malformed/unmatched/unsupported evidence stays unknown. Native objects, local companion metadata, capture/recovery identities, cursor framing and receipt/publication formats unchanged.",
+    "files": [
+      "catalog/components/store-application/AgentPromptMarkup.stories.svelte",
+      "catalog/fixtures/AgentPromptFixture.svelte",
+      "crates/jj-store-service/src/collaboration/agent_details.rs",
+      "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
+      "crates/jj-store-service/src/collaboration/agent_transcript_timing.rs",
+      "crates/jj-store-service/src/collaboration/agent_transcripts.rs",
+      "crates/jj-store-service/src/collaboration/models.rs",
+      "crates/jj-store-service/src/collaboration.rs",
+      "crates/jj-store-service/src/local_repository/browser_agents/transcripts.rs",
+      "crates/jj-store-service/tests/agent_sessions/timing.rs",
+      "crates/jj-store-service/tests/agent_sessions.rs",
+      "crates/jj-store-service/tests/local_agent/timing.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/local-jj.md",
+      "spec/src/mutations.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/collaboration/presentation.ts",
+      "web/src/lib/ui/community-message/CommunityMessageMeta.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/tests/collaboration-presentation.test.ts",
+      "spec/src/milestones.md",
+      "spec/src/compatibility.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; read tracked/parent guidance and JJ skill; inspect owning canonical chapters/ledger, Community timed-row and Design Core MessageMetadata sources; pnpm exec tsx .local/agent-message-timing/live.ts before",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before proof: all 13 selected messages lack times. Main and preview initially clean. Recorded repository/AgentStore snapshot revision 113, state version 39; no transcript content or credentials written to proof."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions message_timing_matches_selected_evidence --locked (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact regression fails: [None,None,None,None] instead of two captured times followed by two unknowns. .local/agent-message-timing/before.log."
+      },
+      {
+        "command": "Update canonical requirements with additive DTOs; cargo fmt --all; cargo test -p jj-store-service --test agent_sessions message_timing_matches_selected_evidence --locked (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "CLI/Desktop exact regression passes. Fractions, offsets, user/assistant messages, malformed/missing times, content and read pins retained; transcript continuation times match activity. .local/agent-message-timing/after.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions --test local_agent --lib timing --locked (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New local test compared a DTO without PartialEq. Corrected the test to compare complete serialized detail values; production DTO unchanged for equality. .local/agent-message-timing/timing-tests.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions --test local_agent --lib timing --locked (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six timestamp guards/native/local timing tests pass. Companion historical detail/page times remain exact after later capture; explicit observation timestamp overrides malformed native timestamp. .local/agent-message-timing/timing-tests-final.log."
+      },
+      {
+        "command": "pnpm contracts:generate; pnpm web:check (first concurrent generation/check)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Generation passes. Early UI check saw the old generated DTO before generation finished and reported two missing fields. Final helper accepts lossless bigint values and retains Date range/safe integer guards. .local/agent-message-timing/web-check.log."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/collaboration-presentation.test.ts; pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six direct presentation tests pass; web/catalog report zero errors and warnings, catalog 175 modules. Unknown times do not infer from sequence/session. Recorded fallback retains Markdown and ISO occurrence time."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (first)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two stories failed because the matcher did not accept a regex as an attribute value. Corrected to match the actual title attribute; production date formatting unchanged. Four other stories passed. .local/agent-message-timing/stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (corrected and final); pnpm web:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All six story interactions/accessibility checks pass, including activity and chunk timestamps, full-date title, nested XML/Markdown, inert markup and explicitly unknown time. Final web check zero errors/warnings. .local/agent-message-timing/stories-complete.log and web-check-complete.log. Visual baselines remain unapproved."
+      },
+      {
+        "command": "pnpm contracts:check (interrupted)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Full inventory began because DTO generation is shared, then was stopped with SIGTERM/143 while unrelated capture import/snapshot fixtures exercised long recovery bounds. No full inventory pass claimed. Replaced by directly affected native/local HTTP captures plus live known-time responses under the controlling targeted policy. .local/agent-message-timing/contracts.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions --locked; cargo test -p jj-store-service --test local_agent timing --locked; cargo test -p jj-store-service --test local_agent browser_agent_presentation_pins_metadata_and_transcript_membership --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Complete affected native test binary: seven pass. Two local timing tests and existing local browser membership test pass. Native explicit hook timestamps, unknown/manual transcript fields, bounded activity and pinned continuations retained. Logs native-final.log, local-final.log, local-presentation.log."
+      },
+      {
+        "command": "cargo clippy -p jj-store-service --all-targets --locked -- -D warnings; cargo clippy -p jj-store-service --all-targets --no-deps --locked -- -D warnings",
+        "result": "fail",
+        "failures": 2,
+        "note": "Strict Clippy blocked by unchanged collapsible_if warnings in jj-store-jj/src/query/language/identity.rs:108, then service collab_reads/materialization.rs:203. Neither belongs to this slice and neither was edited/suppressed. Both failures retained; no strict lint pass claimed. Logs clippy.log and clippy-focused.log."
+      },
+      {
+        "command": "cargo check -p jj-store-service --all-targets --locked; pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected all-target service check and locked CLI/server build pass. Existing macOS compact-unwind linker warning retained. Installed tools, main development runtime and native desktop processes untouched."
+      },
+      {
+        "command": "JJ_STORE_COLLABORATION_CONTRACT_CAPTURE=.local/agent-message-timing/native-contract.json cargo test -p jj-store-cli --test native_lifecycle http_collaboration_acceptance::local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_credentials --locked -- --exact; JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE=.local/agent-message-timing/local-contract.json cargo test -p jj-store-cli --test local_browser filesystem_runtime_registers_and_reads_without_native_storage --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both actual HTTP consumers pass. Native cursor root and local companion admission preserved. Captures contain 34 responses; their untimed hook/manual records correctly retain unknown fields."
+      },
+      {
+        "command": "node .local/agent-message-timing/validate-contracts.mjs (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "All response schema validation passed, but proof script incorrectly assumed untimed hook/manual fixtures would contain timestamps. Source inspection confirms occurred_at_millis absent and generation 5 manual chunks unqualified. Corrected fixture expectation to unknown; live qualified timestamps validated separately."
+      },
+      {
+        "command": "node .local/agent-message-timing/validate-contracts.mjs; pnpm test:contracts; pnpm contracts:generate (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "34 actual native/local HTTP responses conform and untimed fixtures remain unknown. Seven contract units and contract TypeScript check pass. Final generation produces the same additive fields; no route inventory change."
+      },
+      {
+        "command": "jj describe -m Show captured timestamps on agent transcript messages; jj rebase -r uqwlnutu -o upuyqosu; jj workspace update-stale (clean preview)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main owns all implementation. Clean preview descendant refreshed onto the same change for live HMR verification; final clean ancestry verified after commit."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:backend:restart (preview cwd)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only selected preview backend restarted. Vite, fixture and all native state preserved; Search ready. Main7460/7462 and native desktop left running."
+      },
+      {
+        "command": "pnpm exec tsx .local/agent-message-timing/live.ts after; Python before/after assertions; Cua fresh preview tab and Agent response navigation, DOM timestamps and screenshots",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 existing messages and 13 chunks now have occurrence times; exact message/event/sequence/role identity, session summary and snapshot unchanged at revision113/state39. Live detail/transcript responses conform to generated schemas. Visible reply times include 00:08:04,00:08:20,00:14:36 in local BST; semantic datetime retains exact UTC milliseconds, tooltip full date and timezone. Current repository Agents route presents its list; UI verification opens the selected session through Projects Agents. Screenshots after.png and replies.png. Temporary tab closed and initial details-rail preference restored."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (first)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Spec validation passed. Spec-first required compatibility.md for generated schema changes; added the owning additive-response contract. Progress rejected outside-slice baseline/release qualifications listed as remaining feature gaps; moved them to explicit scope/next boundaries without claiming them passed. Narrow message timestamp acceptance has no remaining gaps."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; pnpm format:rust:check; focused Prettier on changed UI/stories/specs and standalone evidence; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Architecture, owned UI, 17-package boundaries and Rust formatting pass. Final spec-first, canonical validation, 136-task progress and focused document/evidence formatting pass. Existing historical ledger bytes retained. Strict baseline lint/full inventory/visual/harness qualifications remain explicitly outside narrow feature acceptance; root aggregates/full Rust and unrelated UI/browser suites not run."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Per-message API/read projection and owned Agent response presentation only; no milestone promotion. Native immutable capture data and companion history preserved; current recorded source generation1 supports chunk timing, unsupported generations remain unknown. No reimport/reset/publication, installed-tool change or unrelated service restart. Strict Clippy baseline warnings, the interrupted unrelated full contract inventory, visual approval and full harness release gates are outside this narrow acceptance; their unresolved status is retained in the runs and next action.",
+    "next": "Use the refreshed preview Agent response. Timestamp data is available for already captured selected messages; retain unknown times and separate broader harness, strict baseline lint and visual qualification work."
+  },
+  {
+    "id": "E-M18-008",
+    "tasks": ["M9.4", "M9.5", "M18.8"],
+    "requirements": [
+      "JST-COLLAB-002",
+      "JST-COLLAB-004",
+      "JST-COLLAB-005",
+      "JST-API-001",
+      "JST-API-006",
+      "JST-LOCAL-001",
+      "JST-UI-006"
+    ],
+    "date": "2026-10-04",
+    "kind": "Recorded tool durations, padding before tool icons and simplified session times",
+    "revision": "enclosing Jujutsu change rvkzvqxz",
+    "before": "Clean main rvkzvqxz/1163ba3e above upuyqosu/f6f69419; preview clean. Both existing exec tools in selected session lack duration fields. Exact native duration regression fails once. Initial tool-group stories fail twice for missing inset/duration. User then asks to remove Started prefix; its exact Agent response story fails once. Subsequent user inspection identifies zero row padding before tool icons despite an 8px outer-group inset; strengthened icon regression captures that boundary.",
+    "versions": "JJ 0.45.1; Rust 1.98.1; Chrono 0.4.45; Svelte 5.57.1; qualified Codex CLI0.156.1/Desktop0.159.2 profiles retained; released Design Core ToolCalls stats extension used.",
+    "formats": "Additive optional nonnegative duration_millis in AgentToolActivity version1. Exact selected event observations provide ordered call/result endpoints or timed hook lifecycle endpoints; source/profile/sequence and monotonic times must match. Missing, malformed, ambiguous, over-bound evidence stays absent. Zero remains known. Unknown/failed outcomes stay unchanged. No immutable object, source cursor, capture recovery, receipt or native/local publication format changes.",
+    "files": [
+      "catalog/components/store-application/AgentToolGroups.stories.svelte",
+      "catalog/components/store-application/agent-sidebar-play.ts",
+      "catalog/fixtures/agent-tool-groups.ts",
+      "crates/jj-store-service/src/collaboration/agent_details.rs",
+      "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
+      "crates/jj-store-service/src/collaboration/agent_tool_timing.rs",
+      "crates/jj-store-service/src/collaboration/models.rs",
+      "crates/jj-store-service/src/collaboration.rs",
+      "crates/jj-store-service/tests/agent_sessions/timing.rs",
+      "crates/jj-store-service/tests/local_agent/timing.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/local-jj.md",
+      "spec/src/mutations.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/collaboration/presentation.ts",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessionRow.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTools.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/tests/collaboration-presentation.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; read parent guidance, JJ skill and owning canonical chapters; inspect Community rich tool presentation and Design Core ToolCalls/CSS; pnpm exec tsx .local/agent-tool-duration/live.ts before",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean main/preview; native selected revision113/state39; two untimed tools. Proof files retain IDs/times/status only, no transcript content or credentials."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions timing::tool_duration_uses_exact_call_and_result_evidence_without_inventing_status --locked -- --exact (before/after) (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before fails once (None versus1250); after passes for both CLI/Desktop. Known1250, zero, unknown missing/malformed/reversed cases and immutable snapshot retained. Logs before-rust.log and after-rust.log. Before failure preserved."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test agent_sessions timing::tool_duration_uses_exact_call_and_result_evidence_without_inventing_status --locked -- --exact (before/after) (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before fails once (None versus1250); after passes for both CLI/Desktop. Known1250, zero, unknown missing/malformed/reversed cases and immutable snapshot retained. Logs before-rust.log and after-rust.log. Before failure preserved."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte (before and first after) (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before two failures/five passes; first after seven passes. User clarification reveals the first inset assertion measured outer-group offset, not padding inside the trigger. Strengthened regression and corrected row styling follow; this first pass alone is not final acceptance."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte (before and first after) (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before two failures/five passes; first after seven passes. User clarification reveals the first inset assertion measured outer-group offset, not padding inside the trigger. Strengthened regression and corrected row styling follow; this first pass alone is not final acceptance."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCollaboration.stories.svelte -t Agent (Started-prefix before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "One failure/three passes/five skips confirms unwanted Started prefix. Existing assertion updated to requested time-only text; relative time/full-date tooltip preserved."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte -t Grouped rows align (icon-padding before)",
+        "result": "pass",
+        "failures": 0,
+        "note": "The name filter selected zero tests (seven skips), so no regression acceptance claimed. Replaced with complete exact tool-group family, whose strengthened before-icon assertion fails once; subsequent final family qualifies the correction. icon-padding-before.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib collaboration::agent_ --locked; cargo test -p jj-store-service --test agent_sessions --locked; cargo test -p jj-store-service --test local_agent timing --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final three timing units, complete affected native binary eight tests and three companion timing tests pass. Failed hook spans, unmatched/missing/source/profile/duplicate/restarted/backward evidence remain unknown. Local call/result cross separate captures; old pin remains untimed and current pin gains1250ms. units-final.log/native-final.log/local-final.log."
+      },
+      {
+        "command": "cargo check -p jj-store-service --all-targets --locked; pnpm dev:backend:build (initial/final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Service all-target check and explicit development binaries pass. Existing macOS compact-unwind linker warning retained. No installed executable changed. Initial preview restart overlapped initial build; definitive live proof uses completed final build and final restart."
+      },
+      {
+        "command": "pnpm contracts:generate (initial/final); pnpm test:contracts; affected native/local HTTP capture tests; node .local/agent-tool-duration/validate-contracts.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both exact LocalTrusted HTTP consumers pass; 34 actual responses conform, untimed hook/manual fixtures retain absent durations. Seven contract units and contract TypeScript check pass. Live known durations conform separately. Full unrelated contract inventory and root aggregate lanes are outside the targeted impact surface."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/collaboration-presentation.test.ts; pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven presentation units and both type checks pass with zero diagnostics. Duration formatter retains subsecond/zero values and rejects unknown, negative, noninteger or unsafe values."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Twenty direct session-row/layout/menu story interactions and accessibility checks pass after removing Started. Final icon correction reruns all direct story families below. No visual baseline approval."
+      },
+      {
+        "command": "jj describe -m Inset agent tool rows and show captured tool durations; jj rebase -r uqwlnutu -o rvkzvqxz; jj workspace update-stale; preview-only pnpm dev:backend:restart with JJ_STORE_DEV_ROOT, ports7470/7472 and explicit main-built development binary paths",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main owns implementation. Clean preview is a descendant refreshed for source HMR. Only preview backend replaced; fixture/native state and main7460/7462/native desktop preserved. Final tree identity checked after commit."
+      },
+      {
+        "command": "pnpm exec tsx .local/agent-tool-duration/live.ts after; Python before/after snapshot/identity/status assertions; Cua fresh background tab, DOM metadata and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both existing exec calls gain13153ms and464ms without changing snapshot revision113/state39 or tool status/IDs. DOM confirms duration immediately precedes chevron; six session rows show relative times only, retaining full-date tooltips. Temporary tab closed. Initial browser proof records outer-group inset; final icon proof is recorded below."
+      },
+      {
+        "command": "Final icon-padding story family, live user-tab measurements and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final four direct story families:27 interactions/accessibility checks pass. Actual live user tab measures paddingInlineStart8px and iconInset8px INSIDE both tool triggers, rootInset0; message padding8px. Duration remains immediately before chevron. Screenshot icon-padding.png and DOM proof icon-padding.json. User tabs, drafts, route/preferences untouched; temporary proof tab closed."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; pnpm format:rust:check; focused Prettier; pnpm spec:first; pnpm spec:validate; pnpm check:progress; historical evidence-prefix check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final architecture, owned UI, package boundaries, Rust formatting, changed-file Prettier, spec-first, canonical validation and136-task progress pass.405 historical evidence objects and raw prefix retained. Governance draft issue corrected; root aggregates/full workspace/release/visual baseline qualification not run under targeted policy."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte (strengthened icon regression before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "One failure/six passes proves actual row padding before icon is zero. Corrected padding from outer group to actual grouped/standalone trigger; icon-padding-regression.log."
+      },
+      {
+        "command": "pnpm check:progress (draft evidence)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Draft runs used unsupported pending values and combined failure counts with final pass results. Split before failures from after passes and replaced all placeholders with actual results; no historical evidence edited. progress-first.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (after final icon correction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both final type checks zero errors/warnings; catalog175-module boundary passes. web-check-icon.log and catalog-check-icon.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Tool timing and directly affected Agent list/transcript presentation only; no milestone promotion, evidence rewrite, reimport/reset, publication, installed-tool change or unrelated restart. Full release/harness qualification, root aggregates/full Rust workspace, unrelated contract inventory and visual baseline approval are outside narrow acceptance. Prior strict Clippy baseline warnings remain separately recorded in E-M18-007; this slice runs affected all-target check.",
+    "next": "Use refreshed preview. Known recorded duration appears before each tool detail chevron; padding belongs inside each row before its icon. Unknown timing stays absent; broader release and visual qualification remain separate."
+  },
+  {
+    "id": "E-M18-009",
+    "tasks": ["M9.5", "M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change xrpomkus",
+    "kind": "Compact, highlighted, borderless XML prompt rows with explicit child indentation",
+    "versions": "Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; existing CodeMirror XML and Lezer highlight parsers; released Design Core Collapsible/Button and safe Mira preview.",
+    "formats": "Presentation-only internal prompt metadata now carries guarded label/closing/compact values after safe Markdown sanitization. No source, transport/schema, persisted transcript, review-anchor, capture or server format changes. Arbitrary tags and attributes are escaped token text; one source-line Markdown leaf renders inline, other bodies retain disclosures.",
+    "files": [
+      "catalog/components/store-application/AgentPromptMarkup.stories.svelte",
+      "catalog/components/store-application/AgentToolGroups.stories.svelte",
+      "catalog/components/store-application/agent-tool-duration-play.ts",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-collaboration/StorePromptElement.svelte",
+      "web/src/lib/ui/store-collaboration/StorePromptTag.svelte",
+      "web/src/lib/ui/store-collaboration/prompt-elements-extension.ts",
+      "web/src/lib/ui/store-collaboration/prompt-tag-tokens.ts",
+      "web/src/lib/ui/store-collaboration/remark-prompt-elements.ts",
+      "web/tests/browser/agent-prompt-markup.spec.ts",
+      "web/tests/vite/prompt-elements.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; read tracked/parent guidance, JJ skill, canonical UI/API/collaboration chapters and milestones; inspect Community Markdown presentation and Design Core Button/highlight tokens",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main change xrpomkus continues the authorized XML slice. Preview is a clean descendant. All implementation belongs to main. No unrelated changes, server resets or installed executables touched."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (initial compact regression)",
+        "result": "fail",
+        "failures": 1,
+        "note": "before.log: six existing stories pass; compact/highlighting story fails once before implementation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (initial after)",
+        "result": "fail",
+        "failures": 3,
+        "note": "stories.log: fragmented token spans changed accessible names for attribute-bearing triggers. Four pass; fixed by explicit aria-label preserving the exact original opening tag."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (accessible-name correction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories-corrected.log: all seven interaction/accessibility stories pass before subsequent indentation/border/attribute requests."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (initial cold build)",
+        "result": "fail",
+        "failures": 2,
+        "note": "browser.log: desktop/mobile fail Axe contrast, tag name #22863a on inherited inline-code background #f4f5f7, ratio4.24. Inert/malformed scenario passes. Copy, Markdown, keyboard and virtualization assertions pass before Axe."
+      },
+      {
+        "command": "pnpm check:architecture (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "architecture.log: preceding slice left AgentToolGroups story at413 counted lines after its late icon assertions, exceeding400. Historical E-M18-008 remains unchanged. Extracted existing duration play function into owned catalog helper; behavior unchanged."
+      },
+      {
+        "command": "pnpm spec:first (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "spec-first.log: UI change requires mapped api.md alongside ui.md. Updated mapped API paragraph without transport/schema changes; corrected run passes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (indentation regression)",
+        "result": "fail",
+        "failures": 1,
+        "note": "indent-before.log: six pass, new hierarchy assertion fails. Live before measurement independently confirms parent label1056px, compact child1046px, disclosed child1067px; only10px body padding and1px row border."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte (first indentation after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "stories-final.log:12 pass, compact geometry and attribute contrast fail. Exact tool family all seven passes. Neutral attribute palette changed to distinct constant token; mix toward foreground fixes lighter story surface contrast."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (subsequent indentation checks)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Each of stories-indent-final.log, stories-verified.log and stories-diagnostic.log records one compact geometry failure and six passes. Diagnostics show parent label586.1875px versus child346px: catalog lacked justify-start utility output. Replaced utility-dependent trigger layout with explicit owned CSS and retained16px geometry assertion; temporary diagnostic logging removed."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (first hierarchy build)",
+        "result": "fail",
+        "failures": 2,
+        "note": "browser-latest.log: desktop observes15px due transparent1px Button border; mobile asynchronous separate bounding-box reads encounter remount. Removed trigger border and made geometry read atomic within current subtree; assertions remain16px plus aligned sibling labels."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (first borderless build)",
+        "result": "fail",
+        "failures": 2,
+        "note": "browser-verified.log: functional/copy/geometry checks pass; Axe rejects tag color on highlighted message surface (#e5e5e6 ratio3.67) and mobile hover surface. Names mix20% toward foreground, attributes15%; no global palette change or weakened accessibility checks."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/prompt-elements.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "units.log and units-final.log: eight parser/token units pass. Generic arbitrary/Unicode names, inert attributes, exact character reconstruction, malformed syntax, nesting/code/reference boundaries preserved. No added dependency."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories-accepted.log: all seven interactions and Axe checks pass. Compact children and deeper leaf labels indent16px per level, align with disclosed siblings, keep closing tags/inline Markdown without buttons, retain <=4px sibling gaps and borderless rows; distinct attribute/string/name colors. Nested and multiline disclosures remain keyboard accessible."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "tool-stories.log and stories-final.log: exact seven direct tool stories pass after duration play helper extraction, preserving prior icon padding and timing behavior. No broader tool changes."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial/final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both affected type checks pass with zero errors/warnings; latest catalog176-module boundary. web-check-verified.log and catalog-check-verified.log. No Rust source, schema or contract generation changed."
+      },
+      {
+        "command": "pnpm web:build (initial/final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All builds pass, including build-accepted.log. Existing chunk-size warning retained. Production asset manifest generated; no Rust binary rebuild. Required cold browser verification consumes final built UI via existing explicit browser_preview executable on isolated7458."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (final cold build)",
+        "result": "pass",
+        "failures": 0,
+        "note": "browser-contrast.log and final browser-accepted.log: three scenarios pass, covering desktop activity, touch-mobile recorded chunks and inert/malformed sections. Real built-asset router, exact clipboard source, safe links/code, keyboard expand/collapse, virtual-row resizing, no overlap/viewport overflow, child indentation and Axe all qualify this surface. Fresh isolated service stopped by Playwright."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; focused Prettier; pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Architecture908-module, UI ownership, package boundaries, changed-file formatting and canonical/mapped chapter checks pass. Final style-only correction consumes the same narrow surface. Root aggregates/full Rust/full browser inventory remain out of scope."
+      },
+      {
+        "command": "jj --no-pager st; jj workspace update-stale (clean preview); Cua live DOM geometry, syntax colors and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preview7470 HMR synchronized from main. Actual Focus view measures parent393px, compact children409px, grandchildren425px; all row and trigger borders0. Attribute type blue, name green, quoted value navy. Current user view opened transient disclosures for inspection; route, source, drafts, settings, preferences unchanged. Temporary proof tab closed. Screenshot .local/agent-xml-compact/after.png and geometry.json; no visual baseline approval."
+      },
+      {
+        "command": "pnpm check:progress; final architecture check; historical evidence-prefix assertions",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress-final.log:136 tasks pass. architecture-accepted.log:908-module source limits pass after final CSS. All406 prior evidence objects and raw prefix remain unchanged; no milestone status promoted. Main slice committed with explicit JJ message and clean preview refreshed afterward."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "XML transcript presentation and direct tool-story source-size correction only. No milestone promotion, historical evidence rewrite, Rust build, reimport/reset, service installation, main-runtime restart or publication. Root aggregates, full browser/Storybook inventories, unrelated packages and visual baseline approval are out of scope under targeted verification policy.",
+    "next": "Use refreshed preview7470. Broader harness/release and visual-baseline qualification remain separately governed."
+  },
+  {
+    "id": "E-M18-010",
+    "tasks": ["M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change truyzyxr",
+    "kind": "Usable capture loading, grouped Codex settings and harness-filtered source table",
+    "versions": "Node24.10.0; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; released Design Core Skeleton, Collapsible, Button, Table, Select and Badge; existing browser_preview binary.",
+    "formats": "UI and ordinary-read policy only. Existing CaptureSettings, CaptureStatus, CaptureSourcePage and receipt contracts remain unchanged. GET capture_control_busy retries at most five attempts with150/300/450/600ms delays, cancellable on closure. POST commands retain exact identity and are never automatically retried. Harness filtering is local presentation over loaded sources; paths/native keys remain absent from source rows.",
+    "files": [
+      "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+      "catalog/components/store-application/capture-harness-play.ts",
+      "catalog/components/store-application/capture-loading-play.ts",
+      "catalog/fixtures/CaptureSettingsFixture.svelte",
+      "catalog/fixtures/capture-management.ts",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "web/src/lib/controller/capture-errors.ts",
+      "web/src/lib/controller/capture-http.ts",
+      "web/src/lib/controller/capture-observations.ts",
+      "web/src/lib/controller/capture-settings-management.ts",
+      "web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureHarnessConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureLoading.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+      "web/tests/browser/local-capture-loading.spec.ts",
+      "web/tests/browser/local-capture-settings.spec.ts",
+      "web/tests/vite/capture-freshness.test.ts",
+      "web/tests/vite/capture-observation-http.test.ts"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager workspace list; read tracked/parent AGENTS, JJ and shadcn-svelte skills, owning canonical UI/API/collaboration chapters and milestone ledger; inspect Community settings and released Design Core primitives",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main continued authorized slice truyzyxr; clean preview uqwlnutu. Memory quick lookup gave no task-specific implementation evidence. All tracked edits belong to this slice."
+      },
+      {
+        "command": "Admitted live GET /v1/local/capture/settings, /v1/local/capture and /v1/local/capture/sources?limit=100 with protocol and same-origin Fetch Metadata headers",
+        "result": "pass",
+        "failures": 0,
+        "note": "Saved/effective settings are valid. Initial status/source409 capture_control_busy is transient worker coordination; four admitted busy reads precede200 within approximately400ms. Missing admission headers correctly403; no bypass. Artifacts .local/agent-settings-loading/{settings-before,status-before,sources-before,status-admitted}.json."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (loading before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "stories-before.log:14 existing stories pass, two new loading/busy regressions fail before implementation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-observation-http.test.ts web/tests/vite/capture-freshness.test.ts (before)",
+        "result": "fail",
+        "failures": 4,
+        "note": "units-before.log: seven tests pass; four retry/loading regressions fail. Two expected pre-implementation rejected-read diagnostics recorded; after runs have no unhandled errors."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (loading after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories-after.log:16 interactions/accessibility stories pass; initial fixture captured-prop warnings subsequently corrected with untrack."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (harness before)",
+        "result": "fail",
+        "failures": 3,
+        "note": "harness-before.log:15 pass. Group/table regressions and updated table-layout expectation fail before implementation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (intermediate harness after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "harness-after.log:16 pass. Corrected test assumptions about collapse animation and Select button/listbox semantics; no forced interactions or weakened assertions."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (intermediate verified/accepted)",
+        "result": "fail",
+        "failures": 1,
+        "note": "stories-verified.log and stories-accepted.log:17 pass, one fails from pointer-events lock during Select closing animation. Wait for restored pointer interaction before next click; test still proves exact selected import source."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories-final.log:18 stories pass. Loading and real refusal notifications, draft retention, keyboard Codex disclosure/avatar, semantic source table, mixed harness filters/stable labels, styled counts, empty filter coverage, qualified import guards and exact selector all pass. Visual-pending remains."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-observation-http.test.ts web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-settings.test.ts web/tests/vite/production-capture-management.test.ts (after/verified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "units-after.log and units-verified.log:31 tests across five files pass, no unhandled diagnostics. Retries are bounded, GET-only and cancellable; real refusals/unknown commands retain guarded state and stable identity."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial/intermediate)",
+        "result": "fail",
+        "failures": 7,
+        "note": "Initial web check passed; catalog had two fixture prop-capture warnings. Intermediate web had one $state shadowing error; catalog had five Testing Library API errors and one nonreactive fixture warning. Corrected captureState naming, documented role/label APIs, fixture untrack and reactive accepted-command state. Recorded logs retained."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (accepted)",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check-verified.log and catalog-check-accepted.log: zero errors/warnings; catalog178-module boundaries pass. Production stays independent of catalog. No contract generation required."
+      },
+      {
+        "command": "pnpm check:architecture (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "architecture.log:407 counted story lines exceed400. Existing layout/loading plays extracted into owned catalog helpers; all behavior and assertions retained."
+      },
+      {
+        "command": "pnpm check:architecture (verified/final); pnpm check:ui-ownership; pnpm check:boundaries; pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "architecture-final.log:912 modules pass. Ownership, package boundaries and protected-source/spec mappings pass; canonical validation has22 chapters167 requirements. Focused formatting uses changed UI/controller/test/doc files; historical ledger never whole-file formatted."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "build.log: fresh production bundle and asset manifest pass; existing chunk-size warning retained. No Rust build. Cold tests use existing explicit target/debug/examples/browser_preview on isolated7458, then Playwright stops it."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/agent-settings-loading/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "browser.log: all seven cold tests pass. Real built router verifies delayed initial loads, skeletons and visible disabled controls, two Busy refusals then recovery for each read with no unavailable toast; Codex collapse/draft/global controls; table border/radius, mixed filters/counts/stable exact-selector imports; mobile scroll/no viewport overflow; notification dismissal and pending intent; lifecycle polling and capability gate; Axe passes."
+      },
+      {
+        "command": "jj rebase -r uqwlnutu -d truyzyxr; jj workspace update-stale (clean preview); Cua live DOM and screenshots",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preview7470 source refreshed without backend/main-runtime restart. Real local configuration shows global settings plus avatar-bearing Codex CLI/Desktop disclosure. Sources show4 loaded/observed; Cursor filter shows0 rows while retaining total4. No false unavailable toast; no real config/control/import submitted. Screenshot .local/agent-settings-loading/sources-preview.png. Temporary proof tab is closed after inspection; user tab retained."
+      },
+      {
+        "command": "pnpm check:progress; pnpm catalog:check (final); focused pnpm exec prettier --check; final historical evidence-prefix assertions",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress.log:136 tasks pass. catalog-check-final-accepted.log: zero errors/warnings,178-module boundaries pass. format-check.log: all21 changed source/test/chapter files pass; append-only ledger excluded from whole-file formatting. All407 prior evidence objects and their raw JSON prefix retained. configuration-preview.png also records collapsed Codex/global separation. Temporary proof tab closed; user tab remains open."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Installation Agents settings and their direct controller observations only. Existing user/main-runtime/desktop processes and server config untouched. No Rust build, harness reader change, reimport/reset, installation or publication. Root aggregates, full browser/Storybook/Rust inventory, other harness qualification and visual baseline approval are out of scope under the targeted verification policy. No milestone promoted.",
+    "next": "Try Configuration and Sources in refreshed preview7470. Retain focused loading/group/filter/notification regressions; broader harness and release work stays deferred."
+  },
+  {
+    "id": "E-M18-011",
+    "tasks": ["M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change vsusztpy",
+    "kind": "Source-table avatars, combined filters, icon history actions and observation freshness footer",
+    "versions": "Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; released Design Core Table/Select/Button/Badge; owned CommunityMemberAvatar and CommunityRelativeTime; existing browser_preview executable.",
+    "formats": "Presentation and internal installation-controller metadata only. sourcesObservedAt is browser-clock milliseconds on validated accepted coverage/paging; null until acceptance. No wire/schema/server/persisted transcript changes. Source filters preserve selectors, unfiltered coverage and cursors. No per-source activity/modification timestamps are inferred.",
+    "files": [
+      "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+      "catalog/components/store-application/capture-harness-play.ts",
+      "catalog/components/store-application/capture-source-table-play.ts",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "web/src/lib/controller/capture-management.svelte.ts",
+      "web/src/lib/controller/capture-observations.ts",
+      "web/src/lib/controller/capture-types.ts",
+      "web/src/lib/ui/store-settings/StoreCaptureSourceFilters.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSourceFooter.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+      "web/src/lib/ui/store-settings/capture-source-presentation.ts",
+      "web/tests/browser/local-capture-loading.spec.ts",
+      "web/tests/vite/capture-freshness.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/capture-freshness.test.ts#source observation time advances only after accepted coverage",
+      "web/tests/vite/capture-freshness.test.ts#source paging advances observation time only for a validated page"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Refine capture sources with harness avatars, status filters and freshness footer\"; read owning UI/API/collaboration chapters and ledger; inspect Community runtime relative-time presentation and released Design Core table/button exports",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean main started at vsusztpy after96ffe099. Current source contract has no per-source update timestamp. Quick memory search provides no task-specific implementation facts. New UI remains owned; no sibling source imports."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "stories-before.log:18 existing stories pass; new source avatar/external-status-filter/icon/footer regression fails before implementation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "units-before.log:8 existing tests pass; new accepted observation-time regression fails before implementation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "stories-after.log:18 pass, one old row-count assertion includes a newly added spanning footer. Corrected assertions to count body rows and independently verify footer; no product assertions removed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories-final.log:19 stories pass including interaction/accessibility. First cells identify Codex/Cursor with owned avatars; filters outside border combine over stable source labels; import is icon-only with accessible name; footer spans4 columns and uses shared relative time; exact import selector and prior draft/notification/loading guards retained. Visual-pending remains."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-settings.test.ts web/tests/vite/capture-observation-http.test.ts web/tests/vite/production-capture-management.test.ts (after/final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "units-after.log:32 pass; units-final.log:33 across five files pass with paging freshness added. First successful source observation and accepted continuation update browser time; Busy, real unavailable and rejected duplicate paging retain previous timestamp and selected coverage."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial/final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check-final.log and catalog-check-final.log: zero errors/warnings; catalog179-module boundary passes. No generated contract change or Rust lane required."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "build.log: fresh production bundle and asset manifest pass; existing chunk-size warning retained. Cold UI uses explicit existing target/debug/examples/browser_preview without Rust rebuild."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "browser.log: all7 cold tests pass. New table regression measures both filters above/outside border and trailing alignment, avatar first-cell image, combined Codex/degraded filtering, icon-only accessible history button,4-column footer and datetime; desktop/mobile Axe, narrow-screen containment, exact selector, drafts, notifications, loading/retry and polling lifetime remain qualified. Isolated7458 service stopped by Playwright."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership; focused pnpm exec prettier --write/--check",
+        "result": "pass",
+        "failures": 0,
+        "note": "architecture-final.log:916 modules; boundaries.log:17 packages; ownership.log and format-check.log pass. Production table/filter/footer helpers stay under governed source budgets and independent of catalog. Ledger never whole-file formatted."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "spec-first.log: changing capture-types internal controller metadata requires mapped API chapter. Added explicit browser-only successful observation-time semantics to canonical API chapter; no schema or public response change."
+      },
+      {
+        "command": "pnpm spec:first (final); pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-first-final.log and spec-validate.log pass with UI/API/collaboration owning chapters. Canonical requirements distinguish accepted coverage freshness from transcript/file/server update time."
+      },
+      {
+        "command": "jj rebase -r uqwlnutu -d vsusztpy; jj workspace update-stale (clean preview); Cua live table DOM/screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preview7470 shows Codex avatars, two trailing filters above rounded table, icon imports and full-width footer with current coverage,4 shown/loaded/observed and Updated just now. .local/capture-source-table/after.png saved after ready observation. Temporary proof tab closed; user tab retained. No real capture/import/config command submitted; existing main/desktop/backend processes unchanged."
+      },
+      {
+        "command": "pnpm check:progress; prior evidence object/raw-prefix preservation assertions",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress.log:136 tasks pass. All408 prior evidence objects and raw JSON prefix preserved; ledger not whole-file formatted."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Agents source-table presentation and its internal observation metadata only. No milestone promotion, historical evidence rewrite, server configuration mutation, real history import, Rust build, service reset/install/restart or publication. Root aggregates, full browser/Storybook/Rust inventories, new harness qualification and visual baseline approval remain out of scope under targeted verification.",
+    "next": "Use refreshed preview7470. Source update time describes accepted coverage reads; per-source event/modification timing would need separately qualified server evidence."
+  },
+  {
+    "id": "E-M18-012",
+    "tasks": ["M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change mpsxrmoz",
+    "kind": "Compact source repository navigation, retained-refresh footer spinner and fair bounded coverage observations",
+    "versions": "Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; Rust1.98.1/macOS ARM64; released Design Core Table/Spinner; existing browser_preview and development RustFS executables.",
+    "formats": "UI first-cell repository links and3-column colspan only; fair one-second acquisition of existing management mutex for status/source/receipt reads. Commands, held physical journals, owned blocking cancellation, authorization, wire schemas, native roots and source formats unchanged. Browser observation freshness remains accepted-read time.",
+    "files": [
+      "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+      "catalog/components/store-application/capture-source-table-play.ts",
+      "catalog/fixtures/CaptureSettingsFixture.svelte",
+      "crates/jj-store-server/src/capture_management/imports.rs",
+      "crates/jj-store-server/src/capture_management/observation.rs",
+      "crates/jj-store-server/src/capture_management/sources.rs",
+      "crates/jj-store-server/src/capture_management/tests/observations.rs",
+      "crates/jj-store-server/src/capture_management/tests.rs",
+      "crates/jj-store-server/src/capture_management.rs",
+      "docs/capture-preview.md",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSourceFooter.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSourceIdentity.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/tests/browser/local-capture-loading.spec.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-server/src/capture_management/tests/observations.rs#cached_observations_queue_before_later_import_work",
+      "crates/jj-store-server/src/capture_management/tests/observations.rs#queued_observation_rechecks_current_authority",
+      "crates/jj-store-server/src/capture_management/tests/observations.rs#timed_out_or_cancelled_observation_releases_its_queue_place"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; read canonical UI/API/CLI/collaboration and milestone chapters; inspect Community then released Design Core Table/Spinner; CDP live capture request timings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean main mpsxrmoz after4eff7363. Sources are worker watch-channel catalogs, not request-triggered transcript scans. Persisted private source identities/cursors are separate from reconstructed runtime coverage. Live settings reads8-10ms; status/sources repeatedly409 Busy with150/300/450/600ms backoff and5s fallback polling."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-server --lib capture_management::tests::observations (before)",
+        "result": "fail",
+        "failures": 3,
+        "note": "rust-before.log: all3 new queue, authority and cancellation regressions fail because reads try-lock immediately."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "stories-before.log:18 pass/2 fail; separate repository header persists and refreshing footer has no spinner."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-server --lib capture_management::tests::observations (after and final); cargo check --locked -p jj-store-server",
+        "result": "pass",
+        "failures": 0,
+        "note": "rust-regression.log and rust-regression-final.log:3 pass. FIFO tests cover status/source/receipt reads preceding later import waiters, current authority after queue admission, one-second Busy and cancellation queue cleanup. rust-check.log passes. Existing linker unwind warning retained."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-server --test capture_management source_pages_",
+        "result": "pass",
+        "failures": 0,
+        "note": "rust-http-sources.log:2 pass for bounded cached pages and current actor/configuration/installation/physical-journal withholding. No wire/schema/generated response change."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories-accepted.log:21 pass including interaction/accessibility. First-cell icon repository link preserves callback identity; no repository column;3-column footer; spinner retains rows and clears on ready; unsaved Agent draft blocks navigation without clearing the draft."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-settings.test.ts web/tests/vite/capture-observation-http.test.ts web/tests/vite/production-capture-management.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "units.log:33 pass across5 direct capture files, preserving pending request identity, accepted source freshness and cancellation."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "browser.log:7 pass/1 fail. New navigation fixture omitted repository from bootstrap, so the expected named repository was absent. Added explicit linked bootstrap only for the navigation scenario; retained actual route and authorization assertions."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold source refresh retains coverage\"; pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "browser-regression.log:1 pass; browser-final.log:8 pass cold. Actual production Settings repository link closes Settings and selects authorized files page; gated source refresh retains rows and accepted datetime, shows footer spinner and clears it. Existing loading/busy, drafts, exact imports, notification dismissal, polling lifetime, desktop/mobile/Axe and narrow containment remain qualified. Isolated7458 service stopped; no Rust rebuild for browser fixture."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership; focused Prettier and rustfmt --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check-final.log/catalog-check.log: zero errors/warnings,179-module catalog boundary. architecture-final.log:917 modules; boundaries.log:17 packages; ownership.log and format-check.log pass. Initial redundant link role warning and rustfmt module-order diagnostics corrected. Ledger never whole-file formatted."
+      },
+      {
+        "command": "pnpm web:build (final); pnpm spec:first; pnpm spec:validate; pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "build-final.log passes with existing chunk-size warning. spec-first.log:17 protected files/4 owning chapters; spec-validate.log:22 chapters/167 requirements. backend-build.log passes with existing linker warning; checkout-only CLI/server binaries, no installed executable replacement."
+      },
+      {
+        "command": "jj rebase -r uqwlnutu -d mpsxrmoz; jj workspace update-stale; explicit development executable/runtime paths pnpm dev:capture:restart in preview; CDP timing/DOM/screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preview7470/7472 backend restarted using main target/debug/jj-store and existing embedded runtime. Vite retained, isolated fixture/history preserved, main service/desktop untouched. Live4 source pages all200 with80/109/137/138ms response latency; whole observed settings/status/source chains about130-200ms. This is warm read evidence, not a cold-import guarantee. Real compact table shows repo links under titles and3-column footer. after.jpg and live-timings.json saved; temporary proof tab closed and user tab retained. No real Import/Pause/Rescan/config save submitted."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check docs/capture-preview.md spec/src/api.md spec/src/cli.md spec/src/collaboration.md spec/src/ui.md (final after plan-note restoration)",
+        "result": "pass",
+        "failures": 0,
+        "note": "17 protected files/5 mapped chapters,22 chapters/167 requirements and136 tasks validated. Focused documentation formatting passes. All409 prior evidence objects and raw JSON prefix preserved; only E-M18-012/E-M18-013 updated. Extra broad diagnostic failures remain explicit; root aggregates, other harness/release qualification and visual baseline approval remain outside this narrow acceptance."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Narrow source-table/coverage-read slice only. No milestone promotion, new reader, historical evidence rewrite, wire generation, installed binary/service/main-runtime changes, real import/config command, reset, publication or visual baseline approval. Additional server-library survey failures are recorded independently in E-M18-013; this entry does not claim a full Rust-suite pass. Cold sanitizer/import preparation remains explicitly Deferred in the agreed preview plan.",
+    "next": "Use compact Sources in preview7470; retain focused queue/navigation/spinner coverage. Broader cold sanitizer and timed import qualification stays in E-M18-013 and the deferred roadmap."
+  },
+  {
+    "id": "E-M18-013",
+    "tasks": ["M18", "M18.2"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change mpsxrmoz",
+    "kind": "Separate broad server-library diagnostic and baseline cold-publication timeout reproduction",
+    "versions": "Rust1.98.1/macOS ARM64 debug profile; same checked-in native sanitizer and retained capture fixtures.",
+    "formats": "Diagnostic evidence only; no assertion, timeout, worker ownership, sanitizer, persistence or wire format weakened. Previous three management production files temporarily selected from parent vsusztpy for baseline compilation, then restored byte-for-byte from task backup before final queue regression.",
+    "files": [
+      "spec/src/milestones.md",
+      "docs/capture-preview.md",
+      "crates/jj-store-server/src/capture_management/tests/scheduled_import.rs",
+      "crates/jj-store-server/src/capture_management/tests/scheduled_import/handoff.rs",
+      "crates/jj-store-server/src/capture_supervisor/opencode/tests.rs",
+      "crates/jj-store-server/src/capture_supervisor/tests.rs"
+    ],
+    "tests": [
+      "crates/jj-store-server/src/capture_management/tests/scheduled_import.rs#accepted_source_refuses_other_request_without_replacing_original_owned_work"
+    ],
+    "runs": [
+      {
+        "command": "cargo test --locked -p jj-store-server --lib",
+        "result": "fail",
+        "failures": 15,
+        "note": "rust-lib.log:95 passed/15 failed/110 total,863.14s. Escalated beyond focused read checks to inspect all existing control/import/runtime/storage consumers sharing the coordination boundary. Thirteen scheduled-import cases fail publication/readiness deadlines (12 at shared published helper scheduled_import.rs:76; one at handoff.rs:47); OpenCode publication did not enter gate; source-degradation readiness times out. New observation regressions, existing cancellation/revocation/physical-journal, foreground, storage lifetime and cold running-loss ownership tests pass. No full-library pass is claimed."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-server --lib capture_management::tests::scheduled_import::accepted_source_refuses_other_request_without_replacing_original_owned_work -- --exact --nocapture (current)",
+        "result": "fail",
+        "failures": 1,
+        "note": "rust-import-regression.log: same scheduled_import.rs:76 ten-second publication wait expires; process finishes166.43s because retained cold owner drains. No control/source observation is performed after scheduling in this scenario."
+      },
+      {
+        "command": "Temporarily select parent production management status/source/import read implementations via jj file show -r @-; cargo test --locked -p jj-store-server --lib capture_management::tests::scheduled_import::accepted_source_refuses_other_request_without_replacing_original_owned_work -- --exact --nocapture (baseline); restore and verify saved source bytes",
+        "result": "fail",
+        "failures": 1,
+        "note": "rust-import-baseline.log: identical scheduled_import.rs:76 Elapsed failure with pre-change try-lock implementations; process finishes122.71s. This representative cold publication failure predates the queue change. Other broad failures were not individually baseline reproduced and remain unqualified. Current implementation restored after baseline compilation; final three queue regressions pass."
+      },
+      {
+        "command": "pnpm spec:first (after deferred-plan clarification)",
+        "result": "fail",
+        "failures": 1,
+        "note": "JST-GOV-002: docs/implementation-plan.md mapped to architecture.md, which this narrow slice does not change. The extra plan note duplicated existing Deferred scope and was restored from parent instead of expanding the implementation."
+      },
+      {
+        "command": "jj restore --from @- -- docs/implementation-plan.md; verify original ledger prefix and all409 prior evidence objects",
+        "result": "pass",
+        "failures": 0,
+        "note": "Removed only this task's redundant plan edit. Existing cold sanitizer deferral stays unchanged in the accepted plan; current diagnostics remain in E-M18-013 and docs/capture-preview.md. All409 original objects and their raw JSON prefix retained."
+      }
+    ],
+    "result": "fail",
+    "remaining": [
+      "Cold debug sanitizer/import publication qualification and the 13 scheduled import deadline failures remain Deferred in the agreed preview roadmap; one representative is baseline-reproduced.",
+      "The separate OpenCode publication-gate and source-degradation readiness failures remain unqualified; assess independently before claiming broad server/harness completion."
+    ],
+    "scope": "Separate broad diagnostic, not the narrow Sources UI/read acceptance E-M18-012. Existing user-requested usable preview and UI priority retain explicit deferred cold sanitizer/native preparation optimization. No milestone promotion, weakened test, new publication guarantee, installation or reset. Every test process and isolated UI fixture has exited.",
+    "next": "Keep these failures visible. Reopen cold sanitizer/setup and affected publication/readiness qualification as a separate deferred slice; preserve the assertions and gate/ownership contracts."
+  },
+  {
+    "id": "E-M18-014",
+    "tasks": ["M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change ltmupmlx",
+    "kind": "Searchable multiple-status CommandView for installation capture sources",
+    "versions": "Svelte 5.57.1; installed released Design Core 0.1.2 CommandView/Popover/Button; Vitest 4.1.11; Playwright 1.63.0; existing isolated browser_preview binary.",
+    "formats": "UI-local status arrays only: union of statuses intersects the selected harness over loaded coverage. Existing sources, selectors, import commands, cursor and observed counts unchanged. No server/configuration/public-wire format change.",
+    "files": [
+      "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+      "catalog/components/store-application/capture-source-table-play.ts",
+      "catalog/components/store-application/capture-status-command-play.ts",
+      "web/src/lib/ui/store-settings/StoreCaptureSourceFilters.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureStatusFilter.svelte",
+      "web/src/lib/ui/store-settings/capture-source-presentation.ts",
+      "web/tests/browser/local-capture-loading.spec.ts",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/browser/local-capture-loading.spec.ts#cold grouped Codex configuration and harness-filtered source table retain identities"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; read owning UI/API/governance and milestone chapters; inspect CommunityProjectsActivityFilter then released Design Core CommandView/Popover and official shadcn command/combobox documentation",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main workspace clean after 5e440835. New repository-owned composition uses existing released primitives and source status inventory; Community is a design reference without copied implementation or dependency."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte -t \"Source status command searches\" (before selection attempt)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 22 scenarios skipped because generated test names use PascalCase. This is not accepted regression evidence; the complete exact story file was run next."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "before.log: 21 pass / 1 fail. New SourceStatusCommandSearchesTogglesAndCombinesMultipleSelections cannot find searchable command input in the former single-select control."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (initial after); same file -t SourceStatusCommand",
+        "result": "fail",
+        "failures": 1,
+        "note": "stories.log: 21 pass / 1 fail because Command input uses its owning Root label for the accessible name. Set that label explicitly. exact.log then reached the harness-switch/reopen step and failed during Select exit pointer suppression; added the existing bounded pointer-readiness assertion without weakening interaction checks."
+      },
+      {
+        "command": "pnpm catalog:check (initial and intermediate)",
+        "result": "fail",
+        "failures": 6,
+        "note": "catalog-check.log: six inappropriate testing-library exact properties. Removed them; string role queries remain exact by default. catalog-check-final.log exposed one remaining multiline instance, then corrected it. No production diagnostic suppression."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold grouped Codex configuration\" (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "browser.log: open command popup lacked landmark/dialog semantics and failed Axe region rule. Added labelled dialog semantics to the Popover content. Keyboard and multi-status selection assertions had already passed; Axe assertions retained."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (accepted)",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories-accepted.log: all 22 direct capture scenarios pass, with interaction/accessibility. New regression covers search, Enter selection, toggling both directions, union/intersection, checked state and accessible descriptions, retained loaded/observed counts, empty results, Escape focus return, selection preservation, query reset and All statuses clearing."
+      },
+      {
+        "command": "pnpm web:build (initial and final); pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold grouped Codex configuration\" (final and accepted)",
+        "result": "pass",
+        "failures": 0,
+        "note": "build-final.log passes with existing chunk-size/plugin timing diagnostics. browser-final.log and browser-accepted.log each pass the exact cold production Sources journey using a freshly launched isolated fixture. Accepted run includes multiple selection/search/reset, desktop and open mobile popup Axe, popup viewport containment, stable labels/counts and exact imported original selector. Desktop/mobile screenshots under .local/capture-source-table/browser-results; fixture exited."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (accepted); pnpm check:architecture; pnpm check:ui-ownership; focused changed-file Prettier check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero web/catalog errors or warnings; catalog 180 modules; web architecture 919 modules; ownership and focused formatting pass. UI-only slice: no Rust, root aggregates, full browser or repository Storybook inventories. Visual baselines remain unapproved."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Missing mapped api.md chapter for protected web changes. Added the existing API boundary: filters only present loaded observations and cannot change query/paging/selector authority."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate (after mapped API clarification)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Eight protected files / two canonical chapters; 22 chapters / 167 requirements validated. UI chapter owns multiple-status search, any-status matching, clear behavior and focus. Existing milestone statuses retained."
+      },
+      {
+        "command": "jj rebase -r uqwlnutu -d ltmupmlx; jj workspace update-stale",
+        "result": "pass",
+        "failures": 0,
+        "note": "Updated the clean preview workspace to this main UI slice; existing Vite HMR can serve it without backend restart or fixture reset. No real import, configuration write, installed service change or publication."
+      },
+      {
+        "command": "pnpm check:progress (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Ledger named-test validator accepts test declarations, not exported Storybook play helpers or bare file paths. Replaced those references with the exact checked-in Playwright test declaration; Storybook regression names remain documented in runs."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; focused Prettier (final with ledger)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Eight protected files / three canonical chapters (including milestone ledger),22 chapters/167 requirements; changed documentation/UI formatting passes. Existing 411 evidence objects and raw JSON prefix preserved."
+      },
+      {
+        "command": "pnpm check:progress (accepted); final historical evidence preservation audit",
+        "result": "pass",
+        "failures": 0,
+        "note": "136 tasks validated; all411 prior evidence objects/raw JSON prefix unchanged. Milestone statuses and prior deferred/broad diagnostic evidence retained."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Narrow Sources status-filter presentation only. Prior 411 evidence objects/raw prefix preserved; no milestone promotion or alteration of prior E-M18-013 broad diagnostic/deferred scope. Backend work, aggregate testing, additional harnesses and visual-baseline approval remain out of scope.",
+    "next": "Use the searchable multi-select in the main/preview Agents Sources tab; retain normal capture/settings refresh and import behavior."
+  },
+  {
+    "id": "E-M18-015",
+    "tasks": ["M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change rxzwlukn",
+    "kind": "Searchable multiple-repository source filter composed with status and harness",
+    "versions": "Svelte5.57.1; installed released Design Core0.1.2 CommandView/Popover/Button; Vitest4.1.11; Playwright1.63.0; existing isolated browser_preview executable.",
+    "formats": "UI-local repository selection arrays and shared owned command-filter composition only. Exact last-bound repository IDs, explicit unknown selection, unique options from all loaded rows. Native roots, source selectors/cursors, wire formats, imports, cached coverage counts and server policy unchanged.",
+    "files": [
+      "catalog/components/store-application/StoreCaptureSources.stories.svelte",
+      "catalog/components/store-application/capture-repository-command-play.ts",
+      "catalog/fixtures/CaptureSettingsFixture.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureCommandFilter.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSourceFilters.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureStatusFilter.svelte",
+      "web/src/lib/ui/store-settings/capture-source-presentation.ts",
+      "web/tests/browser/local-capture-loading.spec.ts",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/browser/local-capture-loading.spec.ts#cold repository source filtering composes with status and harness filters",
+      "web/tests/browser/local-capture-loading.spec.ts#cold grouped Codex configuration and harness-filtered source table retain identities"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; read current Sources UI/API requirements and inspect CommunityProjectFilesRepositoryCommand followed by the released/owned command composition",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main clean after a7b9879b. Reused existing owned status control as a common CommandView composition, retaining the status component entrypoint. Repository names use the existing catalog resolver; options retain full cached IDs and display compact ID context. No Community runtime/source dependency."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte -t SourceRepositoryCommand (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "before.log: exact new repository regression fails because the repository filter is absent;22 unrelated existing scenarios skipped. New test later moved to its own Sources story file for the catalog line budget."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (initial after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories.log:23 pass. New play exercises keyboard search, multiple repositories, unknown binding, toggling, status intersection, preserved counts/labels, empty combined results and All repositories reset."
+      },
+      {
+        "command": "pnpm check:architecture (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Capture Settings story module reached406 counted lines against400 maximum. Restored its prior unchanged content and placed the new repository scenario in StoreCaptureSources.stories.svelte; no budget or checker weakened."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/StoreCaptureSources.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories-final.log:23 pass across both direct story files with interaction/accessibility; existing status search/toggles/focus and source import/navigation guards still pass."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold (repository source filtering|grouped Codex configuration)\" (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "browser.log:1 pass/1 fail. New repository case interacted before first source coverage was accepted, during initial component handoff. Added explicit accepted3-row/current-coverage readiness assertions before querying and choosing repository options; original selection assertion retained."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold (repository source filtering|grouped Codex configuration)\" (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "build.log passes with existing chunk-size warning. browser-final.log:2 cold passes in newly launched isolated fixture. Repository selections use exact cached identities and intersect with harness/status; options remain available independently of other filters, search resets without retargeting, unknown binding/empty state/clear work. Desktop and390px open popup Axe and containment pass. Existing original-selector import and status keyboard behavior pass. Screenshots copied to .local/capture-repository-filter/after.png; fixture exited."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (initial/final); pnpm check:architecture (after story extraction); pnpm check:ui-ownership; focused changed-file Prettier",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero web/catalog errors/warnings;182-module catalog boundary;922-module web architecture; UI ownership and formatting pass. New shared control stays repository-owned and uses released Design Core. Root aggregates, Rust, full app/browser/catalog inventories and visual baselines are outside this UI-only slice."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nine protected files/two owning chapters;22 chapters/167 requirements. UI/API chapters specify loaded-only repository filtering, full identity matching, unique options, unknown observation semantics and no access/query/paging authority change."
+      },
+      {
+        "command": "jj rebase -r uqwlnutu -d rxzwlukn; jj workspace update-stale; screenshot inspection",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean preview workspace follows main UI change through existing Vite HMR. No backend restart, real capture/import/config mutation, fixture reset, installation or publication."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; focused canonical formatting (final with ledger)",
+        "result": "pass",
+        "failures": 0,
+        "note": "136 tasks;9 protected files/3 canonical chapters;22 chapters/167 requirements validated. Existing412 evidence objects and raw JSON prefix preserved, with no milestone promotion."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Narrow Sources repository filter and direct shared status-command presentation only. All412 prior evidence objects/raw JSON prefix preserved; milestone statuses unchanged, prior E-M18-013 broad diagnostics/deferred work retained. No claim of a full repository, Rust or multi-harness release pass.",
+    "next": "Use repository/harness/status filters in main and preview Sources settings; filters describe loaded coverage and do not enroll or authorize sources."
+  },
+  {
+    "id": "E-M18-016",
+    "tasks": ["M18.2", "M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change kzkswsvy",
+    "kind": "Five-profile capture settings and generated contracts",
+    "versions": "Cursor Desktop3.22.7; Cursor CLI2026.09.26-dd393fe; OpenCode1.18.30 configured profiles. Svelte5.57.1; Vitest4.1.11. Runtime qualification remains separate.",
+    "formats": "Optional credential-free loopback endpoint; distinct Cursor CLI profile; five configurable profiles. Existing saved/effective configuration and restart semantics retained.",
+    "files": [
+      "catalog/fixtures/capture-management.ts",
+      "catalog/components/store-application/StoreMultiHarnessSettings.stories.svelte",
+      "crates/jj-store-capture/src/profile.rs",
+      "crates/jj-store-cli/src/agent_commands/capture.rs",
+      "crates/jj-store-server/src/capture_config.rs",
+      "crates/jj-store-server/src/capture_management/report.rs",
+      "crates/jj-store-server/src/capture_management/settings.rs",
+      "crates/jj-store-server/tests/capture_management/settings.rs",
+      "crates/jj-store-service/src/capture_management.rs",
+      "crates/jj-store-service/src/capture_management/settings.rs",
+      "schemas/openapi.json",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/capture-configuration.ts",
+      "web/src/lib/controller/capture-types.ts",
+      "web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureHarnessConfiguration.svelte",
+      "web/src/lib/ui/store-settings/capture-source-presentation.ts",
+      "web/tests/vite/capture-settings.test.ts",
+      "spec/src/collaboration.md",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/cli.md",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-settings.test.ts (before/after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before6 pass/1 expected new regression failure; after7 pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test --locked -p jj-store-server --test capture_management settings::",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 pass,14 filtered."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI and TypeScript from public Rust types."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings;183 catalog modules."
+      },
+      {
+        "command": "pnpm exec vitest run --config .local/multi-harness/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/StoreMultiHarnessSettings.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Separate cold runs:22 existing and1 new interaction/axe pass. Local wrapper only permits symlinked dependencies; no tracked infrastructure change."
+      },
+      {
+        "command": "cargo check --locked -p jj-store-server -p jj-store-cli (shared CARGO_TARGET_DIR)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial exhaustive match error in CLI fixed; final check passes."
+      },
+      {
+        "command": "pnpm install --offline --frozen-lockfile; initial Storybook config",
+        "result": "fail",
+        "failures": 1,
+        "note": "Two installs refused pnpmfileChecksum mismatch; unchanged lockfile. Initial browser dependency request refused outside-workspace module; no tests ran. Ignored local FS allow wrapper resolves test runtime."
+      },
+      {
+        "command": "Changed-file Prettier; cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only intended tracked files changed."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+  "scope": "Settings/contracts slice only. Prior evidence and milestone statuses unchanged. Wider aggregate lanes out of scope under targeted policy; visual baselines pending.",
+    "next": "Wire and qualify OpenCode startup, then shared bounded Cursor JSONL capture."
+  }
 ]
-
 ```

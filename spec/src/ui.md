@@ -1900,3 +1900,12 @@ outcomes retain the original intent until a fresh observation resolves them.
 Operational failures use the shared notification service. Field validation and
 restart guidance may remain contextual. Remote and non-Admin connections do not
 expose editing. No credential or arbitrary TOML editing is introduced.
+
+Cursor and OpenCode configuration MUST use the same expandable avatar-bearing
+sections and divided settings rows as Codex. Cursor has independent Desktop/CLI
+toggles, root overrides and visible resolved defaults; OpenCode has a toggle and
+explicit local API endpoint. Global enablement and budgets remain outside
+harness sections. Loading skeletons, draft retention, notification-service
+errors, save/cancel columns and restart-required state apply to all harnesses.
+Sources and Agents reuse their existing avatars, repository links and filters.
+New harnesses with deferred inactive import MUST keep Import unavailable.

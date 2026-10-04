@@ -765,3 +765,10 @@ worker/extraction limits; old omitted fields use their established defaults.
 Generated contracts and actual LocalTrusted HTTP acceptance cover strict
 actor-free input, saved versus effective snapshots, conflicts and current
 authority rejection.
+
+The opt-in local capture extension adds Cursor Desktop 3.22.7, a distinct Cursor
+CLI 2026.09.26-dd393fe profile and OpenCode read-only API 1.18.30 to editable
+settings. The optional API endpoint is credential-free literal loopback.
+Generated contracts support five product profiles; exported OpenCode history
+remains withheld. Runtime qualification is recorded independently of
+configuration saves.

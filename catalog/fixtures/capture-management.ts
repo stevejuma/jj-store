@@ -144,6 +144,21 @@ export function captureSettings(enabled = true): CaptureSettings {
     restart_required: false,
     defaults: [
       {
+        profile: "cursor-desktop-transcript-v1",
+        product_version: "3.22.7",
+        roots: ["/Users/capture/.cursor/projects"],
+      },
+      {
+        profile: "cursor-cli-transcript-v1",
+        product_version: "2026.09.26-dd393fe",
+        roots: ["/Users/capture/.cursor/projects"],
+      },
+      {
+        profile: "opencode-read-only-api-v1",
+        product_version: "1.18.30",
+        roots: [],
+      },
+      {
         profile: "codex-cli-jsonl-v1",
         product_version: "0.156.1",
         roots: ["/Users/capture/.codex/sessions"],
