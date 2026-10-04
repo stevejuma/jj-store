@@ -1786,6 +1786,10 @@ filesystem roots. Cursor profiles expose resolved roots and independently
 qualified product versions. Existing saved/effective revision, conditional-save
 and restart semantics remain unchanged. Export is not editable or enabled.
 
+Grouping harness controls into shared presentation rows MUST preserve each
+profile's independent enablement, roots or endpoint in the saved draft. Opening
+or closing a harness row performs no configuration save or capture command.
+
 Configured runtime coverage supports up to five independently qualified product
 profiles. Cursor sources use cached ordinary coverage and repository binding,
 but never advertise an inactive-history import target. OpenCode endpoint errors

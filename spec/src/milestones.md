@@ -148,7 +148,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -72142,6 +72142,101 @@ entries.
     ],
     "scope": "Authorized local main-workspace review restart only. Prior implementation/qualification evidence unchanged; no milestone promotion, root aggregate lanes, fresh harness prompts, installed CLI replacement, publication or fixture reset.",
     "next": "Review the retained main settings tab at7460. Diagnose the existing fixture Agent-session read failure separately from passing configuration startup; preserve current-only AgentStore policy and retained user data."
+  },
+  {
+    "id": "E-M18-019",
+    "tasks": ["M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change smtutknl",
+    "kind": "Unified rounded harness configuration rows",
+    "versions": "Svelte 5, installed Design Core ghost Button and Collapsible; Chromium Storybook and main Vite HMR on macOS ARM64.",
+    "formats": "UI-only composition and geometry; one labelled rounded Settings group containing Codex, Cursor and OpenCode expandable rows. No configuration or capture contract change.",
+    "files": [
+      "web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreCaptureHarnessConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "spec/src/api.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager diff --stat; jj --no-pager diff spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main began clean on cbd0b428. Narrow layout change; historical evidence and milestone statuses retained."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte web/src/lib/ui/store-settings/StoreCaptureHarnessConfiguration.svelte web/src/lib/ui/store-settings/StoreSettings.css spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only changed production and canonical UI files formatted."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreMultiHarnessSettings.stories.svelte catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 files, 23 stories passed with blocking accessibility checks. Existing save/reload, independent profiles, disclosure and draft-retention interactions preserved. Visual baselines remain separately pending."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and 0 warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and 0 warnings; catalog boundaries passed for 183 modules."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 validator, 22 chapters, 167 requirements; no new sibling presentation imports."
+      },
+      {
+        "command": "CUA observation and reconnect of retained main review tab 12",
+        "result": "fail",
+        "failures": 2,
+        "note": "Old tab timed out on focus-emulation command twice. A fresh review tab in the same browser restored inspection; no service restart needed."
+      },
+      {
+        "command": "Fresh main UI review tab at http://127.0.0.1:7460/; Settings > Agents > Configuration; collapse all harnesses, inspect DOM styles, verify hover and keyboard Enter expansion/collapse, save screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Shared group has 1px border and 10px radius. Row wrappers have no side borders, radius or padding; following rows have 1px top separators. Cursor pointer hover uses accent background; Codex keyboard focus is visible with accent background and ring-colored border. Keyboard expansion exposes unchanged nested fields/defaults. /tmp/jj-harness-rows-review.png. Capture and drafts were not changed or saved."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Settings presentation maps to api.md as well as ui.md; added the independent-profile draft and disclosure-without-save contract to the API chapter."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte web/src/lib/ui/store-settings/StoreCaptureHarnessConfiguration.svelte web/src/lib/ui/store-settings/StoreSettings.css spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 validators, 22 chapters, 167 requirements; progress bookkeeping passed for 136 tasks; all changed production/UI chapter formatting passed."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md; format only E-M18-019 JSON entry; compare previous ledger entries to jj file show -r @-",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical API clarification formatted. All pre-existing evidence objects preserved exactly; no whole-ledger formatter churn."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte web/src/lib/ui/store-settings/StoreCaptureHarnessConfiguration.svelte web/src/lib/ui/store-settings/StoreSettings.css spec/src/ui.md spec/src/api.md (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first passed for 3 protected files and 3 canonical chapters; 5 validators, 22 chapters, 167 requirements; 136 tasks passed bookkeeping; all affected source and canonical formatting passed."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Requested harness layout in main only. UI checks, directly affected settings stories and live HMR review; Rust, public contracts, root aggregate lanes, service restart and visual-baseline approval out of scope. Existing main fixture Agent-session 503 and Cursor Desktop live qualification remain separate prior gaps.",
+    "next": "Review the grouped harness rows at http://127.0.0.1:7460/ under Settings > Agents > Configuration."
   }
 ]
 ```

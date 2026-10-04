@@ -184,12 +184,9 @@
 <style>
   :global(.store-capture-harness) {
     min-width: 0;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--card, var(--background));
   }
   :global(.store-capture-harness__trigger) {
+    --ui-button-radius: 0;
     width: 100%;
     height: auto;
     justify-content: flex-start;

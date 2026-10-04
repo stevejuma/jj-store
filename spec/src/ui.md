@@ -1746,13 +1746,14 @@ cold flow evidence do not approve visual baselines.
 ### Harness configuration and source coverage
 
 JST-UI-016 capture configuration MUST separate installation-wide enablement and
-resource limits from harness-specific settings. Each supported harness has a
-keyboard-accessible expandable section with its bundled avatar and nested
-settings in the existing divided Settings columns. The qualified Codex section
-contains CLI and Desktop capture toggles, folder overrides and resolved server
-defaults. Collapsing a section MUST retain the installation-owned draft and
-leave global settings and save/cancel controls available. Additional editable
-harness sections require qualified server configuration support.
+resource limits from harness-specific settings. Supported harnesses share one
+rounded Settings group with divided, keyboard-accessible expandable rows. Each
+row has its bundled avatar, hover and visible keyboard-focus feedback, and
+nested settings in the existing divided Settings columns. The qualified Codex
+row contains CLI and Desktop capture toggles, folder overrides and resolved
+server defaults. Collapsing a section MUST retain the installation-owned draft
+and leave global settings and save/cancel controls available. Additional
+editable harness sections require qualified server configuration support.
 
 Sources MUST use a semantic data table within the rounded Settings border, with
 source, state and history-action columns. Source identity includes the bundled
@@ -1901,14 +1902,15 @@ Operational failures use the shared notification service. Field validation and
 restart guidance may remain contextual. Remote and non-Admin connections do not
 expose editing. No credential or arbitrary TOML editing is introduced.
 
-Cursor and OpenCode configuration MUST use the same expandable avatar-bearing
-sections and divided settings rows as Codex. Cursor has independent Desktop/CLI
-toggles, root overrides and visible resolved defaults; OpenCode has a toggle and
-explicit local API endpoint. Global enablement and budgets remain outside
-harness sections. Loading skeletons, draft retention, notification-service
-errors, save/cancel columns and restart-required state apply to all harnesses.
-Sources and Agents reuse their existing avatars, repository links and filters.
-New harnesses with deferred inactive import MUST keep Import unavailable.
+Cursor and OpenCode configuration MUST share Codex's rounded harness group,
+expandable avatar-bearing rows and divided nested settings. Cursor has
+independent Desktop/CLI toggles, root overrides and visible resolved defaults;
+OpenCode has a toggle and explicit local API endpoint. Global enablement and
+budgets remain outside harness sections. Loading skeletons, draft retention,
+notification-service errors, save/cancel columns and restart-required state
+apply to all harnesses. Sources and Agents reuse their existing avatars,
+repository links and filters. New harnesses with deferred inactive import MUST
+keep Import unavailable.
 
 Cursor and OpenCode capture sources reuse the existing Agents presentation,
 harness avatars and cached Sources table with repository, harness and status

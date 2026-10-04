@@ -140,17 +140,24 @@
             {/each}
           </Field.Group>
         </div>
-        <StoreCaptureHarnessConfiguration {management} {busy} />
-        <StoreCaptureHarnessConfiguration
-          {management}
-          {busy}
-          harness="cursor"
-        />
-        <StoreCaptureHarnessConfiguration
-          {management}
-          {busy}
-          harness="open_code"
-        />
+        <h3 class="store-capture-configuration__heading">Harnesses</h3>
+        <div
+          class="store-settings__rows"
+          role="group"
+          aria-label="Harness configuration"
+        >
+          <StoreCaptureHarnessConfiguration {management} {busy} />
+          <StoreCaptureHarnessConfiguration
+            {management}
+            {busy}
+            harness="cursor"
+          />
+          <StoreCaptureHarnessConfiguration
+            {management}
+            {busy}
+            harness="open_code"
+          />
+        </div>
         <div class="store-settings__action-row">
           <div>
             <strong>Save configuration</strong>
