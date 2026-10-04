@@ -50,6 +50,7 @@ struct GuardedIndexStore {
     path: PathBuf,
     cache_policy: cache::Policy,
     resident: Option<Arc<cache::resident::Saved>>,
+    residents: Arc<cache::resident::Residents>,
     disk_verified: AtomicBool,
     access: Arc<dyn ReadAccess>,
     preparing: bool,
@@ -72,6 +73,21 @@ impl IndexStore for GuardedIndexStore {
         self.budget
             .check()
             .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
+        let selected = m::OperationId::from_slice(operation.id().as_bytes())
+            .map_err(|_| IndexStoreError::Read(Box::new(self.budget.fail(Error::Corrupt))))?;
+        if selected != self.access.operation()
+            && let Some(saved) = self.residents.get_memory_at(self.access.as_ref(), selected)
+        {
+            // The native operation/view still come from this request's Store.
+            // Reuse only exact immutable data; never load/copy the other slot.
+            self.budget
+                .authorize(self.access.as_ref())
+                .await
+                .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
+            return saved
+                .reader(self.budget.clone())
+                .map_err(|e| IndexStoreError::Read(Box::new(e)));
+        }
         if let Some(resident) = &self.resident
             && operation.id().as_bytes() != resident.operation.as_bytes()
             && !self.disk_verified.load(Ordering::Acquire)
@@ -187,6 +203,7 @@ pub(super) fn loader(
     budget: Arc<Budget>,
     cache_policy: cache::Policy,
     resident: Option<Arc<cache::resident::Saved>>,
+    residents: Arc<cache::resident::Residents>,
     access: Arc<dyn ReadAccess>,
     preparing: bool,
 ) -> Result<RepoLoader> {
@@ -204,6 +221,7 @@ pub(super) fn loader(
                 path: path.to_owned(),
                 cache_policy,
                 resident: resident.clone(),
+                residents: residents.clone(),
                 disk_verified: AtomicBool::new(false),
                 access: access.clone(),
                 preparing,
@@ -235,17 +253,14 @@ impl IndexStore for ResidentIndexStore {
         self.budget
             .check()
             .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
-        let failure = if operation.id().as_bytes() != self.saved.operation.as_bytes() {
-            Some(Error::NotCommitted)
-        } else if self.saved.index.num_commits() as usize > self.budget.limits.max_index_commits {
-            Some(Error::IndexBudget)
-        } else {
-            None
-        };
-        if let Some(error) = failure {
-            return Err(IndexStoreError::Read(Box::new(self.budget.fail(error))));
+        if operation.id().as_bytes() != self.saved.operation.as_bytes() {
+            return Err(IndexStoreError::Read(Box::new(
+                self.budget.fail(Error::NotCommitted),
+            )));
         }
-        Ok(self.saved.index.reader(self.budget.clone()))
+        self.saved
+            .reader(self.budget.clone())
+            .map_err(|e| IndexStoreError::Read(Box::new(e)))
     }
     fn write_index(
         &self,

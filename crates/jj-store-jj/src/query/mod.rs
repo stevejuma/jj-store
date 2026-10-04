@@ -545,6 +545,7 @@ impl GraphExecutor {
             budget.clone(),
             self.cache_policy,
             entry.resident.clone(),
+            self.residents.clone(),
             access.clone(),
             matches!(work, Work::Prepare),
         )?;

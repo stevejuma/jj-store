@@ -90,6 +90,13 @@ impl Drop for Saved {
     }
 }
 impl Saved {
+    pub fn reader(&self, budget: Arc<Budget>) -> Result<Box<dyn jj_lib::index::ReadonlyIndex>> {
+        budget.check()?;
+        if self.index.num_commits() as usize > budget.limits.max_index_commits {
+            return Err(budget.fail(Error::IndexBudget));
+        }
+        Ok(self.index.reader_with_memory(budget, self.memory.clone()))
+    }
     pub fn report(&self) -> Report {
         Report {
             state: State::Reused,
@@ -116,13 +123,20 @@ pub(in super::super) struct Residents {
 }
 impl Residents {
     pub(in super::super) fn get_memory(&self, access: &dyn ReadAccess) -> Option<Arc<Saved>> {
+        self.get_memory_at(access, access.operation())
+    }
+    pub(in super::super) fn get_memory_at(
+        &self,
+        access: &dyn ReadAccess,
+        operation: m::OperationId,
+    ) -> Option<Arc<Saved>> {
         let mut entries = self.entries.lock().unwrap();
         entries.retain(|entry| entry.present());
         let (index, saved) = entries.iter().enumerate().find_map(|(index, slot)| {
             slot.get_if(|e| {
                 e.repository == access.repository()
                     && e.epoch == access.epoch()
-                    && e.operation == access.operation()
+                    && e.operation == operation
             })
             .map(|saved| (index, saved))
         })?;

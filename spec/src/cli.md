@@ -1783,3 +1783,11 @@ Scratch tests MUST reject oversized ordered-table growth before retaining data
 and preserve forward/reverse/keyed ordering. Focused native graph and local
 prepared-read consumers remain required because they share the owned format
 writer. Complete scale/RSS and combined lifecycle qualification remain deferred.
+
+Historical native resident reuse regression MUST prepare the selected and
+ancestor operations independently, then evaluate multiple historical scopes with
+an inline threshold below each closure. Compare ordinary pinned semantics,
+assert that the selected slot's file receipt does not grow, and repeat the warm
+read. Direct corruption, binding, revocation and resident lifetime consumers
+remain part of focused delivery evidence; full scale qualification stays
+deferred.

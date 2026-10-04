@@ -839,6 +839,21 @@ MUST retain charges until the last executing owner releases an evicted copy.
 Queries that can load additional operation indexes retain their exclusive
 namespace lease; this optimization does not authorize concurrent disk writers.
 
+Additional native operation loads MAY reuse a separately retained prepared
+resident under the exact repository/epoch/operation key. The operation and view
+still cross the current request's native capabilities before that lookup, and
+the index reader rechecks current authorization and hard commit admission.
+Retain the saved allocation leases on each fresh request reader; its separate
+generation accounting does not acquire the secondary reader's allocations.
+Deduplicate shared parent handles when a generation includes earlier index
+allocations. This path does not read, hash or copy another cache slot and does
+not add its segments/links to the primary generation. Preserve each operation's
+own visibility, prefixes and annotations; a current-view index is not a
+substitute for a historical one. Cold additional operations retain bounded
+construction and the existing namespace lock. Primary slot corruption and
+missing-projection recovery keep their ordinary admission; a secondary resident
+cannot repair or override that selected slot implicitly.
+
 When preparation already holds that lease, a new ordinary `all()` page MAY use
 an existing resident matching repository, epoch and operation without opening
 any cache metadata or index files. Construct fresh request-scoped native backend

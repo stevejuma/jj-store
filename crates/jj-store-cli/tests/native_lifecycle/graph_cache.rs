@@ -482,6 +482,108 @@ async fn native_preparation_fits_small_cache_and_preserves_historical_scopes() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn historical_predicates_reuse_separately_prepared_residents_without_slot_growth() {
+    use jj_store_service::administration::{TokenChange, TokenRequest};
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let oracle = tempfile::tempdir().unwrap();
+            let (first, a) = initial(&f, local.path(), work.path()).await;
+            let (second, b) = child(&first, &a, "B").await;
+            let (third, _) = child(&second, &b, "C").await;
+            let read = pin(&f, oid(third.op_id())).await;
+            let mut query = log("at_operation(@-, all()) | at_operation(@--, all())");
+            if let q::Request::Log { workspace, .. } = &mut query {
+                *workspace = Some("fixture".into());
+            }
+            let expected = read
+                .graph(
+                    &executor(oracle.path(), q::Limits::default()),
+                    query.clone(),
+                    page(100),
+                )
+                .await
+                .unwrap();
+            let exec = executor(
+                root.path(),
+                q::Limits {
+                    max_inline_rebuild_commits: 1,
+                    ..Default::default()
+                },
+            );
+            for repo in [&first, &second, &third] {
+                pin(&f, oid(repo.op_id()))
+                    .await
+                    .prepare_index(&exec, q::Cancellation::default())
+                    .await
+                    .unwrap();
+            }
+            let path = cache_slot(root.path(), oid(third.op_id()));
+            let files = || {
+                serde_json::from_slice::<serde_json::Value>(
+                    &fs::read(path.join("query-cache.json")).unwrap(),
+                )
+                .unwrap()["files"]
+                    .clone()
+            };
+            let before_files = files();
+            let before = f.session.snapshot().await.unwrap().manifest().clone();
+            let session = f.session(f.reader.clone(), Protection::default());
+            let OpenRead::Pinned(reader) = session
+                .open_read(Some(oid(third.op_id())), ReadLimits::default())
+                .await
+                .unwrap()
+            else {
+                panic!("pinned reader")
+            };
+            let reader = Arc::new(reader);
+            let actual = reader
+                .graph(&exec, query.clone(), page(100))
+                .await
+                .expect("prepared historical operations must not use interactive reconstruction");
+            assert_eq!(actual.data, expected.data);
+            assert_eq!(
+                files(),
+                before_files,
+                "historical residents must not be copied into the selected slot"
+            );
+            for repo in [&first, &second] {
+                fs::remove_dir_all(
+                    cache_slot(root.path(), oid(repo.op_id())).join("index/segments"),
+                )
+                .unwrap();
+            }
+            assert_eq!(
+                reader
+                    .graph(&exec, query.clone(), page(100))
+                    .await
+                    .unwrap()
+                    .data,
+                expected.data
+            );
+            assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
+            f.session
+                .change_token(&TokenRequest {
+                    request_id: m::RequestId::new([218; 16]),
+                    expected: f.session.snapshot().await.unwrap().manifest().snapshot(),
+                    change: TokenChange::Revoke {
+                        token: f.reader.id(),
+                    },
+                })
+                .await
+                .unwrap();
+            assert_eq!(
+                reader.graph(&exec, query, page(100)).await.unwrap_err(),
+                q::Error::Denied
+            );
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn resident_indexes_preserve_multiple_historical_operation_scopes() {
     tokio::task::LocalSet::new()
         .run_until(async {

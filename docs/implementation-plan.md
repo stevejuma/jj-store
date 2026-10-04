@@ -65,9 +65,10 @@ loading still uses the existing bounded metadata pages; lightweight server
 summaries and cross-request local WorkStore root reuse remain delivery work.
 Native missing-operation construction now uses the owned bounded format writer
 with compact, admitted scratch for interactive and small-cache reads. Immutable
-additional-operation generations/short locking and local operation/deep lookup
-are still pending. These focused deliveries do not complete the later combined
-qualification gate.
+resident lookup also reuses separately prepared historical operations without
+copying another slot. Cold additional-operation generations/short locking and
+local operation/deep lookup are still pending. These focused deliveries do not
+complete the later combined qualification gate.
 
 ### Deferred complete qualification
 

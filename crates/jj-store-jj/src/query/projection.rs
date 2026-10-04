@@ -42,9 +42,17 @@ impl Prepared {
         self.decorations.weight
     }
     pub fn reader(&self, budget: Arc<Budget>) -> Box<dyn ReadonlyIndex> {
+        self.reader_with_memory(budget.clone(), budget.index_memory.clone())
+    }
+    pub fn reader_with_memory(
+        &self,
+        budget: Arc<Budget>,
+        memory: Arc<memory::Indexes>,
+    ) -> Box<dyn ReadonlyIndex> {
         Box::new(Reader {
             prepared: self.clone(),
             budget,
+            _memory: memory,
         })
     }
 }
@@ -230,6 +238,7 @@ fn label_weight(
 pub(super) struct Reader {
     pub prepared: Prepared,
     budget: Arc<Budget>,
+    _memory: Arc<memory::Indexes>,
 }
 impl Reader {
     pub fn annotations(&self, id: m::CommitId) -> Result<(Vec<Bookmark>, Vec<String>)> {
