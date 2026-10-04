@@ -22,6 +22,7 @@ export function createProductionProjects(
   fetcher?: typeof fetch,
   changed: () => void = () => {},
   base?: () => StoreController,
+  shared?: import("./repository-sources.js").RepositorySources,
 ) {
   const context = {
     data,
@@ -79,13 +80,15 @@ export function createProductionProjects(
       let source = sources.get(home);
       if (!source) {
         const candidate = context.data.repositories.find((r) => r.id === home)!;
-        source = repositorySource(
-          candidate,
-          context.token(),
-          `projects-${context.session()}`,
-          () => {},
-          context.fetcher,
-        );
+        source = shared
+          ? shared.acquire(candidate, context.token())
+          : repositorySource(
+              candidate,
+              context.token(),
+              `projects-${context.session()}`,
+              () => {},
+              context.fetcher,
+            );
         sources.set(home, source);
       }
       if (!source.work) throw new ApiError("work_unavailable");

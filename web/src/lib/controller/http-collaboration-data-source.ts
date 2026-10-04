@@ -1,3 +1,4 @@
+import { readQuery } from "./read-query.js";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { Client, fullId, pretty, type Model } from "../api/client.js";
 import type { StoreReviewCommandRequest } from "./native-data-source.js";
@@ -16,7 +17,7 @@ export class HttpCollaborationDataSource {
     query: Record<string, string | number | bigint | undefined>,
     read: (signal: AbortSignal) => Promise<T>,
   ): Promise<T> {
-    return this.queryClient.fetchQuery({
+    return readQuery(this.queryClient, {
       queryKey: storeQueryKeys.resource(this.scope, kind, null, query),
       queryFn: async ({ signal }) => {
         const value = await read(signal);
@@ -121,7 +122,12 @@ export class HttpCollaborationDataSource {
     );
     if (result.status === "committed")
       await this.queryClient.invalidateQueries({
-        queryKey: storeQueryKeys.root(this.scope),
+        predicate: (q) =>
+          storeQueryKeys
+            .root(this.scope)
+            .every((v, i) => q.queryKey[i] === v) &&
+          String(q.queryKey[4]).startsWith("review-"),
+        refetchType: "none",
       });
     return result;
   }

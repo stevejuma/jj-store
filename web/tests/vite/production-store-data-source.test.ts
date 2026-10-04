@@ -415,6 +415,7 @@ test("review commands keep exact request and precondition values", async () => {
   source.close();
 });
 
+// Retained ledger anchor: explicit refresh now invalidates its domain separately.
 test("explicit snapshot refresh invalidates cached collaboration roots", async () => {
   const queryClient = createStoreQueryClient();
   let agentRoot = "12".repeat(32);
@@ -457,6 +458,20 @@ test("explicit snapshot refresh invalidates cached collaboration roots", async (
   expect((await source.agentSessions()).snapshot.agent_root).not.toBe(
     agentRoot,
   );
+  await source.snapshot(true);
+  expect((await source.agentSessions()).snapshot.agent_root).not.toBe(
+    agentRoot,
+  );
+  await queryClient.invalidateQueries({
+    queryKey: [
+      "jj-store",
+      "local-session",
+      "native",
+      repository,
+      "agent-sessions",
+    ],
+    refetchType: "none",
+  });
   await source.snapshot(true);
   expect((await source.agentSessions()).snapshot.agent_root).toBe(agentRoot);
   source.close();

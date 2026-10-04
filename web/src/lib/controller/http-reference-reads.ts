@@ -17,11 +17,11 @@ export function httpReferences(
     exact: input.exact,
     q: input.query ?? "",
   };
-  if (input.signal)
-    return client.request<Model<"Window">>("references", query, {
-      signal: input.signal,
-    });
-  return read<Model<"Window">>("references", operation, query, (signal) =>
-    client.request("references", query, { signal }),
+  return read<Model<"Window">>(
+    "references",
+    operation,
+    query,
+    (signal) => client.request("references", query, { signal }),
+    input.signal,
   );
 }

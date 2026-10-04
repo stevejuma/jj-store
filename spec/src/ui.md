@@ -2050,3 +2050,8 @@ The application freshness migration preserves explicit historical selections,
 prepared commands and exact unknown request identities. Threads accepts a
 successfully refreshed head independently of its route pin, preventing one
 publication from repeatedly refreshing unchanged conversations.
+
+Main views, Projects and repository navigation share authorization-session
+repository leases. Closing one reader retains other consumers and their cache.
+Credential replacement and denied access clear protected data. Query observers
+track independent in-flight consumers; controller visibility owns event refresh.

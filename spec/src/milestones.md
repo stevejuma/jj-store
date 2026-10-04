@@ -4,7 +4,7 @@ This is the single status ledger. Done requires original-gate evidence; fake or
 analog fixtures cannot satisfy a real-storage gate. Every implementation slice
 adds evidence here in its enclosing Jujutsu change.
 
-| M20 | In progress | M4.18,M15.5 | JST-API-003,JST-UI-012 | Event-driven scoped freshness, shared query ownership and cold idle/recovery qualification | Implement shared caches and multiplexed events | E-FRESH-001 |
+| M20 | In progress | M4.18,M15.5 | JST-API-003,JST-UI-012 | Event-driven scoped freshness, shared query ownership and cold idle/recovery qualification | Implement shared caches and multiplexed events | E-FRESH-001,E-FRESH-002 |
 
 ## Tasks and gates
 
@@ -80152,6 +80152,79 @@ entries.
     "next": "Implement shared cache ownership and cancellation without changing operation pins.",
     "tests": [
       "web/tests/vite/automatic-store-refresh.test.ts#a successful Threads refresh accepts freshness without moving its code pin"
+    ]
+  },
+  {
+    "id": "E-FRESH-002",
+    "kind": "Authorization-session query ownership, immutable cache identity and cancellation leases",
+    "versions": "Node26.9.0; pnpm10.32.1; Vitest4.1.11; TanStack Svelte Query6.3.0",
+    "formats": "No wire or persisted format change. Native exact content keys add epoch; local keys retain registration generation and companion pin. Live family invalidation is separate from snapshot capture.",
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=2 web/tests/vite/read-query.test.ts web/tests/vite/repository-sources.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/production-file-reader.test.ts web/tests/vite/production-reference-reader.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/repository-thread-navigation.test.ts web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "74 tests/9 files after shared graph extraction and epoch keys. Initial duplicate-read and fresh-local-capture failures fixed without weakening supersession."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=2 web/tests/vite/http-query.test.ts web/tests/vite/repository-sources.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 tests/2 files. Native immutable key separates epochs; prepared pages remain transient."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/0 warnings after final helpers."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial oversized orchestrators extracted; final973 modules pass. All production boundaries owned."
+      }
+    ],
+    "result": "pending",
+    "tests": [
+      "web/tests/vite/read-query.test.ts#one observer cancellation cannot abort another consumer's shared read",
+      "web/tests/vite/read-query.test.ts#the final observer release aborts obsolete transport",
+      "web/tests/vite/http-query.test.ts#immutable content shares exact epoch while transient prepared pages expire"
+    ],
+    "remaining": [
+      "Application event hub/producers, browser healthy-poll migration, generated contracts and cold idle/recovery filesystem/real-storage qualification remain. Full plan not complete; root aggregate and visual baselines out of scope."
+    ],
+    "next": "Add authenticated scoped application feed with shared monitor/replay ownership and independent SSE delivery lifetime.",
+    "tasks": [
+      "M20"
+    ],
+    "date": "2026-10-04",
+    "revision": "uvknxprmzuyl",
+    "files": [
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/http-collaboration-data-source.ts",
+      "web/src/lib/controller/http-file-reads.ts",
+      "web/src/lib/controller/http-graph-reads.ts",
+      "web/src/lib/controller/http-local-query.ts",
+      "web/src/lib/controller/http-query.ts",
+      "web/src/lib/controller/http-reference-reads.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/http-threads-data-source.ts",
+      "web/src/lib/controller/http-work-data-source.ts",
+      "web/src/lib/controller/production-projects-integration.ts",
+      "web/src/lib/controller/production-repository-connect.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/read-query.ts",
+      "web/src/lib/controller/repository-source.ts",
+      "web/src/lib/controller/repository-sources.ts",
+      "web/src/lib/controller/repository-thread-navigation.svelte.ts",
+      "web/src/lib/controller/store-query-keys.ts",
+      "web/tests/vite/http-query.test.ts",
+      "web/tests/vite/production-store-data-source.test.ts",
+      "web/tests/vite/read-query.test.ts",
+      "web/tests/vite/repository-sources.test.ts"
     ]
   }
 ]

@@ -21,11 +21,21 @@ export function createProductionRepositoryThreadNavigation(
   repositories: () => readonly StoreRepositorySummary[],
   credential: () => string | null,
   fetcher?: typeof fetch,
+  shared?: import("./repository-sources.js").RepositorySources,
 ) {
   return createRepositoryThreadNavigation({
     repositories,
     credential,
     source(repository) {
+      if (shared) {
+        const repo = repositories().find((r) => r.id === repository);
+        if (!repo) throw new ApiError("access_denied");
+        const source = shared.acquire(repo, credential());
+        return {
+          list: (cursor?: string) => source.threads!.list(cursor),
+          close: () => source.close(),
+        };
+      }
       const client = new Client(repository, credential(), () => {}, fetcher);
       const queries = createStoreQueryClient();
       let active = true;

@@ -1,3 +1,4 @@
+import { readQuery } from "./read-query.js";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
 import { targetKey } from "../collaboration/thread-presentation.js";
@@ -22,7 +23,7 @@ export class HttpThreadsDataSource implements ThreadTransport {
   ) {
     if (!this.active())
       return Promise.reject<T>(new DOMException("Closed", "AbortError"));
-    return this.queryClient.fetchQuery({
+    return readQuery(this.queryClient, {
       queryKey: storeQueryKeys.resource(this.scope, kind, null, args),
       queryFn: async ({ signal }) => {
         const value = await read(signal);

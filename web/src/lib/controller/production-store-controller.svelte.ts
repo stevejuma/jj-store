@@ -1,3 +1,4 @@
+import { repositoryReaders } from "./repository-sources.js";
 import { createReadScope } from "./read-scope.js";
 import { createProductionAutomaticRefresh } from "./production-automatic-refresh.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
@@ -8,7 +9,6 @@ import { createProfileRouteRestorer } from "./production-profile-route.js";
 import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
 
-import { createProductionRepositoryThreadNavigation } from "./repository-thread-navigation.svelte.js";
 import { createLocalConfiguration } from "./production-local-configuration.js";
 import type { StoreController } from "./contracts.js";
 
@@ -28,6 +28,8 @@ import {
   resetConnectionView,
   destroyProductionStoreLifecycle,
   startProductionStoreLifecycle,
+  authorizationReady,
+  controllerAbortScopes,
 } from "./production-store-lifecycle.svelte.js";
 import { createProductionStoreActions } from "./production-store-actions.js";
 import { createProductionMutationCommitter } from "./production-mutation-commit.js";
@@ -41,19 +43,16 @@ export function createProductionStoreController(
   let source: StoreDataSource | null = null,
     sessionToken: string | null = null;
   let session = 0;
-  const threadNavigation = createProductionRepositoryThreadNavigation(
+  const { sources, threadNavigation } = repositoryReaders(
     () => data.repositories,
     () => sessionToken,
     options.fetcher,
+    () => disconnect("Access denied", true),
   );
-  let feed = new AbortController(),
-    discovery = new AbortController(),
-    lifecycle = new AbortController();
+  let { feed, discovery, lifecycle } = controllerAbortScopes();
   const { invalidate, signal, version } = createReadScope();
-  function follow(active: StoreDataSource) {
-    feed = new AbortController();
-    automatic.follow(active, feed.signal);
-  }
+  const follow = (active: StoreDataSource) =>
+    automatic.follow(active, (feed = new AbortController()).signal);
   const activeSource = () => requireProductionSource(source);
   const current = (ticket: number, active: StoreDataSource) =>
     ticket === version() && active === source;
@@ -82,6 +81,7 @@ export function createProductionStoreController(
     options.fetcher,
     () => automatic.request(),
     () => controller,
+    sources,
   );
   const threadsIntegration = createThreadsIntegration({
     source: () => source,
@@ -138,6 +138,7 @@ export function createProductionStoreController(
     stopProjectEvents();
     discovery.abort();
     if (!preserveSession) {
+      sources.clear();
       clearProjects();
       threadNavigation.clear();
     }
@@ -182,6 +183,7 @@ export function createProductionStoreController(
         projects,
         reader,
         fetcher: options.fetcher,
+        sources,
       },
       repository,
       token,
@@ -210,7 +212,8 @@ export function createProductionStoreController(
     threads: threadsIntegration,
     search,
     reader,
-    refreshThreadNavigation: () => threadNavigation.load(true),
+    refreshThreadNavigation: () =>
+      sources.refreshThreads(threadNavigation, history.route.repository),
     stopFeed: () => feed.abort(),
     invalidate,
     follow,
@@ -269,9 +272,7 @@ export function createProductionStoreController(
     route: () => history.route,
     source: () => source,
     signal: lifecycle.signal,
-    active: () =>
-      data.storageReady &&
-      (data.accessMode === "local_trusted" || sessionToken !== null),
+    active: () => authorizationReady(data, sessionToken),
     refresh: () => refresh(true),
     report: (cause) => reportProductionStoreError(data, cause),
   });

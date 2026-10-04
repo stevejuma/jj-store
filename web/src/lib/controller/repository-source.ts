@@ -12,22 +12,29 @@ export function repositorySource(
   session: string,
   denied: () => void,
   fetcher?: typeof fetch,
+  queries?: import("@tanstack/svelte-query").QueryClient,
 ): StoreDataSource {
   if (repository.availability === "unavailable")
     throw new ApiError("local_folder_unavailable");
   if (repository.availability === "identity_changed")
     throw new ApiError("local_identity_changed");
   if (repository.profile === "git_sha1_jj045")
-    return new HttpLocalStoreDataSource(repository.id, fetcher);
+    return new HttpLocalStoreDataSource(
+      repository.id,
+      fetcher,
+      queries,
+      session,
+    );
   if (repository.profile && repository.profile !== "native")
     throw new ApiError("unsupported_repository_profile");
   return new HttpStoreDataSource(
     repository.id,
     token,
-    createStoreQueryClient(),
+    queries ?? createStoreQueryClient(),
     session,
     denied,
     fetcher,
+    !queries,
   );
 }
 

@@ -1,3 +1,4 @@
+import { readQuery } from "./read-query.js";
 import {
   ApiError,
   decode,
@@ -25,7 +26,7 @@ type DataByKind = {
 export class HttpLocalQuery {
   readonly profile = "git_sha1_jj045" as const;
   protected readonly client: LocalClient;
-  readonly #reads = createStoreQueryClient();
+  readonly #reads: import("@tanstack/svelte-query").QueryClient;
   protected head: LocalHead | null = null;
   #capture = 0;
   #accepted = 0;
@@ -33,21 +34,42 @@ export class HttpLocalQuery {
   constructor(
     readonly repository: string,
     fetcher?: typeof fetch,
+    reads?: import("@tanstack/svelte-query").QueryClient,
+    private readonly session: string = crypto.randomUUID(),
   ) {
     this.client = new LocalClient(repository, fetcher);
+    this.#reads = reads ?? createStoreQueryClient();
   }
   protected read<T>(path: string, body?: unknown, signal?: AbortSignal) {
-    if (signal) return this.client.request<T>(path, body, signal);
+    if (path === "snapshot") return this.client.request<T>(path, body, signal);
     const encoded = pretty(body);
     const retained = body === undefined ? undefined : decode(encoded);
-    return this.#reads.fetchQuery<T>({
-      queryKey: ["local-read", this.repository, this.#capture, path, encoded],
-      queryFn: () => this.client.request<T>(path, retained, signal),
-      staleTime: 0,
-      gcTime: 0,
-      retry: (failures, error) =>
-        error instanceof ApiError && error.code === "busy" && failures < 2,
-    });
+    return readQuery<T>(
+      this.#reads,
+      {
+        queryKey: [
+          "jj-store",
+          this.session,
+          this.profile,
+          this.repository,
+          path,
+          this.head
+            ? `${this.head.generation}:${this.head.heads.join(",")}:${this.head.metadata_commit ?? ""}`
+            : null,
+          encoded,
+        ],
+        queryFn: ({ signal: shared }) =>
+          this.client.request<T>(path, retained, shared),
+        staleTime:
+          path.startsWith("work/") && body && path !== "work/query-info"
+            ? Infinity
+            : 0,
+        gcTime: 10 * 60_000,
+        retry: (failures, error) =>
+          error instanceof ApiError && error.code === "busy" && failures < 2,
+      },
+      signal,
+    );
   }
   async snapshot(fresh = false): Promise<LocalHead> {
     if (this.head && !fresh) return this.head;
@@ -145,7 +167,7 @@ export class HttpLocalQuery {
   close() {
     this.#capture++;
     this.client.close();
-    this.#reads.clear();
+
     this.head = null;
   }
 }

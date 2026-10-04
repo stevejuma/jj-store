@@ -1,3 +1,4 @@
+import { readQuery } from "./read-query.js";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
 export function createHttpQuery(
@@ -10,16 +11,26 @@ export function createHttpQuery(
     snapshot: string | null,
     args: Record<string, string | number | bigint | boolean | undefined>,
     read: (signal: AbortSignal) => Promise<T>,
+    signal?: AbortSignal,
   ): Promise<T> => {
     if (!active())
       return Promise.reject(new DOMException("Closed", "AbortError"));
-    return queryClient.fetchQuery({
-      queryKey: storeQueryKeys.resource(scope, kind, snapshot, args),
-      queryFn: async ({ signal }) => {
-        const value = await read(signal);
-        if (!active()) throw new DOMException("Closed", "AbortError");
-        return value;
+    return readQuery(
+      queryClient,
+      {
+        queryKey: storeQueryKeys.resource(scope, kind, snapshot, args),
+        staleTime:
+          snapshot &&
+          ["file", "commit", "operation", "commit-summary"].includes(kind)
+            ? Infinity
+            : 30_000,
+        queryFn: async ({ signal }) => {
+          const value = await read(signal);
+          if (!active()) throw new DOMException("Closed", "AbortError");
+          return value;
+        },
       },
-    });
+      signal,
+    );
   };
 }

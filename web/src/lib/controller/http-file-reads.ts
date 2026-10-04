@@ -7,10 +7,17 @@ export class HttpFileReads {
     private readonly query: ReturnType<typeof createHttpQuery>,
   ) {}
   commitSummary(id: string, operation: string, signal?: AbortSignal) {
-    return this.client.request<Envelope<Model<"ContentObject">>>(
-      `objects/commit/${fullId(id)}`,
-      { at_op: fullId(operation) },
-      { signal },
+    return this.query<Envelope<Model<"ContentObject">>>(
+      "commit-summary",
+      operation,
+      { id },
+      (shared) =>
+        this.client.request(
+          `objects/commit/${fullId(id)}`,
+          { at_op: fullId(operation) },
+          { signal: shared },
+        ),
+      signal,
     );
   }
   paths(commit: string, operation: string, input: PathQuery = {}) {
@@ -23,12 +30,6 @@ export class HttpFileReads {
       limit: input.limit ?? 50,
       cursor: input.cursor,
     };
-    if (input.signal)
-      return this.client.request<Model<"Window3">>(
-        `commits/${fullId(commit)}/paths`,
-        query,
-        { signal: input.signal },
-      );
     return this.query<Model<"Window3">>(
       "paths",
       operation,
@@ -37,6 +38,7 @@ export class HttpFileReads {
         this.client.request(`commits/${fullId(commit)}/paths`, query, {
           signal,
         }),
+      input.signal,
     );
   }
   file(
@@ -44,10 +46,12 @@ export class HttpFileReads {
     operation: string,
     context?: { commit: string; path: string; signal?: AbortSignal },
   ) {
-    if (context?.signal)
-      return this.client.file(fullId(id), fullId(operation), context.signal);
-    return this.query("file", operation, { id }, (signal) =>
-      this.client.file(fullId(id), fullId(operation), signal),
+    return this.query(
+      "file",
+      operation,
+      { id },
+      (signal) => this.client.file(fullId(id), fullId(operation), signal),
+      context?.signal,
     );
   }
 }

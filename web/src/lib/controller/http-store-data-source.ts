@@ -1,3 +1,4 @@
+import { readHttpGraph } from "./http-graph-reads.js";
 import { httpReferences } from "./http-reference-reads.js";
 import { HttpFileReads } from "./http-file-reads.js";
 import { createHttpQuery } from "./http-query.js";
@@ -7,7 +8,6 @@ import {
   Client,
   fullId,
   type Envelope,
-  type Graph,
   type Head,
   type Model,
 } from "../api/client.js";
@@ -24,7 +24,10 @@ import { HttpCollaborationDataSource } from "./http-collaboration-data-source.js
 import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 
 import { HttpThreadsDataSource } from "./http-threads-data-source.js";
-import { HttpWorkDataSource } from "./http-work-data-source.js";
+import {
+  cachedWorkSource,
+  type HttpWorkDataSource,
+} from "./http-work-data-source.js";
 
 export class HttpStoreDataSource
   extends HttpRepositoryTransports
@@ -48,6 +51,7 @@ export class HttpStoreDataSource
     session: string,
     denied: () => void,
     fetcher?: typeof fetch,
+    private readonly ownsQueries = true,
   ) {
     const client = new Client(repository, token, denied, fetcher);
     super(client);
@@ -61,7 +65,13 @@ export class HttpStoreDataSource
       this.#scope,
       () => this.#active,
     );
-    this.work = new HttpWorkDataSource(this.#client, this);
+    this.work = cachedWorkSource(
+      this.#client,
+      this,
+      this.#query,
+      queryClient,
+      this.#scope,
+    );
     this.#writes = new HttpStoreWriteDataSource(this.#client);
     this.#collaboration = new HttpCollaborationDataSource(
       this.#client,
@@ -83,45 +93,22 @@ export class HttpStoreDataSource
     const key = storeQueryKeys.resource(this.#scope, "snapshot", null);
     if (fresh)
       await this.queryClient.invalidateQueries({
-        queryKey: storeQueryKeys.root(this.#scope),
+        queryKey: key,
+        exact: true,
+        refetchType: "none",
       });
-    return this.#query<Head>("snapshot", null, {}, (signal) =>
+    const head = await this.#query<Head>("snapshot", null, {}, (signal) =>
       this.#client.request("snapshot", {}, { signal }),
     );
+    this.#scope.epoch = head.epoch;
+    return head;
   }
   references(operation: string, cursor?: string, input: ReferenceQuery = {}) {
     return httpReferences(this.#client, this.#query, operation, cursor, input);
   }
 
   graph(kind: "log" | "operations" | "evolution", input: GraphQuery) {
-    const query = {
-      at_op: fullId(input.operation),
-      cursor: input.cursor,
-      limit: input.limit ?? 50,
-      ...(kind === "log"
-        ? {
-            revset: input.revset ?? "all()",
-            workspace: input.workspace,
-            user_email: input.userEmail ?? "",
-            at_time_millis: input.atTimeMillis ?? Date.now(),
-          }
-        : {}),
-      ...(kind === "operations" ? { query: input.operationQuery ?? "" } : {}),
-      ...(kind === "evolution" ? { commit: fullId(input.commit ?? "") } : {}),
-    };
-    if (input.signal)
-      return this.#client.request<Envelope<Graph>>(kind, query, {
-        signal: input.signal,
-      });
-    return this.#query<Envelope<Graph>>(
-      kind,
-      input.operation,
-      query,
-      (signal) =>
-        this.#client.request(kind, query, {
-          signal,
-        }),
-    );
+    return readHttpGraph(this.#client, this.#query, kind, input);
   }
   commitSummary(id: string, operation: string, signal?: AbortSignal) {
     return this.#files.commitSummary(id, operation, signal);
@@ -288,8 +275,14 @@ export class HttpStoreDataSource
   close() {
     this.#active = false;
     this.#client.close();
-    void this.queryClient.cancelQueries();
-    this.queryClient.clear();
+    if (this.ownsQueries) {
+      void this.queryClient.cancelQueries({
+        queryKey: storeQueryKeys.root(this.#scope),
+      });
+      this.queryClient.removeQueries({
+        queryKey: storeQueryKeys.root(this.#scope),
+      });
+    }
   }
 }
 

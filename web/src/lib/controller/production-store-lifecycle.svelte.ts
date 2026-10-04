@@ -223,3 +223,20 @@ export function createProductionSelections(
     branchActions: createProductionBranchActions(context),
   };
 }
+
+export function authorizationReady(
+  data: ProductionStoreState,
+  token: string | null,
+) {
+  return (
+    data.storageReady && (data.accessMode === "local_trusted" || token !== null)
+  );
+}
+
+export function controllerAbortScopes() {
+  return {
+    feed: new AbortController(),
+    discovery: new AbortController(),
+    lifecycle: new AbortController(),
+  };
+}

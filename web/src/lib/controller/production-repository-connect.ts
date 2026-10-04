@@ -29,6 +29,7 @@ export async function connectRepositorySource(
     projects: { restore(): Promise<void> };
     reader: { restorePage(): Promise<void> };
     fetcher?: typeof fetch;
+    sources?: import("./repository-sources.js").RepositorySources;
   },
   repository: string,
   token: string | null,
@@ -49,19 +50,21 @@ export async function connectRepositorySource(
       options.history.route,
       repository,
     );
-    const active = repositorySource(
-      candidate,
-      credential,
-      `session-${options.nextSession()}`,
-      () => {
-        if (options.source() === active)
-          options.disconnect(
-            connectionDeniedMessage(options.data.accessMode),
-            true,
-          );
-      },
-      options.fetcher,
-    );
+    const active = options.sources
+      ? options.sources.acquire(candidate, credential)
+      : repositorySource(
+          candidate,
+          credential,
+          `session-${options.nextSession()}`,
+          () => {
+            if (options.source() === active)
+              options.disconnect(
+                connectionDeniedMessage(options.data.accessMode),
+                true,
+              );
+          },
+          options.fetcher,
+        );
     options.setSource(active);
     const capabilities = await active.capabilities();
     const captured = await active.snapshot();
