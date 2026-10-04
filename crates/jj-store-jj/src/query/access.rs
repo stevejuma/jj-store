@@ -37,6 +37,7 @@ pub(crate) struct Budget {
     output: AtomicU64,
     failure: Mutex<Option<Error>>,
     index: Mutex<Option<super::index::Admission>>,
+    pub(super) index_memory: Arc<super::memory::Indexes>,
 }
 impl Budget {
     pub fn new(limits: Limits) -> Result<Self> {
@@ -55,6 +56,7 @@ impl Budget {
             output: AtomicU64::new(0),
             failure: Mutex::new(None),
             index: Mutex::new(None),
+            index_memory: Arc::default(),
         })
     }
     pub fn fail(&self, error: Error) -> Error {

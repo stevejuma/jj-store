@@ -794,7 +794,7 @@ contracts. This shared construction does not change native segment bytes.
 Warm native graph reads MAY reuse an already verified immutable in-memory index
 under the same cache namespace lease. Retained residents bind repository, epoch,
 operation, cache path and exact receipt file set; they have an LRU count bound
-and a conservative byte bound no greater than 256 MiB per executor. Before
+and a conservative shared process-wide allocation allowance of 1 GiB. Before
 reuse, enumerate the bounded file set and compare device, inode, size, mtime and
 ctime at nanosecond precision. Filesystems without the required metadata use
 full verification. Changed, replaced, missing or added files invalidate reuse. A
@@ -805,6 +805,20 @@ eviction and loss of the resident require full checksums before loading. Current
 authorization and loaded-index hard limits still apply. Disk-generation
 immutability, shorter namespace locking and larger aggregate quotas remain
 separate work.
+
+Native disk-index loads and local prepared generation loads MUST reserve
+resident allocation before upstream decoding. Account twice the complete bounded
+segment file bytes, per-file metadata and fixed overhead. Check pinned
+commit-index format-6 and changed-path format-0 framing, bounded parent filename
+length, exact table lengths, at most 4,096 files and parent chains of at most
+128 segments before entering JJ's allocating parser. Cycles and excessive counts
+fail closed. This framing check does not replace checksum verification. Native
+inline construction retains ordinary query admission and accounts its resulting
+segment weight before retention; construction peak admission remains a separate
+gate. Allocation leases are shared with retained indexes and live readers across
+executor instances and both profiles; dropping a cache owner cannot release
+memory still owned by a reader. This allowance accounts resident index
+estimates, not the whole server's heap or storage-library caches.
 
 An ordinary warm `all()` page MAY release the cache namespace lease after
 loading and validating its exact operation, view and resident index and
@@ -845,8 +859,8 @@ build fresh operation/backend capabilities for the current binding. Index
 membership admits commit decoding without a complete source inventory. Source
 extra metadata stays read-only, with bounded seeks and change detection; no
 implicit Git import, retention-ref write or source-index fallback is permitted.
-The local profile owns resident-memory admission and source verification
-details.
+The local profile owns source verification details and shares resident
+allocation admission with the native profile.
 
 Local prepared generations MUST reserve their full writable allowance in the
 same cache namespace as native retained entries before construction. The shared

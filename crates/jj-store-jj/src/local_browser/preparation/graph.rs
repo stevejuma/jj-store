@@ -1,4 +1,5 @@
 use super::*;
+use crate::query::memory::Lease;
 use blake2::{Blake2b512, Digest as _};
 use jj_lib::{
     default_index::{DefaultIndexStore, DefaultReadonlyIndex},
@@ -7,42 +8,18 @@ use jj_lib::{
     },
     store::Store,
 };
-use std::{
-    fs,
-    io::Read as _,
-    sync::atomic::{AtomicU64, Ordering},
-};
-
-struct Memory {
-    used: Arc<AtomicU64>,
-    bytes: u64,
-}
-impl Memory {
-    fn reserve(used: Arc<AtomicU64>, bytes: u64) -> Result<Self> {
-        used.fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
-            old.checked_add(bytes).filter(|n| *n <= 256 * 1024 * 1024)
-        })
-        .map_err(|_| Error::Limit)?;
-        Ok(Self { used, bytes })
-    }
-}
-impl Drop for Memory {
-    fn drop(&mut self) {
-        self.used.fetch_sub(self.bytes, Ordering::AcqRel);
-    }
-}
+use std::{fs, io::Read as _};
 pub(super) struct Resident {
     index: DefaultReadonlyIndex,
     metadata: PathBuf,
     extras: Arc<extras::Extras>,
     shallow: BTreeSet<gix::ObjectId>,
-    _memory: Memory,
+    _memory: Lease,
 }
 pub(super) async fn load(
     directory: &tempfile::TempDir,
     source: &LocalSource,
     operation: m::OperationId,
-    memory: Arc<AtomicU64>,
 ) -> Result<Resident> {
     let mut segments =
         fs::read_dir(directory.path().join("segments")).map_err(|_| Error::Incomplete)?;
@@ -59,11 +36,14 @@ pub(super) async fn load(
         return Err(Error::Corrupt);
     }
     let size = segment.metadata().map_err(|_| Error::Incomplete)?.len();
-    let memory = Memory::reserve(
-        memory,
-        size.saturating_mul(2)
-            .saturating_add(512 * 1024 + source.shallow.len() as u64 * 128),
+    let weight = crate::query::memory::framing::weight(
+        directory.path(),
+        source.loader.store().commit_id_length(),
+        source.loader.store().change_id_length(),
+        source.limits.max_commits,
+        &mut || source.budget.work(1),
     )?;
+    let memory = Lease::reserve(weight.saturating_add(source.shallow.len() as u64 * 128))?;
     let mut input = fs::File::open(segment.path()).map_err(|_| Error::Incomplete)?;
     let mut digest = Blake2b512::new();
     let mut buffer = vec![0; 64 * 1024];
@@ -283,28 +263,5 @@ impl Executor {
             })
         })
         .await
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn resident_admission_releases_only_when_owner_drops() {
-        let used = Arc::new(AtomicU64::new(0));
-        let first = Memory::reserve(used.clone(), 200 * 1024 * 1024).unwrap();
-        assert!(matches!(
-            Memory::reserve(used.clone(), 60 * 1024 * 1024),
-            Err(Error::Limit)
-        ));
-        assert_eq!(used.load(Ordering::Acquire), 200 * 1024 * 1024);
-        drop(first);
-        let second = Memory::reserve(used.clone(), 256 * 1024 * 1024).unwrap();
-        assert!(matches!(
-            Memory::reserve(used.clone(), 1),
-            Err(Error::Limit)
-        ));
-        drop(second);
-        assert_eq!(used.load(Ordering::Acquire), 0);
     }
 }

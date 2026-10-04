@@ -98,7 +98,30 @@ impl IndexStore for GuardedIndexStore {
                 // new files against the entry's original receipt.
                 self.disk_verified.store(true, Ordering::Release);
             }
-            self.inner.get_index_at_op(operation, store).await?
+            self.budget
+                .index_memory
+                .reserve(
+                    &self.path,
+                    store.commit_id_length(),
+                    store.change_id_length(),
+                    self.budget.limits.max_index_commits,
+                    || self.budget.work(1),
+                )
+                .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            let index = self.inner.get_index_at_op(operation, store).await?;
+            // Inline construction can add segments; retain their final weight
+            // before any result is cached beyond the request's own admission.
+            self.budget
+                .index_memory
+                .reserve(
+                    &self.path,
+                    store.commit_id_length(),
+                    store.change_id_length(),
+                    self.budget.limits.max_index_commits,
+                    || self.budget.work(1),
+                )
+                .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            index
         };
         // Warm indexes need the same hard bound, even when no commits are read.
         // Also applies to additional operations loaded by native predicates.

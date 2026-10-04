@@ -520,6 +520,9 @@ impl Cache {
             .as_ref()
             .is_none_or(|saved| saved.verification.files != receipt.files)
         {
+            if let Some(saved) = &entry.resident {
+                budget.index_memory.include(saved.memory.clone());
+            }
             residents.remember(
                 index,
                 entry.path.clone(),

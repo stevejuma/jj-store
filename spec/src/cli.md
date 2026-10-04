@@ -1649,6 +1649,13 @@ repository/epoch, eviction and revocation checks. A low-work warm verification
 fixture MUST distinguish metadata checks from full-file hashing. New executors
 and process restarts still verify complete disk content.
 
+Shared resident-memory regression MUST prove aggregate native/local admission,
+refusal before exceeding capacity, overflow rejection and retention until the
+last reader exits. Framing tests MUST reject an allocating parent-name length,
+parent cycle, impossible table length and excessive commit count before calling
+JJ's decoder. Both native graph and local prepared-read suites exercise the
+shared admission boundary; these tests do not qualify total process RSS.
+
 Cache concurrency acceptance MUST hold a warm `all()` page at an authorized
 commit read, prepare a newer operation using the same namespace and a one-slot
 cache, then release the old read. Preparation must complete and evict the old

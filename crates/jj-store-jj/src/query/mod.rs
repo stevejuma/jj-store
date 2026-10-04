@@ -6,6 +6,7 @@ pub mod content;
 mod graphs;
 mod index;
 pub mod language;
+pub(crate) mod memory;
 pub mod predicates;
 pub mod preparation;
 pub(crate) mod prepared;

@@ -177,22 +177,16 @@ pub enum Response {
 pub struct Executor {
     workers: crate::query::workers::Workers,
     limits: Limits,
-    prepared_memory: Arc<std::sync::atomic::AtomicU64>,
 }
 impl Executor {
     pub fn new(concurrency: usize) -> Result<Self> {
         Ok(Self {
             workers: crate::query::workers::Workers::new(concurrency)?,
             limits: Limits::default(),
-            prepared_memory: Arc::default(),
         })
     }
     pub fn with_workers(workers: crate::query::workers::Workers, limits: Limits) -> Self {
-        Self {
-            workers,
-            limits,
-            prepared_memory: Arc::default(),
-        }
+        Self { workers, limits }
     }
     pub async fn heads(&self, access: Arc<dyn Access>) -> Result<Heads> {
         self.worker(access, move |access, budget| {

@@ -251,7 +251,6 @@ impl Executor {
         let cancel = cancellation.token().drop_guard();
         budget.until(access.authorize()).await??;
         let capture_limits = self.limits;
-        let memory = self.prepared_memory.clone();
         let runtime = tokio::runtime::Handle::current();
         let result = tokio::task::spawn_blocking(move || {
             let _permit = permit;
@@ -309,7 +308,7 @@ impl Executor {
                         .await?;
                         budget.authorize(&context.access).await?;
                         let resident =
-                            Box::pin(graph::load(&directory, &source, operation, memory)).await?;
+                            Box::pin(graph::load(&directory, &source, operation)).await?;
                         budget.authorize(&context.access).await?;
                         Ok(Prepared {
                             directory,

@@ -83,6 +83,7 @@ pub(in super::super) struct Saved {
     policy: Policy,
     retained: Arc<AtomicU64>,
     report: Mutex<Report>,
+    pub(super) memory: Arc<super::super::memory::Indexes>,
 }
 impl Drop for Saved {
     fn drop(&mut self) {
@@ -170,7 +171,7 @@ impl Residents {
             .saturating_mul(2)
             .saturating_add(files.len() as u64 * 1024)
             .saturating_add(files.keys().map(|name| name.len() as u64 * 2).sum::<u64>());
-        let ceiling = policy.max_total_bytes.min(256 * 1024 * 1024);
+        let ceiling = policy.max_total_bytes.min(super::super::memory::LIMIT);
         if weight > ceiling {
             return Ok(());
         }
@@ -205,6 +206,7 @@ impl Residents {
             policy,
             retained: self.retained.clone(),
             report: Mutex::new(report),
+            memory: budget.index_memory.clone(),
         }));
         Ok(())
     }

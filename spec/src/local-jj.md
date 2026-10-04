@@ -466,9 +466,10 @@ decoder. No extra-metadata import, source index repair or publication is
 allowed. Interactive work/byte/row/deadline limits remain unchanged. Syntax
 admission must not multiply query length by total repository commit count.
 Retained generation and index-memory admission, task delivery and deep-page
-qualification remain explicit independent gates. Per-executor resident admission
+qualification remain explicit independent gates. Resident admission shares a
+process-wide 1 GiB allocation allowance with native graph indexes. It
 conservatively charges twice the index segment bytes plus retained
-metadata/shallow-root overhead, up to 256 MiB. Charges live until the last
+metadata/shallow-root overhead before decoding. Charges live until the last
 handle is released. Verify the complete bounded segment and fixed operation link
 before decoding; an unexpected upstream rebuild must fail through a view-denying
 capability. Prepared pages consult the memory copy and must survive damage or
