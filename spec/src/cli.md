@@ -1528,6 +1528,11 @@ missing, linked or oversized retained configuration fails before stopping the
 backend; startup MUST NOT silently restore defaults. Switching to another
 configuration or fixture remains an explicit development mode selection.
 
+UI development validates the built manual before stopping services. Run
+`pnpm docs:build` when the bundle is missing or invalid. A successful subsequent
+documentation build publishes its manifest and updates Vite's Help assets
+without restarting the backend or reloading the application.
+
 ### Settings configuration coverage
 
 | Format-2 fields                                                                                                                                        | Settings location                                 | Editing policy                                                                |

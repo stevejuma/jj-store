@@ -340,6 +340,12 @@ HMR, backend restart and state preservation; built-bundle CSP qualification is
 retained separately. No development workflow publishes a package or replaces the
 installed CLI.
 
+The HMR preflight also validates the generated Help bundle before replacing a
+process. Missing or invalid Help fails with `pnpm docs:build` guidance. Vite
+reloads Help on manifest publication events, preserving the last validated
+assets during rebuilds and releasing its observers at shutdown. This applies
+without a Rust or UI rebuild, API polling, or an application document reload.
+
 The same fresh fixture includes native WorkStore samples through its authorized
 HTTP commands. The additive `dev:seed:work` command checks the matching owned
 runtime before publishing, uses repository-scoped stable entity identities,

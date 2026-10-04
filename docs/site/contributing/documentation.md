@@ -56,6 +56,12 @@ and media checks. Scripts and search workers stay local; Mermaid does not run in
 the reader's browser. Open Help from the sidebar to verify the embedded
 experience.
 
+During `pnpm dev:ui`, Vite serves the generated site from `docs/build`. Startup
+checks the bundle before replacing any service; build it with `pnpm docs:build`
+if needed. Vite watches the manifest's publication and validates each complete
+replacement before serving it. Rebuilds retain the last valid manual until a new
+one passes validation, without polling or reloading the application.
+
 Documentation styling lives in `assets/manual.css` and `assets/layout.css`. The
 build bundles the application's existing palette sources and the released DM
 Sans/Source Code Pro fonts, including their licenses; keep these sources shared

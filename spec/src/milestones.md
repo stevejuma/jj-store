@@ -151,7 +151,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -79322,6 +79322,112 @@ entries.
       "spec/src/architecture.md",
       "spec/src/milestones.md"
     ]
+  },
+  {
+    "id": "E-DOC-008",
+    "tasks": ["M19"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change otplssvv",
+    "kind": "Help development preflight and manifest-driven asset reload",
+    "versions": "Node26.9.0; Vite8.3.1; Playwright1.63.0; pnpm10.32.1; macOS ARM64.",
+    "formats": "Existing bounded Help manifest version1 and same-origin static delivery unchanged. No API, repository or storage format change.",
+    "files": [
+      "scripts/dev-ui.mjs",
+      "scripts/dev-ui.test.mjs",
+      "scripts/docs/assets.mjs",
+      "scripts/docs-assets.test.mjs",
+      "spec/src/documentation.md",
+      "spec/src/spec-governance.md",
+      "spec/src/cli.md",
+      "docs/site/contributing/development.md",
+      "docs/site/contributing/documentation.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "scripts/dev-ui.test.mjs#missing or invalid Help leaves running services and runtime markers intact",
+      "scripts/docs-assets.test.mjs#Help recovers from a missing initial bundle when its manifest is published",
+      "scripts/docs-assets.test.mjs#Help retains validated bytes until a safe complete replacement is published",
+      "scripts/docs-assets.test.mjs#Help releases its manifest observers when the server closes",
+      "scripts/docs-assets.test.mjs#a cold Vite server reloads rebuilt Help through real filesystem publication events",
+      "scripts/docs-assets.test.mjs#superseded Help publications settle on the latest validated bundle"
+    ],
+    "runs": [
+      {
+        "command": "node --test scripts/dev-ui.test.mjs scripts/docs.test.mjs (before changes)",
+        "result": "pass",
+        "failures": 0,
+        "note": "14existing cases pass; before-existing.log."
+      },
+      {
+        "command": "node --test --test-name-pattern='missing or invalid Help|Help recovers|Help retains|Help releases|cold Vite' scripts/dev-ui.test.mjs scripts/docs-assets.test.mjs (before implementation)",
+        "result": "fail",
+        "failures": 5,
+        "note": "5new regressions reproduce preflight omission, sticky missing map, no rebuilt bundle adoption and missing observer lifecycle; before-regressions.log."
+      },
+      {
+        "command": "node --test --test-name-pattern='missing or invalid Help|Help recovers|Help retains|Help releases|cold Vite' scripts/dev-ui.test.mjs scripts/docs-assets.test.mjs (after implementation)",
+        "result": "pass",
+        "failures": 0,
+        "note": "5exact regressions pass. Initial broad directory watch produced Vite HTML reload notices; narrowed observation to the manifest and added no-full-reload/cold directory replacement assertions. after-regressions.log."
+      },
+      {
+        "command": "node --test scripts/dev-ui.test.mjs scripts/docs.test.mjs scripts/docs-assets.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "20direct cases pass after manifest-only observation; direct-tests.log. Cold existing-directory replacement and no full-reload assertions pass."
+      },
+      {
+        "command": "node --test --test-name-pattern='cold Vite' scripts/docs-assets.test.mjs (missing parent directory extension)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cold real-filesystem probe found that Vite could miss a manifest created below a missing build directory. cold-watcher.log. Replaced shared Vite observation with a recursive filesystem observer on the tracked documentation parent, filtered to manifest/directory hints; serial validation closes the startup subscribe/read gap."
+      },
+      {
+        "command": "node --test scripts/dev-ui.test.mjs scripts/docs-assets.test.mjs scripts/docs.test.mjs (final observer)",
+        "result": "pass",
+        "failures": 0,
+        "note": "20pass. Real missing-bundle creation, full build-directory replacement, safe adoption, last validated bytes, overlapping publications and observer shutdown pass. No application full-reload broadcasts. direct-tests-final.log, direct-tests-final2.log."
+      },
+      {
+        "command": "pnpm docs:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "9Mermaid diagrams;139files/13,698,340bytes; generated references and links/anchors valid. docs-check.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm spec:validate; pnpm check:boundaries; pnpm check:architecture; pnpm spec:first; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors/warnings;5validators/23chapters/172requirements;17packages;987modules;6protected files/4canonical chapters;139tasks. web-check-final.log, spec-validate.log, boundaries.log, architecture.log, spec-first.log, progress.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/help-assets-fix/playwright.config.ts (initial cold harness)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Harness timed out before tests: defineConfig(base, override) concatenated its inherited Rust preview server with the intended Vite server. Replaced server configuration in a single object; no assertions or product behavior changed. cold-help-browser.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/help-assets-fix/playwright.config.ts (corrected fresh Vite harness)",
+        "result": "pass",
+        "failures": 0,
+        "note": "12pass/1.8m across Chromium/WebKit:6existing Help cases each. Draft/focus preservation, local offline search/diagrams, themes, deep links/mobile navigation, missing-bundle retry and installation Help all pass. API bootstrap is mocked; isolated Vite has no backend, so local catalog connection refusal in sidebar fixtures is expected. No native/production HTTP qualification inferred. cold-help-browser-final.log."
+      },
+      {
+        "command": "node main prepareUiDevelopment preflight; fetch updated Help; compare runtime process markers",
+        "result": "pass",
+        "failures": 0,
+        "note": "Current main validates its bundle and serves the updated manual withHTTP200. VitePID53716 and backendPID36259 retained; no backend replacement. live-preflight.log."
+      },
+      {
+        "command": "pnpm exec prettier --write changed scripts, manual pages and canonical chapters/ledger",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed files formatted; format.log, format-observer.log, format-final.log. Scope preserves all471prior evidence objects and139task states."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "Retain Help development startup/publication/lifecycle regressions. M19 remains Partial with separate registry and packaged WKWebView release gates. Production Rust asset delivery, root aggregates, unrelated repository/browser suites, additional-platform filesystem qualification and visual baselines are outside this development-only slice. No new public contract or storage format. Current manual is rebuilt and adopted by the running Vite instance."
   }
 ]
 ```

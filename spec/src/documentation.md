@@ -20,6 +20,17 @@ The documentation source lives under `docs/site`, shared CLI long help under
 provides the standalone and embedded site. Mermaid sources remain Markdown and
 become SVG at build time. Scripts, fonts, search and diagrams are bundled.
 
+UI development MUST validate the generated manual before stopping any running
+service. A missing or invalid bundle requires `pnpm docs:build` and leaves
+existing processes and runtime markers intact. Vite observes publication of the
+documentation manifest through filesystem events, validates a complete new
+bundle, and replaces its in-memory assets only after validation succeeds. An
+unfinished or rejected rebuild retains the last validated bundle. Missing
+initial assets recover when a valid manifest is published. Reloads are serial,
+superseded reads cannot replace newer assets, and shutdown releases observers.
+This development mechanism performs no periodic reads or application reloads;
+production and desktop retain their startup-loaded immutable bundles.
+
 The source review gate records content fingerprints and a topic-specific review
 explanation. A passing gate proves acknowledged source coverage, not prose
 correctness. The progress ledger remains the sole qualification record. Main

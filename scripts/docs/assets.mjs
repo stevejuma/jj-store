@@ -1,5 +1,6 @@
 import { lstat, readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { watch } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 export const helpCsp =
   "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'none'";
 /** @type {Record<string, string>} */
@@ -71,6 +72,7 @@ export async function helpAssets(root) {
 }
 /** @param {string} root @returns {import("vite").Plugin} */
 export function documentationPlugin(root) {
+  let dispose = () => {};
   /** @param {import("vite").ViteDevServer | import("vite").PreviewServer} server */
   const configure = async (server) => {
     /** @type {Awaited<ReturnType<typeof helpAssets>> | undefined} */
@@ -87,6 +89,70 @@ export function documentationPlugin(root) {
       server.config.logger.warn(
         "Help is unavailable. Run pnpm docs:build before starting Vite.",
       );
+    }
+    if ("watcher" in server) {
+      const directory = resolve(root);
+      const parent = dirname(directory);
+      const manifestPath = join(directory, "asset-manifest.json");
+      let generation = 0;
+      let loading = false;
+      let closed = false;
+      const reload = async () => {
+        if (loading) return;
+        loading = true;
+        try {
+          while (!closed) {
+            const selected = generation;
+            try {
+              const next = await helpAssets(root);
+              if (!closed && selected === generation) assets = next;
+            } catch (error) {
+              if (
+                !closed &&
+                selected === generation &&
+                !(
+                  error instanceof Error &&
+                  "code" in error &&
+                  error.code === "ENOENT"
+                )
+              )
+                server.config.logger.warn(
+                  `Help rebuild rejected: ${error instanceof Error ? error.message : String(error)}. Keeping the last validated bundle.`,
+                );
+            }
+            if (selected === generation) break;
+          }
+        } finally {
+          loading = false;
+        }
+      };
+      const observer = watch(
+        parent,
+        { recursive: true },
+        (_event, filename) => {
+          if (filename !== null) {
+            const path = resolve(parent, filename.toString());
+            if (path !== manifestPath && path !== directory) return;
+          }
+          generation += 1;
+          void reload();
+        },
+      );
+      observer.on("error", (error) => {
+        dispose();
+        server.config.logger.warn(
+          `Help observer stopped: ${error.message}. Restart Vite after rebuilding documentation.`,
+        );
+      });
+      dispose = () => {
+        closed = true;
+        observer.close();
+        server.httpServer?.off("close", dispose);
+      };
+      server.httpServer?.once("close", dispose);
+      // Close the startup read/subscribe gap without periodic filesystem reads.
+      generation += 1;
+      await reload();
     }
     server.middlewares.use((req, res, next) => {
       const path = new URL(req.url ?? "/", "http://localhost").pathname;
@@ -117,5 +183,6 @@ export function documentationPlugin(root) {
     name: "bundled-documentation",
     configureServer: configure,
     configurePreviewServer: configure,
+    closeBundle: () => dispose(),
   };
 }

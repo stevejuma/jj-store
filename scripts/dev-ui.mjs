@@ -3,6 +3,7 @@ import { constants } from "node:fs";
 import { access, lstat, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { helpAssets } from "./docs/assets.mjs";
 import { developmentLayout, loadFixture } from "./dev-demo-state.mjs";
 import { stopPrevious, processTreeMetrics } from "./dev-demo-services.mjs";
 import {
@@ -83,6 +84,14 @@ export async function prepareUiDevelopment(
   } catch {
     throw new Error(
       "Missing embedded RustFS executable. Run pnpm dev:restart once or select JJ_STORE_DEV_RUSTFS_RUNTIME.",
+    );
+  }
+  try {
+    await helpAssets(join(repositoryRoot, "docs/build"));
+  } catch (error) {
+    throw new Error(
+      "UI development requires a valid built documentation bundle. Run pnpm docs:build before starting Vite.",
+      { cause: error },
     );
   }
   return {

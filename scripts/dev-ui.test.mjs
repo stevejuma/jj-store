@@ -13,6 +13,16 @@ import {
 import { prepareUiDevelopment, runUiDevelopment } from "./dev-ui.mjs";
 import { developmentLayout, writeFixture } from "./dev-demo-state.mjs";
 
+async function documentation(root) {
+  const docs = join(root, "docs/build");
+  await mkdir(docs, { recursive: true });
+  await writeFile(join(docs, "index.html"), "<h1>Help</h1>");
+  await writeFile(
+    join(docs, "asset-manifest.json"),
+    JSON.stringify({ version: 1, files: ["index.html"] }),
+  );
+}
+
 test("HMR proxy preserves the public origin and streams every versioned API route", () => {
   const settings = uiDevelopmentSettings({});
   assert.equal(settings.origin, "http://127.0.0.1:7460/");
@@ -89,6 +99,7 @@ test("an occupied backend port leaves the current service and runtime marker int
   const backendPort = blocker.address().port;
   const uiPort = backendPort - 1;
   const layout = developmentLayout(root, {});
+  await documentation(root);
   await mkdir(layout.repository, { recursive: true });
   await mkdir(layout.rustfsVolume, { recursive: true });
   await writeFile(
@@ -139,6 +150,7 @@ test("matching HMR backend restart retains app-saved configuration and refuses a
   const root = await mkdtemp(join(tmpdir(), "jj-store-ui-settings-"));
   t.after(() => rm(root, { recursive: true, force: true }));
   const layout = developmentLayout(root, {});
+  await documentation(root);
   await mkdir(layout.repository, { recursive: true });
   await mkdir(layout.rustfsVolume, { recursive: true });
   const base = `format = 2\nbind = "127.0.0.1:7460"\npublic_url = "http://127.0.0.1:7460/"\nruntime_executable = ${JSON.stringify(process.execPath)}\n[agent_capture]\nenabled = false\n`;
@@ -172,4 +184,77 @@ test("matching HMR backend restart retains app-saved configuration and refuses a
     prepareUiDevelopment(root, { JJ_STORE_DEV_SERVER: process.execPath }),
     { code: "ENOENT" },
   );
+});
+
+test("missing or invalid Help leaves running services and runtime markers intact", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "jj-store-ui-help-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const layout = developmentLayout(root, {});
+  await mkdir(layout.repository, { recursive: true });
+  await mkdir(layout.rustfsVolume, { recursive: true });
+  await writeFile(
+    layout.serverConfig,
+    `format = 2\nruntime_executable = ${JSON.stringify(process.execPath)}\n`,
+  );
+  await writeFixture(layout, {
+    repositoryId: "11".repeat(16),
+    firstStartupMillis: 0,
+  });
+  const blocker = createServer();
+  await new Promise((ready) => blocker.listen(0, "127.0.0.1", ready));
+  t.after(() => new Promise((ready) => blocker.close(ready)));
+  const backendPort = blocker.address().port;
+  const uiPort = backendPort - 1;
+  const running = spawn(
+    process.execPath,
+    [
+      "-e",
+      "setInterval(() => {}, 1000)",
+      "--",
+      "jj-store",
+      "run",
+      "--config",
+      layout.serverConfig,
+    ],
+    { stdio: "ignore" },
+  );
+  await new Promise((ready, reject) => {
+    running.once("spawn", ready);
+    running.once("error", reject);
+  });
+  t.after(() => running.kill());
+  const marker = JSON.stringify({
+    serverPid: running.pid,
+    serverConfig: layout.serverConfig,
+    origin: `http://127.0.0.1:${uiPort}/`,
+  });
+  await writeFile(layout.runtimeFile, marker);
+  const environment = {
+    JJ_STORE_DEV_PORT: String(uiPort),
+    JJ_STORE_DEV_BACKEND_PORT: String(backendPort),
+    JJ_STORE_DEV_SERVER: process.execPath,
+  };
+  for (const invalid of ["missing", "unsafe", "duplicate", "incomplete"]) {
+    if (invalid !== "missing") {
+      await documentation(root);
+      const files =
+        invalid === "unsafe"
+          ? ["index.html", "../secret.html"]
+          : invalid === "duplicate"
+            ? ["index.html", "index.html"]
+            : ["index.html", "missing.js"];
+      await writeFile(
+        join(root, "docs/build/asset-manifest.json"),
+        JSON.stringify({ version: 1, files }),
+      );
+    }
+    await assert.rejects(
+      runUiDevelopment(root, environment),
+      /documentation.*pnpm docs:build/isu,
+    );
+    assert.doesNotThrow(() => process.kill(running.pid, 0));
+    assert.equal(await readFile(layout.runtimeFile, "utf8"), marker);
+  }
+  await documentation(root);
+  await prepareUiDevelopment(root, environment);
 });

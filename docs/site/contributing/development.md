@@ -17,6 +17,12 @@ loopback origin and reuses the existing native executable. Run
 disposable fixture. `pnpm dev:stop` preserves its state. `pnpm dev:reset` is an
 explicit destructive reset, not an ordinary iteration command.
 
+UI startup validates the generated manual before replacing running services. If
+Help is missing or invalid, run `pnpm docs:build`, then retry `pnpm dev:ui`.
+Subsequent documentation builds update Vite's Help assets automatically when
+their validated manifest is published. No backend restart or page reload is
+needed; an unfinished or failed rebuild retains the last valid manual.
+
 After backend edits, `pnpm dev:backend:build` and `pnpm dev:backend:restart`
 replace the backend while Vite remains running. Explicit development paths avoid
 replacing the installed `jj` or restarting unrelated services. Never put real
