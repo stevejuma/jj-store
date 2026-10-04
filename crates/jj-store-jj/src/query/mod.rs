@@ -493,42 +493,69 @@ impl GraphExecutor {
         let settings = UserSettings::from_config(StackedConfig::with_defaults())
             .map_err(|_| Error::Unavailable)?;
         let mut cache = match cache::Cache::open(&self.root, self.cache_policy, &budget) {
-            Ok(cache) => cache,
-            Err(Error::Busy) if matches!(&work, Work::Graph(Request::Log { revset, .. }, _) if revset.trim() == "all()") =>
-            {
-                let saved = self
-                    .residents
-                    .get_memory(access.as_ref())
-                    .ok_or(Error::Busy)?;
-                budget.start_index(false)?;
-                // Construct fresh request-scoped native capabilities. The saved
-                // index carries no previous caller's authorization or backend.
-                let loader =
-                    index::resident_loader(&stores, &settings, saved.clone(), budget.clone())?;
-                let repo = stores
-                    .load_at(&loader, access.operation())
-                    .await
-                    .map_err(|_| Error::Unavailable)?;
-                budget.finish_initial_index();
-                let Work::Graph(request, page) = work else {
-                    unreachable!()
-                };
-                let (data, next) = graphs::run(&repo, request, page, &access, &budget).await?;
-                budget.authorize(access.as_ref()).await?;
-                let result = Output::Graph(GraphPage {
-                    version: 1,
-                    cache: saved.report(),
-                    operation: access.operation(),
-                    data,
-                    next,
-                    stats: budget.stats(),
-                });
-                budget.complete_output(&result)?;
-                return Ok(result);
-            }
+            Ok(cache) => Some(cache),
+            Err(Error::Busy) if matches!(&work, Work::Graph(..)) => None,
             Err(error) => return Err(error),
         };
-        let entry = cache.prepare(access.as_ref(), &stores, &budget, &self.residents)?;
+        let entry = match &mut cache {
+            Some(cache) => {
+                match cache.prepare(access.as_ref(), &stores, &budget, &self.residents) {
+                    Ok(entry) => Some(entry),
+                    Err(Error::Limit)
+                        if matches!(&work, Work::Graph(..))
+                            && cache.can_use_reserved_fallback() =>
+                    {
+                        None
+                    }
+                    Err(error) => return Err(error),
+                }
+            }
+            None => None,
+        };
+        if entry.is_none() {
+            let blocked = if cache.is_some() {
+                Error::Limit
+            } else {
+                Error::Busy
+            };
+            drop(cache);
+            let saved = self.residents.get_memory(access.as_ref()).ok_or(blocked)?;
+            budget.start_index(false)?;
+            // Construct fresh request-scoped native capabilities. The saved
+            // index carries no previous caller's authorization or backend.
+            let loader = index::resident_loader(
+                &stores,
+                &settings,
+                saved.clone(),
+                budget.clone(),
+                self.root.clone(),
+                self.cache_policy,
+                self.residents.clone(),
+                access.clone(),
+            )?;
+            let repo = stores
+                .load_at(&loader, access.operation())
+                .await
+                .map_err(|_| Error::Unavailable)?;
+            budget.finish_initial_index();
+            let Work::Graph(request, page) = work else {
+                unreachable!()
+            };
+            let (data, next) = graphs::run(&repo, request, page, &access, &budget).await?;
+            budget.authorize(access.as_ref()).await?;
+            let result = Output::Graph(GraphPage {
+                version: 1,
+                cache: saved.report(),
+                operation: access.operation(),
+                data,
+                next,
+                stats: budget.stats(),
+            });
+            budget.complete_output(&result)?;
+            return Ok(result);
+        }
+        let mut cache = cache.ok_or(Error::Unavailable)?;
+        let entry = entry.ok_or(Error::Unavailable)?;
         if matches!(work, Work::Graph(..)) {
             budget.start_index(entry.initialize)?;
         }
@@ -542,6 +569,7 @@ impl GraphExecutor {
             &stores,
             &settings,
             &entry.path,
+            self.root.clone(),
             budget.clone(),
             self.cache_policy,
             entry.resident.clone(),
@@ -555,12 +583,10 @@ impl GraphExecutor {
             .map_err(|_| Error::Unavailable)?;
         budget.check()?;
         budget.finish_initial_index();
-        if entry.resident.is_some()
-            && matches!(&work, Work::Graph(Request::Log { revset, .. }, _) if revset.trim() == "all()")
-        {
-            // This exact expression only consults the already-loaded index and
-            // view. Finish cache bookkeeping before releasing the namespace;
-            // the loader retains the immutable resident until the query exits.
+        if matches!(&work, Work::Graph(..)) {
+            // Publish only the complete primary generation, then release the
+            // namespace. Additional operations use private reserved construction
+            // and immutable residents; this loader never extends this slot.
             let index = repo
                 .readonly_index()
                 .downcast_ref::<projection::Reader>()

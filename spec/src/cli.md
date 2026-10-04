@@ -450,6 +450,15 @@ preparation during later publications, cache loss/rebuild and shared-worker
 cancellation. These are native library tests, independent of browser task
 status.
 
+Native graph-cache fixtures require immutable primary receipts after cold
+historical predicates, reuse of their separate data-only residents, and filtered
+warm reads during primary preparation. A gated historical constructor proves its
+private allowance remains charged while the namespace is free, with cleanup
+after exit and warm reads surviving one-entry disk eviction. Private output
+verification rejects wrong operation links, checksums and unexpected files
+before the allocating JJ decoder. These focused regressions do not qualify
+scale, production memory or combined HTTP/browser behavior.
+
 HTTP acceptance compares owned DTOs at exact operations, including binary media
 and error boundaries. Existing authenticated native-service fixtures retain the
 future shared-deployment branch; the local release serves protected HTTP V1 on

@@ -758,3 +758,10 @@ repository/epoch/operation keys. Historical predicates attach those indexes and
 their allocation leases to fresh request readers while native operation/view
 capabilities and current authorization stay request-owned. Reuse does not copy
 another slot or broaden repository membership.
+
+The native query boundary completes primary generation bookkeeping before graph
+evaluation. Missing historical indexes build in separately reserved scratch and
+retain verified data only, with fresh operation/view capabilities and shared
+process allocation leases. Cache namespace locks protect admission and receipt
+installation; historical construction and graph evaluation run outside them.
+Cold primary construction still holds its lock and remains delivery work.

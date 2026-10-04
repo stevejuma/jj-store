@@ -374,13 +374,14 @@ derived files. The checksums detect local cache damage; native objects remain
 the authority. Query execution checks current authorization before touching
 these files.
 
-An exclusive namespace lock serializes graph-cache users, including separate
-executors/processes sharing that directory. Contention returns Busy. Completed
-queries record immutable graph data before atomically installing a staged cache
-and its bounded receipt. Missing files, invalid cache receipts or checksum
-mismatches trigger reconstruction. A mismatched native backend/profile binding
-fails explicitly. Source corruption or denied reads cannot be repaired by cache
-rebuilding and remain errors.
+An exclusive namespace lock serializes primary graph-cache admission and
+bookkeeping, including separate executors/processes sharing that directory.
+Contention returns Busy unless the request can use its exact immutable resident.
+Primary index preparation installs its complete staged cache and bounded receipt
+before graph evaluation releases this lock. Missing files, invalid receipts or
+checksum mismatches trigger reconstruction. A mismatched native backend/profile
+binding fails explicitly. Source corruption or denied reads cannot be repaired
+by cache rebuilding and remain errors.
 
 Retention bounds slot count, file count, individual-cache bytes and total
 retained bytes. Defaults retain at most 16 slots, 2 GiB of file bytes per slot,
@@ -801,7 +802,7 @@ substitute an unchecked source index or expose upstream objects through service
 contracts. This shared construction does not change native segment bytes.
 
 Warm native graph reads MAY reuse an already verified immutable in-memory index
-under the same cache namespace lease. Retained residents bind repository, epoch,
+after primary cache admission. Retained residents bind repository, epoch,
 operation, cache path and exact receipt file set; they have an LRU count bound
 and a conservative shared process-wide allocation allowance of 1 GiB. Before
 reuse, enumerate the bounded file set and compare device, inode, size, mtime and
@@ -809,11 +810,12 @@ ctime at nanosecond precision. Filesystems without the required metadata use
 full verification. Changed, replaced, missing or added files invalidate reuse. A
 metadata comparison only authorizes using the existing verified in-memory index;
 it MUST NOT substitute for checksumming disk bytes that will be decoded.
-Additional operation indexes retain full disk verification. Process restart,
-eviction and loss of the resident require full checksums before loading. Current
-authorization and loaded-index hard limits still apply. Disk-generation
-immutability, shorter namespace locking and larger aggregate quotas remain
-separate work.
+Privately constructed additional-operation indexes require full checksums and
+exact operation-link/segment linkage before decoding. Process restart, eviction
+and loss of the resident require full checksums before loading. Current
+authorization and loaded-index hard limits still apply. Primary construction
+still holds the namespace lock; separately staged primary admission remains
+delivery work.
 
 Native disk-index loads and local prepared generation loads MUST reserve
 resident allocation before upstream decoding. Account twice the complete bounded
@@ -829,15 +831,16 @@ executor instances and both profiles; dropping a cache owner cannot release
 memory still owned by a reader. This allowance accounts resident index
 estimates, not the whole server's heap or storage-library caches.
 
-An ordinary warm `all()` page MAY release the cache namespace lease after
-loading and validating its exact operation, view and resident index and
-finishing cache bookkeeping. Evaluation then uses the retained immutable memory
-copy and authorized native object reads. Another job may evict or replace its
-disk slot without changing the in-flight page's source. Cache diagnostics in
-that response describe the admission-time observation. Resident byte accounting
-MUST retain charges until the last executing owner releases an evicted copy.
-Queries that can load additional operation indexes retain their exclusive
-namespace lease; this optimization does not authorize concurrent disk writers.
+Every graph request MUST release the cache namespace lease after loading and
+validating its exact operation, view and primary index and finishing cache
+bookkeeping. Evaluation then uses the retained immutable memory copy and
+authorized native object reads. Another job may evict or replace its disk slot
+without changing the in-flight page's source. Cache diagnostics in that response
+describe the admission-time observation. Resident byte accounting MUST retain
+charges until the last executing owner releases an evicted copy. The loader
+retains primary data and its own allocation handle across subsequent loads,
+including after a staging rename or disk eviction. Evaluation MUST NOT extend
+the primary generation with additional operation files.
 
 Additional native operation loads MAY reuse a separately retained prepared
 resident under the exact repository/epoch/operation key. The operation and view
@@ -849,21 +852,35 @@ Deduplicate shared parent handles when a generation includes earlier index
 allocations. This path does not read, hash or copy another cache slot and does
 not add its segments/links to the primary generation. Preserve each operation's
 own visibility, prefixes and annotations; a current-view index is not a
-substitute for a historical one. Cold additional operations retain bounded
-construction and the existing namespace lock. Primary slot corruption and
-missing-projection recovery keep their ordinary admission; a secondary resident
-cannot repair or override that selected slot implicitly.
+substitute for a historical one. Missing historical operations acquire a private
+locked reservation in the shared native/local namespace before construction. Its
+complete allowance stays charged until worker cleanup; acquisition releases the
+namespace lock before building. Use the ordinary inline threshold, compact
+admitted scratch and owned format-6 writer. Verify the exact two-file output,
+selected operation link and content-addressed segment, then admit frame memory
+before JJ decoding. Derive visibility and annotations from that operation's own
+view. After readonly arrays are fully owned, discard construction files and
+retain only immutable data in a count/weight-bounded auxiliary LRU sharing the
+process allocation pool. Cache entries carry no caller or native capability.
+Primary slot corruption and missing-projection recovery keep their ordinary
+admission; a secondary resident cannot repair or override that selected slot
+implicitly.
 
-When preparation already holds that lease, a new ordinary `all()` page MAY use
-an existing resident matching repository, epoch and operation without opening
-any cache metadata or index files. Construct fresh request-scoped native backend
-and operation capabilities; never retain or reuse an earlier caller's
-authorization. The memory-only index store admits exactly the captured
-operation, enforces the current hard limit and denies writes. Cold or
-graph-dependent reads without a matching resident retain Busy/preparation
-admission. Cache retained counts on this path describe the most recent completed
-cache observation for that resident; the request performs no eviction.
-Revocation, epoch changes, cancellation and final output checks remain current.
+When preparation already holds that lease, any graph request MAY use an existing
+resident matching repository, epoch and operation without opening any cache
+metadata or index files. Construct fresh request-scoped native backend and
+operation capabilities; never retain or reuse an earlier caller's authorization.
+The memory-only index store admits the captured operation and loads additional
+operations through the same guarded historical reader, enforces the current hard
+limit and denies writes. Cold primary reads without a matching resident retain
+Busy/preparation admission. Cache retained counts on this path describe the most
+recent completed cache observation for that resident; the request performs no
+eviction. Revocation, epoch changes, cancellation and final output checks remain
+current. A live reservation may evict primary disk data and prevent new disk
+admission; its matching immutable resident MAY still serve the request. Detected
+cache damage MUST retain the normal recovery path. Memory fallback does not
+waive missing historical construction admission or follow another caller's
+source.
 
 The shared native query-cache namespace defaults to 2 GiB per entry, 4 GiB per
 repository across all epochs/operations, and 16 GiB total. Cold preparation MUST
@@ -885,9 +902,9 @@ explicit preparation uses the same scratch when its writable allowance is below
 reserve streamed segment/link bytes before writing and admit the actual receipt
 bytes before creating its temporary file. A small cache does not require a
 fixed1MiB receipt reservation or a database's minimum allocation. Framing and
-resident decoding remain admitted before JJ allocation. These constructors still
-hold the namespace lock and may add additional operation files in a retained
-slot; immutable generations and shorter locking remain delivery work.
+resident decoding remain admitted before JJ allocation. Primary constructors
+still hold the namespace lock until completing their generation. Additional
+operations use private reservations and never extend the retained primary slot.
 
 Local prepared log reads reuse only checksum-verified immutable index data and
 build fresh operation/backend capabilities for the current binding. Index

@@ -1,5 +1,7 @@
 //! Reuse verified immutable in-memory indexes, never unchecked on-disk bytes.
+mod additional;
 use super::*;
+pub(in crate::query) use additional::Data;
 use std::sync::{
     Mutex,
     atomic::{AtomicU64, Ordering},
@@ -79,7 +81,6 @@ pub(in super::super) struct Saved {
     pub operation: m::OperationId,
     pub(super) verification: Verification,
     weight: u64,
-    policy: Policy,
     retained: Arc<AtomicU64>,
     report: Mutex<Report>,
     pub(super) memory: Arc<super::super::memory::Indexes>,
@@ -90,12 +91,14 @@ impl Drop for Saved {
     }
 }
 impl Saved {
-    pub fn reader(&self, budget: Arc<Budget>) -> Result<Box<dyn jj_lib::index::ReadonlyIndex>> {
-        budget.check()?;
-        if self.index.num_commits() as usize > budget.limits.max_index_commits {
-            return Err(budget.fail(Error::IndexBudget));
+    pub fn data(&self) -> Data {
+        Data {
+            index: self.index.clone(),
+            memory: self.memory.clone(),
         }
-        Ok(self.index.reader_with_memory(budget, self.memory.clone()))
+    }
+    pub fn reader(&self, budget: Arc<Budget>) -> Result<Box<dyn jj_lib::index::ReadonlyIndex>> {
+        self.data().reader(budget)
     }
     pub fn report(&self) -> Report {
         Report {
@@ -107,21 +110,30 @@ impl Saved {
     pub(super) fn update_report(&self, report: Report) {
         *self.report.lock().unwrap() = report;
     }
-    /// Additional native operation loaders read disk, so they must reverify it.
-    pub fn verify_disk(&self, budget: &Budget) -> Result<()> {
-        let (files, _) = inventory(&self.path, self.policy, budget, true)?;
-        if files != self.verification.files {
-            return Err(Error::Unavailable);
-        }
-        Ok(())
-    }
 }
 #[derive(Default)]
 pub(in super::super) struct Residents {
     entries: Mutex<Vec<Arc<super::super::memory::Retained<Saved>>>>,
     retained: Arc<AtomicU64>,
+    additional: additional::AdditionalResidents,
 }
 impl Residents {
+    pub(in crate::query) fn get_additional(
+        &self,
+        access: &dyn ReadAccess,
+        operation: m::OperationId,
+    ) -> Option<Data> {
+        self.additional.get(access, operation)
+    }
+    pub(in crate::query) fn remember_additional(
+        &self,
+        access: &dyn ReadAccess,
+        operation: m::OperationId,
+        data: Data,
+        policy: Policy,
+    ) {
+        self.additional.remember(access, operation, data, policy);
+    }
     pub(in super::super) fn get_memory(&self, access: &dyn ReadAccess) -> Option<Arc<Saved>> {
         self.get_memory_at(access, access.operation())
     }
@@ -225,7 +237,6 @@ impl Residents {
             operation: access.operation(),
             verification,
             weight,
-            policy,
             retained: self.retained.clone(),
             report: Mutex::new(report),
             memory: budget.index_memory.clone(),

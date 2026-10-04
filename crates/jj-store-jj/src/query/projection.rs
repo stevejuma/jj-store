@@ -41,9 +41,6 @@ impl Prepared {
     pub fn weight(&self) -> u64 {
         self.decorations.weight
     }
-    pub fn reader(&self, budget: Arc<Budget>) -> Box<dyn ReadonlyIndex> {
-        self.reader_with_memory(budget.clone(), budget.index_memory.clone())
-    }
     pub fn reader_with_memory(
         &self,
         budget: Arc<Budget>,

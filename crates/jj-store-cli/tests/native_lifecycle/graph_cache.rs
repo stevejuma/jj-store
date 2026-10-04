@@ -35,6 +35,45 @@ impl jj_store_object::ObjectStore for HeldCommitRead {
     }
 }
 
+// Historical construction deliberately bypasses commit-body memoization. Gate
+// its first download only; later hydration of the same commit must proceed.
+struct OneShotCommitRead {
+    gate: HeldCommitRead,
+    entered_once: std::sync::atomic::AtomicBool,
+}
+#[async_trait::async_trait]
+impl jj_store_object::ObjectStore for OneShotCommitRead {
+    async fn head(
+        &self,
+        key: &jj_store_object::Key,
+    ) -> jj_store_object::Result<jj_store_object::Metadata> {
+        self.gate.inner.head(key).await
+    }
+    async fn get(
+        &self,
+        key: &jj_store_object::Key,
+        range: Option<jj_store_object::ByteRange>,
+    ) -> jj_store_object::Result<jj_store_object::Download> {
+        if key.as_str() == self.gate.target
+            && !self
+                .entered_once
+                .swap(true, std::sync::atomic::Ordering::AcqRel)
+        {
+            self.gate.entered.notify_one();
+            self.gate.release.notified().await;
+        }
+        self.gate.inner.get(key, range).await
+    }
+    async fn put(
+        &self,
+        _: &jj_store_object::Key,
+        _: jj_store_object::Condition,
+        _: &jj_store_object::StagedUpload,
+    ) -> jj_store_object::Result<jj_store_object::WriteOutcome> {
+        panic!("query wrote native state")
+    }
+}
+
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn warm_graph_survives_concurrent_preparation_and_cache_eviction() {
     tokio::task::LocalSet::new()
@@ -584,6 +623,205 @@ async fn historical_predicates_reuse_separately_prepared_residents_without_slot_
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn cold_historical_indexes_leave_the_primary_generation_immutable() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let (repo, b) = child(&repo, &a, "B").await;
+            let (repo, _) = child(&repo, &b, "C").await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let exec = executor(root.path(), q::Limits::default());
+            read.prepare_index(&exec, q::Cancellation::default())
+                .await
+                .unwrap();
+            let path = cache_slot(root.path(), oid(repo.op_id()));
+            let files = || {
+                serde_json::from_slice::<serde_json::Value>(
+                    &fs::read(path.join("query-cache.json")).unwrap(),
+                )
+                .unwrap()["files"]
+                    .clone()
+            };
+            let before = files();
+            let mut request = log("at_operation(@-, all()) | at_operation(@--, all())");
+            if let q::Request::Log { workspace, .. } = &mut request {
+                *workspace = Some("fixture".into());
+            }
+            let first = read.graph(&exec, request.clone(), page(100)).await.unwrap();
+            assert_eq!(
+                files(),
+                before,
+                "cold historical construction changed the retained primary index"
+            );
+            let warm = read.graph(&exec, request, page(100)).await.unwrap();
+            assert_eq!(warm.data, first.data);
+            assert!(
+                warm.stats.object_reads < first.stats.object_reads,
+                "historical indexes should be reused across requests: first={:?}, warm={:?}",
+                first.stats,
+                warm.stats
+            );
+            assert!(fs::read_dir(cache_root(root.path())).unwrap().all(|e| {
+                !e.unwrap()
+                    .file_name()
+                    .to_string_lossy()
+                    .starts_with(".reserved-")
+            }));
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn private_historical_construction_reserves_quota_without_blocking_warm_graphs() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            // One entry forces disk eviction; two retain the primary slot while
+            // construction is charged. Both must leave warm memory usable.
+            for max_entries in [2, 1] {
+                let f = Fixture::new().await;
+                let local = tempfile::tempdir().unwrap();
+                let work = tempfile::tempdir().unwrap();
+                let root = tempfile::tempdir().unwrap();
+                let (old, a) = initial(&f, local.path(), work.path()).await;
+                let (repo, _) = child(&old, &a, "later").await;
+                let read = pin(&f, oid(repo.op_id())).await;
+                let policy = q::cache::Policy {
+                    max_entries,
+                    ..Default::default()
+                };
+                let exec = q::GraphExecutor::with_cache_policy(
+                    root.path().to_owned(),
+                    q::Limits::default(),
+                    2,
+                    policy,
+                )
+                .unwrap();
+                let current = log("all() ~ root()");
+                let expected = read.graph(&exec, current.clone(), page(100)).await.unwrap();
+                let path = cache_slot(root.path(), oid(repo.op_id()));
+                let before = serde_json::from_slice::<serde_json::Value>(
+                    &fs::read(path.join("query-cache.json")).unwrap(),
+                )
+                .unwrap()["files"]
+                    .clone();
+                let gate = Arc::new(OneShotCommitRead {
+                    gate: HeldCommitRead {
+                        inner: f.store.clone(),
+                        target: m::ObjectKey::Commit(cid(a.id())).storage_path(REPO),
+                        entered: Default::default(),
+                        release: Default::default(),
+                    },
+                    entered_once: Default::default(),
+                });
+                let mut historical = log("at_operation(@-, all())");
+                if let q::Request::Log { workspace, .. } = &mut historical {
+                    *workspace = Some("fixture".into());
+                }
+                let pending = {
+                    let exec = exec.clone();
+                    let read = read.clone();
+                    let gate = gate.clone();
+                    tokio::spawn(
+                        async move { exec.execute(gate, read, historical, page(100)).await },
+                    )
+                };
+                let entered =
+                    tokio::time::timeout(Duration::from_secs(2), gate.gate.entered.notified())
+                        .await;
+                let reservations: Vec<_> = fs::read_dir(cache_root(root.path()))
+                    .unwrap()
+                    .map(|e| e.unwrap().path())
+                    .filter(|p| {
+                        p.file_name()
+                            .unwrap()
+                            .to_string_lossy()
+                            .starts_with(".reserved-")
+                    })
+                    .collect();
+                let warm = read.graph(&exec, current, page(100)).await;
+                // Always release the blocked worker before reporting assertions.
+                gate.gate.release.notify_one();
+                let built = pending.await.unwrap();
+                entered.expect("historical construction did not reach its gated commit");
+                built.unwrap();
+                assert_eq!(reservations.len(), 1);
+                assert!(
+                    !reservations[0].exists(),
+                    "private scratch survived construction"
+                );
+                let warm = warm.expect("historical construction blocked an immutable warm graph");
+                assert_eq!(warm.data, expected.data);
+                if max_entries == 2 {
+                    assert_eq!(warm.cache.retained_entries, 2);
+                    assert!(warm.cache.retained_bytes >= policy.max_entry_bytes);
+                    assert_eq!(
+                        serde_json::from_slice::<serde_json::Value>(
+                            &fs::read(path.join("query-cache.json")).unwrap(),
+                        )
+                        .unwrap()["files"],
+                        before
+                    );
+                } else {
+                    assert!(
+                        !path.exists(),
+                        "private construction did not honor the one-entry quota"
+                    );
+                }
+            }
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn warm_filtered_graph_starts_while_another_operation_is_preparing() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let old = pin(&f, oid(repo.op_id())).await;
+            let (later, b) = child(&repo, &a, "later").await;
+            let newer = pin(&f, oid(later.op_id())).await;
+            let exec = executor(root.path(), q::Limits::default());
+            let request = log("all() ~ root()");
+            let expected = old.graph(&exec, request.clone(), page(100)).await.unwrap();
+            let gate = Arc::new(HeldCommitRead {
+                inner: f.store.clone(),
+                target: m::ObjectKey::Commit(cid(b.id())).storage_path(REPO),
+                entered: Default::default(),
+                release: Default::default(),
+            });
+            let pending = {
+                let exec = exec.clone();
+                let gate = gate.clone();
+                tokio::spawn(async move {
+                    exec.prepare_index(gate, newer, q::Cancellation::default())
+                        .await
+                })
+            };
+            tokio::time::timeout(Duration::from_secs(2), gate.entered.notified())
+                .await
+                .unwrap();
+            let result = old.graph(&exec, request, page(100)).await;
+            gate.release.notify_one();
+            pending.await.unwrap().unwrap();
+            assert_eq!(
+                result
+                    .expect("a filtered warm graph must not need the namespace lock")
+                    .data,
+                expected.data
+            );
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn resident_indexes_preserve_multiple_historical_operation_scopes() {
     tokio::task::LocalSet::new()
         .run_until(async {
@@ -691,7 +929,17 @@ async fn graph_cache_recovery_rechecks_permission_and_serializes_independent_exe
                 .unwrap();
             assert_eq!(recovered.data, healed.data);
             assert!(!abandoned.exists());
-            // A failed native query cannot leave partially updated derived files.
+            // Evaluation starts only after primary installation. A failed
+            // revset retains that complete immutable generation, without
+            // extending its verified file set or leaving partial construction.
+            let files = || {
+                serde_json::from_slice::<serde_json::Value>(
+                    &fs::read(path.join("query-cache.json")).unwrap(),
+                )
+                .unwrap()["files"]
+                    .clone()
+            };
+            let complete = files();
             assert!(matches!(
                 admin
                     .graph(&separate, log("@"), page(100))
@@ -699,7 +947,16 @@ async fn graph_cache_recovery_rechecks_permission_and_serializes_independent_exe
                     .unwrap_err(),
                 q::Error::InvalidQuery(diagnostic) if diagnostic.kind == "missing_context"
             ));
-            assert_eq!(fs::read_dir(cache_root(root.path())).unwrap().count(), 1);
+            assert_eq!(files(), complete);
+            assert_eq!(fs::read_dir(cache_root(root.path())).unwrap().count(), 2);
+            assert_eq!(
+                admin
+                    .graph(&separate, log("all()"), page(100))
+                    .await
+                    .unwrap()
+                    .data,
+                recovered.data
+            );
             assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
         })
         .await;

@@ -25,6 +25,15 @@ pub struct Reservation {
 }
 impl Reservation {
     pub fn acquire(root: &Path, repository: m::RepositoryId, policy: Policy) -> Result<Self> {
+        let budget = Budget::new(Limits::default())?;
+        Self::acquire_for_query(root, repository, policy, &budget)
+    }
+    pub(in crate::query) fn acquire_for_query(
+        root: &Path,
+        repository: m::RepositoryId,
+        policy: Policy,
+        budget: &Budget,
+    ) -> Result<Self> {
         policy.validate()?;
         if !root.is_absolute()
             || policy.max_entry_bytes <= OVERHEAD
@@ -32,8 +41,7 @@ impl Reservation {
         {
             return Err(Error::Limit);
         }
-        let budget = Budget::new(Limits::default())?;
-        let mut cache = Cache::open(root, policy, &budget)?;
+        let mut cache = Cache::open(root, policy, budget)?;
         cache.reserve(repository, policy.max_entry_bytes)?;
         let directory = tempfile::Builder::new()
             .prefix(".reserved-")

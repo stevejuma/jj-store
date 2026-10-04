@@ -66,9 +66,13 @@ summaries and cross-request local WorkStore root reuse remain delivery work.
 Native missing-operation construction now uses the owned bounded format writer
 with compact, admitted scratch for interactive and small-cache reads. Immutable
 resident lookup also reuses separately prepared historical operations without
-copying another slot. Cold additional-operation generations/short locking and
-local operation/deep lookup are still pending. These focused deliveries do not
-complete the later combined qualification gate.
+copying another slot. Cold historical operations now build under separate full
+reservations and retain verified data only. Graph evaluation releases the
+namespace after completing the immutable primary generation, including filtered
+queries. Cold primary construction still holds the namespace through its build;
+separately staged primary admission and local operation/deep lookup remain
+pending. These focused deliveries do not complete the later combined
+qualification gate.
 
 ### Deferred complete qualification
 

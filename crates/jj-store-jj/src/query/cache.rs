@@ -1,4 +1,5 @@
 //! Disposable bounded cache slots. Only verified native objects are authority.
+pub(super) mod constructed;
 mod reservation;
 pub(super) mod resident;
 use super::*;
@@ -236,6 +237,11 @@ pub(super) fn construction_bytes(path: &Path, policy: Policy, budget: &Budget) -
         .ok_or(Error::Limit)
 }
 impl Cache {
+    pub fn can_use_reserved_fallback(&self) -> bool {
+        // A live reservation may temporarily remove a valid disk generation.
+        // Detected cache damage must still take its normal recovery path.
+        !self.reservations.is_empty() && !self.damaged
+    }
     pub fn open(root: &Path, policy: Policy, budget: &Budget) -> Result<Self> {
         let mut root = root.to_owned();
         plain_dir(&root)?;
