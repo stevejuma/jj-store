@@ -76811,6 +76811,72 @@ entries.
     "Native limits, cross-profile/process quota admission, immutable generations, historical/prefix/copy/search/RPC and collaboration/card projections remain open. Linux/native2m/10krefs/deep-page/near-capacity/cold/real-RustFS qualification remains pending. No running service changed. Unchanged UI/native graph/root aggregate lanes out of scope; E-READ-005 registry/full-contract limitations retained."
   ],
   "next": "Commit verified prepared local logs, then wire shared quota admission, local task/cache lifecycle and HTTP/browser delivery."
+},
+{
+  "id": "E-READ-016",
+  "tasks": [
+    "M4.1",
+    "M13.5"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change rmmkypyx",
+  "kind": "Shared native/local generation reservation accounting",
+  "versions": "Rust1.98.1; jj-lib0.45.1; macOS ARM64.",
+  "formats": "Repository persistence unchanged. Disposable reservation descriptor version1 inside existing private cache namespace; lifetime file lock is process-owned. No new HTTP contract.",
+  "files": [
+    "crates/jj-store-jj/src/query/cache/reservation.rs",
+    "crates/jj-store-jj/src/query/cache.rs",
+    "spec/src/cli.md",
+    "spec/src/jj-integration.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-JJ-003",
+    "JST-JJ-005"
+  ],
+  "tests": [
+    "crates/jj-store-jj/src/query/cache/reservation.rs#reservations_share_native_repository_total_and_lifetime_admission",
+    "crates/jj-store-jj/src/query/cache/reservation.rs#stale_reserved_generations_are_discarded_before_reuse"
+  ],
+  "runs": [
+    {
+      "command": "Source inspection: query/cache.rs and local_browser/preparation.rs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Before: native namespace accounts only its slots; local construction relies on caller-provided reservation with no shared admission API. New locked reservation provides the composition boundary; service wiring remains next."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --lib --locked query::cache:: -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "5passed. Repository and total exhaustion seen by native admission, short namespace lock, final-reader lifetime, stale staging removal, existing native quota/LRU/checksum tests."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance:: -- --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "24passed. Full graph module justified by shared cache accounting/recovery impact. Existing linker unwind-size advisory remains."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected package and direct consumers checked."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/cli.md; pnpm spec:first; pnpm spec:validate; pnpm check:boundaries; cargo fmt --all -- --check; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Canonical source mapping,167requirements,17package boundaries,format and ledger checks."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "API is not yet connected to local preparation/service task ownership; that integration must retain the reservation inside actual worker/prepared handles until all readers exit. Reservation conservatively holds full entry allowance including4096bytes descriptor overhead; filesystem/root ownership remains trusted server configuration.",
+    "Lock lifetime and orphan cleanup exercised with independent handles and simulated owner exit. Independent executable crash/platform qualification remains pending. The namespace lease is released after admission; native preparation still uses its existing namespace-lock duration.",
+    "No running service changed. Local history/task/HTTP/browser delivery, larger native limits, other endpoint/collaboration/card work and Linux/native2m/10krefs/deep-page/near-capacity/cold/real-RustFS acceptance remain pending. UI/full-contract/root aggregate lanes out of scope; inherited gates remain."
+  ],
+  "next": "Commit shared reservation admission, then retain reservations inside local preparation and service task lifecycle."
 }
 ]
 ```

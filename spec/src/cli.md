@@ -1671,3 +1671,11 @@ pages. Current revocation and same-size source-extra mutation with restored
 mtime must fail explicitly. Resident admission retains its charge until the
 final handle drops; source metadata, refs and dirty files remain unchanged by
 reads.
+
+Cross-profile cache qualification MUST prove that two local generations consume
+the same repository allowance seen by native cache admission, that another
+repository consumes aggregate capacity, and that a reader-held generation
+remains charged after task ownership is released. A terminated owner's staged
+output must be reclaimed before another reservation is admitted; active
+generations must remain readable while the short namespace admission lock is
+available.

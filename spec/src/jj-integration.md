@@ -838,3 +838,14 @@ extra metadata stays read-only, with bounded seeks and change detection; no
 implicit Git import, retention-ref write or source-index fallback is permitted.
 The local profile owns resident-memory admission and source verification
 details.
+
+Local prepared generations MUST reserve their full writable allowance in the
+same cache namespace as native retained entries before construction. The shared
+namespace lock admits reservations briefly; independent lifetime locks preserve
+charges across processes without holding up interactive cache access. Count all
+live reservations in per-repository, aggregate and entry limits, including
+staging and descriptor overhead. Never evict a live external reservation; native
+LRU entries may be reclaimed to admit it. The final reader retains the charge.
+Interrupted reservations are discarded after their lifetime lock becomes free;
+no partial generation is adopted as repository authority. A report's accounted
+bytes include conservative live reservations, even before their files grow.

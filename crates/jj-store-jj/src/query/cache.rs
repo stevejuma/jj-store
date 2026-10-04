@@ -1,7 +1,9 @@
 //! Disposable bounded cache slots. Only verified native objects are authority.
+mod reservation;
 pub(super) mod resident;
 use super::*;
 use blake2::{Blake2b512, Digest as _};
+pub use reservation::Reservation;
 use std::{
     collections::BTreeMap,
     fs,
@@ -91,6 +93,7 @@ pub(super) struct Cache {
     _lock: fs::File,
     policy: Policy,
     slots: Vec<Slot>,
+    reservations: Vec<reservation::Record>,
     evicted: usize,
     damaged: bool,
 }
@@ -248,6 +251,7 @@ impl Cache {
             _lock: lock,
             policy,
             slots: vec![],
+            reservations: vec![],
             evicted: 0,
             damaged: false,
         };
@@ -261,6 +265,12 @@ impl Cache {
             let name = entry.file_name();
             let name = name.to_str().ok_or(Error::Unavailable)?;
             if name == "lock" {
+                continue;
+            }
+            if name.starts_with(".reserved-") {
+                if let Some(record) = reservation::inspect(&entry.path())? {
+                    cache.reservations.push(record);
+                }
                 continue;
             }
             if name.starts_with(".building-") {
@@ -297,10 +307,13 @@ impl Cache {
             }
         }
         cache.slots.sort_by_key(|slot| (slot.receipt.used, slot.id));
-        while let Some(repository) = cache.slots.iter().find_map(|slot| {
-            let repository = slot.receipt.repository;
-            (cache.repository_bytes(repository) > policy.max_repository_bytes).then_some(repository)
-        }) {
+        while let Some(repository) = cache
+            .slots
+            .iter()
+            .map(|s| s.receipt.repository)
+            .chain(cache.reservations.iter().map(|r| r.repository))
+            .find(|r| cache.repository_bytes(*r) > policy.max_repository_bytes)
+        {
             cache.evict_repository(repository)?;
         }
         while cache.bytes() > policy.max_total_bytes {
@@ -312,13 +325,23 @@ impl Cache {
         self.root.join(format!("slot-{id}"))
     }
     fn bytes(&self) -> u64 {
-        self.slots.iter().map(|slot| slot.bytes).sum()
+        self.slots
+            .iter()
+            .map(|slot| slot.bytes)
+            .chain(self.reservations.iter().map(|r| r.bytes))
+            .sum()
     }
     fn repository_bytes(&self, repository: m::RepositoryId) -> u64 {
         self.slots
             .iter()
             .filter(|slot| slot.receipt.repository == repository)
             .map(|slot| slot.bytes)
+            .chain(
+                self.reservations
+                    .iter()
+                    .filter(|r| r.repository == repository)
+                    .map(|r| r.bytes),
+            )
             .sum()
     }
     fn evict_repository(&mut self, repository: m::RepositoryId) -> Result<()> {
@@ -350,7 +373,7 @@ impl Cache {
         {
             self.evict_repository(repository)?;
         }
-        while self.slots.len() >= self.policy.max_entries
+        while self.slots.len() + self.reservations.len() >= self.policy.max_entries
             || self.bytes().saturating_add(bytes) > self.policy.max_total_bytes
         {
             self.evict()?;
@@ -489,7 +512,7 @@ impl Cache {
         let report = Report {
             state: entry.state,
             evicted: self.evicted,
-            retained_entries: self.slots.len() + 1,
+            retained_entries: self.slots.len() + self.reservations.len() + 1,
             retained_bytes: self.bytes() + size,
         };
         if entry
