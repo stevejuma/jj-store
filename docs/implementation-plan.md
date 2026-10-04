@@ -97,6 +97,14 @@ Changed-frontier discovery still completes under one ordinary visit budget per
 request; retained continuation for oversized differences and repeated group
 discovery remains delivery work.
 
+E-READ-044 adds composed native unfiltered Changes/All reference windows through
+retained ordered visible change groups. Indexed identities determine lexical
+pages before selected-target hydration; reverse workspace names avoid scanning
+bookmarks. The shared native executor retains ordinary content limits, cold
+exact-snapshot preparation recovery, signed cursors and namespace release before
+hydration. Description-filter indexes and differently embedded operations remain
+separate delivery work, together with deep/difference/search/RPC continuations.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

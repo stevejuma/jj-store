@@ -1,5 +1,12 @@
 # Compatibility and release
 
+Native unfiltered reference windows reuse ordered prepared visibility while
+preserving version-1 DTOs, lexical anchors, divergence, explicit bookmark terms
+and signed cursor claims. Cold large reads reuse exact-snapshot index
+preparation recovery. Native index bytes, storage/WAL/receipts and public
+schemas are unchanged; complete scale and release qualification remains
+separately deferred.
+
 Prepared comparison extends the disposable local lookup to version2 records
 containing both operation and view fingerprints. Generations are process-owned
 and rebuilt; this artifact grants no source authority and needs no persisted

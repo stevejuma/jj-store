@@ -269,6 +269,7 @@ pub struct IndexReport {
 }
 enum Work {
     Graph(Request, Page),
+    References(content::references::Request, content::Limits),
     Prepare,
 }
 #[derive(Serialize)]
@@ -276,6 +277,57 @@ enum Work {
 enum Output {
     Graph(GraphPage),
     Index(IndexReport),
+    References(content::references::Page),
+}
+impl Work {
+    fn is_query(&self) -> bool {
+        matches!(self, Self::Graph(..) | Self::References(..))
+    }
+    async fn run(
+        self,
+        repo: &jj_lib::repo::ReadonlyRepo,
+        access: &Arc<dyn ReadAccess>,
+        budget: &Arc<Budget>,
+        objects: Arc<NativeObjects>,
+        cache: cache::Report,
+    ) -> Result<Output> {
+        match self {
+            Self::Graph(request, page) => {
+                let (data, next) = graphs::run(repo, request, page, access, budget).await?;
+                Ok(Output::Graph(GraphPage {
+                    version: 1,
+                    cache,
+                    operation: access.operation(),
+                    data,
+                    next,
+                    stats: budget.stats(),
+                }))
+            }
+            Self::References(request, limits) => {
+                let reader = repo
+                    .readonly_index()
+                    .downcast_ref::<projection::Reader>()
+                    .ok_or(Error::Unavailable)?;
+                let context = content::Context {
+                    limits,
+                    budget: budget.clone(),
+                    access: access.clone(),
+                    objects,
+                    permit: None,
+                };
+                Ok(Output::References(
+                    content::references::read_prepared(
+                        context,
+                        request,
+                        reader,
+                        repo.view().store_view(),
+                    )
+                    .await?,
+                ))
+            }
+            Self::Prepare => Err(Error::Unavailable),
+        }
+    }
 }
 /// Bounded jobs and operation-specific local caches; no physical working copy.
 #[derive(Clone)]
@@ -336,7 +388,7 @@ impl GraphExecutor {
             .await?
         {
             Output::Graph(page) => Ok(page),
-            Output::Index(_) => Err(Error::Unavailable),
+            _ => Err(Error::Unavailable),
         }
     }
     pub fn with_preparation_limits(mut self, limits: preparation::Limits) -> Result<Self> {
@@ -355,7 +407,28 @@ impl GraphExecutor {
             .await?
         {
             Output::Index(report) => Ok(report),
-            Output::Graph(_) => Err(Error::Unavailable),
+            _ => Err(Error::Unavailable),
+        }
+    }
+    pub(crate) async fn references(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        request: content::references::Request,
+        limits: content::Limits,
+    ) -> Result<content::references::Page> {
+        content::references::validate(&request, &limits)?;
+        match self
+            .execute_work(
+                store,
+                access,
+                Work::References(request, limits),
+                Cancellation::default(),
+            )
+            .await?
+        {
+            Output::References(page) => Ok(page),
+            _ => Err(Error::Unavailable),
         }
     }
     async fn execute_work(
@@ -368,13 +441,22 @@ impl GraphExecutor {
         let limits = match &work {
             Work::Prepare => self.preparation.budget(self.limits),
             Work::Graph(..) => self.limits,
+            Work::References(_, content) => Limits {
+                metadata: content.metadata,
+                max_page: content.max_page,
+                max_work: content.max_work,
+                max_object_bytes: content.max_read_bytes,
+                max_output_bytes: content.max_output_bytes,
+                timeout: content.timeout,
+                ..self.limits
+            },
         };
         let mut budget = Budget::new(limits)?;
         budget.cancellation = cancellation.0;
         let budget = Arc::new(budget);
         let permit = match &work {
             Work::Prepare => self.workers.acquire_preparation()?,
-            Work::Graph(..) => self.workers.acquire()?,
+            Work::Graph(..) | Work::References(..) => self.workers.acquire()?,
         };
         budget.authorize(access.as_ref()).await?;
         if let Work::Graph(_, page) = &work
@@ -475,7 +557,10 @@ impl GraphExecutor {
             NativeObjects::new(
                 Arc::new(ReadStore::new(store, access.clone(), budget.clone(), true)),
                 access.repository(),
-                self.limits.max_object_bytes,
+                match &work {
+                    Work::References(_, limits) => limits.max_blob_bytes,
+                    _ => self.limits.max_object_bytes,
+                },
             )
             .map_err(|_| Error::Limit)?,
         );
@@ -484,7 +569,7 @@ impl GraphExecutor {
             budget: budget.clone(),
         });
         let stores = NativeStores::new(
-            objects,
+            objects.clone(),
             authority,
             BackendLimits::default(),
             OperationLimits::default(),
@@ -494,17 +579,14 @@ impl GraphExecutor {
             .map_err(|_| Error::Unavailable)?;
         let mut cache = match cache::Cache::open(&self.root, self.cache_policy, &budget) {
             Ok(cache) => Some(cache),
-            Err(Error::Busy) if matches!(&work, Work::Graph(..)) => None,
+            Err(Error::Busy) if work.is_query() => None,
             Err(error) => return Err(error),
         };
         let entry = match &mut cache {
             Some(cache) => {
                 match cache.prepare(access.as_ref(), &stores, &budget, &self.residents) {
                     Ok(entry) => Some(entry),
-                    Err(Error::Limit)
-                        if matches!(&work, Work::Graph(..))
-                            && cache.can_use_reserved_fallback() =>
-                    {
+                    Err(Error::Limit) if work.is_query() && cache.can_use_reserved_fallback() => {
                         None
                     }
                     Err(error) => return Err(error),
@@ -538,24 +620,15 @@ impl GraphExecutor {
                 .await
                 .map_err(|_| Error::Unavailable)?;
             budget.finish_initial_index();
-            let Work::Graph(request, page) = work else {
-                unreachable!()
-            };
-            let (data, next) = graphs::run(&repo, request, page, &access, &budget).await?;
+            let result = work
+                .run(&repo, &access, &budget, objects, saved.report())
+                .await?;
             budget.authorize(access.as_ref()).await?;
-            let result = Output::Graph(GraphPage {
-                version: 1,
-                cache: saved.report(),
-                operation: access.operation(),
-                data,
-                next,
-                stats: budget.stats(),
-            });
             budget.complete_output(&result)?;
             return Ok(result);
         }
         let mut entry = entry.ok_or(Error::Unavailable)?;
-        if matches!(work, Work::Graph(..)) {
+        if work.is_query() {
             budget.start_index(entry.initialize)?;
         }
         if entry.private() {
@@ -592,7 +665,7 @@ impl GraphExecutor {
             Some(cache) => cache,
             None => cache::Cache::reopen(&self.root, self.cache_policy, &budget).await?,
         };
-        if matches!(&work, Work::Graph(..)) {
+        if work.is_query() {
             // Publish only the complete primary generation, then release the
             // namespace. Additional operations use private reserved construction
             // and immutable residents; this loader never extends this slot.
@@ -604,28 +677,15 @@ impl GraphExecutor {
                 .clone();
             let report = cache.finish(entry, access.as_ref(), &budget, index, &self.residents)?;
             drop(cache);
-            let Work::Graph(request, page) = work else {
-                unreachable!()
-            };
-            let (data, next) = graphs::run(&repo, request, page, &access, &budget).await?;
+            let result = work.run(&repo, &access, &budget, objects, report).await?;
             budget.authorize(access.as_ref()).await?;
-            let result = Output::Graph(GraphPage {
-                version: 1,
-                cache: report,
-                operation: access.operation(),
-                data,
-                next,
-                stats: budget.stats(),
-            });
             budget.complete_output(&result)?;
             return Ok(result);
         }
-        let data = match work {
-            Work::Graph(request, page) => {
-                Some(graphs::run(&repo, request, page, &access, &budget).await?)
-            }
-            Work::Prepare => None,
-        };
+        // All interactive work returned above; only explicit preparation remains.
+        if !matches!(work, Work::Prepare) {
+            return Err(Error::Unavailable);
+        }
         budget.check()?;
         budget.authorize(access.as_ref()).await?;
         // Drop native loaders before replacing/removing their derived files.
@@ -644,22 +704,12 @@ impl GraphExecutor {
             resident_index,
             &self.residents,
         )?;
-        let result = match data {
-            Some((data, next)) => Output::Graph(GraphPage {
-                version: 1,
-                cache,
-                operation: access.operation(),
-                data,
-                next,
-                stats: budget.stats(),
-            }),
-            None => Output::Index(IndexReport {
-                version: 1,
-                cache,
-                operation: access.operation(),
-                stats: budget.stats(),
-            }),
-        };
+        let result = Output::Index(IndexReport {
+            version: 1,
+            cache,
+            operation: access.operation(),
+            stats: budget.stats(),
+        });
         budget.complete_output(&result)?;
         Ok(result)
     }

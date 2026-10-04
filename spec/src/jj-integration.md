@@ -1022,6 +1022,21 @@ operation/view objects still cross native integrity and current authorization;
 cache data cannot grant native membership. No authoritative/wire format changes.
 Complete scale/RSS/lifecycle qualification remains in the deferred slice.
 
+Native selected-view derivation MUST also retain ordered visible
+change-to-commit groups from the indexed commit/change stream. Reserve group
+keys and targets with visibility before allocation, sort identities once, and
+preserve hidden rewrite exclusion and divergence. The composed content reader
+shares the graph executor's generation and worker admission for exact-operation
+unfiltered Changes/All pages, selecting keys before metadata hydration.
+Workspace labels use retained reverse annotations. Selection borrows the freshly
+verified view already loaded for that request, without reloading operation/view
+objects or copying unselected bookmark terms. Fresh native membership,
+integrity, access, work and output checks remain mandatory. Cold construction
+and disk recovery use the existing inline threshold and explicit preparation;
+namespace leases end before selected-target reads. Standalone metadata readers
+and filtered or different-operation queries retain their previous bounds until
+indexed delivery.
+
 A verified disk index without its resident selected-view projection follows the
 same inline construction threshold as a missing index. Large generations return
 explicit rebuild-required recovery; preparation rebuilds the projection with its

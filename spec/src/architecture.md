@@ -1,5 +1,18 @@
 # Architecture
 
+Composed native unfiltered Changes/All reference reads share the graph
+executor's immutable selected-view generation and worker admission. Its ordered
+change groups come from indexed identities; content hydration begins after
+keyset selection and namespace release. Native DTO integrity and request
+authorization remain at the existing object boundary. This adds only derived
+resident data, without a persistence authority or source index mutation.
+
+Native reference selection borrows the immutable view just verified by its
+request-scoped repository loader. Only selected bookmark terms cross into owned
+DTOs; operation/view objects and unselected reference maps are not read or
+copied again. Current access and committed membership stay with the loader and
+selected target reader.
+
 Local prepared comparisons share checksum-verified immutable commit-index bytes
 through a compact bounded decoder. Separate resident admission covers that
 decoder; request queues and result identities remain bounded by ordinary visit,

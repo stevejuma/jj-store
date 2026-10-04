@@ -2,6 +2,8 @@
 use super::*;
 use serde::Deserialize;
 use std::collections::{BTreeMap, BTreeSet};
+mod prepared;
+pub(in crate::query) use prepared::read as read_prepared;
 
 #[derive(
     Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema,
@@ -69,9 +71,9 @@ struct Entry {
     key: String,
     value: Reference,
 }
-pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
+pub(in crate::query) fn validate(request: &Request, limits: &Limits) -> Result<()> {
     if request.limit == 0
-        || request.limit > context.limits.max_page
+        || request.limit > limits.max_page
         || request.exact.as_ref().is_some_and(|name| name.len() > 1024)
         || request.query.len() > 1024
         || request.anchor.as_ref().is_some_and(|v| v.len() > 4096)
@@ -83,6 +85,10 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     {
         return Err(Error::Invalid);
     }
+    Ok(())
+}
+pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
+    validate(&request, &context.limits)?;
     let operation = context.operation(request.operation).await?;
     let view = context.view(operation.view_id).await?;
     if request.kind == Kind::Workspaces {

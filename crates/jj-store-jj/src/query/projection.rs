@@ -57,10 +57,15 @@ struct Decorations {
     heads: BTreeSet<b::CommitId>,
     visible: BTreeSet<m::CommitId>,
     changes: Box<dyn ChangeIdIndex>,
+    references: BTreeMap<String, VisibleChange>,
     bookmarks: BTreeMap<m::CommitId, Vec<Bookmark>>,
     workspaces: BTreeMap<m::CommitId, Vec<String>>,
     weight: u64,
     _memory: memory::Lease,
+}
+pub(super) struct VisibleChange {
+    pub change: m::ChangeId,
+    pub commits: Vec<m::CommitId>,
 }
 fn id(id: &b::CommitId) -> Result<m::CommitId> {
     m::CommitId::from_slice(id.as_bytes()).map_err(|_| Error::Corrupt)
@@ -74,7 +79,7 @@ impl Decorations {
         budget: &Budget,
     ) -> Result<Self> {
         let mut weight =
-            u64::from(index.num_commits()) * 256 + view.heads().len() as u64 * 256 + 1024 * 1024;
+            u64::from(index.num_commits()) * 512 + view.heads().len() as u64 * 256 + 1024 * 1024;
         for (name, target) in view.local_bookmarks() {
             weight += label_weight(name.as_str(), None, target, budget)?;
         }
@@ -109,16 +114,33 @@ impl Decorations {
             )
             .map_err(|_| Error::Unavailable)?;
         let mut visible = BTreeSet::new();
-        let mut stream = set.stream_graph();
-        while let Some((commit, edges)) = stream.try_next().await.map_err(|_| Error::Unavailable)? {
+        let mut references = BTreeMap::new();
+        let mut stream = set.commit_change_ids();
+        while let Some((commit, change)) =
+            stream.try_next().await.map_err(|_| Error::Unavailable)?
+        {
             if visible.len() % 256 == 0 {
                 budget.authorize(access).await?;
             }
-            budget.work(32 + edges.len())?;
+            budget.work(32)?;
             if visible.len() >= index.num_commits() as usize {
                 return Err(budget.fail(Error::Corrupt));
             }
-            visible.insert(id(&commit)?);
+            let commit = id(&commit)?;
+            let change = m::ChangeId::from_slice(change.as_bytes()).map_err(|_| Error::Corrupt)?;
+            visible.insert(commit);
+            references
+                .entry(format!("change:{change}"))
+                .or_insert_with(|| VisibleChange {
+                    change,
+                    commits: vec![],
+                })
+                .commits
+                .push(commit);
+        }
+        for group in references.values_mut() {
+            budget.work(group.commits.len() * 32)?;
+            group.commits.sort_unstable();
         }
         // Upstream retains prefix ambiguity and hidden offsets. Empty heads
         // avoid a second ancestor traversal; this generation overlays visibility.
@@ -134,6 +156,7 @@ impl Decorations {
             heads,
             visible,
             changes,
+            references,
             bookmarks: BTreeMap::new(),
             workspaces: BTreeMap::new(),
             weight,
@@ -240,6 +263,20 @@ pub(super) struct Reader {
 impl Reader {
     pub fn annotations(&self, id: m::CommitId) -> Result<(Vec<Bookmark>, Vec<String>)> {
         self.prepared.decorations.annotations(id, &self.budget)
+    }
+    pub fn reference_changes(&self) -> &BTreeMap<String, VisibleChange> {
+        &self.prepared.decorations.references
+    }
+    pub fn workspace_names(&self, id: m::CommitId) -> Result<Vec<String>> {
+        let names = self
+            .prepared
+            .decorations
+            .workspaces
+            .get(&id)
+            .map(Vec::as_slice)
+            .unwrap_or_default();
+        self.budget.work(1 + names.len())?;
+        Ok(names.to_vec())
     }
 }
 impl ReadonlyIndex for Reader {

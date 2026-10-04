@@ -80237,6 +80237,270 @@ entries.
     ],
     "next": "Continue indexed filtered references, operation neighbors and retained deep/difference/search/RPC continuations in this workspace; qualify the complete implementation separately.",
     "scope": "Private local prepared operation/view admission, compact graph access and change grouping with direct prepared readers and native default-writer byte equivalence. An initial canonical patch-context miss changed no files. No installed CLI or original server restart."
+  },
+  {
+    "id": "E-READ-044",
+    "tasks": ["M13.4"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change tkttkswl",
+    "kind": "Prepared native visible reference windows with selected-target hydration and exact-snapshot HTTP recovery",
+    "versions": "Rust1.98.1 (48a229cea 2026-09-01); jj-lib0.45.1; JJ0.45.1; macOS ARM64.",
+    "formats": "No native/index/WAL/companion/receipt, public DTO/schema, cursor or CLI format change. Native resident visibility now includes sorted textual change keys and sorted visible target IDs from the index commit/change stream. Conservatively reserves512bytes/commit plus existing heads/labels/base allowance before projection growth; resident weight and global idle eviction include it. Reference selection and target/cache copies have request-local memory leases; existing content work/read/output/deadline/page/group bounds retained. Selected pages borrow the freshly verified request-scoped native view; only chosen bookmark terms are converted, with no duplicate operation/view IO or whole-view DTO copy.",
+    "files": [
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/src/query/projection.rs",
+      "crates/jj-store-jj/src/query/workers.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/src/query/content/references.rs",
+      "crates/jj-store-jj/src/query/content/references/prepared.rs",
+      "crates/jj-store-service/src/pagination/browsing.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/reference_windows.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs",
+      "docs/implementation-plan.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md"
+    ],
+    "result": "pending",
+    "remaining": [
+      "34 unique focused Rust tests pass, including final exact reference/HTTP/worker reruns. Native unfiltered Changes/All performance delivery complete without full qualification or milestone promotion. Pages select indexed keys before target hydration and borrow fresh verified operation/view data; prepared visibility never grants membership or authority.",
+      "Nonempty native/local description filtering still needs indexed projection/query keys. Native standalone metadata readers and a differently embedded reference operation keep their previous separately bounded reader; the serving composition uses the new exact-operation prepared path.",
+      "Indexed operation child neighbors, deep operation/predecessor/copy/search continuations, retained oversized difference/change-group discovery, paged native RPC and remaining local application search/index delivery remain open.",
+      "Complete combined integration/contracts, Linux/native2million/near-capacity fixtures, measured RSS/release latency, full cold production browser, fault/revocation/restart/publication/real-RustFS, registry/release and Help/source-review refresh remain deferred. Public schemas and UI production code unchanged; UI suites/build and contract regeneration are out of scope for this delivery. Main/Linux source and original dev services untouched; retained workspace remains open. Visual baselines unapproved; inherited __eh_frame linker warning and earlier strict-lint gaps separately deferred."
+    ],
+    "next": "Continue indexed native/local description filtering, operation child lookup and retained deep/difference/search/RPC continuations in this workspace; qualify the complete combined implementation separately.",
+    "scope": "Native prepared visibility/content composition and signed browser recovery. Focused graph/cache/worker and existing native transport consumers run because execution and resident derivation are shared. No full Rust/UI/repository aggregate or combined qualification; no installed executable replacement, source mutation or original server restart.",
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_references_select_visible_windows_before_target_reads -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "0pass/1fail,0.42s: composed native All/Changes still walks complete ancestors despite an already prepared index, failing a one-visit limit. native-reference-before-044.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service --locked (first)",
+        "result": "pass",
+        "failures": 0,
+        "note": "21.15s; one unused Repo import warning removed before final check. native-reference-check-044.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_references_select_visible_windows_before_target_reads -- --nocapture (expanded fixture first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "One test compiler diagnostic: formatted bookmark key needed Into<RefNameBuf>; fixed test-only key conversion. native-reference-exact-044.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_references_select_visible_windows_before_target_reads -- --nocapture (expanded fixture second)",
+        "result": "fail",
+        "failures": 1,
+        "note": "0pass/1fail,30.25s: test reused one short CommittedRead across separate simulated requests. Fixed each page to open a fresh exact-operation read while reusing the same generation; retained limits and all assertions. native-reference-strengthened-044.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_references_select_visible_windows_before_target_reads -- --nocapture (fixed)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/92.58s.32 extra ancestors,256 bookmarks, diverging visible targets, explicit conflict terms, workspace labels and hidden predecessor.16 forward/backward/deep windows and all exact changes match ordinary DTOs/cursors under a4-visit prepared limit. One-row ready page:4object reads,76042charged bytes,147work; metadata1656includes repeated selected operation/view framing, not ancestor body hydration. native-reference-fixed-044.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "59.88s including shared build-directory wait; no new warnings. native-reference-check-final-044.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-service -p jj-store-cli; cargo fmt -p jj-store-cli; pnpm exec prettier --write spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/compatibility.md spec/src/jj-integration.md docs/implementation-plan.md; pnpm check:boundaries; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed Rust/docs formatting,17package boundaries and1ownership validator pass. native-reference-format[-final]/test-format[-final]/doc-format/boundaries/ownership-044.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-service -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust formatting passes. native-reference-rust-format-check-044.log."
+      },
+      {
+        "command": "pnpm check:progress (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "E-READ-044 evidence used commands instead of required runs field; corrected ledger schema and added requirement/test links. native-reference-progress-044.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Service browsing change requires mapped mutations.md chapter; added explicit shared-worker/read-only recovery requirement alongside existing read capability policy. native-reference-spec-first-044.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "5validators/23chapters/172requirements pass. native-reference-spec-044.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_browser_windows_preserve_references_paths_groups_and_exact_diffs -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.66s tests (36.81s with build). native-reference-consumer-00-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked signed_browser_cursors_bind_queries_support_backward_windows_and_reset_on_restart -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.40s tests (28.72s with build). native-reference-consumer-01-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked direct_directory_rows_include_directories_and_bookmark_pages_hydrate_only_the_window -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.20s tests (14.85s with build). native-reference-consumer-02-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked workspace_windows_seek_filter_and_resolve_exact_names_without_history -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.26s tests (15.4s with build). native-reference-consumer-03-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked operation_pages_do_not_admit_or_build_a_commit_index -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.19s tests (17.98s with build). native-reference-consumer-04-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.93s tests (18.4s with build). native-reference-consumer-05-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked query_workers_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass/0.29s tests (15.64s with build). native-reference-consumer-06-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_query_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "5pass/1.64s tests (13.25s with build). native-reference-consumer-07-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_cache_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "6pass/2.79s tests (17.97s with build). native-reference-consumer-08-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked warm_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "4pass/1.31s tests (14.73s with build). native-reference-consumer-09-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked disk_preparation_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2pass/0.60s tests (12.21s with build). native-reference-consumer-10-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_graph_pages_and_preparation_do_not_enumerate_inventory -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.46s tests (14.75s with build). native-reference-consumer-11-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked existing_disk_projection_recovery_releases_namespace_and_preserves_generations -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/1.72s tests (19.84s with build). native-reference-consumer-12-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked canceled_disk_projection_recovery_cleans_up_while_namespace_is_busy -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.44s tests (13.27s with build). native-reference-consumer-13-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked query_cancel_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass/0.31s tests (14.76s with build). native-reference-consumer-14-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_preparation_fits_small_cache_and_preserves_historical_scopes -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/1.29s tests (29.08s with build). native-reference-consumer-15-044.log. Direct browser/signed recovery, shared worker/cancellation, prepared graph/cache/disk/inventory consumers; no full suite."
+      },
+      {
+        "command": "cargo check -p jj-store-jj --locked (loaded-view optimization first)",
+        "result": "fail",
+        "failures": 3,
+        "note": "3compiler diagnostics: upstream RefNameBuf lacks Display. Use as_str for lexical bookmark keys; no contract/semantic change. native-reference-view-check-044.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli --locked (loaded-view fixed)",
+        "result": "pass",
+        "failures": 0,
+        "note": "13.52s. Borrow freshly verified upstream view; convert only selected bookmark terms and remove redundant operation/view reads and whole-view DTO copies. native-reference-view-check-fixed-044.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj; cargo fmt -p jj-store-cli; pnpm exec prettier --write spec/src/architecture.md spec/src/jj-integration.md spec/src/mutations.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Loaded-view production/fixture and owning-chapter/ledger formatting pass. native-reference-view-format/view-test-format/view-doc-format/ledger-format-fixed/ledger-consumer-format-044.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_references_select_visible_windows_before_target_reads -- --nocapture (borrowed view)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/67.28s. Same complete DTO/cursor equivalence after borrowing fresh native view. One-row virtual root now needs2object reads,38021charged bytes,143work and828metadata records (half previous operation/view admission). native-reference-view-exact-044.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_references_select_visible_windows_before_target_reads -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/59.99s (84.1s with build). native-reference-final-00-044.log. Final strict reference counts, actual cold HTTP preparation/retry and signed backward pages across publication, plus shared file-lifetime and cancellation admission."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.62s (16.98s with build). native-reference-final-01-044.log. Final strict reference counts, actual cold HTTP preparation/retry and signed backward pages across publication, plus shared file-lifetime and cancellation admission."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked query_workers_ -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass/0.42s (18.89s with build). native-reference-final-02-044.log. Final strict reference counts, actual cold HTTP preparation/retry and signed backward pages across publication, plus shared file-lifetime and cancellation admission."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-service -p jj-store-cli -- --check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final affected Rust formatting passes. native-reference-rust-format-final-044.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:first; pnpm spec:validate (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final ledger formatting,138task bookkeeping,11protected files/7canonical chapters and5validators/23chapters/172requirements pass. native-reference-ledger-final-format/progress-fixed/spec-first-fixed/spec-final-044.log. No milestone promotion or complete qualification."
+      }
+    ],
+    "requirements": ["JST-JJ-003", "JST-API-001", "JST-MUT-001"],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/reference_windows.rs#native_prepared_references_select_visible_windows_before_target_reads",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication",
+      "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs#query_workers_file_lifetime_limits_graphs_and_content_together",
+      "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs#query_workers_graph_and_content_cancel_release_shared_capacity",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#disk_preparation_matches_pinned_upstream_index_bytes"
+    ]
   }
 ]
 ```

@@ -366,6 +366,14 @@ Committed reads can request owned object DTOs, directory pages and verified file
 streams. These operations share the same captured membership and current policy
 checks as graph reads and expose no publication or staging method.
 
+Native prepared reference windows share graph/content worker admission with
+typed mutation previews. Their cached keys and visibility grant no command or
+publication capability. Selected-target hydration and resumed signed windows
+retain fresh committed membership, current policy and epoch checks. Cold
+reference recovery prepares only a disposable exact-operation generation;
+cancellation drains its read worker and cannot replay or discard accepted
+command receipts.
+
 Directory continuation pins share the graph cursor authority boundary. A fresh
 currently authenticated session is required on every page, and no cursor can
 switch between graph and directory queries or acquire publication capability.

@@ -66,9 +66,11 @@ impl Executors {
         capacity: usize,
     ) -> Result<Self> {
         let workers = Workers::new(capacity)?;
+        let graph = GraphExecutor::with_workers(root, graph, cache, workers.clone())?;
         Ok(Self {
-            graph: GraphExecutor::with_workers(root, graph, cache, workers.clone())?,
-            content: content::ContentReader::with_workers(content, workers.clone())?,
+            content: content::ContentReader::with_workers(content, workers.clone())?
+                .with_graph(graph.clone()),
+            graph,
             workers,
         })
     }

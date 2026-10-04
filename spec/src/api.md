@@ -2044,6 +2044,15 @@ targets. A different embedded operation or nonempty description search keeps its
 previous bounded dispatch until separately indexed. Reference DTOs, signed
 cursors and preparation task contracts are unchanged.
 
+Composed native Changes/All reference reads with an empty query and the exact
+outer operation MUST reuse prepared ordered visible change groups and select
+their lexical window before target hydration. Native bookmarks and workspaces
+retain their metadata-only readers. Cold large generations return the existing
+rebuild-required response with the exact pinned snapshot; retry after
+preparation uses the same query and signed-window semantics. No cursor or public
+schema changes. Filtered descriptions and a different embedded operation remain
+separate indexed-delivery work.
+
 Local operation-prefix graph queries use ready exact-operation generations and
 existing rebuild-required recovery when cold. This delivery changes no request,
 response, cursor or public schema. Read-only plain operation pages retain their

@@ -907,6 +907,29 @@ async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_public
         },
     );
     let path = "log?at_time_millis=1790000000000&revset=all()&limit=1";
+    // Native reference windows participate in the same exact-snapshot recovery.
+    let reference_path = "references?kind=changes&limit=1";
+    let (status, reference_rebuild) = json(&router, &f.f.reader, reference_path).await;
+    assert_eq!(status, StatusCode::CONFLICT);
+    assert_eq!(reference_rebuild["code"], "index_rebuild_required");
+    assert!(
+        reference_rebuild["snapshot"]["operation_id"]
+            .as_str()
+            .is_some()
+    );
+    // Metadata-only bookmark/workspace reads remain available without an index.
+    for kind in ["bookmarks", "workspaces"] {
+        assert_eq!(
+            json(
+                &router,
+                &f.f.reader,
+                &format!("references?kind={kind}&limit=1")
+            )
+            .await
+            .0,
+            StatusCode::OK
+        );
+    }
     let before = f.f.session.snapshot().await.unwrap().manifest().clone();
     let (status, rebuild) = json(&router, &f.f.reader, path).await;
     assert_eq!(status, StatusCode::CONFLICT);
@@ -938,6 +961,11 @@ async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_public
     let (status, first) = json(&router, &f.f.reader, path).await;
     assert_eq!(status, StatusCode::OK);
     let cursor = first["next_cursor"].as_str().unwrap();
+    assert_eq!(reference_rebuild["snapshot"], rebuild["snapshot"]);
+    let (status, reference_first) = json(&router, &f.f.reader, reference_path).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(reference_first["snapshot"], first["snapshot"]);
+    let reference_cursor = reference_first["next_cursor"].as_str().unwrap();
     let original: m::OperationId = operation.parse().unwrap();
     let mut later = f.operation.clone();
     later.parents = vec![o::OperationId::from_bytes(original.as_bytes())];
@@ -958,6 +986,40 @@ async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_public
             &router,
             &f.f.reader,
             &format!("{}&cursor={cursor}", path.replace("limit=1", "limit=2"))
+        )
+        .await
+        .0,
+        StatusCode::BAD_REQUEST
+    );
+    let (status, reference_second) = json(
+        &router,
+        &f.f.reader,
+        &format!("{reference_path}&cursor={reference_cursor}"),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(reference_second["snapshot"], reference_first["snapshot"]);
+    assert_ne!(
+        reference_second["data"]["references"],
+        reference_first["data"]["references"]
+    );
+    let previous = reference_second["previous_cursor"].as_str().unwrap();
+    let (status, reference_back) = json(
+        &router,
+        &f.f.reader,
+        &format!("{reference_path}&cursor={previous}"),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(
+        reference_back["data"]["references"],
+        reference_first["data"]["references"]
+    );
+    assert_eq!(
+        json(
+            &router,
+            &f.f.reader,
+            &format!("references?kind=all&limit=1&cursor={reference_cursor}")
         )
         .await
         .0,

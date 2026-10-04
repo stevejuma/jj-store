@@ -36,6 +36,22 @@ async fn query_workers_file_lifetime_limits_graphs_and_content_together() {
         f.read.object(&content, f.tree.key()).await.unwrap_err(),
         q::Error::Busy
     );
+    let reference = c::references::Request {
+        operation: f.read.snapshot().await.unwrap().operation_id,
+        query: String::new(),
+        exact: None,
+        kind: c::references::Kind::All,
+        limit: 1,
+        anchor: None,
+        direction: c::Direction::Forward,
+    };
+    assert_eq!(
+        f.read
+            .references(&content, reference.clone())
+            .await
+            .unwrap_err(),
+        q::Error::Busy
+    );
     while file.next_chunk().await.unwrap().is_some() {}
     // The handle still retains its spool after EOF; admission follows ownership.
     assert_eq!(
@@ -51,6 +67,7 @@ async fn query_workers_file_lifetime_limits_graphs_and_content_together() {
         .await
         .unwrap();
     f.read.object(&content.clone(), f.tree.key()).await.unwrap();
+    f.read.references(&content, reference).await.unwrap();
     assert_eq!(*f.f.session.snapshot().await.unwrap().manifest(), before);
 }
 
@@ -59,7 +76,8 @@ async fn query_workers_graph_and_content_cancel_release_shared_capacity() {
     let f = ContentFixture::new().await;
     let root = tempfile::tempdir().unwrap();
     let (graph, content) = executors(root.path(), 1);
-    for use_graph in [true, false] {
+    let operation = f.read.snapshot().await.unwrap().operation_id;
+    for kind in [0, 1, 2] {
         let access = Arc::new(PauseContent {
             inner: f.read.clone(),
             remaining: 2.into(),
@@ -72,14 +90,31 @@ async fn query_workers_graph_and_content_cancel_release_shared_capacity() {
             let access = access.clone();
             let store = f.f.store.clone();
             tokio::spawn(async move {
-                if use_graph {
+                if kind == 0 {
                     graph
                         .execute(store, access, q::Request::Operations, page())
                         .await
                         .map(|_| ())
-                } else {
+                } else if kind == 1 {
                     content
                         .object(store, access, m::ObjectKey::Commit(roots::ROOT_COMMIT))
+                        .await
+                        .map(|_| ())
+                } else {
+                    content
+                        .references(
+                            store,
+                            access,
+                            c::references::Request {
+                                operation,
+                                query: String::new(),
+                                exact: None,
+                                kind: c::references::Kind::All,
+                                limit: 1,
+                                anchor: None,
+                                direction: c::Direction::Forward,
+                            },
+                        )
                         .await
                         .map(|_| ())
                 }
@@ -90,7 +125,7 @@ async fn query_workers_graph_and_content_cancel_release_shared_capacity() {
             .unwrap();
         // Collect the result before aborting so a failing assertion cannot leave
         // a test task waiting on an unnotified fixture gate.
-        let competing = if use_graph {
+        let competing = if kind == 0 {
             f.read.object(&content, f.tree.key()).await.map(|_| ())
         } else {
             f.read

@@ -1,5 +1,12 @@
 # CLI and server commands
 
+Focused native reference regressions compare exact, forward/backward and deep
+visible windows with the ordinary reader, while retaining divergence, conflict
+terms, virtual roots, hidden-predecessor exclusion and workspace labels. The
+actual HTTP path preserves pinned cold preparation recovery and signed cursors
+across later publication. These delivery checks add no installed executable or
+CLI command and do not qualify combined Linux/RSS/browser/release scale.
+
 Prepared local comparison regressions retain exact ordinary operation
 differences and forward/backward change pages, short differing tails over deep
 shared history, missing Git objects, historical source replacement/retry and
