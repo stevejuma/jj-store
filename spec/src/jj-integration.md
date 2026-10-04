@@ -998,7 +998,21 @@ A verified disk index without its resident selected-view projection follows the
 same inline construction threshold as a missing index. Large generations return
 explicit rebuild-required recovery; preparation rebuilds the projection with its
 independent budget from verified disk data. Executor restart does not authorize
-an interactive ancestor traversal above that threshold.
+an interactive ancestor traversal above that threshold. Before decoding a
+verified disk generation without a matching resident, admission MUST move its
+files into a privately locked, quota-charged reservation under the namespace
+lease. Charge existing data, bounded receipt replacement and reservation
+metadata before moving; recovery does not reserve an unrelated construction
+maximum or copy the index. Remove the old receipt from the private generation so
+receipt replacement cannot allocate an uncharged second receipt. Release the
+namespace before operation/view reads, allocating JJ decode and projection
+derivation. Retain verified file identities/stamps where available; unsupported
+precise metadata retains full checks. Completion installs only the complete
+verified immutable generation against current namespace state. Failed/canceled
+workers retain their reservation until cleanup. Another job may install the same
+pin or an unrelated generation; neither can change the privately owned source.
+The inline/hard index thresholds, current authority and allocation leases still
+apply. No repository state or persisted/wire format changes.
 
 Shared resident allocation pressure MUST reclaim idle prepared native and local
 generations in process-wide least-recently-used order before refusing new

@@ -786,6 +786,11 @@ only its own reservation to final bytes and chooses a free slot from current
 namespace state. This derived-cache transition adds no publication or repository
 authority.
 
-Existing verified disk-index loads without a retained projection still hold
-their admission lease while decoding and deriving that projection. Separating
-this recovery path remains performance delivery work.
+Existing verified disk-index recovery without a retained projection transfers
+its selected files into private quota-charged ownership while holding the
+namespace only for admission and rename. Recovery reserves actual data plus
+bounded receipt/descriptor overhead, removes the old receipt and decodes/derives
+outside the namespace. Verification stamps reuse the admitted file identities;
+completion uses the same current-slot installation path as private construction.
+Neither disk recovery nor warm resident reads retain an earlier caller's access
+capability. Complete scale/lifecycle qualification remains deferred.

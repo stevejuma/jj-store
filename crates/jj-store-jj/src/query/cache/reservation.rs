@@ -2,7 +2,7 @@
 use super::*;
 
 const RECORD: &str = "reservation.json";
-const OVERHEAD: u64 = 4096;
+pub(super) const OVERHEAD: u64 = 4096;
 
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -48,11 +48,20 @@ impl Reservation {
         Self::within(&mut cache, repository)
     }
     pub(super) fn within(cache: &mut Cache, repository: m::RepositoryId) -> Result<Self> {
-        let policy = cache.policy;
-        if policy.max_entry_bytes <= OVERHEAD || policy.max_entry_bytes > 2 * 1024 * 1024 * 1024 {
+        Self::sized(cache, repository, cache.policy.max_entry_bytes)
+    }
+    pub(super) fn sized(
+        cache: &mut Cache,
+        repository: m::RepositoryId,
+        bytes: u64,
+    ) -> Result<Self> {
+        if bytes <= OVERHEAD
+            || bytes > cache.policy.max_entry_bytes
+            || bytes > 2 * 1024 * 1024 * 1024
+        {
             return Err(Error::Limit);
         }
-        cache.reserve(repository, policy.max_entry_bytes)?;
+        cache.reserve(repository, bytes)?;
         let directory = tempfile::Builder::new()
             .prefix(".reserved-")
             .tempdir_in(&cache.root)
@@ -63,7 +72,7 @@ impl Reservation {
         let record = Record {
             version: 1,
             repository,
-            bytes: policy.max_entry_bytes,
+            bytes,
             path: directory.path().to_owned(),
         };
         let data = serde_json::to_vec(&record).map_err(|_| Error::Unavailable)?;
@@ -75,7 +84,7 @@ impl Reservation {
         Ok(Self {
             directory,
             _lock: lock,
-            bytes: policy.max_entry_bytes - OVERHEAD,
+            bytes: bytes - OVERHEAD,
         })
     }
     pub fn path(&self) -> &Path {
@@ -213,5 +222,35 @@ mod tests {
         let next = Reservation::acquire(root.path(), repository, policy()).unwrap();
         assert!(!path.exists());
         assert!(next.path().exists());
+    }
+    #[test]
+    fn sized_recovery_reservations_charge_actual_allowance_and_reject_unbounded_requests() {
+        let root = tempfile::tempdir().unwrap();
+        let repository = m::RepositoryId::new([1; 16]);
+        let budget = Budget::new(Limits::default()).unwrap();
+        let mut cache = Cache::open(root.path(), policy(), &budget).unwrap();
+        let actual = OVERHEAD + 1024;
+        let reservation = Reservation::sized(&mut cache, repository, actual).unwrap();
+        assert_eq!(reservation.bytes(), 1024);
+        assert_eq!(cache.bytes(), actual);
+        for bytes in [0, OVERHEAD, policy().max_entry_bytes + 1, u64::MAX] {
+            assert!(matches!(
+                Reservation::sized(&mut cache, repository, bytes),
+                Err(Error::Limit)
+            ));
+            assert_eq!(cache.bytes(), actual);
+        }
+        drop(cache);
+        assert_eq!(
+            Cache::open(root.path(), policy(), &budget).unwrap().bytes(),
+            actual
+        );
+        let path = reservation.path().to_owned();
+        drop(reservation);
+        assert!(!path.exists());
+        assert_eq!(
+            Cache::open(root.path(), policy(), &budget).unwrap().bytes(),
+            0
+        );
     }
 }

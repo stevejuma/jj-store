@@ -558,10 +558,11 @@ impl GraphExecutor {
         if matches!(work, Work::Graph(..)) {
             budget.start_index(entry.initialize)?;
         }
-        if entry.initialize {
-            // The independent reservation protects this private generation.
-            // Native construction and projection do not hold the namespace.
+        if entry.private() {
+            // Construction and recovered disk data have independent ownership.
             drop(cache.take());
+        }
+        if entry.initialize {
             stores
                 .initialize_cache(&settings, &entry.path)
                 .await

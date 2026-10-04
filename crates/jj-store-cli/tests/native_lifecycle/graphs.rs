@@ -886,3 +886,6 @@ mod history_query_acceptance;
 
 #[path = "graph_projection.rs"]
 mod projection_acceptance;
+
+#[path = "graph_disk_recovery.rs"]
+mod disk_recovery_acceptance;

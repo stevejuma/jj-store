@@ -1,5 +1,6 @@
 //! Disposable bounded cache slots. Only verified native objects are authority.
 pub(super) mod constructed;
+mod recovery;
 mod reservation;
 pub(super) mod resident;
 use super::*;
@@ -119,8 +120,11 @@ impl Drop for Entry {
     }
 }
 impl Entry {
+    pub fn private(&self) -> bool {
+        self.staging.is_some()
+    }
     pub fn seal(&mut self, policy: Policy, budget: &Budget) -> Result<()> {
-        if self.staging.is_some() {
+        if self.staging.is_some() && self.sealed.is_none() {
             // Hash large private generations before reacquiring the namespace.
             let files = inventory(&self.path, policy, budget, true)?.0;
             self.sealed = match resident::Verification::capture(&self.path, files, budget) {
@@ -455,7 +459,7 @@ impl Cache {
                     .is_ok_and(|(files, _)| files == slot.receipt.files);
             budget.check()?;
             if valid {
-                return Ok(Entry {
+                let entry = Entry {
                     path,
                     initialize: false,
                     slot: Some(slot.id),
@@ -465,7 +469,12 @@ impl Cache {
                     sealed: None,
                     retain: false,
                     resident,
-                });
+                };
+                return if entry.resident.is_none() {
+                    self.recover(entry, slot.receipt, access, budget)
+                } else {
+                    Ok(entry)
+                };
             }
             remove(&path)?;
             self.damaged = true;

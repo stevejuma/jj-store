@@ -72,10 +72,13 @@ under separate full reservations and retain verified data only. Graph evaluation
 releases the namespace after completing the immutable primary generation,
 including filtered queries. Missing primary generations now use private reserved
 staging and reacquire the namespace only for complete-generation installation.
-Loading an existing disk index without a resident projection still retains its
-lease and remains delivery work, alongside local operation/deep lookup and
-lightweight/root-bound metadata reads. These focused deliveries do not complete
-the later combined qualification gate.
+Existing-disk projection recovery now moves verified files into an actual-size
+private reservation and releases the namespace before decoding and deriving
+visibility. It preserves hard/inline limits, exact source files and cancellation
+cleanup; it copies no index and reserves no unrelated construction maximum.
+Local operation/deep lookup and lightweight/root-bound metadata reads remain
+delivery work. These focused deliveries do not complete the later combined
+qualification gate.
 
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their

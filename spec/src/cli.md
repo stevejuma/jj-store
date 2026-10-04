@@ -1816,3 +1816,10 @@ assert that the selected slot's file receipt does not grow, and repeat the warm
 read. Direct corruption, binding, revocation and resident lifetime consumers
 remain part of focused delivery evidence; full scale qualification stays
 deferred.
+
+Native graph fixture coverage MUST distinguish missing-primary construction,
+warm resident reuse and existing-disk projection recovery after executor loss.
+Private recovery retains current native operation/view admission, hard/inline
+limits, selected visibility and cancellation cleanup while unrelated cache
+preparation proceeds. Focused fixture evidence does not qualify Linux/native
+scale, production browser or release behavior.
