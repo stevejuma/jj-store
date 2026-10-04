@@ -11,7 +11,8 @@ def on_page_markdown(markdown, *, page, config, files):
     def image(match):
         digest = hashlib.sha256(match[1].encode()).hexdigest()[:20]
         path = get_relative_url(f"assets/generated/{digest}.svg", page.url)
-        return f'<figure class="architecture-diagram"><img src="{path}" alt="Architecture diagram; explanation follows."></figure>'
+        dark_path = get_relative_url(f"assets/generated/{digest}.dark.svg", page.url)
+        return f'<figure class="architecture-diagram"><img src="{path}" data-light-src="{path}" data-dark-src="{dark_path}" alt="Architecture diagram; explanation follows."></figure>'
     return re.sub(r"```mermaid\n([\s\S]*?)\n```", image, markdown)
 
 

@@ -26,6 +26,14 @@ correctness. The progress ledger remains the sole qualification record.
 Presentation-only Help changes may retain accurate manual prose after explicit
 review; sidebar sizing follows the application navigation requirements.
 
+Embedded Help MUST inherit the active application's resolved palette, typography
+and chrome preferences on open, page navigation and live appearance changes. Its
+Markdown site retains navigation, content and table-of-contents regions styled
+with the application tokens. Theme state is read-only and never creates another
+application preference record. Standalone documentation retains its own
+light/dark control. Theme CSS is bundled from the owning application sources;
+fonts and light/dark diagram variants remain local and manifest-validated.
+
 Verification covers generators and negative drift fixtures, actual configuration
 parsing, built-site links/search, HTTP asset admission, iframe focus and
 dismissal, offline cold browser use and desktop resource staging/WKWebView

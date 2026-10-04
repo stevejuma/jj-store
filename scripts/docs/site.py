@@ -43,6 +43,13 @@ for name in files:
     if re.search(r"@import\s+['\"]", css): raise ValueError('CSS imports must use validated url(): '+name)
 for name in ids:
     soup=BeautifulSoup((ROOT/name).read_text(),'html.parser')
+    for image in soup.select('.architecture-diagram img'):
+        for attribute in ('data-light-src', 'data-dark-src'):
+            target=image.get(attribute, '')
+            parsed=urlsplit(target)
+            path=unquote(urlsplit(urljoin('/'+name,target)).path).lstrip('/')
+            if not target or parsed.scheme or parsed.netloc or path not in files:
+                raise ValueError(f'{name}: missing or external diagram variant {target}')
     for element in soup.find_all(['a','script','img','link']):
         url=element.get('href') or element.get('src')
         if not url: continue

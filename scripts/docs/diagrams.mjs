@@ -34,26 +34,30 @@ export async function diagrams() {
         "utf8",
       ),
     });
-    await page.evaluate(() =>
-      window.mermaid.initialize({
-        startOnLoad: false,
-        securityLevel: "strict",
-        theme: "neutral",
-        fontFamily: "sans-serif",
-      }),
-    );
-    for (const [key, code] of entries) {
-      const svg = await page.evaluate(
-        async ({ key, code }) =>
-          (await window.mermaid.render("diagram" + key, code)).svg,
-        { key, code },
+    for (const dark of [false, true]) {
+      await page.evaluate(
+        (dark) =>
+          window.mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: "strict",
+            theme: dark ? "dark" : "neutral",
+            fontFamily: "sans-serif",
+          }),
+        dark,
       );
-      await writeFile(`${dir}/${key}.svg`, svg);
+      for (const [key, code] of entries) {
+        const svg = await page.evaluate(
+          async ({ key, code }) =>
+            (await window.mermaid.render("diagram" + key, code)).svg,
+          { key, code },
+        );
+        await writeFile(`${dir}/${key}${dark ? ".dark" : ""}.svg`, svg);
+      }
     }
   } finally {
     await browser.close();
   }
   console.log(
-    `Rendered ${entries.size} Mermaid diagrams without network access`,
+    `Rendered ${entries.size} Mermaid diagrams in light and dark without network access`,
   );
 }

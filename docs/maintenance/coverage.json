@@ -129,8 +129,8 @@
       "docs/site/guides/settings.md"
     ],
     "review": {
-      "reason": "Reviewed the Help spacing change against browsing, editing and settings guidance: only sidebar button geometry changes; the existing Help workflow, keyboard behavior and connection layout remain accurate.",
-      "fingerprint": "8ad4a1e60fef7fea4fefeb1676b23b007215b0d0eebd1fcef7f183ce035808f0"
+      "reason": "Reviewed generated Help palettes and local fonts, live appearance inheritance, the full-height chrome backdrop, and page/draft preservation. Browsing guidance documents inheritance; editing and settings semantics remain unchanged.",
+      "fingerprint": "e7cd050d6930212c1403b21aa39292e4556050de50b4af914e18739995f98f4e"
     }
   },
   {

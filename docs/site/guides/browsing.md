@@ -40,9 +40,12 @@ statuses are descriptive rather than copy targets. Following a link does not
 also perform a row's copy action.
 
 Opening Help preserves your application view. Closing the overlay returns to the
-same selection. If a view is unavailable after returning, inspect current
-permission or connection status instead of changing a historical identifier to
-make a lookup succeed.
+same selection. Help follows your active app theme and text size, including
+changes made while it is open. Its left navigation, reading area and table of
+contents use the same colors and surfaces as the app. The standalone manual has
+its own light/dark switch. If a view is unavailable after returning, inspect
+current permission or connection status instead of changing a historical
+identifier to make a lookup succeed.
 
 ## When results change
 

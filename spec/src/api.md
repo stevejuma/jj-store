@@ -1784,6 +1784,11 @@ The Help entry uses the primary sidebar's collapsed and expanded spacing. This
 presentation change preserves the same overlay, local document routes and
 admission policy.
 
+Help reads same-origin presentation attributes to inherit live application
+appearance; it adds no API, mutation or credential transport. Generated fonts,
+palette CSS and diagram variants remain in the independent documentation asset
+manifest and use the existing CSP. Standalone docs do not read app preferences.
+
 Bundled Help is independently allowlisted under `/help/`, with a separate
 512-file, 8-MiB-per-file and 32-MiB-total bound. The existing browser bundle
 retains its own bounds. Application documents may frame same-origin content, but

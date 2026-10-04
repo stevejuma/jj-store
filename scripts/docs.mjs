@@ -3,6 +3,7 @@ import { mkdirSync, cpSync, rmSync } from "node:fs";
 import { references } from "./docs/references.mjs";
 import { review } from "./docs/review.mjs";
 import { diagrams } from "./docs/diagrams.mjs";
+import { themeAssets } from "./docs/theme.mjs";
 const mode = process.argv[2] ?? "check";
 const run = (cmd, args) => execFileSync(cmd, args, { stdio: "inherit" });
 function check() {
@@ -12,6 +13,7 @@ function check() {
 async function build() {
   check();
   await diagrams();
+  await themeAssets();
   run("uv", ["run", "--locked", "mkdocs", "build", "--strict"]);
   run("uv", ["run", "--locked", "python", "scripts/docs/site.py"]);
 }

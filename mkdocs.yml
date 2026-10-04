@@ -11,6 +11,7 @@ theme:
   features:
     - content.code.copy
     - navigation.top
+    - navigation.expand
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -40,8 +41,11 @@ markdown_extensions:
   - toc:
       permalink: true
 extra_css:
+  - assets/generated/app-theme.css
   - assets/manual.css
+  - assets/layout.css
 extra_javascript:
+  - assets/theme.js
   - assets/embed.js
 validation:
   nav:

@@ -149,7 +149,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015 |
-| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002 |
+| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -72121,6 +72121,123 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Narrow application-owned Help geometry. All 414 prior evidence entries preserved. M19 remains Partial; registry/native-host release gates remain in E-DOC-001. Existing cold exact browser test and live before/after geometry cover the change without adding an implementation-mirroring test. Rust, root aggregates, full browser/Storybook/storage suites and visual baselines are out of scope. Development fixture seeding failure remains explicit and is not a Help acceptance failure.",
   "next": "Use the built workspace preview on 7484 to review Help. Repair or resume the incomplete demo seeding separately before using managed dev:ui for this fixture."
+},
+{
+  "id": "E-DOC-003",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change nsnyowlt",
+  "kind": "Application-styled documentation and live Help appearance",
+  "versions": "macOS ARM64; Svelte 5.57.1; MkDocs 1.6.1 and Material 9.6.23; Playwright 1.63.0 Chromium and WebKit; existing local Design Core validation hook.",
+  "formats": "No repository, API, browser or documentation manifest format change. Generated closure adds local app palette/font assets and dark Mermaid variants.",
+  "files": [
+    "docs/maintenance/coverage.json",
+    "docs/site/assets/layout.css",
+    "docs/site/assets/manual.css",
+    "docs/site/assets/theme.js",
+    "docs/site/contributing/documentation.md",
+    "docs/site/guides/browsing.md",
+    "mkdocs.yml",
+    "scripts/docs/diagrams.mjs",
+    "scripts/docs/hooks.py",
+    "scripts/docs/site.py",
+    "scripts/docs/theme.mjs",
+    "scripts/docs.mjs",
+    "scripts/docs.test.mjs",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/playwright.docs.config.ts",
+    "web/src/lib/ui/store-help/StoreHelp.svelte",
+    "web/tests/browser/help-theme.spec.ts",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "web/tests/browser/help-theme.spec.ts#embedded Help follows live application appearance across pages and reopening",
+    "web/tests/browser/help-theme.spec.ts#standalone documentation retains themed search and responsive navigation",
+    "scripts/docs.test.mjs#generated closure requires both local diagram theme variants"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; inspect Community presentation, Design Core shell/button/font sources and application appearance; pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"embedded Help follows\" (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Clean working change. Exact new regression failed because the generated manual did not inherit Nord from the application."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"embedded Help follows\" (intermediate)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Two successive assertion failures: equivalent CSS custom-property hex/HSL serializations and ambiguous .md-typeset locator. Compare rendered background colors and scope typography to article; top-frame initialization preserves preference updates. Exact Chromium then passed."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts (first theme suite)",
+      "result": "fail",
+      "failures": 2,
+      "note": "10/12 passed. Both standalone dark Axe checks exposed Material slate link specificity overriding app tokens (4.23 contrast). Raised token mapping specificity; full contrast assertions retained."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"standalone documentation retains\" (intermediate)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Mobile menu click exposed Material direction-selector specificity: the widened drawer still used its old left offset and intercepted the toolbar. Matched the direction selector and retained mobile title positioning. Another run used fill without Material keyboard search events; changed to actual typing as in existing Help tests. Exact Chromium then passed."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts (second theme suite)",
+      "result": "fail",
+      "failures": 1,
+      "note": "11/12 passed. Chromium stalled during the second drawer boundingBox call, which remained pending until context cleanup; no failure screenshot completed. WebKit and the preceding exact Chromium run passed. Preserve geometry assertion and rerun unchanged after final heading CSS."
+    },
+    {
+      "command": "node --test scripts/docs.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "7/7 tooling regressions, including valid, absent, remote and empty dark-diagram variants; bounded closure/staging and source drift remain covered."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web/catalog diagnostics; 182 catalog modules; 932 architecture modules; ownership valid. Web/catalog rerun after final Svelte edits also passed."
+    },
+    {
+      "command": "pnpm web:build; node scripts/docs.mjs stage; pnpm docs:review application <appearance review>; pnpm docs:review",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh production web build and strict final docs generation; 138 files, 13232172 bytes, valid links and anchors; 9 diagrams with light/dark variants and local fonts. Existing foundational CSS :global and bundle-size warnings remain. User requested TOC heading refinement: transparent muted heading without Material white shadow at intermediate widths. All explicit source reviews current."
+    },
+    {
+      "command": "Changed-file pnpm exec prettier --write/--check; uv run --locked python -m py_compile scripts/docs/hooks.py scripts/docs/site.py; pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatting and Python syntax pass; spec-first 16 protected files and 4 canonical chapters; 5 validators, 23 chapters and 171 requirements. Historical ledger prefix excluded from reformatting."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"standalone documentation retains\"; pnpm exec playwright test --config web/playwright.docs.config.ts (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact standalone Chromium passed unchanged after final CSS, then 12/12 complete cold Help tests passed in 1.2m. Fresh native asset-router process, actual generated assets, live Nord/Buzz/Original Dark inheritance and font sizes, dark/light SVG loads, standalone palette/search/mobile drawer, external-network denial, CSP, Axe, draft/page/focus retention and unavailable-doc recovery. Earlier renderer stall did not recur; no timeout or assertion weakening."
+    },
+    {
+      "command": "Graceful restart of only the documentation config process; curl app/help; browser reload, inherited-theme and computed TOC heading inspection",
+      "result": "pass",
+      "failures": 0,
+      "note": "Loopback 7484 app/Help HTTP 200. Existing five-second shutdown warning recurred; read-only preview restarted with preserved partial fixture. App and Help both Buzz; TOC heading has transparent background and no shadow at the user viewport. Full app reload refreshed cached stylesheet. Saved ignored .local/dev-demo/help-app-theme.png; no visual baseline changes. Other deployments untouched."
+    },
+    {
+      "command": "pnpm check:progress; parseLedger historical comparison",
+      "result": "pass",
+      "failures": 0,
+      "note": "137 tasks; all 415 historical evidence objects and their raw JSON prefix preserved. M19 remains Partial. No storage/identity release qualification claimed."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Generated manual presentation and read-only appearance inheritance only. Existing app palettes and released fonts are bundled; host attributes are observed without parent writes, preference storage access or a new messaging/API protocol. Complete Help browser lane justified by shared generated assets and embedded/standalone consumers. All 415 previous evidence entries and raw JSON prefix preserved. M19 remains Partial; foundational registry-only and packaged WKWebView release gates remain in E-DOC-001. Unrelated Rust, root aggregate, full browser/Storybook/storage lanes and visual baselines are out of scope.",
+  "next": "Review themed Help in the documentation workspace preview on 7484. Foundational registry-only and packaged WKWebView release qualification remain separate M19 gates."
 }
 ]
 

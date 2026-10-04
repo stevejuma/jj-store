@@ -1913,3 +1913,11 @@ The Help entry follows primary sidebar navigation geometry: a centered 2rem icon
 button with 0.5rem horizontal rail padding when collapsed, and a full-width
 labelled button inset by 0.75rem when expanded. Connection-screen Help retains
 its standalone layout.
+
+The generated manual uses the app's semantic palette, local DM Sans and Source
+Code Pro fonts, typography scale, sidebar chrome and rounded content surfaces.
+The same-origin frame observes only the host's appearance attributes and glass
+opacity, including previews and cross-tab/system updates. Theme changes preserve
+the current documentation page, scroll, search and the application's drafts.
+Embedded Help hides its independent palette selector; the standalone site keeps
+a light/dark switch. Light/dark Mermaid images follow the resolved color mode.

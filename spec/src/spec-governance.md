@@ -126,6 +126,12 @@ and requires `git-interop.md`.
 
 ## Verification scope
 
+Help presentation bundling consumes the existing application palette sources and
+released local fonts. Changes to its asset generation and theme lifecycle run
+the documentation-tool regressions and complete cold Help browser lane,
+including embedded inheritance and standalone behavior. No repository storage or
+Rust contract changes are implied by these presentation assets.
+
 Installation capture management adds a server-package response capture to the
 shared contract runner. Fixture selection binds package and test binary
 explicitly; existing CLI captures retain their defaults. Changes to this runner

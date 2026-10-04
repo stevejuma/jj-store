@@ -143,6 +143,35 @@ test("generated closure rejects broken anchors inline scripts and remote runtime
   }
 });
 
+test("generated closure requires both local diagram theme variants", (t) => {
+  const root = fixture(t);
+  writeFileSync(
+    join(root, "light.svg"),
+    '<svg xmlns="http://www.w3.org/2000/svg"/>',
+  );
+  writeFileSync(
+    join(root, "dark.svg"),
+    '<svg xmlns="http://www.w3.org/2000/svg"/>',
+  );
+  for (const dark of [
+    "dark.svg",
+    "missing.svg",
+    "https://example.test/dark.svg",
+    "",
+  ]) {
+    writeFileSync(
+      join(root, "index.html"),
+      `<figure class="architecture-diagram"><img src="light.svg" data-light-src="light.svg" data-dark-src="${dark}"></figure>`,
+    );
+    const result = spawnSync(
+      "uv",
+      ["run", "--locked", "python", "scripts/docs/site.py", root],
+      { encoding: "utf8" },
+    );
+    assert.equal(result.status === 0, dark === "dark.svg", result.stderr);
+  }
+});
+
 test("desktop staging copies the complete Help closure and rejects missing help before replacement", async (t) => {
   const { stageDesktopResources } = await import("./desktop-resources.mjs");
   const { readFileSync, existsSync } = await import("node:fs");

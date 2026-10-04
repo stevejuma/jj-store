@@ -191,7 +191,7 @@
     max-height: none;
     border: 0;
     color: var(--foreground);
-    background: var(--background);
+    background: var(--store-theme-gradient, var(--background));
   }
   .store-help[open] {
     display: flex;
@@ -207,13 +207,14 @@
     padding: 0.4rem 1rem;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
+    background: var(--store-theme-chrome, var(--sidebar));
   }
   header.desktop {
     padding-inline-start: 80px;
     min-height: 40px;
   }
   h1 {
-    font-size: 1rem;
+    font-size: var(--community-text-body, 0.875rem);
     margin: 0;
   }
   p,
