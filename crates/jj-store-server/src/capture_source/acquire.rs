@@ -121,6 +121,9 @@ pub(super) fn normalizer(profile: CaptureProfile) -> Result<NormalizerProfileV1>
     match profile {
         CaptureProfile::CodexCliJsonlV1 => Ok(NormalizerProfileV1::codex_0_156_1()),
         CaptureProfile::CodexDesktopJsonlV1 => Ok(NormalizerProfileV1::codex_desktop_0_159_2()),
-        _ => Err(Error::Config("unsupported admitted Codex profile")),
+        CaptureProfile::CursorDesktopTranscriptV1 | CaptureProfile::CursorCliTranscriptV1 => {
+            Ok(profile.normalizer())
+        }
+        _ => Err(Error::Config("unsupported admitted file profile")),
     }
 }

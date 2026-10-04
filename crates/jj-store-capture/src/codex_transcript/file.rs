@@ -54,6 +54,25 @@ pub(crate) fn inspect_bound(
     if identity.is_some_and(|id| id.device != observed.device || id.inode != observed.inode) {
         return Err("transcript source identity changed".into());
     }
+    if profile.is_cursor() {
+        let binding = crate::cursor_binding::read(profile, path)?;
+        let mut witness = Sha256::new_with_prefix(b"jj-store/cursor-transcript-file/v1\0");
+        witness.update(observed.device.to_be_bytes());
+        witness.update(observed.inode.to_be_bytes());
+        witness.update(binding.witness());
+        if !unchanged(&file, path, &observed)? {
+            return Err("Cursor transcript changed during inspection".into());
+        }
+        return Ok((
+            file,
+            Header {
+                session: binding.session,
+                directory: binding.directory,
+                witness: witness.finalize().into(),
+            },
+            observed,
+        ));
+    }
     let mut bytes = Vec::new();
     BufReader::new((&file).take(MAX_RECORD_BYTES as u64 + 1)).read_until(b'\n', &mut bytes)?;
     if bytes.len() > MAX_RECORD_BYTES || bytes.last() != Some(&b'\n') {

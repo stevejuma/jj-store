@@ -53,10 +53,27 @@ impl HarnessConfig {
                 if !self.roots.is_empty() {
                     return Ok(self.roots.clone());
                 }
-                let data = std::env::var_os("CURSOR_DATA_DIR")
-                    .map(PathBuf::from)
-                    .or_else(|| home.map(|p| p.join(".cursor")))
-                    .ok_or(Error::Config("Cursor capture home unavailable"))?;
+                let data = if self.profile == CaptureProfile::CursorCliTranscriptV1 {
+                    std::env::var_os("CURSOR_DATA_DIR").map(PathBuf::from)
+                } else {
+                    None
+                }
+                .or_else(|| home.map(|p| p.join(".cursor")))
+                .ok_or(Error::Config("Cursor capture home unavailable"))?;
+                if !data.is_absolute()
+                    || data.parent().is_none()
+                    || data
+                        .to_str()
+                        .is_none_or(|s| s.len() > 4096 || s.chars().any(char::is_control))
+                    || data.components().any(|p| {
+                        matches!(
+                            p,
+                            std::path::Component::CurDir | std::path::Component::ParentDir
+                        )
+                    })
+                {
+                    return Err(Error::Config("Cursor capture root unavailable"));
+                }
                 Ok(vec![data.join("projects")])
             }
             CaptureProfile::OpencodeReadOnlyApiV1 => Ok(vec![]),

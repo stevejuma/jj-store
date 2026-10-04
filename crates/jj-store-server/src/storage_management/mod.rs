@@ -64,30 +64,29 @@ impl Manager {
         };
         let mut active = self.0.active.lock().await;
         // A lost report is recovered as interrupted/unknown from the durable running intent.
-        if let Ok(mut journal) = journal::read(&self.0.root, repo) {
-            if let Some(entry) = journal
+        if let Ok(mut journal) = journal::read(&self.0.root, repo)
+            && let Some(entry) = journal
                 .entries
                 .iter_mut()
                 .find(|e| e.report.request_id == id)
+        {
+            entry.report.phase = match &result {
+                Ok(()) => StoragePhase::Complete,
+                Err(_) if kind == StorageKind::Checkpoint => StoragePhase::Unknown,
+                Err(Error::Incomplete) => StoragePhase::Incomplete,
+                Err(_) => StoragePhase::Failed,
+            };
+            entry.report.message = result.err().map(|e| e.to_string());
+            if kind == StorageKind::Checkpoint
+                && let Ok(selection) = self.0.backend.selection(repo, &capture).await
             {
-                entry.report.phase = match &result {
-                    Ok(()) => StoragePhase::Complete,
-                    Err(_) if kind == StorageKind::Checkpoint => StoragePhase::Unknown,
-                    Err(Error::Incomplete) => StoragePhase::Incomplete,
-                    Err(_) => StoragePhase::Failed,
-                };
-                entry.report.message = result.err().map(|e| e.to_string());
-                if kind == StorageKind::Checkpoint {
-                    if let Ok(selection) = self.0.backend.selection(repo, &capture).await {
-                        entry.report.selection = Some(selection);
-                        if selection != CheckpointSelection::NotCovered {
-                            entry.report.phase = StoragePhase::Complete;
-                            entry.report.message = None;
-                        }
-                    }
+                entry.report.selection = Some(selection);
+                if selection != CheckpointSelection::NotCovered {
+                    entry.report.phase = StoragePhase::Complete;
+                    entry.report.message = None;
                 }
-                let _ = journal::save(&self.0.root, repo, &journal);
             }
+            let _ = journal::save(&self.0.root, repo, &journal);
         }
         active.remove(&(repo, id));
     }

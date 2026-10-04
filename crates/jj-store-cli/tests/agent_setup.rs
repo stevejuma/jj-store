@@ -397,7 +397,8 @@ fn setup_command_selects_one_explicit_integration() {
     let jj_store_cli::commands::Extension::Agent(args) = parsed.command else {
         panic!("expected agent extension");
     };
-    let Some(jj_store_cli::agent_commands::AgentCommand::Setup { agent, dry_run }) = args.command
+    let Some(jj_store_cli::agent_commands::AgentCommand::Setup { agent, dry_run, .. }) =
+        args.command
     else {
         panic!("expected setup command");
     };
@@ -414,4 +415,69 @@ fn setup_command_selects_one_explicit_integration() {
     };
     assert_eq!(agent, jj_store_cli::agent_commands::AgentName::Cursor);
     assert!(dry_run);
+}
+
+#[cfg(unix)]
+#[test]
+fn cursor_transcript_setup_is_explicit_preserves_other_handlers_and_removes_exactly() {
+    use jj_store_cli::agent_setup::setup_with_mode;
+    let t = tempfile::tempdir().unwrap();
+    let workspace = t.path().join("workspace");
+    let state = t.path().join("state");
+    let bin = t.path().join("bin");
+    fs::create_dir_all(workspace.join(".cursor")).unwrap();
+    fs::create_dir_all(&bin).unwrap();
+    executable(&bin.join("codex"), "0.156.1");
+    executable(&bin.join("cursor-agent"), "2026.09.26-dd393fe");
+    executable(&bin.join("opencode"), "1.18.30");
+    let original = br#"{"version":1,"hooks":{"beforeShellExecution":[{"command":"./keep"}]}}"#;
+    fs::write(workspace.join(".cursor/hooks.json"), original).unwrap();
+    let mut registry = registry(&state, &workspace, &bin);
+    let request = SetupRequestV1 {
+        integration: IntegrationId::Cursor,
+        executable: "/fixture/jj".into(),
+        dry_run: true,
+    };
+    assert!(
+        setup_with_mode(&mut registry, request.clone(), true)
+            .unwrap()
+            .changed
+    );
+    assert_eq!(
+        fs::read(workspace.join(".cursor/hooks.json")).unwrap(),
+        original
+    );
+    let request = SetupRequestV1 {
+        dry_run: false,
+        ..request
+    };
+    setup_with_mode(&mut registry, request.clone(), true).unwrap();
+    let owned: Value =
+        serde_json::from_slice(&fs::read(workspace.join(".cursor/hooks.json")).unwrap()).unwrap();
+    assert_eq!(
+        owned["hooks"]["beforeShellExecution"][0]["command"],
+        "./keep"
+    );
+    assert_eq!(
+        owned["hooks"]["stop"][0]["command"],
+        "/fixture/jj agent hook cursor --transcript-capture"
+    );
+    assert!(owned.to_string().contains("beforeSubmitPrompt"));
+    assert!(
+        !setup_with_mode(&mut registry, request, true)
+            .unwrap()
+            .changed
+    );
+    remove(
+        &mut registry,
+        RemoveRequestV1 {
+            integration: IntegrationId::Cursor,
+            dry_run: false,
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        fs::read(workspace.join(".cursor/hooks.json")).unwrap(),
+        original
+    );
 }

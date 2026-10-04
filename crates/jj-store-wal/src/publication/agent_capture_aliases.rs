@@ -9,6 +9,23 @@ mod catalog;
 mod remap;
 use remap::{Identities, session_id};
 
+/// Data-only alias lookup; callers supply already selected sanitized evidence.
+pub fn normalized_tool_native_id(
+    profile: &NormalizerProfileV1,
+    batch: &SanitizedObservationBatchV1,
+    tool: ToolCallId,
+) -> Result<Option<String>> {
+    let normalized = jj_agent::normalize_batch(profile, batch).map_err(agent_error)?;
+    let mut matching = normalized.aliases.iter().filter(|alias| {
+        matches!(alias.target,
+            AgentEntityRefV1::Tool { tool_call_id, .. } if tool_call_id == tool)
+    });
+    let Some(alias) = matching.next() else {
+        return Ok(None);
+    };
+    Ok(matching.next().is_none().then(|| alias.native_id.clone()))
+}
+
 pub(super) async fn adopt_selected_aliases(
     base: &dyn AgentSnapshotRead,
     candidates: &mut NormalizationCandidates,

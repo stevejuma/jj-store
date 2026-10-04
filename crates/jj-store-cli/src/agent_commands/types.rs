@@ -103,6 +103,9 @@ pub enum AgentCommand {
     },
     /// Install one owned project hook or plugin without replacing unrelated configuration
     Setup {
+        /// Bind Cursor transcripts for automatic server capture; hooks supply no message bodies
+        #[arg(long)]
+        transcript_capture: bool,
         #[arg(value_enum)]
         agent: AgentName,
         /// Preview the target change without writing configuration or ownership state
@@ -120,6 +123,8 @@ pub enum AgentCommand {
     /// Receive one bounded project hook event
     #[command(hide = true)]
     Hook {
+        #[arg(long)]
+        transcript_capture: bool,
         #[arg(value_enum)]
         agent: AgentName,
     },

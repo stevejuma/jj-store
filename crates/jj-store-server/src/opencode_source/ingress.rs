@@ -46,6 +46,20 @@ impl OpenCodeCaptureSource {
         let Some(record) = self.pass.records.front().cloned() else {
             return Ok(CaptureSourceStep::Verifying);
         };
+        // Native API assistant bodies are mutable until the completion flush.
+        // Stop at that prefix and reacquire later; never enqueue a partial body
+        // whose durable recovery proof would disappear on the next update.
+        let info = &record.envelope()["record"]["info"];
+        if info["role"] == "assistant"
+            && info["time"].is_object()
+            && info["time"]["completed"].as_i64().is_none()
+        {
+            self.pass.finished = true;
+            self.pass.records.clear();
+            self.pass.acquisition = None;
+            self.sanitizer = None;
+            return Ok(CaptureSourceStep::Waiting);
+        }
         let position = self.pass.next_position(&record, &self.lease)?;
         if let Some(target) = &self.pass.target {
             let SourcePositionV1::Snapshot {

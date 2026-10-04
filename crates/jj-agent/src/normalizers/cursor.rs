@@ -17,6 +17,10 @@ pub(crate) fn normalize(
             invalid(output, observation.source_sequence, "cursor-json");
             continue;
         };
+        if value["capture_format"] == "cursor-jsonl/v1" {
+            super::cursor_transcript::record(profile, batch, observation, &value, output)?;
+            continue;
+        }
         match string(&value, &["cursor_version"]) {
             None => {
                 invalid(output, observation.source_sequence, "cursor-version");
@@ -142,7 +146,7 @@ fn state(
         ));
 }
 
-fn session(
+pub(super) fn session(
     batch: &SanitizedObservationBatchV1,
     output: &mut NormalizationBatchV1,
     native: &str,

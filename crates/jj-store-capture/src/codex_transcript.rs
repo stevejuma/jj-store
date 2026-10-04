@@ -5,9 +5,7 @@ use crate::{
     profile::CaptureProfile,
     reader_progress::{ReaderCaptureMetadataV1, ReaderProgressV1},
 };
-use jj_agent::{
-    CaptureBatchId, CaptureCursorV1, IntegrationId, SourceInstanceId, SourcePositionV1,
-};
+use jj_agent::{CaptureBatchId, CaptureCursorV1, SourceInstanceId, SourcePositionV1};
 use sha2::{Digest as _, Sha256};
 use std::{
     path::{Path, PathBuf},
@@ -37,6 +35,7 @@ pub struct RawTranscriptRecord {
     pub sequence: u64,
     /// None is an oversized complete record, represented later as a safe gap.
     pub bytes: Option<Vec<u8>>,
+    pub record_key: Option<[u8; 32]>,
 }
 #[derive(Clone)]
 pub struct CodexTranscriptBatch {
@@ -175,7 +174,7 @@ impl CodexTranscriptReader {
         };
         if let Some(previous) = previous {
             previous.validate()?;
-            if previous.cursor.integration != IntegrationId::Codex
+            if previous.cursor.integration != profile.integration()
                 || previous.cursor.source_instance_id != source
             {
                 return Err("transcript reader source mismatch".into());
@@ -216,7 +215,7 @@ impl CodexTranscriptReader {
         self.generation
     }
     fn parser(&self) -> String {
-        format!("codex-jsonl@{}/v1", self.profile.product_version())
+        self.profile.parser()
     }
     fn start_verification(&mut self, stamp: Stamp) {
         self.verification = Some(Verification {

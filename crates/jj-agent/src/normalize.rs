@@ -23,6 +23,9 @@ impl NormalizerProfileV1 {
     pub fn cursor_3_22_7() -> Self {
         Self::new(IntegrationId::Cursor, "3.22.7")
     }
+    pub fn cursor_cli_2026_09_26() -> Self {
+        Self::new(IntegrationId::Cursor, "2026.09.26-dd393fe")
+    }
     pub fn opencode_1_18_30() -> Self {
         Self::new(IntegrationId::OpenCode, "1.18.30")
     }
@@ -59,6 +62,7 @@ impl NormalizerProfileV1 {
                 (IntegrationId::Codex, "0.156.1")
                     | (IntegrationId::Codex, "0.159.2")
                     | (IntegrationId::Cursor, "3.22.7")
+                    | (IntegrationId::Cursor, "2026.09.26-dd393fe")
                     | (IntegrationId::OpenCode, "1.18.30")
             )
     }

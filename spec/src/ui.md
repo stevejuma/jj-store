@@ -1909,3 +1909,11 @@ harness sections. Loading skeletons, draft retention, notification-service
 errors, save/cancel columns and restart-required state apply to all harnesses.
 Sources and Agents reuse their existing avatars, repository links and filters.
 New harnesses with deferred inactive import MUST keep Import unavailable.
+
+Cursor and OpenCode capture sources reuse the existing Agents presentation,
+harness avatars and cached Sources table with repository, harness and status
+filters. Current coverage distinguishes withheld inactive, disabled, unsupported
+and unlinked sources; absent native message/tool timing remains unknown. Cursor
+settings explain the one-time `jj agent setup cursor --transcript-capture` step.
+Saved/effective values and restart-required state apply independently to both
+Cursor products and the configured OpenCode API endpoint.

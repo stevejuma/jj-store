@@ -1,5 +1,11 @@
 # Native JJ integration
 
+Read-only local identity hints continue to require an exact secure-config
+metadata binding before selecting a repository email. They never migrate
+configuration or introduce aliases into query evaluation. Multi-harness capture
+verification retains these boundaries; conditional-expression lint cleanup does
+not change identity selection or native persistence.
+
 WorkStore comment reactions use the existing native RPC collaboration command
 and read envelopes with an additive typed target. Exact WorkStore selection is
 captured alongside ReactionStore; no code-operation mutation, upstream JJ import

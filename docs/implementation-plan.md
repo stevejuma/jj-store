@@ -34,14 +34,14 @@ selected harnesses. Existing personal transcripts are not a test fixture.
 
 ### Reuse what exists
 
-| Area             | Existing foundation                                                                                                                       | Work needed for the preview                                                    |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Codex worker     | Configured startup, known locations/overrides, directory/workspace admission, active backfill, bounded tailing, durable spool and restart | Integrate with current main and prove the real preview path                    |
-| History          | Explicit Codex import, retained original intent, recovery and receipt-backed progress                                                     | Keep the existing feature usable; do not wait for OpenCode history             |
-| Capture settings | Status, sources, pause/resume/rescan/import, typed client and unknown-outcome handling                                                    | Automatic loading/freshness, clear state labels, capability-aware actions      |
-| Agents           | Recorded sessions and common response/tool presentation                                                                                   | Reuse main's newer repository/project Agents views and automatic refresh       |
-| OpenCode         | Qualified library/API acquisition, active supervision, identity joins and exact prefix preparation                                        | Preserve completed work; defer configured startup and unfinished import/export |
-| Main application | Automatic updates, scoped Agents sidebar, newer settings, UI development commands and desktop host                                        | Rebase and preserve these improvements rather than recreate them               |
+| Area             | Existing foundation                                                                                                                       | Work needed for the preview                                                         |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Codex worker     | Configured startup, known locations/overrides, directory/workspace admission, active backfill, bounded tailing, durable spool and restart | Integrate with current main and prove the real preview path                         |
+| History          | Explicit Codex import, retained original intent, recovery and receipt-backed progress                                                     | Keep the existing feature usable; do not wait for OpenCode history                  |
+| Capture settings | Status, sources, pause/resume/rescan/import, typed client and unknown-outcome handling                                                    | Automatic loading/freshness, clear state labels, capability-aware actions           |
+| Agents           | Recorded sessions and common response/tool presentation                                                                                   | Reuse main's newer repository/project Agents views and automatic refresh            |
+| OpenCode         | Qualified library/API acquisition, active supervision, identity joins and exact prefix preparation                                        | Configured local startup reopened on 4 October; history/import/export stay deferred |
+| Main application | Automatic updates, scoped Agents sidebar, newer settings, UI development commands and desktop host                                        | Rebase and preserve these improvements rather than recreate them                    |
 
 The delay came from treating a broad completion roadmap as a prerequisite for
 trying capture. Eighty capture changes now exist beyond the common ancestor,
@@ -182,23 +182,43 @@ for user testing. Broader completion stays deferred after this handoff.
 
 ### Deferred work
 
-| Work                                                                                                                        | Reason and re-entry condition                                                                                                                      |
-| --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| OpenCode configured worker, inactive API history, consent/restart integration, exact API completion and exported JSON files | Not needed for the working Codex preview; resume after feedback, preserving the parked draft and completed libraries                               |
-| Cursor transcript reader, product/version coverage and common identity joins                                                | Additional harness; resume when the Codex user journey is accepted                                                                                 |
-| M18.3 complete block/plan/child-agent/compaction model and replay/renormalization                                           | Existing messages/tools are sufficient to try capture; resume as a separate conversation milestone                                                 |
-| M18.4 automatic checkpoints, edit causality and shared owned producer scopes                                                | Do not claim transcript observation proves code authorship; resume separately                                                                      |
-| Full M18.5 multi-harness release matrix and remaining platform/cold qualification                                           | Keep the narrow Codex real-service/browser/restart proof above; defer the full release gate                                                        |
-| M18.6 advanced inspection/search, exact message/plan reviews, immutable feedback dispatch                                   | Existing Agents browsing is the preview; expand after use                                                                                          |
-| M18.7 collaboration archives, portable carriers, broader deployment/privacy policy and purge                                | Separate release scope; existing local privacy/admission rules remain mandatory                                                                    |
-| Configuration editor, hook setup wizard and additional platforms                                                            | One documented local setup is enough for the preview                                                                                               |
-| Cold debug sanitizer/native preparation optimization and clearer body-free history selection/refusal                        | Functional linked capture/import is qualified; reduce observed multi-minute preparation and unlinked unknown-command friction after trial feedback |
-| Official ACP Rust SDK adoption                                                                                              | Not a required capture outcome                                                                                                                     |
+| Work                                                                                                 | Reason and re-entry condition                                                                                                                      |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenCode inactive API history and exported JSON files                                                | Retain separately parked history draft; configured active capture is reopened below                                                                |
+| Cursor advanced identity joins, cloud sessions and additional platforms/versions                     | Local Desktop/CLI transcript capture is reopened below; retain separate qualification gates                                                        |
+| M18.3 complete block/plan/child-agent/compaction model and replay/renormalization                    | Existing messages/tools are sufficient to try capture; resume as a separate conversation milestone                                                 |
+| M18.4 automatic checkpoints, edit causality and shared owned producer scopes                         | Do not claim transcript observation proves code authorship; resume separately                                                                      |
+| Full M18.5 multi-harness release matrix and remaining platform/cold qualification                    | Keep the narrow Codex real-service/browser/restart proof above; defer the full release gate                                                        |
+| M18.6 advanced inspection/search, exact message/plan reviews, immutable feedback dispatch            | Existing Agents browsing is the preview; expand after use                                                                                          |
+| M18.7 collaboration archives, portable carriers, broader deployment/privacy policy and purge         | Separate release scope; existing local privacy/admission rules remain mandatory                                                                    |
+| Configuration editor, hook setup wizard and additional platforms                                     | One documented local setup is enough for the preview                                                                                               |
+| Cold debug sanitizer/native preparation optimization and clearer body-free history selection/refusal | Functional linked capture/import is qualified; reduce observed multi-minute preparation and unlinked unknown-command friction after trial feedback |
+| Official ACP Rust SDK adoption                                                                       | Not a required capture outcome                                                                                                                     |
 
 Legacy AgentStore support and migration are excluded, not queued for later.
 Existing implemented features are preserved. Deferral does not authorize removal
 of current privacy, directory matching, Write, bounded-resource, durable receipt
 or manifest publication guarantees.
+
+### Cursor and OpenCode extension reopened 4 October 2026
+
+The approved extension adds separate expandable Cursor Desktop/CLI and OpenCode
+configuration, five-profile contracts, configured OpenCode API startup and
+metadata-only Cursor hook handoff to the shared bounded JSONL reader. Defaults
+remain opt-in, LocalTrusted and current AgentStore in exactly linked native
+repositories. Configuration saves require a backend restart. The implementation
+uses existing sanitation, spool, source registry, receipts and Agents views.
+Nullable Cursor start paths require a bounded private lifecycle handoff; mutable
+OpenCode assistant snapshots wait for final completion before durable enqueue.
+
+Qualification records fixtures and disposable installed-harness runs separately
+in the milestone ledger. Desktop automation must verify the disposable workspace
+before sending any prompt. Keep unfulfilled real-harness/cold gates explicit;
+fixture acceptance is not product or release qualification. Rebase against the
+current main workspace before local integration. Preserve the independently
+parked OpenCode history draft. Inactive history, export/database readers, cloud
+Cursor, advanced subagents, setup wizard and additional platforms/versions stay
+deferred.
 
 ### Verification budget and stop condition
 

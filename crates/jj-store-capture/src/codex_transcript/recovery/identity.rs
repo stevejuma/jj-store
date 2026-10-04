@@ -1,8 +1,7 @@
 use super::*;
 use crate::{agent_capture::PendingCaptureStateV1, transcript_sanitization::TRANSCRIPT_POLICY};
 use jj_agent::{
-    NormalizerProfileV1, ObservationId, SanitizedMediaType, SanitizedRepresentation, SourceKind,
-    SourceTrust,
+    ObservationId, SanitizedMediaType, SanitizedRepresentation, SourceKind, SourceTrust,
 };
 pub(super) struct Target {
     pub offset: u64,
@@ -18,11 +17,7 @@ pub(super) fn target(
     header: &Header,
 ) -> CaptureResult<Target> {
     entry.validate()?;
-    let expected_profile = match profile {
-        CaptureProfile::CodexCliJsonlV1 => NormalizerProfileV1::codex_0_156_1(),
-        CaptureProfile::CodexDesktopJsonlV1 => NormalizerProfileV1::codex_desktop_0_159_2(),
-        _ => return Err("unsupported queued Codex profile".into()),
-    };
+    let expected_profile = profile.normalizer();
     let metadata = entry
         .reader_metadata
         .as_ref()
@@ -30,7 +25,7 @@ pub(super) fn target(
     if entry.profile != expected_profile
         || entry.cursor.source_instance_id != source
         || metadata.generation_digest != header.witness
-        || entry.cursor.parser_version != format!("codex-jsonl@{}/v1", profile.product_version())
+        || entry.cursor.parser_version != profile.parser()
         || entry.cursor.native_session_key.as_deref() != Some(&header.session)
         || entry.batch.sanitizer_version != TRANSCRIPT_POLICY
         || entry.batch.representation != SanitizedRepresentation::SanitizedNative

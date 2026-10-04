@@ -40356,7 +40356,7 @@
           "harnesses": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/CaptureHarnessCoverage" },
-            "maxItems": 2
+            "maxItems": 5
           },
           "pending_capacity_bytes": {
             "type": "integer",

@@ -156,17 +156,31 @@ fn import_key(qualified: &QualifiedCodexSource) -> [u8; 32] {
 fn keys(qualified: &QualifiedCodexSource) -> ([u8; 32], [u8; 32], [u8; 32]) {
     (
         digest(
-            b"codex-location/v1",
+            if qualified.profile.is_cursor() {
+                b"cursor-location/v1"
+            } else {
+                b"codex-location/v1"
+            },
             &[qualified.candidate.path().as_os_str().as_encoded_bytes()],
         ),
         physical_key(qualified.candidate.identity()),
-        digest(
-            b"codex-admitted-session/v1",
-            &[qualified
-                .native_session_key()
-                .to_ascii_lowercase()
-                .as_bytes()],
-        ),
+        if qualified.profile.is_cursor() {
+            digest(
+                b"cursor-admitted-session/v1",
+                &[
+                    qualified.native_session_key().as_bytes(),
+                    &qualified.header.witness,
+                ],
+            )
+        } else {
+            digest(
+                b"codex-admitted-session/v1",
+                &[qualified
+                    .native_session_key()
+                    .to_ascii_lowercase()
+                    .as_bytes()],
+            )
+        },
     )
 }
 fn digest(domain: &[u8], parts: &[&[u8]]) -> [u8; 32] {

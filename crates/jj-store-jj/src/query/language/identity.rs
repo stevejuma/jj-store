@@ -105,14 +105,13 @@ fn repository_paths_at(metadata: &Path, root: Option<&Path>) -> Vec<PathBuf> {
         }
         if let Some(root) = root {
             let folder = root.join("repo").join(id);
-            if let Ok(binding) = jj_lib::secure_config::read_metadata(&folder) {
-                if jj_lib::secure_config::metadata_path(&binding)
+            if let Ok(binding) = jj_lib::secure_config::read_metadata(&folder)
+                && jj_lib::secure_config::metadata_path(&binding)
                     .ok()
                     .flatten()
                     == Some(metadata)
-                {
-                    return vec![folder.join("config.toml")];
-                }
+            {
+                return vec![folder.join("config.toml")];
             }
         }
         return vec![];

@@ -35,6 +35,11 @@ pub(crate) fn probe(
             HarnessSupportV1::ProbeFailed,
         ));
     };
+    let expected = if integration == IntegrationId::Cursor && version == "2026.09.26-dd393fe" {
+        "2026.09.26-dd393fe"
+    } else {
+        expected
+    };
     let support = if version == expected {
         HarnessSupportV1::Supported
     } else {

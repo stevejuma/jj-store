@@ -43,6 +43,15 @@ impl ActiveCodexSource {
     }
     pub fn revalidate(&self) -> CaptureResult<()> {
         self.qualified.revalidate()?;
+        if self.qualified.profile.is_cursor()
+            && !crate::cursor_binding::read(
+                self.qualified.profile,
+                self.qualified.candidate.path(),
+            )?
+            .fresh_activity()
+        {
+            return Err("Cursor hook activity expired".into());
+        }
         let (_, header, stamp) = file::inspect_bound(
             self.qualified.profile,
             self.qualified.candidate.path(),
@@ -95,6 +104,24 @@ impl CodexActivityProbe {
         })
     }
     pub fn poll(&mut self) -> CaptureResult<ActivityPoll> {
+        if self.qualified.profile.is_cursor() {
+            self.qualified.revalidate()?;
+            let binding = crate::cursor_binding::read(
+                self.qualified.profile,
+                self.qualified.candidate.path(),
+            )?;
+            let (_, _, stamp) = file::inspect_bound(
+                self.qualified.profile,
+                self.qualified.candidate.path(),
+                Some(self.qualified.candidate.identity()),
+            )?;
+            self.stamp = stamp;
+            self.ready = true;
+            self.eof = true;
+            self.initialized = true;
+            self.scan.complete.active = binding.fresh_activity().then_some(binding.directory);
+            return Ok(self.result_at_eof());
+        }
         if self.unavailable {
             return Err("Codex activity probe unavailable; rearm required".into());
         }
@@ -190,6 +217,15 @@ impl CodexActivityProbe {
     /// body frame; this method never allocates or reads partial transcript rows.
     pub fn poll_idle(&mut self) -> CaptureResult<Option<ActivityPoll>> {
         self.ready = false;
+        if self.qualified.profile.is_cursor() {
+            return self.poll().map(|p| {
+                if p == ActivityPoll::Active {
+                    None
+                } else {
+                    Some(p)
+                }
+            });
+        }
         if self.unavailable || !self.eof {
             return Ok(None);
         }

@@ -176,6 +176,9 @@ impl SourceWork {
                         self.snapshot.awaiting_activity = false;
                         self.stage = Stage::Live(source.into_pipeline());
                     }
+                    Ok(CaptureResumeStep::Withheld) if self.qualified.profile().is_cursor() => {
+                        return Err(Error::Service("capture directory admission unavailable"));
+                    }
                     Ok(_) => {}
                     Err(error) => {
                         *resume = None;

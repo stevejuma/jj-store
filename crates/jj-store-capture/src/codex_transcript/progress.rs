@@ -8,7 +8,7 @@ impl CodexTranscriptReader {
         if let Some(progress) = &bounds.progress {
             progress.validate()?;
             if progress.metadata.generation_digest != self.header.witness
-                || progress.cursor.integration != IntegrationId::Codex
+                || progress.cursor.integration != self.profile.integration()
                 || progress.cursor.source_instance_id != self.source
                 || progress.cursor.generation > bounds.generation_floor
                 || progress.last_sequence > bounds.sequence_floor

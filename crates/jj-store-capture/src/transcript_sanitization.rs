@@ -123,9 +123,20 @@ impl CodexTranscriptBatch {
     ) -> CaptureResult<ReaderCapture> {
         profile.validate()?;
         self.cursor.validate()?;
-        if profile.integration != IntegrationId::Codex
-            || self.cursor.integration != IntegrationId::Codex
-            || self.cursor.parser_version != format!("codex-jsonl@{}/v1", profile.product_version)
+        if !matches!(
+            profile.integration,
+            IntegrationId::Codex | IntegrationId::Cursor
+        ) || self.cursor.integration != profile.integration
+            || self.cursor.parser_version
+                != format!(
+                    "{}@{}/v1",
+                    if profile.integration == IntegrationId::Cursor {
+                        "cursor-jsonl"
+                    } else {
+                        "codex-jsonl"
+                    },
+                    profile.product_version
+                )
         {
             return Err("transcript sanitization profile mismatch".into());
         }
@@ -152,10 +163,11 @@ impl CodexTranscriptBatch {
                         .and_then(|bytes| serde_json::from_slice::<Value>(bytes).ok())
                         .filter(|v| v.is_object())
                         .and_then(|native| {
-                            sanitizer.sanitize(json!({
-                    "capture_format":"codex-jsonl/v1", "product_version":profile.product_version,
-                    "session_id":session, "record":native
-                }))
+                            let mut envelope=json!({"capture_format":if profile.integration==IntegrationId::Cursor {"cursor-jsonl/v1"} else {"codex-jsonl/v1"}, "product_version":profile.product_version,"session_id":session,"record":native});
+                            if profile.integration==IntegrationId::Cursor {
+                                envelope["record_key"]=json!(record.record_key.map(|k| k.iter().map(|b|format!("{b:02x}")).collect::<String>()));
+                            }
+                            sanitizer.sanitize(envelope)
                         })
                 })
                 .unwrap_or_else(|| {
@@ -185,7 +197,7 @@ impl CodexTranscriptBatch {
         let batch = SanitizedObservationBatchV1 {
             schema_version: 1,
             batch_id: self.batch_id,
-            integration: IntegrationId::Codex,
+            integration: profile.integration,
             source_instance_id: self.cursor.source_instance_id,
             sanitizer_version: TRANSCRIPT_POLICY.into(),
             representation: SanitizedRepresentation::SanitizedNative,

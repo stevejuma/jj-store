@@ -43,7 +43,7 @@ fn registry_probes_pinned_harnesses_and_persists_explicit_enablement() {
     );
     assert_eq!(
         status.integration(IntegrationId::Cursor).unwrap().support,
-        HarnessSupportV1::UnsupportedVersion
+        HarnessSupportV1::Supported
     );
     assert_eq!(
         status.integration(IntegrationId::OpenCode).unwrap().support,
@@ -68,7 +68,15 @@ fn registry_probes_pinned_harnesses_and_persists_explicit_enablement() {
     registry
         .enable(&[IntegrationId::Codex, IntegrationId::OpenCode], false)
         .unwrap();
-    assert!(registry.enable(&[IntegrationId::Cursor], false).is_err());
+    registry.enable(&[IntegrationId::Cursor], false).unwrap();
+    assert_eq!(
+        registry
+            .status()
+            .integration(IntegrationId::Cursor)
+            .unwrap()
+            .expected_version,
+        "2026.09.26-dd393fe"
+    );
     drop(registry);
 
     let registry = AgentIntegrationRegistry::open(&state, &workspace, repository).unwrap();

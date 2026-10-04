@@ -911,3 +911,10 @@ Cursor and OpenCode capture settings use the same revision-conditional local
 Admin save, saved/effective snapshots and restart requirement as Codex. Editing
 profiles, approved roots or the local API endpoint never enrolls a source,
 executes a harness, or bypasses repository/workspace admission.
+
+Cursor's hook binding hint grants no native publication permission. Source
+enrollment and every preparation/publication recheck the linked native
+workspace, catalog and current Write policy. Transcript-mode hook messages are
+never separately published; source/spool receipts and manifest CAS remain the
+only AgentStore publication path. Capture controls apply to all configured
+lanes.

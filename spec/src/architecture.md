@@ -6,6 +6,16 @@ read of exact selected evidence, shared by native and local companion
 presentation. No capture provider, persisted format, source identity or
 publication boundary depends on this display projection.
 
+The service consumes the WAL's data-only alias lookup for exact native
+tool-alias matching in the OpenCode timing read projection. Native integer
+creation/completion and tool spans remain derived from selected sanitized
+evidence; the lookup has no harness process, API acquisition, source allocation
+or publication capability and keeps service imports behind the owned WAL facade.
+Cursor's nullable-path lifecycle handoff remains private bounded metadata in
+capture, separate from server source catalogs and repository authority. The
+reopened multi-harness plan retains independent fixture, installed-product and
+cold restart qualification.
+
 The local service consumes `jj-review` directly for portable source validation.
 The dependency audit permits this owned model boundary while rejecting
 ReviewStore dependencies on publication and core-model dependencies on reviews.

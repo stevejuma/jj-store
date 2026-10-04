@@ -266,3 +266,39 @@ async fn codex_and_api_share_one_reader_without_starving_either_harness() {
     .unwrap();
     runtime.shutdown().await.unwrap();
 }
+
+#[tokio::test]
+async fn incomplete_native_assistant_waits_for_final_flush_without_stale_intents() {
+    let f = Fixture::new(4 * 1024 * 1024).await;
+    let directory = f.workspace(A).to_str().unwrap().to_owned();
+    let mut unfinished = message(
+        "msg_pending",
+        Some(&directory),
+        "unfinished native assistant",
+    );
+    unfinished["info"]["time"] = serde_json::json!({"created":1000});
+    let api = Api::new(directory.clone(), vec![unfinished], true).await;
+    let mut runtime = RunningCodexCapture::start(prepare(&f, &api.endpoint)).unwrap();
+    tokio::time::timeout(Duration::from_secs(15), async {
+        while runtime.snapshot().status.caught_up == 0 {
+            tokio::time::sleep(Duration::from_millis(10)).await;
+        }
+    })
+    .await
+    .unwrap();
+    assert!(
+        !recorded(&f, "unfinished native assistant").await,
+        "partial native messages must not become immutable publication intents"
+    );
+    let mut complete = message("msg_pending", Some(&directory), "final native assistant");
+    complete["info"]["time"] = serde_json::json!({"created":1000,"completed":2000});
+    api.data.lock().unwrap().messages = vec![complete];
+    wait_recorded(&f, &runtime, "final native assistant").await;
+    runtime.shutdown().await.unwrap();
+    assert!(f.spool.pending().unwrap().is_empty());
+    api.data.lock().unwrap().busy = false;
+    let mut restarted = RunningCodexCapture::start(prepare(&f, &api.endpoint)).unwrap();
+    wait_recorded(&f, &restarted, "final native assistant").await;
+    restarted.shutdown().await.unwrap();
+    assert!(f.spool.pending().unwrap().is_empty());
+}

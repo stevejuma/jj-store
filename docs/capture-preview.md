@@ -1,4 +1,4 @@
-# Local Codex capture preview
+# Local agent capture preview
 
 Run these commands from the preview workspace. The preview owns its isolated
 `.local/codex-preview` fixture and loopback ports 7470/7472. It preserves
@@ -91,10 +91,66 @@ Optional environment overrides are `JJ_STORE_CAPTURE_PREVIEW_ROOT`,
 `JJ_STORE_CAPTURE_PREVIEW_PORT`, `JJ_STORE_CAPTURE_PREVIEW_BACKEND_PORT` and
 `JJ_STORE_CAPTURE_CODEX`. Use the same overrides for every preview command.
 
-Codex Desktop needs independent actual-version qualification. OpenCode, Cursor,
-advanced conversation/review features and broader release qualification remain
-deferred in the [implementation plan](implementation-plan.md). This preview
-supports current AgentStore only. Visual baselines remain pending. The inherited
-registry Design Core package lacks APIs used by current main; local validation
-uses main's documented dependency setup with tracked registry declarations
-preserved. Registry-only UI release qualification remains open.
+Codex Desktop needs independent actual-version qualification. Advanced
+conversation/review features and broader release qualification remain deferred
+in the [implementation plan](implementation-plan.md). This preview supports
+current AgentStore only. Visual baselines remain pending. The inherited registry
+Design Core package lacks APIs used by current main; local validation uses
+main's documented dependency setup with tracked registry declarations preserved.
+Registry-only UI release qualification remains open.
+
+## Cursor and OpenCode
+
+Settings → Agents → Configuration has separate expandable Codex, Cursor and
+OpenCode groups. Enable global capture and the required product, then save and
+restart the local backend. Saved and effective configuration are displayed
+separately until restart. Desktop and CLI are independent Cursor switches. The
+existing preview setup command enables only Codex; the other products are opt-in
+through settings.
+
+Cursor Desktop **3.22.7** and CLI **2026.09.26-dd393fe** use project hooks to
+bind the exact native session, workspace and JSONL transcript. Run the
+development `jj` executable from the linked native workspace:
+
+```sh
+jj agent enable --non-interactive --agent cursor
+jj agent setup cursor --transcript-capture --dry-run
+jj agent setup cursor --transcript-capture
+```
+
+If jj-store already owns ordinary Cursor hooks, remove that setup before
+switching modes with `jj agent remove cursor`. Removal restores the backed-up
+configuration and preserves unrelated handlers. Transcript hooks supply only
+private binding and lifecycle metadata; messages come from JSONL, so hook
+messages are not duplicated. Desktop defaults to `~/.cursor/projects`; CLI
+honors `CURSOR_DATA_DIR/projects`, otherwise using the same home default. Custom
+roots must agree with the harness data directory and be approved in the server
+settings. A nullable transcript path retains a bounded private active session
+witness until a later hook supplies the exact transcript path. Only that matched
+lifecycle handoff can enroll a recently completed short session. A `.txt`
+transcript, unsupported product version or unlinked workspace stays withheld.
+
+OpenCode **1.18.30** requires a running credential-free loopback API:
+
+```sh
+opencode serve --hostname 127.0.0.1 --port 4096
+```
+
+Enable OpenCode and set `http://127.0.0.1:4096/` in Configuration. A new active
+session in the linked native workspace is automatically backfilled and followed.
+An endpoint outage degrades OpenCode coverage while the file harnesses continue.
+Sources shows cached observations with the product avatar and repository link;
+Agents shows the captured session. Pause, resume and rescan apply to the shared
+capture worker. Previously admitted sessions recover through restart and finish
+delayed final flushes. Missing native tool results or timing remain unknown.
+
+These additions use current AgentStore only. Inactive Cursor/OpenCode history,
+export files, direct database readers, cloud Cursor sessions, advanced subagent
+modeling, a setup wizard and additional platforms/versions remain deferred. The
+milestone ledger distinguishes fixture checks from disposable live-product
+qualification; passing fixtures alone is not a multi-harness release claim.
+
+The recorded live checks cover Cursor CLI and OpenCode on macOS ARM64, including
+API outage and cold server restart without duplicate messages. Cursor Desktop
+has fixture coverage; its disposable live-session and restart gate is still
+pending because UI automation could not verify the selected workspace.

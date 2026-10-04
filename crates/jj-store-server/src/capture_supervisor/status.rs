@@ -24,7 +24,7 @@ impl Default for CodexDiscoveryStatus {
 }
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct CodexSupervisorStatus {
-    pub harnesses: [Option<CodexHarnessStatus>; 3],
+    pub harnesses: [Option<CodexHarnessStatus>; 5],
     pub discovery: CodexDiscoveryStatus,
     pub degraded_sources: usize,
     pub pending_capacity_bytes: u64,

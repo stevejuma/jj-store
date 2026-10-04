@@ -167,9 +167,7 @@ impl CodexCaptureSupervisor {
                 )?);
                 continue;
             }
-            for path in
-                harness.codex_roots(locations.home.as_deref(), locations.codex_home.as_deref())?
-            {
+            for path in harness.roots(locations.home.as_deref(), locations.codex_home.as_deref())? {
                 roots.push((harness.profile, path));
             }
         }

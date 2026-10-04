@@ -58,9 +58,12 @@ impl DeliveryWork {
         let available: Vec<_> = pending
             .iter()
             .filter(|entry| {
-                entry.cursor.integration == jj_store_capture::opencode_ingress::IntegrationId::Codex
-                    && (self.frames.len() < self.limit
-                        || self.frames.contains_key(&CaptureDrainPartition::of(entry)))
+                matches!(
+                    entry.cursor.integration,
+                    jj_store_capture::opencode_ingress::IntegrationId::Codex
+                        | jj_store_capture::opencode_ingress::IntegrationId::Cursor
+                ) && (self.frames.len() < self.limit
+                    || self.frames.contains_key(&CaptureDrainPartition::of(entry)))
             })
             .cloned()
             .collect();
@@ -81,6 +84,9 @@ impl DeliveryWork {
             for offset in 0..sources.len() {
                 let index = (self.candidate_after + offset) % sources.len();
                 let source = &sources[index];
+                if source.qualified.profile().integration() != entry.cursor.integration {
+                    continue;
+                }
                 if !source.ordinary.load(std::sync::atomic::Ordering::SeqCst) {
                     continue;
                 }

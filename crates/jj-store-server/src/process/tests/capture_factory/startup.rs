@@ -35,12 +35,21 @@ async fn server_capture_initialization_helper() {
     for profile in [
         CaptureProfile::CodexCliJsonlV1,
         CaptureProfile::CodexDesktopJsonlV1,
+        CaptureProfile::OpencodeReadOnlyApiV1,
     ] {
         let f = Fixture::new(4 * 1024 * 1024).await;
         let mut config = Config::load(&f.root.path().join("server.toml")).unwrap();
         config.agent_capture.harnesses[0].profile = profile;
         config.agent_capture.harnesses[0].product_version = profile.product_version().into();
-        config.agent_capture.harnesses[0].roots = vec![f.transcript.parent().unwrap().to_owned()];
+        config.agent_capture.harnesses[0].roots =
+            if profile == CaptureProfile::OpencodeReadOnlyApiV1 {
+                vec![]
+            } else {
+                vec![f.transcript.parent().unwrap().to_owned()]
+            };
+        config.agent_capture.harnesses[0].endpoint = (profile
+            == CaptureProfile::OpencodeReadOnlyApiV1)
+            .then(|| "http://127.0.0.1:9/".into());
         let identity = Identity::load(&f.root.path().join("installation.json")).unwrap();
         let storage = AuthoritativeStorage::start(&config).await.unwrap();
         let root = config.state_dir.join("agent-capture");
@@ -113,4 +122,17 @@ async fn server_capture_initialization_helper() {
         storage.shutdown().await.unwrap();
     }
     println!("startup-factory-passed");
+}
+
+#[tokio::test]
+async fn configured_opencode_profile_prepares_without_contacting_an_endpoint() {
+    let f = Fixture::new(4 * 1024 * 1024).await;
+    let mut config = Config::load(&f.root.path().join("server.toml")).unwrap();
+    config.agent_capture.harnesses[0] = crate::capture_config::HarnessConfig {
+        profile: CaptureProfile::OpencodeReadOnlyApiV1,
+        product_version: "1.18.30".into(),
+        roots: vec![],
+        endpoint: Some("http://127.0.0.1:9/".into()),
+    };
+    assert!(super::super::super::capture::supported(&config).is_ok());
 }

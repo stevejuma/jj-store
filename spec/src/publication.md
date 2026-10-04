@@ -1,5 +1,11 @@
 # Publication and recovery
 
+The WAL facade exposes a pure normalized tool-alias lookup for timing reads from
+selected sanitized observations. It reuses the owning AgentStore normalizer and
+returns a native ID only for one unambiguous matching tool target. The lookup
+cannot read storage, acquire a source, stage objects or publish state; immutable
+evidence, request identities and capture formats remain unchanged.
+
 Task comment reaction publication reads the Work root from the same captured
 manifest base as ReactionStore and selects only the existing Reaction
 transition. The shared authorized target reader validates Work state and

@@ -16,6 +16,7 @@ pub mod codex_import;
 pub mod codex_resume;
 pub mod codex_source;
 pub mod codex_transcript;
+pub mod cursor_binding;
 pub mod local_agent_publication;
 pub mod opencode_checkpoint;
 pub mod opencode_ingress;

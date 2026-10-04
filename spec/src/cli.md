@@ -1537,3 +1537,15 @@ owned Cursor hook setup. That mode provides current binding/lifecycle without
 replaying hook messages alongside transcript messages. OpenCode 1.18.30 uses the
 configured read-only loopback API. All settings are editable under Agents and
 apply on the next backend startup; capture never starts a harness.
+
+Cursor transcript setup is explicit: enable Cursor in the device registry, then
+run `jj agent setup cursor --transcript-capture` in the linked native workspace.
+CLI version 2026.09.26-dd393fe and Desktop 3.22.7 are separate product profiles.
+`--dry-run` previews the exact owned handlers; removal preserves unrelated
+configuration and restores the original bytes. Changing an existing owned setup
+mode requires exact removal followed by setup; drift is never overwritten.
+Transcript hooks write only private binding/activity hints and never publish
+hook messages alongside JSONL messages. Nullable paths await a later hook.
+Desktop defaults to `~/.cursor/projects`; CLI uses `CURSOR_DATA_DIR/projects`
+when configured, otherwise the same home convention. Custom CLI roots must agree
+with the harness data-directory configuration and server-approved roots.

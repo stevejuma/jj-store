@@ -85,8 +85,12 @@ impl DiscoveryWork {
                     return Ok(None);
                 };
                 root.scanner = Some(
-                    CodexDirectoryScanner::new(approved)
-                        .map_err(|_| Error::Service("capture discovery scanner unavailable"))?,
+                    if root.profile.is_cursor() {
+                        CodexDirectoryScanner::cursor(approved)
+                    } else {
+                        CodexDirectoryScanner::new(approved)
+                    }
+                    .map_err(|_| Error::Service("capture discovery scanner unavailable"))?,
                 );
                 root.availability = Availability::Available;
             }

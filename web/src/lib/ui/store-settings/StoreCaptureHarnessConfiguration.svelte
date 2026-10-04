@@ -114,7 +114,7 @@
                 )?.product_version}. {harness === "codex"
                   ? "Inactive history requires explicit import."
                   : harness === "cursor"
-                    ? "Requires one-time Cursor hook setup. History import is deferred."
+                    ? "Requires one-time setup: jj agent setup cursor --transcript-capture. History import is deferred."
                     : "Connects to an existing local API. History import is deferred."}</Field.Description
               ></Field.Content
             >

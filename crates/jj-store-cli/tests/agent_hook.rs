@@ -48,6 +48,7 @@ fn hook_command_selects_one_supported_integration() {
     assert!(matches!(
         args.command,
         Some(AgentCommand::Hook {
+            transcript_capture: false,
             agent: jj_store_cli::agent_commands::AgentName::Codex
         })
     ));

@@ -62,10 +62,10 @@ pub(super) fn save(root: &Path, repo: RepositoryId, journal: &Journal) -> Result
     }
     let path = path(root, repo);
     policy::outside_checkout(&path).map_err(|_| Error::Unavailable)?;
-    if let Ok(meta) = fs::symlink_metadata(&path) {
-        if !meta.is_file() || meta.file_type().is_symlink() {
-            return Err(Error::Unavailable);
-        }
+    if let Ok(meta) = fs::symlink_metadata(&path)
+        && (!meta.is_file() || meta.file_type().is_symlink())
+    {
+        return Err(Error::Unavailable);
     }
     let mut tmp = tempfile::NamedTempFile::new_in(root).map_err(|_| Error::Unavailable)?;
     tmp.write_all(&bytes).map_err(|_| Error::Unavailable)?;

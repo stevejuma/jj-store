@@ -211,6 +211,12 @@ async fn drive(
         interval.tick().await;
     }
     publish(&supervisor, &updates);
+    // The retained owner has now proved every lane stopped. An earlier bounded
+    // wait expiring is no longer a drain failure; preserve other terminal faults.
+    let result = match result {
+        Err(Error::Service("Codex supervisor is still draining")) => Ok(()),
+        result => result,
+    };
     fault.and(result)
 }
 fn publish(supervisor: &CodexCaptureSupervisor, updates: &RuntimeUpdates) {

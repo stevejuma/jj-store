@@ -44,6 +44,26 @@ pub(crate) async fn resolve(
             let occurred_at_millis =
                 event_at_millis(&evidence, &batch.normalizer_version, event_id, kind);
             if let Some(value) = occurred_at_millis {
+                let end = evidence
+                    .observations
+                    .iter()
+                    .find_map(|observation| {
+                        (normalized_event_id(
+                            evidence.source_instance_id,
+                            evidence.integration,
+                            observation.source_sequence,
+                            kind,
+                        ) == event_id)
+                            .then(|| {
+                                super::opencode_timing::completion(
+                                    &evidence,
+                                    &batch.normalizer_version,
+                                    observation,
+                                )
+                            })
+                            .flatten()
+                    })
+                    .unwrap_or(value);
                 timing.first_activity_at_millis = Some(
                     timing
                         .first_activity_at_millis
@@ -52,7 +72,7 @@ pub(crate) async fn resolve(
                 timing.last_activity_at_millis = Some(
                     timing
                         .last_activity_at_millis
-                        .map_or(value, |current| current.max(value)),
+                        .map_or(end, |current| current.max(end)),
                 );
             }
         }
@@ -87,6 +107,9 @@ pub(super) fn observed_at_millis(
     observation: &SanitizedObservationV1,
 ) -> Option<i64> {
     observation.occurred_at_millis.or_else(|| {
+        if let Some(value) = super::opencode_timing::creation(evidence, normalizer, observation) {
+            return Some(value);
+        }
         let value = codex_record(evidence, normalizer, observation)?;
         let timestamp = value.get("record")?.get("timestamp")?.as_str()?;
         if timestamp.len() > 64 {

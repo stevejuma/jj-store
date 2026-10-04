@@ -58,7 +58,10 @@ impl CodexCaptureSupervisor {
     pub(crate) fn retained_import_slots(&self) -> Vec<(u64, QualifiedCodexSource)> {
         self.slots
             .iter()
-            .filter(|slot| slot.owner.phase() != CaptureWorkerPhase::Stopped)
+            .filter(|slot| {
+                slot.owner.phase() != CaptureWorkerPhase::Stopped
+                    && !slot.qualified.profile().is_cursor()
+            })
             .map(|slot| (slot.selector, slot.qualified.clone()))
             .collect()
     }

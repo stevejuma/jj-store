@@ -36,14 +36,25 @@ pub fn setup(
     registry: &mut AgentIntegrationRegistry,
     request: SetupRequestV1,
 ) -> AuthorityResult<SetupOutcomeV1> {
+    setup_with_mode(registry, request, false)
+}
+pub fn setup_with_mode(
+    registry: &mut AgentIntegrationRegistry,
+    request: SetupRequestV1,
+    transcript_capture: bool,
+) -> AuthorityResult<SetupOutcomeV1> {
+    if transcript_capture && request.integration != IntegrationId::Cursor {
+        return Err("transcript hook mode requires Cursor".into());
+    }
     require_setup_ready(registry, request.integration)?;
     let target = target_path(&registry.status().workspace, request.integration)?;
     validate_target_parent(&registry.status().workspace, &target)?;
     let current = read_target(&target)?;
-    let intended = agent_setup_templates::render(
+    let intended = agent_setup_templates::render_with_mode(
         request.integration,
         current.bytes.as_deref(),
         &request.executable,
+        transcript_capture,
     )?;
     let owned_sha256 = digest(&intended);
     let install = install_path(registry.state_directory(), request.integration)?;

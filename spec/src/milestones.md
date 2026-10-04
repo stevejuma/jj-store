@@ -139,10 +139,10 @@ shared-package release qualification does not alter those original Git gates.
 | M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                                            | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                                                         | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                                                      | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| M18         | In progress | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Deliver a usable Codex preview; retain extended roadmap as Deferred                                                            | Usable CLI preview delivered; additional harnesses and broader roadmap remain Deferred         | E-M17-001,E-M17-002,E-M17-003,E-M17-004,E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-001,E-M18-013 |
+| M18         | In progress | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Codex, Cursor CLI and OpenCode usable capture; Desktop live gate remains                                                       | Complete Desktop live gate; extended roadmap remains Deferred                                  | E-M17-001,E-M17-002,E-M17-003,E-M17-004,E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-001,E-M18-013,E-M18-017 |
 | M18.0       | Done        | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Canonical gap traceability, agreed defaults and explicit qualification gates                                                   | Start M18.1 exact capture regressions                                                          | E-M17-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.1       | Done        | M18.0                   | JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023                                                                                                                                                                      | Diagnostic-only publication, cross-batch reduction and bounded append                                                          | Start M18.2 configured local capture runtime and readers                                       | E-M17-002,E-M17-003,E-M17-004,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| M18.2       | Partial     | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-029,JST-COLLAB-030                                                                                                                         | Codex capture and management qualified; additional readers Deferred                                                            | Reuse completed Codex path in M18.8; defer OpenCode and Cursor completion                      | E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-021,E-M17-022,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-005,E-M18-013                     |
+| M18.2       | Partial     | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-029,JST-COLLAB-030                                                                                                                         | Configured Cursor CLI/OpenCode active capture qualified; Desktop fixture pass                                                  | Complete Desktop installed-product cold gate; keep broad release separate                      | E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-021,E-M17-022,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-005,E-M18-013                               |
 | M18.3       | Deferred    | M18.2                   | JST-COLLAB-024                                                                                                                                                                                                    | Complete conversations, exact message/plan reviews and versioned replay                                                        | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.4       | Deferred    | M18.3                   | JST-COLLAB-025                                                                                                                                                                                                    | Separately opted-in checkpoint scopes and common canonical producer                                                            | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -172,8 +172,10 @@ search is part of the local application and uses no bearer credential.
 
 M9 implements the accepted repository-native agent and review plan for the
 LocalTrusted application. The first release defines exact Codex, Cursor and
-OpenCode contracts; local qualification enables Codex and OpenCode while the
-installed Cursor drift remains explicitly unsupported. It includes exact
+OpenCode contracts; local qualification enables Codex and OpenCode. The active
+capture extension qualifies pinned Cursor CLI 2026.09.26-dd393fe; the default
+CLI wrapper's newer version remains unsupported and Desktop live qualification
+remains pending. It includes exact
 immutable review anchors and live collaboration hints while code remains pinned
 until explicit refresh. Reviews prepare explicit task context; controller job
 dispatch is deferred. Authenticated/shared access, remote replication,
@@ -71837,8 +71839,254 @@ entries.
     ],
     "result": "pass",
     "remaining": [],
-  "scope": "Settings/contracts slice only. Prior evidence and milestone statuses unchanged. Wider aggregate lanes out of scope under targeted policy; visual baselines pending.",
+    "scope": "Settings/contracts slice only. Prior evidence and milestone statuses unchanged. Wider aggregate lanes out of scope under targeted policy; visual baselines pending.",
     "next": "Wire and qualify OpenCode startup, then shared bounded Cursor JSONL capture."
+  },
+  {
+    "id": "E-M18-017",
+    "tasks": ["M18", "M18.2", "M18.8", "M9.4", "M9.5"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change wwutzuqw",
+    "kind": "Configured active Cursor/OpenCode capture and native timing projection",
+    "versions": "macOS ARM64; Cursor Desktop3.22.7 fixture profile; real Cursor CLI2026.09.26-dd393fe; OpenCode1.18.30; JJ0.45.1; current AgentStore only. Default Cursor wrapper auto-updated to2026.10.01-e373342 and was correctly refused. Real Desktop qualification remains pending.",
+    "formats": "Five enabled product profiles; cursor-jsonl/v1 plus metadata-only bounded lifecycle binding; opencode-snapshot/v1 finalized assistant records; unchanged immutable AgentStore identity, sanitized evidence, spool and publication receipts. OpenCode native integer times are read projections, through the owned WAL facade.",
+    "files": [
+      "catalog/components/store-application/StoreMultiHarnessSettings.stories.svelte",
+      "crates/jj-agent/src/normalize.rs",
+      "crates/jj-agent/src/normalizers/cursor.rs",
+      "crates/jj-agent/src/normalizers/cursor_transcript.rs",
+      "crates/jj-agent/src/normalizers/mod.rs",
+      "crates/jj-store-capture/src/codex_activity.rs",
+      "crates/jj-store-capture/src/codex_discovery/scanner.rs",
+      "crates/jj-store-capture/src/codex_transcript.rs",
+      "crates/jj-store-capture/src/codex_transcript/file.rs",
+      "crates/jj-store-capture/src/codex_transcript/poll.rs",
+      "crates/jj-store-capture/src/codex_transcript/progress.rs",
+      "crates/jj-store-capture/src/codex_transcript/recovery/identity.rs",
+      "crates/jj-store-capture/src/cursor_binding.rs",
+      "crates/jj-store-capture/src/cursor_binding/pending.rs",
+      "crates/jj-store-capture/src/lib.rs",
+      "crates/jj-store-capture/src/profile.rs",
+      "crates/jj-store-capture/src/source_registry.rs",
+      "crates/jj-store-capture/src/transcript_sanitization.rs",
+      "crates/jj-store-capture/tests/codex_recovery.rs",
+      "crates/jj-store-capture/tests/cursor_transcript.rs",
+      "crates/jj-store-capture/tests/transcript_sanitization.rs",
+      "crates/jj-store-cli/src/agent_commands.rs",
+      "crates/jj-store-cli/src/agent_commands/types.rs",
+      "crates/jj-store-cli/src/agent_hook.rs",
+      "crates/jj-store-cli/src/agent_probe.rs",
+      "crates/jj-store-cli/src/agent_setup.rs",
+      "crates/jj-store-cli/src/agent_setup_templates.rs",
+      "crates/jj-store-cli/tests/agent_hook.rs",
+      "crates/jj-store-cli/tests/agent_integrations.rs",
+      "crates/jj-store-cli/tests/agent_setup.rs",
+      "crates/jj-store-jj/src/query/language/identity.rs",
+      "crates/jj-store-server/src/capture_config.rs",
+      "crates/jj-store-server/src/capture_runtime.rs",
+      "crates/jj-store-server/src/capture_source/acquire.rs",
+      "crates/jj-store-server/src/capture_supervisor.rs",
+      "crates/jj-store-server/src/capture_supervisor/delivery.rs",
+      "crates/jj-store-server/src/capture_supervisor/discovery.rs",
+      "crates/jj-store-server/src/capture_supervisor/discovery/observations.rs",
+      "crates/jj-store-server/src/capture_supervisor/source.rs",
+      "crates/jj-store-server/src/capture_supervisor/sources.rs",
+      "crates/jj-store-server/src/capture_supervisor/status.rs",
+      "crates/jj-store-server/src/capture_supervisor/status/harness.rs",
+      "crates/jj-store-server/src/opencode_source/ingress.rs",
+      "crates/jj-store-server/src/process/capture.rs",
+      "crates/jj-store-server/src/process/tests/capture_factory/startup.rs",
+      "crates/jj-store-server/src/storage_management/journal.rs",
+      "crates/jj-store-server/src/storage_management/mod.rs",
+      "crates/jj-store-server/tests/capture_runtime/draining.rs",
+      "crates/jj-store-server/tests/cursor_supervisor.rs",
+      "crates/jj-store-server/tests/opencode_supervisor.rs",
+      "crates/jj-store-service/src/capture_management.rs",
+      "crates/jj-store-service/src/collab_reads/materialization.rs",
+      "crates/jj-store-service/src/collaboration.rs",
+      "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
+      "crates/jj-store-service/src/collaboration/agent_tool_timing.rs",
+      "crates/jj-store-service/src/collaboration/opencode_timing.rs",
+      "crates/jj-store-service/tests/agent_sessions/timing.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_aliases.rs",
+      "docs/capture-preview.md",
+      "docs/cli/agent.md",
+      "docs/implementation-plan.md",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-settings/StoreCaptureHarnessConfiguration.svelte"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-server --lib --locked process::tests::capture_factory::startup -- --test-threads=1",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 startup tests pass; configured OpenCode preparation does not require endpoint contact. /tmp/jj-cursor-startup-final.log."
+      },
+      {
+        "command": "cargo test -p jj-store-capture --test cursor_transcript --locked -- --test-threads=1 (before/after scanner and nullable-path handoff)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before scanner counted257 candidates for one transcript; corrected bounded project/agent-transcripts scan passes. Before nullable-path handoff missed active receipts; final7 reader/binding tests pass. /tmp/jj-cursor-layout-before.log, /tmp/jj-cursor-layout-after.log, /tmp/jj-cursor-null-handoff-final.log. Terminal-only receipts grant no activity; exact pending start/end witness can transfer within the bounded window."
+      },
+      {
+        "command": "cargo test -p jj-store-capture --test codex_transcript --test codex_recovery --test transcript_sanitization --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Codex reader10 pass; recovery5 pass/1 explicit ignored; sanitation4 pass/1 explicit ignored, with exact Cursor envelope regression1 pass. Earlier source layout invocation selected only1 Cursor regression; final complete7-test binary supersedes it. /tmp/jj-cursor-file-tests.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_integrations --test agent_setup --locked; affected agent_hook regression",
+        "result": "pass",
+        "failures": 0,
+        "note": "Registry4 and setup7 pass, plus hook checks. Transcript setup stores metadata-only handlers, preserves unrelated hooks and supports drift-safe removal. /tmp/jj-cursor-cli-final.log, /tmp/jj-cursor-hooks-check.log."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_resume --test capture_runtime --locked -- --test-threads=1 (before/after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Codex resume5 pass. Runtime before9 pass/1 failed: a later shutdown wait could not report proven lane settlement after timeout. Fixed state transition; complete runtime10 pass. /tmp/jj-cursor-codex-runtime-final.log, /tmp/jj-cursor-runtime-qualified.log. No timeout or acceptance assertion weakened."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test cursor_supervisor --test opencode_discovery --locked; serial discovery rerun",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cursor2 pass. Initial parallel OpenCode discovery2 pass/2 timeout failures under load; unchanged serial4 pass. /tmp/jj-cursor-server-runtime-fixed.log, /tmp/jj-opencode-discovery-serial.log."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test cursor_supervisor --test opencode_source --test opencode_lifecycle --test opencode_read_api --locked -- --test-threads=1",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final20 pass: Cursor2, OpenCode source6, lifecycle7, API5. One earlier complete Cursor run1 pass/1 publication timeout under load; unchanged final complete binary2 pass. /tmp/jj-multi-harness-runtime-final.log, /tmp/jj-multi-harness-recovery-final.log. Includes exact linked admission, pause/resume, rewrites, final flush, endpoint outages and restart."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test opencode_supervisor --locked (partial-assistant regression before/after); complete supervisor binary --test-threads=1",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before regression published incomplete mutable assistant snapshots; after pass. Full4 supervisor tests pass. /tmp/jj-opencode-partial-before.log, /tmp/jj-opencode-partial-after.log, /tmp/jj-opencode-supervisor-full-final.log. Pass stops before incomplete assistant and reacquires after final flush without skipping existing intents."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test capture_supervisor --locked -- --test-threads=1; exact generation rerun",
+        "result": "fail",
+        "failures": 1,
+        "note": "Complete Codex survey26 pass/1 generation timeout. Unchanged exact generation test then1 pass/26 filtered. Earlier survey26 pass/1 blocked-directory timeout also retained. /tmp/jj-cursor-remaining-serial-fixed.log, /tmp/jj-codex-generation-focused.log, /tmp/jj-cursor-runtime-qualified.log. These are load-sensitive diagnostics, not a full Codex-suite pass."
+      },
+      {
+        "command": "JJ_STORE_TRANSCRIPT_CACHE=/tmp/jj-store-cursor-opencode-rules cargo test -p jj-store-service --test agent_sessions --locked -- --test-threads=1",
+        "result": "pass",
+        "failures": 0,
+        "note": "All9 AgentSession tests pass through the corrected WAL facade; native OpenCode message/session times and tool duration250ms remain exact selected-evidence read projections. Original timing assertion looked at the wrong nested field; corrected owning tool duration path. /tmp/jj-opencode-timing-facade-final.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::language::identity",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 exact identity/config-binding tests pass after narrow Clippy conditional modernization. /tmp/jj-cursor-identity-regression.log. Service materialization and server storage conditional cleanups are likewise semantic-preserving."
+      },
+      {
+        "command": "JJ_STORE_TRANSCRIPT_CACHE=/tmp/jj-store-cursor-opencode-rules cargo clippy -p jj-agent -p jj-store-capture -p jj-store-wal -p jj-store-service -p jj-store-server -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected packages and targets pass. /tmp/jj-multi-harness-facade-clippy.log. Early shared-target checks linked stale libraries; isolated feature target fixes this. First broad Clippy surfaced existing collapsible-if warnings; narrow conditional modernization passes."
+      },
+      {
+        "command": "pnpm check:boundaries (before/after); pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before dependency audit rejected service->jj-agent; removed direct dependency and exposed pure unique native-tool alias lookup through existing WAL facade. After17-package boundary audit passes; architecture923 modules and ownership22 chapters/167 requirements pass. /tmp/jj-multi-harness-boundaries.log and final facade architecture/ownership logs."
+      },
+      {
+        "command": "JJ_STORE_TRANSCRIPT_CACHE=/tmp/jj-store-cursor-opencode-rules pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "229 actual HTTP/SSE responses checked;7 contract tests pass. /tmp/jj-cursor-contract-check-cached.log. Generated coverage array bound updated to5; no other wire behavior introduced."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-settings.test.ts; pnpm web:check; pnpm catalog:check; cold multi-harness settings story",
+        "result": "pass",
+        "failures": 0,
+        "note": "7 settings units and1 new interaction/axe scenario pass; web/catalog zero errors/warnings. Existing Codex22 settings stories passed in settings parent. /tmp/jj-cursor-settings-unit-final.log, /tmp/jj-cursor-multi-settings-story-final.log, /tmp/jj-cursor-web-check-final.log, /tmp/jj-cursor-catalog-check-final.log. Switch values are numeric render-field indices; corrected new initial string-key story assertion. Visual baseline remains pending."
+      },
+      {
+        "command": "cargo build -p jj-store-cli --bins --locked; pnpm dev:restart with isolated JJ_STORE_DEV_ROOT",
+        "result": "pass",
+        "failures": 0,
+        "note": "Development binaries build. First disposable bootstrap refused drifted agent hooks; no reset performed. Recovered same native fixture manually and linked exact workspace through production API. /tmp/jj-multi-harness-bootstrap.log, /tmp/jj-multi-harness-build-final3.log. Rule-cache build date change caused288s rebuild; use isolated cached rules. macOS linker oversized __eh_frame warning retained."
+      },
+      {
+        "command": "Pinned cursor-agent --version / jj agent enable/setup cursor --transcript-capture / disposable Cursor CLI prompt",
+        "result": "pass",
+        "failures": 0,
+        "note": "Real approved CLI emitted2 messages with CAPTURE-CURSOR-BOUND-HANDOFF-20261004. AgentStore session36ebc85f272dfa87602c50111e237d86 and Sources match linked repository9e44664671e5d003f6e99ee8a85445b3. Native timestamps absent and remain null. Trace observed sessionStart path null then sessionEnd physical JSONL; bounded exact witness fix enables real capture. Probe exceeded2s once under load; warm pinned retry passed without weakening limit."
+      },
+      {
+        "command": "opencode serve --hostname 127.0.0.1 --port 7486; disposable OpenCode1.18.30 prompt with opencode/big-pickle; production capture/session API reads",
+        "result": "pass",
+        "failures": 0,
+        "note": "Real successful native ses_ef96add9cffe6xNRhDllljrsDZ captured2 complete messages, token CAPTURE-OPENCODE-FINAL-FLUSH-20261004; AgentStore7009d66b6ec5dc24a497da24ebaf0e0c, native times1791111799497/1791111799518. Sequence4, records2, receipts4, outstanding0. Earlier MLX endpoint failed runs retained; pre-fix successful diagnostic session retains3 intentionally withheld immutable pending intents. They were not dropped/reset."
+      },
+      {
+        "command": "Cold disposable jj-store restart with OpenCode API offline, then API restart; python3 .local/multi-harness/live-proof.py before/after/outage",
+        "result": "pass",
+        "failures": 0,
+        "note": "Real embedded RustFS, not fake store. Both real sessions retain identical IDs, two-message counts, complete activity and native timing through API outage, cold server restart and repeated scans. /tmp/jj-live-capture-before-restart.json, /tmp/jj-live-capture-api-outage.json, /tmp/jj-live-capture-after-restart.json. No duplicate unchanged messages."
+      },
+      {
+        "command": "Cursor Desktop CUA disposable workspace selection and read-only verification",
+        "result": "fail",
+        "failures": 1,
+        "note": "Desktop prompt withheld: automation could not verify exact disposable workspace and later returned noWindowsAvailable. Fixture tests separately exercise both Desktop and CLI; Desktop installed-product cold qualification remains pending. No existing user project prompt was sent."
+      },
+      {
+        "command": "JJ_STORE_TRANSCRIPT_CACHE=/tmp/jj-store-cursor-opencode-rules cargo test -p jj-store-wal --test agent_catalog --locked opencode_aliases:: -- --test-threads=1",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 exact OpenCode alias tests pass,22 filtered. /tmp/jj-opencode-wal-alias-final.log. Original normalizer/adoption/publication semantics retained behind the new pure facade."
+      },
+      {
+        "command": "Production jj agent remove cursor; restore disposable original hook state; stop only owned jj-store/OpenCode/Cursor worker processes",
+        "result": "fail",
+        "failures": 1,
+        "note": "First cleanup detected owned-configuration drift. Restored verified trace-only install backup, then production removal passed and original absent hooks restored. No trace handlers or owned Cursor install record remain. Final live snapshot matches all3 prior restart/outage snapshots. Owned server shutdown reported capture still draining while retaining old diagnostic pending intents; managed RustFS exited. User services/previews untouched."
+      },
+      {
+        "command": "Focused formatter (before/after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing ledger table formatting and E-M18-016 indentation produced baseline formatter warnings. Corrected E-M18-016 indentation without changing values/statuses; kept unrelated historical table bytes. New evidence formatted separately. All414 historical evidence objects remain identical."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; cargo fmt --all -- --check; changed-document/UI Prettier check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first64 protected files/10 canonical chapters; spec validation5 validators/22 chapters/167 requirements; progress136 tasks. Rust and changed document/UI formatting pass. Initial progress check failed because a table-byte preservation script duplicated historical mapping keys; restored the original pre-evidence prefix except2 authorized task rows. Final progress passes;414 historical evidence objects unchanged. Full-ledger Prettier baseline warnings remain separate from new evidence formatting. Root aggregate lanes not run under targeted policy."
+      },
+      {
+        "command": "jj rebase -s kzkswsvy -o 'default@-'; jj new wwutzuqw -m 'Continue after Cursor and OpenCode capture integration' (default workspace)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main remained clean at committed b11c0486. Explicit rebase skipped3 already-in-place commits; code/tree unchanged and no conflicts. Default workspace advanced cleanly to the verified settings/runtime stack. Parked codex/deferred-opencode-history remained c4d8d275. Only local checkout integration; no publication, installed CLI replacement or user service/preview restart."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Live Cursor Desktop3.22.7 disposable capture and cold restart gate; UI automation must verify the exact workspace before sending any prompt.",
+      "Codex full-suite surveys contain load-sensitive timeouts; exact reruns pass but a complete survey pass is not claimed.",
+      "Visual baseline approval and broad multi-harness release qualification remain separate.",
+      "Disposable shutdown retains capture-draining diagnostic from pre-fix pending intents; recovery preserves those records, and clean full release shutdown is not claimed."
+    ],
+    "scope": "Approved opt-in LocalTrusted active capture in exactly linked native repositories, current AgentStore only. Independent fixtures and real CLI/API/embedded-RustFS evidence. M18 In progress and M18.2 Partial retained. Parked OpenCode history bookmark unchanged. Root aggregate lanes, unrelated preview/service restarts, publication, inactive-history import, export/database readers, cloud Cursor, advanced subagents, setup wizard and extra platforms/versions out of scope.",
+    "next": "Enable the selected harness in Settings > Agents > Configuration, restart the local server, and follow docs/capture-preview.md for pinned Cursor transcript hooks or a running OpenCode API. Complete the remaining Desktop live gate in a verified disposable workspace. Changes are locally integrated; full multi-harness release qualification remains pending."
   }
 ]
 ```

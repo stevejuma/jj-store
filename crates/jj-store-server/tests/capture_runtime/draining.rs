@@ -111,15 +111,17 @@ async fn shutdown_timeout_retains_join_and_raw_ownership_until_a_later_wait() {
     assert!(r.resume().is_err());
     assert!(f.sources.acquire_admitted(f.qualified()).is_err());
     assert!(f.spool.pending().unwrap().is_empty());
+    // Also cross the supervisor's inner deadline before releasing the owner.
+    tokio::time::sleep(Duration::from_millis(200)).await;
     drop(release);
-    // The internal shutdown deadline may also have expired. Either outcome has
-    // settled ownership; the first wait must never consume the undrained task.
-    let _ = r.shutdown().await;
+    // A deadline is an incomplete wait, not a terminal drain failure. Once the
+    // exact retained owner settles, retry confirms successful shutdown.
+    r.shutdown().await.unwrap();
     assert_eq!(r.snapshot().phase, CaptureWorkerPhase::Stopped);
     assert_eq!(r.snapshot().status.resident_source_frames, 0);
     assert!(f.spool.pending().unwrap().is_empty());
     drop(f.sources.acquire_admitted(f.qualified()).unwrap().unwrap());
-    let _ = r.shutdown().await; // a settled failed join is never polled twice
+    r.shutdown().await.unwrap(); // a settled join is never polled twice
 }
 
 #[tokio::test(flavor = "current_thread")]

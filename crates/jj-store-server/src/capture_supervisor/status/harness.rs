@@ -16,7 +16,7 @@ pub struct CodexHarnessStatus {
     pub degraded_sources: usize,
 }
 impl CodexCaptureSupervisor {
-    pub(super) fn harnesses(&self, stable_queue: bool) -> [Option<CodexHarnessStatus>; 3] {
+    pub(super) fn harnesses(&self, stable_queue: bool) -> [Option<CodexHarnessStatus>; 5] {
         let files = self.discovery_coverage.harnesses.map(|group| {
             group.map(|group| {
                 let slots = || {
@@ -51,6 +51,8 @@ impl CodexCaptureSupervisor {
         [
             files[0],
             files[1],
+            files[2],
+            files[3],
             self.api
                 .as_ref()
                 .map(|api| api.harness(stable_queue, self.closed)),

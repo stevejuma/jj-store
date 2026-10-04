@@ -3,17 +3,29 @@ use jj_store_jj::operation_stores::AuthorityResult;
 use serde_json::{Map, Value, json};
 use std::path::Path;
 
-pub(crate) fn render(
+pub(crate) fn render_with_mode(
     integration: IntegrationId,
     original: Option<&[u8]>,
     executable: &Path,
+    transcript_capture: bool,
 ) -> AuthorityResult<Vec<u8>> {
     let executable = executable
         .to_str()
         .ok_or("agent hook executable path is not UTF-8")?;
     match integration {
         IntegrationId::Codex => merge_codex(original, &hook_command(executable, "codex")?),
-        IntegrationId::Cursor => merge_cursor(original, &hook_command(executable, "cursor")?),
+        IntegrationId::Cursor => merge_cursor(
+            original,
+            &format!(
+                "{}{}",
+                hook_command(executable, "cursor")?,
+                if transcript_capture {
+                    " --transcript-capture"
+                } else {
+                    ""
+                }
+            ),
+        ),
         IntegrationId::OpenCode => render_opencode(original, executable),
         IntegrationId::OwnedController => Err("owned controller has no harness setup".into()),
     }
@@ -106,6 +118,7 @@ fn merge_cursor(original: Option<&[u8]>, command: &str) -> AuthorityResult<Vec<u
         "afterFileEdit",
         "afterAgentResponse",
         "sessionEnd",
+        "stop",
     ] {
         let handlers = event(hooks, name)?;
         if !handlers.iter().any(|value| has_command(value, command)) {

@@ -750,10 +750,10 @@ roots. Transcript source files and native session keys remain absent.
 
 Local capture settings use strict additive version-1 typed HTTP configuration
 contracts. Configuration format 2 and AgentStore, source, spool, policy and
-import journal formats remain unchanged. Only qualified Codex profiles are
-editable. Existing configuration values outside agent_capture remain preserved
-by revision-conditional atomic replacement. Unsupported startup readers remain
-separately gated.
+import journal formats remain unchanged. The five opt-in product profiles
+described below are editable. Existing configuration values outside
+agent_capture remain preserved by revision-conditional atomic replacement.
+Unsupported startup readers remain separately gated.
 
 ## Installation operational settings contracts
 
@@ -772,3 +772,10 @@ settings. The optional API endpoint is credential-free literal loopback.
 Generated contracts support five product profiles; exported OpenCode history
 remains withheld. Runtime qualification is recorded independently of
 configuration saves.
+
+Cursor's distinct JSONL envelope uses the qualified product version, exact
+native session UUID and source-derived complete-prefix record key. Existing
+Codex JSONL envelopes and identities retain their byte encoding. Native Cursor
+message/tool IDs, result states and timestamps are never invented. Source
+admission markers bind the exact Cursor witness; registry format remains 1.
+Runtime coverage supports four file profiles and one read-only API lane.

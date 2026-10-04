@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
   import CaptureSettingsFixture from "../../fixtures/CaptureSettingsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Multi harness capture",
@@ -43,9 +43,11 @@
     await userEvent.click(
       c.getByRole("button", { name: "Cursor configuration" }),
     );
-    await expect(
-      c.queryByRole("textbox", { name: "Cursor CLI folders" }),
-    ).toBeNull();
+    await waitFor(() =>
+      expect(
+        c.queryByRole("textbox", { name: "Cursor CLI folders" }),
+      ).toBeNull(),
+    );
     await expect(
       c.getByRole("spinbutton", { name: "Concurrent readers" }),
     ).toBeVisible();

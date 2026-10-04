@@ -317,3 +317,25 @@ fn source_trust(integration: IntegrationId) -> SourceTrust {
         _ => SourceTrust::LocalUserHook,
     }
 }
+
+/// Explicit transcript hooks hand off only body-free binding/activity metadata.
+pub fn cursor_transcript_stdin(
+    workspace: &Path,
+    state: &Path,
+    repository: RepositoryId,
+) -> AuthorityResult<()> {
+    let state = jj_store_server::policy::outside_checkout(state)?;
+    let status = load_status(&state, workspace, repository)?;
+    verify_installed(&status, &state, IntegrationId::Cursor)?;
+    let mut raw = Vec::new();
+    std::io::stdin()
+        .lock()
+        .take(MAX_HOOK_BYTES as u64 + 1)
+        .read_to_end(&mut raw)?;
+    let data = std::env::var_os("CURSOR_DATA_DIR")
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|p| PathBuf::from(p).join(".cursor")))
+        .ok_or("Cursor data root unavailable")?;
+    jj_store_capture::cursor_binding::write_hook(&raw, workspace, &[data.join("projects")])?;
+    Ok(())
+}

@@ -169,7 +169,7 @@ fn prepare_enabled(
     let locations = locations()?;
     locations.validate()?;
     for harness in &config.agent_capture.harnesses {
-        for root in harness.codex_roots(Some(&locations.home), locations.codex_home.as_deref())? {
+        for root in harness.roots(Some(&locations.home), locations.codex_home.as_deref())? {
             valid_path(&root)?;
         }
     }
@@ -236,7 +236,11 @@ pub(super) fn supported(config: &Config) -> Result<()> {
         && config.agent_capture.harnesses.iter().any(|h| {
             !matches!(
                 h.profile,
-                CaptureProfile::CodexCliJsonlV1 | CaptureProfile::CodexDesktopJsonlV1
+                CaptureProfile::CodexCliJsonlV1
+                    | CaptureProfile::CodexDesktopJsonlV1
+                    | CaptureProfile::OpencodeReadOnlyApiV1
+                    | CaptureProfile::CursorDesktopTranscriptV1
+                    | CaptureProfile::CursorCliTranscriptV1
             )
         })
     {

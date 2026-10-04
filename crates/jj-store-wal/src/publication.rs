@@ -61,6 +61,7 @@ mod review_reads;
 mod review_resolver;
 mod work;
 mod work_commands;
+pub use agent_capture_aliases::normalized_tool_native_id;
 pub use agent_catalog::{AgentStoreSelection, AgentStoreSnapshot};
 pub use agent_catalog_engine::AgentCatalogEditor;
 pub use agent_delta::AgentDeltaRequest;

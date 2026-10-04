@@ -30,9 +30,9 @@ transport admission apply. Discovery root counts and phase, rescan pending and
 degraded-source counts are cached body-free observations; status never scans
 transcripts. Runtime harness groups add typed profile/product-version metadata
 and cached root/source counts in deterministic profile order, with no paths or
-session keys. The current Codex runtime returns at most two groups; unsupported
-profiles do not gain a runtime or qualification through this schema. Import and
-source-level coverage remain separate gates.
+session keys. Configured runtime returns at most five qualified groups;
+unsupported profiles do not gain a runtime or qualification through this schema.
+Import and source-level coverage remain separate gates.
 
 Installation capture management uses LocalTrusted Admin-only
 `GET /v1/local/capture` and `POST /v1/local/capture/control`. Both retain exact
@@ -1785,3 +1785,9 @@ profile requires an explicit credential-free literal-loopback root URL and no
 filesystem roots. Cursor profiles expose resolved roots and independently
 qualified product versions. Existing saved/effective revision, conditional-save
 and restart semantics remain unchanged. Export is not editable or enabled.
+
+Configured runtime coverage supports up to five independently qualified product
+profiles. Cursor sources use cached ordinary coverage and repository binding,
+but never advertise an inactive-history import target. OpenCode endpoint errors
+do not turn the entire capture service unavailable. Source GETs remain cached
+and perform no live directory scan or endpoint request.

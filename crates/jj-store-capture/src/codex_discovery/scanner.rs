@@ -57,12 +57,27 @@ pub struct CodexDiscoveryStep {
 pub struct CodexDirectoryScanner {
     root: ApprovedCodexRoot,
     stack: Vec<Frame>,
+    cursor_layout: bool,
+    projects_root: bool,
 }
 impl CodexDirectoryScanner {
     pub fn new(root: ApprovedCodexRoot) -> CaptureResult<Self> {
+        Self::with_layout(root, false)
+    }
+    /// Cursor's default project tree contains generated payloads unrelated to capture.
+    pub fn cursor(root: ApprovedCodexRoot) -> CaptureResult<Self> {
+        Self::with_layout(root, true)
+    }
+    fn with_layout(root: ApprovedCodexRoot, cursor_layout: bool) -> CaptureResult<Self> {
+        let projects_root = root
+            .physical
+            .file_name()
+            .is_some_and(|name| name == "projects");
         let mut scanner = Self {
             root,
             stack: Vec::new(),
+            cursor_layout,
+            projects_root,
         };
         scanner.restart()?;
         Ok(scanner)
@@ -129,6 +144,18 @@ impl CodexDirectoryScanner {
                 continue;
             }
             if metadata.is_dir() {
+                if self.cursor_layout
+                    && (path.file_name().is_some_and(|name| {
+                        name == "mcps" || name == "canvases" || name == "node_modules"
+                    }) || (self.projects_root
+                        && depth == 1
+                        && path
+                            .file_name()
+                            .is_none_or(|name| name != "agent-transcripts")))
+                {
+                    step.skipped_entries += 1;
+                    continue;
+                }
                 if depth >= MAX_DEPTH {
                     step.depth_limited += 1;
                     continue;
@@ -138,6 +165,17 @@ impl CodexDirectoryScanner {
                     Err(_) => step.unavailable_entries += 1,
                 }
             } else if metadata.is_file() && path.extension().is_some_and(|e| e == "jsonl") {
+                if self.cursor_layout && self.projects_root && depth < 2 {
+                    step.skipped_entries += 1;
+                    continue;
+                }
+                if self.cursor_layout
+                    && !fs::symlink_metadata(path.with_extension("jj-store.json"))
+                        .is_ok_and(|binding| binding.is_file() && !binding.file_type().is_symlink())
+                {
+                    step.skipped_entries += 1;
+                    continue;
+                }
                 if valid_path(&path).is_err() || !self.root.contains_exact(&path) {
                     step.unavailable_entries += 1;
                     continue;

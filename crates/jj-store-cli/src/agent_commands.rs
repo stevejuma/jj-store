@@ -2,7 +2,7 @@ use crate::{
     agent_integrations::{AgentDeviceStatusV1, AgentIntegrationRegistry},
     agent_sanitization::warm_kingfisher_cache,
     agent_setup::{
-        RemoveRequestV1, SetupRequestV1, audit_installations, remove, require_setup_ready, setup,
+        RemoveRequestV1, SetupRequestV1, audit_installations, remove, require_setup_ready,
     },
     commands::{Format, error},
     presentation,
@@ -93,7 +93,19 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
     let repository = backend
         .repository()?
         .ok_or_else(|| error("enable an integration or initialize local agent metadata first"))?;
-    if let AgentCommand::Hook { agent } = &command {
+    if let AgentCommand::Hook {
+        agent,
+        transcript_capture,
+    } = &command
+    {
+        if *transcript_capture {
+            if IntegrationId::from(*agent) != IntegrationId::Cursor {
+                return Err(error("transcript hook mode requires Cursor"));
+            }
+            crate::agent_hook::cursor_transcript_stdin(&workspace, &state, repository)
+                .map_err(error)?;
+            return Ok(());
+        }
         crate::agent_hook::ingest_stdin(
             &workspace,
             &state,
@@ -130,19 +142,24 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
                 if dry_run { "previewed" } else { "enabled" },
             )
         }
-        AgentCommand::Setup { agent, dry_run } => {
+        AgentCommand::Setup {
+            agent,
+            dry_run,
+            transcript_capture,
+        } => {
             let integration = IntegrationId::from(agent);
             require_setup_ready(&registry, integration).map_err(error)?;
-            if !dry_run {
+            if !dry_run && !transcript_capture {
                 warm_kingfisher_cache(&state.join("kingfisher-cache")).map_err(error)?;
             }
-            let result = setup(
+            let result = crate::agent_setup::setup_with_mode(
                 &mut registry,
                 SetupRequestV1 {
                     integration,
                     executable: std::env::current_exe().map_err(error)?,
                     dry_run,
                 },
+                transcript_capture,
             )
             .map_err(error)?;
             return presentation::result(

@@ -100,7 +100,14 @@ impl CodexTranscriptReader {
                         break 'read;
                     }
                     directory_context.get_or_insert_with(|| scan.history.context.clone());
-                    records.push(RawTranscriptRecord { sequence, bytes });
+                    records.push(RawTranscriptRecord {
+                        sequence,
+                        bytes,
+                        record_key: self
+                            .profile
+                            .is_cursor()
+                            .then(|| scan.hash.clone().finalize().into()),
+                    });
                     scan.oversized = false;
                     last_complete = Some((scan.offset, scan.hash.clone(), scan.history.clone()));
                     if records.len() >= MAX_BATCH_RECORDS {
@@ -131,7 +138,7 @@ impl CodexTranscriptReader {
             batch_id: CaptureBatchId::new(digest[..16].try_into().expect("digest length")),
             cursor: CaptureCursorV1 {
                 schema_version: 1,
-                integration: IntegrationId::Codex,
+                integration: self.profile.integration(),
                 source_instance_id: self.source,
                 generation: self.generation,
                 parser_version: self.parser(),

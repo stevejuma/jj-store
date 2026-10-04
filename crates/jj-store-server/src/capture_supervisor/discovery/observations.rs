@@ -21,7 +21,7 @@ pub(crate) struct RootObservations {
     pub available: usize,
     pub unavailable: usize,
     pub rescan_pending: bool,
-    pub harnesses: [Option<ProfileRoots>; 2],
+    pub harnesses: [Option<ProfileRoots>; 4],
 }
 impl RootObservations {
     pub fn configured(profiles: impl Iterator<Item = CaptureProfile>) -> Self {
@@ -37,10 +37,12 @@ impl RootObservations {
         availability: Availability,
         rescan: bool,
     ) {
-        // Preparation admits only these two Codex surfaces before selecting roots.
+        // Preparation admits the four qualified file surfaces before selecting roots.
         let index = match profile {
             CaptureProfile::CodexCliJsonlV1 => 0,
             CaptureProfile::CodexDesktopJsonlV1 => 1,
+            CaptureProfile::CursorDesktopTranscriptV1 => 2,
+            CaptureProfile::CursorCliTranscriptV1 => 3,
             _ => unreachable!("Codex profile was qualified before root selection"),
         };
         let group = self.harnesses[index].get_or_insert(ProfileRoots {

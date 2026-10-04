@@ -4,6 +4,7 @@ mod codex_tool_result;
 mod codex_transcript;
 mod cursor;
 mod cursor_tool;
+mod cursor_transcript;
 mod opencode;
 mod opencode_snapshot;
 mod opencode_tools;

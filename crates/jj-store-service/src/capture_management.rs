@@ -74,7 +74,7 @@ pub struct CaptureRuntimeStatus {
     pub phase: CaptureRuntimePhase,
     pub discovery: CaptureDiscoveryStatus,
     pub degraded_sources: usize,
-    #[schemars(length(max = 2))]
+    #[schemars(length(max = 5))]
     pub harnesses: Vec<CaptureHarnessCoverage>,
     pub pending_capacity_bytes: u64,
     pub ingress_capacity_refusals: usize,

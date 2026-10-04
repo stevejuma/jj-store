@@ -187,6 +187,7 @@ fn exact_range_reconstructs_changed_context_and_rejects_mixed_or_changed_identit
             .chain(second.records.iter())
             .map(
                 |row| jj_store_capture::codex_transcript::RawTranscriptRecord {
+                    record_key: None,
                     sequence: row.sequence,
                     bytes: None,
                 },

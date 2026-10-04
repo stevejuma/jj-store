@@ -64,6 +64,25 @@ impl ToolTimings {
             span.invalid = true;
         }
         span.sequence = Some(observation.source_sequence);
+        if super::opencode_timing::record(evidence, normalizer, observation).is_some() {
+            if matches!(state, ToolState::Pending | ToolState::Running) {
+                return;
+            }
+            let Some((start, end)) =
+                super::opencode_timing::tool_span(evidence, normalizer, observation, *tool_call_id)
+            else {
+                span.invalid = true;
+                return;
+            };
+            if span.start.is_some_and(|previous| previous != start)
+                || span.end.is_some_and(|previous| previous != end)
+            {
+                span.invalid = true;
+            }
+            span.start = Some(start);
+            span.end = Some(end);
+            return;
+        }
         let Some(time) = observed_at_millis(evidence, normalizer, observation) else {
             span.invalid = true;
             return;

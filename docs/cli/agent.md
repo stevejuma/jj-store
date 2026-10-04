@@ -62,6 +62,17 @@ A real setup compiles and caches MongoDB Kingfisher's pinned in-process rules
 before installing the hook. The first setup can take longer; later hook
 processes reuse the private device-local cache.
 
+`jj agent setup cursor --transcript-capture` instead installs metadata-only
+transcript hooks for Cursor Desktop 3.22.7 and CLI 2026.09.26-dd393fe. Run it
+from the exact linked native workspace after enabling Cursor. This mode skips
+hook sanitizer warming because the configured server sanitizes bounded JSONL
+messages. Hooks write a private binding/activity hint beside the approved
+transcript and do not enqueue prompt, response or tool messages. Use `--dry-run`
+to preview; switching an existing owned setup mode requires removal followed by
+setup. Server capture settings remain opt-in and take effect after restart. See
+the [local capture guide](../capture-preview.md) for root and OpenCode API
+setup.
+
 The registry is user-restricted, contains no credentials or transcript content,
 and is bound to one repository, physical workspace, and stable device identity.
 A missing executable, failed probe, or different version is reported without

@@ -285,3 +285,63 @@ async fn message_timing_matches_selected_evidence_in_activity_and_transcript_pag
         );
     }
 }
+
+#[tokio::test]
+async fn opencode_snapshot_timing_and_tool_span_use_native_evidence() {
+    let fixture = fixture().await;
+    let profile = NormalizerProfileV1::opencode_1_18_30();
+    let mut source = transcript_batch(&profile);
+    source.integration = IntegrationId::OpenCode;
+    source.observations.truncate(1);
+    let observation = &mut source.observations[0];
+    observation.source_kind = SourceKind::NativeApi;
+    observation.source_trust = SourceTrust::ApprovedHarnessApi;
+    observation.payload = SanitizedPayloadV1::new(SanitizedMediaType::Json, &serde_json::to_vec(&serde_json::json!({
+        "capture_format":"opencode-snapshot/v1", "product_version":"1.18.30", "session_id":"ses_timing",
+        "record":{"type":"message", "info":{"id":"msg_timing","sessionID":"ses_timing","role":"assistant","time":{"created":1000,"completed":3000}},
+            "parts":[{"id":"prt_timing","messageID":"msg_timing","sessionID":"ses_timing","type":"tool","callID":"call_timing","tool":"read",
+                "state":{"status":"completed","input":{},"output":"done","time":{"start":1100,"end":1350}}}]}
+    })).unwrap()).unwrap();
+    let request = fixture
+        .session
+        .prepare_agent_capture(
+            m::RequestId::new([87; 16]),
+            m::PublicationId::new([88; 16]),
+            &profile,
+            &source,
+            b"native OpenCode timing".to_vec(),
+        )
+        .await
+        .unwrap();
+    fixture.session.publish_agent_delta(&request).await.unwrap();
+    let pager =
+        AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+    let page = pager.begin(fixture.session.clone(), 10).await.unwrap();
+    assert_eq!(page.sessions.len(), 1);
+    assert_eq!(page.sessions[0].first_activity_at_millis, Some(1000));
+    assert_eq!(page.sessions[0].last_activity_at_millis, Some(3000));
+    let detail = pager
+        .detail(fixture.session.clone(), page.sessions[0].session_id)
+        .await
+        .unwrap();
+    let activity = serde_json::to_value(&detail.activity).unwrap();
+    let message = activity
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|a| a["type"] == "message")
+        .unwrap();
+    assert_eq!(message["occurred_at_millis"].as_i64(), Some(1000));
+    let tool = activity
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|a| a["type"] == "tool")
+        .unwrap();
+    assert_eq!(tool["tool"]["duration_millis"].as_u64(), Some(250));
+    assert_eq!(detail.snapshot, page.snapshot);
+    assert_eq!(
+        pager.begin(fixture.session, 10).await.unwrap().snapshot,
+        page.snapshot
+    );
+}

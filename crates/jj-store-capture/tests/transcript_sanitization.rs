@@ -185,10 +185,10 @@ fn omissions_key_collisions_and_invalid_identity_retain_safe_source_progress() {
             position:SourcePositionV1::JsonLines {complete_byte_offset:100,prefix_sha256:[1;32]}},
         metadata:ReaderCaptureMetadataV1 {schema_version:1,generation_digest:[2;32], opencode_snapshot:None},
         records:std::sync::Arc::new(vec![
-            RawTranscriptRecord {sequence:1,bytes:Some(vec![0xff,b'\n'])},
-            RawTranscriptRecord {sequence:2,bytes:None},
-            RawTranscriptRecord {sequence:3,bytes:Some(br#"{"metadata":{"/Users/transcript-test/private":"private","$HOME/private":"already-templated"}}"#.to_vec())},
-            RawTranscriptRecord {sequence:4,bytes:Some(br#"{"type":"response_item","payload":{"type":"message","id":"later","role":"assistant","content":[{"type":"output_text","text":"later valid message"}]}}"#.to_vec())},
+            RawTranscriptRecord {record_key:None,sequence:1,bytes:Some(vec![0xff,b'\n'])},
+            RawTranscriptRecord {record_key:None,sequence:2,bytes:None},
+            RawTranscriptRecord {record_key:None,sequence:3,bytes:Some(br#"{"metadata":{"/Users/transcript-test/private":"private","$HOME/private":"already-templated"}}"#.to_vec())},
+            RawTranscriptRecord {record_key:None,sequence:4,bytes:Some(br#"{"type":"response_item","payload":{"type":"message","id":"later","role":"assistant","content":[{"type":"output_text","text":"later valid message"}]}}"#.to_vec())},
         ]),
     };
     let input = batch
