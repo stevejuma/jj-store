@@ -1,0 +1,16 @@
+.community-message {
+  --file-line-width: 100%;
+}
+
+.community-message :is(.mira-markdown-preview, .markdown-preview-surface) {
+  --file-line-width: 100%;
+}
+
+.community-message
+  [data-ui-component="ai-chat-message-bubble"][data-variant="ghost"] {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding-inline: 0;
+}

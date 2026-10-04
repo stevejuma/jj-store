@@ -1,0 +1,78 @@
+<script module lang="ts">
+  import { defineMeta } from "@storybook/addon-svelte-csf";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
+  import Fixture from "../../fixtures/AppearanceComposerFixture.svelte";
+  import { themeNames } from "../../../web/src/lib/appearance/theme-catalog.js";
+
+  const { Story } = defineMeta({
+    title: "JJ Store/Appearance/Composer",
+    component: Fixture,
+    tags: ["visual-pending"],
+    parameters: { layout: "fullscreen" },
+  });
+</script>
+
+<Story
+  name="Single composer surface across every palette"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const editor = await c.findByRole("textbox", { name: "Markdown editor" });
+    const send = c.getByRole("button", { name: "Send message" });
+    await expect(
+      Number.parseFloat(getComputedStyle(send).borderRadius),
+    ).toBeGreaterThanOrEqual(
+      Number.parseFloat(getComputedStyle(send).width) / 2,
+    );
+    await userEvent.click(editor);
+    await userEvent.type(editor, "Retained composer draft");
+    const composer = canvasElement.querySelector(".community-chat-composer")!;
+    const body = composer.querySelector('[data-ui-part="body"]')!;
+    const cm = composer.querySelector(".cm-editor")!;
+    const page = canvasElement.querySelector(".appearance-composer-fixture")!;
+    const action = c.getByRole("button", { name: "Mention or link" });
+    for (const theme of themeNames) {
+      await waitFor(() =>
+        expect(document.documentElement.dataset.storeTheme).toBe(theme),
+      );
+      await expect(editor).toHaveTextContent("Retained composer draft");
+      await expect(getComputedStyle(body).backgroundColor, theme).toBe(
+        getComputedStyle(page).backgroundColor,
+      );
+      // The frameless editor reveals the owned composer surface.
+      await expect(getComputedStyle(cm).backgroundColor, theme).toBe(
+        "rgba(0, 0, 0, 0)",
+      );
+      await expect(getComputedStyle(cm).color, theme).toBe(
+        getComputedStyle(body).color,
+      );
+      // Buttons animate color; verify the settled palette rather than a transition frame.
+      await waitFor(() =>
+        expect(getComputedStyle(action).color, theme).toBe(
+          getComputedStyle(body).color,
+        ),
+      );
+      await userEvent.click(c.getByRole("button", { name: "Next palette" }));
+    }
+    await userEvent.click(editor);
+    await userEvent.keyboard("{Control>}a{/Control}{Backspace}");
+    const mutedText = c.getByText(
+      "Text and placeholders follow the selected app palette.",
+    );
+    for (const theme of themeNames) {
+      await waitFor(() =>
+        expect(document.documentElement.dataset.storeTheme).toBe(theme),
+      );
+      await waitFor(() => {
+        const placeholder = composer.querySelector(".cm-placeholder");
+        expect(placeholder).toHaveTextContent("Write a message");
+        expect(getComputedStyle(placeholder!).color, theme).toBe(
+          getComputedStyle(mutedText).color,
+        );
+      });
+      await expect(
+        c.getByRole("button", { name: "Send message" }),
+      ).toBeDisabled();
+      await userEvent.click(c.getByRole("button", { name: "Next palette" }));
+    }
+  }}
+/>

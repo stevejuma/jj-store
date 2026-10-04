@@ -1,0 +1,31 @@
+[package]
+name = "jj-store-tantivy"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+schemars.workspace = true
+jj-store-model.workspace = true
+jj-store-adapters.workspace = true
+jj-store-service.workspace = true
+async-trait = "0.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+base64 = "0.22"
+hmac = "0.12"
+getrandom = "0.4"
+zeroize = "1"
+thiserror = "2"
+tantivy = { version = "=0.26.2", default-features = false, features = ["mmap", "lz4-compression"] }
+tempfile = "3"
+tokio = { version = "1", features = ["fs", "rt", "sync", "time"] }
+uuid = { version = "1", features = ["v4"] }
+
+[dev-dependencies]
+jj-store-object.workspace = true
+jj-store-wal.workspace = true
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

@@ -1,0 +1,68 @@
+/* Buzz's single translucent wash above native Sidebar vibrancy. Inner panels stay opaque. */
+html[data-store-native-glass="true"] {
+  --store-theme-chrome: transparent;
+  --store-native-glass-wash: #ffffff;
+  --store-native-glass-tint: color-mix(
+    in srgb,
+    var(--sidebar) calc(var(--store-glass-opacity) * 100%),
+    transparent
+  );
+}
+html.dark[data-store-native-glass="true"] {
+  --store-native-glass-wash: #12161d;
+}
+html[data-store-native-glass="true"][data-store-theme="buzz"] {
+  --store-native-glass-tint: linear-gradient(
+    180deg,
+    color-mix(
+      in srgb,
+      #e6e6b6 calc(var(--store-glass-opacity) * 100%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      #c4d0da calc(var(--store-glass-opacity) * 100%),
+      transparent
+    )
+  );
+}
+html[data-store-native-glass="true"][data-store-theme="buzz-dark"] {
+  --store-native-glass-tint: linear-gradient(
+    180deg,
+    color-mix(
+      in srgb,
+      #4a4616 calc(var(--store-glass-opacity) * 100%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      #0a1423 calc(var(--store-glass-opacity) * 100%),
+      transparent
+    )
+  );
+}
+html[data-store-native-glass="true"],
+html[data-store-native-glass="true"] body,
+html[data-store-native-glass="true"] #app {
+  background: transparent;
+}
+html[data-store-native-glass="true"] .community-app-shell {
+  background:
+    var(--store-native-glass-tint),
+    linear-gradient(
+      color-mix(in srgb, var(--store-native-glass-wash) 2.4%, transparent),
+      color-mix(in srgb, var(--store-native-glass-wash) 2.4%, transparent)
+    );
+}
+/* A solid non-Buzz tint isn't an image; give it its own background-color layer. */
+html[data-store-native-glass="true"]:not([data-store-theme="buzz"]):not(
+    [data-store-theme="buzz-dark"]
+  )
+  .community-app-shell {
+  background: var(--store-native-glass-tint);
+}
+html[data-store-native-glass="true"] .community-app-shell__header,
+html[data-store-native-glass="true"]
+  [data-ui-component="app-shell"][data-ui-part="sidebar"] {
+  backdrop-filter: none;
+}

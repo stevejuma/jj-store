@@ -1,0 +1,330 @@
+{
+  "recorded_at": "2026-09-27T05:06:22.772508+00:00",
+  "host": {
+    "system": "Darwin",
+    "release": "27.0.0",
+    "machine": "arm64"
+  },
+  "command": [
+    "/Users/stevejuma/code/lapismd/jj-store/target/release/examples/query_qualification",
+    "50000"
+  ],
+  "binary_sha256": "3342dea1b4e9c4f7258012869bc67a7d23507f518c73875a526c7fcf2e26a3b4",
+  "cargo_lock_sha256": "4fc78780f3556da9661dff3049e635481a9925766d9d8196d7c2a2f4745fbbac",
+  "scenario": "graphs",
+  "scope": "Encoded immutable fixture storage (large content uses disk spools) and production native query executor; no service authorization, network, RustFS or browser cost. Whole-process memory includes fixture generation and encoded source objects.",
+  "ceilings": {
+    "peak_process_bytes": 1073741824,
+    "cpu_seconds": 60,
+    "wall_seconds": 180
+  },
+  "process": {
+    "exit_code": 0,
+    "wall_seconds": 5.7056785830063745,
+    "cpu_seconds": 5.220389,
+    "peak_rss_bytes": 296026112
+  },
+  "native": {
+    "profile": "jj-native-0.45.1-v1",
+    "revision": "7c41cdeb16b6b321c64e789a966b6adf723816a5",
+    "build": "release",
+    "limits": {
+      "max_metadata_nodes": 4000000,
+      "max_merge_terms": 65,
+      "max_tree_entries": 50000,
+      "max_parent_edges": 256,
+      "max_index_commits": 50000,
+      "max_inline_rebuild_commits": 0,
+      "max_work": 1000000,
+      "max_object_bytes": 268435456,
+      "max_output_bytes": 8388608,
+      "timeout_millis": 10000
+    },
+    "scenarios": [
+      {
+        "shape": "linear",
+        "commits": 50000,
+        "objects": 50005,
+        "encoded_bytes": 35478056,
+        "fixture_millis": 347,
+        "cold_admission_millis": 1,
+        "preparation": {
+          "result": "pass",
+          "millis": 1018,
+          "report": {
+            "version": 1,
+            "operation": "c15b9f9fe3fbbf78978e32885a6dc3a050444d08b7cb32ebfe759e10ed726c208d5f7dc2b655554a6cebd2a497a83d99ef170876a8fc107a767c98b084d6901a",
+            "cache": {
+              "state": "built",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            },
+            "stats": {
+              "metadata_nodes": 2100024,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 50002,
+              "object_bytes": 35478417,
+              "work": 100149
+            }
+          }
+        },
+        "runs": [
+          {
+            "name": "prepared_log",
+            "query": {
+              "graph": "log",
+              "revset": "all()",
+              "workspace": null,
+              "user_email": "qualified@example.invalid",
+              "at_time_millis": 1790000000000
+            },
+            "result": "pass",
+            "millis": 37,
+            "rows": 500,
+            "response_bytes": 469568,
+            "stats": {
+              "metadata_nodes": 21050,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 502,
+              "object_bytes": 355978,
+              "work": 252285
+            },
+            "cache": {
+              "state": "reused",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            }
+          },
+          {
+            "name": "warm_log",
+            "query": {
+              "graph": "log",
+              "revset": "all()",
+              "workspace": null,
+              "user_email": "qualified@example.invalid",
+              "at_time_millis": 1790000000000
+            },
+            "result": "pass",
+            "millis": 36,
+            "rows": 500,
+            "response_bytes": 469568,
+            "stats": {
+              "metadata_nodes": 21050,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 502,
+              "object_bytes": 355978,
+              "work": 252285
+            },
+            "cache": {
+              "state": "reused",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            }
+          },
+          {
+            "name": "warm_filter",
+            "query": {
+              "graph": "log",
+              "revset": "subject(z)",
+              "workspace": null,
+              "user_email": "qualified@example.invalid",
+              "at_time_millis": 1790000000000
+            },
+            "result": "pass",
+            "millis": 837,
+            "rows": 0,
+            "response_bytes": 426,
+            "stats": {
+              "metadata_nodes": 2100008,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 50001,
+              "object_bytes": 35478056,
+              "work": 600283
+            },
+            "cache": {
+              "state": "reused",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            }
+          },
+          {
+            "name": "operations",
+            "query": {
+              "graph": "operations"
+            },
+            "result": "pass",
+            "millis": 19,
+            "rows": 2,
+            "response_bytes": 1523,
+            "stats": {
+              "metadata_nodes": 50,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 2,
+              "object_bytes": 978,
+              "work": 286
+            },
+            "cache": {
+              "state": "reused",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            }
+          }
+        ],
+        "negative_admission_cases": 2
+      },
+      {
+        "shape": "wide_heads",
+        "commits": 50000,
+        "objects": 50005,
+        "encoded_bytes": 42027794,
+        "fixture_millis": 440,
+        "cold_admission_millis": 1,
+        "preparation": {
+          "result": "pass",
+          "millis": 1276,
+          "report": {
+            "version": 1,
+            "operation": "f1fc00da28a984417401cf0d985b0d0525348b4e5392bdc5860e5e835e135ade04c77172e08e03b975430b86886f3248c8e62d20413243a0207a6da4718217a8",
+            "cache": {
+              "state": "built",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            },
+            "stats": {
+              "metadata_nodes": 2200020,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 50002,
+              "object_bytes": 48577893,
+              "work": 100149
+            }
+          }
+        },
+        "runs": [
+          {
+            "name": "prepared_log",
+            "query": {
+              "graph": "log",
+              "revset": "all()",
+              "workspace": null,
+              "user_email": "qualified@example.invalid",
+              "at_time_millis": 1790000000000
+            },
+            "result": "pass",
+            "millis": 167,
+            "rows": 500,
+            "response_bytes": 469569,
+            "stats": {
+              "metadata_nodes": 71048,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 502,
+              "object_bytes": 6905716,
+              "work": 252285
+            },
+            "cache": {
+              "state": "reused",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            }
+          },
+          {
+            "name": "warm_log",
+            "query": {
+              "graph": "log",
+              "revset": "all()",
+              "workspace": null,
+              "user_email": "qualified@example.invalid",
+              "at_time_millis": 1790000000000
+            },
+            "result": "pass",
+            "millis": 167,
+            "rows": 500,
+            "response_bytes": 469569,
+            "stats": {
+              "metadata_nodes": 71048,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 502,
+              "object_bytes": 6905716,
+              "work": 252285
+            },
+            "cache": {
+              "state": "reused",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            }
+          },
+          {
+            "name": "warm_filter",
+            "query": {
+              "graph": "log",
+              "revset": "subject(z)",
+              "workspace": null,
+              "user_email": "qualified@example.invalid",
+              "at_time_millis": 1790000000000
+            },
+            "result": "pass",
+            "millis": 876,
+            "rows": 0,
+            "response_bytes": 426,
+            "stats": {
+              "metadata_nodes": 2150006,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 50001,
+              "object_bytes": 42027794,
+              "work": 600283
+            },
+            "cache": {
+              "state": "reused",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            }
+          },
+          {
+            "name": "operations",
+            "query": {
+              "graph": "operations"
+            },
+            "result": "pass",
+            "millis": 116,
+            "rows": 2,
+            "response_bytes": 1530,
+            "stats": {
+              "metadata_nodes": 50048,
+              "predicate_file_bytes": 0,
+              "predicate_lines": 0,
+              "object_reads": 2,
+              "object_bytes": 6550716,
+              "work": 286
+            },
+            "cache": {
+              "state": "reused",
+              "evicted": 0,
+              "retained_entries": 1,
+              "retained_bytes": 5202606
+            }
+          }
+        ],
+        "negative_admission_cases": 2
+      }
+    ]
+  },
+  "stderr": "",
+  "passed": true
+}

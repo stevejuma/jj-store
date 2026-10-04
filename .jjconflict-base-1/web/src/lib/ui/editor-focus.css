@@ -1,0 +1,6 @@
+/* Static host styling also applies when the asset policy rejects injected editor styles. */
+.store-file-editor__contents .cm-content:focus,
+.community-chat-composer__mira .cm-content:focus {
+  outline: none;
+  box-shadow: none;
+}

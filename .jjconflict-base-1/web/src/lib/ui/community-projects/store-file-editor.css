@@ -1,0 +1,92 @@
+.store-file-editor {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.store-file-editor__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.store-file-editor__contents {
+  --file-line-width: 100%;
+  --file-margins-x: 0.5rem;
+  --file-margins-y: 0.5rem;
+
+  min-width: 0;
+  min-height: 28rem;
+}
+
+.store-file-editor__contents .cm-scroller {
+  display: flex !important;
+  align-items: flex-start !important;
+}
+
+.store-file-editor[data-mode="edit"] {
+  gap: 0;
+  padding: 0;
+}
+
+.store-file-editor__contents > [data-ui-component="code-editor"] {
+  --mira-code-editor-active-line: transparent;
+  --mira-code-editor-background: var(--background);
+  --mira-code-editor-border: transparent;
+  --mira-code-editor-gutter-background: var(--background);
+  --mira-code-editor-radius: 0;
+
+  margin: 0;
+}
+
+.store-file-editor__contents .mira-code-editor[data-surface="framed"],
+.store-file-editor__contents
+  .mira-code-editor[data-surface="framed"]:focus-within {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.store-file-editor__contents .cm-editor.cm-focused {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.store-file-editor__contents .cm-gutters {
+  display: flex;
+  align-self: stretch;
+  border-inline-end: 0;
+}
+
+.store-file-editor__contents .cm-content {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.store-file-editor__contents .cm-lineNumbers .cm-gutterElement {
+  padding-inline: 0.8rem;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.store-file-editor__preview {
+  min-height: 28rem;
+}
+
+.store-file-editor__actions {
+  justify-content: flex-end;
+}
+
+.store-file-editor[data-mode="edit"] .store-file-editor__actions {
+  padding: 0.75rem 1rem 1rem;
+}
+
+.store-file-editor[data-mode="edit"] .store-file-editor__error {
+  margin-inline: 1rem;
+}
+
+.store-file-editor__error {
+  margin: 0;
+  color: var(--destructive);
+  font-size: var(--community-text-caption);
+}
