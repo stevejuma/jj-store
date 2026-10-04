@@ -1,4 +1,7 @@
 /* The same navigation / rounded content / detail rail composition as the app. */
+:root {
+  --manual-toc-width: 14rem;
+}
 .md-grid {
   max-width: none;
 }
@@ -34,7 +37,7 @@
   padding: 0.5rem 0;
 }
 .md-sidebar--secondary {
-  width: 14rem;
+  width: var(--manual-toc-width);
 }
 .md-sidebar__scrollwrap {
   margin: 0;
@@ -88,7 +91,6 @@
   margin-top: 0.75rem;
 }
 .md-nav--secondary {
-  border-left: 1px solid var(--border);
   padding-left: 0.5rem;
 }
 .md-nav--secondary .md-nav__link {
@@ -96,12 +98,12 @@
 }
 .md-search__form {
   color: var(--foreground);
-  background: var(--muted);
+  background: var(--background);
   border: 1px solid var(--border);
   border-radius: 0.625rem;
 }
 .md-search__form:hover {
-  background: var(--muted);
+  background: var(--background);
 }
 .md-search__input {
   font-size: var(--community-text-body);
@@ -148,6 +150,12 @@ body .md-sidebar--secondary .md-nav__title {
   background: transparent;
   box-shadow: none;
   position: static;
+}
+@media (min-width: 45em) {
+  .md-header .md-search__inner {
+    /* Align the idle field with the TOC's padded left edge. */
+    width: calc(var(--manual-toc-width) - 0.75rem);
+  }
 }
 @media (min-width: 76.25em) {
   body .md-sidebar .md-nav .md-nav__title {

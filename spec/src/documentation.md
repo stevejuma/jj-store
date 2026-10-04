@@ -34,6 +34,11 @@ application preference record. Standalone documentation retains its own
 light/dark control. Theme CSS is bundled from the owning application sources;
 fonts and light/dark diagram variants remain local and manifest-validated.
 
+The table-of-contents rail has no separating border. At desktop widths the idle
+search field aligns with the rail's content edge and uses the reading surface
+background; focused results retain room to expand and mobile search remains
+responsive.
+
 Verification covers generators and negative drift fixtures, actual configuration
 parsing, built-site links/search, HTTP asset admission, iframe focus and
 dismissal, offline cold browser use and desktop resource staging/WKWebView

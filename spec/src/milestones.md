@@ -149,7 +149,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015 |
-| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003 |
+| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -72238,6 +72238,74 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Generated manual presentation and read-only appearance inheritance only. Existing app palettes and released fonts are bundled; host attributes are observed without parent writes, preference storage access or a new messaging/API protocol. Complete Help browser lane justified by shared generated assets and embedded/standalone consumers. All 415 previous evidence entries and raw JSON prefix preserved. M19 remains Partial; foundational registry-only and packaged WKWebView release gates remain in E-DOC-001. Unrelated Rust, root aggregate, full browser/Storybook/storage lanes and visual baselines are out of scope.",
   "next": "Review themed Help in the documentation workspace preview on 7484. Foundational registry-only and packaged WKWebView release qualification remain separate M19 gates."
+},
+{
+  "id": "E-DOC-004",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change wtyoqnzs",
+  "kind": "Help search alignment and TOC divider refinement",
+  "versions": "macOS ARM64; MkDocs 1.6.1 and Material 9.6.23; Playwright 1.63.0 Chromium/WebKit; existing source validation setup.",
+  "formats": "Presentation CSS only; no asset manifest, repository, API or preference format change.",
+  "files": [
+    "docs/site/assets/layout.css",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "web/tests/browser/help-theme.spec.ts#standalone documentation retains themed search and responsive navigation",
+    "web/tests/browser/help.spec.ts#bundled Help preserves a draft without a repository and works without external network"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; inspect Community and Design Core search/input sources; live Help geometry and computed-style inspection",
+      "result": "fail",
+      "failures": 3,
+      "note": "Clean workspace. Before: TOC left border 1px; search x=1151.8 vs visible TOC x=1127 at 1351px viewport; search used muted background while reading panel used background. User confirmed alignment to the TOC rail."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/site/assets/layout.css spec/src/documentation.md (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Canonical prose wrapping needed formatting; repaired with the same files passed to prettier --write."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/site/assets/layout.css spec/src/documentation.md; node scripts/docs.mjs stage",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh strict generated docs and stage: 138 admitted assets, 13232381 bytes; links and anchors valid, 9 diagrams with light/dark variants. Explicit source review checks current."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --grep \"standalone documentation retains|bundled Help preserves a draft\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "4/4 exact Chromium/WebKit tests on a fresh native asset-router process: standalone search, theme switch, Axe and mobile drawer; embedded search, network independence, keyboard dismissal and draft preservation. Existing tests retained without new CSS-mirroring assertions."
+    },
+    {
+      "command": "pnpm web:check; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web errors/warnings; UI ownership validator passes."
+    },
+    {
+      "command": "Verify preview process ownership; graceful restart only documentation preview; curl app/help; reload app and inspect current themed Help",
+      "result": "pass",
+      "failures": 0,
+      "note": "App/help HTTP 200 at 7484. After: search and TOC both x=1127, search width 212px; search and reading panel both oklch(1 0 0); TOC left border 0px. Ignored screenshot .local/dev-demo/help-search-alignment.png. Existing five-second shutdown warning recurred; preview restarted with preserved partial fixture and no reset or unrelated process restart."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; changed-file pnpm exec prettier --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "1 protected file and 2 canonical chapters; 5 validators, 23 chapters and 171 requirements; 137 tasks. Changed CSS/prose formatting passes; historical ledger entries remain unchanged."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Narrow application-owned documentation stylesheet refinement. Fresh generated assets justify cold exact search/reader tests; generator implementation, theme lifecycle and application components unchanged. Full Help, tooling, catalog, unrelated UI/Rust/root aggregate lanes and visual baselines are out of scope. Preserve all 416 prior evidence objects and raw JSON prefix. M19 remains Partial with E-DOC-001 release gates unchanged.",
+  "next": "Review the refined Help search and TOC in the running documentation-workspace preview."
 }
 ]
 
