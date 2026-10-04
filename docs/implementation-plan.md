@@ -126,6 +126,23 @@ This is a prerequisite for native filtered delivery; filter-file lifetime/quota
 ownership and the remaining deep/search/comparison/RPC continuations are still
 open. Full large-fixture resource and lifecycle qualification stays deferred.
 
+E-READ-047 adds native prepared description/reference filtering and explicit
+upgrade of index-only generations. Selected candidate keys cross exact current
+visibility and description checks before native target hydration, preserving
+Unicode, divergence, removed bookmark terms and both cursor directions. A shared
+generation pin keeps readonly filter files and their complete slot charged
+through active readers. Pressure may reclaim idle filtered residents; pinned
+recovery remains in place without deleting another reader's files or duplicating
+quota. Small-cache memory-only policies keep their ordinary bounded fallback.
+Different embedded operations, cold full receipt hashing outside the namespace,
+and deep/difference/search/candidate/RPC continuations remain delivery work.
+Full scale, fault/lifecycle, memory and production browser qualification stays
+in the deferred slice.
+
+Resident retention charges actual framed index allocations and the bounded
+database cache; complete filter files remain in disk quota. The large-file
+admission regression is arithmetic evidence, not measured RSS or scale serving.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

@@ -849,9 +849,17 @@ projection and bounded database cache. Construction shares existing admitted
 commit reads and the generation's pre-growth disk reservation; request work
 seeks compressed lexical candidate blocks, validates exact pinned descriptions
 and hydrates only selected rows. No complete matching set or source history is
-retained by a query. Native filtering and extreme candidate continuation remain
-separate delivery work; full memory, construction and latency qualification is
-still deferred.
+retained by a query. Eligible native preparation shares that operation-bound
+projection. Its readonly reader and allocation lease own a shared pin on the
+complete disk generation; active pins block cache unlink and retain quota
+accounting. Idle filtered residents can be reclaimed outside namespace/cache
+locks before admission is retried. Recovery moves an unpinned generation into an
+actual-size private reservation, or independently pins an already owned slot in
+place. Native candidate validation uses retained visible change groups and
+freshly admitted bookmark terms, then hydrates only the selected page. Extreme
+candidate continuation and cold full receipt hashing outside the namespace
+remain separate delivery work; full memory, construction and latency
+qualification is deferred.
 
 Native resident visibility and ordered reference groups use flat full-ID arrays
 and compact group boundaries. Their conservative per-indexed-commit admission is
@@ -862,3 +870,9 @@ checks cancellation in finite batches; lexical pages allocate only selected keys
 and targets. The two-million-row admission regression checks room for further
 admitted state within the unchanged 1GiB process pool. It does not prove RSS,
 elapsed time, complex-frontier peak usage or complete large-scale serving.
+
+Native resident retention charges framed index allocations, the selected-view
+projection and the bounded database cache. Complete filter files remain charged
+to disk quota. This distinction prevents a disk-only projection from defeating
+valid warm reader admission; existing allocation leases and disk limits remain
+independent and unchanged.

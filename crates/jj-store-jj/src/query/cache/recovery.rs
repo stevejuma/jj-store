@@ -9,6 +9,25 @@ impl Cache {
         access: &dyn ReadAccess,
         budget: &Budget,
     ) -> Result<Entry> {
+        let exclusive = match generation::exclusive(&entry.path) {
+            Ok(guard) => guard,
+            Err(Error::Busy) => {
+                // Another readonly database owns this generation. Keep its
+                // files in place, with an independently held shared pin, then
+                // derive outside the namespace. No allocating decoder runs here.
+                entry.pin = Some(Arc::new(generation::Pin::acquire(&entry.path)?));
+                entry.sealed =
+                    match resident::Verification::capture(&entry.path, receipt.files, budget) {
+                        Ok(value) => Some(value),
+                        Err(_) => {
+                            budget.check()?;
+                            None
+                        }
+                    };
+                return Ok(entry);
+            }
+            Err(error) => return Err(error),
+        };
         let data_bytes = receipt.files.values().try_fold(0u64, |total, file| {
             total.checked_add(file.bytes).ok_or(Error::Limit)
         })?;
@@ -31,6 +50,7 @@ impl Cache {
         let private = staging.path().join("generation");
         budget.check()?;
         fs::rename(&entry.path, &private).map_err(|_| Error::Unavailable)?;
+        drop(exclusive);
         // Install ownership immediately so any following failure cleans up while
         // the lifetime lock still keeps its quota visible to other workers.
         entry.path = private;

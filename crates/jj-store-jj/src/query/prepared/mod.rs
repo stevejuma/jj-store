@@ -88,12 +88,14 @@ pub(super) async fn build(
     budget: &Budget,
     max_bytes: u64,
     inline: bool,
+    filtering: bool,
 ) -> Result<()> {
     let source = NativeSource {
         operation,
         store,
         budget,
         inline,
+        filtering,
     };
     build_with_tables(
         path,
@@ -118,6 +120,13 @@ pub(crate) struct Description {
     _memory: super::memory::Lease,
 }
 impl Description {
+    fn from_string(text: String) -> Result<Self> {
+        let memory = super::memory::Lease::reserve(4096 + text.len() as u64 * 2)?;
+        Ok(Self {
+            text,
+            _memory: memory,
+        })
+    }
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         // Lossy UTF-8 can expand each input byte to a three-byte replacement.
         let memory = super::memory::Lease::reserve(4096 + bytes.len() as u64 * 6)?;
@@ -159,6 +168,7 @@ struct NativeSource<'a> {
     store: &'a Arc<Store>,
     budget: &'a Budget,
     inline: bool,
+    filtering: bool,
 }
 impl Source for NativeSource<'_> {
     fn check(&self) -> Result<()> {
@@ -195,6 +205,9 @@ impl Source for NativeSource<'_> {
     fn change_len(&self) -> usize {
         self.store.change_id_length()
     }
+    fn reference_filter(&self) -> bool {
+        self.filtering
+    }
     async fn operation(&self, id: &jj_lib::op_store::OperationId) -> Result<Operation> {
         let data = self
             .budget
@@ -224,7 +237,11 @@ impl Source for NativeSource<'_> {
             parents: commit.parents,
             change: commit.change_id,
             timestamp: commit.committer.timestamp.timestamp.0,
-            description: None,
+            description: if self.filtering {
+                Some(Description::from_string(commit.description)?)
+            } else {
+                None
+            },
         })
     }
 }

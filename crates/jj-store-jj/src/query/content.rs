@@ -347,13 +347,16 @@ impl ContentReader {
         access: Arc<dyn ReadAccess>,
         request: references::Request,
     ) -> Result<references::Page> {
-        if request.query.is_empty()
-            && matches!(
-                request.kind,
-                references::Kind::All | references::Kind::Changes
-            )
-            && request.operation == access.operation()
+        if request.operation == access.operation()
             && let Some(graph) = &self.graph
+            && ((request.query.is_empty()
+                && matches!(
+                    request.kind,
+                    references::Kind::All | references::Kind::Changes
+                ))
+                || (!request.query.is_empty()
+                    && request.kind != references::Kind::Workspaces
+                    && graph.reference_filters()))
         {
             return graph.references(store, access, request, self.limits).await;
         }

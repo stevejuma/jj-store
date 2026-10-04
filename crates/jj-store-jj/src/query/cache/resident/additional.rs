@@ -34,6 +34,14 @@ pub(super) struct AdditionalResidents {
     retained: Arc<AtomicU64>,
 }
 impl AdditionalResidents {
+    pub fn reclaim_filtered(&self) -> bool {
+        let entries = self.entries.lock().unwrap().clone();
+        let mut reclaimed = false;
+        for entry in entries {
+            reclaimed |= entry.evict_idle_if(|saved| saved.data.index.has_reference_filter());
+        }
+        reclaimed
+    }
     pub fn get(&self, access: &dyn ReadAccess, operation: m::OperationId) -> Option<Data> {
         let mut entries = self.entries.lock().unwrap();
         entries.retain(|entry| entry.present());

@@ -340,6 +340,9 @@ pub struct GraphExecutor {
     residents: Arc<cache::resident::Residents>,
 }
 impl GraphExecutor {
+    pub(super) fn reference_filters(&self) -> bool {
+        self.cache_policy.reference_filters()
+    }
     pub fn new(root: PathBuf, limits: Limits, concurrency: usize) -> Result<Self> {
         Self::with_cache_policy(root, limits, concurrency, cache::Policy::default())
     }
@@ -577,23 +580,58 @@ impl GraphExecutor {
         .map_err(|_| Error::Unavailable)?;
         let settings = UserSettings::from_config(StackedConfig::with_defaults())
             .map_err(|_| Error::Unavailable)?;
-        let mut cache = match cache::Cache::open(&self.root, self.cache_policy, &budget) {
-            Ok(cache) => Some(cache),
-            Err(Error::Busy) if work.is_query() => None,
-            Err(error) => return Err(error),
-        };
-        let entry = match &mut cache {
-            Some(cache) => {
-                match cache.prepare(access.as_ref(), &stores, &budget, &self.residents) {
-                    Ok(entry) => Some(entry),
-                    Err(Error::Limit) if work.is_query() && cache.can_use_reserved_fallback() => {
-                        None
+        let required_filter =
+            matches!(&work, Work::References(request, _) if !request.query.is_empty());
+        let want_filters = matches!(work, Work::Prepare) && self.reference_filters();
+        let mut reclaimed = false;
+        let (cache, entry) = loop {
+            let mut cache = match cache::Cache::open(&self.root, self.cache_policy, &budget) {
+                Ok(cache) => Some(cache),
+                Err(Error::Busy) if work.is_query() => None,
+                Err(Error::Limit) if !reclaimed => {
+                    reclaimed = true;
+                    if self.residents.reclaim_filtered() {
+                        continue;
                     }
-                    Err(error) => return Err(error),
+                    return Err(Error::Limit);
                 }
-            }
-            None => None,
+                Err(error) => return Err(error),
+            };
+            let result = match &mut cache {
+                Some(cache) => cache
+                    .prepare(
+                        access.as_ref(),
+                        &stores,
+                        &budget,
+                        &self.residents,
+                        want_filters,
+                    )
+                    .map(Some),
+                None => Ok(None),
+            };
+            let entry = match result {
+                Ok(entry) => entry,
+                Err(Error::Limit)
+                    if work.is_query()
+                        && cache
+                            .as_ref()
+                            .is_some_and(|c| c.can_use_reserved_fallback()) =>
+                {
+                    None
+                }
+                Err(error @ (Error::Limit | Error::Busy)) if !reclaimed => {
+                    drop(cache);
+                    reclaimed = true;
+                    if self.residents.reclaim_filtered() {
+                        continue;
+                    }
+                    return Err(error);
+                }
+                Err(error) => return Err(error),
+            };
+            break (cache, entry);
         };
+        let mut cache = cache;
         if entry.is_none() {
             let blocked = if cache.is_some() {
                 Error::Limit
@@ -602,6 +640,9 @@ impl GraphExecutor {
             };
             drop(cache);
             let saved = self.residents.get_memory(access.as_ref()).ok_or(blocked)?;
+            if required_filter && !saved.index.has_reference_filter() {
+                return Err(Error::IndexRebuildRequired);
+            }
             budget.start_index(false)?;
             // Construct fresh request-scoped native capabilities. The saved
             // index carries no previous caller's authorization or backend.
@@ -652,6 +693,7 @@ impl GraphExecutor {
             self.residents.clone(),
             access.clone(),
             matches!(work, Work::Prepare),
+            required_filter,
         )?;
         let repo = stores
             .load_at(&loader, access.operation())

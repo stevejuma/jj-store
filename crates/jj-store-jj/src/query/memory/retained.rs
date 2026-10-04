@@ -49,6 +49,25 @@ impl<T: Send + Sync + 'static> Retained<T> {
     pub(crate) fn present(&self) -> bool {
         self.value.lock().expect("resident slot").is_some()
     }
+    pub(crate) fn evict_idle_if(&self, matches: impl FnOnce(&T) -> bool) -> bool {
+        let value = {
+            let Ok(mut value) = self.value.try_lock() else {
+                return false;
+            };
+            if value
+                .as_ref()
+                .is_some_and(|value| Arc::strong_count(value) == 1 && matches(value))
+            {
+                value.take()
+            } else {
+                None
+            }
+        };
+        let reclaimed = value.is_some();
+        // File and allocation cleanup can acquire other locks.
+        drop(value);
+        reclaimed
+    }
 }
 impl<T: Send + Sync + 'static> Entry for Retained<T> {
     fn used(&self) -> u64 {
@@ -58,28 +77,27 @@ impl<T: Send + Sync + 'static> Entry for Retained<T> {
         self.present()
     }
     fn evict_idle(&self) {
-        let value = {
-            let Ok(mut value) = self.value.try_lock() else {
-                return;
-            };
-            if value
-                .as_ref()
-                .is_some_and(|value| Arc::strong_count(value) == 1)
-            {
-                value.take()
-            } else {
-                None
-            }
-        };
-        // Dropping an object can release multiple leases and remove scratch.
-        // Never do that while holding a pool or slot lock.
-        drop(value);
+        self.evict_idle_if(|_| true);
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn selective_idle_reclamation_preserves_active_and_unmatched_values() {
+        let pool = Arc::new(Pool::new(100));
+        let one = Retained::in_pool(Arc::new(pool.reserve(40).unwrap()), pool.clone());
+        let two = Retained::in_pool(Arc::new(pool.reserve(40).unwrap()), pool.clone());
+        let active = one.get().unwrap();
+        assert!(!one.evict_idle_if(|_| true));
+        assert!(!two.evict_idle_if(|_| false));
+        assert!(two.evict_idle_if(|_| true));
+        assert_eq!(pool.used.load(Ordering::Acquire), 40);
+        drop(active);
+        assert!(one.evict_idle_if(|_| true));
+        assert_eq!(pool.used.load(Ordering::Acquire), 0);
+    }
     #[test]
     fn shared_pool_reclaims_idle_native_and_local_generations_before_growth() {
         let pool = Arc::new(Pool::new(100));

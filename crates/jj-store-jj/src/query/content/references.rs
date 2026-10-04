@@ -2,6 +2,7 @@
 use super::*;
 use serde::Deserialize;
 use std::collections::{BTreeMap, BTreeSet};
+mod filter;
 mod prepared;
 pub(in crate::query) use prepared::read as read_prepared;
 

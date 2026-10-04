@@ -155,6 +155,15 @@ async fn disk_preparation_matches_pinned_upstream_index_bytes() {
                 std::fs::read(segment).unwrap(),
                 std::fs::read(expected_segment).unwrap()
             );
+            // Derived text files have their own identity proof; they do not
+            // change the upstream segment or operation-link comparison.
+            use sha2::{Digest as _, Sha256};
+            let filter = find(cache.path(), "local-reference-filter").unwrap();
+            let sum = find(cache.path(), "local-reference-filter.sha256").unwrap();
+            assert_eq!(
+                std::fs::read(sum).unwrap(),
+                Sha256::digest(std::fs::read(filter).unwrap()).as_slice()
+            );
             let result = read.graph(&exec, log("all()"), page(100)).await.unwrap();
             assert_eq!(result.cache.state, q::cache::State::Reused);
             assert_eq!(commits(&result)[0].commit.id, cid(merge.id()));

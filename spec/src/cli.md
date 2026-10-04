@@ -1866,3 +1866,32 @@ seeks, checksums, operation selection, growth admission and canceled/budgeted
 queries. Actual local HTTP evidence MUST retain cold exact-operation recovery,
 prepared retry and query-bound signed forward/backward cursors. Complete
 large-repository and production browser qualification remains deferred.
+
+Native prepared-filter regression MUST compare 108 bookmark/change/all windows
+against complete ordinary pinned results across Unicode, sparse/missing text,
+hidden predecessors, divergent visible targets, removed bookmark terms and both
+directions with arbitrary anchors. An ordinary history budget below the fixture
+closure must still serve the prepared page while reading only its selected
+target bodies. Preserve unfiltered and small-cache bounded behavior.
+
+Native filtered-cache acceptance MUST upgrade an index-only generation through
+explicit preparation and verify pinned cold recovery, executor loss and restart.
+When another readonly reader owns its disk generation, failed inline recovery
+must leave the files and byte charge intact. Successful recovery replaces the
+same slot without duplicate accounting. Pressure tests must hold an executing
+reader while a third operation needs a two-slot cache, reclaim an idle filtered
+resident and preserve the executing reader's exact rows, files and charge. Unit
+evidence must refuse deleting or uncharging active pinned slots and skip them
+when another generation is removable. Complete process/fault/RSS and
+large-repository qualification stays deferred.
+
+Focused native HTTP evidence must cover filtered cold recovery through the
+explicit index task, compare unfiltered first-page identities, and preserve
+query-bound signed forward/backward cursors across later publication. The
+original snapshot remains selected; complete contract/browser qualification is
+still separate.
+
+Native admission arithmetic must distinguish bounded reader memory from complete
+filter-file disk quota for a two-million-row index, without raising the process
+pool. This private regression proves retention arithmetic, not measured RSS or
+large-repository serving.

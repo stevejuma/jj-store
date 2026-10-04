@@ -1,4 +1,6 @@
 use super::*;
+#[path = "filter_cache.rs"]
+mod filter_cache;
 
 struct HeldCommitRead {
     inner: Arc<dyn jj_store_object::ObjectStore>,

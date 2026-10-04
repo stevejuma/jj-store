@@ -908,7 +908,8 @@ async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_public
     );
     let path = "log?at_time_millis=1790000000000&revset=all()&limit=1";
     // Native reference windows participate in the same exact-snapshot recovery.
-    let reference_path = "references?kind=changes&limit=1";
+    let reference_path = "references?kind=changes&q=change%3A&limit=1";
+    let unfiltered_path = "references?kind=changes&limit=1";
     let (status, reference_rebuild) = json(&router, &f.f.reader, reference_path).await;
     assert_eq!(status, StatusCode::CONFLICT);
     assert_eq!(reference_rebuild["code"], "index_rebuild_required");
@@ -916,6 +917,13 @@ async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_public
         reference_rebuild["snapshot"]["operation_id"]
             .as_str()
             .is_some()
+    );
+    let (status, unfiltered_rebuild) = json(&router, &f.f.reader, unfiltered_path).await;
+    assert_eq!(status, StatusCode::CONFLICT);
+    assert_eq!(unfiltered_rebuild["code"], "index_rebuild_required");
+    assert_eq!(
+        unfiltered_rebuild["snapshot"],
+        reference_rebuild["snapshot"]
     );
     // Metadata-only bookmark/workspace reads remain available without an index.
     for kind in ["bookmarks", "workspaces"] {
@@ -965,6 +973,12 @@ async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_public
     let (status, reference_first) = json(&router, &f.f.reader, reference_path).await;
     assert_eq!(status, StatusCode::OK);
     assert_eq!(reference_first["snapshot"], first["snapshot"]);
+    let (status, unfiltered_first) = json(&router, &f.f.reader, unfiltered_path).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(
+        unfiltered_first["data"]["references"],
+        reference_first["data"]["references"]
+    );
     let reference_cursor = reference_first["next_cursor"].as_str().unwrap();
     let original: m::OperationId = operation.parse().unwrap();
     let mut later = f.operation.clone();

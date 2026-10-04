@@ -34,6 +34,13 @@ fn verify_files(
             return Err(Error::Unavailable);
         }
     }
+    let filter = super::super::prepared::filters::NAME;
+    let checksum = format!("{filter}.sha256");
+    match (files.remove(filter), files.remove(&checksum)) {
+        (None, None) => {}
+        (Some(data), Some(sum)) if data.bytes > 0 && sum.bytes == 32 => {}
+        _ => return Err(Error::Unavailable),
+    }
     if files.len() != 2 {
         return Err(Error::Unavailable);
     }

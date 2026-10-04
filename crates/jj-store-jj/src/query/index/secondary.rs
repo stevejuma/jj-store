@@ -26,17 +26,24 @@ impl Secondary {
         {
             return data.reader(self.budget.clone());
         }
-        let reservation = cache::Reservation::acquire_for_query(
-            &self.root,
-            self.access.repository(),
-            self.policy,
-            &self.budget,
-        )?;
+        let reserve = || {
+            cache::Reservation::acquire_for_query(
+                &self.root,
+                self.access.repository(),
+                self.policy,
+                &self.budget,
+            )
+        };
+        let reservation = match reserve() {
+            Err(Error::Limit) if self.residents.reclaim_filtered() => reserve()?,
+            result => result?,
+        };
         let path = reservation.path().join("index");
         std::fs::create_dir(&path).map_err(|_| Error::Unavailable)?;
         let bytes = cache::construction_bytes(reservation.path(), self.policy, &self.budget)?
             .min(reservation.bytes());
-        super::super::prepared::build(&path, operation, store, &self.budget, bytes, true).await?;
+        super::super::prepared::build(&path, operation, store, &self.budget, bytes, true, false)
+            .await?;
         cache::constructed::verify(&path, selected, self.policy, &self.budget)?;
         let memory = Arc::new(memory::Indexes::default());
         memory.reserve(
@@ -60,6 +67,9 @@ impl Secondary {
             store,
             self.access.as_ref(),
             &self.budget,
+            reservation.path(),
+            &path,
+            selected,
         )
         .await?;
         self.budget.authorize(self.access.as_ref()).await?;

@@ -45,12 +45,14 @@ struct GuardedIndexStore {
     inner: DefaultIndexStore,
     budget: Arc<Budget>,
     path: PathBuf,
+    generation: PathBuf,
     cache_policy: cache::Policy,
     resident: Option<Arc<cache::resident::Saved>>,
     secondary: Arc<secondary::Secondary>,
     primary: Mutex<Option<cache::resident::Data>>,
     access: Arc<dyn ReadAccess>,
     preparing: bool,
+    required_filter: bool,
 }
 impl fmt::Debug for GuardedIndexStore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -85,18 +87,34 @@ impl IndexStore for GuardedIndexStore {
                 .map_err(|e| IndexStoreError::Read(Box::new(e)));
         }
         if let Some(saved) = &self.resident {
+            if self.required_filter && !saved.index.has_reference_filter() {
+                return Err(IndexStoreError::Read(Box::new(
+                    self.budget.fail(Error::IndexRebuildRequired),
+                )));
+            }
             let data = saved.data();
             *self.primary.lock().unwrap() = Some(data.clone());
             return data
                 .reader(self.budget.clone())
                 .map_err(|e| IndexStoreError::Read(Box::new(e)));
         }
-        if !self
+        let missing_filter = !self
             .path
-            .join("op_links")
-            .join(operation.id().hex())
+            .join(super::prepared::filters::NAME)
             .try_exists()
-            .map_err(|e| IndexStoreError::Read(Box::new(e)))?
+            .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
+        if self.required_filter && missing_filter && !self.preparing {
+            return Err(IndexStoreError::Read(Box::new(
+                self.budget.fail(Error::IndexRebuildRequired),
+            )));
+        }
+        if (self.preparing && self.cache_policy.reference_filters() && missing_filter)
+            || !self
+                .path
+                .join("op_links")
+                .join(operation.id().hex())
+                .try_exists()
+                .map_err(|e| IndexStoreError::Read(Box::new(e)))?
         {
             let bytes = cache::construction_bytes(
                 self.path
@@ -113,6 +131,7 @@ impl IndexStore for GuardedIndexStore {
                 &self.budget,
                 bytes,
                 !self.preparing,
+                self.preparing && self.cache_policy.reference_filters(),
             )
             .await
             .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
@@ -165,6 +184,9 @@ impl IndexStore for GuardedIndexStore {
                 store,
                 self.access.as_ref(),
                 &self.budget,
+                &self.generation,
+                &self.path,
+                selected,
             )
             .await
             .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
@@ -198,6 +220,7 @@ pub(super) fn loader(
     residents: Arc<cache::resident::Residents>,
     access: Arc<dyn ReadAccess>,
     preparing: bool,
+    required_filter: bool,
 ) -> Result<RepoLoader> {
     stores
         .verify_cache_binding(path)
@@ -210,6 +233,7 @@ pub(super) fn loader(
         budget: budget.clone(),
     });
     let mut factories = default_backend_factories();
+    let generation = path.to_owned();
     factories.merge(stores.factories());
     factories.add_index_store(
         "default",
@@ -218,12 +242,14 @@ pub(super) fn loader(
                 inner: DefaultIndexStore::load(path),
                 budget: budget.clone(),
                 path: path.to_owned(),
+                generation: generation.clone(),
                 cache_policy,
                 resident: resident.clone(),
                 secondary: secondary.clone(),
                 primary: Mutex::default(),
                 access: access.clone(),
                 preparing,
+                required_filter,
             }))
         }),
     );

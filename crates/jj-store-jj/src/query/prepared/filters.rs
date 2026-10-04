@@ -11,7 +11,7 @@ use std::{
     ops::Bound,
 };
 
-const NAME: &str = "local-reference-filter";
+pub(crate) const NAME: &str = "local-reference-filter";
 const MAGIC: &[u8; 8] = b"JSTLRF1\0";
 const TEXT: Table = TableDefinition::new("text");
 const SIZES: Table = TableDefinition::new("sizes");

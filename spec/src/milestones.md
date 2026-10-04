@@ -80923,6 +80923,286 @@ entries.
       "Native description filtering still needs correct disk-handle/cache-generation lifetime and quota ownership, recovery and selected-page semantics. Different embedded operation references, indexed child neighbors, deep operation/predecessor/copy/search continuations, retained oversized comparisons/change grouping and filtered candidate continuation, paged RPCs and remaining local application search/index features remain delivery work.",
       "Full combined integration/contracts, Linux/native large/near-capacity fixtures, construction footprint, complex-frontier peak pressure, isolated RSS/release latency, cold built browser, faults/cancellation/revocation/restart/publication/real RustFS, registry/release and Help/source-review refresh remain deferred. No milestone promotion. Unrelated root aggregate/UI/contract-generation lanes are out of scope. Visual baselines remain unapproved. Inherited __eh_frame linker warning and prior strict-lint gaps remain deferred."
     ]
+  },
+  {
+    "id": "E-READ-047",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "enclosing Jujutsu change uvwwwsmn",
+    "kind": "Native prepared substring windows with quota-owned immutable filter readers",
+    "versions": "Rust1.98.1; jj-lib/jj-cli source pinned0.45.1; redb4.3.0; macOS ARM64.",
+    "formats": "No native/index6/receipt/companion/WAL, public DTO/schema, RPC or signed cursor format changes. Eligible explicit native preparation shares the existing disposable JSTLRF1 description/reference projection, complete SHA256 sidecar and bounded redb reader lease. Pin bookkeeping is an empty root reader-pin marker excluded from immutable receipts; it owns no source authority. Sorted postings only nominate candidates; exact selected visibility, Unicode-lowercased text and bookmark added/removed terms decide rows before selected hydration. Idle-only reclamation runs outside namespace/cache locks; active readers retain their files, full slot quota and allocation leases. Cold pinned recovery stays in place under shared ownership; unpinned recovery remains privately reserved. Index-only generations upgrade only through explicit preparation. Small-cache memory-only policies preserve ordinary bounded fallback. Resident retention uses framed JJ allocation bytes and bounded filter-cache memory; physical database bytes stay in disk quota. Prior index-allocation charges remain attached when an existing resident is wrapped in fresh request ownership.",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/browsing.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/filter_cache.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/reference_filters.rs",
+      "crates/jj-store-jj/src/query/access.rs",
+      "crates/jj-store-jj/src/query/cache/constructed.rs",
+      "crates/jj-store-jj/src/query/cache/generation.rs",
+      "crates/jj-store-jj/src/query/cache/recovery.rs",
+      "crates/jj-store-jj/src/query/cache/resident/additional.rs",
+      "crates/jj-store-jj/src/query/cache/resident.rs",
+      "crates/jj-store-jj/src/query/cache.rs",
+      "crates/jj-store-jj/src/query/content/references/filter.rs",
+      "crates/jj-store-jj/src/query/content/references/prepared.rs",
+      "crates/jj-store-jj/src/query/content/references.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/src/query/index/secondary.rs",
+      "crates/jj-store-jj/src/query/index.rs",
+      "crates/jj-store-jj/src/query/memory/retained.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/src/query/prepared/filters.rs",
+      "crates/jj-store-jj/src/query/prepared/mod.rs",
+      "crates/jj-store-jj/src/query/projection/decorations.rs",
+      "crates/jj-store-jj/src/query/projection/filter.rs",
+      "crates/jj-store-jj/src/query/projection.rs",
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md"
+    ],
+    "next": "Move cold full receipt hashing outside namespace ownership, then different embedded operation references and indexed deep/comparison/search/RPC delivery. Keep complete qualification separate.",
+    "scope": "Private native filtering, shared resident/cache ownership and direct graph/content/HTTP consumers. Exact regressions and focused package checks only; no combined integration, full contracts, UI, large fixtures or release qualification. Final admission adjustment reruns its exact arithmetic regression, affected cache units, native filtering/cache/graph/preparation/HTTP consumers and direct package checks.",
+    "requirements": ["JST-JJ-003", "JST-JJ-005"],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/reference_filters.rs#native_filtered_references_seek_pinned_text_before_selected_target_reads",
+      "crates/jj-store-cli/tests/native_lifecycle/filter_cache.rs#native_filter_upgrade_and_pinned_cold_recovery_preserve_exact_generation",
+      "crates/jj-store-cli/tests/native_lifecycle/filter_cache.rs#native_filter_quota_reclaims_idle_residents_and_preserves_live_reader_files",
+      "crates/jj-store-jj/src/query/cache/generation.rs#readonly_generation_pins_preserve_files_and_quota_until_last_reader_exits",
+      "crates/jj-store-jj/src/query/cache/generation.rs#pinned_slots_stay_charged_and_eviction_skips_to_a_removable_generation",
+      "crates/jj-store-jj/src/query/memory/retained.rs#selective_idle_reclamation_preserves_active_and_unmatched_values",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#disk_preparation_matches_pinned_upstream_index_bytes",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication",
+      "crates/jj-store-jj/src/query/cache/resident.rs#native_resident_admission_counts_index_allocations_and_bounded_filter_cache"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_filtered_references_seek_pinned_text_before_selected_target_reads -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1fail/0pass/0.69s tests. Prepared nonempty query fell back to the ordinary reader and exceeded its four-visit budget. native-filter-before-047.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_filtered_references_seek_pinned_text_before_selected_target_reads -- --nocapture (initial compile)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Compiler rejected len() on the opaque local_bookmarks iterator (E0599); corrected to the admitted view map. Tool output; intermediate log was replaced by the after run."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_filtered_references_seek_pinned_text_before_selected_target_reads -- --nocapture (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0failed/109.09s tests,66s compile. native-filter-after-047.log. All108 windows passed; selected page4object reads/27524bytes/2385work. Diagnostic process sample showed repeated ordinary-source hydration, not a stuck prepared reader. Oracle reuse subsequently retains all108 comparisons while eliminating repeated identical ordinary reads."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_filter -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass/0failed/28.62s tests,45.21s build. native-filter-final-047.log.108 differential windows, explicit upgrade, failed/successful pinned cold recovery, restart and idle-pressure/live-reader ownership."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::cache -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "10pass/0failed/0.33s tests. native-filter-cache-unit-047.log. Complete affected private cache-unit module; no full crate suite."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::memory::retained -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "4pass/0failed. native-filter-memory-unit-047.log. Complete affected retained-memory unit module."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cache_acceptance -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "18pass/0failed/5.78s tests,28.59s build. native-filter-cache-consumers-047.log. Complete focused native cache consumers, including authorization, corruption, symlinks, cancellation, cold/private construction, historical scopes and eviction."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "17package dependency boundaries pass. native-filter-boundaries-047.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli; pnpm exec prettier --write spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed Rust/docs formatted; native-filter-doc-format-047.log. Focused final checks follow."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::projection:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 45 filtered out; finished in 0.04s. 0.46s command. native-filter-consumer-00-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::prepared::filters:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 45 filtered out; finished in 2.14s. 2.55s command. native-filter-consumer-01-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_references_select_visible_windows_before_target_reads -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 221 filtered out; finished in 49.67s. 67.12s command. native-filter-consumer-02-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_query_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 217 filtered out; finished in 1.51s. 17.21s command. native-filter-consumer-03-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked disk_preparation_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 220 filtered out; finished in 0.87s. 16.66s command. native-filter-consumer-04-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked index_preparation:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 222 filtered out; finished in 0.00s. 14.83s command. native-filter-consumer-05-047.log. Focused direct consumers; no full suite. This selected zero tests and proves no preparation behavior; corrected index_acceptance:: lane follows."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 221 filtered out; finished in 0.93s. 19.41s command. native-filter-consumer-06-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 221 filtered out; finished in 0.52s. 16.11s command. native-filter-consumer-07-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked query_workers_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 219 filtered out; finished in 0.31s. 26.86s command. native-filter-consumer-08-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "25.6s command. native-filter-consumer-09-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.41s command. native-filter-consumer-10-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.25s command. native-filter-consumer-11-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.46s command. native-filter-consumer-12-047.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked index_acceptance:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "6pass/0failed/1.89s tests,17.80s build. native-filter-preparation-consumers-047.log. Correct module filter covers preparation policy, independent work/membership bounds, explicit task/cursor pinning, disposal and cancellation."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked native_resident_admission_counts_index_allocations_and_bounded_filter_cache -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1fail/0pass/6.25s build. native-filter-resident-before-047.log. Old retention counted a1GiB disk-only database as resident RAM and produced2965377122bytes, rejecting the bounded two-million-row allocation. Arithmetic only; no actual large fixture."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked native_resident_admission_counts_index_allocations_and_bounded_filter_cache -- --nocapture (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0failed/7.17s build. native-filter-resident-after-047.log. Actual framed allocations plus bounded filter cache leave128MiB headroom in unchanged pool; another512MiB disk-file growth does not increase resident admission. Full file remains counted by cache disk quota; no RSS proof."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "138tasks;27protected files/4chapters;5validators/23chapters/172requirements pass. native-filter-progress/spec-first/spec-047.log. Initial evidence before final retention adjustment; final checks follow. No milestone promotion."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::cache -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 0.21s. 1.23s command. native-filter-admission-final-00-047.log. Final resident-admission adjustment; focused affected consumers only."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_filter -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 219 filtered out; finished in 22.20s. 95.57s command. native-filter-admission-final-01-047.log. Final resident-admission adjustment; focused affected consumers only."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cache_acceptance -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 204 filtered out; finished in 6.02s. 20.74s command. native-filter-admission-final-02-047.log. Final resident-admission adjustment; focused affected consumers only."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_query_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 217 filtered out; finished in 1.48s. 17.9s command. native-filter-admission-final-03-047.log. Final resident-admission adjustment; focused affected consumers only."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked index_acceptance:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 216 filtered out; finished in 1.81s. 19.97s command. native-filter-admission-final-04-047.log. Final resident-admission adjustment; focused affected consumers only."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 221 filtered out; finished in 0.93s. 15.91s command. native-filter-admission-final-05-047.log. Final resident-admission adjustment; focused affected consumers only."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "15.39s command. native-filter-admission-final-06-047.log. Final resident-admission adjustment; focused affected consumers only."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.04s command. native-filter-admission-final-07-047.log. Final resident-admission adjustment; focused affected consumers only."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/architecture.md spec/src/cli.md docs/implementation-plan.md; pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical/doc/ledger formatting complete. native-filter-admission-doc-format/ledger-admission-format-047.log. Final checks below."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm exec prettier --check spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md (complete)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final admission-adjusted evidence:138tasks;27protected files/4canonical chapters;5validators/23chapters/172requirements and changed-doc formatting pass. native-filter-progress-complete/spec-first-complete/spec-complete/format-complete-047.log. No milestone promotion; complete qualification remains pending."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "59 unique focused Rust tests and direct JJ/service/HTTP/RPC/CLI checks pass. Native filtering is delivered under exact regression evidence; full Linux/native large fixtures, process RSS, disk footprint and release latency are not qualified. Original source repositories, main workspace and dev services remain unchanged; temporary workspace stays open.",
+      "Cold full receipt hashing still holds the namespace on executor recovery. Different embedded-operation references, indexed child neighbors, deep operation/predecessor/copy/search continuations, retained oversized differences/change groups and extreme filter candidate continuation, paged RPCs and remaining local application search/index remain delivery work.",
+      "Combined integration/contracts, Linux/native near-capacity fixtures, cold production browser, faults/cancellation/revocation/restart/publication/real RustFS, registry/release and Help/source-review refresh remain deferred. No milestone promotion. Unrelated root aggregates/UI/contract-generation lanes are out of scope. Visual baselines remain unapproved. Inherited __eh_frame linker warning and prior strict-lint gaps remain deferred."
+    ]
   }
 ]
 ```
