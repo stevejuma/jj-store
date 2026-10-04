@@ -10,6 +10,7 @@ pub(crate) mod memory;
 pub mod predicates;
 pub mod preparation;
 pub(crate) mod prepared;
+mod projection;
 pub mod workers;
 use crate::{
     backend::BackendLimits,
@@ -549,6 +550,8 @@ impl GraphExecutor {
             budget.clone(),
             preparation_bytes,
             entry.resident.clone(),
+            access.clone(),
+            matches!(work, Work::Prepare),
         )?;
         let repo = stores
             .load_at(&loader, access.operation())
@@ -564,8 +567,9 @@ impl GraphExecutor {
             // the loader retains the immutable resident until the query exits.
             let index = repo
                 .readonly_index()
-                .downcast_ref::<jj_lib::default_index::DefaultReadonlyIndex>()
+                .downcast_ref::<projection::Reader>()
                 .ok_or(Error::Unavailable)?
+                .prepared
                 .clone();
             let report = cache.finish(entry, access.as_ref(), &budget, index, &self.residents)?;
             drop(cache);
@@ -596,8 +600,9 @@ impl GraphExecutor {
         // Drop native loaders before replacing/removing their derived files.
         let resident_index = repo
             .readonly_index()
-            .downcast_ref::<jj_lib::default_index::DefaultReadonlyIndex>()
+            .downcast_ref::<projection::Reader>()
             .ok_or(Error::Unavailable)?
+            .prepared
             .clone();
         drop(repo);
         drop(loader);

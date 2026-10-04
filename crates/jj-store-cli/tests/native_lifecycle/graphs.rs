@@ -880,3 +880,6 @@ mod index_acceptance;
 
 #[path = "history_query.rs"]
 mod history_query_acceptance;
+
+#[path = "graph_projection.rs"]
+mod projection_acceptance;

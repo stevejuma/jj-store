@@ -1755,3 +1755,16 @@ below the visible closure, hydration stays within selected-page targets;
 source-index loss, later operations and differing embedded selections remain
 explicitly tested. Complete pressure/browser/lifecycle qualification is
 deferred.
+
+Native prepared-decoration regression MUST prepare with a separately bounded
+construction budget, serve a warm selected row below the work required to scan
+unrelated references, and reject a row whose own annotation output exceeds its
+ordinary work budget. Verify local/remote identity and workspace labels, pinned
+visibility/divergence and unchanged manifest state. Keep exact native graph and
+cache consumers in the focused delivery checks; large-scale and full lifecycle
+qualification remains deferred.
+
+Native projection recovery acceptance MUST reopen a previously prepared disk
+generation through a fresh executor, observe rebuild-required under a lower
+inline threshold, explicitly prepare and reproduce the exact pinned rows without
+changing the manifest.

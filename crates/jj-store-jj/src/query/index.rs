@@ -51,6 +51,8 @@ struct GuardedIndexStore {
     preparation_bytes: Option<u64>,
     resident: Option<Arc<cache::resident::Saved>>,
     disk_verified: AtomicBool,
+    access: Arc<dyn ReadAccess>,
+    preparing: bool,
 }
 impl fmt::Debug for GuardedIndexStore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -82,10 +84,10 @@ impl IndexStore for GuardedIndexStore {
                 .await
                 .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
         }
-        let index: Box<dyn ReadonlyIndex> = if let Some(resident) = &self.resident
+        let index = if let Some(resident) = &self.resident
             && operation.id().as_bytes() == resident.operation.as_bytes()
         {
-            Box::new(resident.index.clone())
+            resident.index.clone()
         } else {
             if let Some(resident) = &self.resident
                 && !self.disk_verified.load(Ordering::Acquire)
@@ -121,14 +123,42 @@ impl IndexStore for GuardedIndexStore {
                     || self.budget.work(1),
                 )
                 .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
-            index
+            let raw = index
+                .downcast_ref::<DefaultReadonlyIndex>()
+                .ok_or_else(|| {
+                    IndexStoreError::Read(Box::new(self.budget.fail(Error::Unavailable)))
+                })?;
+            if raw.num_commits() as usize > self.budget.limits.max_index_commits {
+                return Err(IndexStoreError::Read(Box::new(
+                    self.budget.fail(Error::IndexBudget),
+                )));
+            }
+            // A disk index alone lacks the resident visibility projection.
+            // Large missing projections use explicit preparation's own budget.
+            if !self.preparing
+                && raw.num_commits() as usize > self.budget.limits.max_inline_rebuild_commits
+            {
+                return Err(IndexStoreError::Read(Box::new(
+                    self.budget.fail(Error::IndexRebuildRequired),
+                )));
+            }
+            let view = operation
+                .view()
+                .await
+                .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
+            projection::Prepared::build(
+                raw.clone(),
+                &view,
+                store,
+                self.access.as_ref(),
+                &self.budget,
+            )
+            .await
+            .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?
         };
         // Warm indexes need the same hard bound, even when no commits are read.
         // Also applies to additional operations loaded by native predicates.
-        let count = index
-            .downcast_ref::<DefaultReadonlyIndex>()
-            .ok_or_else(|| IndexStoreError::Read(Box::new(self.budget.fail(Error::Unavailable))))?
-            .num_commits() as usize;
+        let count = index.num_commits() as usize;
         if count > self.budget.limits.max_index_commits {
             return Err(IndexStoreError::Read(Box::new(
                 self.budget.fail(Error::IndexBudget),
@@ -137,7 +167,7 @@ impl IndexStore for GuardedIndexStore {
         self.budget
             .check()
             .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
-        Ok(index)
+        Ok(index.reader(self.budget.clone()))
     }
     fn write_index(
         &self,
@@ -156,6 +186,8 @@ pub(super) fn loader(
     budget: Arc<Budget>,
     preparation_bytes: Option<u64>,
     resident: Option<Arc<cache::resident::Saved>>,
+    access: Arc<dyn ReadAccess>,
+    preparing: bool,
 ) -> Result<RepoLoader> {
     stores
         .verify_cache_binding(path)
@@ -172,6 +204,8 @@ pub(super) fn loader(
                 preparation_bytes,
                 resident: resident.clone(),
                 disk_verified: AtomicBool::new(false),
+                access: access.clone(),
+                preparing,
             }))
         }),
     );
@@ -210,7 +244,7 @@ impl IndexStore for ResidentIndexStore {
         if let Some(error) = failure {
             return Err(IndexStoreError::Read(Box::new(self.budget.fail(error))));
         }
-        Ok(Box::new(self.saved.index.clone()))
+        Ok(self.saved.index.reader(self.budget.clone()))
     }
     fn write_index(
         &self,

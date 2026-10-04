@@ -455,7 +455,7 @@ impl Cache {
         mut entry: Entry,
         access: &dyn ReadAccess,
         budget: &Budget,
-        index: jj_lib::default_index::DefaultReadonlyIndex,
+        index: projection::Prepared,
         residents: &resident::Residents,
     ) -> Result<Report> {
         let files = match &entry.resident {

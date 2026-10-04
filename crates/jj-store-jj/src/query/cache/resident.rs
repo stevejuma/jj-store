@@ -1,6 +1,5 @@
 //! Reuse verified immutable in-memory indexes, never unchecked on-disk bytes.
 use super::*;
-use jj_lib::default_index::DefaultReadonlyIndex;
 use std::sync::{
     Mutex,
     atomic::{AtomicU64, Ordering},
@@ -73,7 +72,7 @@ impl Verification {
     }
 }
 pub(in super::super) struct Saved {
-    pub index: DefaultReadonlyIndex,
+    pub index: projection::Prepared,
     path: PathBuf,
     repository: m::RepositoryId,
     epoch: m::EpochId,
@@ -157,7 +156,7 @@ impl Residents {
     }
     pub(super) fn remember(
         &self,
-        index: DefaultReadonlyIndex,
+        index: projection::Prepared,
         path: PathBuf,
         access: &dyn ReadAccess,
         files: BTreeMap<String, File>,
@@ -169,6 +168,7 @@ impl Residents {
         // Account Vec capacity slack, per-file/index metadata, names and hashes.
         let weight = bytes
             .saturating_mul(2)
+            .saturating_add(index.weight())
             .saturating_add(files.len() as u64 * 1024)
             .saturating_add(files.keys().map(|name| name.len() as u64 * 2).sum::<u64>());
         let ceiling = policy.max_total_bytes.min(super::super::memory::LIMIT);

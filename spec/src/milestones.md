@@ -31,7 +31,7 @@ shared-package release qualification does not alter those original Git gates.
 | M3.2        | Done        | M3.1                    | JST-JJ-001,JST-JJ-004,JST-JJ-005                                                                                                                                                                                  | Create edit describe log restart op-log evolog; multi-workspace                                                                | Retain native slice acceptance                                                                 | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | M3.3        | Done        | M3.2                    | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                                                                                                                                                                   | Custom command presentation and capability parity                                                                              | Retain native slice acceptance                                                                 | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | M4          | Deferred    | M3                      | JST-API-001,JST-API-005                                                                                                                                                                                           | Registry-only/shared-deployment browser finalization beyond the functional local application                                   | Future shared/package release                                                                  | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-M4-018,E-SCOPE-001,E-UI-007,E-UI-008,E-UI-016,E-UI-017,E-UI-018                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| M4.1        | Done        | M3                      | JST-API-001,JST-API-002,JST-JJ-003                                                                                                                                                                                | Pinned three-graph reads with zero GET publications                                                                            | Retain pinned read conformance                                                                 | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-READ-001,E-READ-003,E-READ-024 |
+| M4.1        | Done        | M3                      | JST-API-001,JST-API-002,JST-JJ-003                                                                                                                                                                                | Pinned three-graph reads with zero GET publications                                                                            | Retain pinned read conformance                                                                 | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-READ-001,E-READ-003,E-READ-024,E-READ-027 |
 | M4.2        | Done        | M4.1                    | JST-API-003,JST-API-006                                                                                                                                                                                           | Committed SSE and generated API contract deployment qualification                                                              | Retain real RustFS/TLS SSE conformance                                                         | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001,E-UI-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M4.3        | Deferred    | M4.1,M5,M6              | JST-API-004,JST-API-005                                                                                                                                                                                           | Shared/authenticated browser and separately packaged dependency finalization                                                   | Future shared/package release                                                                  | E-SCOPE-001,E-UI-007,E-UI-008,E-M4-018,E-UI-016,E-UI-017,E-UI-018                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M4.4        | Done        | Bootstrap               | JST-UI-001                                                                                                                                                                                                        | Isolated catalog types, interaction/a11y and static build                                                                      | Implement shell stories                                                                        | E-UI-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -78142,6 +78142,87 @@ entries.
     "crates/jj-store-cli/tests/local_browser/prepared_points_http.rs#local_point_http_uses_ready_membership_and_only_falls_back_when_cold",
     "crates/jj-store-cli/tests/local_browser/prepared_points.rs#prepared_historical_points_skip_ancestry_and_preserve_content_and_conflicts",
     "crates/jj-store-cli/tests/local_browser/prepared_details.rs#prepared_local_visibility_preserves_divergence_offsets_and_ten_thousand_bookmarks"
+  ]
+},
+{
+  "id": "E-READ-027",
+  "tasks": [
+    "M4.1"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change kumwspzq",
+  "kind": "Native prepared selected visibility and reverse bookmark/workspace annotations",
+  "versions": "Rust1.98.1; jj-lib0.45.1; Node26.9.0; pnpm10.32.1; macOS ARM64.",
+  "formats": "Native64-byte commit identities, JJ format6 and authoritative/wire formats unchanged. Prepared immutable memory retains selected visibility and reverse labels under shared allocation admission. Fresh request budgets/access remain mandatory. Large disk-only generations use existing explicit rebuild-required recovery.",
+  "files": [
+    "crates/jj-store-cli/tests/native_lifecycle/graph_projection.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+    "crates/jj-store-jj/src/query/cache/resident.rs",
+    "crates/jj-store-jj/src/query/cache.rs",
+    "crates/jj-store-jj/src/query/graphs.rs",
+    "crates/jj-store-jj/src/query/index.rs",
+    "crates/jj-store-jj/src/query/mod.rs",
+    "crates/jj-store-jj/src/query/projection.rs",
+    "spec/src/jj-integration.md",
+    "spec/src/cli.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-JJ-003",
+    "JST-JJ-005",
+    "JST-API-001"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_rows_reuse_visibility_and_charge_only_returned_labels -- --nocapture (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Selected base returned5,000 bookmark labels at work238 under max_work300 instead of Limit; native-projection-before.log. Exact failing assertion corrected to avoid dumping the entire row."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_rows_reuse_visibility_and_charge_only_returned_labels -- --nocapture (after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "1pass/8.83s. Two warm one-row windows reuse selected visibility/workspace/local/remote labels under work300; selected5,000-label row is refused before cloning. Manifest unchanged. native-projection-after.log."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance:: -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "29direct graph/cache/preparation/resource tests pass/7.48s,175unrelated tests filtered out. Includes exact after regression, explicit disk-generation projection recovery after executor restart, hidden evolution/divergence/conflicts, pinned three histories, revocation, quota/corruption and concurrent readers. native-projection-consumers.log. Linker compact-unwind size warning retained; no compilation failure."
+    },
+    {
+      "command": "cargo check -p jj-store-jj --lib --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected package passes/21.20s; CLI/server/service composition compiled through focused consumer tests. package-check-027.log."
+    },
+    {
+      "command": "cargo fmt -p jj-store-jj -p jj-store-cli; cargo fmt -p jj-store-jj -p jj-store-cli -- --check; pnpm exec prettier --write spec/src/jj-integration.md spec/src/cli.md; pnpm exec prettier --check spec/src/jj-integration.md spec/src/cli.md; pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "Focused formatting and spec-first8protected files/2chapters pass. format-rust-027.log/format-docs-027.log/spec-first-027.log."
+    },
+    {
+      "command": "pnpm spec:validate; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "5validators/23chapters/172requirements and138tasks pass; spec-027.log/progress-027.log. Historical evidence bytes preserved; no milestone promotion."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Shared global eviction of idle resident generations, immutable native cache/additional-operation construction and before-growth admission remain delivery work. Current projection reserves256bytes/indexed native commit plus exact head/name/term charges; this is an allocation estimate, not RSS qualification.",
+    "Prepared local operation/prefix/comparison and indexed filtering, deep lookup/native RPC, root-bound collaboration/search and lightweight visible repository cards remain implementation slices.",
+    "Complete combined qualification is deferred: Linux/native large fixtures, RSS/release latency, comprehensive contracts/cold-browser/restart/fault/real-RustFS, registry-only and Help review refresh. No milestone promotion; main/original dev services/Linux source untouched."
+  ],
+  "next": "Deliver shared native/local resident eviction and remaining high-priority performance features in this temporary workspace; comprehensive verification remains its own later slice.",
+  "scope": "Prepared native visibility/reverse-label delivery with exact regression and direct graph/cache consumers; no full-plan completion.",
+  "tests": [
+    "crates/jj-store-cli/tests/native_lifecycle/graph_projection.rs#native_prepared_rows_reuse_visibility_and_charge_only_returned_labels",
+    "crates/jj-store-cli/tests/native_lifecycle/graph_projection.rs#native_prepared_projection_is_recovered_explicitly_after_executor_restart",
+    "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_three_histories_filtered_edges_and_snapshot_pagination",
+    "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#warm_graph_starts_while_another_operation_is_preparing"
   ]
 }
 ]

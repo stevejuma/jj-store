@@ -923,3 +923,23 @@ change/all reference windows use a fresh scoped Store, seek before target
 hydration and need no graph RepoLoader. The wrapper rejects a different embedded
 operation. Preserve ordinary output/record/work limits and retain full search
 matching on the existing bounded path until indexed filtering is delivered.
+
+Native graph generations MUST retain selected-view visibility and reverse
+bookmark/workspace annotations alongside their verified immutable JJ index.
+Derive visibility once from indexed parents and reserve resident projection
+allocation before growth. Preserve pinned change-prefix ambiguity, hidden target
+offsets and divergence by overlaying exact visibility on the shared upstream
+change index. Reject different head selections. Fresh readers attach current
+request budgets and authorization, never an earlier caller's budget or access.
+Warm log/evolution rows charge and copy only their returned annotations rather
+than scanning all references or reconstructing ancestor visibility. Returned
+labels preserve local/remote ordering, identities and conflict terms. Selected
+operation/view objects still cross native integrity and current authorization;
+cache data cannot grant native membership. No authoritative/wire format changes.
+Complete scale/RSS/lifecycle qualification remains in the deferred slice.
+
+A verified disk index without its resident selected-view projection follows the
+same inline construction threshold as a missing index. Large generations return
+explicit rebuild-required recovery; preparation rebuilds the projection with its
+independent budget from verified disk data. Executor restart does not authorize
+an interactive ancestor traversal above that threshold.
