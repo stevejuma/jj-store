@@ -156,3 +156,32 @@ export function captureSettings(enabled = true): CaptureSettings {
     ],
   };
 }
+
+/** Mixed read-only coverage keeps selectors stable while the UI filters rows. */
+export function mixedCaptureSources(): CaptureSourcePage {
+  const page = captureSources();
+  const original = page.sources[0];
+  return {
+    ...page,
+    total: 5,
+    sources: [
+      original,
+      {
+        ...original,
+        selector: captureGeneration + ":0000000000000002",
+        profile: "cursor-desktop-transcript-v1",
+        product_version: "2.0",
+        awaiting_activity: false,
+        running: true,
+      },
+      {
+        ...original,
+        selector: captureGeneration + ":0000000000000003",
+        profile: "codex-desktop-jsonl-v1",
+        product_version: "0.159.2",
+        degraded: true,
+        ingress_required_capacity_bytes: 8192,
+      },
+    ],
+  };
+}

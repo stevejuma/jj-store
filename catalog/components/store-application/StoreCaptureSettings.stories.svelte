@@ -1,6 +1,15 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
+  import {
+    loadingCaptureSettings,
+    busyCaptureSettings,
+  } from "./capture-loading-play.js";
+  import {
+    codexConfigurationGroup,
+    captureSettingsLayout,
+    filteredCaptureSources,
+  } from "./capture-harness-play.js";
   import CaptureSettingsFixture from "../../fixtures/CaptureSettingsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Capture",
@@ -9,6 +18,16 @@
   });
 </script>
 
+<Story
+  name="Loading keeps controls visible and shows settings skeletons"
+  args={{ delayedObservations: true }}
+  play={loadingCaptureSettings}
+/>
+<Story
+  name="Busy observations stay loading without an unavailable notification"
+  args={{ busyObservations: true }}
+  play={busyCaptureSettings}
+/>
 <Story
   name="Operational errors use dismissed scoped notifications"
   args={{ feedbackControls: true }}
@@ -171,8 +190,8 @@
       c.getByText("Transcript capture is disabled in server configuration."),
     ).toBeVisible();
     await expect(
-      c.queryByRole("button", { name: "Pause capture" }),
-    ).not.toBeInTheDocument();
+      c.getByRole("button", { name: "Pause capture" }),
+    ).toBeDisabled();
   }}
 />
 <Story
@@ -233,40 +252,7 @@
 
 <Story
   name="Shared settings rows and action columns"
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
-    await expect(await c.findByText("Codex CLI source 1")).toBeVisible();
-    await expect(
-      c.getByRole("heading", { name: "Agents", level: 1 }),
-    ).toBeVisible();
-    const refresh = c.getByRole("button", { name: "Refresh capture" });
-    await expect(refresh.closest(".store-settings__tab-bar")).not.toBeNull();
-    await userEvent.click(c.getByRole("tab", { name: "Capture" }));
-    const pause = c.getByRole("button", { name: "Pause capture" });
-    const rescan = c.getByRole("button", { name: "Rescan capture" });
-    const actions = pause.closest(".store-settings__actions")!;
-    await expect(actions.parentElement?.parentElement).toHaveClass(
-      "store-settings__rows",
-    );
-    await expect(getComputedStyle(actions).flexDirection).toBe("column");
-    await expect(pause.getBoundingClientRect().width).toBe(
-      rescan.getBoundingClientRect().width,
-    );
-    await expect(rescan.getBoundingClientRect().top).toBeGreaterThan(
-      pause.getBoundingClientRect().bottom,
-    );
-    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
-    const sourceAction = c.getByRole("button", { name: /Import history for/ });
-    await expect(sourceAction.closest("dl")).toHaveClass(
-      "store-settings__rows",
-    );
-    await userEvent.click(c.getByRole("tab", { name: "Imports" }));
-    const request = c.getByRole("textbox", {
-      name: "Previous import request ID",
-    });
-    await expect(request.closest(".store-settings__rows")).not.toBeNull();
-  }}
+  play={captureSettingsLayout}
 />
 
 <Story
@@ -384,4 +370,14 @@
     await expect(c.queryByText(/Save outcome unknown\. Refresh/)).toBeNull();
     await expect(c.getByText("Enabled · Restart required")).toBeVisible();
   }}
+/>
+
+<Story
+  name="Codex configuration disclosure retains nested drafts"
+  play={codexConfigurationGroup}
+/>
+<Story
+  name="Sources table filters harnesses with stable selectors and counts"
+  args={{ multipleHarnesses: true }}
+  play={filteredCaptureSources}
 />

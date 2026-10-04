@@ -1743,9 +1743,38 @@ freshness; active views follow committed roots automatically while explicit
 historical selections retain their pins. Focused interaction/accessibility and
 cold flow evidence do not approve visual baselines.
 
+### Harness configuration and source coverage
+
+JST-UI-016 capture configuration MUST separate installation-wide enablement and
+resource limits from harness-specific settings. Each supported harness has a
+keyboard-accessible expandable section with its bundled avatar and nested
+settings in the existing divided Settings columns. The qualified Codex section
+contains CLI and Desktop capture toggles, folder overrides and resolved server
+defaults. Collapsing a section MUST retain the installation-owned draft and
+leave global settings and save/cancel controls available. Additional editable
+harness sections require qualified server configuration support.
+
+Sources MUST use a semantic data table within the rounded Settings border, with
+source, repository, state and history-action columns. A labelled harness filter
+changes only the displayed loaded rows; it MUST NOT alter observed coverage,
+source selectors, paging cursors or import intent. Source labels stay stable
+across filtering. Styled count badges distinguish filtered rows, loaded rows and
+total observed sources, including partial pages. Empty filtered coverage is
+explicit; More sources remains available independently of the filter. Tables
+scroll within their boundary on narrow screens without widening the page. Import
+actions retain current capability, runtime and exact-selector guards; deferred
+harnesses cannot import history.
+
 ### Usable capture settings lifecycle
 
-Opening the Agents section loads capture status and sources automatically. A
+Opening the Agents section loads capture status and sources automatically.
+Capture controls MUST remain visible and disabled while status is unknown,
+loading, busy, disabled or unsupported. Initial status, configuration and source
+reads use accessible skeleton rows with the existing Settings column structure;
+background refresh retains loaded content and drafts. A busy read is a deferred
+observation, not an unavailable error: controls remain guarded, ordinary reads
+retry within a bounded cancellable window and continue the visible refresh
+cycle. Real failures retain scoped notifications and exact pending commands. A
 serial five-second visible refresh retains the loaded source count and validates
 all replacement continuations, waking on focus and reconnect and after control
 acknowledgements. Closure cancels ordinary observations and removes polling;

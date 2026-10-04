@@ -1,6 +1,7 @@
 import type { CaptureSaveSettings } from "./capture-configuration.js";
 import type { Model } from "../api/client.js";
 import { LocalClient } from "../api/local-client.js";
+import { captureReadBusy } from "./capture-errors.js";
 import type {
   CaptureControl,
   CaptureImport,
@@ -10,20 +11,44 @@ import type {
 /** Installation management deliberately has no repository or bearer token. */
 export class HttpCaptureManagement implements CaptureTransport {
   constructor(private client = new LocalClient("")) {}
+  private async observe<T>(path: string, signal?: AbortSignal): Promise<T> {
+    const lifetime = AbortSignal.any([
+      this.client.closed.signal,
+      signal ?? new AbortController().signal,
+    ]);
+    for (let attempt = 0; ; attempt++) {
+      lifetime.throwIfAborted();
+      try {
+        return await this.client.request<T>(path, undefined, lifetime);
+      } catch (cause) {
+        if (!captureReadBusy(cause) || attempt === 4) throw cause;
+        await new Promise<void>((resolve, reject) => {
+          const cancel = () => {
+            clearTimeout(timer);
+            reject(lifetime.reason);
+          };
+          const timer = setTimeout(
+            () => {
+              lifetime.removeEventListener("abort", cancel);
+              resolve();
+            },
+            (attempt + 1) * 150,
+          );
+          lifetime.addEventListener("abort", cancel, { once: true });
+          if (lifetime.aborted) cancel();
+        });
+      }
+    }
+  }
   close() {
     this.client.close();
   }
   status(signal?: AbortSignal) {
-    return this.client.request<Model<"CaptureStatus">>(
-      "capture",
-      undefined,
-      signal,
-    );
+    return this.observe<Model<"CaptureStatus">>("capture", signal);
   }
   settings(signal?: AbortSignal) {
-    return this.client.request<Model<"LocalCaptureSettings">>(
+    return this.observe<Model<"LocalCaptureSettings">>(
       "capture/settings",
-      undefined,
       signal,
     );
   }
@@ -34,9 +59,8 @@ export class HttpCaptureManagement implements CaptureTransport {
     );
   }
   sources(cursor?: string, signal?: AbortSignal) {
-    return this.client.request<Model<"CaptureSourcePage">>(
+    return this.observe<Model<"CaptureSourcePage">>(
       `capture/sources?limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
-      undefined,
       signal,
     );
   }
@@ -59,9 +83,8 @@ export class HttpCaptureManagement implements CaptureTransport {
     );
   }
   inspect(id: string, signal?: AbortSignal) {
-    return this.client.request<Model<"CaptureImportStatus">>(
+    return this.observe<Model<"CaptureImportStatus">>(
       `capture/imports?request_id=${encodeURIComponent(id)}`,
-      undefined,
       signal,
     );
   }

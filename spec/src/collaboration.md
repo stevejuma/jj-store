@@ -3176,9 +3176,14 @@ startup remain separately gated.
 
 Capture presentation schedules ordinary status, loaded source coverage and
 original import progress observations independently of stable command ownership.
-UI closure or visibility cannot cancel, replace or automatically resend a
-pending command. Background source discovery never retargets an accepted import.
-Only qualified Codex profiles expose history import in the initial preview.
+The read-only busy response defers observation without reporting unavailable or
+discarding selected data. Bounded read retries honor cancellation; continued
+contention leaves initial data loading or retained observations refreshing.
+Command refusals, unknown outcomes and exact retry identities remain unchanged;
+automatic read retries MUST NOT resend mutation commands. UI closure or
+visibility cannot cancel, replace or automatically resend a pending command.
+Background source discovery never retargets an accepted import. Only qualified
+Codex profiles expose history import in the initial preview.
 
 Installation capture feedback follows JST-UI-019: operational failures use
 installation-scoped notifications while exact unknown-command recovery remains

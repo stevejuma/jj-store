@@ -15,6 +15,7 @@
     captureSources,
     captureStatus,
     captureSettings,
+    mixedCaptureSources,
   } from "./capture-management.js";
   import "../../web/src/lib/ui/store-settings/StoreSettings.css";
   let {
@@ -25,6 +26,9 @@
     degraded = false,
     feedbackControls = false,
     configurationFailure = "",
+    delayedObservations = false,
+    busyObservations = false,
+    multipleHarnesses = false,
   }: {
     supported?: boolean;
     enabled?: boolean;
@@ -33,17 +37,30 @@
     degraded?: boolean;
     feedbackControls?: boolean;
     configurationFailure?: "" | "stale" | "unknown";
+    delayedObservations?: boolean;
+    busyObservations?: boolean;
+    multipleHarnesses?: boolean;
   } = $props();
   const notifications = ownNotifications();
   let failedObservations = false;
+  let busyReads = untrack(() => busyObservations);
+  let releaseReads!: () => void;
+  let readGate = untrack(() =>
+    delayedObservations
+      ? new Promise<void>((resolve) => {
+          releaseReads = resolve;
+        })
+      : Promise.resolve(),
+  );
   let visible = $state(true);
   let value = captureStatus();
   let settings = untrack(() => captureSettings(enabled));
-  let accepted: CaptureImport | null = null;
+  let accepted = $state<CaptureImport | null>(null);
   let controlAttempts = 0,
     importAttempts = 0;
   const transport: CaptureTransport = {
     async settings() {
+      await readGate;
       return structuredClone(settings);
     },
     async saveSettings(command) {
@@ -60,7 +77,9 @@
       return structuredClone(settings);
     },
     async status() {
-      if (failedObservations) throw new ApiError("capture_control_busy");
+      if (failedObservations)
+        throw new ApiError("capture_management_unavailable");
+      if (busyReads) throw new ApiError("capture_control_busy");
       const result = structuredClone(value);
       if (!enabled)
         return { version: 1, enabled: false, policy: null, runtime: null };
@@ -73,7 +92,9 @@
     },
     async sources() {
       return enabled
-        ? captureSources()
+        ? multipleHarnesses
+          ? mixedCaptureSources()
+          : captureSources()
         : {
             version: 1,
             enabled: false,
@@ -117,7 +138,15 @@
       importAttempts++;
       if (importUnknown && importAttempts === 1)
         throw new TypeError("lost response");
-      return captureReceipt(command);
+      const outcome = captureReceipt(command);
+      if (multipleHarnesses) {
+        const source = mixedCaptureSources().sources.find(
+          (s) => s.selector === command.selector,
+        )!;
+        outcome.receipt.profile = source.profile;
+        outcome.receipt.product_version = source.product_version;
+      }
+      return outcome;
     },
     async inspect(id) {
       const outcome = captureReceipt(accepted ?? undefined);
@@ -147,6 +176,23 @@
   onDestroy(() => management.destroy());
 </script>
 
+{#if delayedObservations}<Button onclick={() => releaseReads()}
+    >Finish capture load</Button
+  >
+  <Button
+    onclick={() => {
+      readGate = new Promise<void>((resolve) => {
+        releaseReads = resolve;
+      });
+      void management.refresh();
+    }}>Delay capture refresh</Button
+  >{/if}
+{#if busyObservations}<Button
+    onclick={() => {
+      busyReads = false;
+      void management.refresh();
+    }}>Allow capture observations</Button
+  >{/if}
 {#if feedbackControls}
   <Button
     onclick={() => {
@@ -167,3 +213,7 @@
     repositoryName={() => "Capture repository"}
   />{/if}
 <StoreNotificationHost owner={notifications} />
+
+{#if multipleHarnesses && accepted}<output aria-label="Accepted source selector"
+    >{accepted.selector}</output
+  >{/if}

@@ -156,10 +156,12 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
     .toBe(true);
   await page.getByRole("tab", { name: "Sources", exact: true }).click();
   await expect(page.getByText("Codex CLI source 1")).toBeVisible();
-  const sourceRow = page.getByText("Codex CLI source 1").locator("..");
+  const sourceRow = page
+    .getByRole("row")
+    .filter({ hasText: "Codex CLI source 1" });
   const columns = await sourceRow.evaluate((row) => {
-    const label = row.querySelector("dt")!.getBoundingClientRect();
-    const control = row.querySelector("dd")!.getBoundingClientRect();
+    const label = row.querySelector("td:first-child")!.getBoundingClientRect();
+    const control = row.querySelector("td:last-child")!.getBoundingClientRect();
     return { labelRight: label.right, controlLeft: control.left };
   });
   expect(columns.controlLeft).toBeGreaterThan(columns.labelRight);
@@ -227,18 +229,17 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("tab", { name: "Sources", exact: true }).click();
-  const mobileColumns = await sourceRow.evaluate((row) => {
-    const label = row.querySelector("dt")!.getBoundingClientRect();
-    const control = row.querySelector("dd")!.getBoundingClientRect();
-    return {
-      labelLeft: label.left,
-      labelBottom: label.bottom,
-      controlLeft: control.left,
-      controlTop: control.top,
-    };
-  });
-  expect(mobileColumns.controlLeft).toBe(mobileColumns.labelLeft);
-  expect(mobileColumns.controlTop).toBeGreaterThan(mobileColumns.labelBottom);
+  await expect(
+    page.getByRole("table", { name: "Capture sources" }),
+  ).toBeVisible();
+  const scroll = page.locator(
+    '.store-capture-sources__table [data-slot="table-container"]',
+  );
+  expect(
+    await scroll.evaluate(
+      (element) => element.scrollWidth > element.clientWidth,
+    ),
+  ).toBe(true);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -277,8 +278,8 @@ test("capture notifications retain dismissal and drafts until observed recovery"
   await page.route("**/v1/local/capture**", (route) => {
     if (unavailable)
       return route.fulfill({
-        status: 409,
-        json: { version: 1, code: "capture_control_busy" },
+        status: 503,
+        json: { version: 1, code: "capture_management_unavailable" },
       });
     return route.fulfill({
       contentType: "application/json",

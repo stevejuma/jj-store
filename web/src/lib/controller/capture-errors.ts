@@ -1,4 +1,6 @@
 import { ApiError } from "../api/client.js";
+export const captureReadBusy = (cause: unknown) =>
+  cause instanceof ApiError && cause.code === "capture_control_busy";
 
 export const captureRefusals = new Set([
   "capture_management_denied",

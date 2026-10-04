@@ -1685,7 +1685,14 @@ appear in the response; the read contacts no harness and reads no pending body.
 
 Capture management is presented in installation-scoped Agents settings. Leaving
 that section cancels visible observations without replacing the original pending
-command or request-ID draft; the section does not select a repository.
+command or request-ID draft; the section does not select a repository. The
+browser treats `capture_control_busy` on ordinary GET observations as retryable
+contention. At most five read attempts with 150/300/450/600ms delays run per
+observation, with cancellation on closure. Exhaustion defers to the visible
+polling cycle without an unavailable toast. Other refusals and malformed
+responses remain errors; no POST request is retried by this read policy. Loading
+uses Settings skeleton rows, retained data survives refresh, and Capture
+controls stay visible with their existing capability/precondition guards.
 
 LocalTrusted Admin capture status exposes optional `configured_roots` per
 qualified harness as a bounded list of startup-resolved directory paths. Each

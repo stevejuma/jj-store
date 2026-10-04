@@ -148,7 +148,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006 |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -71113,6 +71113,155 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "XML transcript presentation and direct tool-story source-size correction only. No milestone promotion, historical evidence rewrite, Rust build, reimport/reset, service installation, main-runtime restart or publication. Root aggregates, full browser/Storybook inventories, unrelated packages and visual baseline approval are out of scope under targeted verification policy.",
   "next": "Use refreshed preview7470. Broader harness/release and visual-baseline qualification remain separately governed."
+},
+{
+  "id": "E-M18-010",
+  "tasks": [
+    "M18.8"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change truyzyxr",
+  "kind": "Usable capture loading, grouped Codex settings and harness-filtered source table",
+  "versions": "Node24.10.0; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; released Design Core Skeleton, Collapsible, Button, Table, Select and Badge; existing browser_preview binary.",
+  "formats": "UI and ordinary-read policy only. Existing CaptureSettings, CaptureStatus, CaptureSourcePage and receipt contracts remain unchanged. GET capture_control_busy retries at most five attempts with150/300/450/600ms delays, cancellable on closure. POST commands retain exact identity and are never automatically retried. Harness filtering is local presentation over loaded sources; paths/native keys remain absent from source rows.",
+  "files": [
+    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+    "catalog/components/store-application/capture-harness-play.ts",
+    "catalog/components/store-application/capture-loading-play.ts",
+    "catalog/fixtures/CaptureSettingsFixture.svelte",
+    "catalog/fixtures/capture-management.ts",
+    "spec/src/api.md",
+    "spec/src/collaboration.md",
+    "spec/src/ui.md",
+    "spec/src/milestones.md",
+    "web/src/lib/controller/capture-errors.ts",
+    "web/src/lib/controller/capture-http.ts",
+    "web/src/lib/controller/capture-observations.ts",
+    "web/src/lib/controller/capture-settings-management.ts",
+    "web/src/lib/ui/store-settings/StoreCaptureConfiguration.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureHarnessConfiguration.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureLoading.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+    "web/tests/browser/local-capture-loading.spec.ts",
+    "web/tests/browser/local-capture-settings.spec.ts",
+    "web/tests/vite/capture-freshness.test.ts",
+    "web/tests/vite/capture-observation-http.test.ts"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; jj --no-pager workspace list; read tracked/parent AGENTS, JJ and shadcn-svelte skills, owning canonical UI/API/collaboration chapters and milestone ledger; inspect Community settings and released Design Core primitives",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main continued authorized slice truyzyxr; clean preview uqwlnutu. Memory quick lookup gave no task-specific implementation evidence. All tracked edits belong to this slice."
+    },
+    {
+      "command": "Admitted live GET /v1/local/capture/settings, /v1/local/capture and /v1/local/capture/sources?limit=100 with protocol and same-origin Fetch Metadata headers",
+      "result": "pass",
+      "failures": 0,
+      "note": "Saved/effective settings are valid. Initial status/source409 capture_control_busy is transient worker coordination; four admitted busy reads precede200 within approximately400ms. Missing admission headers correctly403; no bypass. Artifacts .local/agent-settings-loading/{settings-before,status-before,sources-before,status-admitted}.json."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (loading before)",
+      "result": "fail",
+      "failures": 2,
+      "note": "stories-before.log:14 existing stories pass, two new loading/busy regressions fail before implementation."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-observation-http.test.ts web/tests/vite/capture-freshness.test.ts (before)",
+      "result": "fail",
+      "failures": 4,
+      "note": "units-before.log: seven tests pass; four retry/loading regressions fail. Two expected pre-implementation rejected-read diagnostics recorded; after runs have no unhandled errors."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (loading after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories-after.log:16 interactions/accessibility stories pass; initial fixture captured-prop warnings subsequently corrected with untrack."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (harness before)",
+      "result": "fail",
+      "failures": 3,
+      "note": "harness-before.log:15 pass. Group/table regressions and updated table-layout expectation fail before implementation."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (intermediate harness after)",
+      "result": "fail",
+      "failures": 2,
+      "note": "harness-after.log:16 pass. Corrected test assumptions about collapse animation and Select button/listbox semantics; no forced interactions or weakened assertions."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (intermediate verified/accepted)",
+      "result": "fail",
+      "failures": 1,
+      "note": "stories-verified.log and stories-accepted.log:17 pass, one fails from pointer-events lock during Select closing animation. Wait for restored pointer interaction before next click; test still proves exact selected import source."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories-final.log:18 stories pass. Loading and real refusal notifications, draft retention, keyboard Codex disclosure/avatar, semantic source table, mixed harness filters/stable labels, styled counts, empty filter coverage, qualified import guards and exact selector all pass. Visual-pending remains."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-observation-http.test.ts web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-settings.test.ts web/tests/vite/production-capture-management.test.ts (after/verified)",
+      "result": "pass",
+      "failures": 0,
+      "note": "units-after.log and units-verified.log:31 tests across five files pass, no unhandled diagnostics. Retries are bounded, GET-only and cancellable; real refusals/unknown commands retain guarded state and stable identity."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check (initial/intermediate)",
+      "result": "fail",
+      "failures": 7,
+      "note": "Initial web check passed; catalog had two fixture prop-capture warnings. Intermediate web had one $state shadowing error; catalog had five Testing Library API errors and one nonreactive fixture warning. Corrected captureState naming, documented role/label APIs, fixture untrack and reactive accepted-command state. Recorded logs retained."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check (accepted)",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-check-verified.log and catalog-check-accepted.log: zero errors/warnings; catalog178-module boundaries pass. Production stays independent of catalog. No contract generation required."
+    },
+    {
+      "command": "pnpm check:architecture (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "architecture.log:407 counted story lines exceed400. Existing layout/loading plays extracted into owned catalog helpers; all behavior and assertions retained."
+    },
+    {
+      "command": "pnpm check:architecture (verified/final); pnpm check:ui-ownership; pnpm check:boundaries; pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "architecture-final.log:912 modules pass. Ownership, package boundaries and protected-source/spec mappings pass; canonical validation has22 chapters167 requirements. Focused formatting uses changed UI/controller/test/doc files; historical ledger never whole-file formatted."
+    },
+    {
+      "command": "pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "build.log: fresh production bundle and asset manifest pass; existing chunk-size warning retained. No Rust build. Cold tests use existing explicit target/debug/examples/browser_preview on isolated7458, then Playwright stops it."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/agent-settings-loading/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "browser.log: all seven cold tests pass. Real built router verifies delayed initial loads, skeletons and visible disabled controls, two Busy refusals then recovery for each read with no unavailable toast; Codex collapse/draft/global controls; table border/radius, mixed filters/counts/stable exact-selector imports; mobile scroll/no viewport overflow; notification dismissal and pending intent; lifecycle polling and capability gate; Axe passes."
+    },
+    {
+      "command": "jj rebase -r uqwlnutu -d truyzyxr; jj workspace update-stale (clean preview); Cua live DOM and screenshots",
+      "result": "pass",
+      "failures": 0,
+      "note": "Preview7470 source refreshed without backend/main-runtime restart. Real local configuration shows global settings plus avatar-bearing Codex CLI/Desktop disclosure. Sources show4 loaded/observed; Cursor filter shows0 rows while retaining total4. No false unavailable toast; no real config/control/import submitted. Screenshot .local/agent-settings-loading/sources-preview.png. Temporary proof tab is closed after inspection; user tab retained."
+    },
+    {
+      "command": "pnpm check:progress; pnpm catalog:check (final); focused pnpm exec prettier --check; final historical evidence-prefix assertions",
+      "result": "pass",
+      "failures": 0,
+      "note": "progress.log:136 tasks pass. catalog-check-final-accepted.log: zero errors/warnings,178-module boundaries pass. format-check.log: all21 changed source/test/chapter files pass; append-only ledger excluded from whole-file formatting. All407 prior evidence objects and their raw JSON prefix retained. configuration-preview.png also records collapsed Codex/global separation. Temporary proof tab closed; user tab remains open."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Installation Agents settings and their direct controller observations only. Existing user/main-runtime/desktop processes and server config untouched. No Rust build, harness reader change, reimport/reset, installation or publication. Root aggregates, full browser/Storybook/Rust inventory, other harness qualification and visual baseline approval are out of scope under the targeted verification policy. No milestone promoted.",
+  "next": "Try Configuration and Sources in refreshed preview7470. Retain focused loading/group/filter/notification regressions; broader harness and release work stays deferred."
 }
 ]
 ```

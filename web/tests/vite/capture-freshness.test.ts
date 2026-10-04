@@ -41,17 +41,53 @@ function fixture() {
     }),
   };
 }
-test("capture conditions recover only after complete successful observations", async () => {
+test("busy capture observations wait without reporting unavailable or replacing snapshots", async () => {
   const f = fixture();
   try {
     vi.mocked(f.transport.status).mockRejectedValueOnce(
       new ApiError("capture_control_busy"),
     );
     await f.management.refresh();
+    expect(f.management.state.status).toBe("loading");
+    expect(f.management.state.error).toBe("");
+    expect(f.management.state.busy).toBe(false);
+    await f.management.refresh();
+    const value = structuredClone(f.management.state.value);
+    const sources = structuredClone(f.management.state.sources);
+    vi.mocked(f.transport.status).mockRejectedValueOnce(
+      new ApiError("capture_control_busy"),
+    );
+    await f.management.refresh();
+    expect(f.management.state.status).toBe("refreshing");
+    expect(f.management.state.value).toEqual(value);
+    expect(f.management.state.error).toBe("");
+    await f.management.control("pause");
+    expect(f.transport.control).not.toHaveBeenCalled();
+    vi.mocked(f.transport.sources).mockRejectedValueOnce(
+      new ApiError("capture_control_busy"),
+    );
+    await f.management.refresh();
+    expect(f.management.state.sourceState).toBe("refreshing");
+    expect(f.management.state.sources).toEqual(sources);
+    expect(f.management.state.error).toBe("");
+    await f.management.refresh();
+    expect(f.management.state.status).toBe("ready");
+    expect(f.management.state.sourceState).toBe("ready");
+  } finally {
+    f.management.destroy();
+  }
+});
+test("capture conditions recover only after complete successful observations", async () => {
+  const f = fixture();
+  try {
+    vi.mocked(f.transport.status).mockRejectedValueOnce(
+      new ApiError("capture_management_unavailable"),
+    );
+    await f.management.refresh();
     const error = f.management.state.error;
     expect(error).not.toBe("");
     vi.mocked(f.transport.sources).mockRejectedValueOnce(
-      new ApiError("capture_control_busy"),
+      new ApiError("capture_management_unavailable"),
     );
     await f.management.refresh();
     expect(f.management.state.error).not.toBe("");

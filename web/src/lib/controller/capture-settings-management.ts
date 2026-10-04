@@ -1,4 +1,5 @@
 import { ApiError } from "../api/client.js";
+import { captureReadBusy } from "./capture-errors.js";
 import type { Model } from "../api/client.js";
 import type {
   CaptureManagementState,
@@ -51,8 +52,13 @@ export function createCaptureSettings(options: {
         const value = await transport.settings(signal);
         if (selected === epoch && options.available() && !signal?.aborted)
           accept(value);
-      } catch {
-        if (selected === epoch && options.available() && !signal?.aborted)
+      } catch (cause) {
+        if (
+          selected === epoch &&
+          options.available() &&
+          !signal?.aborted &&
+          !captureReadBusy(cause)
+        )
           settings.error =
             "Agent configuration could not be loaded. Refresh settings to try again.";
       }

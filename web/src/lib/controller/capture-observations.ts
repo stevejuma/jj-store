@@ -9,7 +9,7 @@ import {
   validateCaptureSources,
   validateImportStatus,
 } from "./capture-validation.js";
-import { captureError } from "./capture-errors.js";
+import { captureError, captureReadBusy } from "./capture-errors.js";
 
 /** Ordinary observations have their own cancellation; commands retain installation ownership. */
 export function createCaptureObservations(options: {
@@ -26,7 +26,8 @@ export function createCaptureObservations(options: {
     controller === read && !read.signal.aborted && options.available();
   async function observe(read: AbortController) {
     state.busy = true;
-    if (!state.value) state.status = "loading";
+    state.status = state.value ? "refreshing" : "loading";
+    state.sourceState = state.sources ? "refreshing" : "loading";
     try {
       if (transport.settings) await options.observeSettings(read.signal);
       if (!current(read)) return false;
@@ -71,8 +72,12 @@ export function createCaptureObservations(options: {
         for (const cursor of visited) cursors.add(cursor);
       } catch (cause) {
         if (!current(read)) return false;
-        state.sourceState = "failed";
-        if (!state.pending)
+        state.sourceState = captureReadBusy(cause)
+          ? state.sources
+            ? "refreshing"
+            : "loading"
+          : "failed";
+        if (!state.pending && !captureReadBusy(cause))
           state.error = `${captureError(cause)} Source coverage could not be refreshed.`;
       }
       const id =
@@ -105,8 +110,13 @@ export function createCaptureObservations(options: {
       return state.sourceState === "ready";
     } catch (cause) {
       if (!current(read)) return false;
-      state.status = "failed";
-      if (!state.pending) state.error = captureError(cause);
+      state.status = captureReadBusy(cause)
+        ? state.value
+          ? "refreshing"
+          : "loading"
+        : "failed";
+      if (!state.pending && !captureReadBusy(cause))
+        state.error = captureError(cause);
       return false;
     } finally {
       if (controller === read) {
@@ -133,6 +143,8 @@ export function createCaptureObservations(options: {
       state.busy = false;
       if (state.status === "loading")
         state.status = state.value ? "ready" : "idle";
+      if (state.sourceState === "loading")
+        state.sourceState = state.sources ? "ready" : "idle";
     },
   };
 }

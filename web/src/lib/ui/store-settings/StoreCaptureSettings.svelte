@@ -19,6 +19,7 @@
   import StoreCaptureDiagnostics from "./StoreCaptureDiagnostics.svelte";
   import StoreCaptureSources from "./StoreCaptureSources.svelte";
   import StoreCaptureImport from "./StoreCaptureImport.svelte";
+  import StoreCaptureLoading from "./StoreCaptureLoading.svelte";
   let {
     management,
     section = $bindable("capture"),
@@ -47,6 +48,51 @@
 </script>
 
 <section class="store-settings__section" aria-label="Agent capture settings">
+  {#if section === "capture"}
+    <header><h2>Agent transcript capture</h2></header>
+    <div class="store-settings__rows store-settings__rows--controls">
+      <div>
+        <div>
+          <strong>Automatic transcript capture</strong>
+          <p class="store-settings__row-description">
+            Watch configured harness locations for active sessions linked to
+            this server. Settings apply to the whole local service. Status and
+            published Agents update automatically.
+          </p>
+          <p class="store-settings__row-description">
+            Pause policy persists across restarts. Worker status updates every
+            five seconds while this view is open.
+          </p>
+        </div>
+        <div class="store-settings__actions">
+          <Button
+            variant="outline"
+            disabled={!ready}
+            onclick={() =>
+              management?.control(
+                state?.value?.policy?.paused ? "resume" : "pause",
+              )}
+          >
+            {#if state?.value?.policy?.paused}<PlayIcon
+                data-icon="inline-start"
+                aria-hidden="true"
+              />{:else}<PauseIcon
+                data-icon="inline-start"
+                aria-hidden="true"
+              />{/if}
+            {state?.value?.policy?.paused ? "Resume capture" : "Pause capture"}
+          </Button>
+          <Button
+            variant="outline"
+            disabled={!ready || state?.value?.policy?.paused}
+            onclick={() => management?.rescan()}
+            ><RefreshCwIcon data-icon="inline-start" aria-hidden="true" />Rescan
+            capture</Button
+          >
+        </div>
+      </div>
+    </div>
+  {/if}
   {#if !management?.supported || !state}
     <StoreSettingsEmpty
       Icon={BotIcon}
@@ -54,57 +100,6 @@
       description="Capture management is not available for this connection."
     />
   {:else}
-    {#if section === "capture"}
-      <header><h2>Agent transcript capture</h2></header>
-      <div class="store-settings__rows store-settings__rows--controls">
-        <div>
-          <div>
-            <strong>Automatic transcript capture</strong>
-            <p class="store-settings__row-description">
-              Watch configured harness locations for active sessions linked to
-              this server. Settings apply to the whole local service. Status and
-              published Agents update automatically.
-            </p>
-            <p class="store-settings__row-description">
-              Pause policy persists across restarts. Worker status updates every
-              five seconds while this view is open.
-            </p>
-          </div>
-          <div class="store-settings__actions">
-            {#if state.value?.enabled}
-              <Button
-                variant="outline"
-                disabled={!ready}
-                onclick={() =>
-                  management.control(
-                    state.value?.policy?.paused ? "resume" : "pause",
-                  )}
-              >
-                {#if state.value.policy?.paused}<PlayIcon
-                    data-icon="inline-start"
-                    aria-hidden="true"
-                  />{:else}<PauseIcon
-                    data-icon="inline-start"
-                    aria-hidden="true"
-                  />{/if}
-                {state.value.policy?.paused
-                  ? "Resume capture"
-                  : "Pause capture"}
-              </Button>
-              <Button
-                variant="outline"
-                disabled={!ready || state.value.policy?.paused}
-                onclick={() => management.rescan()}
-                ><RefreshCwIcon
-                  data-icon="inline-start"
-                  aria-hidden="true"
-                />Rescan capture</Button
-              >
-            {/if}
-          </div>
-        </div>
-      </div>
-    {/if}
     {#if section === "configuration"}<StoreCaptureConfiguration
         {management}
       />{:else}
@@ -112,9 +107,6 @@
           >Saved capture settings require a local server restart. Runtime
           controls are unavailable until restart.</StoreSettingsNotice
         >{/if}
-      {#if state.status === "loading" || state.status === "refreshing"}
-        <StoreSettingsNotice>Loading capture status…</StoreSettingsNotice>
-      {/if}
       {#if state.value?.enabled}
         {#if section === "capture"}
           <StoreSettingsNotice
@@ -147,8 +139,16 @@
             </dd>
           </div>
         </dl>
-      {:else}<StoreSettingsNotice>Loading service coverage…</StoreSettingsNotice
-        >{/if}
+      {:else if section !== "sources" && section !== "imports"}
+        {#if state.status === "failed"}<StoreSettingsEmpty
+            Icon={BotIcon}
+            title="Capture status unavailable"
+            description="Status refresh will retry automatically while this page is open."
+          />{:else}<StoreCaptureLoading label="Loading capture status" />{/if}
+      {/if}
+      {#if section === "sources" && !state.value?.enabled && !state.value}
+        <StoreCaptureSources {management} {repositoryName} />
+      {/if}
       {#if state.pending?.uncertain}
         <Alert.Root role="status"
           ><InfoIcon aria-hidden="true" /><Alert.Title
