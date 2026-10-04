@@ -1629,6 +1629,11 @@ work. Current admission and private journal checks still run after acquisition.
 This read endpoint cannot enroll sources, import history, advance reader
 cursors, publish roots or change device policy.
 
+Browser harness and multiple-status filtering apply only to already loaded
+source observations. Their combination cannot add query fields, change page
+bounds or cursors, or reinterpret stable source selectors. Loaded and observed
+coverage counts remain those of the accepted source pages.
+
 `POST /v1/local/capture/import` is an actor-free version-1 command with
 request_id, generation, expected_revision and selector. Current local Admin and
 independent repository Write govern historical enrollment. Acknowledgement

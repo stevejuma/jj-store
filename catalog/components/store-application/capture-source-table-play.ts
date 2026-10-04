@@ -64,6 +64,7 @@ export async function sourceTableIdentification({
   await expect(c.queryByText("Codex CLI source 1")).toBeNull();
   await expect(c.getByText("1 shown")).toBeVisible();
   await expect(c.getByText("5 observed")).toBeVisible();
+  await userEvent.keyboard("{Escape}");
 }
 
 export async function sourceRefreshSpinner({

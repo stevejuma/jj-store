@@ -1,13 +1,11 @@
 <script lang="ts">
   import * as Select from "@lapismd/design-core/shadcn/select";
-  import {
-    captureSourceHarnesses,
-    captureSourceStatuses,
-  } from "./capture-source-presentation.js";
+  import { captureSourceHarnesses } from "./capture-source-presentation.js";
+  import StoreCaptureStatusFilter from "./StoreCaptureStatusFilter.svelte";
   let {
     harness = $bindable("all"),
-    status = $bindable("all"),
-  }: { harness?: string; status?: string } = $props();
+    statuses = $bindable([]),
+  }: { harness?: string; statuses?: string[] } = $props();
 </script>
 
 <div class="store-capture-sources__filters" aria-label="Source table filters">
@@ -26,21 +24,7 @@
       </Select.Group></Select.Content
     >
   </Select.Root>
-  <Select.Root type="single" bind:value={status}>
-    <Select.Trigger aria-label="Filter by source status"
-      >{captureSourceStatuses.find((s) => s.value === status)
-        ?.label}</Select.Trigger
-    >
-    <Select.Content
-      ><Select.Group
-        ><Select.Label>Status</Select.Label>
-        {#each captureSourceStatuses as s (s.value)}<Select.Item
-            value={s.value}
-            label={s.label}>{s.label}</Select.Item
-          >{/each}
-      </Select.Group></Select.Content
-    >
-  </Select.Root>
+  <StoreCaptureStatusFilter bind:value={statuses} />
 </div>
 
 <style>

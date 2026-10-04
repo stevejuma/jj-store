@@ -215,7 +215,33 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await expect(
     page.getByText("Codex Desktop source 3", { exact: true }),
   ).toBeVisible();
+  const statusSearch = page.getByRole("combobox", {
+    name: "Search source statuses",
+  });
+  await statusSearch.fill("awaiting");
+  await statusSearch.press("ArrowDown");
+  await statusSearch.press("Enter");
+  await expect(table.locator("tbody > tr")).toHaveCount(2);
+  await expect(statusFilter).toHaveText("2 statuses");
+  await statusSearch.fill("");
+  await expect(
+    page.getByRole("option", { name: "Degraded", exact: true }),
+  ).toHaveAttribute("data-checked", "true");
+  await expect(
+    page.getByRole("option", { name: "Awaiting activity", exact: true }),
+  ).toHaveAttribute("data-checked", "true");
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({
+    path: test.info().outputPath("capture-status-command.png"),
+  });
+  await statusSearch.fill("no-matching-status");
+  await expect(
+    page.getByText("No matching statuses", { exact: true }),
+  ).toBeVisible();
+  await statusSearch.press("Escape");
+  await expect(statusFilter).toBeFocused();
   await statusFilter.click();
+  await expect(statusSearch).toHaveValue("");
   await page.getByRole("option", { name: "All statuses", exact: true }).click();
   await expect(page.getByText("2 shown", { exact: true })).toBeVisible();
   await expect(page.getByText("3 loaded", { exact: true })).toBeVisible();
@@ -223,6 +249,9 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await expect(
     page.getByText("Codex Desktop source 3", { exact: true }),
   ).toBeVisible();
+  await page
+    .getByRole("combobox", { name: "Search source statuses" })
+    .press("Escape");
   await filter.click();
   await page.getByRole("option", { name: "OpenCode", exact: true }).click();
   await expect(
@@ -264,6 +293,19 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await page.screenshot({
     path: test.info().outputPath("capture-sources-mobile.png"),
   });
+  await statusFilter.click();
+  const statusPopup = page.getByRole("dialog", {
+    name: "Source status filter",
+  });
+  await expect(statusPopup).toBeVisible();
+  const popupBounds = await statusPopup.boundingBox();
+  expect(popupBounds!.x).toBeGreaterThanOrEqual(0);
+  expect(popupBounds!.x + popupBounds!.width).toBeLessThanOrEqual(390);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({
+    path: test.info().outputPath("capture-status-command-mobile.png"),
+  });
+  await statusSearch.press("Escape");
   await page
     .getByRole("button", { name: "Import history for Codex Desktop source 3" })
     .click();

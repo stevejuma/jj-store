@@ -34,11 +34,16 @@ export const captureSourceStatuses = [
 export function captureSourceMatches(
   source: Source,
   harness: string,
-  status: string,
+  statuses: readonly string[],
 ) {
   if (harness !== "all" && integrations[source.profile] !== harness)
     return false;
-  if (status === "all") return true;
+  return (
+    statuses.length === 0 ||
+    statuses.some((status) => matchesStatus(source, status))
+  );
+}
+function matchesStatus(source: Source, status: string) {
   if (status.startsWith("phase:")) return source.phase === status.slice(6);
   if (status === "unobserved") return !source.observed;
   return (

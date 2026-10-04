@@ -1762,10 +1762,16 @@ repository page. Missing binding remains explicit; navigation cannot discard
 settings drafts or unresolved commands. Labelled harness and status filters sit
 outside the border, aligned to the trailing edge above the table, and combine
 over loaded rows only. They MUST NOT alter observed coverage, source selectors,
-paging cursors or import intent. Source labels stay stable across filtering.
-History imports use icon-only buttons with accessible names and descriptive
-tooltips, retaining capability, runtime and exact-selector guards; deferred
-harnesses cannot import history.
+paging cursors or import intent. Source labels stay stable across filtering. The
+status filter MUST use a searchable CommandView in a popover with multiple
+toggleable selections and visible, accessible selection feedback. Selecting
+statuses keeps the popover open; Escape closes it and returns focus to its
+trigger. A row matches any selected status and the chosen harness. Empty
+selection or All statuses clears the status restriction. Search affects options
+only, resets on reopening, and preserves selections; the trigger summarizes the
+selected label or count. History imports use icon-only buttons with accessible
+names and descriptive tooltips, retaining capability, runtime and exact-selector
+guards; deferred harnesses cannot import history.
 
 A full-width footer cell spans the columns and reports coverage status with a
 spinner during source refresh, retaining the prior rows and counts, and styled

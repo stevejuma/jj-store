@@ -30,14 +30,14 @@
   const captureState = $derived(management.state);
   const sources = $derived(captureState.sources);
   let harness = $state("all");
-  let status = $state("all");
+  let statuses = $state<string[]>([]);
   const rows = $derived(
     (sources?.sources ?? [])
       .map((source, index) => ({
         source,
         label: `${captureProfiles[source.profile]} source ${index + 1}`,
       }))
-      .filter(({ source }) => captureSourceMatches(source, harness, status)),
+      .filter(({ source }) => captureSourceMatches(source, harness, statuses)),
   );
   const navigationReason = $derived(
     repositoryNavigationReason ||
@@ -75,7 +75,7 @@
       </p>
     </div>
   </header>
-  <StoreCaptureSourceFilters bind:harness bind:status />
+  <StoreCaptureSourceFilters bind:harness bind:statuses />
   {#if captureState.sourceState === "failed"}
     <StoreSettingsNotice
       >Refresh capture to select current source coverage.</StoreSettingsNotice

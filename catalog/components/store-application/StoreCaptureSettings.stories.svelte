@@ -16,6 +16,7 @@
     sourceRepositoryDraftGuard,
   } from "./capture-source-table-play.js";
   import CaptureSettingsFixture from "../../fixtures/CaptureSettingsFixture.svelte";
+  import { sourceStatusCommand } from "./capture-status-command-play.js";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Capture",
     component: CaptureSettingsFixture,
@@ -402,4 +403,10 @@
 <Story
   name="Source repository navigation preserves an unsaved configuration draft"
   play={sourceRepositoryDraftGuard}
+/>
+
+<Story
+  name="Source status command searches toggles and combines multiple selections"
+  args={{ multipleHarnesses: true }}
+  play={sourceStatusCommand}
 />
