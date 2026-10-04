@@ -2,6 +2,7 @@
 use super::review_threads::{ReviewSelection, verify_thread_key};
 use super::*;
 use jj_store_wal::publication::{ReviewCatalogKey, ReviewObjectRef, ReviewObjectV1};
+pub(crate) mod cache;
 mod events;
 
 impl ReviewThreadPager {
@@ -15,15 +16,19 @@ impl ReviewThreadPager {
         within_timeout(self.cursors.timeout(), async {
             let pin = self.pin(&session).await?;
             let page = pin.store.list_threads(None, limit).await.map_err(map_wal)?;
-            let activity = resolve(
-                &ReviewSelection {
-                    repository: pin.snapshot.repo_id,
-                    store: &pin.store,
-                },
-                page.selections,
-                page.next_after.is_some(),
-            )
-            .await?;
+            let activity = cache::shared()
+                .read(
+                    &ReviewSelection {
+                        repository: pin.snapshot.repo_id,
+                        store: &pin.store,
+                    },
+                    cache::Authority::Native(pin.snapshot.epoch),
+                    Some(pin.snapshot.review_root),
+                    limit,
+                    page.selections,
+                    page.next_after.is_some(),
+                )
+                .await?;
             authorize_epoch(&session, pin.snapshot.epoch).await?;
             Ok(ReviewActivitySummary {
                 version: 1,

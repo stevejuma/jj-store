@@ -12,7 +12,14 @@ Compact native/local ReviewStore activity is a read-only service projection of
 the admitted first catalog window. It returns counts and maximum accepted times,
 without anchor/comment presentation or causal event ordering. Provider closure
 admission, current request access and independent native/companion pins remain
-mandatory; sampled counts and times retain explicit incomplete status.
+mandatory; sampled counts and times retain explicit incomplete status. The
+service shares data-only activity facts across native and local facades in an
+independent 128-entry cache with five-minute fixed expiry. Keys bind the
+repository, authority epoch/profile, root digest and exact finite window; values
+retain only count, incomplete flag and maximum time. Fresh provider admission
+precedes reuse and snapshot envelopes stay request-owned. Cold loads coalesce
+outside the map lock, canceled or failed loads admit no value, and active-slot
+pressure falls back to request-local derivation.
 
 Body-free WorkStore task activity groups belong to the owned service projection,
 shared by native HTTP and explicit-companion local HTTP. Native root-cache and

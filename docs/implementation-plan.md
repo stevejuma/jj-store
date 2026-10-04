@@ -62,8 +62,10 @@ resident eviction, viewport-owned repository metadata reads, and native
 root-bound WorkStore projections with selected-window summary hydration, and
 native application content indexes with retained query keys. Visible card
 loading now uses finite selected-view code-head summaries and compact review
-activity. Review root reuse remains delivery work. E-READ-037 adds cross-request
-local WorkStore root/projection and exact-query reuse behind fresh
+activity. E-READ-041 reuses only numeric review activity facts for the exact
+admitted root/window behind fresh native/local provider validation, with fixed
+expiry, bounded idle retention and duplicate-load coalescing. E-READ-037 adds
+cross-request local WorkStore root/projection and exact-query reuse behind fresh
 companion/domain admission. Native missing-operation construction now uses the
 owned bounded format writer with compact, admitted scratch for interactive and
 small-cache reads. Immutable resident lookup also reuses separately prepared
@@ -77,7 +79,7 @@ verified files into an actual-size private reservation and releases the
 namespace before decoding and deriving visibility. It preserves hard/inline
 limits, exact source files and cancellation cleanup; it copies no index and
 reserves no unrelated construction maximum. Local operation/deep lookup and
-lightweight/root-bound metadata reads remain delivery work. These focused
+local application search projections remain delivery work. These focused
 deliveries do not complete the later combined qualification gate.
 
 Repository directory task counts now consume one body-free repository/project
@@ -96,13 +98,16 @@ accepted event time without hydrating anchors, comment conflicts or bodies.
 Snapshot-page activity streams times without constructing presentation events;
 merged activity needs no causal ordering. Native/local directory cards retain
 their existing partial-count and date policies. Fresh access, complete provider
-closure admission and independent root/companion pins still apply. Root-bound
-review activity reuse remains delivery work. Code summaries read only the first
-lexical nonvirtual head window and return its newest sampled committer metadata;
-unvisited ancestry or additional heads keep counts explicitly incomplete. Cards
-request 50 heads without invoking history preparation. Native/local request
-admission and historical pins retain their existing authority; no trees,
-ancestors or graph indexes are read for these summaries.
+closure admission and independent root/companion pins still apply. Repeated
+review activity windows reuse counts and times without retaining providers,
+envelopes or evidence objects. Fixed expiry, idle-only eviction and
+request-local saturation fallback preserve source admission and domain capacity.
+Code summaries read only the first lexical nonvirtual head window and return its
+newest sampled committer metadata; unvisited ancestry or additional heads keep
+counts explicitly incomplete. Cards request 50 heads without invoking history
+preparation. Native/local request admission and historical pins retain their
+existing authority; no trees, ancestors or graph indexes are read for these
+summaries.
 
 ### Deferred complete qualification
 

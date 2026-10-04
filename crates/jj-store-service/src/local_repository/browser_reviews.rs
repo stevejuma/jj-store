@@ -98,16 +98,20 @@ impl LocalRepository {
         }
         let store = self.selected_review_store(commit).await?;
         let page = store.reads().list_threads(None, limit).await?;
-        let activity = c::review_activity::resolve(
-            &ReviewSelection {
-                repository: store.repository(),
-                store: &store,
-            },
-            page.selections,
-            page.next_after.is_some(),
-        )
-        .await
-        .map_err(map)?;
+        let activity = c::review_activity::cache::shared()
+            .read(
+                &ReviewSelection {
+                    repository: store.repository(),
+                    store: &store,
+                },
+                c::review_activity::cache::Authority::Local,
+                store.snapshot.review_root,
+                limit,
+                page.selections,
+                page.next_after.is_some(),
+            )
+            .await
+            .map_err(map)?;
         Ok(LocalReviewActivitySummary {
             version: 1,
             snapshot: store.snapshot,

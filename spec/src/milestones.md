@@ -85,7 +85,7 @@ shared-package release qualification does not alter those original Git gates.
 | M9.1        | Done        | M8a.4                   | JST-PUB-007,JST-PUB-008                                                                                                                                                                                           | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                           | Implement AgentStore typed root objects                                                          | E-M9-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                                      | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                                                 | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                                                         | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                                                 | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                                                    | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                   | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035,E-M18-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                                                    | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                   | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035,E-M18-006,E-READ-041                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                                                    | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                              | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-099,E-M18-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                                                                      | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                                            | E-M9-033                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013                                          | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                                                 | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -114,7 +114,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                                                       | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                     | E-M13-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                                                     | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                               | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                                                       | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                   | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040,E-READ-041                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                                                     | Independent local/native conversion with complete collaboration history                                                        | Retain eligible conversions; qualify portable anchored profiles and remaining prerequisite gates | E-M13-026,E-M13-027,E-M13-028,E-M13-029                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                                               | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                                             | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                               | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017,E-M13-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -27041,7 +27041,7 @@ entries.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
+        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -38975,7 +38975,7 @@ entries.
         "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
         "result": "pass",
         "failures": 0,
-        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+        "note": "Fresh served app on 7460 displays 87e1cd5d\u20268fb9 and 20d6c008\u2026ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
       },
       {
         "command": "pnpm check:progress",
@@ -48781,7 +48781,7 @@ entries.
         "command": "python3 /tmp/jj-land-resolve.py; jj resolve --list; pnpm exec prettier --write (11 resolved files)",
         "result": "pass",
         "failures": 0,
-        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main’s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
+        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main\u2019s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
       },
       {
         "command": "pnpm install --no-frozen-lockfile --lockfile=false; compare installed tooltip-content.svelte to landed Design Core source",
@@ -48919,7 +48919,7 @@ entries.
         "command": "python3 parent evidence and main dependency/runtime metadata audit",
         "result": "pass",
         "failures": 0,
-        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main’s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
+        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main\u2019s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
       },
       {
         "command": "pnpm test:storybook catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
@@ -70153,7 +70153,7 @@ entries.
         "command": "pnpm dev:backend:build; explicit preview JJ_STORE_DEV_ROOT/JJ_STORE_DEV_PORT/JJ_STORE_DEV_BACKEND_PORT/JJ_STORE_DEV_SERVER/JJ_STORE_DEV_RUSTFS_RUNTIME pnpm dev:backend:restart; jj rebase/update-stale; CUA live editor save/restart/restore",
         "result": "pass",
         "failures": 0,
-        "note": "Main executable rebuilt; only isolated preview7470/7472 restarted. Real UI saved readers4→3, restart reports desired/effective3 and no pending configuration; restore4 and restart reports desired/effective4. Fixture/installation/control-policy SHA256 hashes stay identical. First restart used stale preview helper and reset the temporary edit; snapshot main and refresh preview, then repeat successfully with fixed helper. .local/capture-settings-live.json contains proof; screenshot .local/capture-settings-live.png; preview tab retained. Main running fixture and installed services untouched."
+        "note": "Main executable rebuilt; only isolated preview7470/7472 restarted. Real UI saved readers4\u21923, restart reports desired/effective3 and no pending configuration; restore4 and restart reports desired/effective4. Fixture/installation/control-policy SHA256 hashes stay identical. First restart used stale preview helper and reset the temporary edit; snapshot main and refresh preview, then repeat successfully with fixed helper. .local/capture-settings-live.json contains proof; screenshot .local/capture-settings-live.png; preview tab retained. Main running fixture and installed services untouched."
       },
       {
         "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
@@ -70195,7 +70195,7 @@ entries.
     "result": "pass",
     "remaining": [],
     "scope": "Narrow editing acceptance: typed current LocalTrusted Admin configuration, saved/effective/default roots, bounded crash-aware persistence, shared-column editor, stale/unknown drafts and real next-start selection. Runtime pause/rescan/import commands and all durable capture state remain independent. Supplemental strict Clippy warnings are inherited diagnostics outside the gate. The live preview still reports capture_management_unavailable for runtime observations; its worker recovery/availability is not qualified by a settings save. Full M18 multi-harness release, native desktop bundle/lifecycle, arbitrary server/credential editing, hot worker replacement and visual baseline approval remain outside this slice. No root aggregate or installed-service reset/publication.",
-    "next": "Use Settings → Agents → Configuration in preview7470. Save config and restart this selected backend; desktop applies saved config on Quit/reopen with a rebuilt app bundle. Keep the reader limit restored to4. Investigate the retained fixture worker-unavailable diagnostic separately; do not repair journals or infer runtime health from effective config. Continue deferred M18 scope only under its owning gates."
+    "next": "Use Settings \u2192 Agents \u2192 Configuration in preview7470. Save config and restart this selected backend; desktop applies saved config on Quit/reopen with a rebuilt app bundle. Keep the reader limit restored to4. Investigate the retained fixture worker-unavailable diagnostic separately; do not repair journals or infer runtime health from effective config. Continue deferred M18 scope only under its owning gates."
   },
   {
     "id": "E-M14-016",
@@ -70429,7 +70429,7 @@ entries.
         "note": "Read-only proof client omitted a complete Fetch Metadata tuple. Normal admission correctly denied it; add expected Origin plus same-origin site/mode and empty destination. Admission code unchanged."
       },
       {
-        "command": "Cua live Settings save8→3; pnpm exec tsx .local/server-settings-live.ts after-restart; Cua restore3→8; pnpm exec tsx .local/server-settings-live.ts after-restore-save; preview restart; pnpm exec tsx .local/server-settings-live.ts after-restore-restart; fixture/identity hash comparison",
+        "command": "Cua live Settings save8\u21923; pnpm exec tsx .local/server-settings-live.ts after-restart; Cua restore3\u21928; pnpm exec tsx .local/server-settings-live.ts after-restore-save; preview restart; pnpm exec tsx .local/server-settings-live.ts after-restore-restart; fixture/identity hash comparison",
         "result": "pass",
         "failures": 0,
         "note": "Actual UI shows saved3/running8; first restart desired/effective3 and no pending config. Restore saved8/running3; second restart desired/effective8 with no pending config. .local/server-settings-live.json records typed proof. Fixture/installation hashes unchanged; retained capture control matches its previous qualified reference. Screenshot .local/server-settings-live.png; preview tab retained."
@@ -73802,7 +73802,7 @@ entries.
         "command": "CUA Quit and reopen main jj-store.app; show terminal; open details; maximize; restore; native accessibility and appearance inspection",
         "result": "pass",
         "failures": 0,
-        "note": "Cold native WKWebView with existing installation at127.0.0.1:57653. Confirmed old shell idle/no jobs; Quit removed app50857/service50866/runtime50867/shell51586. Reopened same registered repository with updated bundled assets and fresh idle shell. Accessible terminal tablist and separate inline close button retained; duplicate path row absent. Details changed expanded→collapsed on maximize and stayed collapsed after restore. Thin top divider and leading close placement inspected; no visual baseline approval. App remains open with terminal for review."
+        "note": "Cold native WKWebView with existing installation at127.0.0.1:57653. Confirmed old shell idle/no jobs; Quit removed app50857/service50866/runtime50867/shell51586. Reopened same registered repository with updated bundled assets and fresh idle shell. Accessible terminal tablist and separate inline close button retained; duplicate path row absent. Details changed expanded\u2192collapsed on maximize and stayed collapsed after restore. Thin top divider and leading close placement inspected; no visual baseline approval. App remains open with terminal for review."
       },
       {
         "command": "jj new tknuwyuq in main; SHA-256 verified evidence copy; jj workspace forget terminal-polish; remove exact temporary workspace; jj edit tknuwyuq in main",
@@ -79782,6 +79782,144 @@ entries.
       "Full combined integration/contracts, Linux/native/near-capacity fixtures, measured RSS/release latency, complete cold production browser, fault/revocation/restart/publication/real-RustFS, registry/release and Help/source-review refresh remain deferred. No milestone promotion, main/Linux source or original dev-service changes; visual baselines remain unapproved. Inherited oversized __eh_frame linker warning and prior strict-lint gaps remain separately deferred.",
       "Next: root-bound review activity reuse under fresh provider closure admission, then remaining prepared operation/reference lookup and deep continuations."
     ]
+  },
+  {
+    "id": "E-READ-041",
+    "tasks": ["M9.4", "M13.4"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change vtmlrlyl",
+    "kind": "Root/window-bound numeric review activity reuse behind fresh native and local provider admission",
+    "versions": "Rust1.98.1 (48a229cea); jj-lib0.45.1; stock JJ0.45.1; macOS ARM64.",
+    "formats": "Private process-local cache with at most128 fixed-size numeric entries, five-minute fixed expiry, idle LRU and active duplicate-load coalescing. Keys bind repository, native epoch/local profile, optional root digest, finite1..256 limit and exact ordered catalog/reference window including partial flag. No providers, snapshot envelopes, actors, paths, bodies or source objects retained. Public routes/schemas, native/WAL/companion/receipt/cursor formats and collaboration capacities unchanged.",
+    "files": [
+      "crates/jj-store-service/src/collaboration/review_activity/cache.rs",
+      "crates/jj-store-service/src/collaboration/review_activity/cache_tests.rs",
+      "crates/jj-store-service/src/collaboration/review_activity/tests.rs",
+      "crates/jj-store-service/src/collaboration/review_activity.rs",
+      "crates/jj-store-service/src/local_repository/browser_reviews.rs",
+      "crates/jj-store-service/tests/local_review.rs",
+      "crates/jj-store-service/tests/review_threads.rs",
+      "docs/implementation-plan.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md"
+    ],
+    "requirements": [
+      "JST-COLLAB-004",
+      "JST-COLLAB-007",
+      "JST-LOCAL-004",
+      "JST-API-001",
+      "JST-API-004"
+    ],
+    "tests": [
+      "crates/jj-store-service/src/collaboration/review_activity/tests.rs#activity_reuse_avoids_repeat_event_reads_for_the_same_admitted_root_window",
+      "crates/jj-store-service/src/collaboration/review_activity/cache_tests.rs#reuse_isolated_by_root_limit_profile_epoch_and_exact_window",
+      "crates/jj-store-service/src/collaboration/review_activity/cache_tests.rs#malformed_admission_is_rejected_even_after_warm_and_empty_reads",
+      "crates/jj-store-service/src/collaboration/review_activity/cache_tests.rs#failed_derivations_are_not_retained_and_repaired_evidence_can_retry",
+      "crates/jj-store-service/src/collaboration/review_activity/cache_tests.rs#retention_is_fixed_size_idle_lru_with_fixed_not_sliding_expiry",
+      "crates/jj-store-service/src/collaboration/review_activity/cache_tests.rs#active_saturation_expiry_and_disabled_retention_fall_back_without_query_loss",
+      "crates/jj-store-service/src/collaboration/review_activity/cache_tests.rs#concurrent_derivations_coalesce_and_canceled_initializer_releases_waiter",
+      "crates/jj-store-service/tests/review_threads.rs#warm_review_activity_keeps_source_limits_access_and_complete_closure_admission",
+      "crates/jj-store-service/tests/local_review.rs#warm_local_review_activity_returns_fresh_companion_and_keeps_identity_and_limits",
+      "crates/jj-store-service/tests/local_review.rs#local_review_selected_inventory_must_contain_the_complete_root_closure"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-service --lib --locked activity_reuse_avoids_repeat_event_reads -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Pass-through scaffold: second request increases object reads5 to10; expected5. Exact1failure recorded in review-reuse-before-041.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked activity_reuse_avoids_repeat_event_reads -- --nocapture (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/16.20s compile. Second same-root/window read reuses facts with total5 object reads. Temporary unused ENTRY_BYTES warning subsequently removed. review-reuse-after-041.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service (first new tests)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Test-fixture visibility replacement also touched a struct initializer. Corrected that one syntax error before final formatting."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked collaboration::review_activity:: -- --nocapture (first new tests)",
+        "result": "fail",
+        "failures": 11,
+        "note": "Test-only initializer syntax and ambiguous Error glob import produce11diagnostics. Explicit service Error import and initializer correction resolve them; no product assertions weakened. review-reuse-units-041.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked collaboration::review_activity:: -- --nocapture (second new tests)",
+        "result": "fail",
+        "failures": 10,
+        "note": "Initializer repaired; ambiguous Error test import still fails compilation. Resolved before final run. review-reuse-units-final-041.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked collaboration::review_activity:: -- --nocapture (fixed new tests)",
+        "result": "pass",
+        "failures": 0,
+        "note": "11pass/0.01s after6.09s compile. Exact reuse, malformed/empty input, root/limit/profile/epoch/window isolation, failure retry, fixed expiry/idle LRU/count/fixed-size cells, disabled/all-active fallback and true concurrent coalescing/canceled initializer retry. review-reuse-units-fixed-041.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test review_threads --test local_review --locked warm_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2pass: native denial/tighter object cap/corrupt retained comment evidence and recovery; reopened local reuse/fresh unrelated companion pin/historical pin/foreign identity/tighter bytes. review-reuse-admission-041.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test review_threads --test local_review --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "14pass:8local/7.14s plus6native/33.53s. Complete directly affected provider files, including warmed missing local closure rejection while exact historical selection still succeeds. Tests own disposable fixtures; source publication/actor boundaries retained. review-reuse-provider-regressions-041.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked collaboration::review_activity:: -- --nocapture (final repository isolation)",
+        "result": "pass",
+        "failures": 0,
+        "note": "11pass after final distinct-repository isolation proof, with no test warnings. review-reuse-units-admitted-041.log."
+      },
+      {
+        "command": "cargo check -p jj-store-service -p jj-store-http -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected service and direct transport packages check. No public contract change or generation needed. review-reuse-check-041.log."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "17package dependency boundaries pass. review-reuse-boundaries-041.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service; cargo fmt -p jj-store-service -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed Rust formatting passes. review-reuse-rust-format-041.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/architecture.md spec/src/collaboration.md spec/src/local-jj.md spec/src/mutations.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical chapters and delivery plan formatted. review-reuse-format-041.log."
+      },
+      {
+        "command": "pnpm check:ui-ownership; pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Ownership1validator, progress138tasks, spec-first8protected files/6canonical chapters and specification5validators/23chapters/172requirements pass. Ledger formatted. review-reuse-ownership/progress/spec-first/spec/ledger-format-041.log. No milestone promotion or complete qualification claim."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "25 unique focused Rust tests pass; no combined/full-suite qualification or milestone promotion is claimed. UI product code and public schemas unchanged; UI tests/build and contract regeneration are out of scope under the targeted verification policy.",
+      "Prepared local operation prefix/comparison and indexed filtered references, indexed deep operation/predecessor/copy/search, paged native RPC, local operation-difference/change-group paging and remaining local application search/index delivery remain open.",
+      "Full combined integration/contracts, Linux/native/near-capacity fixtures, measured RSS/release latency, complete cold production browser, fault/revocation/restart/publication/real-RustFS, registry/release and Help/source-review refresh remain deferred. Main/Linux source and original dev services untouched; retained workspace remains open. Visual baselines remain unapproved; inherited linker/strict-lint gaps stay deferred."
+    ],
+    "next": "Continue prepared local operation/prefix/comparison and indexed reference/deep lookup in the retained workspace; complete combined qualification in the later slice.",
+    "scope": "Private numeric review reuse and directly affected native/local providers with focused correctness, package and governance evidence."
   }
 ]
 ```

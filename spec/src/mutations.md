@@ -56,6 +56,10 @@ change task versions or grant access to linked code; old edited and tombstoned
 targets fail closed.
 
 Collaboration read optimization does not change publication or receipt behavior.
+Review activity reuse stores numeric facts only after successful derivation from
+an admitted immutable selection. Fresh provider closure admission, request
+authorization and current snapshot capture precede lookup; cache retention never
+becomes a command base or hides missing evidence or tighter source limits.
 Compact review activity derives only count and accepted-event time facts from
 admitted thread selections. It retains provider closure audits and fresh access
 checks, stages no objects and creates neither an actor nor a repository

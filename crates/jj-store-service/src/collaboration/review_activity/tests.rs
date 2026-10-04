@@ -4,18 +4,59 @@ use jj_review::*;
 use jj_store_wal::{self as wal, publication::ReviewSnapshotRead};
 use std::{collections::BTreeMap, sync::Mutex};
 
-const REPO: m::RepositoryId = m::RepositoryId::new([81; 16]);
+pub(super) const REPO: m::RepositoryId = m::RepositoryId::new([81; 16]);
 const THREAD: ReviewThreadId = ReviewThreadId::new([82; 16]);
 
-struct Store {
+#[tokio::test]
+async fn activity_reuse_avoids_repeat_event_reads_for_the_same_admitted_root_window() {
+    let (store, key, thread) = fixture(false);
+    let cache = cache::Cache::default();
+    let pin = ReviewSelection {
+        repository: REPO,
+        store: &store,
+    };
+    let root = Some(m::RecordDigest::new([86; 32]));
+    let first = cache
+        .read(
+            &pin,
+            cache::Authority::Local,
+            root,
+            50,
+            vec![(key, thread)],
+            true,
+        )
+        .await
+        .unwrap();
+    assert_eq!(store.reads.lock().unwrap().len(), 5);
+    let second = cache
+        .read(
+            &pin,
+            cache::Authority::Local,
+            root,
+            50,
+            vec![(key, thread)],
+            true,
+        )
+        .await
+        .unwrap();
+    assert_eq!(second, first);
+    assert_eq!(
+        store.reads.lock().unwrap().len(),
+        5,
+        "warm activity must not reread event objects"
+    );
+}
+
+pub(super) struct Store {
+    pub(super) repository: m::RepositoryId,
     root: ReviewRootV1,
-    values: BTreeMap<ReviewObjectRef, ReviewObjectV1>,
-    reads: Mutex<Vec<ReviewObjectRef>>,
+    pub(super) values: BTreeMap<ReviewObjectRef, ReviewObjectV1>,
+    pub(super) reads: Mutex<Vec<ReviewObjectRef>>,
 }
 #[async_trait::async_trait]
 impl ReviewSnapshotRead for Store {
     fn repository(&self) -> m::RepositoryId {
-        REPO
+        self.repository
     }
     fn root(&self) -> &ReviewRootV1 {
         &self.root
@@ -36,10 +77,10 @@ impl ReviewSnapshotRead for Store {
             .ok_or(wal::Error::Corrupt("Unexpected activity object read"))
     }
 }
-fn reference(kind: ReviewObjectKind, byte: u8) -> ReviewObjectRef {
+pub(super) fn reference(kind: ReviewObjectKind, byte: u8) -> ReviewObjectRef {
     ReviewObjectRef::new(kind, ReviewObjectId::new([byte; 32]))
 }
-fn fixture(merged: bool) -> (Store, ReviewCatalogKey, ReviewObjectRef) {
+pub(super) fn fixture(merged: bool) -> (Store, ReviewCatalogKey, ReviewObjectRef) {
     let anchor = reference(ReviewObjectKind::Anchor, 1);
     let revision = reference(ReviewObjectKind::CommentRevision, 2);
     let event1 = reference(ReviewObjectKind::ThreadEvent, 3);
@@ -162,6 +203,7 @@ fn fixture(merged: bool) -> (Store, ReviewCatalogKey, ReviewObjectRef) {
     }
     (
         Store {
+            repository: REPO,
             root: ReviewRootV1::empty(),
             values,
             reads: Mutex::new(vec![]),

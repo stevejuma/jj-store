@@ -46,6 +46,12 @@ dates include sampled review activity; local card dates retain their existing
 code/task policy. These transport and focused consumer proofs do not complete
 combined browser, scale or release qualification.
 
+Review-activity responses MAY reuse count/time facts from the exact admitted
+root and ordered first window. Every native/local request retains fresh provider
+admission and its own complete snapshot envelope; cache hits do not replay a
+manifest or companion pin. Public routes, schemas, finite limits and sampled
+count/time semantics remain unchanged.
+
 Repository entry menus, Settings-style creation/conversion forms, action rows
 and trailing shell spacing change presentation only. Local/server capability
 gates, exact pending creation/conversion identities, preflight and receipt

@@ -16,6 +16,19 @@ durable read index is added.
 Retention eviction selects only completed materializations; an initializing
 entry remains owned by its original read.
 
+Review activity MAY reuse only its count, partial flag and maximum accepted time
+for an exact admitted root/window. Bind repository, native epoch or local
+profile, root digest, finite limit and the ordered selected reference window.
+Every request MUST first capture and validate its complete current provider
+selection; reuse retains neither that provider nor its snapshot envelope.
+Unrelated metadata publication may reuse facts while returning a fresh pin.
+Coalesce duplicate active derivations; failures and cancellation admit no
+result. Keep at most 128 fixed-size entries with a five-minute fixed expiry and
+bounded retained memory. Evict idle entries only; when all slots are active,
+derive request-locally under existing read admission instead of disabling the
+query. Changed roots/windows/profiles/epochs, expired entries and restart derive
+anew.
+
 Collaboration reads share validated immutable materializations keyed by
 repository, authority epoch and exact domain root references. Each request
 independently captures its complete manifest envelope and rechecks current

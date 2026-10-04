@@ -612,6 +612,13 @@ They MUST NOT open a graph repository, rebuild/import an index, traverse older
 commits, read trees or reconcile operation heads. Current folder admission,
 byte/work/cancellation bounds and exact operation pins remain mandatory.
 
+Local review activity MAY reuse numeric facts at the exact selected Review root
+and first reference window across reopened facades and unrelated companion
+publications. Complete companion membership, retained blobs, canonical domain
+closure and current folder identity remain fresh before reuse. Retain no
+MetadataStore, companion Snapshot, source path or actor, and keep an independent
+bounded cache lifetime. Empty reads must still leave identity and actor absent.
+
 Operation log windows without an ID-prefix selector MUST walk bounded operation
 metadata directly, without loading commits, trees, views or a commit index.
 Native responses report `not_used` for the graph cache. Operation ordering,
