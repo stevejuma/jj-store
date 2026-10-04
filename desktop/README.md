@@ -37,5 +37,22 @@ signed distribution and automatic updates remain pending in the single canonical
 progress ledger. The initial icon is a development placeholder. Native Glass
 background follows Buzz's Sidebar vibrancy with an opaque native window,
 transparent webview and one translucent theme wash. Its adaptations and
-Apache-2.0 attribution are recorded in `docs/ui-provenance.json`. The renderer
-receives only a boolean glass command for the managed main window and origin.
+Apache-2.0 attribution are recorded in `docs/ui-provenance.json`. Presentation
+commands and the typed terminal bridge are restricted to the managed main window
+and exact service origin.
+
+## Repository terminal
+
+In a repository, use the bottom-panel icon beside the right-sidebar toggle in
+the application header, or Cmd+J. Shells open in verified registered folders.
+When several folders are linked, choose the folder for each new tab; missing
+folders link through Repository settings. Hide/navigation and renderer reload
+keep shells running. Closing a tab terminates its shell; Quit terminates
+sessions before stopping the managed service. Sessions and output are
+memory-only and are not restored after quitting. Only dock size is retained.
+
+The terminal is an ordinary local-user shell. It does not provide remote server
+execution, create checkouts, publish repository metadata or grant sandboxing.
+Runtime environment credentials are excluded from child inheritance. The native
+PTY/Alacritty engine and transport are adapted from the attributed Buzz source;
+no external source checkout is needed to build or run.

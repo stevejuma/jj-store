@@ -1,7 +1,11 @@
 /** Presentation metadata only; this marker never authorizes repository access. */
 declare global {
   interface Window {
-    __JJ_STORE_DESKTOP__?: { version: number; platform: string };
+    __JJ_STORE_DESKTOP__?: {
+      version: number;
+      platform: string;
+      terminal?: number;
+    };
   }
 }
 

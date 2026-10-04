@@ -906,3 +906,8 @@ current authority, Search Apply/restart and Settings interaction/accessibility
 lanes remain separate from real-storage migration, native desktop packaging and
 full milestone qualification. No storage relocation, access transition, launch
 reconfiguration or backup execution is introduced by read-only inventory.
+
+Repository terminal adaptations are maintained inside the desktop host and owned
+web UI with pinned Buzz Apache-2.0 provenance. Native terminal evidence covers
+engine, folder admission, transport and process lifetime independently of
+browser fixture interactions; no visual baseline approval is implied.

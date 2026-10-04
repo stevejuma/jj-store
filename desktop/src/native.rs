@@ -1,4 +1,8 @@
-//! Native window and menu lifecycle with a presentation-only glass command.
+//! Managed window, terminal and service lifecycle.
+use crate::terminal::{
+    TargetResolver,
+    commands::{self, TerminalHost},
+};
 use crate::{installation::Resources, native_window, runtime::ManagedService};
 use std::sync::Mutex;
 use tauri::{
@@ -19,12 +23,13 @@ fn show(app: &tauri::AppHandle) {
 }
 pub fn run() {
     let app = tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![crate::native_glass::set_glass_background])
+        .invoke_handler(tauri::generate_handler![crate::native_glass::set_glass_background, commands::terminal_targets, commands::terminal_list, commands::terminal_open, commands::terminal_attach, commands::terminal_close, commands::terminal_input, commands::terminal_resize, commands::terminal_scroll, commands::terminal_focus, commands::terminal_ack, commands::terminal_viewport_ready, commands::terminal_detach])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| show(app)))
         .plugin(tauri_plugin_window_state::Builder::default().with_state_flags(StateFlags::all() & !StateFlags::VISIBLE).build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(RuntimeState(Mutex::new(None)))
+        .manage(TerminalHost::default())
         .setup(|app| {
             let handle = app.handle().clone();
             let show_item = MenuItem::with_id(app, "show", "Show jj-store", true, None::<&str>)?;
@@ -43,9 +48,12 @@ pub fn run() {
                 match result {
                     Ok(service) => {
                         let origin = service.origin.clone();
+                        if let Ok(mut resolver) = handle.state::<TerminalHost>().resolver.lock() {
+                            *resolver = TargetResolver::new(origin.clone()).ok();
+                        }
                         if let Ok(mut owner) = handle.state::<RuntimeState>().0.lock() { *owner = Some(service); } else { handle.exit(1); return; }
                         let window = native_window::build(&handle, origin);
-                        if let Err(error) = window { handle.dialog().message(format!("Cannot open jj-store: {error}")).blocking_show(); handle.exit(1); return; }
+                        if let Err(error) = window { eprintln!("jj-store desktop window: {error}"); handle.dialog().message(format!("Cannot open jj-store: {error}")).blocking_show(); handle.exit(1); return; }
                         loop {
                             std::thread::sleep(std::time::Duration::from_millis(500));
                             let failed = match handle.state::<RuntimeState>().0.lock() {
@@ -55,7 +63,7 @@ pub fn run() {
                             if failed { handle.dialog().message("The local jj-store service stopped. Relaunch to recover using the retained installation and original pending request identities.").blocking_show(); handle.exit(1); return; }
                         }
                     }
-                    Err(error) => { handle.dialog().message(format!("jj-store could not start.\n\n{error}\n\nYour installation has been retained. Relaunch to retry.")).blocking_show(); handle.exit(1); }
+                    Err(error) => { eprintln!("jj-store desktop startup: {error}"); handle.dialog().message(format!("jj-store could not start.\n\n{error}\n\nYour installation has been retained. Relaunch to retry.")).blocking_show(); handle.exit(1); }
                 }
             });
             Ok(())
@@ -81,14 +89,16 @@ pub fn run() {
             }
         }
         RunEvent::ExitRequested { .. } | RunEvent::Exit => {
+            if let Err(error) = handle.state::<TerminalHost>().runtime.shutdown() {
+                eprintln!("Desktop terminal shutdown: {error}");
+            }
             #[cfg(target_os = "macos")]
             crate::macos_chrome::shutdown();
-            if let Ok(mut service) = handle.state::<RuntimeState>().0.lock() {
-                if let Some(mut owner) = service.take() {
-                    if let Err(error) = owner.stop() {
-                        eprintln!("jj-store desktop shutdown: {error}");
-                    }
-                }
+            if let Ok(mut service) = handle.state::<RuntimeState>().0.lock()
+                && let Some(mut owner) = service.take()
+                && let Err(error) = owner.stop()
+            {
+                eprintln!("jj-store desktop shutdown: {error}");
             }
         }
         _ => {}

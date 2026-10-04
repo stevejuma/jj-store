@@ -32,11 +32,23 @@ pub fn build(handle: &AppHandle, origin: url::Url) -> tauri::Result<WebviewWindo
                 .remote(format!("{}*", origin.as_str()))
                 .permission("core:window:allow-start-dragging")
                 .permission("core:window:allow-internal-toggle-maximize")
-                .permission("allow-set-glass-background"),
+                .permission("allow-set-glass-background")
+                .permission("allow-terminal-targets")
+                .permission("allow-terminal-list")
+                .permission("allow-terminal-open")
+                .permission("allow-terminal-attach")
+                .permission("allow-terminal-close")
+                .permission("allow-terminal-input")
+                .permission("allow-terminal-resize")
+                .permission("allow-terminal-scroll")
+                .permission("allow-terminal-focus")
+                .permission("allow-terminal-ack")
+                .permission("allow-terminal-viewport-ready")
+                .permission("allow-terminal-detach"),
         )?;
         builder
             .initialization_script(
-                "Object.defineProperty(window, '__JJ_STORE_DESKTOP__', { value: Object.freeze({ version: 1, platform: 'macos' }) });",
+                "Object.defineProperty(window, '__JJ_STORE_DESKTOP__', { value: Object.freeze({ version: 1, platform: 'macos', terminal: 1 }) });",
             )
     };
     let links = handle.clone();

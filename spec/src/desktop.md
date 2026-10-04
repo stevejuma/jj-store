@@ -14,6 +14,7 @@ ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be is an architectural reference.
 | JST-DESK-003 | Desktop MUST own a bounded parent-lifetime channel, startup and shutdown deadlines and captured output. Closing that channel MUST gracefully stop the server and its RustFS helper. Interrupted mutations retain their existing unknown-outcome semantics.                     |
 | JST-DESK-004 | The macOS host MUST support single-instance reopening, retained window geometry, Dock/tray reopening and explicit Quit. Closing the main window hides it while its managed service remains alive. Native permissions MUST be restricted to the managed main window and origin. |
 | JST-DESK-005 | Packaged ARM64 app and DMG qualification MUST use cold real-RustFS and WKWebView flows, including restart, relocation, failure and persistence. Native controls, dirty-edit protection and public distribution require their own evidence.                                     |
+| JST-DESK-006 | Desktop MUST provide bounded repository-folder terminal sessions, typed exact-origin IPC, retained in-memory sessions, accessible dock controls and verified shell cleanup without changing repository authority.                                                              |
 
 ## Initial delivery
 
@@ -37,9 +38,9 @@ executable and web bundle paths. Installation identity, credentials, catalog and
 volume remain selected by the existing format-2 configuration.
 
 Local development and qualification use explicit separate state paths. Public
-signing, notarization, updates, login startup, additional platforms, terminals
-and agent execution remain deferred. Screenshots are visual-pending and cannot
-qualify process lifetime, publication, storage or accessibility.
+signing, notarization, updates, login startup, additional platforms and agent
+execution remain deferred. Screenshots are visual-pending and cannot qualify
+process lifetime, publication, storage or accessibility.
 
 ## macOS integrated header
 
@@ -57,9 +58,10 @@ The host supplies a presentation-only macOS marker before application startup.
 Ordinary browser clients do not reserve native-control space or enable window
 drag regions. The managed main window's exact loopback origin receives only
 window dragging, Tauri's internal double-click zoom and the single boolean
-`set_glass_background` presentation command. No wildcard origin, filesystem,
-shell, dialog or generic core permission is granted. Window controls and links
-inside the header retain their ordinary click behavior. This slice uses Tauri's
+`set_glass_background` presentation command. No wildcard origin, generic
+filesystem, shell, dialog or core permission is granted. The repository terminal
+extension adds only its named desktop commands. Window controls and links inside
+the header retain their ordinary click behavior. This slice uses Tauri's
 standard double-click zoom; matching the macOS custom double-click preference
 remains a separate refinement.
 
@@ -93,3 +95,36 @@ token is removed on host exit. Platform interop is confined to documented
 NSWindow and retained view hierarchy borrows within Tauri's main-thread callback
 or a live notification's retained window object; no platform pointer escapes or
 becomes authority.
+
+## Repository terminal
+
+Desktop terminal sessions are governed by JST-DESK-006. Desktop MUST own
+bounded, repository-bound interactive terminal sessions independently of the
+managed repository service. Only the exact managed main window and origin may
+use the typed terminal bridge. Targets come from revalidated ready local
+registrations or native workspace links, never arbitrary renderer paths,
+commands or environment. Missing links require explicit linking; opening a
+terminal must not clone, create a workspace, or publish metadata.
+
+Sessions use a filtered login-shell environment, a PTY and a native Alacritty
+grid. Input, dimensions, session count, scrollback, parser work and frame
+delivery are bounded. A subscription allows one in-flight frame and one
+replacement snapshot; stale acknowledgements cannot release a newer
+subscription. Terminal output cannot access the clipboard. Native sessions and
+output remain in memory; repeated open request identities resolve the same
+session. Hide/navigation and renderer reload preserve sessions, tab close ends
+its shell, and Quit cleans up sessions before the managed service. Restart does
+not recreate shells. Late callbacks from closing or removed sessions MUST NOT
+publish obsolete error notices; failures for active sessions remain visible.
+
+The desktop header MUST place a terminal toggle beside the right-sidebar toggle,
+using a bottom-panel icon whose filled region and accessible expanded state
+track the dock. No terminal footer bar is shown. The terminal toolbar uses a
+muted surface, rounded tabs and add control, with maximize and hide controls at
+the right. The Svelte dock provides repository/folder-bound tabs, keyboard and
+pointer resizing, maximize/restore, Cmd+J, IME, selection/copy, bracketed paste
+and readable terminal text. Multiple eligible folders require a choice; one is
+selected automatically. Only versioned dock geometry is persisted. Existing
+refresh retains historical selections, editor drafts and pending mutations. Cold
+native WKWebView and production-CSP evidence remains distinct from fixture
+stories.

@@ -1890,6 +1890,16 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/store-terminal/StoreTerminalToggleIcon.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-app-shell/CommunitySidebarToggleIcon.svelte",
+          "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [
@@ -1984,6 +1994,30 @@
     {
       "local": "web/src/lib/ui/community-app-shell/desktop-chrome.css",
       "reason": "Native desktop header geometry and fixed icon sizes; Buzz source adaptation and Apache-2.0 attribution recorded in desktopAppearance."
+    },
+    {
+      "local": "web/src/lib/ui/store-terminal/terminal.css",
+      "reason": "Repository-owned terminal integration using Design Core public primitives; Buzz terminal reference and license recorded in desktopTerminal."
+    },
+    {
+      "local": "web/src/lib/ui/store-terminal/TerminalViewport.svelte",
+      "reason": "Repository-owned terminal integration using Design Core public primitives; Buzz terminal reference and license recorded in desktopTerminal."
+    },
+    {
+      "local": "web/src/lib/ui/store-terminal/StoreTerminalDock.svelte",
+      "reason": "Repository-owned terminal integration using Design Core public primitives; Buzz terminal reference and license recorded in desktopTerminal."
+    },
+    {
+      "local": "web/src/lib/ui/store-terminal/StoreTerminalWorkspace.svelte",
+      "reason": "Repository-owned terminal integration using Design Core public primitives; Buzz terminal reference and license recorded in desktopTerminal."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StoreApplicationMain.svelte",
+      "reason": "Repository-owned terminal integration using Design Core public primitives; Buzz terminal reference and license recorded in desktopTerminal."
+    },
+    {
+      "local": "web/src/lib/ui/store-terminal/StoreTerminalToggle.svelte",
+      "reason": "Application-owned header control for the native terminal; shares expanded-state chrome with the existing sidebar controls."
     }
   ],
   "desktopAppearance": {
@@ -2008,6 +2042,35 @@
       {
         "local": "web/src/lib/ui/community-app-shell/desktop-chrome.css",
         "source": "desktop/src/app/AppTopChrome.tsx"
+      }
+    ]
+  },
+  "desktopTerminal": {
+    "reference": "Buzz desktop terminal",
+    "repository": "https://github.com/block/buzz",
+    "revision": "ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be",
+    "license": "Apache-2.0",
+    "licenseFile": "docs/licenses/buzz-Apache-2.0.txt",
+    "adaptations": [
+      {
+        "local": "desktop/crates/terminal-engine",
+        "source": "desktop/src-tauri/crates/buzz-terminal",
+        "changes": "Owned crate namespace; bounded action queue; jj-store environment canaries; nonblocking PTY and macOS descendant cleanup."
+      },
+      {
+        "local": "desktop/src/terminal",
+        "source": "desktop/src-tauri/src/terminal_runtime.rs; desktop/src-tauri/src/terminal_transport.rs",
+        "changes": "Owned repository-bound runtime and explicit folder resolver; typed commands; idempotent open and renderer reattachment."
+      },
+      {
+        "local": "web/src/lib/terminal",
+        "source": "desktop/src/features/terminal/terminalRenderer.ts; desktop/src/features/terminal/terminalState.ts",
+        "changes": "Svelte-owned controller, native bridge, colors and keyboard adaptation."
+      },
+      {
+        "local": "web/src/lib/ui/store-terminal/terminal.css",
+        "source": "desktop/src/shared/styles/globals/terminal.css; desktop/src/features/terminal/TerminalSubstrate.tsx",
+        "changes": "Repository-owned muted toolbar, rounded terminal tabs and add control, trailing window actions; header toggle follows Community sidebar geometry with a bottom indicator."
       }
     ]
   }

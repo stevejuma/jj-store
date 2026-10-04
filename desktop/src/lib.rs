@@ -4,6 +4,7 @@ pub mod installation;
 pub mod process;
 pub mod readiness;
 pub mod runtime;
+pub mod terminal;
 
 #[cfg(feature = "native")]
 pub mod native;

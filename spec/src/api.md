@@ -1777,3 +1777,10 @@ Configuration observations and saves MUST remain available while transcript
 inspection occupies the runtime control gate. They use bounded file reads and
 the shared settings-file lock independently from capture journals, spools or
 worker command ownership.
+
+## Desktop terminal consumer
+
+The desktop host consumes existing protected local repository registrations and
+workspace-link reads to resolve terminal targets. These routes remain read-only
+and do not execute shells. Terminal frames and controls use the desktop-only
+Tauri interface, not an HTTP or repository publication API.
