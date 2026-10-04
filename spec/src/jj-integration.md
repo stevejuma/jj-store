@@ -658,7 +658,8 @@ repository JJ then Git configuration when the host has no usable email.
 Configuration reads MUST remain read-only, expose only the email and never load
 aliases or other configuration into query evaluation. Authenticated native
 serving MUST omit host identity hints; explicit request context remains the
-query authority.
+query authority. Secure repository fallback requires a metadata binding that
+resolves to the exact registered metadata directory.
 
 ## M18 opt-in checkpoint coordinator
 

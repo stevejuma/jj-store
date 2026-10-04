@@ -129,6 +129,27 @@ pub enum NativeCreationOutcome {
 
 #[async_trait::async_trait]
 pub trait LocalRepositories: Send + Sync {
+    fn conversion(&self) -> bool {
+        false
+    }
+    async fn preview_conversion(
+        &self,
+        _intent: crate::conversion::contracts::ConversionIntent,
+    ) -> Result<crate::conversion::contracts::ConversionPreview> {
+        Err(Error::Unsupported)
+    }
+    async fn start_conversion(
+        &self,
+        _request: crate::conversion::contracts::StartConversion,
+    ) -> Result<crate::conversion::contracts::ConversionOutcome> {
+        Err(Error::Unsupported)
+    }
+    async fn conversion_status(
+        &self,
+        _request: RequestId,
+    ) -> Result<crate::conversion::contracts::ConversionOutcome> {
+        Err(Error::Unsupported)
+    }
     fn native_creation(&self) -> bool {
         false
     }

@@ -1,5 +1,12 @@
 # CLI and server commands
 
+LocalTrusted installations with native storage own an independent conversion
+journal beside device registration. Preview captures a committed source
+operation, start retains the exact bounded archive before staging, and status
+recovers prepared final publication. Explicit retries preserve request and
+destination identities. This browser/API flow does not add an implicit CLI
+migration or execute source repository configuration.
+
 The native lifecycle HTTP fixture additionally qualifies current application
 content search and Thread directory metadata through the same authorized native
 service. This transport acceptance remains independent of a live runner or
@@ -1411,6 +1418,11 @@ sanitized entry proofs and existing leases. Ordinary process startup remains
 withheld pending management/import/export, identity and real-harness
 qualification; library fixture acceptance cannot bypass that gate. No harness
 process is launched and no existing service is restarted.
+
+The API snapshot management contract fixture prepares the real private
+Kingfisher cache before starting its bounded worker. Publication waits keep
+their existing deadline and assert native receipts and body-free inspection;
+this fixture does not qualify cold scanner compilation latency.
 
 Approved API busy/retry/idle observations now advance a typed private composite
 reader checkpoint independently of message count. Empty admitted sessions retain

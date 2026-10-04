@@ -27,7 +27,7 @@ impl LocalWorkRootV1 {
             comments: self.comments,
         }
     }
-    fn from_state(repository: m::RepositoryId, state: WorkStateV1) -> Self {
+    pub(super) fn from_state(repository: m::RepositoryId, state: WorkStateV1) -> Self {
         Self {
             version: 1,
             repository,

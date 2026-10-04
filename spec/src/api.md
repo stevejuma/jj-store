@@ -1,5 +1,15 @@
 # Read APIs and browser
 
+LocalTrusted installation Admin conversion uses strict versioned preview/start
+bodies and original-request status. Preview returns a bounded eligibility result
+and archive digest; start must match that digest and one explicit source
+operation. Accepted requests retain the exact source archive and generated
+destination identities before preparation or publication. Status resumes final
+publication from retained prepared artifacts. Interrupted preparation requires
+an explicit retry and status polling does not allocate new staging attempts;
+absence is not rejection. Reports expose mappings and provenance digests, never
+private archive bodies or source credentials.
+
 Thread directory and selected conversation reads start concurrently through the
 repository/session/profile query cache. Navigation cancels obsolete reads;
 confirmed reactions invalidate and reload only their exact target, retaining

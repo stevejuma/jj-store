@@ -117,7 +117,9 @@ impl DeviceRepositories {
             Some(value) if value.request == request => value,
             Some(_) => return Err(Error::Conflict),
             None => {
-                if self.local_name_reserved(&request.name)? {
+                if self.local_name_reserved(&request.name)?
+                    || self.conversion_name_reserved(&request.name)?
+                {
                     return Err(Error::Conflict);
                 }
                 if fs::read_dir(self.path.parent().unwrap())

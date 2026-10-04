@@ -1,6 +1,7 @@
 //! LocalTrusted installation management and strictly typed operation-pinned reads.
 use crate::*;
 mod agents;
+mod conversion;
 mod events;
 mod reviews;
 mod work;
@@ -96,6 +97,7 @@ pub(super) fn router() -> Router<Arc<State>> {
     endpoints!(register)
         .merge(work::router())
         .merge(working_copy::router())
+        .merge(conversion::router())
         .merge(agents::router())
         .merge(reviews::router())
         .merge(events::router())
@@ -375,7 +377,11 @@ async fn capabilities(
         search: false,
         code_mutations: false,
         working_copy_edit: true,
-        conversion: false,
+        conversion: state
+            .config
+            .local_repositories
+            .as_ref()
+            .is_some_and(|m| m.conversion()),
     })
 }
 #[derive(Serialize, Deserialize)]
@@ -575,5 +581,6 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
     agents::document(document);
     reviews::document(document);
     working_copy::document(document);
+    conversion::document(document);
     events::document(document);
 }

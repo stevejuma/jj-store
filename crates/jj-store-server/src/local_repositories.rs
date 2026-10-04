@@ -8,6 +8,7 @@ use jj_store_service::{
 };
 use serde::{Deserialize, Serialize};
 use std::{fs, io::Write as _, path::PathBuf, sync::Arc};
+mod conversion;
 mod native_creation;
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -95,6 +96,7 @@ impl DeviceRepositories {
             .await
             .map_err(|_| Error::Unavailable)?;
         if self.creation_name_reserved(&request.name)?
+            || self.conversion_name_reserved(&request.name)?
             || native
                 .repositories
                 .iter()
@@ -368,6 +370,45 @@ fn valid_path(path: &str) -> bool {
 
 #[async_trait::async_trait]
 impl LocalRepositories for DeviceRepositories {
+    fn conversion(&self) -> bool {
+        self.host.is_some()
+    }
+    async fn preview_conversion(
+        &self,
+        intent: jj_store_service::conversion::contracts::ConversionIntent,
+    ) -> Result<jj_store_service::conversion::contracts::ConversionPreview> {
+        let manager = self.clone();
+        let runtime = tokio::runtime::Handle::current();
+        tokio::task::spawn_blocking(move || {
+            runtime.block_on(manager.preview_conversion_inner(intent))
+        })
+        .await
+        .map_err(|_| Error::Unavailable)?
+    }
+    async fn start_conversion(
+        &self,
+        request: jj_store_service::conversion::contracts::StartConversion,
+    ) -> Result<jj_store_service::conversion::contracts::ConversionOutcome> {
+        let manager = self.clone();
+        let runtime = tokio::runtime::Handle::current();
+        tokio::task::spawn_blocking(move || {
+            runtime.block_on(manager.start_conversion_inner(request))
+        })
+        .await
+        .map_err(|_| Error::Unavailable)?
+    }
+    async fn conversion_status(
+        &self,
+        request: RequestId,
+    ) -> Result<jj_store_service::conversion::contracts::ConversionOutcome> {
+        let manager = self.clone();
+        let runtime = tokio::runtime::Handle::current();
+        tokio::task::spawn_blocking(move || {
+            runtime.block_on(manager.conversion_status_inner(request))
+        })
+        .await
+        .map_err(|_| Error::Unavailable)?
+    }
     fn native_creation(&self) -> bool {
         self.host.is_some()
     }

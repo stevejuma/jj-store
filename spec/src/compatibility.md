@@ -1,5 +1,12 @@
 # Compatibility and release
 
+The independent conversion profile is bounded to eligible JJ 0.45.1 Git SHA-1
+and current native repositories on macOS ARM64. Admin HTTP preview/start/status
+contracts and their generated browser client share registered response captures.
+Cold qualification uses production assets, an isolated real RustFS volume and a
+restart; in-memory fault evidence remains separate. Unqualified signed,
+conflicted, copy and code-anchored collaboration representations fail preflight.
+
 AgentStore tool activity adds optional `duration_millis` to version-1 read DTOs.
 Absent fields retain unknown timing; zero is a known duration. Generated
 OpenAPI/TypeScript and affected native/local HTTP consumers qualify known and

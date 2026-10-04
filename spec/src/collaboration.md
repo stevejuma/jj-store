@@ -13,6 +13,9 @@ log/reference reads do not run when restoring Threads. Cached reads retain
 current repository-session isolation and cursor-reset behavior; no batch API or
 durable read index is added.
 
+Retention eviction selects only completed materializations; an initializing
+entry remains owned by its original read.
+
 Collaboration reads share validated immutable materializations keyed by
 repository, authority epoch and exact domain root references. Each request
 independently captures its complete manifest envelope and rechecks current

@@ -1,5 +1,11 @@
 # Architecture
 
+Independent conversion remains inside the JJ integration, owned service and
+installation orchestration boundaries. Destination providers consume explicit
+versioned archives and typed translators. Test-only collaboration dependencies
+exercise nonempty supported histories; service code does not import upstream JJ
+types. Source authority, credentials and active journals remain separate.
+
 The service's bounded agent timing projection uses Chrono's standard RFC 3339
 decoder for preserved sanitized Codex JSONL timestamps. It remains a data-only
 read of exact selected evidence, shared by native and local companion

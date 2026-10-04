@@ -370,6 +370,107 @@ async fn local_history_archive_retains_every_selected_work_version_and_exact_git
     let bytes = archive.encode().unwrap();
     let decoded = RepositoryArchiveV1::decode(&bytes).unwrap();
     assert_eq!(decoded.encode().unwrap(), bytes);
+    let destination_id = m::RepositoryId::new([85; 16]);
+    let host = jj_store_service::administration::RepositoryHost::new(
+        Arc::new(MemoryStore::default()),
+        Arc::new(Operators),
+        Arc::new(jj_store_service::auth::SystemClock),
+        Default::default(),
+        jj_store_service::native::SessionLimits::default(),
+        16 * 1024 * 1024,
+    )
+    .unwrap();
+    host.create_local_trusted(
+        destination_id,
+        m::EpochId::new([86; 16]),
+        jj_store_service::auth::Permission::Admin,
+    )
+    .await
+    .unwrap();
+    let session = host
+        .endpoint(destination_id)
+        .unwrap()
+        .bind_local_trusted(
+            m::PrincipalId::new([87; 16]),
+            jj_store_service::auth::Permission::Admin,
+        )
+        .unwrap()
+        .into_session();
+    let mappings = session
+        .import_conversion_history(&archive, m::RequestId::new([88; 16]))
+        .await
+        .unwrap();
+    assert_eq!(mappings.selections.len(), 2);
+    assert_eq!(mappings.selections[1].versions["work"], 2);
+    let native_archive = session
+        .conversion_archive(jj_store_jj::roots::ROOT_OPERATION)
+        .await
+        .unwrap();
+    assert!(
+        native_archive
+            .collaboration
+            .iter()
+            .any(|s| s.work.as_ref().is_some_and(|w| w
+                .projects
+                .get(&project)
+                .is_some_and(|p| p.title == "Original")))
+    );
+    assert_eq!(
+        native_archive
+            .collaboration
+            .last()
+            .unwrap()
+            .work
+            .as_ref()
+            .unwrap()
+            .projects[&project]
+            .title,
+        "Renamed"
+    );
+    let exported = tmp.path().join("exported");
+    jj_store_jj::conversion::to_local(&native_archive.code, &tmp.path().join("scratch"), &exported)
+        .await
+        .unwrap();
+    let exported = LocalRepository::new(
+        &exported.join(".jj/repo"),
+        MetadataStore::open(&exported.join(".git"), LocalLimits::default()).unwrap(),
+    );
+    let final_id = m::RepositoryId::new([89; 16]);
+    let maps = exported
+        .import_conversion_history(
+            &native_archive,
+            final_id,
+            m::PrincipalId::new([90; 16]),
+            m::RequestId::new([91; 16]),
+        )
+        .await
+        .unwrap();
+    assert_eq!(maps.selections.len(), native_archive.collaboration.len());
+    let history = exported
+        .metadata_store()
+        .history(&exported.metadata_store().read().unwrap().unwrap())
+        .unwrap();
+    assert_eq!(history.len(), native_archive.collaboration.len());
+    assert!(exported.actor().unwrap().is_none());
+    let query = work::WorkQuery {
+        project: None,
+        task: None,
+        limit: 256,
+        cursor: None,
+    };
+    assert_eq!(
+        exported.work_page(&query).unwrap().projects[0].title,
+        "Renamed"
+    );
+    assert!(history.iter().any(|pin| {
+        exported
+            .work_page_at(pin.commit(), &query)
+            .unwrap()
+            .projects
+            .iter()
+            .any(|p| p.title == "Original")
+    }));
+
     let mut padded = bytes.clone();
     padded.push(b' ');
     assert!(RepositoryArchiveV1::decode(&padded).is_err());

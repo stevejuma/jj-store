@@ -200,15 +200,14 @@ impl Cache {
                 entry.used = now;
                 entry.cell.clone()
             } else {
-                if entries.len() >= self.limits.snapshots {
-                    if let Some(victim) = entries
+                if entries.len() >= self.limits.snapshots
+                    && let Some(victim) = entries
                         .iter()
                         .filter(|(_, e)| e.cell.get().is_some())
                         .min_by_key(|(_, e)| e.used)
                         .map(|(k, _)| *k)
-                    {
-                        entries.remove(&victim);
-                    }
+                {
+                    entries.remove(&victim);
                 }
                 let cell = Arc::new(OnceCell::new());
                 // A query may need more roots than the retention capacity. If

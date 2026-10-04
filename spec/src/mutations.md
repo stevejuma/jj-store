@@ -3,7 +3,9 @@
 Independent conversion stages typed historical domain snapshots without altering
 the source. Translation maps immutable repository-bound references explicitly;
 only the destination provider may select these audited roots. Original source
-receipts remain provenance and never authorize destination commands.
+receipts remain provenance and never authorize destination commands. Preparation
+selects supported historical roots only in a new independent destination, with
+stable synthetic request identities and explicit source-to-destination maps.
 
 Agent session, message and tool duration timing are bounded read projections
 over exact selected event evidence. Recovering qualified Codex JSONL timestamps

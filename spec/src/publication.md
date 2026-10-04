@@ -85,6 +85,12 @@ publication capability. Rebuilt catalogs obey the same canonical radix rules and
 bounded closure audits as ordinary edits. Final selection still requires the
 existing manifest or companion ref CAS; archives and staging are invisible.
 
+Independent conversion destinations reconstruct each supported historical
+selection through authorized domain publication in private staging. The native
+manifest is installed only after all immutable destination dependencies;
+retained receipts establish completion without overwriting later destination
+edits.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                              |

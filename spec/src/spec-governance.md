@@ -1,5 +1,11 @@
 # Specification governance
 
+Repository conversion contract changes run the complete registered HTTP/SSE
+capture lane before enabling their generated client capability. Provider and
+installation recovery regressions, isolated real-storage restart and cold
+production browser evidence qualify the bounded conversion slice separately from
+remaining M13 code-command and portable-anchor milestones.
+
 Appearance integration retains both completed histories and their original
 evidence entries without milestone promotion. Runtime relocation reuses the
 existing fixture and installation identity; workspace retirement follows

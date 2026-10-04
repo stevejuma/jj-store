@@ -218,6 +218,19 @@ validation and retention qualify. GETs never initialize identity or actor state.
 
 ## Independent conversion profile
 
+Destination preparation reconstructs supported historical domain selections with
+explicit reference maps. Native staging freezes origin execution through a new
+WorkStore home; final publication copies its verified closure manifest last.
+Local staging selects typed descriptors together, retains the exact archive as a
+reachable companion blob and exports only through a no-replace folder rename. An
+installation journal retains original archive bytes and reports independently of
+the source. Status polling never allocates a new staging attempt. An explicit
+retry of interrupted preparation may start a fresh private staging attempt under
+the same destination identity; completed preparation and final publication reuse
+the retained digest-selected report. Mapping reports include transformed records
+and selected catalog roots; rebuilt internal catalog pages have no one-to-one
+identity correspondence. These artifacts do not grant execution or access.
+
 Conversion pins a committed source operation and companion or manifest selection
 without snapshotting working files or reconciling heads. The source archive is
 read-only and bounded to 100,000 objects, 16 MiB and dependency depth 512. The

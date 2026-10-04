@@ -23,6 +23,7 @@ export function productionStoreView(
   return {
     installationReady: options.installationReady ?? false,
     nativeRepositoryCreation: data.nativeRepositoryCreation,
+    repositoryConversion: data.repositoryConversion,
     accessMode: data.accessMode,
     storageReady: data.storageReady,
     backups: data.backups,

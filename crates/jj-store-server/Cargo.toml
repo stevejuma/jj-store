@@ -37,4 +37,6 @@ tokio = { version = "1", features = ["net", "process", "signal", "time", "rt", "
 tonic = { version = "0.14", features = ["transport", "tls-ring"] }
 
 [dev-dependencies]
+jj-collab.workspace = true
+jj-store-wal.workspace = true
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "test-util"] }

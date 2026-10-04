@@ -1,5 +1,14 @@
 # Storybook presentation catalog
 
+Repository General settings expose Admin-only format conversion when this
+installation has native storage. Preflight explains an independent destination,
+committed code and supported collaboration history; local export requires a new
+absolute folder. Exact accepted requests survive dialog closure, disconnection
+and browser reload without storing credentials or archive bodies. Unknown
+outcomes retain status/retry controls; verified completion refreshes discovery
+and opens the destination. Mapping reports remain retrievable by original
+request and can be downloaded. Source project links retain their identities.
+
 Thread directory and selected conversation reads start concurrently through the
 repository/session/profile query cache. Navigation cancels obsolete reads;
 confirmed reactions invalidate and reload only their exact target, retaining
@@ -52,17 +61,18 @@ and validate their width against discovered profile before reads. Cache keys
 include profile, repository and connection session. External freshness
 automatically reloads active views, including changes missed during
 disconnection, while retaining explicit historical code selections. Unsupported
-local Search, code writes, portable review anchors and conversion remain gated.
-Repository review reads and actions have independent capabilities. Concurrent
-fresh local captures follow the newest accepted capture so a post-save refresh
-and automatic polling do not report a false failure. Obsolete ordinary reads
-still abort; failed or closed replacement captures never expose an older
-metadata pin. Confirmed WorkStore commands notify other views after their own
-reads finish, allowing automatic refresh to run when saving is no longer busy.
-Cold local acceptance checks grouped tools and full-page comment composers,
-verifies automatic refresh without manual refresh clicks, and restores removed
-fixture registrations before subsequent tests. The isolated static-asset server
-must restart after the production build to qualify the current bundle.
+local Search, code writes and portable review anchors remain gated. Conversion
+has an independent installation capability and preflight gate. Repository review
+reads and actions have independent capabilities. Concurrent fresh local captures
+follow the newest accepted capture so a post-save refresh and automatic polling
+do not report a false failure. Obsolete ordinary reads still abort; failed or
+closed replacement captures never expose an older metadata pin. Confirmed
+WorkStore commands notify other views after their own reads finish, allowing
+automatic refresh to run when saving is no longer busy. Cold local acceptance
+checks grouped tools and full-page comment composers, verifies automatic refresh
+without manual refresh clicks, and restores removed fixture registrations before
+subsequent tests. The isolated static-asset server must restart after the
+production build to qualify the current bundle.
 
 The reviewed catalog application is the presentation authority for the served
 browser. Production browsing, search, typed mutations and conflict editing share

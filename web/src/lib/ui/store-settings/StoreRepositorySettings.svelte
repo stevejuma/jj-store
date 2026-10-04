@@ -1,5 +1,6 @@
 <script lang="ts">
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
+  import StoreRepositoryConversion from "./StoreRepositoryConversion.svelte";
   import StoreLocalFolders from "./StoreLocalFolders.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
@@ -185,6 +186,7 @@
           />{/if}
       </dl>
     </section>
+    <StoreRepositoryConversion {controller} {onClose} />
   </Tabs.Content>
   <Tabs.Content value="folders">
     {#if view.repository.profile === "git_sha1_jj045"}<StoreLocalFolders

@@ -115,7 +115,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                           | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050 |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                             | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034 |
 | M13.4 | In progress | M13.2 | JST-LOCAL-004,JST-LOCAL-005 | Filesystem-only server, local UI and recoverable code commands | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095 |
-| M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Complete destination publication, durable orchestration, UI and cold conversion gates          | E-M13-026 |
+| M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Retain eligible conversions; qualify portable anchored profiles and remaining prerequisite gates          | E-M13-026,E-M13-027 |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | - |
 | M14 | In progress | M4.18 | JST-UI-012,JST-UI-016 | Local settings, profile-aware device links and safe maintenance | Implement M14.3 agent setup and automatic recovery | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017 |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                                              | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049 |
@@ -200,7 +200,8 @@ signing/conflict export, native Git import/export and other platforms and
 external forge deployment qualification remain deferred. WorkStore local Git is
 supported while its replication stays frozen. M13 adds the separate server-free
 companion profile; its partial delivery does not qualify local serving/UI or
-conversion. The pending capability gates are explicit in
+conversion. The independently qualified eligible conversion slice is recorded
+separately; remaining capability gates are explicit in
 [local-jj.md](local-jj.md#pending-capabilities-and-acceptance).
 
 ## Evidence ledger
@@ -72137,6 +72138,393 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   ],
   "scope": "Rust conversion primitives only. Exact code/graph/history targets and direct capture/WAL regressions qualify additive staged interfaces. No conversion capability enabled. Root aggregate/full Rust workspace/UI/lifecycle/RustFS/visual lanes out of scope for this slice. Historical raw ledger entries preserved.",
   "next": "Commit verified primitives, then implement destination imports and durable server orchestration plus format UI; complete both-direction source safety/recovery/cold and real RustFS gates before enabling conversion."
+},
+{
+  "id": "E-M13-027",
+  "tasks": [
+    "M13.5"
+  ],
+  "date": "2026-10-04",
+  "kind": "real-rustfs",
+  "revision": "nmqnqtuz",
+  "before": "Creation and conversion primitives committed as c21a0e4e and 4022d470. Independent destination imports, durable installation orchestration and conversion UI not qualified.",
+  "versions": "macOS ARM64; pinned JJ 0.45.1, Git SHA-1; own workspace target; isolated reused embedded RustFS executable; locked dependencies; registry Design Core.",
+  "formats": "Version-1 owned archive/intent/report and digest-selected private installation journal. Original archive retained before staging; no new native persistence codec. Native manifests publish last; new colocated folders publish with synced no-replace rename. Fresh destination operations and typed identity maps; source grants/settings/credentials/journals do not become authority.",
+  "files": [
+    "Cargo.lock",
+    "catalog/components/store-application/StoreRepositoryConversion.stories.svelte",
+    "crates/jj-store-http/src/dto.rs",
+    "crates/jj-store-http/src/local_browser/conversion.rs",
+    "crates/jj-store-http/src/local_browser.rs",
+    "crates/jj-store-jj/src/query/language/identity.rs",
+    "crates/jj-store-server/Cargo.toml",
+    "crates/jj-store-server/src/local_repositories/conversion/journal.rs",
+    "crates/jj-store-server/src/local_repositories/conversion/prefix.rs",
+    "crates/jj-store-server/src/local_repositories/conversion/preparation.rs",
+    "crates/jj-store-server/src/local_repositories/conversion.rs",
+    "crates/jj-store-server/src/local_repositories/native_creation.rs",
+    "crates/jj-store-server/src/local_repositories.rs",
+    "crates/jj-store-server/src/storage_management/journal.rs",
+    "crates/jj-store-server/src/storage_management/mod.rs",
+    "crates/jj-store-server/tests/capture_management/api_snapshot.rs",
+    "crates/jj-store-server/tests/repository_conversion.rs",
+    "crates/jj-store-service/src/administration.rs",
+    "crates/jj-store-service/src/collab_reads/materialization.rs",
+    "crates/jj-store-service/src/conversion/contracts.rs",
+    "crates/jj-store-service/src/conversion/directory.rs",
+    "crates/jj-store-service/src/conversion/import.rs",
+    "crates/jj-store-service/src/conversion.rs",
+    "crates/jj-store-service/src/local_browser.rs",
+    "crates/jj-store-service/src/local_repository/conversion_import.rs",
+    "crates/jj-store-service/src/local_repository/work.rs",
+    "crates/jj-store-service/src/local_repository.rs",
+    "crates/jj-store-service/tests/conversion.rs",
+    "schemas/openapi.json",
+    "scripts/contracts.mjs",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/collaboration.md",
+    "spec/src/compatibility.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/mutations.md",
+    "spec/src/publication.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/contracts.ts",
+    "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+    "web/src/lib/controller/production-store-state.svelte.ts",
+    "web/src/lib/controller/production-store-view.ts",
+    "web/src/lib/controller/repository-conversion-manager.ts",
+    "web/src/lib/ui/store-settings/StoreRepositoryConversion.svelte",
+    "web/src/lib/ui/store-settings/StoreRepositoryConversionDialog.svelte",
+    "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+    "web/tests/browser/repository-conversion-real.mjs",
+    "web/tests/browser/repository-conversion.spec.ts",
+    "web/tests/repository-conversion-manager.test.ts"
+  ],
+  "tests": [
+    "crates/jj-store-server/tests/repository_conversion.rs#cold_rustfs_conversion_round_trip_retains_nonempty_history_across_restart",
+    "crates/jj-store-server/tests/repository_conversion.rs#conversion_round_trip_preserves_source_and_publishes_new_colocated_folder",
+    "crates/jj-store-server/tests/repository_conversion.rs#lost_final_manifest_ack_recovers_after_source_removal_and_restart",
+    "crates/jj-store-server/tests/repository_conversion.rs#unfinished_preparation_retries_the_saved_archive_after_source_removal",
+    "crates/jj-store-server/tests/repository_conversion.rs#retained_report_digest_rejects_altered_identity_maps",
+    "crates/jj-store-server/tests/repository_conversion.rs#conversion_http_derives_admin_authority_and_captures_contracts",
+    "crates/jj-store-service/tests/conversion.rs#local_history_archive_retains_every_selected_work_version_and_exact_git_evidence",
+    "crates/jj-store-jj/src/query/language/identity.rs#secure_repository_config_requires_matching_identity_without_migration",
+    "crates/jj-store-service/tests/collab_pagination/materialization.rs#expiry_eviction_and_failed_validation_rematerialize_from_storage",
+    "crates/jj-store-cli/tests/native_lifecycle/http_local_management.rs#local_workspace_management_requires_local_admin_and_captures_contracts",
+    "crates/jj-store-server/tests/capture_management/api_snapshot.rs#api_snapshot_progress_is_native_receipt_backed_and_body_free"
+  ],
+  "runs": [
+    {
+      "command": "cargo check -p jj-store-service --locked; cargo test -p jj-store-service --test conversion --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "import-check1/import-tests1: typed destination imports and five history/graph tests pass."
+    },
+    {
+      "command": "cargo check -p jj-store-service -p jj-store-server -p jj-store-http --locked (orchestration first)",
+      "result": "fail",
+      "failures": 3,
+      "note": "orchestration-check1: corrected metadata commit type and u64 journal byte limit."
+    },
+    {
+      "command": "cargo check -p jj-store-service -p jj-store-server -p jj-store-http --locked (iterations two/three)",
+      "result": "pass",
+      "failures": 0,
+      "note": "orchestration-check2/3: owning Rust boundaries compile."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test repository_conversion --locked (first fixture)",
+      "result": "fail",
+      "failures": 2,
+      "note": "orchestration-tests1: corrected CreateProject fields without changing assertions."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test repository_conversion --locked (initial round trip)",
+      "result": "fail",
+      "failures": 1,
+      "note": "orchestration-tests2: three pass; export registration reused generation one. Advance registry revision before assigning the destination binding generation."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test repository_conversion --locked conversion_round_trip_preserves_source_and_publishes_new_colocated_folder -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "orchestration-generation-regression: exact source-safe round trip passes."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test repository_conversion --locked (iterations three/four)",
+      "result": "pass",
+      "failures": 0,
+      "note": "orchestration-tests3/4: all five pass; added non-allocating status polling and explicit archived-source retry proof."
+    },
+    {
+      "command": "pnpm contracts:generate",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-contracts-generate: actual owning OpenAPI inventory and generated TS client refreshed."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/repository-conversion-manager.test.ts (first)",
+      "result": "fail",
+      "failures": 2,
+      "note": "conversion-manager-unit1: code-spelling regex assertions did not match human Error messages. Assert typed ApiError.code."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/repository-conversion-manager.test.ts (corrected)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-manager-unit2: four exact intent, reload/retry, foreign receipt, stale/publication conflict and blocked preview cases pass."
+    },
+    {
+      "command": "pnpm web:check (initial)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-web-check1: zero diagnostics."
+    },
+    {
+      "command": "pnpm web:check (presentation split)",
+      "result": "fail",
+      "failures": 1,
+      "note": "conversion-web-check2: dialog operationHeads must accept readonly controller arrays."
+    },
+    {
+      "command": "pnpm web:check (corrected)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-web-check3: zero diagnostics."
+    },
+    {
+      "command": "pnpm exec vitest run --config .local/repository-conversion/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryConversion.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-stories1: four interaction/accessibility stories pass; visual-pending retained."
+    },
+    {
+      "command": "pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-catalog-check1/architecture1/ui-ownership1: zero type diagnostics, 183 catalog modules, 928 production modules, ownership validator passes."
+    },
+    {
+      "command": "pnpm web:build; node scripts/browser-fixtures.mjs; pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/repository-conversion.spec.ts web/tests/browser/native-repository-creation.spec.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "conversion-web-build/browser-fixtures/browser1: build and actual native HTTP/SSE fixtures pass; browser host startup hits existing 30s deadline while waiting for Cargo lock. No tests ran; prebuild host before cold launch."
+    },
+    {
+      "command": "cargo build -p jj-store-http --example browser_preview --locked; pnpm exec playwright test --config .local/repository-conversion/playwright.config.ts web/tests/browser/repository-conversion.spec.ts web/tests/browser/native-repository-creation.spec.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "conversion-browser2: creation three and blocked conversion pass. Reactive preflight proxy could not be structuredClone-d before request persistence."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/repository-conversion-manager.test.ts (proxy counterexample)",
+      "result": "fail",
+      "failures": 1,
+      "note": "conversion-manager-proxy-before: original reload/retry case now uses a proxy and fails DataCloneError before dispatch."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/repository-conversion-manager.test.ts (proxy fix)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-manager-proxy-after: four pass with lossless serialization preserving exact proxy intent."
+    },
+    {
+      "command": "pnpm web:build; pnpm exec playwright test --config .local/repository-conversion/playwright.config.ts web/tests/browser/repository-conversion.spec.ts (iterations three/four)",
+      "result": "fail",
+      "failures": 2,
+      "note": "conversion-browser3/4: one failure each. Reload requires reopening Settings; same-hash goto retains the current mounted Settings. Added explicit cold reload and completion onClose propagation."
+    },
+    {
+      "command": "pnpm web:build; pnpm exec playwright test --config .local/repository-conversion/playwright.config.ts web/tests/browser/repository-conversion.spec.ts web/tests/browser/native-repository-creation.spec.ts (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-web-build3/browser5: all five pass with unchanged deadlines; cold exact pending/reload/retry, blocked preflight, downloadable receipt report and creation regressions."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --lib query::language::identity::tests --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "identity-tests: two owning bounded identity/config tests pass after mechanical inherited collapsible_if repair. No suppression or changed behavior."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test repository_conversion --offline --no-run; JJ_STORE_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_CONVERSION_BROWSER=1 cargo test -p jj-store-server --test repository_conversion --locked -- --ignored --exact cold_rustfs_conversion_round_trip_retains_nonempty_history_across_restart --nocapture (initial)",
+      "result": "fail",
+      "failures": 4,
+      "note": "rustfs-conversion-compile1/conversion1: two fixture diagnostics each, ambiguous Work Request and private Reaction state. Use public Reaction query."
+    },
+    {
+      "command": "JJ_STORE_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_CONVERSION_BROWSER=1 cargo test -p jj-store-server --test repository_conversion --locked -- --ignored --exact cold_rustfs_conversion_round_trip_retains_nonempty_history_across_restart --nocapture (iterations two/three)",
+      "result": "fail",
+      "failures": 2,
+      "note": "rustfs-conversion2/3: real native import, restart, export and nonempty historical graph/source safety assertions pass before browser phase fails. Correct Axe context ownership, then explicitly select the source committed operation instead of assuming asynchronous head loading has finished."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-wal -p jj-store-server -p jj-store-http -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-all-target-check1: affected libraries and direct consumer targets compile; owning workspace target only."
+    },
+    {
+      "command": "cargo clippy -p jj-store-jj -p jj-store-service -p jj-store-wal -p jj-store-server -p jj-store-http -p jj-store-cli --lib --locked -- -D warnings; cargo clippy -p jj-store-server --test repository_conversion --test native_creation --locked -- -D warnings (iterations one/two/three)",
+      "result": "fail",
+      "failures": 11,
+      "note": "conversion-lib-lint1/2 and test-lint1/2/3: inherited service materialization conditional and three storage journal/completion conditionals; new preparation argument count and test needless borrow. Mechanically consolidate conditionals, derive store from destination host and remove needless borrow. No lint suppression. The five command-instance failure counts are 1+1+4+4+1."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test collab_pagination materialization:: --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "materialization-regression: seven exact cache/admission/eviction tests pass; unrelated pager cases out of scope."
+    },
+    {
+      "command": "cargo clippy -p jj-store-jj -p jj-store-service -p jj-store-wal -p jj-store-server -p jj-store-http -p jj-store-cli --lib --locked -- -D warnings (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-lib-lint3: all owning/direct-consumer libraries pass strict lint."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test conversion --locked; cargo test -p jj-store-server --test repository_conversion --test native_creation --locked; cargo test -p jj-store-jj --test conversion --test local_evidence --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-service/server/jj-tests-final: 5 service, 6 conversion, 5 creation, 2 code and 6 local evidence tests pass. Isolated RustFS is separately invoked, not counted from ignored default suite."
+    },
+    {
+      "command": "pnpm contracts:check (initial complete capture lane)",
+      "result": "fail",
+      "failures": 1,
+      "note": "conversion-contracts-check1: inherited api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free times out. Exact isolated reproduction also fails, disproving concurrent build load as the cause. Preserve original publication deadline."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-web/catalog-check-final: zero errors/warnings, catalog boundary passes."
+    },
+    {
+      "command": "cargo fmt --all; pnpm exec prettier --write changed TS/Svelte/canonical chapters and separately formatted evidence object",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-format1 through7, canonical/story/real-browser/manager/browser formatting logs; historical ledger raw bytes preserved."
+    },
+    {
+      "command": "JJ_STORE_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_CONVERSION_BROWSER=1 cargo test -p jj-store-server --test repository_conversion --locked -- --ignored --exact cold_rustfs_conversion_round_trip_retains_nonempty_history_across_restart --nocapture (iteration four)",
+      "result": "fail",
+      "failures": 1,
+      "note": "rustfs-conversion4: browser assumed immediate completion. Actual HTTP deadline returns 504 with unknown outcome. Recover original request through status controls, preserving existing deadlines and request identities."
+    },
+    {
+      "command": "JJ_STORE_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_CONVERSION_BROWSER=1 cargo test -p jj-store-server --test repository_conversion --locked -- --ignored --exact cold_rustfs_conversion_round_trip_retains_nonempty_history_across_restart --nocapture (iteration five)",
+      "result": "pass",
+      "failures": 0,
+      "note": "rustfs-conversion5: 1/1 passes in 195s. Nonempty Agent/Review/Thread/Reaction graph and historical Work versions survive native import, RustFS shutdown/restart and export. Production UI in both directions passes navigation, downloadable reports, axe and zero runtime errors. Real 504 acknowledgement and 503 installation-lock status recover original requests. Source metadata and dirty files remain intact; stock JJ opens destination."
+    },
+    {
+      "command": "pnpm web:build; pnpm exec playwright test --config .local/repository-conversion/playwright.config.ts web/tests/browser/repository-conversion.spec.ts web/tests/browser/native-repository-creation.spec.ts (dismissal regression)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-web-build4/browser6: 6/6 cold browser tests pass, including status retry retaining a dismissed operational error episode until receipt recovery. Existing startup/test deadlines unchanged; already-built isolated host avoids Cargo lock during startup."
+    },
+    {
+      "command": "cargo clippy -p jj-store-server --test repository_conversion --test native_creation --locked -- -D warnings (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-test-lint4: both feature test targets pass strict lint."
+    },
+    {
+      "command": "cargo clippy -p jj-store-jj --test conversion --test local_evidence -p jj-store-service --test conversion --locked -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-primitive-test-lint: code/evidence and service graph test targets pass strict lint."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked content_acceptance::http_acceptance::local_management::local_workspace_management_requires_local_admin_and_captures_contracts -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "storage-management-regression: 1/1 actual HTTP workspace/storage management fixture passes after mechanical owning conditional consolidation."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test capture_management --locked api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free -- --exact (isolated original and diagnostic)",
+      "result": "fail",
+      "failures": 2,
+      "note": "contracts-snapshot-regression/regression2: 1 failure per run; original 120s publication deadline expires at Overdue/awaiting_activity with no snapshot. Disposable process stack sample identifies real Kingfisher/vectorscan rule compilation before observation. Diagnostic retains original deadline; ineffective runtime topology experiment is reverted."
+    },
+    {
+      "command": "sample 84180 2 -file .local/repository-conversion/capture-contract-sample.txt",
+      "result": "pass",
+      "failures": 0,
+      "note": "capture-contract-sample: sampled only this disposable fixture process. Blocking source worker stack reaches TranscriptSanitizer::new, rules compilation and hs_compile_ext_multi; runtime shutdown waits for that owned compiler task."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test capture_management --locked api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free -- --exact (real scanner setup repair)",
+      "result": "pass",
+      "failures": 0,
+      "note": "contracts-snapshot-regression3: 1/1 passes in 189s including actual cold Kingfisher preparation before worker startup. Original 120s publication timeout, single-thread runtime and all receipt/body-free/corruption/authorization assertions retained. No mocks, dropped fixtures or sanitizer policy changes."
+    },
+    {
+      "command": "cargo clippy -p jj-store-server --test capture_management --locked -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-capture-test-lint: owning repaired fixture target passes strict lint."
+    },
+    {
+      "command": "sample 94188 1 -file .local/repository-conversion/capture-prewarmed-sample.txt",
+      "result": "pass",
+      "failures": 0,
+      "note": "capture-prewarmed-sample: owned disposable fixture is performing real rule compilation in setup, before the publication wait."
+    },
+    {
+      "command": "cargo fmt --all; pnpm exec prettier --write spec/src/cli.md .local/repository-conversion/evidence.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-format9/evidence-format2: fixture/canonical formatting and separately formatted new evidence object; inherited ledger remains untouched."
+    },
+    {
+      "command": "pnpm exec prettier --check changed TS/Svelte/MJS/JSON/canonical chapter files .local/repository-conversion/evidence.json; cargo fmt --all -- --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-prettier-final/rust-format-final: changed source and chapters pass. Historical progress ledger is not rewritten by formatting."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-progress2/spec-first2/spec-validate2/boundaries2: 136 tasks, 42 protected files/12 mapped chapters, 22 chapters/167 requirements and 17 package boundaries pass. Bookkeeping is not product acceptance."
+    },
+    {
+      "command": "python3 (compare inherited progress evidence and raw ledger bytes with jj file show -r @-)",
+      "result": "pass",
+      "failures": 0,
+      "note": "All 415 inherited evidence entries and their original ledger bytes are preserved; only M13.5 task scope and E-M13-027 change."
+    },
+    {
+      "command": "pnpm contracts:check (complete registered capture lane, iteration two)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-contracts-check2: all registered owning server and CLI captures pass; 240 actual HTTP/SSE responses conform. Seven contract validation tests and direct generated-client TypeScript check pass. Final scanner-setup fixture separately passes the exact original target after the diagnostic topology experiment is reverted."
+    },
+    {
+      "command": "pnpm exec prettier --write .local/repository-conversion/evidence.json; pnpm exec prettier --check .local/repository-conversion/evidence.json; pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm check:boundaries (final)",
+      "result": "fail",
+      "failures": 1,
+      "note": "evidence-format-check-final/spec-first-final/spec-validate-final/boundaries-final pass; conversion-progress-final rejects a provisional pending run result (runs require pass/fail). Correct evidence metadata without changing implementation or gates."
+    },
+    {
+      "command": "pnpm exec prettier --write .local/repository-conversion/evidence.json; pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm check:boundaries (corrected final metadata)",
+      "result": "pass",
+      "failures": 0,
+      "note": "evidence-format-final2/conversion-progress-final2/spec-first-final2/spec-validate-final2/boundaries-final2: corrected metadata passes all 136-task bookkeeping, 42-file/12-chapter governance, 22-chapter/167-requirement validation and 17-package boundaries. Final evidence append rechecked with the same progress and specification consumers."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Independent eligible conversions in the current LocalTrusted installation only. Full actual registered HTTP/SSE capture escalation is required by added public routes/capabilities and generated browser client. All-target checks cover owning libraries and direct CLI consumer; tests remain named affected targets. Cold production browser and isolated real RustFS restart are distinct from MemoryStore fault tests. M13.5 remains In progress because portable code/agent anchored profiles and the prerequisite M13.4 code-command gates remain separate; unsupported profiles fail preflight without changing source. Root aggregate/full Rust workspace/full UI suites, visual baselines, installed services, existing repository migration, remote destinations and release/deployment are out of scope. API snapshot fixture setup warms the real privacy scanner; it preserves the 120-second publication wait, original single-thread runtime and receipt/body-free assertions. This does not qualify cold scanner compilation latency.",
+  "next": "Retain verified bounded conversion; qualify unsupported signed/conflicted/copy code, portable code/agent anchored collaboration and remaining M13 prerequisite/full-flow gates separately."
 }
 ]
 
