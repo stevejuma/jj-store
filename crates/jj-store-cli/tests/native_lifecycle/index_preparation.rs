@@ -114,7 +114,7 @@ async fn index_preparation_cancels_pending_work_and_retains_shared_slot_until_ex
         .await
         .unwrap();
     let busy = read
-        .object(shared.content(), m::ObjectKey::Commit(roots::ROOT_COMMIT))
+        .prepare_index(shared.graph(), q::Cancellation::default())
         .await;
     cancellation.cancel();
     let canceled = tokio::time::timeout(Duration::from_secs(1), task)

@@ -577,6 +577,13 @@ exits; an open file handle keeps capacity until its verified spool is released.
 Transport admission also bounds snapshot capture and response delivery, which
 are separate from native worker execution.
 
+Explicit index preparation uses one shared background worker in addition to the
+configured interactive read capacity. Preparation MUST NOT occupy an interactive
+slot, and a second preparation cannot gain another slot by choosing a different
+repository or cache namespace. Its permit remains held until actual worker exit
+after cancellation. Cache namespace locking remains independently enforced;
+directory, object and operation-only reads do not require that lock.
+
 Cold graph requests above the configured inline index threshold return an
 explicit rebuild-required result. Index preparation remains tied to the selected
 operation while repository heads advance. Clients retry that snapshot after a

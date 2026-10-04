@@ -72,7 +72,12 @@ async fn query_shape_rejects_commit_merge_amplification_without_narrowing_persis
     assert_eq!(
         read.graph(
             &graph,
-            q::Request::Operations,
+            q::Request::Log {
+                revset: "all()".into(),
+                workspace: None,
+                user_email: String::new(),
+                at_time_millis: 0,
+            },
             q::Page {
                 limit: 1,
                 after: None
@@ -94,7 +99,12 @@ async fn query_shape_rejects_reference_merge_amplification() {
     assert_eq!(
         read.graph(
             &graph,
-            q::Request::Operations,
+            q::Request::Log {
+                revset: "all()".into(),
+                workspace: None,
+                user_email: String::new(),
+                at_time_millis: 0,
+            },
             q::Page {
                 limit: 1,
                 after: None

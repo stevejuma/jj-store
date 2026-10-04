@@ -75983,6 +75983,90 @@ entries.
     "Full contract capture baseline timeout, registry-only Design Core gate, large-scale native 2m, deep-page/cache-loss/corruption/cold/real-RustFS gates remain pending. Running app unchanged; no milestone or full-plan completion claimed. Unrelated root aggregates and unchanged UI browser tests out of scope."
   ],
   "next": "Validate ledger and commit operation-only reads, then continue bounded history preparation and remaining audited endpoints."
+},
+{
+  "id": "E-READ-007",
+  "tasks": [
+    "M4.1"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change ywpqrklo",
+  "kind": "Reserved interactive capacity during index preparation",
+  "versions": "Rust 1.98.1; jj-lib 0.45.1; pnpm 10.32.1.",
+  "formats": "No persisted or HTTP DTO changes. Internal worker diagnostics report configured interactive capacity plus one preparation slot.",
+  "files": [
+    "crates/jj-store-cli/tests/native_lifecycle/content_admission.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/index_preparation.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/index_tasks.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs",
+    "crates/jj-store-jj/src/query/mod.rs",
+    "crates/jj-store-jj/src/query/workers.rs",
+    "spec/src/api.md",
+    "spec/src/cli.md",
+    "spec/src/jj-integration.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-JJ-003",
+    "JST-JJ-005",
+    "JST-API-001"
+  ],
+  "tests": [
+    "crates/jj-store-cli/tests/native_lifecycle/index_tasks.rs#index_preparation_reserves_interactive_capacity",
+    "crates/jj-store-cli/tests/native_lifecycle/index_preparation.rs#index_preparation_cancels_pending_work_and_retains_shared_slot_until_exit",
+    "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs#query_workers_mixed_capacity_clones_and_errors_release_slots",
+    "crates/jj-store-cli/tests/native_lifecycle/content_admission.rs#query_shape_rejects_commit_merge_amplification_without_narrowing_persistence"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked index_preparation_reserves_interactive_capacity -- --nocapture",
+      "result": "fail",
+      "note": "Before: blocked preparation starved interactive file reader. Removed redundant drop-of-Copy warning in test.",
+      "failures": 1
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked index_preparation_reserves_interactive_capacity -- --nocapture",
+      "result": "pass",
+      "note": "1 passed: capacity-one interactive file and operation reads succeed during gated preparation; second namespace returns Busy; canceled worker releases capacity.",
+      "failures": 0
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "note": "Affected packages and direct consumers checked.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "note": "Missing mapped CLI chapter corrected with explicit serving-composition acceptance.",
+      "failures": 1
+    },
+    {
+      "command": "pnpm check:architecture; pnpm exec prettier --check spec/src/api.md spec/src/jj-integration.md spec/src/cli.md; pnpm spec:first; cargo fmt --all -- --check",
+      "result": "pass",
+      "note": "930 production UI modules; focused docs and Rust formatting; spec-first 5 protected files/3 chapters.",
+      "failures": 0
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked -- --test-threads=2",
+      "result": "fail",
+      "note": "Escalated to whole native lifecycle binary because shared scheduling spans graphs/content/commands. 190 passed/2 failed in83.50s. Both failures used operation-only reads to trigger commit/view amplification checks; updated to indexed all() queries and preserved Limit assertions. Existing linker unwind-size advisory retained.",
+      "failures": 2
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked content_acceptance::admission_acceptance:: -- --test-threads=2",
+      "result": "pass",
+      "note": "All4 admission tests pass after correcting the two request shapes. No production admission weakened. Full binary not repeated after test-only corrections; this is not reported as a clean full-suite run. Final check:progress, spec:first, spec:validate and cargo fmt checks pass (136 tasks, 6 protected files/4 chapters, 167 requirements).",
+      "failures": 0
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Shared cache namespace locking and existing index size/rebuild algorithms remain unchanged. Full bounded disk preparation, local historical point/graph lookup, immutable segments/quotas, operation prefix/copy/search/RPC and collaboration projections remain pending.",
+    "Linux/native2m/near-capacity/cold/real-RustFS qualification and E-READ-005 release/contract gaps remain pending. Running dev app unchanged. Unrelated root aggregate and unchanged UI/browser lanes out of scope."
+  ],
+  "next": "Commit reserved-worker slice after ledger checks, then continue historical reads and bounded preparation."
 }
 ]
 ```

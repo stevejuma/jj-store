@@ -345,7 +345,10 @@ impl GraphExecutor {
         let mut budget = Budget::new(self.limits)?;
         budget.cancellation = cancellation.0;
         let budget = Arc::new(budget);
-        let permit = self.workers.acquire()?;
+        let permit = match &work {
+            Work::Prepare => self.workers.acquire_preparation()?,
+            Work::Graph(..) => self.workers.acquire()?,
+        };
         budget.authorize(access.as_ref()).await?;
         if let Work::Graph(_, page) = &work
             && (page.limit == 0 || page.limit > self.limits.max_page)

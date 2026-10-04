@@ -1,4 +1,4 @@
-//! Shared, non-queuing admission across native graphs, content and file streams.
+//! Shared non-queuing interactive admission and one reserved preparation worker.
 use super::{Error, GraphExecutor, Limits, Result, cache, content};
 use serde::Serialize;
 use std::{path::PathBuf, sync::Arc};
@@ -9,9 +9,11 @@ use tokio::sync::{OwnedSemaphorePermit, Semaphore};
 pub struct Workers {
     capacity: usize,
     permits: Arc<Semaphore>,
+    preparation: Arc<Semaphore>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub struct Status {
+    /// Total capacity: configured interactive capacity plus one preparation slot.
     pub capacity: usize,
     /// Includes live verified-file handles and canceled jobs that have not exited.
     pub in_use: usize,
@@ -24,16 +26,24 @@ impl Workers {
         Ok(Self {
             capacity,
             permits: Arc::new(Semaphore::new(capacity)),
+            preparation: Arc::new(Semaphore::new(1)),
         })
     }
     pub fn status(&self) -> Status {
         Status {
-            capacity: self.capacity,
-            in_use: self.capacity - self.permits.available_permits(),
+            capacity: self.capacity + 1,
+            in_use: self.capacity - self.permits.available_permits() + 1
+                - self.preparation.available_permits(),
         }
     }
     pub(crate) fn acquire(&self) -> Result<OwnedSemaphorePermit> {
         self.permits
+            .clone()
+            .try_acquire_owned()
+            .map_err(|_| Error::Busy)
+    }
+    pub(crate) fn acquire_preparation(&self) -> Result<OwnedSemaphorePermit> {
+        self.preparation
             .clone()
             .try_acquire_owned()
             .map_err(|_| Error::Busy)

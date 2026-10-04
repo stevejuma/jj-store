@@ -427,18 +427,23 @@ preparation as well as during backend futures and copy streams; genuine pending
 local I/O remains Pending.
 
 A serving instance composes its graph executor and content reader with one
-shared worker pool, retained across repositories, routes and clones. Admission
-is non-queuing and returns Busy when the aggregate count is exhausted. A worker
+shared interactive worker pool, retained across repositories, routes and clones.
+Explicit index preparation uses one additional shared background slot and MUST
+NOT consume configured interactive capacity, including when that capacity is
+one. Another preparation returns Busy even across distinct cache namespaces.
+Interactive requests cannot borrow the preparation slot. Admission is
+non-queuing and returns Busy when the relevant capacity is exhausted. A worker
 retains its slot through native execution, including canceled synchronous steps.
 A verified file retains its slot with its spool until the handle is dropped,
 including after EOF. Validation, authorization and worker failures return their
 slots without weakening current permission or snapshot membership checks.
 
-The composed executor exposes capacity and active-slot diagnostics without
-credentials or repository data. This bounds simultaneous native jobs/streams;
-per-query byte/work/shape limits remain independent. It is not an OS memory
-reservation. Snapshot admission, response delivery, native RPC and background
-jobs also need explicit composition at the serving boundary.
+The composed executor exposes total capacity (interactive plus preparation) and
+active-slot diagnostics without credentials or repository data. This bounds
+simultaneous native jobs/streams; per-query byte/work/shape limits remain
+independent. It is not an OS memory reservation. Snapshot admission, response
+delivery, native RPC and background jobs also need explicit composition at the
+serving boundary.
 
 ## Explicit index preparation
 

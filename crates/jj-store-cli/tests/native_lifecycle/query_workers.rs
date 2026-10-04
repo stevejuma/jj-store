@@ -135,7 +135,7 @@ async fn query_workers_mixed_capacity_clones_and_errors_release_slots() {
     assert_eq!(
         workers.status(),
         q::workers::Status {
-            capacity: 2,
+            capacity: 3,
             in_use: 0
         }
     );

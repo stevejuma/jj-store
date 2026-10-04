@@ -1610,3 +1610,9 @@ commit-index admission and construction. Reads retain pinned operation ordering
 and bounded filtering and must not repair a local commit index. The existing
 complete-admission prefix path remains until prepared operation lookup is
 qualified.
+
+Serving-composition acceptance MUST block an index preparation storage read and
+prove that the configured interactive capacity still serves files and operation
+metadata. A second preparation, including through another cache namespace, must
+return Busy until the first worker exits. Cancellation and service teardown must
+retain that shared preparation permit until exit and then release it.

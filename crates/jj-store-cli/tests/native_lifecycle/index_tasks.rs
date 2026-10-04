@@ -194,6 +194,68 @@ impl jj_store_object::ObjectStore for GatedStore {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn index_preparation_reserves_interactive_capacity() {
+    let f = ContentFixture::new().await;
+    let root = tempfile::tempdir().unwrap();
+    let shared = shared(root.path());
+    let gate = Arc::new(GatedStore {
+        inner: f.f.store.clone(),
+        target: f.commit.key().storage_path(REPO),
+        entered: Default::default(),
+        released: Default::default(),
+    });
+    let cancellation = q::Cancellation::default();
+    let job = {
+        let graph = shared.graph().clone();
+        let access = f.read.clone();
+        let gate = gate.clone();
+        let cancellation = cancellation.clone();
+        tokio::spawn(async move { graph.prepare_index(gate, access, cancellation).await })
+    };
+    tokio::time::timeout(Duration::from_secs(2), gate.entered.notified())
+        .await
+        .unwrap();
+    // A second cache namespace must not acquire another background slot.
+    let other_root = tempfile::tempdir().unwrap();
+    let other = q::GraphExecutor::with_workers(
+        other_root.path().to_owned(),
+        q::Limits::default(),
+        q::cache::Policy::default(),
+        shared.workers().clone(),
+    )
+    .unwrap();
+    let second = f
+        .read
+        .prepare_index(&other, q::Cancellation::default())
+        .await;
+    let file = f.read.file(shared.content(), f.file, None).await;
+    let active = shared.workers().status().in_use;
+    let file_ok = file.is_ok();
+    drop(file);
+    let operation = f
+        .read
+        .graph(
+            shared.graph(),
+            q::Request::Operations,
+            q::Page {
+                limit: 1,
+                after: None,
+            },
+        )
+        .await;
+    // Always release the blocked worker before assertions, including the baseline.
+    cancellation.cancel();
+    let stopped = job.await.unwrap();
+    assert_eq!(second.unwrap_err(), q::Error::Busy);
+    assert!(file_ok, "preparation starved the interactive file reader");
+    assert_eq!(active, 2);
+    operation.unwrap();
+    assert_eq!(stopped.unwrap_err(), q::Error::Canceled);
+    assert!(gate.released.load(std::sync::atomic::Ordering::SeqCst));
+    assert_eq!(shared.workers().status().in_use, 0);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn index_tasks_deduplicate_bound_cancel_and_drop_running_jobs() {
     let f = ContentFixture::new().await;
     let root = tempfile::tempdir().unwrap();
