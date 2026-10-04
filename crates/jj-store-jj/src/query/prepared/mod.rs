@@ -5,11 +5,13 @@
 //! 6), with Kahn's queue ordered by committer timestamp then commit ID.
 mod disk;
 mod segment;
+mod tables;
 use super::{Error, Result, access::Budget};
 use disk::{Disk, Space, Table, io_error};
 use jj_lib::{backend, object_id::ObjectId as _, operation::Operation, store::Store};
 use redb::TableDefinition;
 use std::{path::Path, sync::Arc};
+use tables::Tables;
 
 const OPS: Table = TableDefinition::new("pending_ops");
 const SEEN_OPS: Table = TableDefinition::new("seen_ops");
@@ -31,10 +33,10 @@ fn number(bytes: &[u8]) -> Result<u32> {
         .map(u32::from_be_bytes)
         .map_err(|_| Error::Corrupt)
 }
-fn required(disk: &Disk, table: Table, key: &[u8]) -> Result<Vec<u8>> {
+fn required(disk: &Tables, table: Table, key: &[u8]) -> Result<Vec<u8>> {
     disk.get(table, key)?.ok_or(Error::Incomplete)
 }
-fn count(disk: &Disk, table: Table, key: &[u8]) -> Result<u32> {
+fn count(disk: &Tables, table: Table, key: &[u8]) -> Result<u32> {
     disk.get(table, key)?.map_or(Ok(0), |n| number(&n))
 }
 
@@ -81,13 +83,22 @@ pub(super) async fn build(
     store: &Arc<Store>,
     budget: &Budget,
     max_bytes: u64,
+    inline: bool,
 ) -> Result<()> {
     let source = NativeSource {
         operation,
         store,
         budget,
+        inline,
     };
-    build_from(path, operation.id(), &source, max_bytes).await
+    build_with_tables(
+        path,
+        operation.id(),
+        &source,
+        max_bytes,
+        inline || max_bytes < 32 * 1024 * 1024,
+    )
+    .await
 }
 
 /// Only the traversal calls these readers, with IDs reached from the admitted
@@ -102,6 +113,9 @@ pub(crate) trait Source {
     fn check(&self) -> Result<()>;
     fn work(&self, amount: usize) -> Result<()>;
     fn max_commits(&self) -> usize;
+    fn index_limit_error(&self) -> Error {
+        Error::IndexBudget
+    }
     fn max_parents(&self) -> usize;
     fn commit_len(&self) -> usize;
     fn change_len(&self) -> usize;
@@ -113,6 +127,7 @@ struct NativeSource<'a> {
     operation: &'a Operation,
     store: &'a Arc<Store>,
     budget: &'a Budget,
+    inline: bool,
 }
 impl Source for NativeSource<'_> {
     fn check(&self) -> Result<()> {
@@ -122,7 +137,23 @@ impl Source for NativeSource<'_> {
         self.budget.work(amount)
     }
     fn max_commits(&self) -> usize {
-        self.budget.limits.max_index_commits
+        if self.inline {
+            self.budget
+                .limits
+                .max_index_commits
+                .min(self.budget.limits.max_inline_rebuild_commits)
+        } else {
+            self.budget.limits.max_index_commits
+        }
+    }
+    fn index_limit_error(&self) -> Error {
+        if self.inline
+            && self.budget.limits.max_inline_rebuild_commits < self.budget.limits.max_index_commits
+        {
+            Error::IndexRebuildRequired
+        } else {
+            Error::IndexBudget
+        }
     }
     fn max_parents(&self) -> usize {
         self.budget.limits.metadata.max_parent_edges
@@ -172,13 +203,22 @@ pub(crate) async fn build_from(
     budget: &impl Source,
     max_bytes: u64,
 ) -> Result<()> {
+    build_with_tables(path, operation, budget, max_bytes, false).await
+}
+async fn build_with_tables(
+    path: &Path,
+    operation: &jj_lib::op_store::OperationId,
+    budget: &impl Source,
+    max_bytes: u64,
+    small: bool,
+) -> Result<()> {
     budget.check()?;
     let scratch = tempfile::Builder::new()
         .prefix(".prepare-")
         .tempdir_in(path)
         .map_err(io_error)?;
     let space = Space::new(max_bytes);
-    let mut disk = Disk::new(&scratch.path().join("graph.redb"), space.clone())?;
+    let mut disk = Tables::new(&scratch.path().join("graph.redb"), space.clone(), small)?;
     disk.put(OPS, operation.as_bytes(), &[])?;
     // Unlike upstream's operation walk, no frontier or retained view set grows
     // in memory with history. Order is irrelevant to the set of historical roots.
@@ -213,7 +253,7 @@ pub(crate) async fn build_from(
             continue;
         }
         if total as usize >= budget.max_commits() || total >= 0x7fff_ffff {
-            return Err(Error::IndexBudget);
+            return Err(budget.index_limit_error());
         }
         let data = budget.commit(&backend::CommitId::from_bytes(&id)).await?;
         if data.parents.len() > budget.max_parents() {

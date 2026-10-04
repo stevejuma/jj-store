@@ -747,4 +747,8 @@ for continuation. Snippets are generated only for returned hits. The cache holds
 data only, with separate bounded root and cursor retention; each request
 captures its manifest envelope and rechecks viewer, inventory limits and
 authorization. No search cache or field index becomes domain authority or a
-persisted format.
+persisted format. Native query construction shares the owned pinned-format
+writer with local preparation. Interactive and small-cache native builds use
+compact ordered scratch with pre-growth shared-pool admission; large explicit
+builds retain bounded disk scratch. This performance delivery does not qualify
+full scale or complete immutable-generation lifecycle behavior.

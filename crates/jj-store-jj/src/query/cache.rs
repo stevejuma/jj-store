@@ -226,6 +226,15 @@ fn inventory(
     }
     Ok((files, total))
 }
+pub(super) fn construction_bytes(path: &Path, policy: Policy, budget: &Budget) -> Result<u64> {
+    let (_, bytes) = inventory(path, policy, budget, false)?;
+    // Leave room for a small receipt. Larger receipts are admitted against the
+    // actual remaining bytes before writing; no fixed 1MiB minimum is needed.
+    policy
+        .max_entry_bytes
+        .checked_sub(bytes.checked_add(4096).ok_or(Error::Limit)?)
+        .ok_or(Error::Limit)
+}
 impl Cache {
     pub fn open(root: &Path, policy: Policy, budget: &Budget) -> Result<Self> {
         let mut root = root.to_owned();
@@ -441,15 +450,6 @@ impl Cache {
             resident: None,
         })
     }
-    pub fn remaining_bytes(&self, entry: &Entry, budget: &Budget) -> Result<u64> {
-        let (_, bytes) = inventory(&entry.path, self.policy, budget, false)?;
-        // Retained entries were reserved by prepare(); scratch and output share
-        // this allowance, including bytes buffered for a pending write.
-        self.policy
-            .max_entry_bytes
-            .checked_sub(bytes + RECEIPT_LIMIT)
-            .ok_or(Error::Limit)
-    }
     pub fn finish(
         &mut self,
         mut entry: Entry,
@@ -486,6 +486,13 @@ impl Cache {
         };
         let bytes = serde_json::to_vec(&receipt).map_err(|_| Error::Unavailable)?;
         if bytes.len() as u64 > RECEIPT_LIMIT {
+            return Err(Error::Limit);
+        }
+        let (_, prior_size) = inventory(&entry.path, self.policy, budget, false)?;
+        if prior_size
+            .checked_add(bytes.len() as u64)
+            .is_none_or(|n| n > self.policy.max_entry_bytes)
+        {
             return Err(Error::Limit);
         }
         // Publish the complete local receipt; an interrupted temp file makes the

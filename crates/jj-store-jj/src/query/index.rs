@@ -48,7 +48,7 @@ struct GuardedIndexStore {
     inner: DefaultIndexStore,
     budget: Arc<Budget>,
     path: PathBuf,
-    preparation_bytes: Option<u64>,
+    cache_policy: cache::Policy,
     resident: Option<Arc<cache::resident::Saved>>,
     disk_verified: AtomicBool,
     access: Arc<dyn ReadAccess>,
@@ -72,34 +72,47 @@ impl IndexStore for GuardedIndexStore {
         self.budget
             .check()
             .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
-        if let Some(bytes) = self.preparation_bytes
-            && !self
-                .path
-                .join("op_links")
-                .join(operation.id().hex())
-                .try_exists()
-                .map_err(|e| IndexStoreError::Read(Box::new(e)))?
+        if let Some(resident) = &self.resident
+            && operation.id().as_bytes() != resident.operation.as_bytes()
+            && !self.disk_verified.load(Ordering::Acquire)
         {
-            super::prepared::build(&self.path, operation, store, &self.budget, bytes)
-                .await
+            resident
+                .verify_disk(&self.budget)
                 .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            // Verify the original receipt before adding bounded derived data.
+            self.disk_verified.store(true, Ordering::Release);
+        }
+        if !self
+            .path
+            .join("op_links")
+            .join(operation.id().hex())
+            .try_exists()
+            .map_err(|e| IndexStoreError::Read(Box::new(e)))?
+        {
+            let bytes = cache::construction_bytes(
+                self.path
+                    .parent()
+                    .ok_or_else(|| IndexStoreError::Read(Box::new(Error::Unavailable)))?,
+                self.cache_policy,
+                &self.budget,
+            )
+            .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            super::prepared::build(
+                &self.path,
+                operation,
+                store,
+                &self.budget,
+                bytes,
+                !self.preparing,
+            )
+            .await
+            .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
         }
         let index = if let Some(resident) = &self.resident
             && operation.id().as_bytes() == resident.operation.as_bytes()
         {
             resident.index.clone()
         } else {
-            if let Some(resident) = &self.resident
-                && !self.disk_verified.load(Ordering::Acquire)
-            {
-                resident
-                    .verify_disk(&self.budget)
-                    .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
-                // The namespace lock remains held. This job may now build more
-                // operation indexes; subsequent loads must not compare its own
-                // new files against the entry's original receipt.
-                self.disk_verified.store(true, Ordering::Release);
-            }
             self.budget
                 .index_memory
                 .reserve(
@@ -111,18 +124,6 @@ impl IndexStore for GuardedIndexStore {
                 )
                 .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
             let index = self.inner.get_index_at_op(operation, store).await?;
-            // Inline construction can add segments; retain their final weight
-            // before any result is cached beyond the request's own admission.
-            self.budget
-                .index_memory
-                .reserve(
-                    &self.path,
-                    store.commit_id_length(),
-                    store.change_id_length(),
-                    self.budget.limits.max_index_commits,
-                    || self.budget.work(1),
-                )
-                .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
             let raw = index
                 .downcast_ref::<DefaultReadonlyIndex>()
                 .ok_or_else(|| {
@@ -184,7 +185,7 @@ pub(super) fn loader(
     settings: &UserSettings,
     path: &Path,
     budget: Arc<Budget>,
-    preparation_bytes: Option<u64>,
+    cache_policy: cache::Policy,
     resident: Option<Arc<cache::resident::Saved>>,
     access: Arc<dyn ReadAccess>,
     preparing: bool,
@@ -201,7 +202,7 @@ pub(super) fn loader(
                 inner: DefaultIndexStore::load(path),
                 budget: budget.clone(),
                 path: path.to_owned(),
-                preparation_bytes,
+                cache_policy,
                 resident: resident.clone(),
                 disk_verified: AtomicBool::new(false),
                 access: access.clone(),

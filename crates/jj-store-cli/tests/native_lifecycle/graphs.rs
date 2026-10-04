@@ -182,7 +182,9 @@ async fn disk_preparation_quota_failure_discards_stage_and_allows_retry() {
                 q::Limits::default(),
                 1,
                 q::cache::Policy {
-                    max_entry_bytes: 1024 * 1024 + 4096,
+                    // Small scratch has no database minimum. Refuse an
+                    // allowance below the complete index/receipt framing.
+                    max_entry_bytes: 1024,
                     max_total_bytes: 2 * 1024 * 1024,
                     ..Default::default()
                 },

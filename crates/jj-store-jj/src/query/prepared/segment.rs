@@ -27,7 +27,7 @@ impl<S: Source> Output<'_, S> {
 pub(super) fn write(
     path: &Path,
     operation: &jj_lib::op_store::OperationId,
-    disk: &mut Disk,
+    disk: &mut Tables,
     total: u32,
     commit_len: usize,
     change_len: usize,

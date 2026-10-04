@@ -538,17 +538,12 @@ impl GraphExecutor {
                 .await
                 .map_err(|_| Error::Unavailable)?;
         }
-        let preparation_bytes = if matches!(work, Work::Prepare) && entry.initialize {
-            Some(cache.remaining_bytes(&entry, &budget)?)
-        } else {
-            None
-        };
         let loader = index::loader(
             &stores,
             &settings,
             &entry.path,
             budget.clone(),
-            preparation_bytes,
+            self.cache_policy,
             entry.resident.clone(),
             access.clone(),
             matches!(work, Work::Prepare),

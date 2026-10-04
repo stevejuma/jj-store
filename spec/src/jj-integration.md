@@ -860,8 +860,19 @@ global LRU order. Opening a namespace with a reduced policy reclaims excess
 retained entries before admitting work. A warm read which creates no files does
 not reserve a new entry or evict unrelated pages. These quotas govern one shared
 serving namespace; independent standalone executor roots remain independently
-configured. General upstream inline writes and additional-operation rebuilding
-retain post-build size verification pending guarded immutable generations.
+configured. Missing native operation indexes, including additional operations
+selected by predicates, use the owned format-6 constructor. Interactive
+construction uses compact ordered scratch capped at64MiB, charging the shared
+resident pool before copying keys/fields or growing tables; it retains no commit
+bodies and enforces the inline commit threshold before adding nodes. Small
+explicit preparation uses the same scratch when its writable allowance is below
+32MiB. Larger explicit preparation keeps bounded disk-backed scratch. Both paths
+reserve streamed segment/link bytes before writing and admit the actual receipt
+bytes before creating its temporary file. A small cache does not require a
+fixed1MiB receipt reservation or a database's minimum allocation. Framing and
+resident decoding remain admitted before JJ allocation. These constructors still
+hold the namespace lock and may add additional operation files in a retained
+slot; immutable generations and shorter locking remain delivery work.
 
 Local prepared log reads reuse only checksum-verified immutable index data and
 build fresh operation/backend capabilities for the current binding. Index

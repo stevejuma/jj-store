@@ -426,6 +426,62 @@ fn cache_bytes(path: &std::path::Path) -> u64 {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_preparation_fits_small_cache_and_preserves_historical_scopes() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let oracle = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let (repo, b) = child(&repo, &a, "B").await;
+            let (repo, _) = child(&repo, &b, "C").await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let mut query = log("at_operation(@-, all()) | at_operation(@--, all())");
+            if let q::Request::Log { workspace, .. } = &mut query {
+                *workspace = Some("fixture".into());
+            }
+            let expected = read
+                .graph(
+                    &executor(oracle.path(), q::Limits::default()),
+                    query.clone(),
+                    page(100),
+                )
+                .await
+                .unwrap();
+            let policy = q::cache::Policy {
+                max_entry_bytes: 64 * 1024,
+                max_repository_bytes: 128 * 1024,
+                max_total_bytes: 128 * 1024,
+                ..Default::default()
+            };
+            let exec = q::GraphExecutor::with_cache_policy(
+                root.path().to_owned(),
+                q::Limits::default(),
+                2,
+                policy,
+            )
+            .unwrap();
+            let before = f.session.snapshot().await.unwrap().manifest().clone();
+            let prepared = read
+                .prepare_index(&exec, q::Cancellation::default())
+                .await
+                .expect("small native preparation must not require a disk database");
+            assert!(prepared.cache.retained_bytes <= policy.max_entry_bytes);
+            let actual = read.graph(&exec, query.clone(), page(100)).await.unwrap();
+            assert_eq!(actual.data, expected.data);
+            assert!(actual.cache.retained_bytes <= policy.max_entry_bytes);
+            assert_eq!(
+                read.graph(&exec, query, page(100)).await.unwrap().data,
+                expected.data
+            );
+            assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn resident_indexes_preserve_multiple_historical_operation_scopes() {
     tokio::task::LocalSet::new()
         .run_until(async {

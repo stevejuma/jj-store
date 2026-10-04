@@ -1775,3 +1775,11 @@ nonblocking admission while a cache slot is busy, and retained
 charges/readability for an executing reader. Exact native cache and local
 preparation-task tests remain the direct delivery consumers; full pressure/RSS
 qualification is deferred.
+
+Native construction delivery regression MUST prepare a small repository within
+a64KiB cache policy, compare multiple historical operation scopes with ordinary
+pinned results, resume warm reads and leave the native manifest unchanged.
+Scratch tests MUST reject oversized ordered-table growth before retaining data
+and preserve forward/reverse/keyed ordering. Focused native graph and local
+prepared-read consumers remain required because they share the owned format
+writer. Complete scale/RSS and combined lifecycle qualification remain deferred.
