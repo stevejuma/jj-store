@@ -148,7 +148,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -72237,6 +72237,52 @@ entries.
     "remaining": [],
     "scope": "Requested harness layout in main only. UI checks, directly affected settings stories and live HMR review; Rust, public contracts, root aggregate lanes, service restart and visual-baseline approval out of scope. Existing main fixture Agent-session 503 and Cursor Desktop live qualification remain separate prior gaps.",
     "next": "Review the grouped harness rows at http://127.0.0.1:7460/ under Settings > Agents > Configuration."
+  },
+  {
+    "id": "E-M18-020",
+    "tasks": ["M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change ylnwrlks",
+    "kind": "Verified Cursor and OpenCode integration and retired temporary workspace",
+    "versions": "macOS ARM64; existing Jujutsu workspace store; integrated configuration d269d6de, active capture b5942af7 and grouped settings 91f7be87.",
+    "formats": "No product, API or repository-data change. Only cursor-opencode workspace registration removed; checkout and ignored local artifacts moved recoverably to Trash.",
+    "files": ["spec/src/milestones.md"],
+    "runs": [
+      {
+        "command": "jj st/workspace list/log in main and cursor-opencode; jj log -r \"::cursor-opencode@- ~ ::default@\"; jj diff --from cursor-opencode@ --to default@ --stat",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both working copies clean. No feature-only committed ancestors; settings and capture commits already in main. Main adds only the recorded review-startup evidence and subsequent grouped harness UI/spec change."
+      },
+      {
+        "command": "ps command-line inspection; lsof cwd inventory; exact workspace path/symlink checks; lsof -nP -iTCP:7460 -iTCP:7462 -sTCP:LISTEN",
+        "result": "pass",
+        "failures": 0,
+        "note": "No persistent process using temporary checkout. Main UI PID99289 and backend PID56370 use main paths. Temporary node_modules is a symlink to main and was not traversed."
+      },
+      {
+        "command": "Recheck clean temporary checkout, unique committed ancestry and absent workspace processes; jj workspace forget cursor-opencode; trash -v /Users/stevejuma/code/lapismd/jj-store-cursor-opencode",
+        "result": "pass",
+        "failures": 0,
+        "note": "Unregistered only cursor-opencode and moved its directory to /Users/stevejuma/.Trash/jj-store-cursor-opencode. Qualification artifacts and ignored files remain recoverable there."
+      },
+      {
+        "command": "jj workspace list; jj st; verify original directory absent and Trash copy present; verify main node_modules and fixture retained; lsof main listeners; curl -fsS -o /dev/null -w HTTP-status http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven other registrations retained with unchanged tips. Main clean before this evidence entry. UI returned200; UI/backend PIDs unchanged. No fixture reset or service restart."
+      },
+      {
+        "command": "Format only E-M18-020 JSON entry and compare previous evidence to jj file show -r @-; pnpm check:progress; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing evidence unchanged; new entry uses Prettier JSON formatting. Progress bookkeeping passed for136 tasks; specification validation passed5 validators,22 chapters and167 requirements. Product lanes not run for workspace cleanup."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "User-authorized verification and retirement of cursor-opencode only. Other registered workspaces, the parked OpenCode history draft and all running services retained. Product tests and builds out of scope for cleanup; prior qualification gaps unchanged.",
+    "next": "Continue review in main at http://127.0.0.1:7460/; any future harness implementation starts from the current main revision."
   }
 ]
 ```
