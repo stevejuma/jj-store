@@ -1954,3 +1954,12 @@ observation is not a server cancellation result. Clients serialize polling and
 explicit cancellation for the captured task ID, retain the original operation,
 and continue observing an unconfirmed cancel without automatically replaying the
 cancel command. Server-confirmed canceled and ready outcomes are distinct.
+
+Local selected commit-summary, path, file-at, diff, changed-path and conflict
+queries use an exact ready local generation when available, retaining signed
+cursor and current registration checks. Absence alone selects the existing
+bounded scoped reader, keeping directly referenced files usable without
+preparation. Generation/authorization/selection errors propagate explicitly;
+there is no fallback that admits unrelated or later Git objects. These readers
+change no HTTP request, response, schema or capability. Their comprehensive
+transport/browser qualification remains in the later bounded-read slice.

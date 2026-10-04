@@ -1738,3 +1738,12 @@ changed-path summary and selected conflict descriptor with a history-visit cap
 below the repository's unrelated history. Preserve exact content/terms and
 unchanged source extra-table heads. Unknown targets remain rejected; the full
 local browser suite retains conflict/operation/dirty-file qualification.
+
+Prepared local point-read regression compares historical summaries, directory
+rows, scoped file content, diffs, changed paths and conflict descriptors with
+the ordinary reader, under a history-visit cap that rejects the cold deep proof.
+The prepared reader must survive source-index corruption and disposable segment
+loss, preserve exact terms/content, reject later commits and mismatched file
+IDs, and leave source extra heads unchanged. These focused checks are delivery
+evidence; complete large-repository and cold lifecycle qualification is
+deferred.

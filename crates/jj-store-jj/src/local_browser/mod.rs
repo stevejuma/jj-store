@@ -165,6 +165,20 @@ impl Request {
                 | Self::Graph(GraphRequest::Log { .. } | GraphRequest::Evolution { .. }, _)
         )
     }
+    /// Ordinary scoped reads can reuse ready point membership while retaining
+    /// their bounded cold reader. Bare file IDs have no selected tree proof.
+    pub fn can_use_prepared_index(&self) -> bool {
+        self.needs_prepared_index()
+            || matches!(
+                self,
+                Self::CommitSummary { .. }
+                    | Self::FileAt { .. }
+                    | Self::Paths(_)
+                    | Self::Diff(_)
+                    | Self::DiffPaths(_)
+                    | Self::Conflicts(_)
+            )
+    }
 }
 #[derive(Serialize, schemars::JsonSchema)]
 #[schemars(rename = "LocalCodeResponse")]

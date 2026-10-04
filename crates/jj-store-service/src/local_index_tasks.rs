@@ -372,7 +372,7 @@ impl IndexTasks {
         operation: m::OperationId,
         request: q::Request,
     ) -> Result<q::Response> {
-        if !request.needs_prepared_index() {
+        if !request.can_use_prepared_index() {
             return Err(q::Error::Invalid.into());
         }
         Self::authorize(access.as_ref()).await?;

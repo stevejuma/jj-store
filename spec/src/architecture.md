@@ -713,3 +713,12 @@ Streamed derived index output shares the scratch allowance. No redb dependency
 enters model, object storage, WAL or publication; scratch is never repository
 authority and is discarded after preparation or failure. The output remains the
 pinned upstream JJ index format rather than a new persisted repository format.
+
+The remaining large-repository implementation is delivered as performance slices
+before separate complete qualification, as requested on 4 October 2026. Each
+slice retains exact correctness regressions and affected package/boundary
+checks. Combined cold-browser/contracts, Linux/native large fixtures, isolated
+memory and release latency, fault/real-RustFS and generated Help/source-review
+qualification remain pending until a later slice. This ordering changes no
+authority, persisted format, capacity or acceptance requirement and does not
+mark milestones Done.

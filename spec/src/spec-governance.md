@@ -982,3 +982,10 @@ source-derived references, review coverage, and locally embedded Help. The
 change map additionally maps `docs/site/`, `docs/maintenance/`, `mkdocs.yml`,
 `pyproject.toml` and `uv.lock` to `documentation.md`. Documentation checks are
 part of normal checks and generated Help is part of browser/desktop packaging.
+
+The user-requested performance-first bounded-read continuation runs focused
+regressions and affected package/boundary checks per delivery change. Complete
+combined integration, large-scale, fault, cold-browser, real-RustFS and release
+qualification is deferred to its own slice; ledger entries keep those gates
+explicitly pending. This execution split does not weaken correctness contracts
+or turn a focused pass into milestone completion.

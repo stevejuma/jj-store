@@ -665,3 +665,17 @@ upstream rereads must agree with the fresh selection. Changed source records
 fail explicitly rather than combining old visibility/annotations with another
 view. This check retains supported upstream normalization and adds no
 authoritative source format or metadata write.
+
+Ready local generations MUST also supply point membership to selected historical
+commit summaries, directory windows, scoped files, diffs, changed-path pages and
+conflict descriptors. These reads reuse the exact operation/generation seal and
+a fresh authorized scoped backend without creating a graph repository or walking
+commit ancestry for proof. Tree/file authority still follows only proven commit
+terms and canonical paths; both diff targets require independent membership.
+Later-operation and unrelated Git objects remain excluded. When no ready
+generation exists, these requests retain their bounded ordinary scoped reader,
+so current files and headers need no preparation. Only a missing generation may
+select that cold path; authorization, corrupt selection and reader errors must
+not fall back. Complete large-scale and lifecycle qualification is deferred;
+focused equivalence, low-visit and source-preservation regressions remain
+required.

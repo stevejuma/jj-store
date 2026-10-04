@@ -254,14 +254,14 @@ impl Executor {
         };
         Ok(page)
     }
-    /// Detailed history shares the exact prepared operation and current access.
+    /// History and scoped points share the exact prepared operation and access.
     pub async fn read_prepared(
         &self,
         access: Arc<dyn Access>,
         prepared: Arc<Prepared>,
         request: Request,
     ) -> Result<Response> {
-        if !request.needs_prepared_index() {
+        if !request.can_use_prepared_index() {
             return Err(Error::Invalid);
         }
         let limits = self.limits;
@@ -306,6 +306,14 @@ impl Executor {
                     budget.clone(),
                     limits,
                 );
+                if !request.needs_prepared_index() {
+                    // Indexed point membership admits only selected commits;
+                    // their tree/file grants still cross the scoped backend.
+                    // No graph repository or ancestry proof is needed here.
+                    context.store = guard.store();
+                    context.scoped = Some(guard);
+                    return context.dispatch(operation, request, false).await;
+                }
                 let selected = operation_store::selected_for(
                     &context,
                     operation,

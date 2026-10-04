@@ -906,3 +906,12 @@ changed-path pages and conflict descriptors. Its two-target proof follows exact
 operation/view references and commit edges under ordinary admission, then reuses
 the owned decoder and scoped tree/file grants. It never promotes raw Git object
 existence to membership or falls back to complete repository preflight.
+
+A ready local prepared reader additionally serves selected summaries, paths,
+scoped content, diffs and conflicts through its point-membership index. Attach
+the immutable generation only after exact binding and operation/view seal
+verification, then use a fresh scoped Store directly. These queries MUST NOT
+construct a graph RepoLoader or repeat retained commit-edge proof. Existing
+ordinary byte/work/deadline and selected-tree grants still apply. Required
+prepared-history kinds retain cold rebuild-required semantics; optional scoped
+kinds may use their ordinary reader only when the generation is absent.

@@ -530,13 +530,23 @@ async fn query(
         operation: query.operation,
     };
     let data = match query.request {
-        request if request.needs_prepared_index() => {
+        request if request.can_use_prepared_index() => {
             match state
                 .local_tasks
-                .read(access.clone(), query.operation, request)
+                .read(access.clone(), query.operation, request.clone())
                 .await
             {
                 Ok(response) => response,
+                Err(jj_store_service::local_index_tasks::Error::Query(
+                    local::Error::IndexRebuildRequired,
+                )) if !request.needs_prepared_index() => {
+                    // Directly referenced files stay usable while cold. Only
+                    // absence permits fallback; corrupt/denied readers fail.
+                    state
+                        .local_reader
+                        .read(access, query.operation, request)
+                        .await?
+                }
                 Err(jj_store_service::local_index_tasks::Error::Query(
                     local::Error::IndexRebuildRequired,
                 )) => {

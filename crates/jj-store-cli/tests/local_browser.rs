@@ -6,6 +6,10 @@ mod index_tasks_acceptance;
 mod preparation_acceptance;
 #[path = "local_browser/prepared_details.rs"]
 mod prepared_details;
+#[path = "local_browser/prepared_points.rs"]
+mod prepared_points;
+#[path = "local_browser/prepared_points_http.rs"]
+mod prepared_points_http;
 #[path = "local_browser/reviews.rs"]
 mod review_acceptance;
 #[path = "local_browser/scoped_differences.rs"]

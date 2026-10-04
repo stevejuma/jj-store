@@ -25,28 +25,56 @@ publication authority, exact source pins, current authorization, staged-object
 exclusion, explicit conflicts and complete-result semantics. Retain persisted
 formats and collaboration capacity limits. Do not enable deferred capabilities.
 
-### Ordered slices
+### Performance delivery first
 
-1. Native catalog-root read pins and verified point membership; local
-   query-specific operation/view access and scoped commit/path/term reads.
-2. Independent directory rows, batched attribution, header and landing document
-   loading; workspace paging and exact reference resolution; page-only target
-   hydration, direct-child tree traversal and seekable continuations.
-3. On-demand preparation for both profiles, bounded disk-backed traversal,
-   immutable verified cache segments and actual-work query admission. One
-   background worker reserves interactive capacity. Default cache quotas are 4
-   GiB per repository and 16 GiB total, including staging. Preserve pinned JJ
-   evaluation. Cover graph visibility, operation differences, prefix lookup,
-   copy lineage and search; add paged native RPC lookup contracts.
-4. Root-bound collaboration read/search projections, keyset pages and
-   lightweight repository summaries. Load visible cards with at most two
-   concurrent reads; refresh loaded windows and cancel obsolete requests.
-5. Cold/warm large-scale qualification: Linux, a native two-million-commit
-   fixture, 10,000 bookmarks including shared targets, large/deep directories,
-   near-capacity collaboration data, deep pages, cache loss/corruption,
-   cancellation, restart, revocation and publication races. Measure work,
-   latency and memory separately. Include focused contracts/UI/real-RustFS
-   acceptance; retain visual-pending status.
+Replanned 4 October 2026 at the user's request. The first 23 bounded-read slices
+are integrated with current main at `f5cd62d4`. Continue in the existing
+`jj-store-bounded-reads` workspace. Deliver the remaining performance features
+in narrow Jujutsu changes before a separate complete-qualification slice:
+
+1. Reuse prepared local historical membership for selected summaries,
+   directories, files, diffs and conflicts. Keep directly referenced cold reads
+   independent of preparation. Then add prepared visible change/reference
+   windows and operation prefix/comparison lookup; hydrate only selected rows.
+2. Retain native prepared visibility and reverse annotations, immutable cache
+   generations and shared eviction. Admit resident and additional-operation
+   growth before allocation and keep cache locks short.
+3. Add indexed deep continuations, operation/predecessor/copy/search lookup and
+   paged native RPC contracts, preserving pinned JJ query semantics.
+4. Add root-bound collaboration/search projections and keyset pages, preserving
+   existing domain capacities. Use lightweight repository summaries and load
+   visible card windows with at most two concurrent reads; refresh loaded
+   windows and cancel obsolete requests.
+
+Each delivery change names and runs its exact correctness regression and focused
+checks on the affected packages and direct boundary. Record actual evidence and
+remaining gates in the milestone ledger. New public contracts still require
+focused schema/transport checks. Do not rerun complete integration, all
+contracts, full cold-browser flows, large fixtures or RustFS qualification for
+each delivery slice. Generated Help/source-review refresh is deferred with the
+qualification slice unless a delivery changes its own documentation tooling.
+Passing focused checks does not complete the plan's acceptance or promote a
+milestone.
+
+### Deferred complete qualification
+
+After performance delivery, qualify the combined implementation separately:
+
+- Cold/warm Linux construction, current visibility policy, isolated server RSS
+  and release latency; native two-million-commit fixture, 10,000 references,
+  large/deep directories, deep pages and near-capacity collaboration data.
+- Cache loss/corruption, cancellation, restart, revocation, publication races
+  and retained-metadata pressure while preparation is active. Measure work,
+  latency and memory separately; earlier debug Linux timing is not latest-policy
+  proof.
+- Complete affected integration/contract inventory, cold production browser
+  flows and real-RustFS acceptance, plus bundled Help/source-review refresh.
+- Registry-only release qualification and separately approved visual baselines.
+
+No qualification failure is waived by this execution split. Existing authority,
+format, identity, authorization, conflict and complete-result contracts remain
+required throughout delivery; comprehensive verification stays explicitly
+pending until its later evidence is recorded.
 
 ### Endpoint audit
 

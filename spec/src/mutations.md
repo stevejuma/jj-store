@@ -984,3 +984,10 @@ credentials. Cancellation retains worker and reservation ownership until actual
 exit, including an initial authorization wait. Eviction, expiry and restart may
 require preparation again but cannot alter native heads, companion state,
 working files, source indexes or retention refs.
+
+Local task reads may share an exact ready generation with optional scoped
+historical content requests. Clone the handle under the short registry lock,
+then release it before source authorization/decoding. Each response retains
+current binding, operation seal and ordinary admission; no task lookup grants
+publication or repairs source state. Missing generations alone allow the
+ordinary content reader. Lifetime, reservation and eviction rules are unchanged.
