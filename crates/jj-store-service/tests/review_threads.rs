@@ -143,6 +143,54 @@ fn body(text: &str) -> ReviewCommentBodyV1 {
     }
 }
 
+#[tokio::test]
+async fn review_activity_matches_the_pinned_catalog_window_without_publishing() {
+    let mut fixture = Fixture::new().await;
+    let pager =
+        ReviewThreadPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+    let empty = pager.activity(fixture.session.clone(), 50).await.unwrap();
+    assert_eq!(empty.activity.threads, 0);
+    assert_eq!(empty.activity.updated_at_millis, None);
+    assert!(!empty.activity.threads_partial);
+    fixture.create("First review").await;
+    fixture.create("Second review").await;
+    let before = fixture.session.snapshot().await.unwrap().manifest().clone();
+    for limit in [1, 2, 50, 256] {
+        let page = pager.begin(fixture.session.clone(), limit).await.unwrap();
+        let summary = pager
+            .activity(fixture.session.clone(), limit)
+            .await
+            .unwrap();
+        assert_eq!(summary.snapshot, page.snapshot);
+        assert_eq!(summary.activity.threads, page.threads.len());
+        assert_eq!(summary.activity.threads_partial, page.next_cursor.is_some());
+        assert_eq!(
+            summary.activity.updated_at_millis,
+            page.threads
+                .iter()
+                .map(|thread| thread.presentation.as_ref().unwrap().updated_at_millis)
+                .max()
+        );
+        let wire = serde_json::to_string(&summary).unwrap();
+        assert!(!wire.contains("First review"));
+        assert!(!wire.contains("anchor"));
+        assert!(!wire.contains("excerpt"));
+    }
+    for limit in [0, 257] {
+        assert_eq!(
+            pager
+                .activity(fixture.session.clone(), limit)
+                .await
+                .unwrap_err(),
+            Error::Limit
+        );
+    }
+    assert_eq!(
+        fixture.session.snapshot().await.unwrap().manifest(),
+        &before
+    );
+}
+
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn review_threads_are_root_pinned_and_details_resolve_selected_objects() {
     let mut fixture = Fixture::new().await;

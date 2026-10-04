@@ -1,5 +1,11 @@
 # Architecture
 
+Compact native/local ReviewStore activity is a read-only service projection of
+the admitted first catalog window. It returns counts and maximum accepted times,
+without anchor/comment presentation or causal event ordering. Provider closure
+admission, current request access and independent native/companion pins remain
+mandatory; sampled counts and times retain explicit incomplete status.
+
 Body-free WorkStore task activity groups belong to the owned service projection,
 shared by native HTTP and explicit-companion local HTTP. Native root-cache and
 cursor admission charge aggregate data alongside existing keys; transport keeps

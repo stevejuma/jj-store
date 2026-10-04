@@ -247,6 +247,11 @@ impl Document {
             operation["responses"]["409"]["description"] = json!(
                 "stale_review, thread_resolved, thread_open, or intent_conflict. No publication by this rejected attempt."
             );
+        } else if path.ends_with("/reviews/activity") {
+            operation["tags"] = json!(["collaboration"]);
+            operation["description"] = json!(
+                "Requires current repository read permission. Returns count and maximum accepted event timestamp for the first bounded radix-ordered thread window of one admitted immutable ReviewStore root. threads_partial indicates an incomplete repository count and sampled timestamp. Contains no presentation or continuation, never dispatches or publishes."
+            );
         } else if path.contains("/agent/") || path.contains("/reviews/") {
             operation["tags"] = json!(["collaboration"]);
             operation["description"] = json!(

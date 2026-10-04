@@ -59,6 +59,51 @@ fn receipt(outcome: LocalReviewOutcome) -> LocalReviewReceipt {
 }
 
 #[tokio::test]
+async fn local_review_activity_retains_historical_selection_and_partial_counts() {
+    let (root, repo) = fixture();
+    let empty = repo.review_activity_at(None, 50).await.unwrap();
+    assert_eq!(empty.activity.threads, 0);
+    assert_eq!(empty.activity.updated_at_millis, None);
+    assert!(empty.snapshot.repo_id.is_none());
+    assert!(repo.metadata_store().read().unwrap().is_none());
+    assert!(!root.path().join("repo/.jj/repo/lapis").exists());
+    repo.apply_review_command(&create(20)).await.unwrap();
+    let first = repo.review_activity_at(None, 50).await.unwrap();
+    let pin = first.snapshot.metadata_commit;
+    repo.apply_review_command(&create(21)).await.unwrap();
+    let before = repo.metadata_store().read().unwrap().unwrap();
+    let historical = reopen(&root.path().join("repo"))
+        .review_activity_at(pin, 50)
+        .await
+        .unwrap();
+    assert_eq!(historical, first);
+    for limit in [1, 2, 50, 256] {
+        let summary = repo.review_activity_at(None, limit).await.unwrap();
+        let page = repo.review_threads_at(None, limit, None).await.unwrap();
+        assert_eq!(summary.snapshot, page.snapshot);
+        assert_eq!(summary.activity.threads, page.threads.len());
+        assert_eq!(summary.activity.threads_partial, page.next_after.is_some());
+        assert_eq!(
+            summary.activity.updated_at_millis,
+            page.threads
+                .iter()
+                .map(|thread| thread.presentation.as_ref().unwrap().updated_at_millis)
+                .max()
+        );
+    }
+    for limit in [0, 257] {
+        assert_eq!(
+            repo.review_activity_at(None, limit).await.unwrap_err(),
+            LocalError::Limit
+        );
+    }
+    assert_eq!(
+        repo.metadata_store().read().unwrap().unwrap().commit(),
+        before.commit()
+    );
+}
+
+#[tokio::test]
 async fn local_review_reads_leave_metadata_and_actor_absent() {
     let (root, repo) = fixture();
     let store = repo.review_store().await.unwrap();

@@ -31,6 +31,9 @@ export interface WorkBrowseTransport extends WorkTransport {
   ): Promise<
     import("./projects-repository-types.js").RepositoryDirectorySummary
   >;
+  reviewActivity?(
+    signal?: AbortSignal,
+  ): Promise<import("./repository-read-types.js").ReviewActivitySummary>;
   reviews?(
     cursor?: string,
     signal?: AbortSignal,

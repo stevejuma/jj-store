@@ -165,7 +165,7 @@ test("canceling a local card during a shared snapshot read starts no collaborati
       await snapshot;
       return { heads: ["61".repeat(64)] };
     },
-    reviewThreads: reviews,
+    reviewActivity: reviews,
     graph,
   } as unknown as StoreDataSource;
   const canceled = new AbortController();

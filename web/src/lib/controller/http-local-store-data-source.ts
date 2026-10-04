@@ -1,5 +1,9 @@
 import { ApiError, fullId, type Model } from "../api/client.js";
 import { LocalEventParser } from "../api/local-events.js";
+import {
+  readLocalReviewActivity,
+  readLocalReviewPage,
+} from "./http-local-review-reader.js";
 import { assertLocalReviewSnapshot } from "./local-review-snapshot.js";
 import { HttpLocalIndexDataSource } from "./http-local-index-data-source.js";
 import { HttpLocalWorkDataSource } from "./http-local-work-data-source.js";
@@ -214,24 +218,22 @@ export class HttpLocalStoreDataSource
   uploadConflict = () => this.unsupported();
   search = () => this.unsupported();
   searchStatus = () => this.unsupported();
-  private validateReview(snapshot: Model<"LocalReviewSnapshot">, pin: string) {
-    assertLocalReviewSnapshot(snapshot, this.repository, pin);
-  }
-  async reviewThreads(cursor?: string, signal?: AbortSignal) {
-    signal?.throwIfAborted();
-    const pin = await this.metadata();
-    signal?.throwIfAborted();
-    const page = await this.read<Model<"LocalReviewPageResponse">>(
-      "reviews/page",
-      {
-        metadata_commit: pin,
-        limit: 50,
-        cursor: cursor ?? null,
-      },
+  reviewActivity(signal?: AbortSignal) {
+    return readLocalReviewActivity(
+      this.repository,
+      () => this.metadata(),
+      this.read.bind(this),
       signal,
     );
-    this.validateReview(page.data.snapshot, pin);
-    return { ...page.data, next_cursor: page.next_cursor };
+  }
+  reviewThreads(cursor?: string, signal?: AbortSignal) {
+    return readLocalReviewPage(
+      this.repository,
+      () => this.metadata(),
+      this.read.bind(this),
+      cursor,
+      signal,
+    );
   }
   async reviewThread(id: string) {
     const pin = await this.metadata();
@@ -242,7 +244,7 @@ export class HttpLocalStoreDataSource
         thread_id: fullId(id, 32),
       },
     );
-    this.validateReview(detail.snapshot, pin);
+    assertLocalReviewSnapshot(detail.snapshot, this.repository, pin);
     if (detail.thread.thread_id !== id) throw new ApiError("snapshot_mismatch");
     return detail;
   }

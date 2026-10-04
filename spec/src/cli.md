@@ -1,5 +1,11 @@
 # CLI and server commands
 
+The native lifecycle and filesystem browser HTTP fixtures cover compact review
+activity windows, partial counts, accepted-event timestamps and explicit local
+historical companion selections. These focused transport proofs retain read
+admission and command receipts; they do not change the CLI or qualify combined
+scale, lifecycle or release gates.
+
 Native lifecycle and filesystem browser HTTP fixtures cover body-free WorkStore
 task activity groups, exact first/resumed pins and unchanged command receipts.
 Local fixture task links consume the actual CLI project receipt identity;

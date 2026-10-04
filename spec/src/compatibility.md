@@ -5,10 +5,12 @@ native and version-2 local pages with independent snapshot profiles. Finite
 1..256-group pages and strict local companion/query bodies accompany generated
 OpenAPI/TypeScript and actual first/resumed response evidence. Native
 manifest/WAL, local companion, signed cursor and domain capacities are
-unchanged. The generated inventory now contains 115 paths (41 local and 74 other
-paths); the two activity routes are the only additions to the prior 113-path
-schema. Focused delivery evidence does not qualify the complete combined
-route/browser inventory or promote a release milestone.
+unchanged. Compact review activity adds two further routes with version-1
+native/local summaries, strict finite windows, independent snapshot profiles and
+explicit sampled-count status. The generated inventory now contains 117 paths
+(42 local and 75 other paths). Activity DTOs carry no persisted-format change.
+Focused delivery evidence does not qualify the complete combined route/browser
+inventory or promote a release milestone.
 
 The independent conversion profile is bounded to eligible JJ 0.45.1 Git SHA-1
 and current native repositories on macOS ARM64. Admin HTTP preview/start/status

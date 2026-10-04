@@ -25,7 +25,7 @@ export function repositoryActivity(
   ];
   return {
     commits: own?.commits ?? 0,
-    reviews: own?.threads.length ?? 0,
+    reviews: own?.reviews ?? 0,
     tasks: groups.reduce((total, group) => total + Number(group.tasks), 0),
     partial: Boolean(
       own?.commitsPartial ||

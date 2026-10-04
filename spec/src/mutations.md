@@ -51,13 +51,16 @@ change task versions or grant access to linked code; old edited and tombstoned
 targets fail closed.
 
 Collaboration read optimization does not change publication or receipt behavior.
-Shared data caches retain only validated immutable domain selections and graphs.
-Request authorization and complete captured manifest envelopes remain fresh;
-scoped reads still validate all retained dependencies of their selected domain.
-Saturated retention may validate an extra root request-locally under existing
-per-pin and concurrency budgets; a small cache cannot disable a valid query.
-Neither warm reads nor derived directory/reaction indexes stage or publish
-state.
+Compact review activity derives only count and accepted-event time facts from
+admitted thread selections. It retains provider closure audits and fresh access
+checks, stages no objects and creates neither an actor nor a repository
+identity. Shared data caches retain only validated immutable domain selections
+and graphs. Request authorization and complete captured manifest envelopes
+remain fresh; scoped reads still validate all retained dependencies of their
+selected domain. Saturated retention may validate an extra root request-locally
+under existing per-pin and concurrency budgets; a small cache cannot disable a
+valid query. Neither warm reads nor derived directory/reaction indexes stage or
+publish state.
 
 WorkStore browse and detail pins share immutable root data and derived ordered
 keys, counts and searchable fields. Query continuations retain keys rather than

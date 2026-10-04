@@ -28,7 +28,11 @@ Repository activity counts consume bounded body-free task groups across metadata
 homes, preserving repository/project filters, maximum timestamps and partial
 state for missing homes or unloaded groups. A visible card does not request
 individual task summaries for its task count. Presentation and navigation remain
-unchanged; code/review summary optimization is separate delivery work.
+unchanged. Review counts now consume a compact first-window activity summary,
+without review-thread presentation hydration. Native cards preserve sampled
+review dates, local cards retain their code/task date policy, and incomplete
+review counts keep the existing partial-activity indication. Lightweight code
+summaries and root-bound review activity reuse remain separate delivery work.
 
 Repository General settings expose Admin-only format conversion when this
 installation has native storage. Preflight explains an independent destination,

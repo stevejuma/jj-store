@@ -120,7 +120,7 @@ export function fixtureTransport(
         updatedAtMillis: Date.UTC(2026, 8, 30),
         commits: home === homeA ? 24 : 12,
         commitsPartial: false,
-        threads: reviews.threads,
+        reviews: reviews.threads.length,
         reviewsPartial: false,
         taskGroups: tasks.groups,
         tasksPartial: false,
@@ -201,6 +201,26 @@ export function fixtureTransport(
         tasks: query.kind === "tasks" ? tasks : [],
         total_matches: query.kind === "tasks" ? tasks.length : projects.length,
         next_cursor: null,
+      };
+    },
+    async reviewActivity() {
+      const page = await fixtureTransport(home, fail, sharedRepository)
+        .reviews!();
+      return {
+        version: 1,
+        snapshot: page.snapshot,
+        activity: {
+          threads: page.threads.length,
+          threads_partial: Boolean(page.next_cursor),
+          updated_at_millis: page.threads.reduce<number | null>(
+            (latest, thread) =>
+              Math.max(
+                latest ?? -Infinity,
+                Number(thread.presentation?.updated_at_millis ?? 0),
+              ),
+            null,
+          ),
+        },
       };
     },
     async reviews() {

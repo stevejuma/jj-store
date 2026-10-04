@@ -62,6 +62,12 @@ export function isLocalAssociation(
 
 export type ReviewSnapshot =
   Model<"ReviewReadSnapshot"> | Model<"LocalReviewSnapshot">;
+export type ReviewActivitySummary = Omit<
+  Model<"ReviewActivitySummary">,
+  "snapshot"
+> & {
+  snapshot: ReviewSnapshot;
+};
 export type ReviewPage = Omit<Model<"ReviewThreadPage">, "snapshot"> & {
   snapshot: ReviewSnapshot;
 };

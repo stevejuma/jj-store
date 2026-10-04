@@ -55,6 +55,21 @@ pub struct ReviewThreadPage {
     pub next_cursor: Option<String>,
 }
 
+/// Facts about a bounded first catalog window, never an inferred complete count.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ReviewActivity {
+    pub threads: usize,
+    pub threads_partial: bool,
+    pub updated_at_millis: Option<i64>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ReviewActivitySummary {
+    pub version: u32,
+    pub snapshot: ReviewReadSnapshot,
+    pub activity: ReviewActivity,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewAnchor {
     pub object_id: ReviewObjectId,

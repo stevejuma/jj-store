@@ -59,6 +59,13 @@ export class HttpWorkDataSource implements WorkTransport {
       { signal },
     );
   }
+  reviewActivity(signal?: AbortSignal) {
+    return this.client.request<Model<"ReviewActivitySummary">>(
+      "reviews/activity",
+      { limit: 50 },
+      { signal },
+    );
+  }
   reviews(cursor?: string, signal?: AbortSignal) {
     return this.client.request<Model<"ReviewThreadPage">>(
       "reviews/threads",

@@ -225,6 +225,12 @@ struct ReviewThreads {
 }
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+struct ReviewActivity {
+    #[serde(default = "limit")]
+    limit: usize,
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 struct AgentTranscript {
     source: jj_store_service::collaboration::AgentSourceInstanceIdentity,
     generation: u64,
@@ -304,6 +310,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/agent/checkpoints/{checkpoint}", agent_checkpoint, Empty, crate::collaboration::CheckpointDetail, Reply::Json(200)),
             (get, "/repos/{repo}/agent/checkpoints/{checkpoint}/versions/{version}", agent_checkpoint_version, Empty, crate::collaboration::CheckpointDetail, Reply::Json(200)),
             (get, "/repos/{repo}/reviews/threads", review_threads, ReviewThreads, crate::collaboration::ReviewPage, Reply::Json(200)),
+            (get, "/repos/{repo}/reviews/activity", review_activity, ReviewActivity, crate::collaboration::ReviewActivitySummary, Reply::Json(200)),
             (get, "/repos/{repo}/reviews/threads/{thread}", review_thread, Empty, crate::collaboration::ReviewDetail, Reply::Json(200)),
             (post, "/repos/{repo}/reviews/commands", review_command_apply, Empty, jj_store_service::review_mutations::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/reviews/commands/{request_id}", review_command_status, Empty, jj_store_service::review_mutations::Status, Reply::Json(200)),
@@ -577,6 +584,20 @@ async fn review_threads(
 ) -> Result<Response> {
     let args = input(args)?;
     crate::collaboration::review_threads(&state, context.session, args.cursor, args.limit).await
+}
+
+async fn review_activity(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<ReviewActivity>,
+) -> Result<Response> {
+    let args = input(args)?;
+    state.json(
+        &state
+            .review_threads
+            .activity(context.session, args.limit)
+            .await?,
+    )
 }
 async fn review_thread(
     ExtractState(state): ExtractState<Arc<State>>,

@@ -15,6 +15,7 @@ mod checkpoint_models;
 mod cursor_position;
 mod models;
 pub(crate) use models::{summary as session_summary, transcript_descriptor};
+pub(crate) mod review_activity;
 mod review_cursors;
 mod review_models;
 mod review_presentation;

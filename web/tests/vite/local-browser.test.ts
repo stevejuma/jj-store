@@ -491,6 +491,46 @@ test("local_review_reads_reject_foreign_companion_snapshots", async () => {
   source.close();
 });
 
+test("local_review_activity_uses_explicit_pin_and_rejects_foreign_results", async () => {
+  const calls: { url: string; body: any; signal?: AbortSignal | null }[] = [];
+  let foreign = "";
+  const source = new HttpLocalStoreDataSource(repository, async (url, init) => {
+    const body = init?.body ? JSON.parse(String(init.body)) : null;
+    calls.push({ url: String(url), body, signal: init?.signal });
+    if (String(url).endsWith("snapshot")) return json(head);
+    assert.ok(String(url).endsWith("reviews/activity"));
+    return json({
+      version: 1,
+      snapshot: {
+        profile: foreign === "profile" ? "native" : "local_jj_git",
+        repo_id: foreign === "repository" ? "aa".repeat(16) : repository,
+        metadata_commit: foreign === "pin" ? "bb".repeat(20) : metadata,
+        review_root: "cc".repeat(32),
+        review_state_version: 1,
+      },
+      activity: { threads: 50, threads_partial: true, updated_at_millis: 123 },
+    });
+  });
+  const controller = new AbortController();
+  const summary = await source.reviewActivity(controller.signal);
+  assert.equal(summary.activity.threads, 50);
+  assert.deepEqual(calls[1]?.body, { metadata_commit: metadata, limit: 50 });
+  assert.equal(calls[1]?.signal?.aborted, false);
+  for (foreign of ["repository", "pin", "profile"]) {
+    await assert.rejects(source.reviewActivity(), {
+      code: "snapshot_mismatch",
+    });
+  }
+  const before = calls.length;
+  controller.abort();
+  assert.equal(calls[1]?.signal?.aborted, true);
+  await assert.rejects(source.reviewActivity(controller.signal), {
+    name: "AbortError",
+  });
+  assert.equal(calls.length, before);
+  source.close();
+});
+
 test("physical_save_preserves_selection_and_never_retries_or_advances_code", async () => {
   const selection = {
     version: 1,

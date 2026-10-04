@@ -12,7 +12,7 @@ export async function readLocalRepositoryDirectory(
   signal?.throwIfAborted();
   const [tasks, reviews] = await Promise.all([
     work.taskActivity!({ limit: 256 }, signal),
-    source.reviewThreads(undefined, signal),
+    source.reviewActivity!(signal),
   ]);
   signal?.throwIfAborted();
   const graph =
@@ -59,8 +59,8 @@ export async function readLocalRepositoryDirectory(
       : null,
     commits: commits.length,
     commitsPartial: Boolean(graph?.next_cursor),
-    threads: reviews.threads,
-    reviewsPartial: Boolean(reviews.next_cursor),
+    reviews: Number(reviews.activity.threads),
+    reviewsPartial: reviews.activity.threads_partial,
     taskGroups: tasks.groups,
     tasksPartial: Boolean(tasks.next_cursor),
   };

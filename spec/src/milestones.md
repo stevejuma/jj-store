@@ -79402,6 +79402,192 @@ entries.
       "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#graph_cache_recovery_never_follows_symlinks_or_repairs_authoritative_objects",
       "crates/jj-store-cli/tests/native_lifecycle/index_preparation.rs#index_preparation_cancels_pending_work_and_retains_shared_slot_until_exit"
     ]
+  },
+  {
+    "id": "E-READ-039",
+    "tasks": ["M11.4", "M13.4"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change qklynsvv",
+    "kind": "Compact native and local repository-card review activity without comment or anchor presentation hydration",
+    "versions": "Rust1.98.1 (48a229cea); jj-lib0.45.1; stock JJ0.45.1; macOS ARM64.",
+    "formats": "Two additive HTTP routes bring generated inventory to117 paths (42local/75other). Version1 native/local activity summaries bind independent review snapshots and contain first-window count, explicit incomplete flag and maximum selected accepted-event time. Finite1..256-thread windows; cards request50. Local body requires explicit committed metadata. Existing native/WAL/companion/receipt/cursor formats and domain capacities remain unchanged. No persistent activity aggregate, extra publication, actor, or source identity is created.",
+    "files": [
+      "catalog/fixtures/projects-hub-fixture.ts",
+      "crates/jj-store-cli/tests/local_browser/reviews.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_collaboration_reviews.rs",
+      "crates/jj-store-http/src/collaboration.rs",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/contract/review_tests.rs",
+      "crates/jj-store-http/src/local_browser/reviews.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-service/src/collaboration.rs",
+      "crates/jj-store-service/src/collaboration/review_activity.rs",
+      "crates/jj-store-service/src/collaboration/review_activity/events.rs",
+      "crates/jj-store-service/src/collaboration/review_activity/tests.rs",
+      "crates/jj-store-service/src/collaboration/review_models.rs",
+      "crates/jj-store-service/src/collaboration/review_threads.rs",
+      "crates/jj-store-service/src/local_repository/browser_reviews.rs",
+      "crates/jj-store-service/tests/local_review.rs",
+      "crates/jj-store-service/tests/review_threads.rs",
+      "docs/implementation-plan.md",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/http-local-review-reader.ts",
+      "web/src/lib/controller/http-local-store-data-source.ts",
+      "web/src/lib/controller/http-local-work-data-source.ts",
+      "web/src/lib/controller/http-repository-directory.ts",
+      "web/src/lib/controller/http-work-data-source.ts",
+      "web/src/lib/controller/local-repository-directory.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/projects-hub-types.ts",
+      "web/src/lib/controller/projects-repository-types.ts",
+      "web/src/lib/controller/repository-read-types.ts",
+      "web/src/lib/ui/store-work/repository-directory-presentation.ts",
+      "web/tests/vite/local-browser.test.ts",
+      "web/tests/vite/projects-repositories.test.ts",
+      "web/tests/vite/projects-repository-visibility.test.ts"
+    ],
+    "requirements": [
+      "JST-COLLAB-004",
+      "JST-COLLAB-007",
+      "JST-API-001",
+      "JST-API-004",
+      "JST-LOCAL-004",
+      "JST-UI-015"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repositories.test.ts -t 'card review activity' (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "2fail: native/local cards both invoke full review presentation. review-activity-before-039.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repositories.test.ts -t 'card review activity' (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2pass/0.84s. Native sampled review counts/time and local existing code/task date policy; no thread presentation. review-activity-after-039.log."
+      },
+      {
+        "command": "cargo check -p jj-store-http -p jj-store-service --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected initial packages pass/48.72s. review-activity-check-initial-039.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked collaboration::review_activity:: -- --nocapture (initial)",
+        "result": "fail",
+        "failures": 7,
+        "note": "Test compilation: ambiguous glob Error import (six diagnostics) and missing Corrupt constructor argument (one). Corrected explicit service Error import and typed WAL error. review-activity-units-039.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --test review_threads --test local_review --locked review_activity -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "6pass: four units and two provider regressions. Selected-only object reads, maximum across paged/merged nonmonotonic event times, absent anchors/comments/bodies, empty selection, corrupt key/count/missing events, native no-publication and local historical selection/bounds. review-activity-service-039.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test review_threads --test local_review --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "12pass (7local/5native). Existing review admission/selected-closure/foreign anchors/receipt replay/GC/detail body limit/SSE and pin consumers pass. review-activity-review-consumers-039.log."
+      },
+      {
+        "command": "JJ_STORE_REVIEW_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/performance/review-activity-native-capture-039.json cargo test -p jj-store-cli --test native_lifecycle --locked local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/2.84s. Actual native first-window/complete summaries match pins/times; current read permission admitted, limit0/257 return inherited413, unknown cursor returns400. Existing detail/write/receipt/restart fixture retained. review-activity-native-http-039.log."
+      },
+      {
+        "command": "JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/performance/review-activity-local-capture-039.json cargo test -p jj-store-cli --test local_browser --locked filesystem_runtime_registers_and_reads_without_native_storage -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/29.88s. Actual local finite/complete/historical-empty summaries; explicit pins, missing/unknown fields400 and inherited capacity413. Isolated fixture only; complete cold production-browser/RustFS qualification remains deferred. review-activity-local-http-039.log."
+      },
+      {
+        "command": "node scripts/contracts.mjs --write; cargo test -p jj-store-http --lib --locked contract::review_tests:: -- --nocapture; node --input-type=module with scripts/contracts-validation.mjs responseValidator over only captured /reviews/activity responses",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI/TypeScript passes schema generation;3HTTP contract units pass/1.18s and5actual native/local activity responses validate. Inventory117/42local. review-activity-generate-039.log/review-activity-contract-units-039.log/review-activity-responses-039.log. Full contract inventory intentionally deferred."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repositories.test.ts web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-agents.test.ts web/tests/vite/local-browser.test.ts (initial)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Three fixture activity calls used an out-of-scope transport variable; one cancellation test expected signal reference identity although LocalClient composes signals. Corrected fixture lookup and prove forwarded signal abortion. review-activity-ui-consumers-039.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repositories.test.ts web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-agents.test.ts web/tests/vite/local-browser.test.ts (corrected)",
+        "result": "fail",
+        "failures": 1,
+        "note": "44pass/1fail: error-message regex used code spelling; ApiError message is human-readable. Assert exact code snapshot_mismatch instead. review-activity-ui-consumers-corrected-039.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repositories.test.ts web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-agents.test.ts web/tests/vite/local-browser.test.ts (final); pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/local-browser.test.ts (after extraction cleanup)",
+        "result": "pass",
+        "failures": 0,
+        "note": "45unique UI tests pass/7.03s;19local direct consumers also pass/5.09s after final extraction cleanup. Current independent pins, foreign repo/epoch/metadata/profile rejection, cancellation, partial groups/counts and existing local reviews retain behavior. review-activity-ui-consumers-final-039.log/review-activity-local-ui-final-039.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "20pass/55.96s directly affected card/hub/directory/action interaction and accessibility stories in a fresh test process. review-activity-stories-039.log. Visual baselines and complete production cold browser acceptance stay deferred."
+      },
+      {
+        "command": "pnpm check:architecture (initial and first extraction)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Local store facade exceeds300counted lines (309 then302). Extracted related activity/page reads to owned http-local-review-reader.ts and removed redundant detail validator method without weakening checks. review-activity-architecture-039.log/review-activity-architecture-final-039.log."
+      },
+      {
+        "command": "cargo check -p jj-store-service -p jj-store-http -p jj-store-cli --locked; pnpm web:check (initial, final and extraction cleanup); pnpm catalog:check (initial and final); pnpm check:boundaries; pnpm check:architecture (corrected); pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust packages/direct CLI consumers pass; web/catalog0errors/0warnings;190catalog modules;17package boundaries;973architecture modules;5validators/23chapters/172requirements. review-activity-packages-final-039.log/review-activity-web-check-039.log/review-activity-web-check-final-039.log/review-activity-web-check-extracted-039.log/review-activity-catalog-check-039.log/review-activity-catalog-check-final-039.log/review-activity-boundaries-039.log/review-activity-architecture-corrected-039.log/review-activity-spec-039.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Protected presentation helper also maps to ui.md, which was missing from the canonical update. Added its activity/count contract. review-activity-spec-first-039.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md spec/src/ui.md docs/implementation-plan.md spec/src/api.md; pnpm check:progress; pnpm spec:first (corrected); pnpm spec:validate (final); pnpm check:ui-ownership; targeted Prettier check; cargo fmt -p jj-store-service -p jj-store-http -p jj-store-cli -- --check; jj --no-pager diff --git plus added-line whitespace validation",
+        "result": "pass",
+        "failures": 0,
+        "note": "138-task bookkeeping;34protected files/9canonical chapters;5validators/23chapters/172requirements; UI ownership; canonical/UI/Rust formatting and whitespace pass. review-activity-ledger-format-039.log/review-activity-progress-039.log/review-activity-ui-spec-format-039.log/review-activity-doc-format-final-039.log/review-activity-spec-first-corrected-039.log/review-activity-spec-final-039.log/review-activity-ui-ownership-039.log/review-activity-doc-check-039.log/review-activity-rust-format-final-039.log/review-activity-final-039.patch. 21unique focused Rust tests,45UI units and20interaction/accessibility stories; no full-suite or complete qualification claim."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Lightweight code metadata still fetches a graph window; root-bound review activity reuse remains delivery work. Current review summary counts/times intentionally describe only the requested catalog window.",
+      "Prepared local operation prefix/comparison, indexed filtered references, indexed deep operation/predecessor/copy/search, paged native RPC, local operation-difference/change-group paging and remaining local application search/index delivery remain open.",
+      "Full combined integration/contracts, Linux/native/near-capacity fixtures, measured RSS/release latency, complete cold production browser, fault/revocation/restart/publication/real-RustFS, registry/release and Help/source-review refresh remain deferred. No milestone promotion, main/Linux source or original dev-service change; visual baselines remain unapproved.",
+      "Inherited oversized __eh_frame linker warning remains. E-READ-037 inherited strict-lint gaps remain deferred; no full Rust workspace or root aggregate lane was run."
+    ],
+    "next": "Continue lightweight code summaries and root-bound review activity reuse, then remaining indexed lookup/reference/deep/RPC delivery; complete combined qualification in the later slice.",
+    "scope": "One cross-layer compact repository-card review activity behavior and its direct native/local service, HTTP/schema, directory and local transport consumers.",
+    "tests": [
+      "crates/jj-store-service/src/collaboration/review_activity/tests.rs#activity_reads_only_window_events_and_uses_maximum_across_pages",
+      "crates/jj-store-service/src/collaboration/review_activity/tests.rs#merged_activity_reads_no_comment_conflicts_and_uses_every_event_time",
+      "crates/jj-store-service/tests/review_threads.rs#review_activity_matches_the_pinned_catalog_window_without_publishing",
+      "crates/jj-store-service/tests/local_review.rs#local_review_activity_retains_historical_selection_and_partial_counts",
+      "crates/jj-store-http/src/contract/review_tests.rs#review_activity_contract_is_compact_bounded_and_independently_pinned",
+      "crates/jj-store-cli/tests/native_lifecycle/http_collaboration_reviews.rs#local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail",
+      "crates/jj-store-cli/tests/local_browser.rs#filesystem_runtime_registers_and_reads_without_native_storage",
+      "web/tests/vite/projects-repositories.test.ts#native card review activity avoids thread presentation and keeps sample uncertainty",
+      "web/tests/vite/local-browser.test.ts#local_review_activity_uses_explicit_pin_and_rejects_foreign_results"
+    ]
   }
 ]
 ```

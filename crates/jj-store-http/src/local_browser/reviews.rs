@@ -17,6 +17,13 @@ struct DetailQuery {
     metadata_commit: repo::MetadataCommit,
     thread_id: jj_store_service::collaboration::ReviewThreadIdentity,
 }
+#[derive(Deserialize, Serialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+#[schemars(rename = "LocalReviewActivityQuery")]
+struct ActivityQuery {
+    metadata_commit: repo::MetadataCommit,
+    limit: usize,
+}
 #[derive(Serialize, JsonSchema)]
 #[schemars(rename = "LocalReviewPageResponse")]
 struct Page {
@@ -26,6 +33,7 @@ struct Page {
 macro_rules! endpoints {
     ($register:ident) => { $register! {
         (post, "/local/repos/{repo}/reviews/page", page, "local_review_page", PageQuery, Page),
+        (post, "/local/repos/{repo}/reviews/activity", activity, "local_review_activity", ActivityQuery, repo::LocalReviewActivitySummary),
         (post, "/local/repos/{repo}/reviews/detail", detail, "local_review_detail", DetailQuery, repo::LocalReviewThreadDetail),
         (post, "/local/repos/{repo}/reviews/commands", apply, "local_review_apply", service::Request, repo::LocalReviewOutcome),
         (get, "/local/repos/{repo}/reviews/commands/{request_id}", status, "local_review_status", routes::Empty, repo::LocalReviewOutcome)
@@ -91,6 +99,32 @@ async fn detail(
                 .open(repository)
                 .map_err(map)?
                 .review_thread_at(Some(request.metadata_commit), request.thread_id)
+                .await
+                .map_err(Error::from)
+        })
+    })
+    .await?;
+    work::check(&state, repository, generation).await?;
+    state.json(&data)
+}
+
+async fn activity(
+    ExtractState(state): ExtractState<Arc<State>>,
+    Path(repository): Path<m::RepositoryId>,
+    args: routes::Input<routes::Empty>,
+    body: Body<ActivityQuery>,
+) -> Result<Response> {
+    routes::input(args)?;
+    let request = decode_body(body)?;
+    let generation = binding(&state, repository).await?.generation();
+    let manager = manager(&state)?;
+    let runtime = tokio::runtime::Handle::current();
+    let data = blocking(&state, move || {
+        runtime.block_on(async {
+            manager
+                .open(repository)
+                .map_err(map)?
+                .review_activity_at(Some(request.metadata_commit), request.limit)
                 .await
                 .map_err(Error::from)
         })

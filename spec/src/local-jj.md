@@ -338,6 +338,13 @@ qualified. File text is bounded; binary/oversized content reports its status.
 
 ### Pinned local WorkStore transport
 
+Local repository-card ReviewStore activity uses an explicit committed companion
+pin and current folder admission, then reads only selected thread/event facts
+for a bounded first catalog window. Full descriptor/retained-object closure
+admission remains mandatory before deriving the count and maximum timestamp.
+Activity responses do not hydrate comment or anchor presentation and mark the
+count incomplete whenever the selected window has more catalog entries.
+
 Local browser WorkStore pages require an explicit committed companion metadata
 selection, independently from the code operation. Initial pages and resumed
 queries validate that selection against bounded current committed history and

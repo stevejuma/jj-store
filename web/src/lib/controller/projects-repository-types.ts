@@ -10,7 +10,7 @@ export interface RepositoryDirectorySummary {
   updatedAtMillis: number | bigint | null;
   commits: number;
   commitsPartial: boolean;
-  threads: Model<"ReviewThreadSummary">[];
+  reviews: number;
   reviewsPartial: boolean;
   taskGroups: Model<"WorkActivityGroup">[];
   tasksPartial: boolean;

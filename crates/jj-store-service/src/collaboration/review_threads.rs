@@ -150,7 +150,7 @@ impl ReviewThreadPager {
         })
     }
 
-    async fn pin(&self, session: &NativeSession) -> Result<ReviewPin> {
+    pub(super) async fn pin(&self, session: &NativeSession) -> Result<ReviewPin> {
         authorize(session).await?;
         let selected = session.snapshot().await.map_err(map_wal)?;
         let manifest = selected.manifest();
@@ -429,7 +429,7 @@ async fn load_events(
     Ok(events)
 }
 
-fn verify_thread_key(key: ReviewCatalogKey, thread_id: ReviewThreadId) -> Result<()> {
+pub(super) fn verify_thread_key(key: ReviewCatalogKey, thread_id: ReviewThreadId) -> Result<()> {
     let expected =
         ReviewCatalogKey::derive("thread", thread_id.as_bytes()).map_err(|_| Error::Corrupt)?;
     if key == expected {

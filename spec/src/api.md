@@ -6,7 +6,7 @@ code/WorkStore/ReviewStore pages. Viewport-owned metadata requests share two
 actual concurrent directory reads, propagate cancellation to their transport,
 preserve independent pins and discard obsolete results. Existing paging,
 authorization and partial-activity contracts remain unchanged; lightweight
-server summary delivery and complete browser qualification are separate slices.
+code-summary delivery and complete browser qualification are separate slices.
 
 Native `GET /v1/repos/{repo}/work/activity` and local
 `POST /v1/local/repos/{repo}/work/activity` return independently pinned
@@ -17,6 +17,18 @@ envelope. Directory cards fetch one group page per home and retain partial state
 for unloaded groups; they do not load task summaries to count activity. Public
 schema and representative transport evidence accompany this performance
 delivery; complete combined contract and browser qualification remain deferred.
+
+Native `GET /v1/repos/{repo}/reviews/activity` and local
+`POST /v1/local/repos/{repo}/reviews/activity` return compact independently
+pinned review counts and maximum accepted timestamps for a bounded first window
+of 1..256 radix-ordered threads. The response explicitly marks counts incomplete
+when more threads exist; it contains no thread/anchor/comment presentation or
+continuation. The local body requires its committed companion metadata
+selection. Directory cards request 50 selections without fetching review
+presentations and retain their existing partial-activity indication. Native card
+dates include sampled review activity; local card dates retain their existing
+code/task policy. These transport and focused consumer proofs do not complete
+combined browser, scale or release qualification.
 
 Repository entry menus, Settings-style creation/conversion forms, action rows
 and trailing shell spacing change presentation only. Local/server capability

@@ -1,6 +1,35 @@
 use super::*;
 
 #[test]
+fn review_activity_contract_is_compact_bounded_and_independently_pinned() {
+    let doc = openapi();
+    let native = &doc["paths"]["/v1/repos/{repo}/reviews/activity"]["get"];
+    let parameters = native["parameters"].as_array().unwrap();
+    assert!(!parameters.iter().any(|value| value["name"] == "cursor"));
+    assert_eq!(
+        parameters
+            .iter()
+            .find(|value| value["name"] == "limit")
+            .unwrap()["schema"]["default"],
+        50
+    );
+    assert_eq!(
+        native["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        "#/components/schemas/ReviewActivitySummary"
+    );
+    let local = &doc["paths"]["/v1/local/repos/{repo}/reviews/activity"]["post"];
+    assert_eq!(
+        local["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        "#/components/schemas/LocalReviewActivitySummary"
+    );
+    let activity = &doc["components"]["schemas"]["ReviewActivity"];
+    assert_eq!(activity["properties"].as_object().unwrap().len(), 3);
+    for field in ["threads", "threads_partial", "updated_at_millis"] {
+        assert!(activity["properties"].get(field).is_some());
+    }
+}
+
+#[test]
 fn collaboration_contract_exposes_root_pinned_review_threads() {
     let doc = openapi();
     let list = &doc["paths"]["/v1/repos/{repo}/reviews/threads"]["get"];

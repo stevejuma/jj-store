@@ -149,6 +149,32 @@ async fn local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail
     assert!(presentation["created_at_millis"].is_number());
     assert!(presentation["updated_at_millis"].is_number());
     assert!(presentation["excerpt"].is_string());
+    let (status, activity) = json(&router, "reviews/activity?limit=1", None).await;
+    assert_eq!(status, StatusCode::OK, "{activity}");
+    assert_eq!(activity["snapshot"], first_page["snapshot"]);
+    assert_eq!(activity["activity"]["threads"], 1);
+    assert_eq!(activity["activity"]["threads_partial"], true);
+    assert_eq!(
+        activity["activity"]["updated_at_millis"],
+        presentation["updated_at_millis"]
+    );
+    assert!(activity.get("threads").is_none());
+    let (status, complete_activity) = json(&router, "reviews/activity?limit=50", None).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(complete_activity["activity"]["threads"], 2);
+    assert_eq!(complete_activity["activity"]["threads_partial"], false);
+    for query in ["limit=0", "limit=257", "limit=1&cursor=ignored"] {
+        assert_eq!(
+            json(&router, &format!("reviews/activity?{query}"), None)
+                .await
+                .0,
+            if query.contains("cursor") {
+                StatusCode::BAD_REQUEST
+            } else {
+                StatusCode::PAYLOAD_TOO_LARGE
+            }
+        );
+    }
     let cursor = first_page["next_cursor"].as_str().unwrap();
     let reply_request = command(
         125,
@@ -229,6 +255,10 @@ async fn local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail
     let before_denied = fixture.session.snapshot().await.unwrap().manifest().clone();
     let reader = api(&fixture, cache.path(), Permission::Read);
     assert_eq!(
+        json(&reader, "reviews/activity", None).await.0,
+        StatusCode::OK
+    );
+    assert_eq!(
         json(&reader, "reviews/commands", Some(&create(129, "Denied")))
             .await
             .0,
@@ -304,6 +334,12 @@ async fn local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail
 
     if let Some(path) = std::env::var_os("JJ_STORE_REVIEW_CONTRACT_CAPTURE") {
         let samples = [
+            ("/v1/repos/{repo}/reviews/activity", "get", activity),
+            (
+                "/v1/repos/{repo}/reviews/activity",
+                "get",
+                complete_activity,
+            ),
             ("/v1/repos/{repo}/reviews/threads", "get", first_page),
             (
                 "/v1/repos/{repo}/reviews/threads/{thread}",

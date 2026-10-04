@@ -17,6 +17,93 @@ const repositories = [
   { id: homeB, name: "Browser", permission: "read" as const },
 ];
 
+test("native card review activity avoids thread presentation and keeps sample uncertainty", async () => {
+  const fixture = fixtureTransport(homeA);
+  const seed = await fixture.directory!();
+  const work = {
+    ...fixture,
+    reviews: async () => {
+      throw new Error("Review presentation is unnecessary");
+    },
+    reviewActivity: async () => ({
+      version: 1,
+      snapshot: seed.review!,
+      activity: { threads: 50, threads_partial: true, updated_at_millis: 9999 },
+    }),
+  };
+  const client = new Client(
+    homeA,
+    null,
+    () => {},
+    async () =>
+      new Response(
+        JSON.stringify({
+          ...seed.code,
+          heads: ["61".repeat(64), "62".repeat(64)],
+        }),
+        { headers: { "content-type": "application/json" } },
+      ),
+  );
+  const summary = await readRepositoryDirectory(client, work);
+  expect(summary.reviews).toBe(50);
+  expect(summary.reviewsPartial).toBe(true);
+  expect(summary.updatedAtMillis).toBe(9999);
+  expect(summary).not.toHaveProperty("threads");
+});
+
+test("local card review activity avoids presentation and retains its code task date policy", async () => {
+  const fixture = fixtureTransport(homeA);
+  const seed = await fixture.directory!();
+  const source = {
+    repository: homeA,
+    snapshot: async () => ({ heads: ["61".repeat(64), "62".repeat(64)] }),
+    reviewThreads: async () => {
+      throw new Error("Review presentation is unnecessary");
+    },
+    reviewActivity: async () => ({
+      version: 1,
+      snapshot: seed.review!,
+      activity: { threads: 3, threads_partial: false, updated_at_millis: 9999 },
+    }),
+  } as unknown as StoreDataSource;
+  const summary = await readLocalRepositoryDirectory(source, fixture);
+  expect(summary.reviews).toBe(3);
+  expect(summary.reviewsPartial).toBe(false);
+  expect(summary.updatedAtMillis).not.toBe(9999);
+  expect(summary).not.toHaveProperty("threads");
+});
+
+test("native card compact review activity rejects a foreign repository or epoch", async () => {
+  const fixture = fixtureTransport(homeA);
+  const seed = await fixture.directory!();
+  const client = new Client(
+    homeA,
+    null,
+    () => {},
+    async () =>
+      new Response(
+        JSON.stringify({
+          ...seed.code,
+          heads: ["61".repeat(64), "62".repeat(64)],
+        }),
+        { headers: { "content-type": "application/json" } },
+      ),
+  );
+  for (const foreign of [{ repo_id: homeB }, { epoch: "ee".repeat(16) }]) {
+    const work = {
+      ...fixture,
+      reviewActivity: async () => ({
+        version: 1,
+        snapshot: { ...seed.review!, ...foreign },
+        activity: { threads: 1, threads_partial: false, updated_at_millis: 0 },
+      }),
+    };
+    await expect(readRepositoryDirectory(client, work)).rejects.toMatchObject({
+      code: "snapshot_mismatch",
+    });
+  }
+});
+
 test("native directory reads compact complete task groups without fetching task summaries", async () => {
   const source = fixtureTransport(homeA);
   const seed = await source.directory!();
@@ -85,7 +172,7 @@ test("local directory uses compact task groups and retains unloaded-group partia
   const source = {
     repository: homeA,
     snapshot: async () => ({ heads: ["61".repeat(64), "62".repeat(64)] }),
-    reviewThreads: fixture.reviews,
+    reviewActivity: fixture.reviewActivity,
   } as unknown as StoreDataSource;
   let calls = 0;
   const summary = await readLocalRepositoryDirectory(source, {

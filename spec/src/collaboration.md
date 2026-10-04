@@ -2756,6 +2756,20 @@ reconstructed state that disagrees with the snapshot.
 
 ## Root-pinned review store
 
+Repository-card review activity reads MUST enumerate only the first requested
+radix-ordered window (1..256 threads) of the admitted selected root and return
+its thread count, explicit incomplete-count flag and maximum accepted event
+timestamp. A partial window MUST NOT claim a complete repository count or latest
+timestamp. The timestamp includes every selected event in each returned thread,
+including merged event graphs; event sequence/order alone is not a time maximum.
+Activity reads MUST NOT resolve anchors, comment revisions, conflicts or bodies
+for presentation. Provider admission still audits complete selected
+dependencies; this optimization does not weaken closure validation or domain
+capacities. Native requests retain ordinary concurrency, timeout and fresh epoch
+admission; local requests require the explicit committed companion and current
+folder identity. Empty reads create no state. No durable activity aggregate is
+added.
+
 The WAL coordinator stages each validated review object in the existing
 repository-bound envelope and traverses every typed ReviewStore, native code and
 AgentStore strong edge before staging a root. A review root independently audits

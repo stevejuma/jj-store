@@ -11,13 +11,13 @@ import type { WorkBrowseTransport } from "./projects-hub-types.js";
 /** Independent native pins, bounded pages, no head reconciliation or authority writes. */
 export async function readRepositoryDirectory(
   client: Client,
-  work: Pick<WorkBrowseTransport, "taskActivity" | "reviews">,
+  work: Pick<WorkBrowseTransport, "taskActivity" | "reviewActivity">,
   signal?: AbortSignal,
 ): Promise<RepositoryDirectorySummary> {
   const [head, tasks, reviews] = await Promise.all([
     client.request<Head>("snapshot", {}, { signal }),
     work.taskActivity!({ limit: 256 }, signal),
-    work.reviews!(undefined, signal),
+    work.reviewActivity!(signal),
   ]);
   if (
     head.repo_id !== client.repository ||
@@ -64,9 +64,9 @@ export async function readRepositoryDirectory(
     )[0];
   const dates = [
     ...(latest ? [latest.committer.timestamp.millis] : []),
-    ...reviews.threads.flatMap((thread) =>
-      thread.presentation ? [thread.presentation.updated_at_millis] : [],
-    ),
+    ...(reviews.activity.updated_at_millis !== null
+      ? [reviews.activity.updated_at_millis]
+      : []),
     ...tasks.groups
       .filter(
         (task) => (task.repository ?? client.repository) === client.repository,
@@ -88,8 +88,8 @@ export async function readRepositoryDirectory(
       : null,
     commits: commits.length,
     commitsPartial: Boolean(graph?.next_cursor),
-    threads: reviews.threads,
-    reviewsPartial: Boolean(reviews.next_cursor),
+    reviews: Number(reviews.activity.threads),
+    reviewsPartial: reviews.activity.threads_partial,
     taskGroups: tasks.groups,
     tasksPartial: Boolean(tasks.next_cursor),
   };
