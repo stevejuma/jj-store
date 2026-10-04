@@ -213,12 +213,14 @@ export function productionControllerSurface(
     historyQuery?: StoreController["historyQuery"];
     capture?: StoreController["capture"];
     configuration?: StoreController["configuration"];
+    freshness?: StoreController["freshness"];
   },
   pause?: StoreController["actions"]["setRefreshPaused"],
 ): StoreController {
   return {
     capture: options.capture,
     configuration: options.configuration,
+    freshness: options.freshness,
     get threads() {
       return options.threads.available() ? options.threads.threads : undefined;
     },

@@ -127,6 +127,7 @@ impl Registry {
 /// Share one instance across repositories. Completed entries retain only owned
 /// snapshot/status data; credentials and complete inventories live in running jobs.
 pub struct IndexTasks {
+    changes: crate::freshness::Signals,
     executor: GraphExecutor,
     limits: Limits,
     slots: Arc<Semaphore>,
@@ -146,6 +147,9 @@ impl Drop for IndexTasks {
     }
 }
 impl IndexTasks {
+    pub fn freshness(&self) -> tokio::sync::broadcast::Receiver<crate::freshness::Change> {
+        self.changes.subscribe()
+    }
     pub fn new(executor: GraphExecutor, limits: Limits) -> Result<Self> {
         if !(1..=64).contains(&limits.running)
             || !(1..=1024).contains(&limits.retained)
@@ -161,6 +165,7 @@ impl IndexTasks {
             return Err(Error::Limit);
         }
         Ok(Self {
+            changes: Default::default(),
             executor,
             limits,
             slots: Arc::new(Semaphore::new(limits.running)),
@@ -252,6 +257,8 @@ impl IndexTasks {
             );
         }
         let registry = self.registry.clone();
+        let changes = self.changes.clone();
+        let repository = task.snapshot.authority.repo_id;
         let executor = self.executor.clone();
         let completed_ttl = self.limits.ttl;
         tokio::spawn(async move {
@@ -270,21 +277,49 @@ impl IndexTasks {
                 }
             }
             .unwrap_or(Err(q::Error::Unavailable));
-            let mut registry = registry.lock().expect("index task registry");
-            if let Some(entry) = registry.0.get_mut(&id) {
-                if Instant::now() >= entry.expires {
-                    registry.0.remove(&id);
-                    return;
+            let completed_expires = Instant::now() + completed_ttl;
+            let retired = Cancellation::default();
+            {
+                let mut registry = registry.lock().expect("index task registry");
+                if let Some(entry) = registry.0.get_mut(&id) {
+                    if Instant::now() >= entry.expires {
+                        registry.0.remove(&id);
+                        changes.notify_to(
+                            Some(repository),
+                            crate::freshness::Domain::IndexTasks,
+                            Some(id.clone()),
+                            Some(owner),
+                        );
+                        return;
+                    }
+                    entry.task.state = match outcome {
+                        _ if matches!(entry.task.state, State::Canceling) => State::Canceled,
+                        Ok(index) => State::Ready { index },
+                        Err(q::Error::Canceled) => State::Canceled,
+                        Err(error) => State::Failed { error },
+                    };
+                    entry.expires = completed_expires;
+                    entry.cancellation = retired.clone();
+                    changes.notify_to(
+                        Some(repository),
+                        crate::freshness::Domain::IndexTasks,
+                        Some(id.clone()),
+                        Some(owner),
+                    );
                 }
-                entry.task.state = match outcome {
-                    _ if matches!(entry.task.state, State::Canceling) => State::Canceled,
-                    Ok(index) => State::Ready { index },
-                    Err(q::Error::Canceled) => State::Canceled,
-                    Err(error) => State::Failed { error },
-                };
-                entry.expires = Instant::now() + completed_ttl;
+                registry.prune();
             }
-            registry.prune();
+            tokio::select! {
+                _ = retired.cancelled() => return,
+                _ = tokio::time::sleep_until(completed_expires) => {},
+            }
+            registry.lock().expect("index task registry").prune();
+            changes.notify_to(
+                Some(repository),
+                crate::freshness::Domain::IndexTasks,
+                Some(id.clone()),
+                Some(owner),
+            );
         });
         Ok(task)
     }

@@ -43,6 +43,9 @@ pub enum Error {
 }
 #[async_trait::async_trait]
 pub trait SyncManager: Send + Sync {
+    fn freshness(&self) -> Option<tokio::sync::broadcast::Receiver<crate::freshness::Change>> {
+        None
+    }
     async fn capture(&self, repository: RepositoryId) -> Result<BarrierV1, Error>;
     async fn wait(
         &self,

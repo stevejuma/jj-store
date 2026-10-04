@@ -178,6 +178,7 @@ export interface StoreControllerState {
 }
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
+  readonly freshness?: import("./application-freshness.js").ApplicationFreshness;
   readonly historyQuery?: import("./history-query-types.js").HistoryQueryController;
   readonly configuration?: import("./server-settings.svelte.js").ServerSettingsManagement;
   readonly capture?: import("./capture-types.js").CaptureManagement;
@@ -195,7 +196,9 @@ export interface StoreController {
     refresh(): Promise<void>;
     selectOperation(id: string): Promise<void>;
     selectComparisonParent(id: string): Promise<void>;
-    refreshSettings(): Promise<void>;
+    refreshSettings(
+      section?: import("./settings-refresh.js").SettingsRefreshScope,
+    ): Promise<void>;
     setRefreshPaused?(key: string, paused: boolean): void;
     refreshWorkspaceLinks(): Promise<void>;
     setWorkspacePath(path: string): void;

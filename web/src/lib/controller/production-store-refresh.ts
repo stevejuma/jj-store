@@ -24,11 +24,21 @@ export function createProductionRefresh(options: {
   follow: (source: StoreDataSource) => void;
   invalidate: () => void;
   refreshThreadNavigation?: () => Promise<void>;
+  discover?: () => Promise<void>;
 }) {
   const { data, history, projects, threads, reader, search } = options;
   return {
-    async refresh(automatic = false) {
-      void options.refreshThreadNavigation?.();
+    async refresh(
+      automatic = false,
+      changes?: readonly import("../api/application-events.js").FreshnessChange[],
+    ) {
+      if (!changes || changes.some((change) => change.domain === "threads"))
+        void options.refreshThreadNavigation?.();
+      if (
+        changes?.some((change) => change.repository === null) &&
+        history.route.page !== "projects"
+      )
+        await options.discover?.();
       if (history.route.page === "threads") {
         const active = options.source(),
           route = history.route;
@@ -46,8 +56,22 @@ export function createProductionRefresh(options: {
       }
       if (await threads.refresh()) return;
       if (history.route.page === "projects") {
-        await projects.refresh();
+        await projects.refresh(changes);
         data.status.refreshAvailable = false;
+        return;
+      }
+      if (
+        changes &&
+        changes.every(
+          (change) =>
+            change.repository !== null &&
+            ["agents", "reviews"].includes(change.domain),
+        ) &&
+        ["files", "branches", "log", "oplog"].includes(history.route.page)
+      ) {
+        if (options.source().profile === "git_sha1_jj045")
+          await options.source().snapshot(true);
+        await reader.refreshCollaborationContext?.();
         return;
       }
       const active = options.source(),

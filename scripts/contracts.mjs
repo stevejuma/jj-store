@@ -64,6 +64,12 @@ if (mode === "--check") {
       packageName = "jj-store-cli",
     ] of [
       [
+        "application_events::tests::application_stream_has_independent_finite_delivery_admission_and_contract_capture",
+        "JJ_STORE_APPLICATION_EVENTS_CONTRACT_CAPTURE",
+        "--lib",
+        "jj-store-http",
+      ],
+      [
         "conversion_http_derives_admin_authority_and_captures_contracts",
         "JJ_STORE_CONVERSION_CONTRACT_CAPTURE",
         "repository_conversion",
@@ -184,8 +190,7 @@ if (mode === "--check") {
           "--locked",
           "-p",
           packageName,
-          "--test",
-          binary,
+          ...(binary === "--lib" ? ["--lib"] : ["--test", binary]),
           fixture,
           "--",
           "--exact",

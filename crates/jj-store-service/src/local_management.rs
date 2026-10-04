@@ -120,6 +120,13 @@ pub trait WorkspaceVerifier: Send + Sync {
 
 #[async_trait::async_trait]
 pub trait WorkspaceManager: Send + Sync {
+    /// Bounded link and physical binding comparison; no repository/history reads.
+    fn freshness_witness(&self) -> Option<String> {
+        None
+    }
+    fn freshness(&self) -> Option<tokio::sync::broadcast::Receiver<crate::freshness::Change>> {
+        None
+    }
     async fn list(&self, repository: RepositoryId) -> Result<WorkspaceLinks, Error>;
     async fn link(
         &self,

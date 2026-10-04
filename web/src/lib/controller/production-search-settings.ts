@@ -15,6 +15,8 @@ export function createProductionSearchSettings(options: {
   source: () => StoreDataSource;
   version: () => number;
   current: (ticket: number, source: StoreDataSource) => boolean;
+  freshness?: import("./application-freshness.js").ApplicationFreshness;
+  signal?(): AbortSignal;
 }) {
   const { data } = options;
   let generation = 0;
@@ -82,6 +84,7 @@ export function createProductionSearchSettings(options: {
     try {
       if (!source.searchSettings)
         throw new Error("Search settings unavailable");
+      let observed = options.freshness?.journal.revision ?? 0;
       let result =
         action === "save"
           ? await source.searchSettings.save(
@@ -100,8 +103,22 @@ export function createProductionSearchSettings(options: {
       }
       // Explicit action completion is allowed to refresh management state, never the selected repository snapshot.
       while (action && action !== "save" && searchOperating(result.operation)) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        if (options.freshness) {
+          const freshness = options.freshness;
+          await freshness.journal.wait({
+            after: observed,
+            matches: (change) =>
+              change.domain === "search" &&
+              (change.repository === null ||
+                change.repository === source.repository),
+            healthy: () => freshness.healthy,
+            listen: (listener) => freshness.listen(listener),
+            signal: options.signal?.() ?? new AbortController().signal,
+            delay: 5000,
+          });
+        } else await new Promise((resolve) => setTimeout(resolve, 500));
         if (!current()) return;
+        observed = options.freshness?.journal.revision ?? observed;
         result = await source.searchSettings.status();
         if (!current()) return;
         state.value = result;

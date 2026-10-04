@@ -78,17 +78,34 @@
     } catch (cause) {
       message = storeErrorMessage(cause);
     }
-    const timer = setInterval(() => {
-      if (
-        !document.hidden &&
-        manager &&
-        !busy &&
-        !pending &&
-        (mode === "settings" || open)
-      )
-        void run(list);
-    }, 5000);
+    const subscription = controller.freshness?.watch({
+      initial: false,
+      matches: (change) =>
+        change.repository === null &&
+        ["repository", "discovery", "workspaces", "conversion"].includes(
+          change.domain,
+        ),
+      active: () =>
+        Boolean(manager && !busy && !pending && (mode === "settings" || open)),
+      refresh: async () => {
+        await run(list);
+        return !message;
+      },
+    });
+    const timer = subscription
+      ? undefined
+      : setInterval(() => {
+          if (
+            !document.hidden &&
+            manager &&
+            !busy &&
+            !pending &&
+            (mode === "settings" || open)
+          )
+            void run(list);
+        }, 5000);
     return () => {
+      subscription?.stop();
       clearInterval(timer);
       manager?.close();
     };

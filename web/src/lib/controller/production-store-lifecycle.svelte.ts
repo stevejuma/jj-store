@@ -111,6 +111,7 @@ export async function initializeProductionStore(options: {
   connect: (repository: string, token: string | null) => Promise<void>;
   fetcher?: typeof fetch;
   signal: AbortSignal;
+  events?(supported: boolean, token: string | null | undefined): Promise<void>;
 }) {
   options.data.status.connection = "connecting";
   try {
@@ -127,6 +128,11 @@ export async function initializeProductionStore(options: {
     options.data.captureSupported =
       bootstrap.capabilities.local_capture_management === true;
     options.data.backups = [...bootstrap.backups];
+    await options.events?.(
+      bootstrap.capabilities.application_events === true,
+      bootstrap.access_mode === "authenticated" ? undefined : null,
+    );
+    if (options.signal.aborted) return;
     if (!bootstrap.storage.ready) {
       options.data.status.connection = "failed";
       options.data.status.error = "Authoritative storage is not ready.";
@@ -172,6 +178,7 @@ export function startProductionStoreLifecycle(options: {
   restore: () => Promise<void>;
   fetcher?: typeof fetch;
   signal: AbortSignal;
+  events?(supported: boolean, token: string | null | undefined): Promise<void>;
 }) {
   if (options.history.error)
     Object.assign(options.data.status, {

@@ -3474,6 +3474,306 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
 }
 ```
 
+## GET /v1/events
+
+Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.
+
+```text
+{
+  "operationId": "application_events",
+  "tags": [
+    "reads"
+  ],
+  "description": "Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.",
+  "parameters": [
+    {
+      "name": "after",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "string",
+        "maxLength": 128,
+        "pattern": "^jse1:[0-9a-f]{32}:[0-9a-f]{32}:(0|[1-9][0-9]*)$"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
+      "name": "Last-Event-ID",
+      "in": "header",
+      "required": false,
+      "description": "Must agree with after when both are supplied.",
+      "schema": {
+        "type": "string",
+        "maxLength": 128,
+        "pattern": "^jse1:[0-9a-f]{32}:[0-9a-f]{32}:(0|[1-9][0-9]*)$"
+      }
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Bounded SSE stream. JSON data appears inside ready, repository-changed and reset frames. Authorized heartbeat comments do not advance IDs. Reset closes the stream. Resume the last fully parsed ID after EOF; post-header failures terminate the stream.",
+      "content": {
+        "text/event-stream": {
+          "schema": {
+            "type": "string"
+          },
+          "x-sse-data-schema": {
+            "$ref": "#/components/schemas/ApplicationFreshnessEvent"
+          },
+          "x-sse-events": {
+            "ready": "ready",
+            "changed": "changed",
+            "reset": "reset"
+          },
+          "x-sse-id-schema": {
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^jse1:[0-9a-f]{32}:[0-9a-f]{32}:(0|[1-9][0-9]*)$"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "after": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "repositoryBearer": []
+    },
+    {}
+  ]
+}
+```
+
+## HEAD /v1/events
+
+Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.
+
+```text
+{
+  "operationId": "application_events_head",
+  "tags": [
+    "reads"
+  ],
+  "description": "Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.",
+  "parameters": [
+    {
+      "name": "after",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "string",
+        "maxLength": 128,
+        "pattern": "^jse1:[0-9a-f]{32}:[0-9a-f]{32}:(0|[1-9][0-9]*)$"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
+      "name": "Last-Event-ID",
+      "in": "header",
+      "required": false,
+      "description": "Must agree with after when both are supplied.",
+      "schema": {
+        "type": "string",
+        "maxLength": 128,
+        "pattern": "^jse1:[0-9a-f]{32}:[0-9a-f]{32}:(0|[1-9][0-9]*)$"
+      }
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Bounded SSE stream. JSON data appears inside ready, repository-changed and reset frames. Authorized heartbeat comments do not advance IDs. Reset closes the stream. Resume the last fully parsed ID after EOF; post-header failures terminate the stream."
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor."
+    },
+    "401": {
+      "description": "Missing repository Bearer credential."
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin."
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route."
+    },
+    "405": {
+      "description": "Unsupported method."
+    },
+    "408": {
+      "description": "Native query canceled."
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart."
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded."
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding."
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history."
+    },
+    "504": {
+      "description": "Request or response deadline exceeded."
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "after": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "repositoryBearer": []
+    },
+    {}
+  ]
+}
+```
+
 ## GET /v1/local/repositories
 
 LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.

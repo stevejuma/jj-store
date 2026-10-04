@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import StoreSearchHealth from "./StoreSearchHealth.svelte";
   import StoreSearchConfiguration from "./StoreSearchConfiguration.svelte";
   import type { StoreController } from "../../controller/contracts.js";
+  import { observeStoreSettings } from "../../controller/settings-refresh.js";
   let active = $state("configuration");
   let { controller }: { controller: StoreController } = $props();
   const settings = $derived(controller.state.settings);
@@ -12,6 +14,12 @@
       ? settings.capabilities?.search
       : settings.capabilities?.local_search_management,
   );
+  const repository = $derived(controller.state.route.repository);
+  $effect(() => {
+    const section = active === "health" ? "search_health" : "search";
+    repository;
+    return untrack(() => observeStoreSettings(controller, section));
+  });
 </script>
 
 <StoreSettingsPage
@@ -19,7 +27,7 @@
   bind:value={active}
   onRefresh={supported
     ? active === "health"
-      ? controller.actions.refreshSettings
+      ? () => controller.actions.refreshSettings("search_health")
       : controller.actions.refreshSearchSettings
     : undefined}
   refreshLabel={active === "health" ? "Refresh status" : "Refresh settings"}

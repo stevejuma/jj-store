@@ -53,6 +53,23 @@
     }
   });
   onDestroy(() => manager?.close());
+  $effect(() => {
+    const freshness = controller.freshness,
+      current = manager;
+    if (!freshness || !current) return;
+    const watch = freshness.watch({
+      initial: Boolean(current.pending),
+      active: () => Boolean(current.pending && !busy),
+      matches: (change) =>
+        change.domain === "conversion" &&
+        change.identity === current.pending?.request_id,
+      refresh: async () => {
+        await run(true);
+        return !error;
+      },
+    });
+    return watch.stop;
+  });
   function edit() {
     preview = null;
     checkedIntent = null;

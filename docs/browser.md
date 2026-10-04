@@ -37,11 +37,12 @@ previews are capped separately; downloadable native data remains available
 through the authenticated API.
 
 The snapshot bar identifies the displayed operation and publication position.
-New committed events show a newer-history notice without replacing the selected
-view. Refresh snapshot captures current heads and starts a fresh subscription.
-Index preparation is explicit and cancelable. It retries the original captured
-query when ready. The graph display is bounded; narrow a query for large
-history.
+Relevant committed events refresh active content automatically. Explicit
+historical operations, drafts and pending commands remain selected. Refresh
+snapshot captures current heads; the authorization session retains its shared
+event subscription. Index preparation is explicit and cancelable. It retries the
+original captured query when ready. The graph display is bounded; narrow a query
+for large history.
 
 ## Repository search (deferred locally)
 

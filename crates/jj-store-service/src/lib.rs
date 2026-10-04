@@ -4,6 +4,7 @@ pub mod access;
 pub mod administration;
 pub mod auth;
 pub mod events;
+pub mod freshness;
 pub mod guard;
 pub mod local_browser;
 pub mod local_repository;

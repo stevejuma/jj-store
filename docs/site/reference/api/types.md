@@ -444,6 +444,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "events": {
       "type": "boolean"
     },
+    "application_events": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
     "search": {
       "type": "boolean"
     },
@@ -582,6 +588,22 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     },
     "poll_millis": {
       "type": "integer",
+      "format": "uint128",
+      "minimum": 0
+    },
+    "stream_lifetime_millis": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint128",
+      "minimum": 0
+    },
+    "heartbeat_millis": {
+      "type": [
+        "integer",
+        "null"
+      ],
       "format": "uint128",
       "minimum": 0
     }
@@ -12943,6 +12965,153 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "request_id"
       ]
     }
+  ]
+}
+```
+
+## ApplicationFreshnessEvent
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "witnesses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Change4"
+          }
+        },
+        "type": {
+          "type": "string",
+          "const": "ready"
+        }
+      },
+      "required": [
+        "type",
+        "version",
+        "witnesses"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "change": {
+          "$ref": "#/components/schemas/Change4"
+        },
+        "type": {
+          "type": "string",
+          "const": "changed"
+        }
+      },
+      "required": [
+        "type",
+        "version",
+        "change"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "reason": {
+          "type": "string"
+        },
+        "witnesses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Change4"
+          }
+        },
+        "type": {
+          "type": "string",
+          "const": "reset"
+        }
+      },
+      "required": [
+        "type",
+        "version",
+        "reason",
+        "witnesses"
+      ]
+    }
+  ]
+}
+```
+
+## Change4
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "repository": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/RepositoryId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "domain": {
+      "$ref": "#/components/schemas/Domain"
+    },
+    "witness": {
+      "type": "string"
+    },
+    "identity": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "repository",
+    "domain",
+    "witness"
+  ]
+}
+```
+
+## Domain
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "repository",
+    "code",
+    "threads",
+    "agents",
+    "reviews",
+    "work",
+    "storage",
+    "sync",
+    "search",
+    "index_tasks",
+    "capture",
+    "configuration",
+    "discovery",
+    "workspaces",
+    "conversion"
   ]
 }
 ```

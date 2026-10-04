@@ -45,6 +45,11 @@ pub enum ReplicationControlError {
 
 #[tonic::async_trait]
 pub trait ReplicationControls: Send + Sync {
+    fn freshness(
+        &self,
+    ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
+        None
+    }
     async fn status(
         &self,
         repository: m::RepositoryId,

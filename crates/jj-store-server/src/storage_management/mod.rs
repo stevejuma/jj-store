@@ -5,6 +5,7 @@ use jj_store_service::storage_management::*;
 use std::{collections::BTreeSet, path::PathBuf, sync::Arc};
 use tokio::sync::Mutex;
 struct Inner {
+    changes: jj_store_service::freshness::Signals,
     root: PathBuf,
     backend: Arc<dyn StorageBackend>,
     active: Mutex<BTreeSet<(RepositoryId, RequestId)>>,
@@ -18,6 +19,7 @@ impl Manager {
             return Err(crate::Error::Config("storage journal directory"));
         }
         Ok(Self(Arc::new(Inner {
+            changes: Default::default(),
             root,
             backend,
             active: Mutex::new(BTreeSet::new()),
@@ -89,10 +91,20 @@ impl Manager {
             let _ = journal::save(&self.0.root, repo, &journal);
         }
         active.remove(&(repo, id));
+        self.0.changes.notify(
+            Some(repo),
+            jj_store_service::freshness::Domain::Storage,
+            Some(id.to_string()),
+        );
     }
 }
 #[async_trait::async_trait]
 impl StorageManager for Manager {
+    fn freshness(
+        &self,
+    ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
+        Some(self.0.changes.subscribe())
+    }
     async fn overview(&self, repo: RepositoryId) -> Result<StorageOverview, Error> {
         let mut overview = self.0.backend.overview(repo).await?;
         let active = self.0.active.lock().await;
@@ -161,6 +173,11 @@ impl StorageManager for Manager {
                 journal.entries[index].report.phase = StoragePhase::Canceled;
                 let report = journal.entries[index].report.clone();
                 journal::save(&self.0.root, repo, &journal)?;
+                self.0.changes.notify(
+                    Some(repo),
+                    jj_store_service::freshness::Domain::Storage,
+                    Some(id.to_string()),
+                );
                 return Ok(report);
             }
             if command.action != StorageAction::PublishCheckpoint
@@ -226,6 +243,11 @@ impl StorageManager for Manager {
         }
         let entry = entry.clone();
         journal::save(&self.0.root, repo, &journal)?;
+        self.0.changes.notify(
+            Some(repo),
+            jj_store_service::freshness::Domain::Storage,
+            Some(id.to_string()),
+        );
         if entry.report.phase == StoragePhase::Running {
             active.insert((repo, id));
             let this = self.clone();

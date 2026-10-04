@@ -1775,3 +1775,14 @@ nonblocking admission while a cache slot is busy, and retained
 charges/readability for an executing reader. Exact native cache and local
 preparation-task tests remain the direct delivery consumers; full pressure/RSS
 qualification is deferred.
+
+## Freshness producer ownership
+
+State owners publish bounded, body-free semantic notices after accepted changes
+and asynchronous settlement. Capture observations suppress scheduler-only phase
+and resident-frame churn while retaining pause, drain, availability, selected
+source, import and queue progress. Local watcher hints never establish committed
+state; shared bounded heads/companion checks validate their meaning and cover
+missed physical notifications. No browser poll is needed while the advertised
+application feed is healthy. Exact task and request receipts remain
+authoritative.

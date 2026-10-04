@@ -158,14 +158,16 @@ export function createRepositoryThreadNavigation(context: {
     pending.set(repository, task);
     return task;
   }
-  async function load(refresh = false) {
+  async function load(refresh = false, affected?: ReadonlySet<string>) {
     const ticket = generation;
     for (const id of Object.keys(entries)) if (!allowed(id)) delete entries[id];
     const repositories = context
       .repositories()
       .filter(
         (repo) =>
-          supportsRepositoryThreads(repo) && (refresh || !entries[repo.id]),
+          supportsRepositoryThreads(repo) &&
+          (!affected || affected.has(repo.id)) &&
+          (refresh || !entries[repo.id]),
       );
     let index = 0;
     await Promise.all(

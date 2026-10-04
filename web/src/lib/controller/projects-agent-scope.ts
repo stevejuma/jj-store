@@ -61,6 +61,7 @@ export async function loadProjectAgents(context: {
   project: Model<"ProjectV1"> | null;
   error: string;
   refresh: boolean;
+  affected?: ReadonlySet<string>;
   current(): boolean;
   report(message: string): void;
 }) {
@@ -74,7 +75,8 @@ export async function loadProjectAgents(context: {
       context.project,
       context.current,
     );
-    if (context.current()) await context.agents.load(scope, context.refresh);
+    if (context.current())
+      await context.agents.load(scope, context.refresh, context.affected);
   } catch (cause) {
     if (context.current()) {
       context.agents.reset();

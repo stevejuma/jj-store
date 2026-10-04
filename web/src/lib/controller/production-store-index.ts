@@ -17,6 +17,7 @@ export function createProductionStoreSettings(input: {
   signal?: () => AbortSignal;
   current: (ticket: number, source: StoreDataSource) => boolean;
   restore: () => Promise<void>;
+  freshness?: import("./application-freshness.js").ApplicationFreshness;
 }) {
   const options = {
     ...input,
@@ -77,7 +78,14 @@ export function createProductionStoreSettings(input: {
     }
   }
 
-  async function refresh() {
+  async function refresh(
+    section?: import("./settings-refresh.js").SettingsRefreshScope,
+  ) {
+    if (section === "repository") return workspaces.refreshWorkspaceLinks();
+    if (section === "storage") return storage.refreshStorage();
+    if (section === "sync") return sync.refreshSyncSettings();
+    if (section === "search") return search.refreshSearchSettings();
+    if (section === "search_health") return refreshSearch();
     await Promise.all([
       refreshSearch(),
       workspaces.refreshWorkspaceLinks(),

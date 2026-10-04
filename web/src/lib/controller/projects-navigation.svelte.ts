@@ -53,7 +53,7 @@ export function createProjectsNavigation(context: {
     }
   }
   let pendingLoad: Promise<void> | null = null;
-  async function loadPages(refresh = false) {
+  async function loadPages(refresh = false, affected?: ReadonlySet<string>) {
     if (!refresh && (loaded || loading)) return;
     reads.abort();
     reads = new AbortController();
@@ -78,6 +78,8 @@ export function createProjectsNavigation(context: {
         Array.from({ length: Math.min(2, homes.length) }, async () => {
           while (index < homes.length && ticket === generation) {
             const home = homes[index++]!;
+            if (affected && !affected.has(home.repository.id) && home.snapshot)
+              continue;
             await reloadProjectHomeWindow(
               home,
               (more) => read(home, ticket, more),
@@ -91,9 +93,9 @@ export function createProjectsNavigation(context: {
       if (ticket === generation) loading = false;
     }
   }
-  function load(refresh = false) {
+  function load(refresh = false, affected?: ReadonlySet<string>) {
     if (!refresh && pendingLoad) return pendingLoad;
-    const request = loadPages(refresh);
+    const request = loadPages(refresh, affected);
     pendingLoad = request;
     void request
       .finally(() => {

@@ -136,6 +136,7 @@ impl Registry {
 }
 
 pub struct IndexTasks {
+    changes: crate::freshness::Signals,
     executor: q::Executor,
     root: PathBuf,
     limits: Limits,
@@ -152,6 +153,9 @@ impl Drop for IndexTasks {
     }
 }
 impl IndexTasks {
+    pub fn freshness(&self) -> tokio::sync::broadcast::Receiver<crate::freshness::Change> {
+        self.changes.subscribe()
+    }
     pub fn new(executor: q::Executor, root: PathBuf, limits: Limits) -> Result<Self> {
         if !root.is_absolute()
             || !(1..=64).contains(&limits.retained)
@@ -163,6 +167,7 @@ impl IndexTasks {
             return Err(q::Error::Limit.into());
         }
         Ok(Self {
+            changes: Default::default(),
             executor,
             root,
             limits,
@@ -243,6 +248,8 @@ impl IndexTasks {
             );
         }
         let registry = self.registry.clone();
+        let changes = self.changes.clone();
+        let repository = task.snapshot.repository;
         let worker_registry = registry.clone();
         let executor = self.executor.clone();
         let limits = self.limits;
@@ -295,6 +302,11 @@ impl IndexTasks {
                     .is_none_or(|entry| Instant::now() >= entry.expires)
                 {
                     registry.0.remove(&id);
+                    changes.notify(
+                        Some(repository),
+                        crate::freshness::Domain::IndexTasks,
+                        Some(id.clone()),
+                    );
                     return;
                 }
                 if let Some(entry) = registry.0.get_mut(&id) {
@@ -311,6 +323,11 @@ impl IndexTasks {
                     entry.cancellation = retired.clone();
                     entry.expires = completed_expires;
                     entry.used = Instant::now();
+                    changes.notify(
+                        Some(repository),
+                        crate::freshness::Domain::IndexTasks,
+                        Some(id.clone()),
+                    );
                 }
             }
             // Expiry frees resident and disk capacity without requiring polling.
@@ -318,6 +335,7 @@ impl IndexTasks {
                 _ = retired.cancelled() => {},
                 _ = tokio::time::sleep_until(completed_expires) => {
                     registry.lock().expect("local index registry").prune();
+                    changes.notify(Some(repository), crate::freshness::Domain::IndexTasks, Some(id.clone()));
                 }
             }
         });

@@ -700,3 +700,14 @@ preparation when cold. Nonempty description search and an embedded reference
 operation different from the outer selection retain their existing separately
 bounded reader pending indexed filtering/operation lookup. No source or wire
 format changes; comprehensive large-scale qualification stays deferred.
+
+## Freshness producer ownership
+
+State owners publish bounded, body-free semantic notices after accepted changes
+and asynchronous settlement. Capture observations suppress scheduler-only phase
+and resident-frame churn while retaining pause, drain, availability, selected
+source, import and queue progress. Local watcher hints never establish committed
+state; shared bounded heads/companion checks validate their meaning and cover
+missed physical notifications. No browser poll is needed while the advertised
+application feed is healthy. Exact task and request receipts remain
+authoritative.

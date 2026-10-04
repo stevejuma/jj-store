@@ -1,3 +1,4 @@
+import { reportProductionStoreError } from "./production-store-lifecycle.svelte.js";
 import { createHistoryQuery } from "./history-query.svelte.js";
 import { createProductionReferenceReader } from "./production-reference-reader.js";
 import { fullId } from "../api/client.js";
@@ -32,13 +33,22 @@ export interface ReaderContext {
 }
 
 export function createProductionStoreReaders(
-  context: Omit<ReaderContext, "operation"> & { begin(): number },
+  context: Omit<ReaderContext, "operation" | "report"> & {
+    begin(): number;
+    report?(cause: unknown): void;
+  },
 ) {
-  const historyQuery = createHistoryQuery(context);
+  const complete = {
+    ...context,
+    report:
+      context.report ??
+      ((cause: unknown) => reportProductionStoreError(context.data, cause)),
+  };
+  const historyQuery = createHistoryQuery(complete);
   return {
     reader: createProductionStoreReader(
       {
-        ...context,
+        ...complete,
         operation: () => context.history.route.snapshotOperationId,
       },
       historyQuery.prepare,

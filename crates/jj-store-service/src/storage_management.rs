@@ -123,6 +123,9 @@ pub trait StorageBackend: Send + Sync {
 }
 #[async_trait::async_trait]
 pub trait StorageManager: Send + Sync {
+    fn freshness(&self) -> Option<tokio::sync::broadcast::Receiver<crate::freshness::Change>> {
+        None
+    }
     async fn overview(&self, repo: RepositoryId) -> Result<StorageOverview, Error>;
     async fn command(
         &self,

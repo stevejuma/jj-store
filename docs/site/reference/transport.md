@@ -42,8 +42,15 @@ request ID after each timeout.
 
 Committed SSE events are freshness hints. The client reopens authorized reads
 rather than treating an event payload or a search hit as repository authority.
-Reconnect and bounded periodic refresh cover missed hints. Historical code pins,
-unsaved drafts and unknown command identities survive ordinary refresh.
+The advertised `/v1/events` feed multiplexes authorized repository and
+installation domains into one session subscription. It replays a bounded
+process-local cursor or sends reset when continuity is lost. Heartbeats arrive
+every 15 seconds and streams renew after five minutes; unchanged renewal causes
+no data reads. The client marks affected scopes dirty before accepting the
+cursor and refreshes only visible consumers. Hidden scopes refresh when
+accessed. Serial bounded fallback runs only when the feed is unavailable and
+pauses while hidden. Historical code pins, unsaved drafts and unknown command
+identities survive ordinary refresh.
 
 Use lossless JSON handling for integers beyond JavaScript's safe number range.
 Identity widths and tagged variants are part of the schema. Uploaded bodies,

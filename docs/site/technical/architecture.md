@@ -68,3 +68,14 @@ terminal commands are not server mutations. See
 A metadata home may link to code in another repository. That link does not grant
 access, copy code or combine their transactions. See
 [projects](../concepts/projects.md).
+
+## Application freshness
+
+One authorization-session QueryClient and transport registry share independent
+read leases. Exact immutable snapshots remain cached; events invalidate live
+aliases and affected domain families. A single application SSE feed observes
+committed native metadata, local heads and companion references, plus accepted
+state-owner settlements. Refcounted monitors coalesce filesystem hints and use
+bounded metadata checks to cover missed notifications. They do not walk history
+or poll storage statistics. Witnesses are hints; every reopened read retains
+current authorization and its original pin. Terminal output uses its own stream.

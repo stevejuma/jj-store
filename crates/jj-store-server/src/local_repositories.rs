@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 use std::{fs, io::Write as _, path::PathBuf, sync::Arc};
 mod conversion;
 mod native_creation;
+mod watcher;
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -38,6 +39,7 @@ struct Registry {
 
 #[derive(Clone)]
 pub struct DeviceRepositories {
+    changes: jj_store_service::freshness::Signals,
     path: PathBuf,
     identity: Identity,
     provider: Arc<dyn FolderProvider>,
@@ -56,6 +58,7 @@ impl DeviceRepositories {
             return Err(crate::Error::Config("local repository registry directory"));
         }
         Ok(Self {
+            changes: Default::default(),
             path: state.join("local-repositories.json"),
             identity,
             provider,
@@ -251,7 +254,12 @@ impl DeviceRepositories {
             .map_err(|_| Error::Unavailable)?;
         fs::File::open(parent)
             .and_then(|f| f.sync_all())
-            .map_err(|_| Error::Unavailable)
+            .map_err(|_| Error::Unavailable)?;
+        self.changes
+            .notify(None, jj_store_service::freshness::Domain::Workspaces, None);
+        self.changes
+            .notify(None, jj_store_service::freshness::Domain::Discovery, None);
+        Ok(())
     }
     fn binding(&self, binding: &SavedBinding) -> LocalBinding {
         let availability = match self.provider.inspect(&binding.folder.path) {
@@ -370,6 +378,15 @@ fn valid_path(path: &str) -> bool {
 
 #[async_trait::async_trait]
 impl LocalRepositories for DeviceRepositories {
+    fn watch(&self, repository: RepositoryId) -> Result<Option<HintWatch>> {
+        let (folder, _) = self.folder(repository)?;
+        watcher::watch(&folder).map(Some)
+    }
+    fn freshness(
+        &self,
+    ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
+        Some(self.changes.subscribe())
+    }
     fn conversion(&self) -> bool {
         self.host.is_some()
     }
@@ -392,7 +409,14 @@ impl LocalRepositories for DeviceRepositories {
         let manager = self.clone();
         let runtime = tokio::runtime::Handle::current();
         tokio::task::spawn_blocking(move || {
-            runtime.block_on(manager.start_conversion_inner(request))
+            let id = request.request_id;
+            let result = runtime.block_on(manager.start_conversion_inner(request));
+            manager.changes.notify(
+                None,
+                jj_store_service::freshness::Domain::Conversion,
+                Some(id.to_string()),
+            );
+            result
         })
         .await
         .map_err(|_| Error::Unavailable)?

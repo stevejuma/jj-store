@@ -25,6 +25,7 @@ pub type Observer = Arc<
         + Sync,
 >;
 struct Inner {
+    changes: jj_store_service::freshness::Signals,
     file: Arc<SettingsFile>,
     host: RepositoryHost,
     root: PathBuf,
@@ -51,6 +52,7 @@ impl Manager {
         file.read()
             .map_err(|_| crate::Error::Config("local search configuration"))?;
         Ok(Self(Arc::new(Inner {
+            changes: Default::default(),
             file: Arc::new(file),
             host,
             root: config.state_dir.clone(),
@@ -211,6 +213,11 @@ impl Manager {
 }
 #[async_trait::async_trait]
 impl SearchManager for Manager {
+    fn freshness(
+        &self,
+    ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
+        Some(self.0.changes.subscribe())
+    }
     async fn status(&self, repo: RepositoryId) -> Result<LocalSearchSettings, Error> {
         Ok(self.report(repo, &self.snapshot().await?))
     }
@@ -229,9 +236,16 @@ impl SearchManager for Manager {
             .try_lock_owned()
             .map_err(|_| Error::Busy)?;
         let file = self.0.file.clone();
+        let changes = self.0.changes.clone();
         tokio::task::spawn_blocking(move || {
             let _permit = permit;
-            file.save(repo, &request.expected_revision, &request.configuration)
+            file.save(repo, &request.expected_revision, &request.configuration)?;
+            changes.notify(
+                Some(repo),
+                jj_store_service::freshness::Domain::Search,
+                None,
+            );
+            Ok::<_, Error>(())
         })
         .await
         .map_err(|_| Error::Unknown)??;
@@ -271,6 +285,11 @@ impl SearchManager for Manager {
             state.error = None;
         }
         let report = self.report(repo, &snapshot);
+        self.0.changes.notify(
+            Some(repo),
+            jj_store_service::freshness::Domain::Search,
+            None,
+        );
         let this = self.clone();
         self.0
             .control
@@ -285,6 +304,11 @@ impl SearchManager for Manager {
                     SearchOperation::Failed
                 };
                 state.error = result.err().map(|e| e.to_string());
+                this.0.changes.notify(
+                    Some(repo),
+                    jj_store_service::freshness::Domain::Search,
+                    None,
+                );
             })
             .await?;
         Ok(report)

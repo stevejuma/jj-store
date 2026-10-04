@@ -6,8 +6,10 @@ import type { ProductionStoreState } from "./production-store-state.svelte.js";
 export function createProductionCaptureManagement(
   data: ProductionStoreState,
   fetcher?: typeof fetch,
+  freshness?: import("./application-freshness.js").ApplicationFreshness,
 ) {
   return createCaptureManagement({
+    freshness,
     transport: new HttpCaptureManagement(new LocalClient("", fetcher)),
     available: () =>
       data.accessMode === "local_trusted" &&

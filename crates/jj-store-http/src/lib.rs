@@ -1,5 +1,6 @@
 //! Versioned authenticated application API; no direct storage or native JJ types.
 #![forbid(unsafe_code)]
+mod application_events;
 pub mod assets;
 mod body;
 mod capture_management;
@@ -114,6 +115,7 @@ pub struct Config {
     pub backups: Vec<BackupStatus>,
     pub concurrency: usize,
     pub event_concurrency: usize,
+    pub event_lifetime: Duration,
     pub events: events::Limits,
     pub workers: usize,
     pub timeout: Duration,
@@ -144,6 +146,7 @@ impl Default for Config {
             backups: Vec::new(),
             concurrency: 8,
             event_concurrency: 16,
+            event_lifetime: Duration::from_secs(300),
             events: Default::default(),
             workers: 2,
             timeout: Duration::from_secs(30),
@@ -158,6 +161,9 @@ impl Default for Config {
     }
 }
 struct State {
+    freshness: jj_store_service::freshness::Hub,
+    event_monitors: application_events::Monitors,
+    event_generation: String,
     host: Option<RepositoryHost>,
     local_reader: jj_store_service::local_browser::code::Executor,
     local_tasks: jj_store_service::local_index_tasks::IndexTasks,
@@ -208,6 +214,8 @@ impl HttpApi {
             || config.backups.len() > 16
             || !(1..=64).contains(&config.concurrency)
             || !(1..=128).contains(&config.event_concurrency)
+            || config.event_lifetime.is_zero()
+            || config.event_lifetime > Duration::from_secs(300)
             || !(64..=64 * 1024 * 1024).contains(&config.max_json_bytes)
             || !(512..=32768).contains(&config.max_uri_bytes)
             || config.timeout.is_zero()
@@ -299,6 +307,9 @@ impl HttpApi {
         )
         .map_err(|_| "HTTP local index task limits")?;
         Ok(Self(Arc::new(State {
+            freshness: jj_store_service::freshness::Hub::new(1024),
+            event_monitors: Default::default(),
+            event_generation: hex::encode(&repository_cursor_key[..16]),
             host,
             local_reader,
             local_tasks,
@@ -331,6 +342,7 @@ impl HttpApi {
         Router::new().nest(
             "/v1",
             routes::router()
+                .merge(application_events::router())
                 .merge(local_browser::router())
                 .merge(capture_management::router())
                 .merge(server_settings::router())
@@ -513,7 +525,7 @@ async fn admit(
             .is_some_and(|path| {
                 matches!(
                     path.as_str(),
-                    "/v1/repos/{repo}/events" | "/v1/local/repos/{repo}/events"
+                    "/v1/events" | "/v1/repos/{repo}/events" | "/v1/local/repos/{repo}/events"
                 )
             });
     let slots = if event_route {
@@ -555,7 +567,12 @@ async fn admit(
             return secure(response);
         }
     };
-    secure(response.map(|body| Body::new(body::Guard::new(body, permit, deadline))))
+    let delivery_deadline = if event_route && response.status().is_success() {
+        Instant::now() + state.config.event_lifetime
+    } else {
+        deadline
+    };
+    secure(response.map(|body| Body::new(body::Guard::new(body, permit, delivery_deadline))))
 }
 struct Context {
     session: Arc<NativeSession>,

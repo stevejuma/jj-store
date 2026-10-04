@@ -1992,6 +1992,7 @@ recovery flow. Continuations preserve lexical order and hydrate only page
 targets. A different embedded operation or nonempty description search keeps its
 previous bounded dispatch until separately indexed. Reference DTOs, signed
 cursors and preparation task contracts are unchanged.
+
 ## Application freshness ownership
 
 Successful Threads refresh accepts its current authority watermark independently
@@ -2008,3 +2009,25 @@ Immutable object reads retain infinite staleness with bounded inactive
 retention; prepared availability, attribution and expiring continuations remain
 transient.
 
+## Scoped application freshness
+
+Application freshness uses bounded process-local semantic notices, separate from
+repository authority and the existing durable native WAL event cursors. Shared
+monitors compare committed manifest/domain witnesses and external local heads
+and companion references, never reconstruct history or reconcile during reads.
+Current authorization gates subscription and delivery; internal monitor state
+never grants access. A restart, overflow or authorization-scope mismatch resets
+continuity. Unchanged observations and stream renewal produce no data reload.
+
+The optional bootstrap `application_events` advertisement selects authenticated
+`GET /v1/events`. Version-1 ready/changed/reset frames contain repository or
+installation domain witnesses and optional exact task/request identities, never
+repository bodies. Native durable WAL cursors remain unchanged. The
+process-local application cursor binds server generation, credential scope and
+bounded replay; restart, overflow or lost continuity sends reset and closes the
+stream. Current authorization is checked before every queued frame and
+heartbeat. Admission allows a separate 300-second finite stream with 15-second
+heartbeats; the browser treats 45 seconds without traffic as a stalled feed.
+Shared refcounted metadata monitors and filesystem hints validate committed
+changes within five seconds under qualified healthy load. Idle monitors retire
+after a bounded grace period.

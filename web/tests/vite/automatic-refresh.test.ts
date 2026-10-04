@@ -75,3 +75,51 @@ test("session reset discards late polls and queued work", async () => {
   expect(f.refresh).not.toHaveBeenCalled();
   f.abort.abort();
 });
+
+test("unrelated healthy notices cannot postpone a queued event read", async () => {
+  vi.useFakeTimers();
+  const abort = new AbortController();
+  const refresh = vi.fn(async () => true),
+    poll = vi.fn(async () => false);
+  const updates = createAutomaticRefresh({
+    active: () => true,
+    refresh,
+    poll,
+    report: () => {},
+    signal: abort.signal,
+    fallback: () => false,
+  });
+  updates.request();
+  await vi.advanceTimersByTimeAsync(20);
+  updates.reschedule();
+  await vi.advanceTimersByTimeAsync(100);
+  updates.reschedule();
+  await vi.advanceTimersByTimeAsync(30);
+  expect(refresh).toHaveBeenCalledOnce();
+  await vi.advanceTimersByTimeAsync(60000);
+  expect(refresh).toHaveBeenCalledOnce();
+  expect(poll).not.toHaveBeenCalled();
+  abort.abort();
+});
+
+test("a deferred healthy event retries promptly and stops after an accepted read", async () => {
+  vi.useFakeTimers();
+  const abort = new AbortController();
+  const refresh = vi.fn(async () => true).mockResolvedValueOnce(false);
+  const updates = createAutomaticRefresh({
+    active: () => true,
+    refresh,
+    poll: async () => false,
+    report: () => {},
+    signal: abort.signal,
+    fallback: () => false,
+  });
+  updates.request();
+  await vi.advanceTimersByTimeAsync(150);
+  expect(refresh).toHaveBeenCalledOnce();
+  await vi.advanceTimersByTimeAsync(551);
+  expect(refresh).toHaveBeenCalledTimes(2);
+  await vi.advanceTimersByTimeAsync(60000);
+  expect(refresh).toHaveBeenCalledTimes(2);
+  abort.abort();
+});

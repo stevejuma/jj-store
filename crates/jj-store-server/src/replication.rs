@@ -31,6 +31,7 @@ use std::{
     time::Duration,
 };
 use tokio::sync::{Notify, watch};
+mod freshness;
 use tonic::Code;
 use zeroize::Zeroizing;
 
@@ -347,6 +348,7 @@ struct RuntimeState {
 }
 
 struct Entry {
+    changes: jj_store_service::freshness::Signals,
     repository: m::RepositoryId,
     local: LocalEndpoint,
     remote: RemoteEndpoint,
@@ -372,6 +374,7 @@ impl PreparedReplication {
         search: BTreeMap<m::RepositoryId, watch::Receiver<SearchHealth>>,
     ) -> Result<Self> {
         let mut entries = BTreeMap::new();
+        let changes = jj_store_service::freshness::Signals::default();
         for config in configs {
             let ca_certificate_pem = config
                 .ca_certificate
@@ -386,6 +389,7 @@ impl PreparedReplication {
                 })
                 .map_err(|_| Error::Config("replication local endpoint"))?;
             let entry = Arc::new(Entry {
+                changes: changes.clone(),
                 repository: config.repository,
                 local: LocalEndpoint {
                     repository: config.repository,
@@ -489,6 +493,11 @@ impl ControlPlane {
 
 #[async_trait]
 impl ReplicationControls for ControlPlane {
+    fn freshness(
+        &self,
+    ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
+        freshness::changes(&self.entries)
+    }
     async fn status(
         &self,
         repository: m::RepositoryId,
@@ -749,18 +758,18 @@ async fn run_entry(entry: Arc<Entry>, mut shutdown: watch::Receiver<bool>) {
             return;
         }
         if entry.paused.load(Ordering::SeqCst) {
-            entry.state.lock().expect("replication state").phase = control::Phase::Paused;
+            freshness::phase(&entry, control::Phase::Paused);
             tokio::select! {
                 changed=shutdown.changed()=>if changed.is_err(){set_stopped(&entry);return;},
                 _=entry.wake.notified()=>{},
             }
             continue;
         }
-        entry.state.lock().expect("replication state").phase = control::Phase::Connecting;
+        freshness::phase(&entry, control::Phase::Connecting);
         let local = match entry.local.descriptor().await {
             Ok(value) => value,
             Err(_) => {
-                entry.state.lock().expect("replication state").phase = control::Phase::Degraded;
+                freshness::phase(&entry, control::Phase::Degraded);
                 if wait_retry(&entry, &mut shutdown).await {
                     return;
                 }
@@ -786,7 +795,7 @@ async fn run_entry(entry: Arc<Entry>, mut shutdown: watch::Receiver<bool>) {
                 value
             }
             _ => {
-                entry.state.lock().expect("replication state").phase = control::Phase::Degraded;
+                freshness::phase(&entry, control::Phase::Degraded);
                 if wait_retry(&entry, &mut shutdown).await {
                     return;
                 }
@@ -801,7 +810,7 @@ async fn run_entry(entry: Arc<Entry>, mut shutdown: watch::Receiver<bool>) {
         ) {
             Ok(value) => value,
             Err(_) => {
-                entry.state.lock().expect("replication state").phase = control::Phase::Degraded;
+                freshness::phase(&entry, control::Phase::Degraded);
                 if wait_retry(&entry, &mut shutdown).await {
                     return;
                 }
@@ -819,7 +828,7 @@ async fn run_entry(entry: Arc<Entry>, mut shutdown: watch::Receiver<bool>) {
         ) {
             Ok(value) => value,
             Err(_) => {
-                entry.state.lock().expect("replication state").phase = control::Phase::Degraded;
+                freshness::phase(&entry, control::Phase::Degraded);
                 if wait_retry(&entry, &mut shutdown).await {
                     return;
                 }
@@ -837,7 +846,12 @@ async fn run_entry(entry: Arc<Entry>, mut shutdown: watch::Receiver<bool>) {
             state.local = Some(local);
             state.peer = Some(peer);
         }
-        let _ = worker.run(shutdown.clone()).await;
+        entry.changes.notify(
+            Some(entry.repository),
+            jj_store_service::freshness::Domain::Sync,
+            None,
+        );
+        freshness::run(&entry, worker, shutdown.clone()).await;
         {
             let mut state = entry.state.lock().expect("replication state");
             state.handle = None;
@@ -847,6 +861,11 @@ async fn run_entry(entry: Arc<Entry>, mut shutdown: watch::Receiver<bool>) {
                 control::Phase::Degraded
             };
         }
+        entry.changes.notify(
+            Some(entry.repository),
+            jj_store_service::freshness::Domain::Sync,
+            None,
+        );
         if *shutdown.borrow() {
             return;
         }
@@ -868,6 +887,12 @@ fn set_stopped(entry: &Entry) {
     let mut state = entry.state.lock().expect("replication state");
     state.handle = None;
     state.phase = control::Phase::Stopped;
+    drop(state);
+    entry.changes.notify(
+        Some(entry.repository),
+        jj_store_service::freshness::Domain::Sync,
+        None,
+    );
 }
 
 fn worker_limits(limits: ReplicationLimits) -> WorkerLimits {
@@ -928,6 +953,7 @@ mod tests {
             request: Arc::new(request),
         };
         let entry = Arc::new(Entry {
+            changes: Default::default(),
             repository,
             local: local.clone(),
             remote: RemoteEndpoint {

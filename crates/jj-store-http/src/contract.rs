@@ -8,6 +8,7 @@ pub(crate) enum Reply {
     Binary,
     Raster,
     Events,
+    ApplicationEvents,
 }
 pub(crate) struct Document {
     output: SchemaGenerator,
@@ -154,19 +155,25 @@ impl Document {
                 );
                 status
             }
-            Reply::Events => {
+            Reply::Events | Reply::ApplicationEvents => {
+                let application = matches!(reply, Reply::ApplicationEvents);
+                let id_schema = if application {
+                    json!({"type":"string", "maxLength":128, "pattern":"^jse1:[0-9a-f]{32}:[0-9a-f]{32}:(0|[1-9][0-9]*)$"})
+                } else {
+                    event_id_schema()
+                };
                 parameters.push(json!({"name":"Last-Event-ID", "in":"header", "required":false,
-                    "description":"Must agree with after when both are supplied.", "schema":event_id_schema()}));
+                    "description":"Must agree with after when both are supplied.", "schema":id_schema}));
                 for parameter in &mut parameters {
                     if parameter["name"] == "after" {
-                        parameter["schema"] = event_id_schema();
+                        parameter["schema"] = id_schema.clone();
                     }
                 }
                 responses.insert("200".into(), json!({"description":"Bounded SSE stream. JSON data appears inside ready, repository-changed and reset frames. Authorized heartbeat comments do not advance IDs. Reset closes the stream. Resume the last fully parsed ID after EOF; post-header failures terminate the stream.",
                     "content":{"text/event-stream":{"schema":{"type":"string"},
                         "x-sse-data-schema":self.output.subschema_for::<R>(),
-                        "x-sse-events":{"ready":"ready", "repository-changed":"changed", "reset":"reset"},
-                        "x-sse-id-schema":event_id_schema()}}}));
+                        "x-sse-events": if application { json!({"ready":"ready", "changed":"changed", "reset":"reset"}) } else { json!({"ready":"ready", "repository-changed":"changed", "reset":"reset"}) },
+                        "x-sse-id-schema":id_schema}}}));
                 200
             }
             Reply::Raster => {
@@ -427,6 +434,7 @@ fn non_null(mut value: Value) -> Value {
 pub fn openapi() -> Value {
     let mut document = Document::new();
     routes::document(&mut document);
+    crate::application_events::document(&mut document);
     crate::local_browser::document(&mut document);
     crate::capture_management::document(&mut document);
     crate::server_settings::document(&mut document);

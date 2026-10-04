@@ -135,13 +135,10 @@
   function openSettings() {
     if (conflictOpen) return;
     settingsOpen = true;
-    void controller.actions.refreshSettings();
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function selectSettings(section: StoreSettingsSection) {
     settingsSection = section;
-    if (section !== "appearance" && section !== "agents")
-      void controller.actions.refreshSettings();
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function closeSettings() {

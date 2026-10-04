@@ -23,6 +23,7 @@ export function createProductionProjects(
   changed: () => void = () => {},
   base?: () => StoreController,
   shared?: import("./repository-sources.js").RepositorySources,
+  freshness?: import("./application-freshness.js").ApplicationFreshness,
 ) {
   const context = {
     data,
@@ -38,6 +39,25 @@ export function createProductionProjects(
   let selectedHome: string | null = null;
   let feed = new AbortController(),
     discovery = new AbortController();
+  async function discover() {
+    discovery.abort();
+    discovery = new AbortController();
+    const ticket = context.session(),
+      credential = context.token();
+    const repositories = await loadRepositories(
+      credential,
+      context.fetcher,
+      discovery.signal,
+    );
+    if (ticket !== context.session() || credential !== context.token()) return;
+    context.data.repositories = repositories.map((r) => ({ ...r }));
+    for (const [id, source] of sources) {
+      if (!repositories.some((r) => r.id === id)) {
+        source.close();
+        sources.delete(id);
+      }
+    }
+  }
   const projects = createProjectsHub({
     agentResponse: (home) => {
       projects.transport(home);
@@ -48,26 +68,7 @@ export function createProductionProjects(
       }, base);
     },
     repositories: () => context.data.repositories,
-    discover: async () => {
-      discovery.abort();
-      discovery = new AbortController();
-      const ticket = context.session(),
-        credential = context.token();
-      const repositories = await loadRepositories(
-        credential,
-        context.fetcher,
-        discovery.signal,
-      );
-      if (ticket !== context.session() || credential !== context.token())
-        return;
-      context.data.repositories = repositories.map((r) => ({ ...r }));
-      for (const [id, source] of sources) {
-        if (!repositories.some((r) => r.id === id)) {
-          source.close();
-          sources.delete(id);
-        }
-      }
-    },
+    discover,
     route: context.route,
     push: context.push,
     changed: () => {
@@ -104,6 +105,7 @@ export function createProductionProjects(
       return source.work;
     },
     activate: (home) => {
+      if (freshness?.supported) return;
       context.pauseCodeEvents();
       if (selectedHome === home && !feed.signal.aborted) return;
       selectedHome = home;
@@ -125,9 +127,12 @@ export function createProductionProjects(
   });
   return {
     projects,
+    discover,
     async poll() {
       const ticket = context.session(),
         credential = context.token();
+      const route = context.route();
+      if (route.page !== "projects") return false;
       const repositories = await loadRepositories(credential, context.fetcher);
       if (ticket !== context.session() || credential !== context.token())
         return false;
@@ -141,11 +146,25 @@ export function createProductionProjects(
             observed.delete(id);
           }
       }
+      const visible = new Set(
+        route.workTab === "repositories"
+          ? projects.repositories.visibleIds
+          : route.workTab === "agents"
+            ? projects.agents.homes.map((home) => home.repository.id)
+            : route.workTab === "reviews"
+              ? projects.reviews.homes.map((home) => home.repository.id)
+              : route.workTab === "activity"
+                ? projects.activity.homes.map((home) => home.repository.id)
+                : route.projectId
+                  ? [route.repository]
+                  : projects.homes.map((home) => home.repository.id),
+      );
+      const selected = repositories.filter((repo) => visible.has(repo.id));
       let index = 0;
       await Promise.all(
-        Array.from({ length: Math.min(2, repositories.length) }, async () => {
-          while (index < repositories.length) {
-            const repo = repositories[index++]!;
+        Array.from({ length: Math.min(2, selected.length) }, async () => {
+          while (index < selected.length) {
+            const repo = selected[index++]!;
             if (!context.data.repositories.some((r) => r.id === repo.id))
               continue;
             projects.transport(repo.id);

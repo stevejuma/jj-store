@@ -5,6 +5,11 @@ repository-specific management. Read the selected context before changing a
 setting: a device appearance preference does not change repository metadata, and
 a repository policy change is not a cosmetic preference.
 
+The visible Settings section reacts to its own events. Storage statistics,
+search health, folder registrations and configuration do not repeatedly fetch
+while unchanged. Feed recovery reconciles missed changes; unavailable feeds use
+bounded fallback only while visible.
+
 ## Saved and effective settings
 
 Where settings expose both saved and effective values, saved configuration is

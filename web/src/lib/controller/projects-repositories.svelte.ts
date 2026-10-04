@@ -119,6 +119,9 @@ export function createProjectsRepositories(context: {
     pump();
   }
   return {
+    get visibleIds() {
+      return [...visible.keys()];
+    },
     get entries() {
       return entries;
     },
@@ -144,6 +147,7 @@ export function createProjectsRepositories(context: {
     async load(
       repositories: readonly StoreRepositorySummary[],
       refresh = false,
+      affected?: ReadonlySet<string>,
     ) {
       generation++;
       for (const id of [...pending.keys()]) cancel(id);
@@ -152,7 +156,11 @@ export function createProjectsRepositories(context: {
       );
       entries = repositories.map((repository) => {
         const prior = previous.get(repository.id);
-        if (refresh && (prior?.summary || attempted.has(repository.id)))
+        if (
+          refresh &&
+          (!affected || affected.has(repository.id)) &&
+          (prior?.summary || attempted.has(repository.id))
+        )
           stale.add(repository.id);
         return {
           repository,

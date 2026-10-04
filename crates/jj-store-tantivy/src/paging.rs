@@ -207,6 +207,13 @@ impl Pager {
         *self.active.write().unwrap() = backend;
         Ok(())
     }
+    pub fn health(&self) -> Option<watch::Receiver<a::Health>> {
+        self.active
+            .read()
+            .unwrap()
+            .as_ref()
+            .map(|b| b.health.clone())
+    }
     pub fn configured(&self) -> bool {
         self.active.read().unwrap().is_some()
     }

@@ -23,6 +23,7 @@ struct Registry {
 
 #[derive(Clone)]
 pub struct Workspaces {
+    changes: jj_store_service::freshness::Signals,
     path: PathBuf,
     identity: Identity,
     verifier: Arc<dyn WorkspaceVerifier>,
@@ -39,6 +40,7 @@ impl Workspaces {
             return Err(crate::Error::Config("workspace registry state directory"));
         }
         Ok(Self {
+            changes: Default::default(),
             path: state.join("workspace-links.json"),
             identity,
             verifier,
@@ -183,6 +185,25 @@ fn valid(link: &VerifiedWorkspace) -> bool {
 
 #[async_trait::async_trait]
 impl WorkspaceManager for Workspaces {
+    fn freshness_witness(&self) -> Option<String> {
+        let value = match self.read() {
+            Ok(value) => value,
+            Err(_) => return Some("unavailable".into()),
+        };
+        let availability = value
+            .links
+            .iter()
+            .map(|link| self.verifier.inspect(&link.path).as_ref() == Ok(link))
+            .collect::<Vec<_>>();
+        Some(hex::encode(Sha256::digest(
+            serde_json::to_vec(&(value, availability)).ok()?,
+        )))
+    }
+    fn freshness(
+        &self,
+    ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
+        Some(self.changes.subscribe())
+    }
     async fn list(&self, repository: RepositoryId) -> Result<WorkspaceLinks, Error> {
         let this = self.clone();
         tokio::task::spawn_blocking(move || Ok(this.snapshot(&this.read()?, repository)))
@@ -195,8 +216,16 @@ impl WorkspaceManager for Workspaces {
         request: LinkWorkspace,
     ) -> Result<WorkspaceLinks, Error> {
         let this = self.clone();
-        tokio::task::spawn_blocking(move || this.link_sync(repository, request))
-            .await
-            .map_err(|_| Error::Unavailable)?
+        tokio::task::spawn_blocking(move || {
+            let result = this.link_sync(repository, request)?;
+            this.changes.notify(
+                Some(repository),
+                jj_store_service::freshness::Domain::Workspaces,
+                None,
+            );
+            Ok(result)
+        })
+        .await
+        .map_err(|_| Error::Unavailable)?
     }
 }

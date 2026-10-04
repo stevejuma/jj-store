@@ -20,6 +20,7 @@ export function createIndexPreparation(options: {
   signal?(): AbortSignal;
   current(ticket: number, source: StoreDataSource): boolean;
   restore(): Promise<void>;
+  freshness?: import("./application-freshness.js").ApplicationFreshness;
 }) {
   const { data } = options;
   let active: Active | null = null;
@@ -61,8 +62,29 @@ export function createIndexPreparation(options: {
       active === run &&
       !run.abort.signal.aborted &&
       options.current(ticket, source);
-    const wait = (delay: number) =>
-      new Promise<void>((resolve) => {
+    let observed = options.freshness?.journal.revision ?? 0;
+    const wait = (delay: number) => {
+      if (options.freshness) {
+        const waiting = new AbortController(),
+          freshness = options.freshness;
+        run.wake = () => waiting.abort();
+        return freshness.journal
+          .wait({
+            after: observed,
+            matches: (change) =>
+              change.repository === source.repository &&
+              change.domain === "index_tasks" &&
+              change.identity === run.task?.id,
+            healthy: () => freshness.healthy,
+            listen: (listener) => freshness.listen(listener),
+            signal: AbortSignal.any([run.abort.signal, waiting.signal]),
+            delay,
+          })
+          .finally(() => {
+            run.wake = () => {};
+          });
+      }
+      return new Promise<void>((resolve) => {
         const timer = setTimeout(done, delay);
         function done() {
           clearTimeout(timer);
@@ -71,6 +93,7 @@ export function createIndexPreparation(options: {
         }
         run.wake = done;
       });
+    };
     data.indexPreparation = "loading";
     data.indexTaskStatus = null;
     data.indexPreparationError = "";
@@ -109,6 +132,7 @@ export function createIndexPreparation(options: {
           }
           // A failed cancel remains observable and may be retried explicitly.
         } else {
+          observed = options.freshness?.journal.revision ?? observed;
           run.task = await source.indexTask(taskId, run.abort.signal);
           polls++;
         }

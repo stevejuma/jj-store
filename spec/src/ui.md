@@ -1843,9 +1843,10 @@ background refresh retains loaded content and drafts. A busy read is a deferred
 observation, not an unavailable error: controls remain guarded, ordinary reads
 retry within a bounded cancellable window and continue the visible refresh
 cycle. Real failures retain scoped notifications and exact pending commands. A
-serial five-second visible refresh retains the loaded source count and validates
-all replacement continuations, waking on focus and reconnect and after control
-acknowledgements. Closure cancels ordinary observations and removes polling;
+semantic event subscription retains the loaded source count and validates all
+replacement continuations, refreshing after relevant changes and control
+acknowledgements. A serial bounded fallback runs only while the application feed
+is unavailable. Closure cancels ordinary observations and removes fallback;
 installation-owned exact commands, original import selectors, receipt identity
 and request-ID drafts survive navigation. Late reads cannot replace observations
 from a newer view. A missing import receipt retains uncertainty and cannot prove
@@ -2022,27 +2023,30 @@ content.
 Git-backed repositories use the same graph preparation action when their local
 capability advertises it. A rebuild-required local response retains the exact
 operation and registration generation that failed, even if the current heads or
-route inputs advance. Starting and polling use only the local task endpoints;
-responses must match the source repository, registration and original operation.
-Completion retries the pinned view and leaves files/reference navigation
-available. Local task state cannot fabricate native epoch or cache-report data.
+route inputs advance. Starting and status observation use only the local task
+endpoints; responses must match the source repository, registration and original
+operation. Completion retries the pinned view and leaves files/reference
+navigation available. Local task state cannot fabricate native epoch or
+cache-report data.
 
 Graph preparation retains one exact task and serializes start, status and cancel
-requests. Polling backs off from 500 ms to five seconds, has no overlapping
-requests, and rechecks the active read scope before every request. Navigation,
-disconnect and teardown abort obsolete observations and clear the polling timer;
-this does not claim that the server worker was canceled. Both the recovery
-action and Repository settings expose Cancel once a task is known. A cancel
-request keeps preparation pending until the server reports ready, failed or
-canceled; transport errors leave cancellation unconfirmed, retain the exact task
-and allow an explicit retry. Cancel never starts or retargets preparation. A
-confirmed cancel keeps the original recovery condition available without
-presenting it as an unexpected failure.
+requests. Healthy observation waits for the exact task's event, including events
+received before the start response. During an outage only, status observation
+backs off from 500 ms to five seconds, has no overlapping requests, and rechecks
+the active read scope before every request. Navigation, disconnect and teardown
+abort obsolete observations and clear the fallback timer; this does not claim
+that the server worker was canceled. Both the recovery action and Repository
+settings expose Cancel once a task is known. A cancel request keeps preparation
+pending until the server reports ready, failed or canceled; transport errors
+leave cancellation unconfirmed, retain the exact task and allow an explicit
+retry. Cancel never starts or retargets preparation. A confirmed cancel keeps
+the original recovery condition available without presenting it as an unexpected
+failure.
 
 Automatic repository refresh queues updates while preparation is being observed,
-so a periodic reload cannot discard the task after five seconds. Explicit
-navigation still stops obsolete observations; terminal preparation releases the
-refresh guard.
+so an incoming event or fallback reload cannot discard the retained task.
+Explicit navigation still stops obsolete observations; terminal preparation
+releases the refresh guard.
 
 ## Event-driven freshness migration
 
@@ -2055,3 +2059,31 @@ Main views, Projects and repository navigation share authorization-session
 repository leases. Closing one reader retains other consumers and their cache.
 Credential replacement and denied access clear protected data. Query observers
 track independent in-flight consumers; controller visibility owns event refresh.
+
+An authorization session owns one advertised application feed, shared repository
+transports and one QueryClient. The client subscribes before discovery and
+initial captures, records domain dirtiness synchronously before advancing
+continuity, and clears only successful reads from the current generation. Hidden
+views retain independent dirtiness until accessed. Events invalidate live
+aliases and affected collaboration families; exact immutable operation/object
+reads remain reusable. Prepared availability, expiring cursors, errors and
+optional metadata are transient.
+
+Healthy idle views, Settings, capture and folder registration perform no
+periodic data requests. Settings observes only its visible section; Projects and
+sidebar navigation refresh affected repository windows, and inline
+Agents/Reviews context refreshes without reloading code. An unchanged
+five-minute feed renewal performs no data reads. Missing or stalled feeds use
+serial jittered 5/10/20/30-second fallback, paused while hidden and removed on
+recovery; preparation status alone uses its bounded 500ms-5s outage fallback.
+Terminal event/ACK transport is separate.
+
+Unrelated notices MUST NOT postpone an already queued event read. Deferred or
+failed healthy reads retain dirtiness and retry serially with bounded 500ms-5s
+backoff only while that dirtiness remains; successful reads stop the timer.
+
+Conversion events only trigger inspection of the retained exact request. A
+validated durable receipt alone completes conversion and permits navigation to
+its independent destination. Historical selections, drafts and exact pending
+commands survive all automatic freshness reads. Browser idle, renewal, external
+change latency and recovery require cold built-bundle qualification.

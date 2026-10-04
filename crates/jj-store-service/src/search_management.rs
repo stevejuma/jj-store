@@ -129,6 +129,9 @@ pub enum Error {
 }
 #[async_trait::async_trait]
 pub trait SearchManager: Send + Sync {
+    fn freshness(&self) -> Option<tokio::sync::broadcast::Receiver<crate::freshness::Change>> {
+        None
+    }
     async fn status(&self, repository: RepositoryId) -> Result<LocalSearchSettings, Error>;
     async fn save(
         &self,

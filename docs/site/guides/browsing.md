@@ -13,9 +13,9 @@ IDs when copying a selection into a command or review.
 
 Selecting a historical operation pins code reads. Files and comparisons retain
 that context across navigation instead of drifting to the latest head. Current
-views refresh after saves, committed events, reconnect and bounded checks;
-explicit historical selections stay historical. To see newly published code,
-return to a current selection deliberately.
+views refresh after saves and relevant committed events; unavailable feeds use
+bounded fallback; explicit historical selections stay historical. To see newly
+published code, return to a current selection deliberately.
 
 ## Inspect files
 

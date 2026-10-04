@@ -8,6 +8,7 @@ export async function loadProjectCollections(context: {
   directory: ProjectsHubController["repositories"];
   reviews: ProjectsHubController["reviews"];
   refresh: boolean;
+  affected?: ReadonlySet<string>;
   report(message: string): void;
 }) {
   const { route, project, repositories, directory, reviews, refresh } = context;
@@ -17,7 +18,7 @@ export async function loadProjectCollections(context: {
     (route.workTab === "repositories" ? directory : reviews).reset();
     context.report("Project unavailable. Return to Projects.");
   } else if (route.workTab === "repositories")
-    await directory.load(repositories, refresh);
+    await directory.load(repositories, refresh, context.affected);
   else
     await reviews.load(
       route,
@@ -25,6 +26,7 @@ export async function loadProjectCollections(context: {
         (repo) => !project || repo.id in project.repositories,
       ),
       refresh,
+      context.affected,
     );
   return true;
 }

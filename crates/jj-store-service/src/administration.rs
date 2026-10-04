@@ -84,6 +84,21 @@ impl RepositoryHost {
         endpoint.events = self.events.clone();
         Ok(endpoint)
     }
+    /// Process-owned metadata monitoring only. Callers reauthorize every delivered notice.
+    pub async fn observe_freshness(
+        &self,
+        repository: m::RepositoryId,
+    ) -> wal::Result<Vec<crate::freshness::Change>> {
+        tokio::time::timeout(
+            self.limits.timeout,
+            crate::freshness::native::observe(self.store.clone(), repository),
+        )
+        .await
+        .map_err(|_| wal::Error::Limit("freshness observation time"))?
+    }
+    pub fn publication_hints(&self) -> tokio::sync::broadcast::Receiver<m::RepositoryId> {
+        self.events.subscribe()
+    }
     pub async fn create(
         &self,
         operator: &BearerToken,

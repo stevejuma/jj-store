@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { untrack } from "svelte";
+  import { observeStoreSettings } from "../../controller/settings-refresh.js";
   import { AppShell } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
   import { settingsNavigationReason } from "./settings-navigation.js";
@@ -45,19 +46,12 @@
       repositoryError = storeErrorMessage(cause);
     }
   }
-  onMount(() => {
-    void controller.configuration?.observe();
-    const timer = setInterval(() => {
-      if (!document.hidden) void controller.configuration?.observe();
-      if (
-        !document.hidden &&
-        section !== "appearance" &&
-        section !== "agents" &&
-        controller.state.status.connection === "connected"
-      )
-        void controller.actions.refreshSettings();
-    }, 5000);
-    return () => clearInterval(timer);
+  const repository = $derived(controller.state.route.repository);
+  $effect(() => {
+    const selected = section;
+    repository;
+    if (["appearance", "agents", "search"].includes(selected)) return;
+    return untrack(() => observeStoreSettings(controller, selected));
   });
 </script>
 

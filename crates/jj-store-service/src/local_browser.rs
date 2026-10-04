@@ -127,8 +127,18 @@ pub enum NativeCreationOutcome {
     },
 }
 
+pub struct HintWatch {
+    pub receiver: tokio::sync::mpsc::Receiver<()>,
+    pub retained: Box<dyn Send>,
+}
 #[async_trait::async_trait]
 pub trait LocalRepositories: Send + Sync {
+    fn watch(&self, _repository: RepositoryId) -> Result<Option<HintWatch>> {
+        Ok(None)
+    }
+    fn freshness(&self) -> Option<tokio::sync::broadcast::Receiver<crate::freshness::Change>> {
+        None
+    }
     fn conversion(&self) -> bool {
         false
     }

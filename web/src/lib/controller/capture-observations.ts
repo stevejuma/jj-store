@@ -24,10 +24,16 @@ export function createCaptureObservations(options: {
   let reading: Promise<boolean> | null = null;
   const current = (read: AbortController) =>
     controller === read && !read.signal.aborted && options.available();
-  async function observe(read: AbortController) {
+  async function observe(
+    read: AbortController,
+    interests?: ReadonlySet<string>,
+  ) {
+    const status = !interests || interests.has("status") || !state.value;
+    const sources = !interests || interests.has("sources") || !state.sources;
+    const imports = !interests || interests.has("import");
     state.busy = true;
-    state.status = state.value ? "refreshing" : "loading";
-    state.sourceState = state.sources ? "refreshing" : "loading";
+    if (status) state.status = state.value ? "refreshing" : "loading";
+    if (sources) state.sourceState = state.sources ? "refreshing" : "loading";
     try {
       if (transport.settings) await options.observeSettings(read.signal);
       if (!current(read)) return false;
@@ -37,55 +43,56 @@ export function createCaptureObservations(options: {
         if (!state.pending) state.error = "";
         return true;
       }
-      const value = await transport.status(read.signal);
+      const value = status ? await transport.status(read.signal) : state.value!;
       validateCaptureStatus(value);
       if (!current(read)) return false;
       state.value = value;
       state.status = "ready";
       const retain = Math.max(1, state.sources?.sources.length ?? 0);
-      try {
-        let page = await transport.sources(undefined, read.signal);
-        validateCaptureSources(page);
-        requireCapture(page.enabled === value.enabled);
-        const visited = new Set<string>();
-        const selectors = new Set(page.sources.map((s) => s.selector));
-        while (page.next_cursor && page.sources.length < retain) {
-          const cursor = page.next_cursor;
-          requireCapture(!visited.has(cursor));
-          visited.add(cursor);
-          const next = await transport.sources(cursor, read.signal);
-          validateCaptureSources(next);
-          requireCapture(
-            next.runtime_generation === page.runtime_generation &&
-              next.enabled === page.enabled &&
-              next.sources.every((s) => !selectors.has(s.selector)),
-          );
-          for (const source of next.sources) selectors.add(source.selector);
-          requireCapture(page.sources.length + next.sources.length <= 4096);
-          page = { ...next, sources: [...page.sources, ...next.sources] };
+      if (sources)
+        try {
+          let page = await transport.sources(undefined, read.signal);
+          validateCaptureSources(page);
+          requireCapture(page.enabled === value.enabled);
+          const visited = new Set<string>();
+          const selectors = new Set(page.sources.map((s) => s.selector));
+          while (page.next_cursor && page.sources.length < retain) {
+            const cursor = page.next_cursor;
+            requireCapture(!visited.has(cursor));
+            visited.add(cursor);
+            const next = await transport.sources(cursor, read.signal);
+            validateCaptureSources(next);
+            requireCapture(
+              next.runtime_generation === page.runtime_generation &&
+                next.enabled === page.enabled &&
+                next.sources.every((s) => !selectors.has(s.selector)),
+            );
+            for (const source of next.sources) selectors.add(source.selector);
+            requireCapture(page.sources.length + next.sources.length <= 4096);
+            page = { ...next, sources: [...page.sources, ...next.sources] };
+          }
+          requireCapture(!page.next_cursor || !visited.has(page.next_cursor));
+          if (!current(read)) return false;
+          state.sources = page;
+          state.sourcesObservedAt = Date.now();
+          state.sourceState = "ready";
+          cursors.clear();
+          for (const cursor of visited) cursors.add(cursor);
+        } catch (cause) {
+          if (!current(read)) return false;
+          state.sourceState = captureReadBusy(cause)
+            ? state.sources
+              ? "refreshing"
+              : "loading"
+            : "failed";
+          if (!state.pending && !captureReadBusy(cause))
+            state.error = `${captureError(cause)} Source coverage could not be refreshed.`;
         }
-        requireCapture(!page.next_cursor || !visited.has(page.next_cursor));
-        if (!current(read)) return false;
-        state.sources = page;
-        state.sourcesObservedAt = Date.now();
-        state.sourceState = "ready";
-        cursors.clear();
-        for (const cursor of visited) cursors.add(cursor);
-      } catch (cause) {
-        if (!current(read)) return false;
-        state.sourceState = captureReadBusy(cause)
-          ? state.sources
-            ? "refreshing"
-            : "loading"
-          : "failed";
-        if (!state.pending && !captureReadBusy(cause))
-          state.error = `${captureError(cause)} Source coverage could not be refreshed.`;
-      }
       const id =
         state.pending?.kind === "import"
           ? state.pending.command.request_id
           : state.importStatus?.request_id;
-      if (id) {
+      if (id && imports) {
         const result = await transport.inspect(id, read.signal);
         validateImportStatus(result, id);
         const pending = state.pending;
@@ -128,12 +135,12 @@ export function createCaptureObservations(options: {
     }
   }
   return {
-    refresh() {
+    refresh(interests?: ReadonlySet<string>) {
       if (reading) return reading;
       if (!options.available() || state.busy || state.settings.saving)
         return Promise.resolve(false);
       controller = new AbortController();
-      reading = observe(controller);
+      reading = observe(controller, interests);
       return reading;
     },
     cancel() {

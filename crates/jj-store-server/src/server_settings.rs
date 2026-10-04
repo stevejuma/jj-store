@@ -13,6 +13,7 @@ use std::{
     sync::Arc,
 };
 struct Inner {
+    changes: jj_store_service::freshness::Signals,
     path: PathBuf,
     effective: Config,
     authority: Authority,
@@ -33,6 +34,7 @@ fn wire(config: &Config) -> Result<ServerConfiguration, Error> {
 impl Manager {
     pub fn new(path: &Path, config: &Config, identity: &Identity) -> crate::Result<Self> {
         Ok(Self(Arc::new(Inner {
+            changes: Default::default(),
             path: policy::outside_checkout(path)?,
             effective: config.clone(),
             authority: Authority::new(path, config, identity)
@@ -151,6 +153,17 @@ impl Manager {
 }
 #[async_trait::async_trait]
 impl ServerSettingsManager for Manager {
+    fn freshness_witness(&self) -> Option<String> {
+        Some(match self.bytes() {
+            Ok(bytes) => hex::encode(Sha256::digest(bytes)),
+            Err(_) => "unavailable".into(),
+        })
+    }
+    fn freshness(
+        &self,
+    ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
+        Some(self.0.changes.subscribe())
+    }
     async fn status(&self, actor: PrincipalId) -> Result<LocalServerSettings, Error> {
         let this = self.clone();
         tokio::task::spawn_blocking(move || {
@@ -168,8 +181,23 @@ impl ServerSettingsManager for Manager {
         request: SaveServerSettings,
     ) -> Result<LocalServerSettings, Error> {
         let this = self.clone();
-        tokio::task::spawn_blocking(move || this.persist(actor, request))
-            .await
-            .map_err(|_| Error::Unknown)?
+        tokio::task::spawn_blocking(move || {
+            let result = this.persist(actor, request);
+            // The blocking owner can settle after the HTTP caller has gone away.
+            if result.is_ok() || matches!(result, Err(Error::Unknown)) {
+                this.0.changes.send(jj_store_service::freshness::Change {
+                    repository: None,
+                    domain: jj_store_service::freshness::Domain::Configuration,
+                    witness: this
+                        .freshness_witness()
+                        .unwrap_or_else(|| "unavailable".into()),
+                    identity: None,
+                    audience: None,
+                });
+            }
+            result
+        })
+        .await
+        .map_err(|_| Error::Unknown)?
     }
 }

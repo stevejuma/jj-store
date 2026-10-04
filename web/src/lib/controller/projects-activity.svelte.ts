@@ -84,6 +84,7 @@ export function createProjectsActivity(context: {
       repositories: readonly StoreRepositorySummary[],
       refresh = false,
       operations: Readonly<Record<string, string>> = {},
+      affected?: ReadonlySet<string>,
     ) {
       reads.abort();
       reads = new AbortController();
@@ -107,6 +108,8 @@ export function createProjectsActivity(context: {
         Array.from({ length: Math.min(2, homes.length) }, async () => {
           while (index < homes.length && ticket === generation) {
             const home = homes[index++]!;
+            if (affected && !affected.has(home.repository.id) && home.page)
+              continue;
             const count = Math.min(home.page?.commits.length ?? 0, 1000);
             if (!home.page || refresh)
               await read(

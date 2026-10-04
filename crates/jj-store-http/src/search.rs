@@ -70,6 +70,7 @@ pub(crate) async fn search_status(
 
 #[derive(Clone)]
 pub struct SearchRegistry {
+    changes: jj_store_service::freshness::Signals,
     pagers: Arc<std::sync::RwLock<std::collections::BTreeMap<m::RepositoryId, Arc<paging::Pager>>>>,
     reader: q::content::ContentReader,
     max_json_bytes: usize,
@@ -81,10 +82,22 @@ impl SearchRegistry {
         max_json_bytes: usize,
     ) -> Self {
         Self {
+            changes: Default::default(),
             pagers: Arc::new(std::sync::RwLock::new(pagers)),
             reader,
             max_json_bytes,
         }
+    }
+    pub(crate) fn freshness(
+        &self,
+    ) -> tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change> {
+        self.changes.subscribe()
+    }
+    pub(crate) fn health(
+        &self,
+        repo: m::RepositoryId,
+    ) -> Option<tokio::sync::watch::Receiver<jj_store_adapters::Health>> {
+        self.get(repo).and_then(|p| p.health())
     }
     fn get(&self, repo: m::RepositoryId) -> Option<Arc<paging::Pager>> {
         self.pagers.read().unwrap().get(&repo).cloned()
@@ -122,6 +135,11 @@ impl SearchRegistry {
             .map_err(|_| "search limits")?;
             pagers.insert(repo, Arc::new(pager));
         }
+        self.changes.notify(
+            Some(repo),
+            jj_store_service::freshness::Domain::Search,
+            None,
+        );
         Ok(())
     }
 }

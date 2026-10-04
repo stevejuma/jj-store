@@ -988,4 +988,11 @@ regressions and affected package/boundary checks per delivery change. Complete
 combined integration, large-scale, fault, cold-browser, real-RustFS and release
 qualification is deferred to its own slice; ledger entries keep those gates
 explicitly pending. This execution split does not weaken correctness contracts
-or turn a focused pass into milestone completion.
+or turn a focused pass into milestone completion. The application freshness
+route adds actual ready/changed/reset SSE capture to the complete registered
+response inventory. HTTP library contract tests retain current five-harness
+capture bounds and all integrated route paths. Dedicated finite event-delivery
+admission is qualified separately from ordinary response timeouts, including an
+unpolled held stream. Shared producer/lifecycle changes run the complete direct
+HTTP library and focused state-owner and native/local task/event suites before
+cold browser acceptance.

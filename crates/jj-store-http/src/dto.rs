@@ -16,6 +16,8 @@ pub(crate) struct Capabilities {
     pub browsing_windows: bool,
     pub index_tasks: bool,
     pub events: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub application_events: Option<bool>,
     pub search: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub local_workspace_links: Option<bool>,
@@ -111,6 +113,10 @@ pub(crate) struct EventLimits {
     pub replay_window: u64,
     pub page: usize,
     pub poll_millis: u128,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stream_lifetime_millis: Option<u128>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub heartbeat_millis: Option<u128>,
 }
 #[derive(Serialize, JsonSchema)]
 pub(crate) struct ReadLimits {
@@ -133,6 +139,7 @@ impl From<&Config> for Capabilities {
     fn from(config: &Config) -> Self {
         Self {
             version: 1,
+            application_events: config.registry.as_ref().map(|_| true),
             native_authority: Some(config.native_authority),
             native_profile: reads::NATIVE_PROFILE,
             authentication: match config.access {
@@ -275,6 +282,8 @@ impl From<&Config> for Capabilities {
                 replay_window: config.events.replay_window,
                 page: config.events.page_size,
                 poll_millis: config.events.poll_interval.as_millis(),
+                stream_lifetime_millis: Some(config.event_lifetime.as_millis()),
+                heartbeat_millis: Some(15_000),
             },
             limits: ReadLimits {
                 requests: config.concurrency,

@@ -148,7 +148,7 @@ impl Hints {
     pub fn published(&self, repository: RepositoryId) {
         let _ = self.0.send(repository);
     }
-    fn subscribe(&self) -> broadcast::Receiver<RepositoryId> {
+    pub(crate) fn subscribe(&self) -> broadcast::Receiver<RepositoryId> {
         self.0.subscribe()
     }
 }

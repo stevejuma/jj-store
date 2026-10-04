@@ -1,15 +1,23 @@
+import { ProjectsDirtiness } from "./projects-dirtiness.js";
+import {
+  pendingProjectCommands,
+  projectProjectionAccepted,
+  invalidateProjectViews,
+} from "./projects-command-state.js";
+import {
+  refreshProjectSources,
+  refreshDirtyLocalProjects,
+} from "./projects-refresh-scope.js";
 import { createProjectHomeReader } from "./projects-hub-homes.js";
 import { projectHubHomes } from "./projects-hub-homes.js";
 import { createProjectsAgents } from "./projects-agents.svelte.js";
-import { loadProjectCollections } from "./projects-related-views.js";
-import { loadProjectAgents } from "./projects-agent-scope.js";
+import { restoreProjectAuxiliary } from "./projects-auxiliary-restore.js";
 import { createProjectsWorkRegistry } from "./projects-work-registry.svelte.js";
 import { reloadProjectHomeWindow } from "./projects-home-read.js";
 import { createProjectsReviews } from "./projects-reviews.svelte.js";
 import { createProjectsNavigation } from "./projects-navigation.svelte.js";
 import { createProjectsRepositories } from "./projects-repositories.svelte.js";
 import { createProjectsActivity } from "./projects-activity.svelte.js";
-import { projectsActivityScope } from "./projects-activity-scope.js";
 import {
   createProjectsViewCache,
   projectsBrowseQuery,
@@ -33,25 +41,27 @@ export function createProjectsHub(
   let reads = new AbortController();
   const scroll = new Map<string, number>();
   const views = createProjectsViewCache();
+  const dirty = new ProjectsDirtiness();
   const { sources, works, selections, transport, work } =
     createProjectsWorkRegistry(context, () => {
       views.clear();
       context.changed();
     });
+  function denied(home: string) {
+    works.get(home)?.reset();
+    views.clear();
+  }
+  function report(message: string) {
+    error = message;
+  }
   const navigation = createProjectsNavigation({
     repositories: context.repositories,
     transport,
-    denied: (home) => {
-      works.get(home)?.reset();
-      views.clear();
-    },
+    denied,
   });
   const reviews = createProjectsReviews({
     source: transport,
-    denied: (home) => {
-      works.get(home)?.reset();
-      views.clear();
-    },
+    denied,
   });
   const agents = createProjectsAgents({
     source: transport,
@@ -71,11 +81,16 @@ export function createProjectsHub(
       views.clear();
     },
   );
-  async function restore(refresh = false) {
+  async function restore(refresh = false, affected?: ReadonlySet<string>) {
     reads.abort();
     reads = new AbortController();
     const ticket = ++generation,
       route = context.route();
+    const pending = dirty.capture(route);
+    if (pending.affected.size) {
+      affected = new Set([...(affected ?? []), ...pending.affected]);
+      refresh = true;
+    }
     loading = true;
     error = "";
     if (route.workTab === "agents")
@@ -105,6 +120,9 @@ export function createProjectsHub(
     const repositories = selection.repositories;
     homes = selection.homes;
     try {
+      if (pending.affected.size)
+        await refreshDirtyLocalProjects(context, pending.affected, transport);
+      if (ticket !== generation) return;
       if (route.projectId && !repositories.length) {
         if (route.workTab === "agents") agents.reset();
         error = "Home repository unavailable. Separate access is required.";
@@ -116,68 +134,33 @@ export function createProjectsHub(
           taskId: route.taskId ?? null,
           commentId: route.commentId ?? null,
         });
-        await work(route.repository).restore(refresh);
+        await work(route.repository).restore(
+          refresh && (!affected || pending.work.has(route.repository)),
+        );
       }
       if (ticket !== generation) return;
       context.activate?.(route.projectId ? route.repository : null);
-      if (route.workTab === "activity" || route.taskId) {
-        const detail = route.projectId ? work(route.repository).state : null;
-        try {
-          await activity.load(
-            projectsActivityScope(
-              context.repositories(),
-              route,
-              detail?.project,
-              detail?.task,
-            ),
-            refresh,
-            route.snapshotOperationId
-              ? { [route.repository]: route.snapshotOperationId }
-              : {},
-          );
-        } catch (cause) {
-          activity.reset();
-          error =
-            cause instanceof Error ? cause.message : "Activity unavailable";
-          return;
-        }
-        if (ticket !== generation || route.workTab === "activity") return;
-      }
-      if (route.workTab === "agents") {
-        const detail = route.projectId ? work(route.repository).state : null;
-        await loadProjectAgents({
+      if (
+        (route.taskId ||
+          ["agents", "reviews", "repositories", "activity"].includes(
+            route.workTab ?? "",
+          )) &&
+        (await restoreProjectAuxiliary({
           route,
           repositories: context.repositories(),
-          navigation,
+          detail: route.projectId ? work(route.repository).state : null,
+          activity,
           agents,
-          project: detail?.project ?? null,
-          error: detail?.error ?? "",
-          refresh,
-          current: () => ticket === generation,
-          report: (message) => {
-            error = message;
-          },
-        });
-        if (ticket === generation) await agents.restoreSelection(refresh);
-        return;
-      }
-      agents.clearSelection();
-      if (route.workTab === "repositories" || route.workTab === "reviews") {
-        await loadProjectCollections({
-          route,
-          project: route.projectId
-            ? work(route.repository).state.project
-            : null,
-          repositories: context.repositories(),
+          navigation,
           directory: repositoryDirectory,
           reviews,
           refresh,
-          report: (message) => {
-            error = message;
-          },
-        });
+          affected,
+          current: () => ticket === generation,
+          report,
+        }))
+      )
         return;
-      }
       const query = projectsBrowseQuery(route);
       if (cached) return;
       let index = 0;
@@ -185,6 +168,8 @@ export function createProjectsHub(
         Array.from({ length: Math.min(2, homes.length) }, async () => {
           while (index < homes.length && ticket === generation) {
             const home = homes[index++]!;
+            if (affected && !affected.has(home.repository.id) && home.snapshot)
+              continue;
             await reloadProjectHomeWindow(
               home,
               (more) => read(home, query, ticket, more),
@@ -198,6 +183,16 @@ export function createProjectsHub(
       if (ticket === generation) {
         loading = false;
         views.save(route, homes);
+        if (!error)
+          pending.accept((domain, id) =>
+            projectProjectionAccepted(domain, id, route, works, {
+              agents: agents.homes,
+              reviews: reviews.homes,
+              activity: activity.homes,
+              directory: repositoryDirectory.entries,
+              work: homes,
+            }),
+          );
       }
     }
   }
@@ -209,9 +204,7 @@ export function createProjectsHub(
     repositories: repositoryDirectory,
     scroll,
     get commands() {
-      return [...works]
-        .filter(([, work]) => work.state.pending)
-        .map(([home, work]) => ({ home, work }));
+      return pendingProjectCommands(works);
     },
     get homes() {
       return homes;
@@ -232,25 +225,36 @@ export function createProjectsHub(
         : undefined;
     },
     restore,
-    async refresh() {
+    invalidate(changes) {
+      dirty.record(
+        changes,
+        context.repositories().map((repo) => repo.id),
+      );
+      invalidateProjectViews(views, works, changes);
+    },
+    async refresh(changes) {
+      if (changes)
+        dirty.record(
+          changes,
+          context.repositories().map((repo) => repo.id),
+        );
       error = "";
       refreshing = true;
       reads.abort();
       const ticket = ++generation,
         refreshTicket = ++refreshGeneration;
       try {
-        await context.discover?.();
-        views.clear();
-        for (const work of works.values()) work.invalidate?.();
-        if (ticket !== generation || context.route().page !== "projects")
-          return;
-        await Promise.allSettled(
-          [...sources.values()].map((source) => source.refresh?.()),
-        );
-        await navigation.load(true);
-        if (ticket !== generation || context.route().page !== "projects")
-          return;
-        await restore(true);
+        await refreshProjectSources({
+          context,
+          sources,
+          works,
+          views,
+          navigation,
+          restore,
+          changes,
+          current: () =>
+            ticket === generation && context.route().page === "projects",
+        });
       } catch (cause) {
         if (refreshTicket === refreshGeneration)
           error =
@@ -270,9 +274,7 @@ export function createProjectsHub(
         await read(home, query, generation, true);
       views.save(context.route(), homes);
     },
-    ...projectsRouteActions(context, restore, (message) => {
-      error = message;
-    }),
+    ...projectsRouteActions(context, restore, report),
     reset() {
       generation++;
       refreshGeneration++;
@@ -292,6 +294,7 @@ export function createProjectsHub(
       selections.clear();
       views.clear();
       scroll.clear();
+      dirty.clear();
     },
   };
 }

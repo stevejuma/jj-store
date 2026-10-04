@@ -60,6 +60,8 @@ impl CaptureImportManagement {
     }
 }
 struct Inner {
+    changes: jj_store_service::freshness::Signals,
+    freshness_started: std::sync::OnceLock<()>,
     authority: authority::Authority,
     settings: settings::SettingsFile,
     binding: Option<CaptureManagementBinding>,
@@ -78,6 +80,8 @@ impl Manager {
         binding: Option<CaptureManagementBinding>,
     ) -> Result<Self, Error> {
         Ok(Self(Arc::new(Inner {
+            changes: Default::default(),
+            freshness_started: Default::default(),
             authority: authority::Authority::new(path, config, identity)?,
             settings: settings::SettingsFile::new(path, &config.agent_capture)?,
             binding,
@@ -142,6 +146,11 @@ impl Manager {
             })
             .is_ok()
         });
+        self.0.changes.notify(
+            None,
+            jj_store_service::freshness::Domain::Capture,
+            Some(selected.receipt.request.to_string()),
+        );
         Ok(CaptureControlOutcome {
             version: 1,
             receipt: CapturePolicyReceipt {
@@ -162,6 +171,16 @@ impl Manager {
 mod tests;
 #[async_trait::async_trait]
 impl CaptureManager for Manager {
+    fn freshness(
+        &self,
+    ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
+        if let Some(runtime) = self.0.binding.as_ref().and_then(|b| b.runtime.get()) {
+            self.0
+                .freshness_started
+                .get_or_init(|| runtime.follow_freshness(self.0.changes.clone()));
+        }
+        Some(self.0.changes.subscribe())
+    }
     async fn settings(&self, actor: PrincipalId) -> Result<LocalCaptureSettings, Error> {
         self.read_settings(actor).await
     }
@@ -177,7 +196,11 @@ impl CaptureManager for Manager {
         actor: PrincipalId,
         request: CaptureImportCommand,
     ) -> Result<CaptureImportOutcome, Error> {
-        self.request_import(actor, request).await
+        let result = self.request_import(actor, request).await?;
+        self.0
+            .changes
+            .notify(None, jj_store_service::freshness::Domain::Capture, None);
+        Ok(result)
     }
     async fn import_status(
         &self,

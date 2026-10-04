@@ -204,6 +204,22 @@ test("open task forms keep their original version guards after incoming metadata
   });
   await title.fill("Unsent task title");
   updated = true;
+  const publication = await request.post(`/v1/repos/${home}/work/commands`, {
+    headers,
+    data: {
+      version: 1,
+      request_id: randomUUID().replaceAll("-", ""),
+      command: {
+        command: "add_comment",
+        id: randomUUID().replaceAll("-", ""),
+        task,
+        expected_task_version: original.tasks[0].version,
+        reply_to: null,
+        body: "Publish an event while the edit form retains its original guards",
+      },
+    },
+  });
+  expect(publication.ok()).toBe(true);
   await expect(
     page.locator("article[aria-label='Task details'] h2"),
   ).toContainText("Externally edited metadata", { timeout: 15000 });

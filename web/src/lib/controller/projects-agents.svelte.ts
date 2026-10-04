@@ -107,6 +107,7 @@ export function createProjectsAgents(context: {
     async load(
       repositories: readonly StoreRepositorySummary[],
       refresh = false,
+      affected?: ReadonlySet<string>,
     ) {
       reads.abort();
       reads = new AbortController();
@@ -133,6 +134,8 @@ export function createProjectsAgents(context: {
         Array.from({ length: Math.min(2, homes.length) }, async () => {
           while (index < homes.length && ticket === generation) {
             const home = homes[index++]!;
+            if (affected && !affected.has(home.repository.id) && home.snapshot)
+              continue;
             if (home.snapshot && !refresh && !home.error) continue;
             await read(home, ticket);
             const seen = new Set<string>();

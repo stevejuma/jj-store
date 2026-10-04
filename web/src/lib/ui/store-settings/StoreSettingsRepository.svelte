@@ -41,7 +41,6 @@
     error = "";
     try {
       await controller.actions.openRepository(repository);
-      await controller.actions.refreshSettings();
       if (controller.state.status.connection === "failed")
         error = controller.state.status.error || "Could not open repository.";
     } catch (cause) {

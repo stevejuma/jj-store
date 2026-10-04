@@ -178,7 +178,7 @@ pub(crate) async fn list(
     })
 }
 
-fn bearer(headers: &HeaderMap) -> Result<BearerToken> {
+pub(crate) fn bearer(headers: &HeaderMap) -> Result<BearerToken> {
     if headers.get_all(header::AUTHORIZATION).iter().count() != 1 {
         return Err(Error::new(
             axum::http::StatusCode::UNAUTHORIZED,

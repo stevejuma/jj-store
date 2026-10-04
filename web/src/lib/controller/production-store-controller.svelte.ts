@@ -1,6 +1,5 @@
 import { repositoryReaders } from "./repository-sources.js";
 import { createReadScope } from "./read-scope.js";
-import { createProductionAutomaticRefresh } from "./production-automatic-refresh.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
 import { createEntitySearch } from "./production-entity-search.js";
 import { createProductionRefresh } from "./production-store-refresh.js";
@@ -8,6 +7,8 @@ import { createThreadsIntegration } from "./production-threads-integration.js";
 import { createProfileRouteRestorer } from "./production-profile-route.js";
 import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
+import { startProductionSessionEvents } from "./production-session-events.js";
+import { ApplicationFreshness } from "./application-freshness.js";
 
 import { createLocalConfiguration } from "./production-local-configuration.js";
 import type { StoreController } from "./contracts.js";
@@ -17,17 +18,14 @@ import { createProductionStoreReaders } from "./production-store-reader.svelte.j
 import { createProductionStoreState } from "./production-store-state.svelte.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import { productionControllerSurface } from "./production-store-view.js";
-import { createProductionStoreSearch } from "./production-store-search-controller.js";
+import { createProductionReadServices } from "./production-read-services.js";
 import { createProductionStoreMutations } from "./production-store-mutations.js";
 import { createProductionStoreConflicts } from "./production-store-conflicts.js";
-import { createProductionStoreSettings } from "./production-store-index.js";
 import {
   createProductionSelections,
   requireProductionSource,
-  reportProductionStoreError,
   resetConnectionView,
   destroyProductionStoreLifecycle,
-  startProductionStoreLifecycle,
   authorizationReady,
   controllerAbortScopes,
 } from "./production-store-lifecycle.svelte.js";
@@ -39,7 +37,10 @@ export function createProductionStoreController(
 ): StoreController {
   const history = createStoreRouteHistory();
   const data = createProductionStoreState();
-  const local = createLocalConfiguration(data, options.fetcher);
+  const freshness = new ApplicationFreshness(options.fetcher, () =>
+    disconnect("Access denied", true),
+  );
+  const local = createLocalConfiguration(data, options.fetcher, freshness);
   let source: StoreDataSource | null = null,
     sessionToken: string | null = null;
   let session = 0;
@@ -64,7 +65,6 @@ export function createProductionStoreController(
     begin: invalidate,
     signal,
     current,
-    report: (cause) => reportProductionStoreError(data, cause),
   });
 
   const {
@@ -72,6 +72,7 @@ export function createProductionStoreController(
     clear: clearProjects,
     stopEvents: stopProjectEvents,
     poll: pollProjects,
+    discover: discoverProjects,
   } = createProductionProjects(
     data,
     history,
@@ -82,6 +83,7 @@ export function createProductionStoreController(
     () => automatic.request(),
     () => controller,
     sources,
+    freshness,
   );
   const threadsIntegration = createThreadsIntegration({
     source: () => source,
@@ -102,21 +104,16 @@ export function createProductionStoreController(
     restore: reader.restorePage,
   });
 
-  const search = createProductionStoreSearch({
+  const { search, settings } = createProductionReadServices({
     data,
     history,
     source: activeSource,
-    isCurrent: (active) => active === source,
-    restoreRoute,
-  });
-  const settings = createProductionStoreSettings({
-    data,
-    source: activeSource,
-    route: () => history.route,
     version,
     signal,
     current,
+    restoreRoute,
     restore: reader.restorePage,
+    freshness,
   });
 
   const { openRoute, globalSearch, referenceSearch } = createEntitySearch({
@@ -138,6 +135,7 @@ export function createProductionStoreController(
     stopProjectEvents();
     discovery.abort();
     if (!preserveSession) {
+      freshness.stop();
       sources.clear();
       clearProjects();
       threadNavigation.clear();
@@ -203,6 +201,7 @@ export function createProductionStoreController(
       sessionToken = token;
     },
     fetcher: options.fetcher,
+    events: (token) => freshness.configure(freshness.supported, token),
   });
   const { refresh, selectOperation } = createProductionRefresh({
     data,
@@ -212,6 +211,7 @@ export function createProductionStoreController(
     threads: threadsIntegration,
     search,
     reader,
+    discover: discoverProjects,
     refreshThreadNavigation: () =>
       sources.refreshThreads(threadNavigation, history.route.repository),
     stopFeed: () => feed.abort(),
@@ -264,29 +264,27 @@ export function createProductionStoreController(
     invalidate,
   });
 
-  const automatic = createProductionAutomaticRefresh({
-    data,
-    projects,
-    threads,
-    pollProjects,
-    route: () => history.route,
-    source: () => source,
-    signal: lifecycle.signal,
-    active: () => authorizationReady(data, sessionToken),
-    refresh: () => refresh(true),
-    report: (cause) => reportProductionStoreError(data, cause),
-  });
-
-  startProductionStoreLifecycle({
-    data,
-    history,
-    source: () => source,
-    connect,
-    disconnect,
-    restore: restoreRoute,
-    fetcher: options.fetcher,
-    signal: lifecycle.signal,
-  });
+  const automatic = startProductionSessionEvents(
+    {
+      data,
+      history,
+      source: () => source,
+      connect,
+      disconnect,
+      restore: restoreRoute,
+      fetcher: options.fetcher,
+      signal: lifecycle.signal,
+      automatic: {
+        projects,
+        threads,
+        pollProjects,
+        sources,
+        active: () => authorizationReady(data, sessionToken),
+        refresh: (changes) => refresh(true, changes),
+      },
+    },
+    freshness,
+  );
 
   const controller: StoreController = productionControllerSurface(
     data,
@@ -302,6 +300,7 @@ export function createProductionStoreController(
       globalSearch,
       referenceSearch,
       ...local,
+      freshness,
       actions: { ...actions, openThreads, openRoute },
     },
     automatic.pause,

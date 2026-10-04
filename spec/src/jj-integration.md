@@ -953,3 +953,8 @@ not evict a generation held by a reader or wait on its cache-slot lock. Native
 disk receipts remain disposable and independently recoverable after resident
 eviction. A local evicted task resets and may be prepared again for the same
 exact operation; it cannot report Ready without a retained generation.
+Replication controls expose an optional process-local semantic change channel
+through their existing owner. It carries no transport authority and changes no
+RPC schema. Alternating idle pull/push scheduling does not trigger browser
+reads; frontiers, checkpoint settlement, faults and pause/lifetime transitions
+do.

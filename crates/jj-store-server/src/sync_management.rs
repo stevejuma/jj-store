@@ -22,6 +22,11 @@ fn configured(worker: jj_store_service::replication_control::StatusV1) -> LocalS
 }
 #[async_trait::async_trait]
 impl SyncManager for LocalSync {
+    fn freshness(
+        &self,
+    ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
+        self.0.freshness()
+    }
     async fn capture(
         &self,
         repository: RepositoryId,

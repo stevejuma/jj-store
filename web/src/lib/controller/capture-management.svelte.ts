@@ -1,3 +1,4 @@
+import { captureConfigurationObserver } from "./capture-configuration-observer.js";
 import { createCaptureSettings } from "./capture-settings-management.js";
 import { ApiError } from "../api/client.js";
 import {
@@ -28,6 +29,7 @@ export function createCaptureManagement(options: {
   transport: CaptureTransport;
   available: () => boolean;
   requestId?: () => string;
+  freshness?: import("./application-freshness.js").ApplicationFreshness;
 }): CaptureManagement {
   const state = $state(emptyCaptureManagement());
   let alive = true;
@@ -35,6 +37,11 @@ export function createCaptureManagement(options: {
   const transport = options.transport;
   const cursors = new Set<string>();
   const configuration = createCaptureSettings({ state, transport, available });
+  const configurationObservations = captureConfigurationObserver(
+    state,
+    configuration.observe,
+    options.freshness,
+  );
   const ready = () =>
     !state.settings.saving &&
     !state.settings.value?.restart_required &&
@@ -119,9 +126,13 @@ export function createCaptureManagement(options: {
     transport,
     available,
     cursors,
-    observeSettings: configuration.observe,
+    observeSettings: configurationObservations.observe,
   });
-  const automatic = createCaptureRefresh({ available, ...observations });
+  const automatic = createCaptureRefresh({
+    available,
+    ...observations,
+    freshness: options.freshness,
+  });
   async function refresh() {
     await observations.refresh();
   }
@@ -273,6 +284,7 @@ export function createCaptureManagement(options: {
     inspectImport,
     retry: sendPending,
     destroy() {
+      configurationObservations.close?.();
       automatic.setActive(false);
       alive = false;
       state.busy = false;

@@ -279,20 +279,20 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 103);
+    assert_eq!(paths.len(), 114);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        30
+        40
     );
     assert_eq!(
         paths
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        73
+        74
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
@@ -301,6 +301,9 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
             if name == "/v1/bootstrap" {
                 assert_eq!(operation["parameters"], json!([]));
                 assert_eq!(operation["security"], json!([{}]));
+            } else if name == "/v1/events" {
+                assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
+                assert_eq!(operation["parameters"][0]["name"], "after");
             } else if name == "/v1/repositories" {
                 assert!(
                     operation["parameters"]

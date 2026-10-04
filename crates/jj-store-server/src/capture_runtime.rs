@@ -7,6 +7,7 @@ use crate::{
 use std::time::Duration;
 use tokio::{sync::watch, task::JoinHandle};
 mod control;
+mod freshness;
 mod imports;
 mod rescan;
 mod sources;
@@ -243,7 +244,12 @@ fn publish(supervisor: &CodexCaptureSupervisor, updates: &RuntimeUpdates) {
         *current = std::sync::Arc::new(targets);
         true
     });
-    updates
-        .updates
-        .send_replace(CaptureRuntimeSnapshot::read(supervisor));
+    let observed = CaptureRuntimeSnapshot::read(supervisor);
+    updates.updates.send_if_modified(|current| {
+        if *current == observed {
+            return false;
+        }
+        *current = observed;
+        true
+    });
 }

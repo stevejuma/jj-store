@@ -17,6 +17,7 @@ export function createProductionConnect(context: {
   discovery: (abort: AbortController) => void;
   token: (token: string) => void;
   fetcher?: typeof fetch;
+  events?(token: string): Promise<void>;
 }) {
   return async (repository: string, token: string | null) => {
     const { data, projects } = context;
@@ -40,6 +41,8 @@ export function createProductionConnect(context: {
     data.status.connection = "connecting";
     data.status.repositories = "loading";
     try {
+      await context.events?.(token);
+      if (ticket !== context.version()) return;
       const repositories = await loadRepositories(
         token,
         context.fetcher,

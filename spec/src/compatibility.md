@@ -818,3 +818,13 @@ only after exact-operation preparation; they never reinterpret it as a native
 epoch. Start/status/cancel responses use the local task DTO, and cancellation is
 bodyless. Generated contracts and actual HTTP responses qualify these additions;
 native routes, persisted identities and companion formats remain unchanged.
+
+## Application freshness compatibility
+
+Bootstrap optionally advertises `application_events` and additive version-1
+ready/changed/reset SSE at `/v1/events`. Existing repository WAL SSE cursors and
+all native/companion/object publication formats retain their meanings. Clients
+use the new feed only when advertised; older servers retain bounded visible
+fallback and their original repository subscriptions. The server adds notify 8.2
+as a host-only filesystem hint dependency. It enters no storage, model or WAL
+authority, and committed metadata checks remain required after any hint.

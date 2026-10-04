@@ -285,7 +285,7 @@ async fn pick(
     })?;
     state.json(&result)
 }
-struct Binding {
+pub(crate) struct Binding {
     manager: Arc<dyn management::LocalRepositories>,
     folder: management::LocalFolder,
     generation: u64,
@@ -314,7 +314,10 @@ impl local::Access for Binding {
         Ok(())
     }
 }
-async fn binding(state: &State, repo: m::RepositoryId) -> Result<Arc<dyn local::Access>> {
+pub(crate) async fn binding(
+    state: &State,
+    repo: m::RepositoryId,
+) -> Result<Arc<dyn local::Access>> {
     let manager = manager(state)?;
     let check = manager.clone();
     let (folder, generation) = blocking(state, move || check.folder(repo).map_err(map)).await?;
@@ -332,7 +335,7 @@ async fn snapshot(
     routes::input(args)?;
     state.json(&capture(&state, repo).await?)
 }
-async fn capture(state: &State, repo: m::RepositoryId) -> Result<Snapshot> {
+pub(crate) async fn capture(state: &State, repo: m::RepositoryId) -> Result<Snapshot> {
     let access = binding(state, repo).await?;
     let code = state.local_reader.heads(access).await?;
     let manager = manager(state)?;

@@ -264,6 +264,11 @@ impl Manager {
             this.0.settings.save(&request, || {
                 this.0.authority.configuration(actor).map(|_| ())
             })?;
+            this.0.changes.notify(
+                None,
+                jj_store_service::freshness::Domain::Configuration,
+                None,
+            );
             this.0
                 .authority
                 .configuration(actor)

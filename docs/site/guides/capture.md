@@ -4,6 +4,11 @@ Capture retains sanitized activity from supported coding-agent sources. It does
 not launch or continue an agent. Configure automatic readers separately from
 explicit workspace hook integrations.
 
+Visible capture status and source coverage react to semantic worker changes.
+Unchanged scheduler activity causes no browser reads. Configuration drafts and
+exact import/control request identities survive refresh; receipt inspection
+remains authoritative for an unknown command outcome.
+
 ## Automatic Codex capture
 
 The current automatic preview supports the exact Codex CLI JSONL profile and

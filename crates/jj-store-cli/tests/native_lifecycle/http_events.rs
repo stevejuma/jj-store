@@ -6,6 +6,8 @@ use axum::{
 };
 use jj_store_http::{Config, HttpApi};
 use tower::ServiceExt as _;
+#[path = "application_events.rs"]
+mod application_events;
 fn router(f: &Fixture, cache: &std::path::Path, config: Config) -> Router {
     HttpApi::new(host(f), cache.to_owned(), config)
         .unwrap()
@@ -82,6 +84,7 @@ async fn http_events_have_separate_admission_and_expire_unpolled_streams() {
         Config {
             concurrency: 1,
             event_concurrency: 1,
+            event_lifetime: Duration::from_millis(120),
             timeout: Duration::from_millis(120),
             ..Default::default()
         },

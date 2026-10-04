@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed scoped read-only local code access and prepared operation-bound visibility, conflict annotations and cancellation. Local technical docs explain source preservation; Git and conversion semantics remain unchanged.",
-      "fingerprint": "8b71d5c29837cc2e6c31de130d7a092471a921edaef2c156e34c97a45cc5f52f"
+      "reason": "Reviewed integrated prepared visibility, bounded resident reclamation and external local heads/companion monitoring; no source authority or Git transport semantics changed.",
+      "fingerprint": "4fb4ed317303c6fae9112758caf02e5c11095c1cb1f9e98ad39a94f13b22fc92"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed separate interactive/preparation admission, shared derived-cache reservations and current authorization. Architecture/transport describe operation-bound tasks; independent conversion still uses its complete bounded archive.",
-      "fingerprint": "da47cf5f447745327d6ea1bb02acc6283a470947f50acaddf0b55af00c0e05ab"
+      "reason": "Reviewed independent task audience witness keys and final audience regression; event settlements remain scoped process-local hints and current authorization remains authoritative.",
+      "fingerprint": "03d17e2e022050716dcdf0b7466909cdc4223c00f9b9f6054ea22e92fb84e9ee"
     }
   },
   {
@@ -74,8 +74,8 @@
     "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
     "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
     "review": {
-      "fingerprint": "d0853ca22543d19bdfc7ffb4921059e3301a76730f6f1dfb83746a7091b971cb",
-      "reason": "Initial search manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+      "reason": "Reviewed health-channel semantic notices and accepted search configuration/control settlement; visible consumers react to events and retain bounded explicit recovery.",
+      "fingerprint": "01f48ae00bd2237715ec76baacb1fb072225bccceb7921055ba1ea77599135b9"
     }
   },
   {
@@ -83,8 +83,8 @@
     "sources": ["crates/jj-store-replication/src"],
     "pages": ["docs/site/technical/replication.md", "docs/site/guides/sync.md"],
     "review": {
-      "fingerprint": "1be4dc1693d106f6387bb8812c8b998ffae097aa5e4acdc04e88f0ccf7eb3ed2",
-      "reason": "Initial replication manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+      "reason": "Reviewed sync semantic projection suppressing idle scheduler churn while preserving checkpoint, pause and fault notices; replication authority is unchanged.",
+      "fingerprint": "1be4dc1693d106f6387bb8812c8b998ffae097aa5e4acdc04e88f0ccf7eb3ed2"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed installation-owned native creation and durable conversion journals plus configured capture roots/endpoints; configuration and lifecycle pages now describe current profiles and restart semantics.",
-      "fingerprint": "77eb079c691ef302c9221221e88b63a37a96844e7c418af80deb3049a414e731"
+      "reason": "Reviewed final capture source/status interest split and cancellation-independent saved configuration notices; saved/effective activation remains explicit.",
+      "fingerprint": "eda4727c37acf896cd4385fa3613c3435290bef01bea9261c6e826bc1d71d89c"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed combined local/native preparation and conversion route registration, scoped local identity reads and current authorization. Transport documents exact rebuild pins and bodyless cancel; security and conversion guarantees remain accurate.",
-      "fingerprint": "b7557797936932ff44424bd3bc12c5612061392a50bdb9dc8b06863e3108af52"
+      "reason": "Reviewed advertised authenticated application SSE ready/changed/reset, bounded replay and current delivery authorization; transport reference documents lifetime and outage fallback.",
+      "fingerprint": "f48f3033163a12fb79fa56f54ee1f173a5620e2f37cb9e1e4fd9c69b2c93d7be"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented files-first enrichment, bounded bookmark/workspace windows and explicit preparation/cancel recovery in browsing and Advanced settings. Reviewed shared conversion/terminal/lifecycle integration; editing and conversion drafts retain their semantics.",
-      "fingerprint": "06b7568b010c83171ec3f2ceb86279b9a7acac658024cd9ee9718c638fb5f428"
+      "reason": "Reviewed preservation of queued event deadlines across unrelated notices, bounded retries only for retained healthy dirtiness, and cold regression for prompt two-client Work refresh.",
+      "fingerprint": "831cc56f9909fa1f28ea5f4c5163316889a8371ab64c65c52fcbc4a3d61a8500"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated combined API references from executable OpenAPI, including local task endpoints, metadata flags and workspaces. Transport distinguishes native/local rebuild pins and observation from confirmed worker cancellation; CLI syntax is unchanged.",
-      "fingerprint": "118df2381a4c9916e36850cb200f0b9ff994d1cad5c90adc60d6045edbd58161"
+      "reason": "Reviewed generated application event schemas and actual SSE capture; event hints do not replace authorized reads or durable command receipts.",
+      "fingerprint": "0e69029a71e1fa4203280a8e2b814b7b97a00ccb4cedfc0ef7281a7cb4c47610"
     }
   }
 ]

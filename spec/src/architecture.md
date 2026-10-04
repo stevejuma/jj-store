@@ -747,4 +747,8 @@ for continuation. Snippets are generated only for returned hits. The cache holds
 data only, with separate bounded root and cursor retention; each request
 captures its manifest envelope and rechecks viewer, inventory limits and
 authorization. No search cache or field index becomes domain authority or a
-persisted format.
+persisted format. The server uses a maintained platform filesystem-notification
+adapter for hint-only local repository monitoring. Native storage, manifest
+publication, captured JJ reads and authorization retain their owned boundaries.
+A notification never selects authority; missed notifications fall back to shared
+bounded witness checks rather than per-browser history scans.

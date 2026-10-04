@@ -70,7 +70,12 @@ export interface ProjectsHubController {
   readonly detail: WorkController | undefined;
   readonly route: StoreRoute;
   restore(): Promise<void>;
-  refresh(): Promise<void>;
+  refresh(
+    changes?: readonly import("../api/application-events.js").FreshnessChange[],
+  ): Promise<void>;
+  invalidate?(
+    changes: readonly import("../api/application-events.js").FreshnessChange[],
+  ): void;
   more(home: string): Promise<void>;
   openHub(tab?: ProjectsTab): Promise<void>;
   openProject(

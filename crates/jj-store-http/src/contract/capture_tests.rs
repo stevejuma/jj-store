@@ -42,7 +42,7 @@ fn capture_management_contract_is_installation_local_and_actor_free() {
     assert!(body["properties"].get("actor").is_none());
     assert_eq!(
         schemas["CaptureConfiguration"]["properties"]["harnesses"]["maxItems"],
-        2
+        5
     );
     let phases = &schemas["CaptureRuntimePhase"]["enum"];
     assert!(phases.as_array().unwrap().contains(&json!("draining")));
@@ -72,7 +72,7 @@ fn capture_management_contract_is_installation_local_and_actor_free() {
         );
     }
     let groups = &schemas["CaptureRuntimeStatus"]["properties"]["harnesses"];
-    assert_eq!(groups["maxItems"], 2);
+    assert_eq!(groups["maxItems"], 5);
     assert_eq!(
         schemas["CaptureHarnessCoverage"]["additionalProperties"],
         false

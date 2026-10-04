@@ -65,3 +65,12 @@ dismissal, offline cold browser use and desktop resource staging/WKWebView
 behavior. Shared asset-delivery changes require all directly affected asset
 tests; unrelated repository/storage qualification is not repeated. Visual
 baseline approval is separate.
+
+The application freshness manual describes the advertised multiplexed feed,
+visible domain interests, hidden dirtiness, retained historical pins/drafts and
+exact task/request observation. It distinguishes healthy event delivery from
+outage-only fallback and unchanged five-minute renewal from a data refresh.
+Canonical ledger evidence owns cold idle/renewal and recovery qualification;
+source review acknowledgement alone cannot qualify those runtime gates. Build
+and stage the shared generated documentation sequentially within one workspace
+so another build cannot replace a manifest's closure during validation.

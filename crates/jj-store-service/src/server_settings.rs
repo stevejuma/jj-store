@@ -106,6 +106,13 @@ pub enum Error {
 }
 #[async_trait::async_trait]
 pub trait ServerSettingsManager: Send + Sync {
+    /// Bounded file revision only; no configuration/status projection or worker access.
+    fn freshness_witness(&self) -> Option<String> {
+        None
+    }
+    fn freshness(&self) -> Option<tokio::sync::broadcast::Receiver<crate::freshness::Change>> {
+        None
+    }
     async fn status(&self, actor: PrincipalId) -> Result<LocalServerSettings, Error>;
     async fn save(
         &self,

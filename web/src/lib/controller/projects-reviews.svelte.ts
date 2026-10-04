@@ -70,6 +70,7 @@ export function createProjectsReviews(context: {
       route: StoreRoute,
       repositories: readonly StoreRepositorySummary[],
       refresh = false,
+      affected?: ReadonlySet<string>,
     ) {
       reads.abort();
       reads = new AbortController();
@@ -101,9 +102,21 @@ export function createProjectsReviews(context: {
         )
         .map((repository) => ({
           repository,
-          threads: [],
-          snapshot: null,
-          cursor: null,
+          threads:
+            affected && !affected.has(repository.id)
+              ? (homes.find((home) => home.repository.id === repository.id)
+                  ?.threads ?? [])
+              : [],
+          snapshot:
+            affected && !affected.has(repository.id)
+              ? (homes.find((home) => home.repository.id === repository.id)
+                  ?.snapshot ?? null)
+              : null,
+          cursor:
+            affected && !affected.has(repository.id)
+              ? (homes.find((home) => home.repository.id === repository.id)
+                  ?.cursor ?? null)
+              : null,
           loading: false,
           unsupported: !context.source(repository.id).reviews,
           error: "",
@@ -113,6 +126,8 @@ export function createProjectsReviews(context: {
         Array.from({ length: Math.min(2, homes.length) }, async () => {
           while (index < homes.length && ticket === generation) {
             const home = homes[index++]!;
+            if (affected && !affected.has(home.repository.id) && home.snapshot)
+              continue;
             await read(home, ticket);
             const count = Math.min(counts.get(home.repository.id) ?? 0, 4096),
               seen = new Set<string>();
