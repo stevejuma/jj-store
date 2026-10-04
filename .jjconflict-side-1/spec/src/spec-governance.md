@@ -1,5 +1,12 @@
 # Specification governance
 
+The trailing branch prompt is an application-owned composition of public Design
+Core Empty and Button primitives with the existing workspace drop guide.
+Provenance records the original local composition separately from copied
+Changeyard canvas and drag adaptations. The public trailing-spacer extension is
+qualified and committed in Design Core; source validation remains distinct from
+released registry acceptance, and mock staging does not authorize backend work.
+
 The UI package guide at `web/src/lib/ui/AGENTS.md` makes the existing Settings
 form and command-row composition the default for form-like surfaces, including
 dialogs. Presentation changes retain focused interaction, geometry and

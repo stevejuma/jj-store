@@ -100,7 +100,8 @@ export function validateFixtureCommand(
     selectedChanges(snapshot, command.selection);
   }
   if (
-    (command.kind === "create_commit" ||
+    (command.kind === "create_stack" ||
+      command.kind === "create_commit" ||
       command.kind === "edit_commit" ||
       command.kind === "transfer") &&
     command.selections

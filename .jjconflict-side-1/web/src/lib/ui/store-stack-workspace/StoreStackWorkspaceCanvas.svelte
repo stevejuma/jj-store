@@ -4,6 +4,7 @@
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import CommunityRepositoryBranchCommand from "../community-repository-branch-command/CommunityRepositoryBranchCommand.svelte";
   import StoreStackUnstaged from "./StoreStackUnstaged.svelte";
+  import StoreStackWorkspaceSpacer from "./StoreStackWorkspaceSpacer.svelte";
   import StoreStackLane from "./StoreStackLane.svelte";
   import StoreStackWorkspaceDiff from "./StoreStackWorkspaceDiff.svelte";
   import {
@@ -56,6 +57,9 @@
     },
   });
   $effect(() => {
+    canvas.trailingSpacerWidth = controller.page === "workspace" ? 390 : 240;
+  });
+  $effect(() => {
     const ids = snapshot.stacks.map((stack) => stack.id);
     untrack(() => {
       for (const id of ids)
@@ -106,6 +110,11 @@
   }
 </script>
 
+{#snippet branchSpacer()}<StoreStackWorkspaceSpacer
+    {controller}
+    {onCommand}
+  />{/snippet}
+
 <ScrollArea
   orientation="horizontal"
   scrollStrategy="styled"
@@ -119,6 +128,7 @@
     controller={canvas}
     {scrollViewport}
     class="stack-workspace__canvas"
+    trailingSpacer={controller.page === "workspace" ? branchSpacer : undefined}
   >
     {#if controller.page === "workspace"}<StoreStackUnstaged
         {controller}

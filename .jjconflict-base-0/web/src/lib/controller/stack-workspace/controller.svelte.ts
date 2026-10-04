@@ -6,7 +6,7 @@ import {
   workspaceBranchSource,
   workspaceAggregateSource,
 } from "./files.js";
-import { activeWorkspace } from "./presentation.js";
+import { activeWorkspace, retainedWorkspaceSelection } from "./presentation.js";
 import {
   cloneWorkspace,
   WorkspaceCommandError,
@@ -268,23 +268,16 @@ export class StackWorkspaceController {
     if (this.snapshot)
       this.commitDrafts.committed(this.snapshot, request.command);
     this.updateSnapshot(result.snapshot);
+    const created = this.commitDrafts.created(result.snapshot, request.command);
+    if (created) {
+      this.selectedStack = created.id;
+      this.selectedBranch = created.name;
+      this.page = "workspace";
+    }
     this.pending = null;
     this.preview = null;
     this.outcome = "Command completed";
-    const workspace = activeWorkspace(result.snapshot);
-    if (!result.snapshot.stacks.some((item) => item.id === this.selectedStack))
-      this.selectedStack = workspace.applied[0] ?? null;
-    const selectedStack = result.snapshot.stacks.find(
-      (stack) => stack.id === this.selectedStack,
-    );
-    if (!selectedStack?.heads.some((head) => head.name === this.selectedBranch))
-      this.selectedBranch = selectedStack?.name ?? null;
-    if (
-      !result.snapshot.stacks.some((item) =>
-        item.commits.some((commit) => commit.id === this.selectedCommit),
-      )
-    )
-      this.selectedCommit = null;
+    Object.assign(this, retainedWorkspaceSelection(result.snapshot, this));
   }
   private failed(error: unknown) {
     if (error instanceof WorkspaceCommandError && error.code !== "failed")

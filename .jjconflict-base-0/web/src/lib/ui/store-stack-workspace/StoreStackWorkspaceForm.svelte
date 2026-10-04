@@ -216,7 +216,9 @@
           >{/if}
         {#if selections.length}<StoreWorkField
             label="Selected changes"
-            description="Only these files or hunks will move."
+            description={command.kind === "create_stack"
+              ? "These files or hunks will be staged for the first commit."
+              : "Only these files or hunks will move."}
             ><ul aria-label="Selected changes">
               {#each selections as selection}<li>
                   {selection.path}{selection.hunks

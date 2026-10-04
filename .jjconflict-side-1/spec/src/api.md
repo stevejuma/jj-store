@@ -1868,8 +1868,9 @@ changing snapshot, request or draft state. Local backend eligibility,
 publication, physical checkout, durability and wire contracts remain deferred
 pending explicit approval of the UI slice.
 
-The frontend command union also carries an optional parent stack for dependent
-creation, explicit above/below placement for empty commits and new branch heads,
+The frontend command union also carries optional exact selections to stage after
+confirmed branch creation, an optional parent stack for dependent creation,
+explicit above/below placement for empty commits and new branch heads,
 branch-specific rename/delete/squash, commit deletion and draft-based commit
 editing with exact additional selections. Immutable history cannot be rewritten;
 copying identifiers/messages and placing branch heads are read-only or bookmark

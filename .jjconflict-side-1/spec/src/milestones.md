@@ -151,9 +151,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007 |
-| M20 | Partial | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review the completed UI before authorizing Phase 2 | E-M20-001,E-M20-002 |
-| M20.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | Review UI; registry foundation qualification and visual approval remain separate | E-M20-001,E-M20-002 |
-| M20.2 | Deferred | M20.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Explicit human approval required after UI review | E-M20-001,E-M20-002 |
+| M20 | Partial | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review the completed UI before authorizing Phase 2 | E-M20-001,E-M20-002,E-M20-003,E-M20-004 |
+| M20.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | Review UI; registry foundation qualification and visual approval remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004 |
+| M20.2 | Deferred | M20.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Explicit human approval required after UI review | E-M20-001,E-M20-002,E-M20-003,E-M20-004 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -77532,6 +77532,423 @@ entries.
     "Phase 2 backend, checkout and persistence require explicit approval."
   ],
   "next": "Continue the requested trailing spacer UI in the next slice."
+},
+{
+  "id": "E-M20-004",
+  "tasks": [
+    "M20",
+    "M20.1",
+    "M20.2"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change rqvrxvzk",
+  "kind": "workspace-trailing-spacer-presentation",
+  "versions": "JJ 0.45.1, Node 26.9.0, pnpm 10.32.1, Svelte 5.57.1, Storybook 10.5.7, Vitest 4.1.11; Design Core source validation remains separate from registry qualification; new Design Core public seam committed at 73e8d5bbeb69",
+  "formats": "Frontend mock create_stack input adds optional exact selections; no Rust/API/RPC or persisted format changes.",
+  "result": "pending",
+  "scope": "The Workspace trailing spacer now composes shadcn Empty, a branch icon and Create a new branch action, centered vertically. Following UI review it uses a plain surface without dots or a leading border, widened from 240px to 390px to match a default stack column. Branches retains its blank 240px reserve. It is never a registered column and only Workspace renders the prompt. Button opens the existing independent/dependent Settings form. File/folder/hunk drops retain exact selections for preview and stage an inline draft only after confirmed creation. Source files remain until the commit is confirmed; unknown requests retain their identity and stage only after status confirmation. The generic public trailingSpacer snippet was implemented upstream first. Controller retains selected branch after confirmed creation and preserves existing selections through a pure helper. Resize geometry scenario moved to its own story family to keep the 400-line story budget. All 437 prior raw evidence objects are preserved. Root aggregates, Rust and production built-bundle tests are out of scope for this UI-only consumer slice. The commit composer to first branch gap increases from 8px to 12px, matching branch-to-branch spacing through one application token. The measured regression repeats after the inline form opens; Branches Apply card spacing is unchanged.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceResize.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceSpacing.stories.svelte",
+    "catalog/fixtures/stack-workspace/preview.ts",
+    "catalog/fixtures/stack-workspace/validation.ts",
+    "docs/ui-provenance.json",
+    "spec/src/api.md",
+    "spec/src/milestones.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "web/src/lib/controller/stack-workspace/commit-drafts.svelte.ts",
+    "web/src/lib/controller/stack-workspace/controller.svelte.ts",
+    "web/src/lib/controller/stack-workspace/drag.ts",
+    "web/src/lib/controller/stack-workspace/presentation.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceForm.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSpacer.svelte",
+    "web/src/lib/ui/store-stack-workspace/stack-workspace-layout.css",
+    "web/src/lib/ui/store-stack-workspace/stack-workspace.css",
+    "web/tests/vite/stack-workspace-spacer.test.ts"
+  ],
+  "runs": [
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:storybook src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte -t InteractiveTrailingSpacer --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/before.log: Initial story used a nonexistent canvas selector; corrected to the actual root part."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:storybook src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte -t InteractiveTrailingSpacer --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/before-exact.log: Exact regression failed because the blank spacer had no content slot."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:storybook src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte -t InteractiveTrailingSpacer --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/after.log: One exact source story passed; 13 skipped. Covers accessible interactive content, retained width/column count and compact omission."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm checks",
+      "result": "fail",
+      "failures": 2,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/checks.log: Governance rejected requirement word/sentence limits; corrected prose without relaxing validation."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm checks",
+      "result": "fail",
+      "failures": 2,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/checks-retry.log: Governance rejected long non-atomic acceptance bullet; shortened and retained behavior."
+    },
+    {
+      "command": "pnpm exec prettier --write src/shared/shadcn/column-canvas/column-canvas.svelte src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvas.example-sources.ts src/shared/shadcn/column-canvas/column-canvas.docs.md spec/src/shadcn/layout.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/format.log: Formatting; exact named source paths recorded in this slice."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/shadcn/layout.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/format-repair.log: Formatting; exact named source paths recorded in this slice."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/shadcn/layout.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/format-repair2.log: Formatting; exact named source paths recorded in this slice."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte -t CenteredBranchPromptOccupiesTheExistingSpacer --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/spacer-before.log: Missing centered spacer prompt before implementation; 4 skipped."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/spacer-after.log: 4 passed; one test expected entire-file text but the existing owned file drag deliberately pins exact hunks. Updated assertion to exact hunk display."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/spacer-qualified.log: 4 passed; one test used Unstaged rather than its existing Unstaged files accessible name; corrected query."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-qualified2.log: 5/5 centered geometry, independent creation, file-to-draft-to-commit, empty/narrow, dark and blank Branches spacer interactions/accessibility passed."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-spacer.test.ts --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-units.log: 4/4 frontend units passed before draft helper refactor."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace*.test.ts --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-all-units.log: 57/57 units in 6 complete workspace controller/history test files passed, including exact staged hunks, stale/foreign drags, source retention, independent/dependent selection and unknown status recovery."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-types.log: Zero errors/warnings before final helper refactor."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-catalog.log: Zero errors/warnings; 215 modules before final helper refactor."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-types-final.log: Zero errors/warnings on final code."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-catalog-final.log: Zero errors/warnings; 216 modules on final code."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 2,
+      "note": ".local/stack-spacer-evidence/spacer-architecture.log: Story 402 lines exceeded 400; controller 314 exceeded 300. Moved resize scenario to its own family and extracted domain helper."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/spacer-architecture-qualified.log: Controller still 304 lines; extracted pure accepted-selection reconciliation without changing its semantics."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-architecture-qualified2.log: 1019 modules; all source budgets passed."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSpacer.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceForm.svelte web/src/lib/ui/store-stack-workspace/stack-workspace-layout.css web/src/lib/controller/stack-workspace/types.ts web/src/lib/controller/stack-workspace/controller.svelte.ts web/src/lib/controller/stack-workspace/drag.ts catalog/fixtures/stack-workspace/validation.ts catalog/fixtures/stack-workspace/preview.ts catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte web/tests/vite/stack-workspace-spacer.test.ts spec/src/ui.md spec/src/api.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-format.log: Only named files formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/controller/stack-workspace/controller.svelte.ts web/src/lib/controller/stack-workspace/commit-drafts.svelte.ts catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceResize.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-refactor-format.log: Only named files formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/controller/stack-workspace/controller.svelte.ts web/src/lib/controller/stack-workspace/presentation.ts web/tests/vite/stack-workspace-spacer.test.ts catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-selection-format.log: Only named files formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/ui-provenance.json spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-provenance-format.log: Only named files formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-all-stories.log: 78/78 complete affected workspace stories in 15 files passed; interaction/accessibility, not full repository suite."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-spec-validate.log: 5 validators, 23 chapters and 173 requirements passed."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-spec-first.log: 15 protected files and 3 canonical chapters passed."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-check-progress.log: 141 tasks; bookkeeping only."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-check-ui-ownership.log: Owned copied presentation boundary passed."
+    },
+    {
+      "command": "pnpm exec prettier --check changed paths except spec/src/milestones.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-format-check.log: all 18 named changed files passed; historical ledger preserved without reformatting."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-ownership-final.log: adaptation descriptions validated."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-ownership-owned.log: original application Empty composition attribution validated."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm checks",
+      "result": "fail",
+      "failures": 1,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/checks-qualified.log: 715 units, 653 Storybook tests, static build, format/types/governance/audit and 14 workspace browsers passed. Shell had one first-test 30s readiness timeout; 10 passed. Later lanes not reached."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:shell:pointer -g 'horizontal pans reveal and dismiss both edge lanes'",
+      "result": "pass",
+      "failures": 0,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/shell-exact-retry.log: Exact unchanged shell reproduction passed cold; see log for full selector."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm checks",
+      "result": "fail",
+      "failures": 2,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/checks-final.log: Prior lanes passed; full shell 11/11 passed. AI had two unchanged 15s visual-story readiness timeouts and one pass; shadcn not reached."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:ai-chat-browser -g 'uses native clipboard|working shimmer' --workers=1",
+      "result": "pass",
+      "failures": 0,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/ai-exact-retry.log: Both exact unchanged AI cases passed on a serial cold run; timeout/assertions were not changed."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte -t CenteredBranchPromptOccupiesTheExistingSpacer --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/spacer-clean-before.log: Requested spacer width regression reproduced 240px versus 390px; four skipped."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-clean-after.log: 5/5 passed, including measured 390px workspace width, no background image or leading border, vertical centering and unchanged blank 240px Branches reserve."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte web/src/lib/ui/store-stack-workspace/stack-workspace-layout.css catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte spec/src/ui.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-clean-format.log: Named changed presentation paths only; ledger excluded."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace -t '^(?!CommitPanelGapMatches)' --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/spacer-clean-stories.log: 77 passed; app-shell story still asserted old 240px workspace spacer width. Updated to the requested 390px. Spacing regression intentionally skipped while pending its separate narrow baseline."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSpacing.stories.svelte --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/spacing-before.log: Exact geometry regression measured 8px from composer to first branch versus 12px between branches."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSpacing.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte -t 'CommitPanelGapMatches|WorkspaceInAppShell' --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacing-and-shell-after.log: Both exact regressions passed; 7 skipped. Measured 12px gaps before and after opening the commit form, and 390px spacer in the real app shell."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-clean-types.log: Zero errors/warnings after the workspace-specific width change."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacer-clean-catalog.log: Zero errors/warnings; 217 catalog modules including new spacing story."
+    },
+    {
+      "command": "pnpm exec prettier --write catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceSpacing.stories.svelte web/src/lib/ui/store-stack-workspace/stack-workspace.css spec/src/ui.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/spacing-format.log: Named paths only; historical ledger excluded."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm checks",
+      "result": "fail",
+      "failures": 1,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/checks-completion.log: Governance, quality, 715 units, 653 stories, build/audit, 14 workspace, 11 shell and 3 AI browsers passed. Shadcn: 35 passed, one platform skip and one wheel animation marker timeout at column-canvas-scroll.spec.ts:1389. Exact unchanged case rerun next."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:shadcn:pointer -g 'resizes the trailing pair inversely'",
+      "result": "pass",
+      "failures": 0,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/shadcn-exact-retry.log: Exact unchanged wheel-animation reproduction passed cold; all assertions/timeouts retained."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-final-stories.log: 79/79 in all 16 directly affected workspace story families passed. Includes exact 12px closed/open commit-panel geometry, 390px plain spacer, app shell, resize, drop guides, drag/sort, recovery and branch actions. Not a full repository suite."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-final-spec-validate.log: 5 validators, 23 chapters and 173 requirements."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/workspace-final-spec-first.log: Final provenance change additionally maps to spec-governance.md; added the owning original composition and separate source/registry qualification rationale."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-final-architecture.log: 1020 modules; no source budget violations."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-final-progress.log: 141 tasks; evidence bookkeeping only."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/spec-governance.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-final-canonical-format.log: Formatted named canonical chapters only; historical evidence JSON untouched."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-qualified-spec-first.log: 19 protected files and all 4 owning canonical chapters passed in the enclosing JJ change."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-qualified-spec-validate.log: All 5 validators, 23 chapters and 173 requirements passed after governance attribution update."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-qualified-ownership.log: Original local composition and copied-reference provenance boundary passed."
+    },
+    {
+      "command": "pnpm exec prettier --check catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceResize.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceSpacer.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceSpacing.stories.svelte catalog/fixtures/stack-workspace/preview.ts catalog/fixtures/stack-workspace/validation.ts docs/ui-provenance.json spec/src/api.md spec/src/spec-governance.md spec/src/ui.md spec/src/verification.md web/src/lib/controller/stack-workspace/commit-drafts.svelte.ts web/src/lib/controller/stack-workspace/controller.svelte.ts web/src/lib/controller/stack-workspace/drag.ts web/src/lib/controller/stack-workspace/presentation.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceForm.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSpacer.svelte web/src/lib/ui/store-stack-workspace/stack-workspace-layout.css web/src/lib/ui/store-stack-workspace/stack-workspace.css web/tests/vite/stack-workspace-spacer.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-final-format.log: All 23 named changed files passed; historical milestone JSON not reformatted."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm checks",
+      "result": "pass",
+      "failures": 0,
+      "note": "/Users/stevejuma/code/lapismd/design-core/.local/trailing-spacer/checks-verified.log: Required complete nonvisual aggregate passed after exact unchanged cold retries. Earlier passing lanes replayed from valid local cache; shadcn reran cold: 36 passed, one platform skip. No assertions or timeouts weakened."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-ledger-progress.log: Final source qualification ledger passes all 141 task/evidence mappings; bookkeeping only."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/workspace-ledger-spec-first.log: Final enclosing JJ slice satisfies all 19 protected files and 4 canonical chapters."
+    }
+  ],
+  "remaining": [
+    "UI review and visual approval remain separate; no screenshot comparisons or baseline updates.",
+    "Released registry-resolved foundation acceptance remains separate from the existing ignored source validation setup.",
+    "Backend, physical checkout and durable workspace execution require explicit approval."
+  ],
+  "next": "Review the UI slice; proceed with local backend integration only after explicit approval.",
+  "browser_acceptance": "Owned Storybook 6057 restarted for the new foundational API, then only its sb-vite development transform cache cleared and restarted again because source-distributed dependency transforms were stale. Fresh browser proved the actual accessible trailing spacer and creation form. Proof: .local/stack-spacer-evidence/spacer-in-app-shell.png. No baseline updated. Final live app-shell DOM measured composer and branch gaps as 12px and the borderless prompt as 390px with no background image. Saved .local/stack-spacer-evidence/workspace-final-in-app-shell.png and .local/stack-spacer-evidence/spacer-final-in-app-shell.png; temporary agent tab closed. Owned Storybook 6057 remains running.",
+  "source_qualification": "Design Core Jujutsu change nwktxoso / 73e8d5bbeb69 commits the generic public trailingSpacer snippet after complete required nonvisual checks. Final aggregate passed; 715 units, 653 interaction/accessibility stories, static build, formatting/types/governance/audit, 14 workspace, 11 shell, 3 AI and 36 shadcn browsers passed, with one intentional platform skip. Prior readiness/animation failures and exact unchanged cold retries are recorded. No visual comparison or baseline update."
 }
 ]
 ```

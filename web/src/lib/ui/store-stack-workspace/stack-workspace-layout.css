@@ -71,3 +71,15 @@
 .stack-workspace[data-page="workspace"] .stack-workspace__unstaged-body {
   padding-inline-start: 0.5rem;
 }
+
+.stack-workspace__branch-spacer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  min-height: 0;
+  align-items: center;
+}
+.stack-workspace__branch-empty {
+  height: 100%;
+  padding: 1rem;
+}

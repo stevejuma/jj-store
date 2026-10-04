@@ -124,3 +124,31 @@ export function commandTitle(command: WorkspaceCommand) {
     } satisfies Record<WorkspaceCommand["kind"], string>
   )[command.kind];
 }
+
+/** Preserve loaded selections when accepted commands remove or replace heads. */
+export function retainedWorkspaceSelection(
+  snapshot: WorkspaceSnapshot,
+  selection: {
+    selectedStack: string | null;
+    selectedBranch: string | null;
+    selectedCommit: string | null;
+  },
+) {
+  const selectedStack = snapshot.stacks.some(
+    (stack) => stack.id === selection.selectedStack,
+  )
+    ? selection.selectedStack
+    : (activeWorkspace(snapshot).applied[0] ?? null);
+  const stack = snapshot.stacks.find((stack) => stack.id === selectedStack);
+  const selectedBranch = stack?.heads.some(
+    (head) => head.name === selection.selectedBranch,
+  )
+    ? selection.selectedBranch
+    : (stack?.name ?? null);
+  const selectedCommit = snapshot.stacks.some((stack) =>
+    stack.commits.some((commit) => commit.id === selection.selectedCommit),
+  )
+    ? selection.selectedCommit
+    : null;
+  return { selectedStack, selectedBranch, selectedCommit };
+}

@@ -77,7 +77,7 @@
     const spacer = columns.querySelector<HTMLElement>(
       '[data-ui-part="trailing-spacer"]',
     )!;
-    await expect(spacer.getBoundingClientRect().width).toBe(240);
+    await expect(spacer.getBoundingClientRect().width).toBe(390);
     const footer = body.querySelector<HTMLElement>(".stack-workspace__footer")!;
     expect(footer.textContent).not.toMatch(/Folder:|Base:/);
     expect(

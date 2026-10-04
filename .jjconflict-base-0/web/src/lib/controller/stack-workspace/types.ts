@@ -62,7 +62,13 @@ export type WorkspaceCommand =
       kind: "apply_stack" | "unapply_stack" | "delete_stack" | "rebase";
       stack: string;
     }
-  | { kind: "create_stack"; name: string; parent?: string }
+  | {
+      kind: "create_stack";
+      name: string;
+      parent?: string;
+      /** Retained UI selections to stage after confirmed branch creation. */
+      selections?: WorkspaceSelection[];
+    }
   | { kind: "create_workspace"; name: string }
   | {
       kind: "create_branch";

@@ -102,6 +102,17 @@ export class WorkspaceCommitDrafts {
     };
     return true;
   }
+  created(snapshot: WorkspaceSnapshot, command: WorkspaceCommand) {
+    if (command.kind !== "create_stack" || !command.selections?.length) return;
+    const name = command.name.trim();
+    const destination = snapshot.stacks.find((stack) =>
+      stack.heads.some((head) => head.name === name),
+    );
+    if (!destination) return;
+    for (const selection of command.selections)
+      this.open(snapshot, destination.id, selection);
+    return { id: destination.id, name };
+  }
   committed(snapshot: WorkspaceSnapshot, command: WorkspaceCommand) {
     const stack =
       command.kind === "create_commit"

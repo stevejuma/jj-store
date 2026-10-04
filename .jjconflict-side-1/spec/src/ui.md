@@ -358,6 +358,17 @@ retains the original commit. Branch-segment deletion and squash preserve lower
 segments; every simulated mutation supports the same preview, stale and undo
 rules. Remote tracking and PR actions remain outside the local UI scope.
 
+The Workspace canvas's existing trailing spacer MUST contain a vertically
+centered public shadcn Empty composition with a branch icon, a Drop files to
+start a branch prompt, and a Create a new branch action. Its plain surface has
+no dotted background or leading border, and its 390-pixel width matches a
+default stack column. This is trailing content rather than a registered stack
+column; the Branches page retains its blank 240-pixel spacer. The action opens
+the existing independent/dependent creation form. Exact file/folder/hunk drops
+preview creation, then stage the retained selections in an inline draft only
+after confirmed branch creation; unknown outcomes retain request identity and do
+not stage early, and source files remain until the commit is confirmed.
+
 The idle commit panel has two separated sections: a shaded drop target with a
 visible two-pixel dashed border above the Start a commit action. Starting or
 dropping changes switches to a stack-like card with a Staged header, count,
@@ -371,6 +382,11 @@ multiple drops retain their exact selections. Staging and cancelling do not
 mutate the mock snapshot. Drafts are scoped to the named combination and stack,
 survive preview cancellation and unknown outcomes, and clear only after
 confirmed commit success.
+
+The Workspace gap between the commit panel and its first branch card MUST match
+the twelve-pixel gap between branch cards, with the form both closed and open.
+Both gaps share the same application spacing token; Branches keeps its existing
+Apply/Unapply card spacing.
 
 Branch-header file lists reuse the commit-row file listing with an inset around
 the panel. Resizing action-bearing commit rows MUST retain their natural content

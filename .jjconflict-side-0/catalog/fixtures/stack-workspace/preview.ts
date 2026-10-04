@@ -61,6 +61,8 @@ export function fixtureSummary(
     case "rename_stack":
       return `Rename “${stackName(command.stack)}” to “${command.name.trim()}” in all combinations.`;
     case "create_stack":
+      if (command.selections?.length)
+        return `Create “${command.name.trim()}”${command.parent ? ` above “${stackName(command.parent)}”` : ` at “${snapshot.base}”`}, apply it to “${workspace.name}”, and stage ${command.selections.length} exact file selection(s) in its inline draft. Source changes remain until that commit is confirmed.`;
       if (command.parent)
         return `Create “${command.name.trim()}” as a dependent branch above “${stackName(command.parent)}” in the same stack. Existing branch histories and Unstaged edits remain.`;
       return `Create “${command.name.trim()}” at “${snapshot.base}” and apply it to “${workspace.name}”.`;

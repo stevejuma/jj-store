@@ -16,7 +16,7 @@ export type WorkspaceDrag =
 export const WORKSPACE_DRAG_TYPE = "application/vnd.lapis.stack-workspace+json";
 export function workspaceDrop(
   value: string,
-  target: "workspace" | "stack" | "stage" | "commit" | "working",
+  target: "workspace" | "stack" | "stage" | "commit" | "working" | "new-stack",
   id = "",
   branch?: string,
   placement?: "above" | "below",
@@ -63,6 +63,8 @@ export function workspaceDrop(
         ),
       )
     ) {
+      if (target === "new-stack")
+        return { kind: "create_stack", name: "", selections: item.selections };
       if ((target === "stage" || target === "stack") && id)
         return {
           kind: "create_commit",
@@ -90,6 +92,8 @@ export function workspaceDrop(
           item.selection.hunks.length > 0 &&
           item.selection.hunks.every((hunk) => typeof hunk === "string")))
     ) {
+      if (target === "new-stack")
+        return { kind: "create_stack", name: "", selections: [item.selection] };
       if ((target === "commit" && id) || target === "working")
         return {
           kind: "transfer",
@@ -111,7 +115,7 @@ export function workspaceDrop(
 }
 
 export type WorkspaceDropTarget = {
-  kind: "workspace" | "stack" | "stage" | "commit" | "working";
+  kind: "workspace" | "stack" | "stage" | "commit" | "working" | "new-stack";
   id?: string;
   branch?: string;
   placement?: "above" | "below";
@@ -201,11 +205,13 @@ export function workspaceDropFeedback(
   )
     return invalid("Choose a squash destination in the same stack.");
   const selections =
-    command.kind === "create_commit"
-      ? (command.selections ?? (command.selection ? [command.selection] : []))
-      : command.kind === "transfer"
-        ? (command.selections ?? [command.selection])
-        : [];
+    command.kind === "create_stack"
+      ? (command.selections ?? [])
+      : command.kind === "create_commit"
+        ? (command.selections ?? (command.selection ? [command.selection] : []))
+        : command.kind === "transfer"
+          ? (command.selections ?? [command.selection])
+          : [];
   for (const selection of selections) {
     const file = workspaceSourceFiles(snapshot, selection.source).find(
       (item) => item.path === selection.path,
@@ -225,22 +231,29 @@ export function workspaceDropFeedback(
     !activeWorkspace(snapshot).applied.includes(command.stack)
   )
     return invalid("Apply the stack before staging changes.");
+  if (
+    command.kind === "create_stack" &&
+    !snapshot.capabilities.includes("create_commit")
+  )
+    return invalid("Staging changes is unavailable in this repository.");
   const message =
-    command.kind === "create_commit"
-      ? "Stage changes for a new commit"
-      : command.kind === "transfer"
-        ? command.target === "unassigned"
-          ? "Move changes back to Unstaged"
-          : "Move changes into this commit"
-        : command.kind === "move_commit"
-          ? command.branch
-            ? `Move commit to branch ${command.branch}`
-            : "Move commit to this stack"
-          : command.kind === "reorder_commit" && "target" in command
-            ? `Place commit ${command.placement} this row`
-            : command.kind === "squash"
-              ? "Squash into this commit"
-              : "Apply this stack";
+    command.kind === "create_stack"
+      ? "Start a branch with these changes"
+      : command.kind === "create_commit"
+        ? "Stage changes for a new commit"
+        : command.kind === "transfer"
+          ? command.target === "unassigned"
+            ? "Move changes back to Unstaged"
+            : "Move changes into this commit"
+          : command.kind === "move_commit"
+            ? command.branch
+              ? `Move commit to branch ${command.branch}`
+              : "Move commit to this stack"
+            : command.kind === "reorder_commit" && "target" in command
+              ? `Place commit ${command.placement} this row`
+              : command.kind === "squash"
+                ? "Squash into this commit"
+                : "Apply this stack";
   return {
     state: "valid",
     message,

@@ -2028,6 +2028,10 @@
     {
       "local": "web/src/lib/ui/store-terminal/StoreTerminalToggle.svelte",
       "reason": "Application-owned header control for the native terminal; shares expanded-state chrome with the existing sidebar controls."
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSpacer.svelte",
+      "reason": "Application-owned composition of public Design Core Empty, Button and the existing workspace drop guide inside the public trailingSpacer snippet; not copied from an external checkout."
     }
   ],
   "desktopAppearance": {
@@ -2100,7 +2104,7 @@
     },
     {
       "local": "web/src/lib/controller/stack-workspace/drag.ts",
-      "reason": "Typed drag payloads and explicit command mapping.",
+      "reason": "Typed drag payloads and explicit command mapping. The application-owned new-stack target retains exact file/folder/hunk selections for its existing mocked creation form and confirmed inline draft.",
       "sources": [
         {
           "repository": "changeyard",
@@ -2113,7 +2117,7 @@
     },
     {
       "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte",
-      "reason": "Existing repository branch picker and full-width applied stack canvas; independent diff columns immediately after their origins and public trailing canvas space/settings. Changeyard layout adaptation maintained locally.",
+      "reason": "Existing repository branch picker and full-width applied stack canvas; independent diff columns immediately after their origins and public trailing canvas space/settings. Changeyard layout adaptation maintained locally. Public Design Core trailingSpacer content composes the application-owned shadcn Empty branch prompt within the existing spacer; no added column or reference dependency.",
       "sources": [
         {
           "repository": "changeyard",
