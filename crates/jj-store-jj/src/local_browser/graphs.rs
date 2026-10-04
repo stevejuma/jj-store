@@ -13,7 +13,7 @@ use std::path::PathBuf;
 pub(super) fn validate(
     request: &GraphRequest,
     page: &GraphWindow,
-    commits: usize,
+    _commits: usize,
     budget: &Budget,
 ) -> Result<()> {
     if page.limit == 0 || page.limit > budget.limits.max_page {
@@ -63,12 +63,7 @@ pub(super) fn validate(
                 return Err(Error::Limit);
             }
         }
-        budget.work(
-            commits
-                .max(1)
-                .checked_mul(revset.len())
-                .ok_or(Error::Limit)?,
-        )?;
+        budget.work(revset.len())?;
     }
     Ok(())
 }
@@ -99,7 +94,7 @@ pub(super) async fn describe(
 ) -> Result<Commit> {
     budget.authorize(access.as_ref()).await?;
     let id = cid(commit.id())?;
-    if !access.inventory().contains(&ObjectKey::Commit(id)) {
+    if !access.contains_commit(id).await? {
         return Err(Error::NotCommitted);
     }
     let targets = repo
@@ -285,7 +280,7 @@ pub(super) async fn run(
                     .store()
                     .get_commit_async(&id)
                     .await
-                    .map_err(|_| Error::Unavailable)?;
+                    .map_err(native::map_backend)?;
                 let node = CommitNode {
                     commit: describe(repo, &commit, access, budget).await?,
                     edges: edges
@@ -311,7 +306,7 @@ pub(super) async fn run(
             return run_operations(repo.operation(), request, page, access, budget).await;
         }
         GraphRequest::Evolution { commit } => {
-            if !access.inventory().contains(&ObjectKey::Commit(commit)) {
+            if !access.contains_commit(commit).await? {
                 return Err(Error::NotCommitted);
             }
             let starts = [b::CommitId::from_bytes(commit.as_bytes())];

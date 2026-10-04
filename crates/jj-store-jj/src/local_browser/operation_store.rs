@@ -12,6 +12,7 @@ struct Guard {
     budget: Arc<Budget>,
     allowed: Mutex<BTreeSet<o::OperationId>>,
     max_operations: usize,
+    view: Option<o::ViewId>,
 }
 impl fmt::Debug for Guard {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -54,8 +55,23 @@ impl OpStore for Guard {
         }
         Ok(value)
     }
-    async fn read_view(&self, _: &o::ViewId) -> OpStoreResult<o::View> {
-        Err(error(Error::Denied))
+    async fn read_view(&self, id: &o::ViewId) -> OpStoreResult<o::View> {
+        self.budget.authorize(&self.access).await.map_err(error)?;
+        if self.view.as_ref() != Some(id) {
+            return Err(error(Error::Denied));
+        }
+        bounded_op_file(
+            self.access.binding.metadata_path(),
+            "views",
+            &id.hex(),
+            &self.budget,
+        )
+        .map_err(error)?;
+        let view = self.source.read_view(id).await?;
+        self.budget
+            .metadata(&dto::View::try_from(&view).map_err(|_| error(Error::Corrupt))?)
+            .map_err(error)?;
+        Ok(view)
     }
     async fn write_view(&self, _: &o::View) -> OpStoreResult<o::ViewId> {
         Err(error(Error::Denied))
@@ -90,6 +106,9 @@ pub(super) async fn selected(
         budget: context.budget.clone(),
         allowed: Mutex::new(BTreeSet::from([id.clone()])),
         max_operations: context.limits.max_history_visits,
+        view: context.access.prepared.as_ref().map(|_| {
+            o::ViewId::from_bytes(context.access.operations[&operation].view_id.as_bytes())
+        }),
     });
     let data = guard
         .read_operation(&id)

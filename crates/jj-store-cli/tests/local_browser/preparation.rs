@@ -72,6 +72,31 @@ async fn local_preparation_matches_upstream_without_trees_or_source_index_writes
         .get_commit_async(view.wc_commit_ids().values().next().unwrap())
         .await
         .unwrap();
+    let expected_access: Arc<dyn q::Access> = Arc::new(ReadBinding(metadata.clone()));
+    let log = || q::GraphRequest::Log {
+        revset: "all()".into(),
+        workspace: None,
+        user_email: String::new(),
+        at_time_millis: 0,
+    };
+    let q::Response::Graph(expected_page) = q::Executor::new(1)
+        .unwrap()
+        .read(
+            expected_access,
+            operation,
+            q::Request::Graph(
+                log(),
+                q::GraphWindow {
+                    limit: 100,
+                    after: None,
+                },
+            ),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
     let tree = commit.tree_ids().as_resolved().unwrap().hex();
     fs::remove_file(
         source
@@ -123,8 +148,83 @@ async fn local_preparation_matches_upstream_without_trees_or_source_index_writes
         )
         .await
         .unwrap();
-    assert_eq!(prepared.snapshot.operation, operation);
+    assert_eq!(prepared.snapshot().operation, operation);
     assert_eq!(files(prepared.path()), expected_files);
+    let prepared = Arc::new(prepared);
+    let small = q::Executor::with_workers(
+        jj_store_jj::query::workers::Workers::new(1).unwrap(),
+        q::Limits {
+            max_history_visits: 2,
+            ..Default::default()
+        },
+    );
+    let mut after = None;
+    let mut joined = vec![];
+    loop {
+        let page = small
+            .graph_prepared(
+                access.clone(),
+                prepared.clone(),
+                log(),
+                q::GraphWindow { limit: 1, after },
+            )
+            .await
+            .unwrap();
+        assert_eq!(page.operation, operation);
+        assert!(page.stats.metadata_nodes < 12, "{:?}", page.stats);
+        let q::Nodes::Log(nodes) = page.data else {
+            panic!()
+        };
+        joined.extend(nodes);
+        after = page.next;
+        if after.is_none() {
+            break;
+        }
+    }
+    assert_eq!(q::Nodes::Log(joined), expected_page.data);
+    // All subsequent pages use the verified memory index, not mutable cache files.
+    fs::remove_dir_all(prepared.path().join("segments")).unwrap();
+    let replay = small
+        .graph_prepared(
+            access.clone(),
+            prepared.clone(),
+            log(),
+            q::GraphWindow {
+                limit: 1,
+                after: None,
+            },
+        )
+        .await
+        .unwrap();
+    let q::Nodes::Log(expected_rows) = &expected_page.data else {
+        panic!()
+    };
+    let q::Nodes::Log(replayed) = replay.data else {
+        panic!()
+    };
+    assert_eq!(replayed, expected_rows[..1]);
+    let denied = Arc::new(HeldBinding {
+        path: metadata.clone(),
+        reads: Default::default(),
+        revoked: true.into(),
+        entered: Default::default(),
+        release: Default::default(),
+    });
+    assert!(matches!(
+        small
+            .graph_prepared(
+                denied,
+                prepared.clone(),
+                log(),
+                q::GraphWindow {
+                    limit: 1,
+                    after: None
+                }
+            )
+            .await,
+        Err(q::Error::Denied)
+    ));
+
     assert!(prepared.stats.metadata_nodes > 3);
     assert_eq!(files(&metadata), before_metadata);
     assert_eq!(files(&source.path().join(".git/refs")), before_refs);
@@ -132,6 +232,41 @@ async fn local_preparation_matches_upstream_without_trees_or_source_index_writes
         fs::read(source.path().join("dirty.txt")).unwrap(),
         b"never snapshot this\n"
     );
+    // Same-size source mutation with restored mtime must invalidate retained
+    // extra metadata even though the prepared index remains available.
+    let segment = fs::read_dir(metadata.join("store/extra/heads"))
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .file_name();
+    let segment = metadata.join("store/extra").join(segment);
+    let original = fs::read(&segment).unwrap();
+    let modified = fs::metadata(&segment).unwrap().modified().unwrap();
+    let mut damaged = original.clone();
+    *damaged.last_mut().unwrap() ^= 1;
+    fs::write(&segment, damaged).unwrap();
+    fs::File::options()
+        .write(true)
+        .open(&segment)
+        .unwrap()
+        .set_times(fs::FileTimes::new().set_modified(modified))
+        .unwrap();
+    assert!(matches!(
+        small
+            .graph_prepared(
+                access.clone(),
+                prepared.clone(),
+                log(),
+                q::GraphWindow {
+                    limit: 100,
+                    after: None
+                }
+            )
+            .await,
+        Err(q::Error::Corrupt)
+    ));
+    fs::write(&segment, original).unwrap();
     let path = prepared.path().to_owned();
     drop(prepared);
     assert!(!path.exists());
@@ -209,7 +344,123 @@ async fn local_preparation_matches_upstream_without_trees_or_source_index_writes
         .await
         .unwrap();
     assert!(unimported.path().join("segments").is_dir());
+    let unimported = Arc::new(unimported);
+    executor
+        .graph_prepared(
+            Arc::new(ReadBinding(metadata.clone())),
+            unimported,
+            log(),
+            q::GraphWindow {
+                limit: 1,
+                after: None,
+            },
+        )
+        .await
+        .unwrap();
     assert_eq!(files(&metadata), missing_extras);
+    assert_eq!(files(&source.path().join(".git/refs")), before_refs);
+}
+
+#[tokio::test]
+async fn prepared_local_log_preserves_conflicts_and_filtered_native_edges() {
+    let source = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    jj(source.path(), &["git", "init", "--colocate"]);
+    fs::write(source.path().join("file"), "base\n").unwrap();
+    jj(source.path(), &["describe", "-m", "Base"]);
+    jj(source.path(), &["bookmark", "create", "base"]);
+    jj(source.path(), &["new", "-m", "Left"]);
+    fs::write(source.path().join("file"), "left\n").unwrap();
+    jj(source.path(), &["bookmark", "create", "left"]);
+    jj(source.path(), &["new", "base", "-m", "Right"]);
+    fs::write(source.path().join("file"), "right\n").unwrap();
+    jj(source.path(), &["bookmark", "create", "right"]);
+    jj(source.path(), &["new", "left", "right", "-m", "Merge"]);
+    let operation = jj(
+        source.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let metadata = source.path().join(".jj/repo");
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(metadata.clone()));
+    let executor = q::Executor::new(1).unwrap();
+    let prepared = Arc::new(
+        executor
+            .prepare_index(
+                access.clone(),
+                operation,
+                output.path().into(),
+                16 * 1024 * 1024,
+                q::preparation::Limits::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
+    // Compare with the pinned upstream cold builder. An existing incremental
+    // index can order same-timestamp sibling commits differently from a cold
+    // index. Require exact cold segment bytes as well as exact graph rows.
+    let expected = tempfile::tempdir().unwrap();
+    let settings =
+        jj_lib::settings::UserSettings::from_config(jj_lib::config::StackedConfig::with_defaults())
+            .unwrap();
+    let loader = jj_lib::repo::RepoLoader::init_from_file_system(
+        &settings,
+        &metadata,
+        &jj_lib::default_backend_factories::default_backend_factories(),
+    )
+    .unwrap();
+    let op = loader
+        .load_operation(&jj_lib::op_store::OperationId::from_bytes(
+            operation.as_bytes(),
+        ))
+        .await
+        .unwrap();
+    jj_lib::default_index::DefaultIndexStore::init(expected.path())
+        .unwrap()
+        .get_index_at_op(&op, loader.store())
+        .await
+        .unwrap();
+    let expected_files = files(expected.path());
+    assert_eq!(files(prepared.path()), expected_files);
+    for (relative, bytes) in expected_files {
+        let path = metadata.join("index").join(relative);
+        fs::create_dir_all(path.parent().unwrap()).unwrap();
+        fs::write(path, bytes).unwrap();
+    }
+    let before_refs = files(&source.path().join(".git/refs"));
+    for expression in ["all()", "description(Left)", "ancestors(bookmarks(left))"] {
+        let request = q::GraphRequest::Log {
+            revset: expression.into(),
+            workspace: Some("default".into()),
+            user_email: "browser@example.invalid".into(),
+            at_time_millis: 0,
+        };
+        let window = q::GraphWindow {
+            limit: 100,
+            after: None,
+        };
+        let q::Response::Graph(expected) = executor
+            .read(
+                access.clone(),
+                operation,
+                q::Request::Graph(request.clone(), window.clone()),
+            )
+            .await
+            .unwrap()
+        else {
+            panic!()
+        };
+        let before = files(&metadata);
+        let actual = executor
+            .graph_prepared(access.clone(), prepared.clone(), request, window)
+            .await
+            .unwrap();
+        assert_eq!(actual.data, expected.data, "{expression}");
+        assert_eq!(actual.next, expected.next);
+        assert_eq!(files(&metadata), before);
+    }
     assert_eq!(files(&source.path().join(".git/refs")), before_refs);
 }
 

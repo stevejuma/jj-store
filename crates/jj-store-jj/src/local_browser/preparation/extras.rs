@@ -15,6 +15,47 @@ struct Segment {
     size: u64,
     count: u32,
     parent: Option<String>,
+    stamp: Stamp,
+    digest: String,
+}
+#[derive(PartialEq, Eq)]
+struct Stamp {
+    size: u64,
+    modified: std::time::SystemTime,
+    #[cfg(unix)]
+    identity: [u64; 4],
+}
+impl Stamp {
+    fn precise(&self) -> bool {
+        #[cfg(unix)]
+        {
+            self.identity[3] != 0
+                && self
+                    .modified
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .is_ok_and(|time| time.subsec_nanos() != 0)
+        }
+        #[cfg(not(unix))]
+        {
+            false
+        }
+    }
+    fn read(file: &fs::File) -> Result<Self> {
+        let metadata = file.metadata().map_err(|_| Error::Incomplete)?;
+        #[cfg(unix)]
+        use std::os::unix::fs::MetadataExt as _;
+        Ok(Self {
+            size: metadata.len(),
+            modified: metadata.modified().map_err(|_| Error::Unavailable)?,
+            #[cfg(unix)]
+            identity: [
+                metadata.dev(),
+                metadata.ino(),
+                metadata.ctime() as u64,
+                metadata.ctime_nsec() as u64,
+            ],
+        })
+    }
 }
 pub(super) struct Extras {
     heads: Vec<String>,
@@ -71,6 +112,7 @@ impl Extras {
                 return Err(Error::Limit);
             }
             let mut file = fs::File::open(path).map_err(|_| Error::Incomplete)?;
+            let stamp = Stamp::read(&file)?;
             let mut digest = Blake2b512::new();
             let mut buffer = [0; 64 * 1024];
             let mut size = 0u64;
@@ -88,6 +130,9 @@ impl Extras {
                 digest.update(&buffer[..n]);
             }
             if size != info.len() || format!("{:x}", digest.finalize()) != id {
+                return Err(Error::Corrupt);
+            }
+            if Stamp::read(&file)? != stamp {
                 return Err(Error::Corrupt);
             }
             let mut word = [0; 4];
@@ -113,7 +158,7 @@ impl Extras {
                 return Err(Error::Corrupt);
             }
             segments.insert(
-                id,
+                id.clone(),
                 Segment {
                     file: Mutex::new(file),
                     index,
@@ -121,12 +166,17 @@ impl Extras {
                     size,
                     count,
                     parent,
+                    stamp,
+                    digest: id.clone(),
                 },
             );
         }
         Ok(Self { heads, segments })
     }
     pub fn change(&self, id: &[u8], budget: &Budget) -> Result<Option<b::ChangeId>> {
+        Ok(self.record(id, budget)?.change)
+    }
+    pub fn record(&self, id: &[u8], budget: &Budget) -> Result<Record> {
         let mut result: Option<Vec<u8>> = None;
         for head in &self.heads {
             let mut next = Some(head);
@@ -149,17 +199,50 @@ impl Extras {
             }
         }
         result
-            .map(|value| decode_change(&value))
+            .map(|value| decode(&value))
             .transpose()
-            .map(Option::flatten)
+            .map(Option::unwrap_or_default)
     }
 }
 impl Segment {
+    fn verify(&self, file: &mut fs::File, budget: &Budget) -> Result<()> {
+        if Stamp::read(file)? != self.stamp {
+            return Err(Error::Corrupt);
+        }
+        if !self.stamp.precise() {
+            file.seek(std::io::SeekFrom::Start(0))
+                .map_err(|_| Error::Incomplete)?;
+            let mut digest = Blake2b512::new();
+            let mut buffer = vec![0; 64 * 1024];
+            let mut size = 0u64;
+            loop {
+                budget.work(1)?;
+                let n = file.read(&mut buffer).map_err(|_| Error::Incomplete)?;
+                if n == 0 {
+                    break;
+                }
+                size += n as u64;
+                if size > self.size {
+                    return Err(Error::Corrupt);
+                }
+                budget.read_bytes(n)?;
+                digest.update(&buffer[..n]);
+            }
+            if size != self.size
+                || format!("{:x}", digest.finalize()) != self.digest
+                || Stamp::read(file)? != self.stamp
+            {
+                return Err(Error::Corrupt);
+            }
+        }
+        Ok(())
+    }
     fn get(&self, id: &[u8], budget: &Budget) -> Result<Option<Vec<u8>>> {
         if id.len() != 20 {
             return Err(Error::Invalid);
         }
         let mut file = self.file.lock().unwrap();
+        self.verify(&mut file, budget)?;
         let (mut lo, mut hi) = (0u32, self.count);
         while lo < hi {
             budget.work(1)?;
@@ -191,10 +274,12 @@ impl Segment {
                     budget.read_bytes((end - start) as usize)?;
                     let mut value = vec![0; (end - start) as usize];
                     bytes(&mut file, start, &mut value)?;
+                    self.verify(&mut file, budget)?;
                     return Ok(Some(value));
                 }
             }
         }
+        self.verify(&mut file, budget)?;
         Ok(None)
     }
 }
@@ -213,16 +298,33 @@ fn varint(input: &mut &[u8]) -> Result<u64> {
     }
     Err(Error::Corrupt)
 }
-fn decode_change(mut input: &[u8]) -> Result<Option<b::ChangeId>> {
-    let mut result = None;
+#[derive(Default)]
+pub(super) struct Record {
+    pub change: Option<b::ChangeId>,
+    pub predecessors: Vec<b::CommitId>,
+    pub trees: Vec<b::TreeId>,
+    pub tree_conflict_format: bool,
+}
+#[cfg(test)]
+fn decode_change(input: &[u8]) -> Result<Option<b::ChangeId>> {
+    Ok(decode(input)?.change)
+}
+fn decode(mut input: &[u8]) -> Result<Record> {
+    let mut result = Record::default();
     while !input.is_empty() {
         let tag = varint(&mut input)?;
-        if tag >> 3 == 0 {
+        let field = tag >> 3;
+        let wire = tag & 7;
+        if field == 0
+            || (matches!(field, 1 | 2 | 4) && wire != 2)
+            || (matches!(field, 8 | 9 | 10) && wire != 0)
+        {
             return Err(Error::Corrupt);
         }
-        let n = match tag & 7 {
+        let mut value = 0;
+        let n = match wire {
             0 => {
-                varint(&mut input)?;
+                value = varint(&mut input)?;
                 0
             }
             1 => 8,
@@ -233,11 +335,33 @@ fn decode_change(mut input: &[u8]) -> Result<Option<b::ChangeId>> {
         if n > input.len() {
             return Err(Error::Corrupt);
         }
-        if tag >> 3 == 4 {
-            if tag & 7 != 2 || (n != 0 && n != 16) {
-                return Err(Error::Corrupt);
+        match field {
+            1 | 2 => {
+                if n != 20 {
+                    return Err(Error::Corrupt);
+                }
+                if field == 1 {
+                    if result.trees.len() >= 65 {
+                        return Err(Error::Limit);
+                    }
+                    result.trees.push(b::TreeId::from_bytes(&input[..n]));
+                } else {
+                    if result.predecessors.len() >= 256 {
+                        return Err(Error::Limit);
+                    }
+                    result
+                        .predecessors
+                        .push(b::CommitId::from_bytes(&input[..n]));
+                }
             }
-            result = (n != 0).then(|| b::ChangeId::from_bytes(&input[..n]));
+            4 => {
+                if n != 0 && n != 16 {
+                    return Err(Error::Corrupt);
+                }
+                result.change = (n != 0).then(|| b::ChangeId::from_bytes(&input[..n]));
+            }
+            10 => result.tree_conflict_format = value != 0,
+            _ => {}
         }
         input = &input[n..];
     }

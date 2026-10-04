@@ -830,3 +830,11 @@ not reserve a new entry or evict unrelated pages. These quotas govern one shared
 serving namespace; independent standalone executor roots remain independently
 configured. General upstream inline writes and additional-operation rebuilding
 retain post-build size verification pending guarded immutable generations.
+
+Local prepared log reads reuse only checksum-verified immutable index data and
+build fresh operation/backend capabilities for the current binding. Index
+membership admits commit decoding without a complete source inventory. Source
+extra metadata stays read-only, with bounded seeks and change detection; no
+implicit Git import, retention-ref write or source-index fallback is permitted.
+The local profile owns resident-memory admission and source verification
+details.

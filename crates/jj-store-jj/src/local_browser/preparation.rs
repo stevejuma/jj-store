@@ -1,5 +1,7 @@
 //! Explicit construction in caller-reserved private scratch; no source index IO.
+mod commit;
 mod extras;
+mod graph;
 use super::*;
 use crate::query::{Cancellation, prepared};
 use jj_lib::{operation::Operation, view::View};
@@ -48,10 +50,14 @@ impl Limits {
 /// The caller must keep its disk reservation until this handle is dropped.
 pub struct Prepared {
     directory: tempfile::TempDir,
-    pub snapshot: Snapshot,
+    snapshot: Snapshot,
     pub stats: Stats,
+    resident: graph::Resident,
 }
 impl Prepared {
+    pub fn snapshot(&self) -> &Snapshot {
+        &self.snapshot
+    }
     /// Complete derived index directory for a future guarded cache consumer.
     pub fn path(&self) -> &Path {
         self.directory.path()
@@ -65,7 +71,7 @@ struct LocalSource {
     limits: Limits,
     git: gix::Repository,
     shallow: BTreeSet<gix::ObjectId>,
-    extras: extras::Extras,
+    extras: Arc<extras::Extras>,
 }
 impl prepared::Source for LocalSource {
     fn check(&self) -> Result<()> {
@@ -202,12 +208,13 @@ impl Executor {
         let budget = Arc::new(Budget::preparation(&limits, &cancellation));
         let cancel = cancellation.token().drop_guard();
         let capture_limits = self.limits;
+        let memory = self.prepared_memory.clone();
         let runtime = tokio::runtime::Handle::current();
         let result = tokio::task::spawn_blocking(move || {
             let _permit = permit;
             runtime.block_on(tokio::task::LocalSet::new().run_until(async {
                 budget
-                    .until(async {
+                    .until(Box::pin(async {
                         let root = std::fs::canonicalize(root).map_err(|_| Error::Unavailable)?;
                         let metadata = std::fs::canonicalize(access.metadata_path())
                             .map_err(|_| Error::Unavailable)?;
@@ -237,8 +244,10 @@ impl Executor {
                             .ok_or(Error::Invalid)?
                             .git_repo();
                         let shallow = shallow_roots(&git, &budget)?;
-                        let extras =
-                            extras::Extras::open(context.access.binding.metadata_path(), &budget)?;
+                        let extras = Arc::new(extras::Extras::open(
+                            context.access.binding.metadata_path(),
+                            &budget,
+                        )?);
                         let source = LocalSource {
                             loader,
                             git,
@@ -248,13 +257,16 @@ impl Executor {
                             budget: budget.clone(),
                             limits,
                         };
-                        prepared::build_from(
+                        Box::pin(prepared::build_from(
                             directory.path(),
                             &o::OperationId::from_bytes(operation.as_bytes()),
                             &source,
                             reserved_bytes,
-                        )
+                        ))
                         .await?;
+                        budget.authorize(&context.access).await?;
+                        let resident =
+                            Box::pin(graph::load(&directory, &source, operation, memory)).await?;
                         budget.authorize(&context.access).await?;
                         Ok(Prepared {
                             directory,
@@ -266,8 +278,9 @@ impl Executor {
                                 operation,
                             },
                             stats: budget.stats(),
+                            resident,
                         })
-                    })
+                    }))
                     .await?
             }))
         })

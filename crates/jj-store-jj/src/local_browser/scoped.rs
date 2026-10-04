@@ -16,6 +16,7 @@ pub(super) struct Guard {
     allowed: Mutex<BTreeSet<ObjectKey>>,
     commits: Mutex<BTreeSet<m::GitSha1Id>>,
     max_commits: usize,
+    prepared: Option<Arc<preparation::Prepared>>,
 }
 impl std::fmt::Debug for Guard {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -37,6 +38,7 @@ impl Guard {
             allowed: Mutex::new(pin.inventory.clone()),
             commits: Mutex::new(BTreeSet::new()),
             max_commits: limits.max_history_visits,
+            prepared: pin.prepared.clone(),
         })
     }
     pub fn contains(&self, key: ObjectKey) -> bool {
@@ -51,7 +53,11 @@ impl Guard {
         if let Some(path) = path {
             native::path(path.as_internal_file_string())?;
         }
-        if !self.contains(key) {
+        let prepared_member = match (&self.prepared, key) {
+            (Some(prepared), ObjectKey::Commit(id)) => prepared.contains(id).await?,
+            _ => false,
+        };
+        if !self.contains(key) && !prepared_member {
             return Err(Error::NotCommitted);
         }
         Ok(())
@@ -110,14 +116,20 @@ impl b::Backend for Scoped {
             }
             commits.insert(id_owned);
         }
-        bounded_git_object(
-            self.0.source.backend(),
-            id_owned,
-            gix::object::Kind::Commit,
-            &self.0.budget,
-        )
-        .map_err(error)?;
-        let commit = self.0.source.backend().read_commit(id).await?;
+        let commit = if let Some(prepared) = &self.0.prepared {
+            prepared
+                .commit(self.0.source.backend(), id, &self.0.budget)
+                .map_err(error)?
+        } else {
+            bounded_git_object(
+                self.0.source.backend(),
+                id_owned,
+                gix::object::Kind::Commit,
+                &self.0.budget,
+            )
+            .map_err(error)?;
+            self.0.source.backend().read_commit(id).await?
+        };
         let data = dto::Commit::try_from(&commit).map_err(|_| error(Error::Corrupt))?;
         self.0.budget.metadata(&data).map_err(error)?;
         self.0

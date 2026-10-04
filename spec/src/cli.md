@@ -1663,3 +1663,11 @@ index must not block construction. Verify dirty files, extra metadata, operation
 heads and Git refs remain unchanged; dropping, canceling or exhausting a
 construction must remove private output. Missing extra records must not trigger
 implicit import, and corrupt extra segments must fail before output is retained.
+
+Prepared local log acceptance MUST compare joined one-row pages and filtered
+merge graphs with pinned upstream output. Missing source trees, damaged source
+indexes and removed derived segment files cannot prevent admitted metadata-only
+pages. Current revocation and same-size source-extra mutation with restored
+mtime must fail explicitly. Resident admission retains its charge until the
+final handle drops; source metadata, refs and dirty files remain unchanged by
+reads.

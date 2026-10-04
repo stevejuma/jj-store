@@ -76711,6 +76711,106 @@ entries.
     "Native preparation limits remain unchanged by this slice. Other endpoint/card/collaboration work and Linux/native2m/10krefs/deep-page/near-capacity/cold/real-RustFS qualification remain open. Running app unchanged; no new browser capability or contract lane. E-READ-005 registry/full-capture limitations retained."
   ],
   "next": "Commit bounded local construction, then add verified prepared local graph delivery with fresh read-only source capabilities and service-owned cache/task lifecycle."
+},
+{
+  "id": "E-READ-015",
+  "tasks": [
+    "M4.1",
+    "M13.5"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change llnzqsrq",
+  "kind": "Verified prepared local log pages with fresh source capabilities",
+  "versions": "Rust1.98.1; jj-lib0.45.1; pnpm10.32.1; macOS ARM64.",
+  "formats": "Persistence and wire DTOs unchanged. Library-owned prepared local log handle retains a verified JJ format6 resident and read-only extra segment handles.",
+  "files": [
+    "crates/jj-store-cli/tests/local_browser/preparation.rs",
+    "crates/jj-store-jj/src/local_browser/graphs.rs",
+    "crates/jj-store-jj/src/local_browser/mod.rs",
+    "crates/jj-store-jj/src/local_browser/operation_store.rs",
+    "crates/jj-store-jj/src/local_browser/preparation/commit.rs",
+    "crates/jj-store-jj/src/local_browser/preparation/extras.rs",
+    "crates/jj-store-jj/src/local_browser/preparation/graph.rs",
+    "crates/jj-store-jj/src/local_browser/preparation.rs",
+    "crates/jj-store-jj/src/local_browser/scoped.rs",
+    "spec/src/cli.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-JJ-003",
+    "JST-JJ-005",
+    "JST-LOCAL-004"
+  ],
+  "tests": [
+    "crates/jj-store-cli/tests/local_browser/preparation.rs#local_preparation_matches_upstream_without_trees_or_source_index_writes",
+    "crates/jj-store-cli/tests/local_browser/preparation.rs#prepared_local_log_preserves_conflicts_and_filtered_native_edges",
+    "crates/jj-store-jj/src/local_browser/preparation/graph.rs#resident_admission_releases_only_when_owner_drops"
+  ],
+  "runs": [
+    {
+      "command": "cargo check -p jj-store-jj --all-targets --locked",
+      "result": "fail",
+      "failures": 2,
+      "note": "Initial2type errors: extra_headers.find expects string, not byte literal. Corrected; final affected check follows."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked preparation_acceptance:: -- --nocapture",
+      "result": "fail",
+      "failures": 2,
+      "note": "Two initial runs aborted on worker stack overflow. Heap buffer plus boxed async loader/construction removed stack pressure."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked preparation_acceptance:: -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final3passed: joined1-row pages without full history admission; source tree/index damage; cache-file removal; missing extras without import; fresh revocation; conflict/filtered graph reads; same-size extra mutation with restored mtime. Logs local-prepared-pages-final.log and earlier boxed/expanded/stamps runs."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --lib --locked local_browser::preparation:: -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "3passed: protobuf framing and resident charges retained until final owner release."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked -- --test-threads=2",
+      "result": "fail",
+      "failures": 1,
+      "note": "Initial14passed/1failed/1ignored. Equal-timestamp siblings differed between source incremental and cold indexes. Replaced reference with exact upstream cold segment parity plus exact ordered graph rows; no sorting/normalization."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked preparation_acceptance::prepared_local_log_preserves_conflicts_and_filtered_native_edges -- --exact --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "1passed; cold segment/link bytes identical to pinned upstream, with exact graph rows/edges for all, description and bookmark ancestry."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked -- --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final15passed/1ignored; expanded because shared local graph/budget/capability paths changed. External large-repository probe not run."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected crates/direct consumers checked. Existing linker unwind-size advisory remains in test builds."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/local-jj.md spec/src/jj-integration.md spec/src/cli.md; pnpm spec:first; pnpm check:boundaries; pnpm spec:validate; cargo fmt --all -- --check; pnpm exec prettier --check spec/src/local-jj.md spec/src/jj-integration.md spec/src/cli.md; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Protected canonical chapters,17package boundaries,167requirements,formatting and ledger consumers checked."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Prepared log reader remains library-only. Ordinary local graph HTTP dispatch still performs full preflight. Service-owned retained generation/task lifecycle and browser delivery remain next. Non-prepared upstream GitBackend calls still require implicit-import audit.",
+    "Resident estimates use twice segment bytes plus512KiB and shallow-root overhead capped at256MiB/originating executor. Source extra seeks check stamps; coarse/non-Unix proof falls back to bounded full checksums. Broad platform and peak-memory qualification pending.",
+    "Native limits, cross-profile/process quota admission, immutable generations, historical/prefix/copy/search/RPC and collaboration/card projections remain open. Linux/native2m/10krefs/deep-page/near-capacity/cold/real-RustFS qualification remains pending. No running service changed. Unchanged UI/native graph/root aggregate lanes out of scope; E-READ-005 registry/full-contract limitations retained."
+  ],
+  "next": "Commit verified prepared local logs, then wire shared quota admission, local task/cache lifecycle and HTTP/browser delivery."
 }
 ]
 ```

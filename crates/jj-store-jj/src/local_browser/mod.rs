@@ -176,16 +176,22 @@ pub enum Response {
 pub struct Executor {
     workers: crate::query::workers::Workers,
     limits: Limits,
+    prepared_memory: Arc<std::sync::atomic::AtomicU64>,
 }
 impl Executor {
     pub fn new(concurrency: usize) -> Result<Self> {
         Ok(Self {
             workers: crate::query::workers::Workers::new(concurrency)?,
             limits: Limits::default(),
+            prepared_memory: Arc::default(),
         })
     }
     pub fn with_workers(workers: crate::query::workers::Workers, limits: Limits) -> Self {
-        Self { workers, limits }
+        Self {
+            workers,
+            limits,
+            prepared_memory: Arc::default(),
+        }
     }
     pub async fn heads(&self, access: Arc<dyn Access>) -> Result<Heads> {
         self.worker(access, move |access, budget| {
@@ -408,6 +414,7 @@ struct Pin {
     operations: BTreeMap<m::OperationId, dto::Operation>,
     views: BTreeMap<m::ViewId, dto::View>,
     inventory: BTreeSet<ObjectKey>,
+    prepared: Option<Arc<preparation::Prepared>>,
 }
 impl Pin {
     fn repository(&self) -> m::RepositoryId {
@@ -416,8 +423,14 @@ impl Pin {
     fn generation(&self) -> u64 {
         self.binding.generation()
     }
-    fn inventory(&self) -> &BTreeSet<ObjectKey> {
-        &self.inventory
+    async fn contains_commit(&self, id: m::GitSha1Id) -> Result<bool> {
+        if self.inventory.contains(&ObjectKey::Commit(id)) {
+            return Ok(true);
+        }
+        match &self.prepared {
+            Some(prepared) => prepared.contains(id).await,
+            None => Ok(false),
+        }
     }
 }
 struct Context {
@@ -493,6 +506,7 @@ impl Context {
             operations: BTreeMap::new(),
             views: BTreeMap::new(),
             inventory: BTreeSet::new(),
+            prepared: None,
         };
         let mut pending = BTreeSet::from([operation]);
         let mut commits = BTreeSet::new();

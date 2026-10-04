@@ -444,9 +444,10 @@ invoking construction. Scratch and streamed output share that allowance. One
 shared preparation permit remains held through actual cancellation/worker exit.
 Construction has separate cumulative work, bytes, metadata and deadline limits;
 it never increases ordinary interactive limits. Failed output is deleted and a
-successful handle owns its disposable files. These library construction handles
-are not yet retained service caches or browser task responses; prepared graph
-delivery, cache generations and large-scale qualification remain separate gates.
+successful handle owns its disposable files. Library handles may serve prepared
+log pages but are not yet retained service caches or browser task responses;
+cache generations, task delivery and large-scale qualification remain separate
+gates.
 
 Preparation MUST NOT invoke GitBackend's implicit extra-metadata import or
 stacked-table reconciliation. It reads compact commit fields from Git and
@@ -455,6 +456,28 @@ metadata segments. Preserve imported and explicit change IDs, shallow roots and
 JJ's commit timestamp ordering. A missing extra record uses upstream's header or
 synthetic change ID without importing it. Segment disagreement, invalid framing
 or identity mismatch fails explicitly; no tree bytes are needed for indexing.
+
+A prepared local log page MUST bind the exact repository, registration
+generation and operation from construction, and create fresh authorized source
+readers for each request. It may reuse a verified immutable resident index;
+membership comes from that operation's constructed closure, never arbitrary Git
+object existence. Returned commit records preserve JJ signatures, conflict tree
+terms/labels, legacy predecessors and extra change IDs through a read-only
+decoder. No extra-metadata import, source index repair or publication is
+allowed. Interactive work/byte/row/deadline limits remain unchanged. Syntax
+admission must not multiply query length by total repository commit count.
+Retained generation and index-memory admission, task delivery and deep-page
+qualification remain explicit independent gates. Per-executor resident admission
+conservatively charges twice the index segment bytes plus retained
+metadata/shallow-root overhead, up to 256 MiB. Charges live until the last
+handle is released. Verify the complete bounded segment and fixed operation link
+before decoding; an unexpected upstream rebuild must fail through a view-denying
+capability. Prepared pages consult the memory copy and must survive damage or
+removal of their disposable index files. Source extra segments remain read-only
+retained handles checked before and after seeks for size, identity and timestamp
+changes. Coarse or unsupported timestamp proofs require bounded full checksum
+checks; changed segments fail explicitly even if mtime is restored. No earlier
+caller's credentials are retained.
 
 ## Rich history query delivery
 
