@@ -185,24 +185,29 @@
 {#if enabled}
   <section class="store-settings__section" aria-labelledby={`${id}-heading`}>
     <header><h2 id={`${id}-heading`}>Repository storage</h2></header>
-    <p class="store-settings__row-description">
-      {local
-        ? "Use this installation's server storage for code and collaboration."
-        : "Create a local Git-backed JJ folder with code and collaboration."}
-    </p>
-    <div class="store-settings__actions">
-      <Button variant="outline" disabled={busy || !manager} onclick={show}
-        >{pending
-          ? "Continue conversion"
-          : local
-            ? "Use server storage"
-            : "Use local Git-backed JJ"}</Button
-      >
-      {#if hasReport}<Button
-          variant="ghost"
-          disabled={busy || !manager}
-          onclick={() => run(true, true)}>Last conversion report</Button
-        >{/if}
+    <div class="store-settings__action-row">
+      <div>
+        <strong>{local ? "Server storage" : "Local Git-backed JJ"}</strong>
+        <p>
+          {local
+            ? "Use this installation's server storage for code and collaboration."
+            : "Create a local Git-backed JJ folder with code and collaboration."}
+        </p>
+      </div>
+      <div class="store-settings__actions">
+        <Button variant="outline" disabled={busy || !manager} onclick={show}
+          >{pending
+            ? "Continue conversion"
+            : local
+              ? "Use server storage"
+              : "Use local Git-backed JJ"}</Button
+        >
+        {#if hasReport}<Button
+            variant="ghost"
+            disabled={busy || !manager}
+            onclick={() => run(true, true)}>Last conversion report</Button
+          >{/if}
+      </div>
     </div>
   </section>
 {/if}

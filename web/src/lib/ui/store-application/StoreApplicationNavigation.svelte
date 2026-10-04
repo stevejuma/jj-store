@@ -76,20 +76,30 @@
                 {
                   id: `add-repository:${section.id}`,
                   kind: "add-repository" as const,
-                  label: "Add local repository",
-                  disabled,
-                },
-              ]
-            : []),
-          ...(section.id === "repositories" &&
-          create &&
-          controller.state.nativeRepositoryCreation
-            ? [
-                {
-                  id: "create-native-repository",
-                  kind: "add-repository" as const,
-                  label: "Create server repository",
-                  disabled: creationDisabled,
+                  label: "Add repository",
+                  disabled:
+                    disabled &&
+                    (!create ||
+                      !controller.state.nativeRepositoryCreation ||
+                      creationDisabled),
+                  children: [
+                    ...(create && controller.state.nativeRepositoryCreation
+                      ? [
+                          {
+                            id: "create-native-repository",
+                            kind: "create-server-repository" as const,
+                            label: "Add Server Repository",
+                            disabled: creationDisabled,
+                          },
+                        ]
+                      : []),
+                    {
+                      id: "add-local-repository",
+                      kind: "add-local-repository" as const,
+                      label: "Add Local Repository",
+                      disabled,
+                    },
+                  ],
                 },
               ]
             : []),
@@ -105,7 +115,7 @@
     onSelect={(item) => {
       if (item.disabled) return;
       if (item.id === "create-native-repository") create?.();
-      else if (item.kind === "add-repository") add?.();
+      else if (item.kind === "add-local-repository") add?.();
       else if (item.kind === "add-project") createProject = true;
       else onSelect(item);
     }}

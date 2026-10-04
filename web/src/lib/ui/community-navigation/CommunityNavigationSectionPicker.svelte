@@ -15,7 +15,9 @@
     onSelect: (item: CommunityNavigationItemModel) => void;
   } = $props();
   const actions = $derived(
-    section.actions ?? (section.action ? [section.action] : []),
+    (section.actions ?? (section.action ? [section.action] : [])).flatMap(
+      (action) => action.children ?? [action],
+    ),
   );
   let query = $state("");
   let input = $state<HTMLInputElement | null>(null);

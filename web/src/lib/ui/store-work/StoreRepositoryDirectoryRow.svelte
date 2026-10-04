@@ -8,6 +8,7 @@
   import type { StoreRepositorySummary } from "../../controller/contracts.js";
   import type { RepositoryDirectoryEntry } from "../../controller/projects-repositories.svelte.js";
   import StoreRepositoryActivity from "./StoreRepositoryActivity.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import {
     repositoryActivity,
     repositoryContributor,
@@ -88,7 +89,11 @@
         >{/if}
       {#if actions}{@render actions()}{/if}
     </div>{:else if actions}{@render actions()}{/if}
-  {#if entry?.error}<span class="store-projects__repository-error" role="alert"
-      >{entry.error}</span
-    >{/if}
 </article>
+<StoreNotice
+  scope="repository-directory"
+  noticeKey={`repository-summary:${repository.id}`}
+  title={`Could not load ${repository.name}`}
+  message={entry?.error}
+  pending={entry?.loading}
+/>

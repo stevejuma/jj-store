@@ -40,6 +40,12 @@
       "data-ui-component",
       "alert",
     );
+    const fields = input.closest(".community-settings__option-group")!;
+    const notice = within(dialog).getByRole("status");
+    await expect(
+      notice.getBoundingClientRect().top -
+        fields.getBoundingClientRect().bottom,
+    ).toBeGreaterThanOrEqual(12);
     await userEvent.type(input, "/workspaces/example");
     await expect(input).toHaveValue("/workspaces/example");
     await expect(

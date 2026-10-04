@@ -1,5 +1,13 @@
 # Read APIs and browser
 
+Repository entry menus, Settings-style creation/conversion forms, action rows
+and trailing shell spacing change presentation only. Local/server capability
+gates, exact pending creation/conversion identities, preflight and receipt
+recovery retain their existing contracts. Repository-summary failures use the
+session-only notification service; retrying preserves the error episode until a
+successful read clears it. Successful metadata from other repositories remains
+visible. No route, schema, storage or generated client changes are introduced.
+
 LocalTrusted installation Admin conversion uses strict versioned preview/start
 bodies and original-request status. Preview returns a bounded eligibility result
 and archive digest; start must match that digest and one explicit source

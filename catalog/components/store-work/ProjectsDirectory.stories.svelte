@@ -201,7 +201,24 @@
     await waitFor(() =>
       expect(c.getByText("Native parsing and storage services")).toBeVisible(),
     );
-    await expect(c.getByRole("alert")).toHaveTextContent("Home unavailable");
+    const body = within(document.body);
+    await expect(await body.findByRole("alert")).toHaveTextContent(
+      "Could not load UI repository",
+    );
+    await expect(body.getByRole("alert")).toHaveTextContent("Home unavailable");
+    await expect(
+      canvasElement.querySelector(".store-projects__repository-error"),
+    ).toBeNull();
+    await userEvent.click(
+      body.getByRole("button", {
+        name: "Dismiss Could not load UI repository",
+      }),
+    );
+    await userEvent.click(c.getByRole("button", { name: "Refresh projects" }));
+    await waitFor(() =>
+      expect(c.getByRole("button", { name: "Refresh projects" })).toBeEnabled(),
+    );
+    await expect(body.queryByRole("alert")).toBeNull();
     for (const layout of ["List layout", "Grid layout"]) {
       await userEvent.click(c.getByRole("radio", { name: layout }));
       const target = c.getByRole("button", {

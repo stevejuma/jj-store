@@ -3,7 +3,8 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import PlusIcon from "@lucide/svelte/icons/plus";
   import ClipboardPlusIcon from "@lucide/svelte/icons/clipboard-plus";
-  import GitBranchPlusIcon from "@lucide/svelte/icons/git-branch-plus";
+  import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
+  import ServerIcon from "@lucide/svelte/icons/server";
   import StoreLocalFolders from "../store-settings/StoreLocalFolders.svelte";
   import StoreNativeRepositoryCreate from "../store-settings/StoreNativeRepositoryCreate.svelte";
   import type { StoreController } from "../../controller/contracts.js";
@@ -48,7 +49,10 @@
           aria-label="Add"
           title="Add"
           disabled={(!onTask || disabled) &&
-            (!addRepository || repositoryDisabled)}
+            (!addRepository || repositoryDisabled) &&
+            (!createRepository ||
+              creationDisabled ||
+              !controller.state.nativeRepositoryCreation)}
         >
           <PlusIcon aria-hidden="true" />
         </Button>
@@ -58,7 +62,7 @@
       align="end"
       preventScroll={false}
       aria-label="Add to projects"
-      style="width: 14rem; max-width: calc(100vw - 2rem)"
+      style="width: 16rem; max-width: calc(100vw - 2rem)"
       onCloseAutoFocus={(event) => {
         if (openingDialog) event.preventDefault();
       }}
@@ -75,16 +79,14 @@
             disabled={repositoryDisabled}
             onSelect={() => select(addRepository)}
           >
-            <GitBranchPlusIcon data-icon="inline-start" aria-hidden="true" />Add
-            local repository
+            <FolderGitIcon data-icon="inline-start" aria-hidden="true" />Add
+            Local Repository
           </DropdownMenu.Item>{/if}
         {#if createRepository && controller.state.nativeRepositoryCreation}<DropdownMenu.Item
             disabled={creationDisabled}
             onSelect={() => select(createRepository)}
-            ><GitBranchPlusIcon
-              data-icon="inline-start"
-              aria-hidden="true"
-            />Create server repository</DropdownMenu.Item
+            ><ServerIcon data-icon="inline-start" aria-hidden="true" />Add
+            Server Repository</DropdownMenu.Item
           >{/if}
       </DropdownMenu.Group>
     </DropdownMenu.Content>

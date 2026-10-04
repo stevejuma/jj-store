@@ -8,7 +8,7 @@
     description = "",
     disabled = false,
     compact = false,
-    bordered = false,
+    bordered = true,
     hideLabel = false,
     class: className = "",
     children,

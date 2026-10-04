@@ -52,74 +52,79 @@
       ? "Select the original repository at its new location."
       : "Inspect an existing folder, then explicitly add it to this installation."}
   >
-    <Field.Group class="store-work__fields community-settings__option-group">
-      <StoreWorkField
-        label="Folder"
-        bordered
-        id={`${formId}-path`}
-        description="Enter an absolute folder path or browse for an existing Git-backed JJ repository."
-        disabled={busy || pending}
-      >
-        <ButtonGroup.Root
-          class="store-settings__folder-picker"
-          style="width: 100%"
+    <div class="store-work__form-sections">
+      <Field.Group class="store-work__fields community-settings__option-group">
+        <StoreWorkField
+          label="Folder"
+          bordered
+          id={`${formId}-path`}
+          description="Enter an absolute folder path or browse for an existing Git-backed JJ repository."
+          disabled={busy || pending}
         >
-          <Input
-            id={`${formId}-path`}
-            value={path}
-            placeholder="/path/to/repository"
+          <ButtonGroup.Root
+            class="store-settings__folder-picker"
+            style="width: 100%"
+          >
+            <Input
+              id={`${formId}-path`}
+              value={path}
+              placeholder="/path/to/repository"
+              disabled={busy || pending}
+              oninput={(event) => {
+                path = event.currentTarget.value;
+                onPathChange();
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              disabled={busy || pending}
+              onclick={onBrowse}
+            >
+              <GitBranchIcon
+                data-icon="inline-start"
+                aria-hidden="true"
+              />Browse
+            </Button>
+          </ButtonGroup.Root>
+        </StoreWorkField>
+        {#if !reconnect}<StoreWorkField
+            label="Name"
+            bordered
+            id={`${formId}-name`}
+            description="Choose the name shown in this installation."
             disabled={busy || pending}
-            oninput={(event) => {
-              path = event.currentTarget.value;
-              onPathChange();
-            }}
-          />
+          >
+            <Input
+              id={`${formId}-name`}
+              bind:value={name}
+              placeholder="Repository name"
+              disabled={busy || pending}
+            />
+          </StoreWorkField>{/if}
+        <StoreWorkField
+          label="Inspection"
+          description="Check the folder before adding it. Companion metadata is initialized only when you add the folder."
+          disabled={busy || pending}
+        >
           <Button
             type="button"
             variant="outline"
-            disabled={busy || pending}
-            onclick={onBrowse}
+            disabled={busy || pending || !path}
+            onclick={onInspect}
           >
-            <GitBranchIcon data-icon="inline-start" aria-hidden="true" />Browse
+            <FolderGitIcon data-icon="inline-start" aria-hidden="true" />Inspect
+            folder
           </Button>
-        </ButtonGroup.Root>
-      </StoreWorkField>
-      {#if !reconnect}<StoreWorkField
-          label="Name"
-          bordered
-          id={`${formId}-name`}
-          description="Choose the name shown in this installation."
-          disabled={busy || pending}
-        >
-          <Input
-            id={`${formId}-name`}
-            bind:value={name}
-            placeholder="Repository name"
-            disabled={busy || pending}
-          />
-        </StoreWorkField>{/if}
-      <StoreWorkField
-        label="Inspection"
-        description="Check the folder before adding it. Companion metadata is initialized only when you add the folder."
-        disabled={busy || pending}
-      >
-        <Button
-          type="button"
-          variant="outline"
-          disabled={busy || pending || !path}
-          onclick={onInspect}
-        >
-          <FolderGitIcon data-icon="inline-start" aria-hidden="true" />Inspect
-          folder
-        </Button>
-      </StoreWorkField>
-    </Field.Group>
-    {#if inspected}<StoreSettingsNotice>
-        Supported Git-backed JJ folder. {inspected.repository
-          ? `Repository ${inspected.repository}`
-          : "Companion metadata will be initialized on Add."}
-      </StoreSettingsNotice>{/if}
-    {#if message}<StoreSettingsNotice>{message}</StoreSettingsNotice>{/if}
+        </StoreWorkField>
+      </Field.Group>
+      {#if inspected}<StoreSettingsNotice>
+          Supported Git-backed JJ folder. {inspected.repository
+            ? `Repository ${inspected.repository}`
+            : "Companion metadata will be initialized on Add."}
+        </StoreSettingsNotice>{/if}
+      {#if message}<StoreSettingsNotice>{message}</StoreSettingsNotice>{/if}
+    </div>
     {#snippet footer()}
       <Button
         type="button"

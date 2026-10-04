@@ -53,104 +53,107 @@
 
 <Dialog.Root bind:open>
   <DialogFrame
+    preventScroll={false}
     title={report ? "Conversion report" : "Convert repository"}
     description="Create and open an independent destination. The source stays available."
     {busy}
   >
-    {#if report}
-      <StoreSettingsNotice
-        >Verified {report.collaboration.selections.length} collaboration selections
-        and {Object.keys(report.code_mappings.commits).length} code commit mappings.
-        Original project repository links keep their IDs.</StoreSettingsNotice
-      >
-      <p>Destination: {report.name}</p>
-      <p>Repository ID: {report.destination}</p>
-      <Button variant="outline" onclick={onDownload}
-        >Download mapping report</Button
-      >
-    {:else}
-      <StoreSettingsNotice
-        >Conversion uses a committed code operation and the complete supported
-        collaboration history. Working-file edits stay in the source folder.
-        Preflight checks evidence and format support before creation.</StoreSettingsNotice
-      >
-      {#if pending}<StoreSettingsNotice
-          >Recovering the original request for {pendingIntent?.name}. Closing
-          this dialog or reconnecting preserves that request.</StoreSettingsNotice
-        >{/if}
-      <Field.Group>
-        <StoreWorkField
-          id={`${id}-name`}
-          label="Destination name"
-          disabled={busy || pending}
+    <div class="store-work__form-sections">
+      {#if report}
+        <StoreSettingsNotice
+          >Verified {report.collaboration.selections.length} collaboration selections
+          and {Object.keys(report.code_mappings.commits).length} code commit mappings.
+          Original project repository links keep their IDs.</StoreSettingsNotice
         >
-          <Input
-            id={`${id}-name`}
-            bind:value={name}
-            disabled={busy || pending}
-            oninput={onEdit}
-          />
-        </StoreWorkField>
-        {#if pending ? pendingIntent?.destination_profile === "local_jj_git" : !local}
+        <p>Destination: {report.name}</p>
+        <p>Repository ID: {report.destination}</p>
+        <Button variant="outline" onclick={onDownload}
+          >Download mapping report</Button
+        >
+      {:else}
+        <StoreSettingsNotice
+          >Conversion uses a committed code operation and the complete supported
+          collaboration history. Working-file edits stay in the source folder.
+          Preflight checks evidence and format support before creation.</StoreSettingsNotice
+        >
+        {#if pending}<StoreSettingsNotice
+            >Recovering the original request for {pendingIntent?.name}. Closing
+            this dialog or reconnecting preserves that request.</StoreSettingsNotice
+          >{/if}
+        <Field.Group class="community-settings__option-group">
           <StoreWorkField
-            id={`${id}-path`}
-            label="New folder"
-            description="Enter an absolute path to a folder that does not exist."
+            id={`${id}-name`}
+            label="Destination name"
             disabled={busy || pending}
           >
             <Input
-              id={`${id}-path`}
-              bind:value={path}
+              id={`${id}-name`}
+              bind:value={name}
               disabled={busy || pending}
               oninput={onEdit}
-              placeholder="/absolute/path/new-repository"
             />
           </StoreWorkField>
-        {/if}
-        <StoreWorkField
-          id={`${id}-operation`}
-          label="Committed operation"
-          disabled={busy || pending}
-        >
-          {#if pending}<Input
-              id={`${id}-operation`}
-              value={operation}
-              readonly
-              disabled
-            />{:else}
-            <Select.Root
-              type="single"
-              bind:value={operation}
-              disabled={busy}
-              onValueChange={onEdit}
+          {#if pending ? pendingIntent?.destination_profile === "local_jj_git" : !local}
+            <StoreWorkField
+              id={`${id}-path`}
+              label="New folder"
+              description="Enter an absolute path to a folder that does not exist."
+              disabled={busy || pending}
             >
-              <Select.Trigger id={`${id}-operation`}
-                >{operation
-                  ? `${operation.slice(0, 12)}…`
-                  : "Choose an operation head"}</Select.Trigger
-              >
-              <Select.Content
-                ><Select.Group
-                  >{#each operationHeads as head}<Select.Item
-                      value={head}
-                      label={head}>{head}</Select.Item
-                    >{/each}</Select.Group
-                ></Select.Content
-              >
-            </Select.Root>
+              <Input
+                id={`${id}-path`}
+                bind:value={path}
+                disabled={busy || pending}
+                oninput={onEdit}
+                placeholder="/absolute/path/new-repository"
+              />
+            </StoreWorkField>
           {/if}
-        </StoreWorkField>
-        {#if validation}<Field.Error>{validation}</Field.Error>{/if}
-      </Field.Group>
-      {#if preview?.blocker}<StoreSettingsNotice
-          >Conversion is unavailable: {preview.blocker}</StoreSettingsNotice
-        >{:else if preview?.prepared_source}<StoreSettingsNotice
-          >Preflight passed for {preview.history_selections} collaboration selections.
-          Code identities and repository-bound record references will be mapped; project
-          links stay unchanged.</StoreSettingsNotice
-        >{/if}
-    {/if}
-    {#if progress}<StoreSettingsNotice>{progress}</StoreSettingsNotice>{/if}
+          <StoreWorkField
+            id={`${id}-operation`}
+            label="Committed operation"
+            disabled={busy || pending}
+          >
+            {#if pending}<Input
+                id={`${id}-operation`}
+                value={operation}
+                readonly
+                disabled
+              />{:else}
+              <Select.Root
+                type="single"
+                bind:value={operation}
+                disabled={busy}
+                onValueChange={onEdit}
+              >
+                <Select.Trigger id={`${id}-operation`}
+                  >{operation
+                    ? `${operation.slice(0, 12)}…`
+                    : "Choose an operation head"}</Select.Trigger
+                >
+                <Select.Content
+                  ><Select.Group
+                    >{#each operationHeads as head}<Select.Item
+                        value={head}
+                        label={head}>{head}</Select.Item
+                      >{/each}</Select.Group
+                  ></Select.Content
+                >
+              </Select.Root>
+            {/if}
+          </StoreWorkField>
+          {#if validation}<Field.Error>{validation}</Field.Error>{/if}
+        </Field.Group>
+        {#if preview?.blocker}<StoreSettingsNotice
+            >Conversion is unavailable: {preview.blocker}</StoreSettingsNotice
+          >{:else if preview?.prepared_source}<StoreSettingsNotice
+            >Preflight passed for {preview.history_selections} collaboration selections.
+            Code identities and repository-bound record references will be mapped;
+            project links stay unchanged.</StoreSettingsNotice
+          >{/if}
+      {/if}
+      {#if progress}<StoreSettingsNotice>{progress}</StoreSettingsNotice>{/if}
+    </div>
     {#snippet footer()}
       <Button variant="outline" disabled={busy} onclick={() => (open = false)}
         >Close</Button

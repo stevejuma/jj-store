@@ -15,6 +15,47 @@ const repositories = [
   { id: homeB, name: "Browser", permission: "read" as const },
 ];
 
+test("directory retries retain an error episode until successful recovery, including queued reads", async () => {
+  const targets = [
+    ...repositories,
+    { ...repositories[0]!, id: "cc".repeat(16) },
+  ];
+  let fail = true;
+  let release: (() => void) | undefined;
+  let gate = Promise.resolve();
+  const directory = createProjectsRepositories({
+    source() {
+      const source = fixtureTransport(homeA);
+      const original = source.directory!;
+      source.directory = async () => {
+        await gate;
+        if (fail) throw new Error("Summary unavailable");
+        return original();
+      };
+      return source;
+    },
+  });
+  await directory.load(targets);
+  gate = new Promise<void>((resolve) => (release = resolve));
+  const retry = directory.load(targets, true);
+  expect(directory.entries.every((entry) => entry.loading)).toBe(true);
+  expect(directory.entries.map((entry) => entry.error)).toEqual(
+    targets.map(() => "Summary unavailable"),
+  );
+  release!();
+  await retry;
+  expect(
+    directory.entries.every((entry) => entry.error === "Summary unavailable"),
+  ).toBe(true);
+  fail = false;
+  await directory.load(targets, true);
+  expect(
+    directory.entries.every(
+      (entry) => !entry.error && !entry.loading && entry.summary,
+    ),
+  ).toBe(true);
+});
+
 test("repository activity uses independent unfiltered pins and stays until explicit refresh", async () => {
   let calls = 0;
   const directory = createProjectsRepositories({

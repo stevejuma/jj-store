@@ -1,6 +1,15 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { api, sample, repo } from "./native-browser-fixture.js";
+
+async function openServerCreation(page: Page) {
+  await page
+    .getByRole("button", { name: "Add repository", exact: true })
+    .click();
+  await page
+    .getByRole("menuitem", { name: "Add Server Repository", exact: true })
+    .click();
+}
 
 test("cold native creation recovers exact intent across entrypoints and reload", async ({
   page,
@@ -51,9 +60,7 @@ test("cold native creation recovers exact intent across entrypoints and reload",
   );
   await page.goto("/");
   await page.getByRole("button", { name: "Expand left sidebar" }).click();
-  await page
-    .getByRole("button", { name: "Create server repository", exact: true })
-    .click();
+  await openServerCreation(page);
   let dialog = page.getByRole("dialog", { name: "Create server repository" });
   await expect(
     dialog.getByRole("button", { name: "Create repository", exact: true }),
@@ -86,9 +93,7 @@ test("cold native creation recovers exact intent across entrypoints and reload",
     .last()
     .click();
   await page.reload();
-  await page
-    .getByRole("button", { name: "Create server repository", exact: true })
-    .click();
+  await openServerCreation(page);
   dialog = page.getByRole("dialog", { name: "Create server repository" });
   await expect(
     dialog.getByRole("textbox", { name: "Name", exact: true }),
@@ -114,9 +119,15 @@ test("cold server creation stays unavailable without installation capability", a
   await api(page, { access: "local_trusted" });
   await page.goto("/");
   await page.getByRole("button", { name: "Expand left sidebar" }).click();
+  await page
+    .getByRole("button", { name: "Add repository", exact: true })
+    .click();
   await expect(
-    page.getByRole("button", { name: "Create server repository", exact: true }),
+    page.getByRole("menuitem", { name: "Add Server Repository", exact: true }),
   ).toHaveCount(0);
+  await expect(
+    page.getByRole("menuitem", { name: "Add Local Repository", exact: true }),
+  ).toBeVisible();
 });
 
 test("cold native creation keeps name rejection inline and permits a corrected request", async ({
@@ -152,9 +163,7 @@ test("cold native creation keeps name rejection inline and permits a corrected r
   });
   await page.goto("/");
   await page.getByRole("button", { name: "Expand left sidebar" }).click();
-  await page
-    .getByRole("button", { name: "Create server repository", exact: true })
-    .click();
+  await openServerCreation(page);
   const dialog = page.getByRole("dialog", { name: "Create server repository" });
   const name = dialog.getByRole("textbox", { name: "Name", exact: true });
   await name.fill("Taken");

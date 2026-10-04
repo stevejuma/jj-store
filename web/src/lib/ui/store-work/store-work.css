@@ -48,17 +48,6 @@
   color: var(--muted-foreground);
 }
 
-.store-work__field {
-  min-width: 0;
-}
-.store-work__control {
-  flex: 1.5;
-  min-width: 0;
-  width: 100%;
-}
-.store-work__control > select {
-  width: 100%;
-}
 .store-work__actions {
   display: flex;
   justify-content: flex-end;

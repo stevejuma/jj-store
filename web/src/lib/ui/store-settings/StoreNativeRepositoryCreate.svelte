@@ -106,32 +106,35 @@
 />
 <Dialog.Root bind:open>
   <DialogFrame
+    preventScroll={false}
     title="Create server repository"
     description="Store code and collaboration in this installation. A local working folder is optional."
     {busy}
   >
-    <Field.Group>
-      <StoreWorkField
-        id={`${id}-name`}
-        label="Name"
-        description="Choose the name shown in this installation."
-        disabled={busy || pending}
-      >
-        <Input
+    <div class="store-work__form-sections">
+      <Field.Group class="community-settings__option-group">
+        <StoreWorkField
           id={`${id}-name`}
-          bind:value={name}
+          label="Name"
+          description="Choose the name shown in this installation."
           disabled={busy || pending}
-          aria-invalid={Boolean(fieldError)}
-          aria-describedby={fieldError ? `${id}-name-error` : undefined}
-          oninput={() => (fieldError = "")}
-          placeholder="Repository name"
-        />
-        {#if fieldError}<Field.Error id={`${id}-name-error`}
-            >{fieldError}</Field.Error
-          >{/if}
-      </StoreWorkField>
-    </Field.Group>
-    {#if progress}<StoreSettingsNotice>{progress}</StoreSettingsNotice>{/if}
+        >
+          <Input
+            id={`${id}-name`}
+            bind:value={name}
+            disabled={busy || pending}
+            aria-invalid={Boolean(fieldError)}
+            aria-describedby={fieldError ? `${id}-name-error` : undefined}
+            oninput={() => (fieldError = "")}
+            placeholder="Repository name"
+          />
+          {#if fieldError}<Field.Error id={`${id}-name-error`}
+              >{fieldError}</Field.Error
+            >{/if}
+        </StoreWorkField>
+      </Field.Group>
+      {#if progress}<StoreSettingsNotice>{progress}</StoreSettingsNotice>{/if}
+    </div>
     {#snippet footer()}
       <Button variant="outline" disabled={busy} onclick={() => (open = false)}
         >Close</Button

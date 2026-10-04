@@ -21,7 +21,7 @@ test("sidebar add actions open the matching existing dialogs without writes", as
   await page.getByRole("button", { name: "Expand left sidebar" }).click();
   const before = page.url();
   const actions = page.getByRole("button", {
-    name: "Add local repository",
+    name: "Add repository",
     exact: true,
   });
   await expect(actions).toHaveCount(1);
@@ -30,13 +30,17 @@ test("sidebar add actions open the matching existing dialogs without writes", as
       .locator(".lc-community-navigation__section-header")
       .getByRole("button", { name: "Browse threads", exact: true }),
   ).toHaveCount(1);
-  for (const label of ["Add project", "Add local repository"]) {
+  for (const label of ["Add project", "Add repository"]) {
     const project = label === "Add project";
     const action = page.getByRole("button", { name: label, exact: true });
     const header = action.locator("..");
     const toggle = header.getByRole("button").first();
     const expanded = await toggle.getAttribute("aria-expanded");
     await action.click();
+    if (!project)
+      await page
+        .getByRole("menuitem", { name: "Add Local Repository", exact: true })
+        .click();
     const dialog = page.getByRole("dialog", {
       name: project ? "Create project" : "Add local JJ folder",
     });
@@ -63,7 +67,7 @@ test("sidebar add actions open the matching existing dialogs without writes", as
   await page.getByRole("button", { name: "Collapse left sidebar" }).click();
   for (const name of ["Your projects", "Repositories"]) {
     const project = name === "Your projects";
-    const label = project ? "Add project" : "Add local repository";
+    const label = project ? "Add project" : "Add Local Repository";
     const trigger = page.getByRole("button", { name, exact: true });
     await trigger.click();
     const action = page.getByRole("option", {

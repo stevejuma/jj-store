@@ -26,14 +26,17 @@ export function createProjectsRepositories(context: {
       reads.abort();
       reads = new AbortController();
       const ticket = ++generation;
-      entries = repositories.map((repository) => ({
-        repository,
-        summary:
-          entries.find((entry) => entry.repository.id === repository.id)
-            ?.summary ?? null,
-        loading: false,
-        error: "",
-      }));
+      entries = repositories.map((repository) => {
+        const previous = entries.find(
+          (entry) => entry.repository.id === repository.id,
+        );
+        return {
+          repository,
+          summary: previous?.summary ?? null,
+          loading: refresh || !previous?.summary,
+          error: previous?.error ?? "",
+        };
+      });
       let index = 0;
       await Promise.all(
         Array.from({ length: Math.min(2, entries.length) }, async () => {
@@ -43,9 +46,15 @@ export function createProjectsRepositories(context: {
             entry.loading = true;
             try {
               const source = context.source(entry.repository.id);
-              if (!source.directory) continue;
+              if (!source.directory) {
+                entry.error = "";
+                continue;
+              }
               const summary = await source.directory(reads.signal);
-              if (ticket === generation) entry.summary = summary;
+              if (ticket === generation) {
+                entry.summary = summary;
+                entry.error = "";
+              }
             } catch (cause) {
               if (ticket !== generation) return;
               if (

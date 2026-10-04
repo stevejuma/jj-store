@@ -1,5 +1,20 @@
 # Storybook presentation catalog
 
+All form-like surfaces, including repository creation and conversion dialogs,
+default to the existing Settings composition: bordered rounded field groups,
+labels and descriptions on the left, bordered controls on the right, and
+responsive stacking. Settings commands use bordered action rows with description
+on the left and buttons on the right. Contextual notices have clearance from
+adjacent field groups. `web/src/lib/ui/AGENTS.md` records this presentation
+rule. The Repositories sidebar has one Git-add menu with icon-led Add Server
+Repository and Add Local Repository choices. Repository add menus retain enough
+width for these labels on one line within supported viewports, bounded by the
+viewport. Capability and pending-request gates remain independent. The shell's
+trailing header controls retain a small gap. Repository-summary read failures
+use scoped, deduplicated condition toasts without adding red error rows.
+Retrying retains the current error episode until successful recovery, so a
+dismissed unchanged error cannot replay during refresh or navigation.
+
 Repository General settings expose Admin-only format conversion when this
 installation has native storage. Preflight explains an independent destination,
 committed code and supported collaboration history; local export requires a new

@@ -32,6 +32,11 @@
   play={async ({ canvasElement }) => {
     const c = within(await dialog(canvasElement));
     const name = c.getByRole("textbox", { name: "Destination name" });
+    await expect(getComputedStyle(name).borderTopWidth).toBe("1px");
+    await expect(
+      getComputedStyle(name.closest(".community-settings__option-group")!)
+        .borderTopWidth,
+    ).toBe("1px");
     await userEvent.clear(name);
     await userEvent.type(name, "Server copy");
     await expect(name).toHaveValue("Server copy");
@@ -53,6 +58,10 @@
       c.getByRole("textbox", { name: "New folder" }),
       "/new/folder",
     );
+    await expect(
+      getComputedStyle(c.getByRole("textbox", { name: "New folder" }))
+        .borderTopWidth,
+    ).toBe("1px");
     await expect(
       c.getByRole("button", { name: "Check conversion" }),
     ).toBeEnabled();

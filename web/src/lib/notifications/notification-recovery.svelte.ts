@@ -7,6 +7,29 @@ export function observeNotificationRecovery(
   context: NotificationContext,
   controller: () => StoreController,
 ) {
+  const directoryKeys = new Set<string>();
+  $effect(() => {
+    const entries = (controller().projects?.repositories.entries ?? []).map(
+      (entry) => ({
+        key: `repository-summary:${entry.repository.id}`,
+        error: entry.error,
+        loading: entry.loading,
+      }),
+    );
+    const current = new Set(entries.map((entry) => entry.key));
+    untrack(() => {
+      for (const key of directoryKeys)
+        if (!current.has(key))
+          context.service.resolve("repository-directory", key);
+      directoryKeys.clear();
+      for (const entry of entries) {
+        const key = entry.key;
+        directoryKeys.add(key);
+        if (!entry.error && !entry.loading)
+          context.service.resolve("repository-directory", key);
+      }
+    });
+  });
   $effect(() => {
     const state = controller().capture?.state;
     const pending = state?.busy || !!state?.pending;

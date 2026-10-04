@@ -15,6 +15,8 @@ export interface CommunityNavigationItemModel {
     | "channel"
     | "repository"
     | "add-repository"
+    | "add-local-repository"
+    | "create-server-repository"
     | "add-project"
     | "project"
     | "more-projects"

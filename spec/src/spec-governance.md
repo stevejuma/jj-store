@@ -1,5 +1,10 @@
 # Specification governance
 
+The UI package guide at `web/src/lib/ui/AGENTS.md` makes the existing Settings
+form and command-row composition the default for form-like surfaces, including
+dialogs. Presentation changes retain focused interaction, geometry and
+accessibility evidence; visual baselines remain separately approved.
+
 Main integration of repository creation and conversion preserves both parents'
 capture and desktop work, milestone gates and original evidence entries.
 Additive document conflicts require no product-code replacement. The combined

@@ -60,18 +60,6 @@
   > time.community-relative-time {
   justify-self: end;
 }
-.store-projects__repository-error {
-  width: 100%;
-  flex: 0 0 100%;
-  grid-column: 1 / -1;
-  color: var(--destructive);
-  font-size: var(--community-text-secondary);
-}
-.store-projects__repository-directory-row:has(
-  .store-projects__repository-error
-) {
-  flex-wrap: wrap;
-}
 .community-projects__list[data-layout="grid"]
   .store-projects__repository-directory-row
   .community-projects__row-meta.store-projects__repository-metadata {
