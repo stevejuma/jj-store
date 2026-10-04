@@ -69,10 +69,12 @@ resident lookup also reuses separately prepared historical operations without
 copying another slot. Cold historical operations now build under separate full
 reservations and retain verified data only. Graph evaluation releases the
 namespace after completing the immutable primary generation, including filtered
-queries. Cold primary construction still holds the namespace through its build;
-separately staged primary admission and local operation/deep lookup remain
-pending. These focused deliveries do not complete the later combined
-qualification gate.
+queries. Missing primary generations now use private reserved staging and
+reacquire the namespace only for complete-generation installation. Loading an
+existing disk index without a resident projection still retains its lease and
+remains delivery work, alongside local operation/deep lookup and
+lightweight/root-bound metadata reads. These focused deliveries do not complete
+the later combined qualification gate.
 
 ### Deferred complete qualification
 

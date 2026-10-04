@@ -390,9 +390,10 @@ Cold staging shares these byte allowances. These are admission and retention
 limits, not measured throughput guarantees. Least-recently-used slots are
 evicted under the namespace lock; failed builds and abandoned staging
 directories are disposable. Symlinks are never followed. A canceled worker
-retains its lock and permit until it exits. Responses report whether their cache
-was built, reused or rebuilt and retained cache counts/bytes. These are local
-diagnostics, never publication positions. Transient build disk use, native
+retains its independent reservation lock and worker permit until it exits;
+construction does not retain the namespace lease. Responses report whether their
+cache was built, reused or rebuilt and retained cache counts/bytes. These are
+local diagnostics, never publication positions. Transient build disk use, native
 synchronous CPU work and production query memory still need resource
 qualification before shared HTTP exposure.
 
@@ -813,9 +814,16 @@ it MUST NOT substitute for checksumming disk bytes that will be decoded.
 Privately constructed additional-operation indexes require full checksums and
 exact operation-link/segment linkage before decoding. Process restart, eviction
 and loss of the resident require full checksums before loading. Current
-authorization and loaded-index hard limits still apply. Primary construction
-still holds the namespace lock; separately staged primary admission remains
-delivery work.
+authorization and loaded-index hard limits still apply. Missing primary
+generations use separately reserved staging, then reacquire the namespace to
+install the complete generation. Hash private output before reacquisition; where
+precise file stamps are supported, installation rechecks the sealed file set and
+stamps without hashing large segments under the lock. Changed sealed files fail
+closed; other platforms retain full verification. Reacquisition retains
+cancellation, work and deadline checks; it cannot overwrite another generation
+admitted during construction. Existing verified disk-index loads without a
+resident still retain the namespace through decoding and projection
+construction; separating this recovery path remains delivery work.
 
 Native disk-index loads and local prepared generation loads MUST reserve
 resident allocation before upstream decoding. Account twice the complete bounded
@@ -902,9 +910,14 @@ explicit preparation uses the same scratch when its writable allowance is below
 reserve streamed segment/link bytes before writing and admit the actual receipt
 bytes before creating its temporary file. A small cache does not require a
 fixed1MiB receipt reservation or a database's minimum allocation. Framing and
-resident decoding remain admitted before JJ allocation. Primary constructors
-still hold the namespace lock until completing their generation. Additional
-operations use private reservations and never extend the retained primary slot.
+resident decoding remain admitted before JJ allocation. Primary and additional
+constructors release the namespace after registering their full reservation.
+Primary completion reopens it, replaces its own reservation with admitted final
+bytes and selects a currently free slot. A concurrently installed generation for
+the same exact pin may be replaced with this independently verified generation;
+other pins remain governed by ordinary LRU quotas. Failed or canceled workers
+retain the reservation until actual cleanup. Additional operations retain
+verified data only and never extend the primary slot.
 
 Local prepared log reads reuse only checksum-verified immutable index data and
 build fresh operation/backend capabilities for the current binding. Index

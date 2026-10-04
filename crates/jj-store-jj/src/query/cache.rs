@@ -101,17 +101,38 @@ pub(super) struct Cache {
 pub(super) struct Entry {
     pub path: PathBuf,
     pub initialize: bool,
-    slot: usize,
+    slot: Option<usize>,
     state: State,
-    staging: Option<tempfile::TempDir>,
+    staging: Option<Reservation>,
+    admission_evicted: usize,
+    sealed: Option<resident::Verification>,
     retain: bool,
     pub resident: Option<Arc<resident::Saved>>,
 }
 impl Drop for Entry {
     fn drop(&mut self) {
-        if !self.retain && self.staging.is_none() {
+        if !self.retain {
+            // Also remove an installed-but-unretained slot if final admission
+            // fails after rename. The reservation still protects private paths.
             let _ = remove(&self.path);
         }
+    }
+}
+impl Entry {
+    pub fn seal(&mut self, policy: Policy, budget: &Budget) -> Result<()> {
+        if self.staging.is_some() {
+            // Hash large private generations before reacquiring the namespace.
+            let files = inventory(&self.path, policy, budget, true)?.0;
+            self.sealed = match resident::Verification::capture(&self.path, files, budget) {
+                Ok(verification) => Some(verification),
+                Err(_) => {
+                    // Platforms lacking precise file metadata retain full checks.
+                    budget.check()?;
+                    None
+                }
+            };
+        }
+        Ok(())
     }
 }
 fn plain_dir(path: &Path) -> Result<()> {
@@ -237,6 +258,19 @@ pub(super) fn construction_bytes(path: &Path, policy: Policy, budget: &Budget) -
         .ok_or(Error::Limit)
 }
 impl Cache {
+    pub async fn reopen(root: &Path, policy: Policy, budget: &Budget) -> Result<Self> {
+        loop {
+            budget.work(1)?;
+            match Self::open(root, policy, budget) {
+                Err(Error::Busy) => {
+                    budget
+                        .until(tokio::time::sleep(Duration::from_millis(2)))
+                        .await?;
+                }
+                result => return result,
+            }
+        }
+    }
     pub fn can_use_reserved_fallback(&self) -> bool {
         // A live reservation may temporarily remove a valid disk generation.
         // Detected cache damage must still take its normal recovery path.
@@ -424,9 +458,11 @@ impl Cache {
                 return Ok(Entry {
                     path,
                     initialize: false,
-                    slot: slot.id,
+                    slot: Some(slot.id),
                     state: State::Reused,
                     staging: None,
+                    admission_evicted: 0,
+                    sealed: None,
                     retain: false,
                     resident,
                 });
@@ -434,24 +470,21 @@ impl Cache {
             remove(&path)?;
             self.damaged = true;
         }
-        self.reserve(access.repository(), self.policy.max_entry_bytes)?;
-        let slot = (0..self.policy.max_entries)
-            .find(|id| !self.slots.iter().any(|s| s.id == *id))
-            .ok_or(Error::Limit)?;
-        let staging = tempfile::Builder::new()
-            .prefix(".building-")
-            .tempdir_in(&self.root)
-            .map_err(|_| Error::Unavailable)?;
+        let staging = Reservation::within(self, access.repository())?;
+        let path = staging.path().join("generation");
+        fs::create_dir(&path).map_err(|_| Error::Unavailable)?;
         Ok(Entry {
-            path: staging.path().to_owned(),
+            path,
             initialize: true,
-            slot,
+            slot: None,
             state: if self.damaged {
                 State::Rebuilt
             } else {
                 State::Built
             },
             staging: Some(staging),
+            admission_evicted: self.evicted,
+            sealed: None,
             retain: false,
             resident: None,
         })
@@ -472,7 +505,13 @@ impl Cache {
             {
                 resident.verification.files.clone()
             }
-            _ => inventory(&entry.path, self.policy, budget, true)?.0,
+            _ => match &entry.sealed {
+                Some(sealed) if sealed.matches(&entry.path, self.policy, budget)? => {
+                    sealed.files.clone()
+                }
+                Some(_) => return Err(Error::Unavailable),
+                None => inventory(&entry.path, self.policy, budget, true)?.0,
+            },
         };
         let used = self
             .slots
@@ -495,9 +534,13 @@ impl Cache {
             return Err(Error::Limit);
         }
         let (_, prior_size) = inventory(&entry.path, self.policy, budget, false)?;
+        let allowance = entry
+            .staging
+            .as_ref()
+            .map_or(self.policy.max_entry_bytes, Reservation::bytes);
         if prior_size
             .checked_add(bytes.len() as u64)
-            .is_none_or(|n| n > self.policy.max_entry_bytes)
+            .is_none_or(|n| n > allowance)
         {
             return Err(Error::Limit);
         }
@@ -516,15 +559,35 @@ impl Cache {
             .persist(entry.path.join(RECEIPT))
             .map_err(|_| Error::Unavailable)?;
         let (_, size) = inventory(&entry.path, self.policy, budget, false)?;
+        if let Some(staging) = &entry.staging {
+            let own = self
+                .reservations
+                .iter()
+                .position(|r| r.path == staging.path())
+                .ok_or(Error::Unavailable)?;
+            // Installation and quota conversion are one namespace-locked step.
+            self.reservations.remove(own);
+            if let Some(duplicate) = self.slots.iter().position(|slot| {
+                slot.receipt.repository == access.repository()
+                    && slot.receipt.epoch == access.epoch()
+                    && slot.receipt.operation == access.operation()
+            }) {
+                self.evict_at(duplicate)?;
+            }
+        }
         self.reserve(access.repository(), size)?;
         if entry.staging.is_some() {
-            let path = self.path(entry.slot);
+            let slot = (0..self.policy.max_entries)
+                .find(|id| !self.slots.iter().any(|s| s.id == *id))
+                .ok_or(Error::Limit)?;
+            let path = self.path(slot);
             fs::rename(&entry.path, &path).map_err(|_| Error::Unavailable)?;
             entry.path = path;
+            entry.slot = Some(slot);
         }
         let report = Report {
             state: entry.state,
-            evicted: self.evicted,
+            evicted: self.evicted + entry.admission_evicted,
             retained_entries: self.slots.len() + self.reservations.len() + 1,
             retained_bytes: self.bytes() + size,
         };
@@ -550,7 +613,7 @@ impl Cache {
             saved.update_report(report.clone());
         }
         self.slots.push(Slot {
-            id: entry.slot,
+            id: entry.slot.ok_or(Error::Unavailable)?,
             receipt,
             bytes: size,
         });
@@ -562,6 +625,48 @@ impl Cache {
 #[cfg(all(test, unix))]
 mod tests {
     use super::*;
+
+    #[test]
+    fn unretained_primary_cleanup_removes_private_and_renamed_generations() {
+        for renamed in [false, true] {
+            let root = tempfile::tempdir().unwrap();
+            let repository = m::RepositoryId::new([41; 16]);
+            let policy = Policy {
+                max_entry_bytes: 64 * 1024,
+                ..Default::default()
+            };
+            let reservation = Reservation::acquire(root.path(), repository, policy).unwrap();
+            let reserved = reservation.path().to_owned();
+            let generation = reserved.join("generation");
+            fs::create_dir(&generation).unwrap();
+            fs::write(generation.join("data"), b"not retained").unwrap();
+            let path = if renamed {
+                let path = reserved.parent().unwrap().join("slot-0");
+                fs::rename(&generation, &path).unwrap();
+                path
+            } else {
+                generation
+            };
+            drop(Entry {
+                path: path.clone(),
+                initialize: true,
+                slot: None,
+                state: State::Built,
+                staging: Some(reservation),
+                admission_evicted: 0,
+                sealed: None,
+                retain: false,
+                resident: None,
+            });
+            assert!(!path.exists());
+            assert!(!reserved.exists());
+            let budget = Budget::new(Limits::default()).unwrap();
+            assert_eq!(
+                Cache::open(root.path(), policy, &budget).unwrap().bytes(),
+                0
+            );
+        }
+    }
 
     #[test]
     fn default_cache_allows_large_preparation_with_a_bounded_total() {

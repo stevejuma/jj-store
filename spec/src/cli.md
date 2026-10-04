@@ -459,6 +459,14 @@ verification rejects wrong operation links, checksums and unexpected files
 before the allocating JJ decoder. These focused regressions do not qualify
 scale, production memory or combined HTTP/browser behavior.
 
+Cold primary preparation fixtures pause a native commit read and require an
+independent unprepared graph to complete in the same namespace. Completion
+preserves that other generation and installs into a currently available slot;
+active reservations stay charged until cleanup. Final installation contention
+must retain request deadlines and cancellation, and must never replace another
+live reservation or publish native state. Failed admission after a staging
+rename must also remove the unretained slot and release its reservation.
+
 HTTP acceptance compares owned DTOs at exact operations, including binary media
 and error boundaries. Existing authenticated native-service fixtures retain the
 future shared-deployment branch; the local release serves protected HTTP V1 on

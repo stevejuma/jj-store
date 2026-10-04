@@ -777,6 +777,188 @@ async fn private_historical_construction_reserves_quota_without_blocking_warm_gr
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn cold_primary_construction_releases_namespace_and_preserves_other_generations() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            for same_operation in [false, true] {
+                let f = Fixture::new().await;
+                let local = tempfile::tempdir().unwrap();
+                let work = tempfile::tempdir().unwrap();
+                let root = tempfile::tempdir().unwrap();
+                let (old, a) = initial(&f, local.path(), work.path()).await;
+                let (repo, b) = child(&old, &a, "later").await;
+                let selected = if same_operation {
+                    oid(repo.op_id())
+                } else {
+                    oid(old.op_id())
+                };
+                let older = pin(&f, selected).await;
+                let newer = pin(&f, oid(repo.op_id())).await;
+                let before = f.session.snapshot().await.unwrap().manifest().clone();
+                let exec = executor(root.path(), q::Limits::default());
+                let separate = executor(root.path(), q::Limits::default());
+                let gate = Arc::new(OneShotCommitRead {
+                    gate: HeldCommitRead {
+                        inner: f.store.clone(),
+                        target: m::ObjectKey::Commit(cid(b.id())).storage_path(REPO),
+                        entered: Default::default(),
+                        release: Default::default(),
+                    },
+                    entered_once: Default::default(),
+                });
+                let pending = {
+                    let exec = exec.clone();
+                    let gate = gate.clone();
+                    let newer = newer.clone();
+                    tokio::spawn(async move {
+                        exec.prepare_index(gate, newer, q::Cancellation::default())
+                            .await
+                    })
+                };
+                let entered =
+                    tokio::time::timeout(Duration::from_secs(2), gate.gate.entered.notified())
+                        .await;
+                let cold = older
+                    .graph(&separate, log("all() ~ root()"), page(100))
+                    .await;
+                gate.gate.release.notify_one();
+                let prepared = pending.await.unwrap();
+                entered.unwrap();
+                let prepared = prepared.unwrap();
+                assert_eq!(
+                    prepared.cache.retained_entries,
+                    if same_operation { 1 } else { 2 }
+                );
+                let cold = cold.expect("cold primary construction held the shared namespace");
+                assert_eq!(cold.operation, selected);
+                assert!(cold.cache.retained_bytes >= q::cache::Policy::default().max_entry_bytes);
+                let old_path = cache_slot(root.path(), selected);
+                let new_path = cache_slot(root.path(), oid(repo.op_id()));
+                if same_operation {
+                    assert_eq!(old_path, new_path);
+                } else {
+                    assert_ne!(
+                        old_path, new_path,
+                        "completion overwrote another generation"
+                    );
+                }
+                assert_eq!(
+                    older
+                        .graph(&separate, log("all() ~ root()"), page(100))
+                        .await
+                        .unwrap()
+                        .data,
+                    cold.data
+                );
+                assert_eq!(
+                    newer
+                        .graph(&exec, log("all()"), page(100))
+                        .await
+                        .unwrap()
+                        .operation,
+                    oid(repo.op_id())
+                );
+                assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
+                assert!(fs::read_dir(cache_root(root.path())).unwrap().all(|e| {
+                    !e.unwrap()
+                        .file_name()
+                        .to_string_lossy()
+                        .starts_with(".reserved-")
+                }));
+            }
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn canceled_primary_installation_releases_its_reservation_while_namespace_is_busy() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let exec = executor(root.path(), q::Limits::default());
+            let cancellation = q::Cancellation::default();
+            let gate = Arc::new(OneShotCommitRead {
+                gate: HeldCommitRead {
+                    inner: f.store.clone(),
+                    target: m::ObjectKey::Commit(cid(a.id())).storage_path(REPO),
+                    entered: Default::default(),
+                    release: Default::default(),
+                },
+                entered_once: Default::default(),
+            });
+            let mut pending = {
+                let exec = exec.clone();
+                let gate = gate.clone();
+                let read = read.clone();
+                let cancellation = cancellation.clone();
+                tokio::spawn(async move { exec.prepare_index(gate, read, cancellation).await })
+            };
+            let entered =
+                tokio::time::timeout(Duration::from_secs(2), gate.gate.entered.notified()).await;
+            let lock = fs::OpenOptions::new()
+                .read(true)
+                .write(true)
+                .open(cache_root(root.path()).join("lock"))
+                .unwrap();
+            let acquired = lock.try_lock();
+            gate.gate.release.notify_one();
+            let constructed = tokio::time::timeout(Duration::from_secs(2), async {
+                loop {
+                    let found = fs::read_dir(cache_root(root.path())).unwrap().any(|e| {
+                        e.unwrap()
+                            .path()
+                            .join("generation/index/op_links")
+                            .join(repo.op_id().hex())
+                            .is_file()
+                    });
+                    if found {
+                        break;
+                    }
+                    if pending.is_finished() {
+                        break;
+                    }
+                    tokio::time::sleep(Duration::from_millis(2)).await;
+                }
+            })
+            .await;
+            let held_until_canceled = !pending.is_finished();
+            cancellation.cancel();
+            let canceled = tokio::time::timeout(Duration::from_secs(2), &mut pending).await;
+            let prompt = canceled.is_ok();
+            // Release the foreign lock before any assertion, including timeout.
+            drop(lock);
+            let result = match canceled {
+                Ok(result) => result.unwrap(),
+                Err(_) => pending.await.unwrap(),
+            };
+            entered.unwrap();
+            acquired.unwrap();
+            constructed.unwrap();
+            assert!(prompt, "cancellation waited for the foreign namespace lock");
+            assert!(
+                held_until_canceled,
+                "construction completed while installation was locked"
+            );
+            assert_eq!(result.unwrap_err(), q::Error::Canceled);
+            assert!(fs::read_dir(cache_root(root.path())).unwrap().all(|e| {
+                !e.unwrap()
+                    .file_name()
+                    .to_string_lossy()
+                    .starts_with(".reserved-")
+            }));
+            read.prepare_index(&exec, q::Cancellation::default())
+                .await
+                .unwrap();
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn warm_filtered_graph_starts_while_another_operation_is_preparing() {
     tokio::task::LocalSet::new()
         .run_until(async {

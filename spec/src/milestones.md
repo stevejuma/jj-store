@@ -78807,6 +78807,132 @@ entries.
       "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#graph_cache_recovery_rechecks_permission_and_serializes_independent_executors",
       "crates/jj-store-jj/src/query/cache/constructed.rs#private_output_requires_exact_operation_link_and_segment_checksum"
     ]
+  },
+  {
+    "id": "E-READ-035",
+    "tasks": ["M4.1", "M13.4"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change lltppqpv",
+    "kind": "Separate native missing-primary construction from namespace admission and install complete immutable generations against current slots",
+    "versions": "Rust1.98.1; jj-lib0.45.1; macOS ARM64.",
+    "formats": "No authority, repository, storage or public wire changes. Reservation version1 bytes unchanged; its filesystem path is process-only bookkeeping. Primary staging shares the native/local full-allowance quota, independent reservation lock and actual worker lifetime. Private output verifies fixed default index type, operation linkage and segment hash before framing/decoder admission. Primary completion seals hashes outside the namespace where precise stamps are supported, reacquires with current budget/cancellation, converts only its own reservation to final bytes and selects a currently free slot.",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-jj/src/query/cache.rs",
+      "crates/jj-store-jj/src/query/cache/constructed.rs",
+      "crates/jj-store-jj/src/query/cache/reservation.rs",
+      "crates/jj-store-jj/src/query/index.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md"
+    ],
+    "requirements": ["JST-JJ-003", "JST-JJ-005", "JST-CLI-003"],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cold_primary_construction_releases_namespace_and_preserves_other_generations -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Paused primary construction holds namespace and independent unprepared graph returns Busy. native-primary-lock-before-035.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cold_primary_construction_releases_namespace_and_preserves_other_generations -- --nocapture (initial implementation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Unavailable because the private verifier originally expected only segment/link output while primary initialization also owns its fixed default type file. Added explicit primary type validation; historical two-file validation stays strict. native-primary-lock-after-035.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cold_primary_construction_releases_namespace_and_preserves_other_generations -- --nocapture (type corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/4.05s, including separate-pin installation and concurrent same-pin replacement without duplicate slots. native-primary-lock-after-035-final.log. Final sealed-generation and cancellation consumer checks follow separately."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cold_primary_construction_releases_namespace_and_preserves_other_generations -- --nocapture (sealed generation)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/1.73s. native-primary-lock-after-035-complete.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cold_primary_construction_releases_namespace_and_preserves_other_generations -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/1.18s. Independent cold readers retain charged reservation, distinct pins survive completion, same-pin replacement retains one slot and manifest unchanged. native-primary-final-035.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked canceled_primary_installation_releases_its_reservation_while_namespace_is_busy -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.82s. Foreign namespace lock remains held while canceled completed construction exits promptly, removes its private reservation, and permits retry. native-primary-cancel-035.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance:: -- --nocapture (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "35pass/1fail/11.15s. Old synchronous-cancellation fixture expected namespace Busy. Corrected to require charged full reservation and held shared graph/content permit while independent work proceeds; release gate before assertions. One background gate panic followed that failed assertion. native-graph-consumers-035.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::cache:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "7pass/0.20s. Shared reservations, stale recovery, hash/link/type verification, repository totals, nonhash warm reuse and unretained cleanup both before and after rename. native-cache-units-035.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines_bound_waits -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.27s. Synchronous canceled worker retains shared graph/content capacity and charged reservation until exit; independent namespace read succeeds, then cleanup/retry and deadline rejection remain checked. native-primary-worker-cancel-035.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance:: -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "36pass/13.60s. Complete directly affected graph/cache/preparation/predicate/decorator/current authorization/identity/cancellation family. native-graph-consumers-035-final.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::memory:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "5pass/0.01s. Shared native/local frame admission, LRU and last-reader lifetime retained. native-memory-units-035.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check; pnpm exec prettier --write spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md docs/implementation-plan.md spec/src/milestones.md; pnpm spec:first; pnpm spec:validate; pnpm check:progress; jj --no-pager diff --git plus added-line whitespace validation",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused formatting,8protected files/4chapters,5validators/23chapters/172requirements,138task bookkeeping and JJ whitespace pass. native-rust-format-035-final.log/native-doc-format-035-final.log/native-spec-first-035-final.log/native-spec-035-final.log/native-progress-035-final.log/native-diff-035.patch. Root aggregates/full contracts/UI builds/scale fixtures/comprehensive qualification not run. Inherited oversized __eh_frame linker warning remains."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked preparation_acceptance:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass/1intentionally ignored large-repository smoke/8.40s. Shared reservation/writer local consumers preserve source binding, cancellation, conflict and pinned upstream semantics. native-local-reservation-consumers-035.log. Large fixture stays deferred."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-cli --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected JJ/CLI libraries and direct transitive consumers compile/2m36s. native-packages-035.log. Public wire schemas unchanged; focused generation not required."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Existing verified primary disk indexes without a retained resident still load/decode/build their projection under the namespace lease. Separating this recovery path remains native performance delivery work; this slice covers missing-generation construction.",
+      "Lightweight repository summaries, local WorkStore/root reuse, local operation/prefix/comparison/deep/predecessor/copy/search and paged native RPC remain implementation work.",
+      "Complete combined integration/contracts, Linux/native scale fixtures, isolated RSS/release latency, cold production browser, restart/revocation/publication/fault/real-RustFS, registry-only and Help/source-review qualification remain deferred. No milestone promotion. Main/original dev services/Linux source/visual baselines unchanged."
+    ],
+    "next": "Continue high-priority lightweight/root-bound metadata reads, remaining native disk-projection recovery and local operation/filtered/deep lookup performance delivery; complete combined qualification later.",
+    "scope": "Keep missing native primary construction outside the namespace while preserving shared quotas, immutable generations, current authorization and canceled-worker reservation cleanup.",
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#cold_primary_construction_releases_namespace_and_preserves_other_generations",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#canceled_primary_installation_releases_its_reservation_while_namespace_is_busy",
+      "crates/jj-store-jj/src/query/cache/constructed.rs#private_output_requires_exact_operation_link_and_segment_checksum",
+      "crates/jj-store-jj/src/query/cache/reservation.rs#reservations_share_native_repository_total_and_lifetime_admission",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines_bound_waits",
+      "crates/jj-store-jj/src/query/cache.rs#unretained_primary_cleanup_removes_private_and_renamed_generations"
+    ]
   }
 ]
 ```

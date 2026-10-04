@@ -764,4 +764,12 @@ evaluation. Missing historical indexes build in separately reserved scratch and
 retain verified data only, with fresh operation/view capabilities and shared
 process allocation leases. Cache namespace locks protect admission and receipt
 installation; historical construction and graph evaluation run outside them.
-Cold primary construction still holds its lock and remains delivery work.
+Construction of missing primary generations owns a private full reservation and
+builds without the namespace lease. Completion reacquires admission, converts
+only its own reservation to final bytes and chooses a free slot from current
+namespace state. This derived-cache transition adds no publication or repository
+authority.
+
+Existing verified disk-index loads without a retained projection still hold
+their admission lease while decoding and deriving that projection. Separating
+this recovery path remains performance delivery work.

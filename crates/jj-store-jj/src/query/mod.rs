@@ -554,12 +554,14 @@ impl GraphExecutor {
             budget.complete_output(&result)?;
             return Ok(result);
         }
-        let mut cache = cache.ok_or(Error::Unavailable)?;
-        let entry = entry.ok_or(Error::Unavailable)?;
+        let mut entry = entry.ok_or(Error::Unavailable)?;
         if matches!(work, Work::Graph(..)) {
             budget.start_index(entry.initialize)?;
         }
         if entry.initialize {
+            // The independent reservation protects this private generation.
+            // Native construction and projection do not hold the namespace.
+            drop(cache.take());
             stores
                 .initialize_cache(&settings, &entry.path)
                 .await
@@ -583,6 +585,12 @@ impl GraphExecutor {
             .map_err(|_| Error::Unavailable)?;
         budget.check()?;
         budget.finish_initial_index();
+        budget.authorize(access.as_ref()).await?;
+        entry.seal(self.cache_policy, &budget)?;
+        let mut cache = match cache {
+            Some(cache) => cache,
+            None => cache::Cache::reopen(&self.root, self.cache_policy, &budget).await?,
+        };
         if matches!(&work, Work::Graph(..)) {
             // Publish only the complete primary generation, then release the
             // namespace. Additional operations use private reserved construction

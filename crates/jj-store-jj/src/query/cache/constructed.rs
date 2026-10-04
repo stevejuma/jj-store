@@ -7,7 +7,33 @@ pub(in crate::query) fn verify(
     policy: Policy,
     budget: &Budget,
 ) -> Result<()> {
-    let (files, _) = inventory(path, policy, budget, true)?;
+    verify_files(path, operation, policy, budget, false)
+}
+pub(in crate::query) fn verify_primary(
+    path: &Path,
+    operation: m::OperationId,
+    policy: Policy,
+    budget: &Budget,
+) -> Result<()> {
+    verify_files(path, operation, policy, budget, true)
+}
+fn verify_files(
+    path: &Path,
+    operation: m::OperationId,
+    policy: Policy,
+    budget: &Budget,
+    primary: bool,
+) -> Result<()> {
+    let (mut files, _) = inventory(path, policy, budget, true)?;
+    if primary {
+        let expected = b"default";
+        if files.remove("type").is_none_or(|file| {
+            file.bytes != expected.len() as u64
+                || file.digest != format!("{:x}", Blake2b512::digest(expected))
+        }) {
+            return Err(Error::Unavailable);
+        }
+    }
     if files.len() != 2 {
         return Err(Error::Unavailable);
     }
@@ -65,5 +91,11 @@ mod tests {
         fs::write(&link_path, &link).unwrap();
         fs::write(root.path().join("unexpected"), b"extra output").unwrap();
         assert!(verify(root.path(), operation, policy, &budget).is_err());
+        fs::remove_file(root.path().join("unexpected")).unwrap();
+        fs::write(root.path().join("type"), b"default").unwrap();
+        assert!(verify(root.path(), operation, policy, &budget).is_err());
+        verify_primary(root.path(), operation, policy, &budget).unwrap();
+        fs::write(root.path().join("type"), b"invalid").unwrap();
+        assert!(verify_primary(root.path(), operation, policy, &budget).is_err());
     }
 }

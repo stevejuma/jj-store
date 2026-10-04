@@ -116,6 +116,13 @@ impl IndexStore for GuardedIndexStore {
             )
             .await
             .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            cache::constructed::verify_primary(
+                &self.path,
+                selected,
+                self.cache_policy,
+                &self.budget,
+            )
+            .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
         }
         let data = {
             self.budget
