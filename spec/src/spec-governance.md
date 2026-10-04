@@ -98,6 +98,7 @@ formats.
 | Protected area                                                                                                                                                                                                                                 | Required chapter     |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | `^(?:catalog/\|\.storybook/\|docs/catalog\.md$)`                                                                                                                                                                                               | `ui.md`              |
+| `^(?:docs/(?:site/\|maintenance/)\|mkdocs\.yml$\|pyproject\.toml$\|uv\.lock$)`                                                                                                                                                                 | `documentation.md`   |
 | `^desktop/`                                                                                                                                                                                                                                    | `desktop.md`         |
 | `^rustfmt\.toml$`                                                                                                                                                                                                                              | `spec-governance.md` |
 | `^crates/jj-store-model/`                                                                                                                                                                                                                      | `identity.md`        |
@@ -906,3 +907,11 @@ current authority, Search Apply/restart and Settings interaction/accessibility
 lanes remain separate from real-storage migration, native desktop packaging and
 full milestone qualification. No storage relocation, access transition, launch
 reconfiguration or backup execution is introduced by read-only inventory.
+
+## Application documentation governance
+
+JST-DOC-001 through JST-DOC-004 govern the independently published manual,
+source-derived references, review coverage, and locally embedded Help. The
+change map additionally maps `docs/site/`, `docs/maintenance/`, `mkdocs.yml`,
+`pyproject.toml` and `uv.lock` to `documentation.md`. Documentation checks are
+part of normal checks and generated Help is part of browser/desktop packaging.

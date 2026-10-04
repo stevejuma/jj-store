@@ -149,6 +149,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015 |
+| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -71795,6 +71796,260 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Narrow Sources repository filter and direct shared status-command presentation only. All412 prior evidence objects/raw JSON prefix preserved; milestone statuses unchanged, prior E-M18-013 broad diagnostics/deferred work retained. No claim of a full repository, Rust or multi-harness release pass.",
   "next": "Use repository/harness/status filters in main and preview Sources settings; filters describe loaded coverage and do not enroll or authorize sources."
+},
+{
+  "id": "E-DOC-001",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change omkyroqp",
+  "kind": "Application manual and bundled Help delivery",
+  "versions": "JJ 0.45.1; Rust 1.98.1/macOS ARM64; MkDocs 1.6.1; Material 9.6.23; Mermaid 11.12.0; Playwright 1.63.0; Python 3.14.3. Browser source acceptance uses the repository existing local Design Core hook; registry-only acceptance is separate.",
+  "formats": "Server config 2 unchanged; browser manifest 1 unchanged; independent Help manifest 1 with 512 files, 8 MiB/file and 32 MiB total; no repository format or API changes.",
+  "files": [
+    ".gitignore",
+    ".prettierignore",
+    "README.md",
+    "crates/jj-store-cli/examples/docs_reference.rs",
+    "crates/jj-store-http/src/assets.rs",
+    "crates/jj-store-http/src/assets/help.rs",
+    "crates/jj-store-http/tests/assets.rs",
+    "crates/jj-store-server/tests/configuration.rs",
+    "docs/cli/server-config.md",
+    "docs/cli/work.md",
+    "docs/maintenance/arguments.json",
+    "docs/maintenance/coverage.json",
+    "docs/site/assets/embed.js",
+    "docs/site/assets/manual.css",
+    "docs/site/cli/index.md",
+    "docs/site/cli/jj-agent.md",
+    "docs/site/cli/jj-project.md",
+    "docs/site/cli/jj-replica.md",
+    "docs/site/cli/jj-review.md",
+    "docs/site/cli/jj-store-client.md",
+    "docs/site/cli/jj-store.md",
+    "docs/site/cli/jj-sync.md",
+    "docs/site/cli/jj-task.md",
+    "docs/site/concepts/collaboration.md",
+    "docs/site/concepts/glossary.md",
+    "docs/site/concepts/projects.md",
+    "docs/site/concepts/repositories.md",
+    "docs/site/concepts/snapshots.md",
+    "docs/site/contributing/development.md",
+    "docs/site/contributing/documentation.md",
+    "docs/site/faq.md",
+    "docs/site/getting-started/contexts.md",
+    "docs/site/getting-started/install.md",
+    "docs/site/getting-started/local.md",
+    "docs/site/getting-started/native.md",
+    "docs/site/getting-started/work.md",
+    "docs/site/guides/browsing.md",
+    "docs/site/guides/capture.md",
+    "docs/site/guides/editing.md",
+    "docs/site/guides/git.md",
+    "docs/site/guides/reviews.md",
+    "docs/site/guides/search.md",
+    "docs/site/guides/settings.md",
+    "docs/site/guides/sync.md",
+    "docs/site/guides/troubleshooting.md",
+    "docs/site/guides/work.md",
+    "docs/site/index.md",
+    "docs/site/reference/api/administration.md",
+    "docs/site/reference/api/code.md",
+    "docs/site/reference/api/collaboration.md",
+    "docs/site/reference/api/installation.md",
+    "docs/site/reference/api/search.md",
+    "docs/site/reference/api/types.md",
+    "docs/site/reference/api/work.md",
+    "docs/site/reference/capabilities.md",
+    "docs/site/reference/configuration.md",
+    "docs/site/reference/defaults.md",
+    "docs/site/reference/environment.md",
+    "docs/site/reference/http-api.md",
+    "docs/site/reference/queries.md",
+    "docs/site/reference/security.md",
+    "docs/site/reference/transport.md",
+    "docs/site/technical/architecture.md",
+    "docs/site/technical/capture.md",
+    "docs/site/technical/lifecycle.md",
+    "docs/site/technical/local.md",
+    "docs/site/technical/publication.md",
+    "docs/site/technical/reads.md",
+    "docs/site/technical/replication.md",
+    "docs/site/technical/storage.md",
+    "mkdocs.yml",
+    "package.json",
+    "pnpm-lock.yaml",
+    "pyproject.toml",
+    "scripts/check-progress.mjs",
+    "scripts/desktop-resources.mjs",
+    "scripts/desktop.mjs",
+    "scripts/docs.mjs",
+    "scripts/docs.test.mjs",
+    "scripts/docs/assets.mjs",
+    "scripts/docs/diagrams.mjs",
+    "scripts/docs/hooks.py",
+    "scripts/docs/references.mjs",
+    "scripts/docs/review.mjs",
+    "scripts/docs/site.py",
+    "spec-validator.config.mjs",
+    "spec/src/SUMMARY.md",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/desktop.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/security.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "uv.lock",
+    "web/playwright.docs.config.ts",
+    "web/src/lib/ui/store-application/StoreApplication.svelte",
+    "web/src/lib/ui/store-application/StoreConnection.svelte",
+    "web/src/lib/ui/store-help/StoreHelp.svelte",
+    "web/src/lib/ui/store-help/help-session.ts",
+    "web/tests/browser/help.spec.ts",
+    "web/tests/help-session.test.ts",
+    "web/vite.config.ts"
+  ],
+  "tests": [
+    "crates/jj-store-http/tests/assets.rs#documentation_routes_are_preloaded_and_have_scoped_framing_policy",
+    "crates/jj-store-http/tests/assets.rs#documentation_manifest_rejects_invalid_closures",
+    "crates/jj-store-http/tests/assets.rs#documentation_rejects_leaf_directory_and_root_symlinks",
+    "crates/jj-store-server/tests/configuration.rs#documentation_configuration_examples_use_production_validation"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; jj workspace add ../jj-store-documentation --name documentation -r @- -m \"Build documentation site and embedded Help\"; inspect JJ docs source/rendered site and owning specifications",
+      "result": "pass",
+      "failures": 0,
+      "note": "Isolated workspace parent b11c0486. Original working files preserved. Markdown/Material and generated full-screen Help follow the user-selected plan; no publication."
+    },
+    {
+      "command": "node --test scripts/web-manifest.test.mjs; pnpm docs:check (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "2 existing asset-generator tests passed; documentation command absent before implementation."
+    },
+    {
+      "command": "pnpm install --frozen-lockfile; pnpm install --ignore-pnpmfile --frozen-lockfile; pnpm web:check (registry baseline)",
+      "result": "fail",
+      "failures": 24,
+      "note": "Existing hook checksum mismatch blocked first install; registry-only install passed. Registry Design Core 0.2.0 lacks APIs already used on parent: 23 Svelte errors in 9 files. No release claim. Logs retained in ignored .scratch."
+    },
+    {
+      "command": "pnpm add -D --save-exact --ignore-pnpmfile mermaid@11.12.0; uv lock; uv sync --locked; pnpm install --no-frozen-lockfile --lockfile=false",
+      "result": "pass",
+      "failures": 0,
+      "note": "Locked documentation dependencies; restored existing source dependency validation setup without changing registry package ranges or installing/publishing global tools."
+    },
+    {
+      "command": "cargo run --quiet --locked -p jj-store-cli --example docs_reference (initial/fixed environment); pnpm docs:generate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial vectorscan build could not find C++ headers. All succeeding Cargo commands use DEVELOPER_DIR=/Library/Developer/CommandLineTools and CXXFLAGS=-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1. 126 visible command nodes generated without opening a repository; defaults come from Rust. Hidden hooks excluded. Reviewed argument descriptions fill absent parser prose and fail on new undocumented arguments."
+    },
+    {
+      "command": "pnpm docs:check (strict build iterations)",
+      "result": "fail",
+      "failures": 5,
+      "note": "Caught Mermaid semicolon parsing, shared-help stale browser link, unprocessed 404 inline scripts, unneeded source maps and oversized highlighted API page. Fixed build hooks and split generated API by domain; original asset limits retained."
+    },
+    {
+      "command": "pnpm docs:check (after repairs)",
+      "result": "pass",
+      "failures": 0,
+      "note": "9 network-disabled Mermaid renders; strict MkDocs navigation plus HTML/CSS link closure and anchor validation. 117 assets, approximately 12.7 MB. Generated refs match the parser and checked-in OpenAPI; source fingerprints acknowledge mapped crate/web/desktop sources and reject uncovered new crates."
+    },
+    {
+      "command": "pnpm docs:test; node --test scripts/web-manifest.test.mjs; pnpm exec tsx --test web/tests/help-session.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "6 documentation regressions, 1 production configuration-parser test, 2 existing manifest tests and 1 frame-message boundary test pass. Negative fixtures cover stale prose review, new sources, generated reference drift, missing/unsafe/symlink assets, broken anchors, inline scripts, external runtime files and preflight-safe desktop staging."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-http --test assets",
+      "result": "pass",
+      "failures": 0,
+      "note": "Complete directly affected HTTP asset suite: 9 passed. Application frame-ancestors remains none; only Help permits same-origin framing; exact preloaded routes enforce independent bounds."
+    },
+    {
+      "command": "pnpm web:check (initial new middleware)",
+      "result": "fail",
+      "failures": 10,
+      "note": "10 JS check errors in new Vite middleware were repaired with typed JSDoc and narrowing; final web diagnostics zero."
+    },
+    {
+      "command": "pnpm docs:test:browser (initial three Chromium runs)",
+      "result": "fail",
+      "failures": 4,
+      "note": "Initial 2 test failures used input fill without Material key events and headings without their permalink marker. Next 1 selected a hidden search link after dismissing search. Third 1 exposed actual theme accessibility defects: unnamed search dialog, footer contrast, color-only links. Fixed explicit reader markup/styles and realistic keyboard interactions; original search, dismissal, draft and Axe assertions retained."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "All 49 governance tests passed. Escalated because source mapping and progress evidence policy changed; docs and new build configuration now require same-change evidence."
+    },
+    {
+      "command": "pnpm docs:test:browser (first Chromium/WebKit run); pnpm exec playwright install webkit",
+      "result": "fail",
+      "failures": 5,
+      "note": "3 Chromium passes; sidebar Shift+Tab escaped focus (1 failure), and the newly pinned WebKit runtime was absent (4 launch failures). Installed WebKit 26.6/v2359 and implemented explicit same-origin iframe focus boundaries."
+    },
+    {
+      "command": "pnpm docs:test:browser (keyboard-boundary run)",
+      "result": "fail",
+      "failures": 2,
+      "note": "All 4 Chromium scenarios and 2 WebKit scenarios passed. WebKit mouse clicks do not automatically focus a button: 2 focus-return assertions exposed capture of the previously active element instead of the actual trigger. Fixed by retaining the click currentTarget; kept the assertions."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final source setup: zero web/catalog errors or warnings, 182 catalog modules, 931 architecture modules, valid UI ownership. No visual baselines changed."
+    },
+    {
+      "command": "Vite createServer smoke with generated /help assets on isolated 7482, then server.close()",
+      "result": "pass",
+      "failures": 0,
+      "note": "117 admitted assets served at /help/ with scoped same-origin framing. An earlier check raced the concurrently cleaning site build and returned unavailable; sequential rerun after generation passed. No backend or fixture startup."
+    },
+    {
+      "command": "Changed-file Prettier check; targeted rustfmt --check; uv run --locked python -m py_compile scripts/docs/hooks.py scripts/docs/site.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatting and Python syntax pass; the historical milestone JSON prefix is not reformatted. Root aggregate check/test/build/spec:check and unrelated Rust/browser/storage lanes remain out of scope."
+    },
+    {
+      "command": "pnpm spec:validate; pnpm spec:first; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "23 canonical chapters, 171 requirements; 95 protected files and 9 canonical chapters; 137 tasks. This ledger tracks partial release qualification without promoting other milestones."
+    },
+    {
+      "command": "pnpm docs:test:browser (final after WebKit trigger fix)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh production web/docs build followed by 8/8 cold Chromium/WebKit tests under the real Rust asset router. Covers network-denied external requests, local search, SVG load, deep links, same-origin navigation, desktop-width and 390px layout, Escape/search dismissal, iframe Tab boundary, actual-trigger focus return, unsent draft and route/scroll retention, missing docs retry, no-repository installation sidebar and Axe. No native packaged WKWebView claim."
+    },
+    {
+      "command": "pnpm docs:generate; node --test scripts/docs.test.mjs (final reference aliases); node scripts/docs.mjs stage",
+      "result": "pass",
+      "failures": 0,
+      "note": "Visible argument aliases also derive from Clap; no parser command executes. Six tooling regressions remain passing. Final strict site generation and delivery stage retain the complete manual and reference closure. Docs source and specification remain separate."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Registry-resolved Design Core qualification remains blocked by pre-existing published API gaps.",
+    "Packaged native WKWebView/DMG cold acceptance and visual baselines are not claimed by browser-engine and resource-staging tests."
+  ],
+  "scope": "Manual and asset delivery only. Shared HTTP/desktop asset loaders justify complete direct asset/packaging regressions. Existing repository identity/storage/API protocols remain unchanged. No full workspace suite, new real-RustFS qualification, fixture reset, installed CLI replacement, package publication or hosting.",
+  "next": "Review the manual and Help in the documentation workspace. Keep M19 Partial until registry-only foundational-package and packaged native-host release qualification are completed; no hosting/publication requested."
 }
 ]
 

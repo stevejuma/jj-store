@@ -662,3 +662,10 @@ Capture retains startup-resolved harness directories beside the cached Copy
 observation, so admitted settings reads expose configuration without directory
 inspection. The four Agents settings tabs share one mounted observation owner
 and retain request drafts and exact pending commands across tab changes.
+
+## Bundled application documentation
+
+The application manual is a separate MkDocs Material build from Markdown. Its
+static HTML, search and build-time Mermaid SVGs are bundled for browser and
+desktop Help. Documentation generators consume command/schema definitions and do
+not become repository authority.

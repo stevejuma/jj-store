@@ -93,3 +93,10 @@ token is removed on host exit. Platform interop is confined to documented
 NSWindow and retained view hierarchy borrows within Tauri's main-thread callback
 or a live notification's retained window object; no platform pointer escapes or
 becomes authority.
+
+## Bundled application documentation
+
+JST-DOC-003 bundles the generated manual with paired desktop resources. Staging
+validates its independent allowlist and preserves nested documentation assets.
+Help fills the application viewport beneath native window controls, using the
+existing external-link policy.

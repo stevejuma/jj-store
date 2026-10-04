@@ -1,0 +1,56 @@
+# Local companion metadata
+
+An explicitly registered Git-backed JJ folder can host application collaboration
+without converting its code into native object storage. Its existing JJ
+operation log and Git backend remain the code authority. An owned companion ref
+selects immutable application metadata.
+
+```mermaid
+flowchart TB
+  Folder[Registered JJ folder] --> Code[Existing JJ code and operation history]
+  Folder --> Ref[Owned companion Git ref]
+  Ref --> Commit[Selected metadata commit]
+  Commit --> Previous[Previous metadata commit]
+  Commit --> Domains[Work, Agent, Review and Thread descriptors]
+  Domains --> Blobs[Canonical records as retained Git blobs]
+  Commit --> Evidence[Explicitly retained evidence closure]
+```
+
+## Selection and retention
+
+The companion ref lives outside ordinary branches, tags and upstream `refs/jj`.
+Its commits retain predecessors through parent edges. Domain records and
+evidence have real Git tree entries; object IDs in JSON alone are insufficient
+to retain data through Git garbage collection. Readers audit the selected
+inventory and closure. Staged blobs remain unavailable until the ref selects
+their candidate.
+
+Local commands use expected-old-value ref publication, stable request identities
+and durable receipts. A race re-evaluates typed intent against the current
+selection. A publication error may remain unknown until receipt lookup resolves
+it. Updating one metadata domain preserves the others.
+
+## Code and metadata are separate
+
+A filesystem Save writes the selected working file. It does not snapshot code or
+publish companion metadata. Likewise, creating a task does not commit the linked
+code. Ordinary JJ code undo does not rewind collaboration. There is no atomic
+transaction spanning the JJ operation log and companion ref.
+
+Read-only commands do not initialize absent metadata or actor state. Local
+project, task and supported collaboration CLI commands can run without the
+native service. Browser access still requires the application server to admit
+the device folder and supply authorized, pinned reads.
+
+## Portability and limits
+
+Device paths, access grants, credentials and active execution journals are not
+portable repository records. Ordinary Git/JJ network commands do not transfer
+the owned companion ref. Do not assume a normal code push backs up
+collaboration.
+
+Repository-wide review persistence is available. Portable code/agent anchors,
+indexed local search, recoverable browser code commands, conversion and broader
+cold full-flow qualification have separate gates. The UI and CLI must reject
+unsupported targets rather than manufacture a repository anchor. Consult the
+[current capability table](../reference/capabilities.md) for the exact boundary.

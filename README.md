@@ -88,3 +88,17 @@ browser serving remains pending. Restart adds these variants to an existing
 fixture and changes only untouched sample links and task targets. Edited records
 and retired links remain intact. Projects and Repositories sidebar disclosure
 choices persist in browser local storage.
+
+## Application documentation
+
+The [application manual](docs/site/index.md) explains repository contexts,
+workflows, configuration, app-specific CLI/API reference and architecture. It is
+separate from the canonical [specification](spec/src/SUMMARY.md). Run
+`pnpm docs:serve` for a local Material for MkDocs preview at
+`http://127.0.0.1:7480/`. `pnpm web:build` bundles that same self-contained
+site; **Help** opens it in a full-screen overlay in the browser and desktop app.
+
+`pnpm docs:check` validates generated references, acknowledged source coverage,
+Mermaid, navigation and links. Read
+[documentation maintenance](docs/site/contributing/documentation.md) for the
+locked build dependencies, review acknowledgements and focused tests.

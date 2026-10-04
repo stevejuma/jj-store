@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreHelp from "../store-help/StoreHelp.svelte";
   import StoreApplicationPlaceholder from "./StoreApplicationPlaceholder.svelte";
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
@@ -206,7 +207,7 @@
         onSelect={select}
         onSearch={() => (searchOpen = true)}
       >
-        {#snippet footer()}<CommunityProfileMenu
+        {#snippet footer()}<StoreHelp {compact} /><CommunityProfileMenu
             member={controller.state.member}
             authenticated={controller.state.authenticated}
             {compact}

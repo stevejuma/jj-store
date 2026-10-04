@@ -342,3 +342,12 @@ no credentials, query, fragment or path suffix. Configuration checks make no API
 requests and open no transcripts. Pending worker composition fails before
 listener, spool or rule-cache creation. Disabled default configuration preserves
 existing serving behavior and serialized setup output.
+
+## Bundled application documentation
+
+JST-DOC-004 permits same-origin framed documentation only. Documentation has its
+own static CSP, including inline styles required by the pinned Material theme,
+with only same-origin scripts/workers/connections and no eval. Executable inline
+scripts are externalized during generation. Application inline restrictions and
+API authorization are unchanged; Help contains no repository data or
+credentials.

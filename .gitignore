@@ -24,3 +24,9 @@
 /desktop/resources/
 
 /desktop/gen/
+
+/.venv/
+/__pycache__/
+/scripts/docs/__pycache__/
+/docs/site/assets/generated/
+/docs/build/

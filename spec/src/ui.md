@@ -1900,3 +1900,11 @@ outcomes retain the original intent until a fresh observation resolves them.
 Operational failures use the shared notification service. Field validation and
 restart guidance may remain contextual. Remote and non-Admin connections do not
 expose editing. No credential or arbitrary TOML editing is introduced.
+
+## Bundled application documentation
+
+JST-DOC-003 adds installation-level Help above the profile footer. The
+full-viewport modal embeds the bundled site, traps focus, handles Escape from
+its same-origin frame and returns focus on dismissal. The underlying application
+remains mounted, preserving route, drafts and pending commands. Docs page/scroll
+state remains session-only.

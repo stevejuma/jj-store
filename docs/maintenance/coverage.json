@@ -1,0 +1,154 @@
+[
+  {
+    "id": "publication",
+    "sources": [
+      "crates/jj-store-wal/src",
+      "crates/jj-store-object/src",
+      "crates/jj-store-model/src"
+    ],
+    "pages": [
+      "docs/site/technical/publication.md",
+      "docs/site/technical/storage.md",
+      "docs/site/concepts/snapshots.md"
+    ],
+    "review": {
+      "fingerprint": "8510cccc4d7a9cd96d9574b25819481bb3b05b1216750e83dd19682306cdbf84",
+      "reason": "Initial publication manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "collaboration",
+    "sources": [
+      "crates/jj-agent/src",
+      "crates/jj-collab/src",
+      "crates/jj-review/src",
+      "crates/jj-work/src"
+    ],
+    "pages": [
+      "docs/site/guides/work.md",
+      "docs/site/guides/reviews.md",
+      "docs/site/concepts/collaboration.md"
+    ],
+    "review": {
+      "fingerprint": "8599482ac715f2c8a504e36f8a6c1939aabfeda254fed15eb4c132f0300d552d",
+      "reason": "Initial collaboration manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "capture",
+    "sources": ["crates/jj-store-capture/src"],
+    "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
+    "review": {
+      "fingerprint": "09f0e790e9fb0392bdf7be1c9cd87271de0c34ede205182e28e03974e3cf2439",
+      "reason": "Initial capture manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "local",
+    "sources": ["crates/jj-store-jj/src"],
+    "pages": ["docs/site/technical/local.md", "docs/site/guides/git.md"],
+    "review": {
+      "fingerprint": "975a231c2b3c5809fa14894ac6c1f3355d5d5fae16163299a74b034cd9e84c97",
+      "reason": "Initial local manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "services",
+    "sources": ["crates/jj-store-service/src", "crates/jj-store-rpc/src"],
+    "pages": [
+      "docs/site/technical/architecture.md",
+      "docs/site/reference/transport.md"
+    ],
+    "review": {
+      "fingerprint": "7eefa93e9bb7010d92d0a145ddbe6444fb4212c2b2691fc30f78f1598fc920be",
+      "reason": "Initial services manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "search",
+    "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
+    "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
+    "review": {
+      "fingerprint": "d0853ca22543d19bdfc7ffb4921059e3301a76730f6f1dfb83746a7091b971cb",
+      "reason": "Initial search manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "replication",
+    "sources": ["crates/jj-store-replication/src"],
+    "pages": ["docs/site/technical/replication.md", "docs/site/guides/sync.md"],
+    "review": {
+      "fingerprint": "1be4dc1693d106f6387bb8812c8b998ffae097aa5e4acdc04e88f0ccf7eb3ed2",
+      "reason": "Initial replication manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "configuration",
+    "sources": ["crates/jj-store-server/src"],
+    "pages": [
+      "docs/site/reference/configuration.md",
+      "docs/site/reference/environment.md",
+      "docs/site/technical/lifecycle.md"
+    ],
+    "review": {
+      "fingerprint": "1acd22e5636579022c06ba511439f377b6879a9deec97c364fd2dc7e1446d0d9",
+      "reason": "Initial configuration manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "cli",
+    "sources": ["crates/jj-store-cli/src"],
+    "pages": [
+      "docs/site/cli/index.md",
+      "docs/site/getting-started/install.md",
+      "docs/site/getting-started/work.md"
+    ],
+    "review": {
+      "fingerprint": "935370a0c55cdc1c4b0c216aa8b02abe1b8131a06b71dd5337b253169e47cdc6",
+      "reason": "Initial cli manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "http",
+    "sources": ["crates/jj-store-http/src"],
+    "pages": [
+      "docs/site/reference/transport.md",
+      "docs/site/reference/security.md"
+    ],
+    "review": {
+      "reason": "Reviewed independent documentation admission, unchanged application CSP boundaries, preloaded directory routes, symlink rejection and bounded file closure against lifecycle and security pages.",
+      "fingerprint": "395b9d8ae920c665badfb0181aef8cd0689e1c2b7bd40754b9e6090e2ff1a21a"
+    }
+  },
+  {
+    "id": "application",
+    "sources": ["web/src"],
+    "pages": [
+      "docs/site/guides/browsing.md",
+      "docs/site/guides/editing.md",
+      "docs/site/guides/settings.md"
+    ],
+    "review": {
+      "reason": "Reviewed Help keyboard boundaries and capture of the actual trigger for focus restoration: WebKit mouse clicks do not necessarily focus buttons. Verified retained drafts and current-page behavior against lifecycle and browsing guidance.",
+      "fingerprint": "ca8d2bbabe4206b4fbac18377311c26edd6529379a0e7e47933d70e8593e22b1"
+    }
+  },
+  {
+    "id": "desktop",
+    "sources": ["desktop/src"],
+    "pages": ["docs/site/technical/lifecycle.md"],
+    "review": {
+      "fingerprint": "21bb70fb4f937e567702c2585ca136c1a3903513444069e6782a6ec9f96da2ad",
+      "reason": "Initial desktop manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "contracts",
+    "sources": ["schemas/openapi.json", "docs/cli"],
+    "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
+    "review": {
+      "reason": "Reviewed shared CLI long-help corrections for LocalTrusted search and separate local WorkStore publication; generated references retain the exact OpenAPI contract.",
+      "fingerprint": "d9ae9b00904d3df559bfa746f9089f7e75f8cfa548251f71aea8345fa5005094"
+    }
+  }
+]

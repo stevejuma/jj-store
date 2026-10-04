@@ -1530,3 +1530,11 @@ Credential environment/OS names and private-file paths in this inventory are
 references only. The Settings API neither reads their credential contents nor
 accepts literal secret values. Search source field omissions use established
 extraction defaults; current clients submit the complete typed configuration.
+
+## Bundled application documentation
+
+JST-DOC-002 derives the checked-in CLI reference from the registered upstream
+command tree augmented with owned extensions and the standalone ServerCli
+parser. A development-only example emits the inventory without loading a
+repository or invoking commands. Configuration examples use the production
+loader; shared authored long help remains embedded in executable help.

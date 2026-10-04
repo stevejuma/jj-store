@@ -1777,3 +1777,12 @@ Configuration observations and saves MUST remain available while transcript
 inspection occupies the runtime control gate. They use bounded file reads and
 the shared settings-file lock independently from capture journals, spools or
 worker command ownership.
+
+## Bundled application documentation
+
+Bundled Help is independently allowlisted under `/help/`, with a separate
+512-file, 8-MiB-per-file and 32-MiB-total bound. The existing browser bundle
+retains its own bounds. Application documents may frame same-origin content, but
+only documentation responses permit same-origin ancestors; API responses remain
+unframeable. New browser builds include Help; older valid bundles without a help
+directory remain loadable.

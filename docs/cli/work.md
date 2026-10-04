@@ -17,8 +17,9 @@ The local native service is required. An upstream is optional. First WorkStore
 publication upgrades the home to format 3 and freezes its origin ledger; M10
 replication is unavailable for that home until WorkStore replication is
 supported. Use a separate coordination home when linked code repositories need
-M10 sync. A repository link grants no code access. Git refs, server-free
-storage, relay synchronization and agent dispatch are outside this feature.
+M10 sync. A repository link grants no code access. Native WorkStore does not
+dispatch agents or synchronize through a relay. The local Git-backed provider
+described below has a separate publication path.
 
 Git-backed JJ repositories use the same project/task commands through an
 in-process local service. No server connection is needed. The first successful

@@ -11,3 +11,12 @@ web/test-results
 web/playwright-report
 
 storybook-static
+
+uv.lock
+.venv
+docs/build
+docs/site/assets/generated
+docs/site/cli/jj-*.md
+docs/site/reference/http-api.md
+docs/site/reference/defaults.md
+docs/site/reference/api
