@@ -633,3 +633,12 @@ Missing or corrupt selected root data still fails. Domain reads and publication
 retain their complete selected-closure validation, so an unavailable domain
 cannot silently become valid through the identity path. No persisted format or
 capacity ceiling changes.
+
+Local selected file diffs, changed-path summaries and conflict descriptors MUST
+use scoped operation/view membership and the read-only Git decoder. Prove only
+the requested from/to or conflicted commit, then follow the selected tree paths
+under ordinary query budgets. Do not preflight unrelated commits, trees or
+retained operation views and do not repair source indexes/extra tables. Each
+requested commit needs independent membership proof; Git object existence does
+not grant authority. Deep historical membership may still require separately
+qualified prepared lookup. Copy support remains the pinned Git backend profile.

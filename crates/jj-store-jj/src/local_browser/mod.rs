@@ -233,8 +233,15 @@ impl Executor {
                 let metadata_only = operation_only || matches!(&request, Request::QueryInfo)
                     || matches!(&request, Request::References(r) if matches!(r.kind, references::Kind::Bookmarks | references::Kind::Workspaces) && r.operation == operation)
                     || matches!(&request, Request::Operation { operation: selected } if *selected == operation);
-                let scoped_commit = match &request { Request::Paths(r) => Some(r.commit), Request::FileAt { commit, .. } | Request::CommitSummary { commit } => Some(*commit), _ => None };
-                let context = Context::open(access, operation, budget, limits, metadata_only, scoped_commit, operation_only).await?;
+                let scoped_commits = match &request {
+                    Request::Paths(r) => vec![r.commit],
+                    Request::FileAt { commit, .. } | Request::CommitSummary { commit } => vec![*commit],
+                    Request::Conflicts(r) => vec![r.commit],
+                    Request::Diff(r) => vec![r.from, r.to],
+                    Request::DiffPaths(r) => vec![r.from, r.to],
+                    _ => vec![],
+                };
+                let context = Context::open(access, operation, budget, limits, metadata_only, scoped_commits, operation_only).await?;
                 let value = match request {
                     Request::QueryInfo => {
                         let mut info = crate::query::language::info(true);
@@ -442,10 +449,10 @@ impl Context {
         budget: Arc<Budget>,
         limits: Limits,
         metadata_only: bool,
-        scoped_commit: Option<m::GitSha1Id>,
+        scoped_commits: Vec<m::GitSha1Id>,
         operation_only: bool,
     ) -> Result<Self> {
-        let metadata_only = metadata_only || scoped_commit.is_some();
+        let metadata_only = metadata_only || !scoped_commits.is_empty();
         let loader = loader(binding.metadata_path())?;
         // Only operations in the current retained operation ancestry may be selected.
         let heads = loader
@@ -565,9 +572,11 @@ impl Context {
                 .extend(commits.into_iter().map(ObjectKey::Commit));
             let scoped = (!operation_only)
                 .then(|| scoped::Guard::new(loader.store().clone(), &pin, budget.clone(), limits));
-            if let (Some(commit), Some(guard)) = (scoped_commit, &scoped) {
-                history::prove_commit(commit, &selected, &loader, &pin, guard, &budget, limits)
-                    .await?;
+            if let Some(guard) = &scoped {
+                for commit in scoped_commits {
+                    history::prove_commit(commit, &selected, &loader, &pin, guard, &budget, limits)
+                        .await?;
+                }
             }
             let store = scoped
                 .as_ref()

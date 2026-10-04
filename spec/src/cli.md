@@ -1726,3 +1726,9 @@ still fail closed. Unselected staged roots remain invisible and a damaged
 selected metadata commit must fail identity observation. Cold filesystem serving
 with recorded Agents must exercise this path through ordinary code requests and
 freshness polling, independently of full collaboration validation.
+
+Local diff/conflict acceptance MUST read a selected file comparison,
+changed-path summary and selected conflict descriptor with a history-visit cap
+below the repository's unrelated history. Preserve exact content/terms and
+unchanged source extra-table heads. Unknown targets remain rejected; the full
+local browser suite retains conflict/operation/dirty-file qualification.

@@ -270,7 +270,7 @@ impl Executor {
                             budget.clone(),
                             capture_limits,
                             true,
-                            None,
+                            vec![],
                             false,
                         )
                         .await?;

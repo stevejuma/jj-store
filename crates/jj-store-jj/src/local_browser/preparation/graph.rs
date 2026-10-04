@@ -215,9 +215,16 @@ impl Executor {
                 }
                 graphs::validate(&request, &page, 0, &budget)?;
                 let operation = prepared.snapshot.operation;
-                let mut context =
-                    Context::open(access, operation, budget.clone(), limits, true, None, false)
-                        .await?;
+                let mut context = Context::open(
+                    access,
+                    operation,
+                    budget.clone(),
+                    limits,
+                    true,
+                    vec![],
+                    false,
+                )
+                .await?;
                 Arc::get_mut(&mut context.access)
                     .ok_or(Error::Unavailable)?
                     .prepared = Some(prepared.clone());

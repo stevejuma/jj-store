@@ -6,6 +6,8 @@ mod index_tasks_acceptance;
 mod preparation_acceptance;
 #[path = "local_browser/reviews.rs"]
 mod review_acceptance;
+#[path = "local_browser/scoped_differences.rs"]
+mod scoped_differences;
 #[path = "local_browser/working_copy.rs"]
 mod working_copy_acceptance;
 use jj_store_cli::local_browser::LocalFolders;

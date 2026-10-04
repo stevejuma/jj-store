@@ -891,3 +891,9 @@ declared Git reachability framing. Its distinct owned Identity type cannot be
 used for domain reads or publication. Existing Snapshot admission still verifies
 domain objects, previous selection and retained evidence closures. Local folder
 checks and code freshness polling must not repeat those unrelated audits.
+
+The scoped local content capability also covers selected from/to diffs,
+changed-path pages and conflict descriptors. Its two-target proof follows exact
+operation/view references and commit edges under ordinary admission, then reuses
+the owned decoder and scoped tree/file grants. It never promotes raw Git object
+existence to membership or falls back to complete repository preflight.
