@@ -62,17 +62,18 @@ resident eviction, viewport-owned repository metadata reads, and native
 root-bound WorkStore projections with selected-window summary hydration, and
 native application content indexes with retained query keys. Visible card
 loading still uses the existing bounded metadata pages; lightweight server
-summaries and cross-request local WorkStore root reuse remain delivery work.
-Native missing-operation construction now uses the owned bounded format writer
-with compact, admitted scratch for interactive and small-cache reads. Immutable
-resident lookup also reuses separately prepared historical operations without
-copying another slot. Cold historical operations now build under separate full
-reservations and retain verified data only. Graph evaluation releases the
-namespace after completing the immutable primary generation, including filtered
-queries. Missing primary generations now use private reserved staging and
-reacquire the namespace only for complete-generation installation. Loading an
-existing disk index without a resident projection still retains its lease and
-remains delivery work, alongside local operation/deep lookup and
+code/review summaries remain delivery work. E-READ-037 adds cross-request local
+WorkStore root/projection and exact-query reuse behind fresh companion/domain
+admission. Native missing-operation construction now uses the owned bounded
+format writer with compact, admitted scratch for interactive and small-cache
+reads. Immutable resident lookup also reuses separately prepared historical
+operations without copying another slot. Cold historical operations now build
+under separate full reservations and retain verified data only. Graph evaluation
+releases the namespace after completing the immutable primary generation,
+including filtered queries. Missing primary generations now use private reserved
+staging and reacquire the namespace only for complete-generation installation.
+Loading an existing disk index without a resident projection still retains its
+lease and remains delivery work, alongside local operation/deep lookup and
 lightweight/root-bound metadata reads. These focused deliveries do not complete
 the later combined qualification gate.
 
@@ -81,8 +82,13 @@ aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project
 filters and unloaded-group partial state. Native requests reuse the admitted
 root projection; local transport independently admits its explicit companion
-selection. Card reads no longer hydrate up to 256 task summaries. Lightweight
-code/review metadata and cross-request local root reuse remain delivery work.
+selection. Card reads no longer hydrate up to 256 task summaries. Local reads
+now reuse immutable roots, projections and eight exact-query key sets across
+independently reopened facades. Browse/activity/detail retain fresh companion
+and Work-blob admission, source limits and folder identity checks. Root
+retention, cold derivation and live readers have separate bounded lifetime
+accounting; selected detail windows follow precomputed task/comment keys.
+Lightweight code/review metadata remains delivery work.
 
 ### Deferred complete qualification
 

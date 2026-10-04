@@ -198,7 +198,7 @@ impl Projection {
         })
     }
 }
-fn validate(state: &WorkStateV1, query: &WorkBrowseQuery) -> Result<()> {
+pub(crate) fn validate_shape(query: &WorkBrowseQuery) -> Result<()> {
     if !(1..=256).contains(&query.limit)
         || query.q.len() > 512
         || (query.kind == WorkBrowseKind::Projects
@@ -206,6 +206,10 @@ fn validate(state: &WorkStateV1, query: &WorkBrowseQuery) -> Result<()> {
     {
         return Err(Error::Invalid);
     }
+    Ok(())
+}
+fn validate(state: &WorkStateV1, query: &WorkBrowseQuery) -> Result<()> {
+    validate_shape(query)?;
     if query
         .project
         .is_some_and(|id| !state.projects.contains_key(&id))

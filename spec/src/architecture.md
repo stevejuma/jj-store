@@ -7,6 +7,13 @@ authorization and snapshot envelopes request-bound. Browser repository cards
 consume only returned groups across metadata homes. No upstream JJ, UI, search
 or transport dependency enters the WorkStore model or publication boundary.
 
+Local WorkStore root/projection reuse belongs to the service facade and shares
+the native provider-independent projection. It retains no MetadataStore,
+companion Snapshot, source path, principal or folder binding. Root and query
+windows hold data-only lifetime charges; current companion admission is still
+performed by JJ integration before reuse. Warm lookups do not hold the cache map
+lock through cold decoding or normalization.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies
@@ -742,9 +749,11 @@ bounded collaboration materialization cache. Ordered keys, normalized searchable
 fields and one-pass aggregate counts remain derived service projections. Fresh
 captured manifest envelopes and request limits stay outside the cache; native
 continuations retain query-matching keys and share the underlying root charge.
-Local browse hydrates only its selected window with the same projector; shared
-local reconstruction and application search indexes remain separate delivery
-work. No domain format, storage authority or upstream JJ import moves into the
+Local browse, activity and detail share parsed immutable roots across reopened
+facades, reuse bounded exact-query key sets and hydrate their selected windows.
+They independently admit the committed companion and read the selected Work blob
+before lookup. Local application search indexes remain separate delivery work.
+No domain format, storage authority or upstream JJ import moves into the
 service.
 
 Native application content search retains service-owned immutable field indexes

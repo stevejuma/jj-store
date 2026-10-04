@@ -71,15 +71,14 @@ impl LocalRepository {
         } else {
             0
         };
-        let projection =
-            crate::work::projection::Projection::new(&self.work_state(Some(&selected))?)?;
-        let (groups, more) = activity_rows(&projection, query, offset)?;
+        let data = self.work_data(Some(&selected))?;
+        let (groups, more) = activity_rows(&data.projection, query, offset)?;
         let next = offset.checked_add(groups.len()).ok_or(Error::Limit)?;
         Ok(LocalWorkActivityPage {
             version: 2,
             snapshot: Self::work_snapshot(Some(&selected)),
             groups,
-            total_groups: projection.activity.len(),
+            total_groups: data.projection.activity.len(),
             next_cursor: if more {
                 Some(
                     URL_SAFE_NO_PAD.encode(
@@ -102,6 +101,7 @@ impl LocalRepository {
         commit: MetadataCommit,
         query: &WorkBrowseQuery,
     ) -> Result<LocalWorkBrowsePage> {
+        crate::work::projection::validate_shape(query)?;
         let selected = self.selected_metadata(commit)?;
         let mut identity = query.clone();
         identity.cursor = None;
@@ -125,7 +125,15 @@ impl LocalRepository {
         } else {
             0
         };
-        let rows = browse_rows(&self.work_state(Some(&selected))?, query, offset)?;
+        let data = self.work_data(Some(&selected))?;
+        let selection = data.select(query)?;
+        let rows = browse_selected(
+            &data.state,
+            &data.projection,
+            &selection.keys,
+            query.limit,
+            offset,
+        )?;
         Ok(LocalWorkBrowsePage {
             version: 2,
             snapshot: Self::work_snapshot(Some(&selected)),

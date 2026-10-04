@@ -49,6 +49,7 @@ mod selection;
 pub use browser_work::{LocalWorkActivityPage, LocalWorkBrowsePage};
 pub use jj_store_jj::local_metadata::GitOid as MetadataCommit;
 mod work;
+mod work_cache;
 mod work_pages;
 pub use work::*;
 pub use work_pages::LocalWorkPage;

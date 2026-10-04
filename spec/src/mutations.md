@@ -73,6 +73,12 @@ pages retain committed companion membership and current folder binding checks.
 Neither aggregate pages nor card refreshes initialize an actor, publish a root,
 replay a command or authorize linked-code access.
 
+Local WorkStore browse/activity/detail reuse retains parsed immutable state and
+derived query keys only. Complete companion membership, the admitted domain blob
+and current folder identity remain fresh. Commands, reaction admission,
+conversion and receipt recovery keep their existing reconstruction paths; this
+read cache does not become a mutation base or retain a provider/actor handle.
+
 Application content search caches only validated immutable Thread/Work fields
 and ordered document keys. Returned snippets, viewer authorization and captured
 manifest envelopes stay request-bound. New roots, edits and tombstones cannot
