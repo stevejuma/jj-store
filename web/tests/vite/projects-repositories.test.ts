@@ -35,6 +35,7 @@ test("directory retries retain an error episode until successful recovery, inclu
       return source;
     },
   });
+  targets.forEach((repository) => directory.watch(repository.id));
   await directory.load(targets);
   gate = new Promise<void>((resolve) => (release = resolve));
   const retry = directory.load(targets, true);
@@ -69,6 +70,7 @@ test("repository activity uses independent unfiltered pins and stays until expli
       return source;
     },
   });
+  repositories.forEach((repository) => directory.watch(repository.id));
   await directory.load(repositories);
   expect(calls).toBe(2);
   const activity = repositoryActivity(directory.entries, homeB);
@@ -101,6 +103,7 @@ test("revoked directory reads clear old facts while failures remain separate", a
       return source;
     },
   });
+  repositories.forEach((repository) => directory.watch(repository.id));
   await directory.load(repositories);
   denied = true;
   await directory.load(repositories, true);
@@ -120,6 +123,7 @@ test("late directory results cannot replace a newer authorized view", async () =
   const directory = createProjectsRepositories({
     source: (id) => ({ ...fixtureTransport(id), directory: () => pending }),
   });
+  directory.watch(homeA);
   const old = directory.load(repositories.slice(0, 1));
   await directory.load([]);
   release(seed);

@@ -9,6 +9,7 @@
   import type { RepositoryDirectoryEntry } from "../../controller/projects-repositories.svelte.js";
   import StoreRepositoryActivity from "./StoreRepositoryActivity.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import { visibleRepository } from "./visible-repository.js";
   import {
     repositoryActivity,
     repositoryContributor,
@@ -22,6 +23,7 @@
     status = "",
     onOpen,
     actions,
+    onVisible,
   }: {
     repository: Pick<StoreRepositorySummary, "id" | "name" | "permission">;
     entries?: readonly RepositoryDirectoryEntry[];
@@ -30,6 +32,7 @@
     status?: string;
     onOpen: (id: string) => void | Promise<void>;
     actions?: Snippet;
+    onVisible?: (id: string) => () => void;
   } = $props();
   const entry = $derived(
     entries.find((entry) => entry.repository.id === repository.id),
@@ -40,6 +43,10 @@
 </script>
 
 <article
+  use:visibleRepository={{
+    id: repository.id,
+    watch: accessible ? onVisible : undefined,
+  }}
   class="community-projects__row community-projects__repository-row store-projects__repository-directory-row"
   aria-busy={entry?.loading}
 >

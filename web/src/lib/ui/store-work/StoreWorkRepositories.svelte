@@ -25,6 +25,7 @@
     repositories,
     writable,
     onOpenRepository,
+    onVisible,
     initialManual = false,
     busy = false,
     layout = "list",
@@ -45,6 +46,7 @@
     home?: string;
     open?: boolean;
     onOpenRepository: (id: string) => void | Promise<void>;
+    onVisible?: (id: string) => () => void;
   } = $props();
   const formId = $props.id();
   import { untrack } from "svelte";
@@ -108,6 +110,7 @@
           accessible={Boolean(repo)}
           status={active ? "" : "Retired"}
           onOpen={onOpenRepository}
+          {onVisible}
         >
           {#snippet actions()}{#if writable}<Button
                 variant="ghost"

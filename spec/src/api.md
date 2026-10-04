@@ -1,5 +1,13 @@
 # Read APIs and browser
 
+Repository directory discovery and metadata loading are independent browser
+reads. Discovery may display authorized names without fetching every card's
+code/WorkStore/ReviewStore pages. Viewport-owned metadata requests share two
+actual concurrent directory reads, propagate cancellation to their transport,
+preserve independent pins and discard obsolete results. Existing paging,
+authorization and partial-activity contracts remain unchanged; lightweight
+server summary delivery and complete browser qualification are separate slices.
+
 Repository entry menus, Settings-style creation/conversion forms, action rows
 and trailing shell spacing change presentation only. Local/server capability
 gates, exact pending creation/conversion identities, preflight and receipt

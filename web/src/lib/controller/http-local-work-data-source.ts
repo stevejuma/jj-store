@@ -35,7 +35,7 @@ export class HttpLocalWorkDataSource implements WorkBrowseTransport {
     readLocalRepositoryDirectory(this.source, this, signal);
   async reviews(cursor?: string, signal?: AbortSignal) {
     signal?.throwIfAborted();
-    const page = await this.source.reviewThreads(cursor);
+    const page = await this.source.reviewThreads(cursor, signal);
     signal?.throwIfAborted();
     return page;
   }

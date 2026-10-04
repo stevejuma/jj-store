@@ -722,3 +722,10 @@ memory and release latency, fault/real-RustFS and generated Help/source-review
 qualification remain pending until a later slice. This ordering changes no
 authority, persisted format, capacity or acceptance requirement and does not
 mark milestones Done.
+
+Repository directory metadata is owned by viewport leases in the application
+controller. Discovery supplies names independently; the controller limits actual
+directory reads to two across refresh and canceled generations. The shared local
+review snapshot validator preserves repository, profile and companion pin checks
+for every directory and review consumer. Viewport observation and cancellation
+do not alter transport admission or authorize linked repositories.

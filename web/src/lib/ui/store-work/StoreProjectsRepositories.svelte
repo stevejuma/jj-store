@@ -48,6 +48,7 @@
               <StoreRepositoryDirectoryRow
                 repository={repo}
                 entries={controller.projects!.repositories.entries}
+                onVisible={controller.projects!.repositories.watch}
                 onOpen={controller.actions.openRepository}
               >
                 {#snippet actions()}<Button

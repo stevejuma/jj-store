@@ -15,6 +15,15 @@ use scoped, deduplicated condition toasts without adding red error rows.
 Retrying retains the current error episode until successful recovery, so a
 dismissed unchanged error cannot replay during refresh or navigation.
 
+Repository directory names remain immediately navigable after discovery.
+Viewport observation may load metadata for visible rows with 200px vertical
+overscan; leaving the viewport or unmounting cancels obsolete reads and
+suppresses late output. Across refresh and navigation, at most two directory
+transports may remain active until their promises settle. Hidden retained
+metadata reloads only when shown after invalidation. Metadata loading and
+failures stay row-local, without blocking repository navigation or replaying
+dismissed error episodes.
+
 Repository General settings expose Admin-only format conversion when this
 installation has native storage. Preflight explains an independent destination,
 committed code and supported collaboration history; local export requires a new

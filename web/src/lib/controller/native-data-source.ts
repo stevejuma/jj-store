@@ -161,7 +161,10 @@ export interface StoreDataSource {
     transcript: Model<"AgentTranscriptDescriptor">,
     cursor?: string,
   ): Promise<Browse.AgentTranscript>;
-  reviewThreads(cursor?: string): Promise<Browse.ReviewPage>;
+  reviewThreads(
+    cursor?: string,
+    signal?: AbortSignal,
+  ): Promise<Browse.ReviewPage>;
   reviewThread(id: string): Promise<Browse.ReviewDetail>;
   applyReviewCommand(
     request: StoreReviewCommandRequest,

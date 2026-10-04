@@ -1,5 +1,6 @@
 import { ApiError, fullId, type Model } from "../api/client.js";
 import { LocalEventParser } from "../api/local-events.js";
+import { assertLocalReviewSnapshot } from "./local-review-snapshot.js";
 import { HttpLocalIndexDataSource } from "./http-local-index-data-source.js";
 import { HttpLocalWorkDataSource } from "./http-local-work-data-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
@@ -214,15 +215,12 @@ export class HttpLocalStoreDataSource
   search = () => this.unsupported();
   searchStatus = () => this.unsupported();
   private validateReview(snapshot: Model<"LocalReviewSnapshot">, pin: string) {
-    if (
-      snapshot.repo_id !== this.repository ||
-      snapshot.metadata_commit !== pin ||
-      snapshot.profile !== "local_jj_git"
-    )
-      throw new ApiError("snapshot_mismatch");
+    assertLocalReviewSnapshot(snapshot, this.repository, pin);
   }
-  async reviewThreads(cursor?: string) {
+  async reviewThreads(cursor?: string, signal?: AbortSignal) {
+    signal?.throwIfAborted();
     const pin = await this.metadata();
+    signal?.throwIfAborted();
     const page = await this.read<Model<"LocalReviewPageResponse">>(
       "reviews/page",
       {
@@ -230,6 +228,7 @@ export class HttpLocalStoreDataSource
         limit: 50,
         cursor: cursor ?? null,
       },
+      signal,
     );
     this.validateReview(page.data.snapshot, pin);
     return { ...page.data, next_cursor: page.next_cursor };

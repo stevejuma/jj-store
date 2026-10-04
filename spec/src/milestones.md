@@ -101,7 +101,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                                                     | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                                            | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                                                      | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                                                    | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-094                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                                                    | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-094,E-READ-029 |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                                                   | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                                                       | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                                           | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -78330,6 +78330,179 @@ entries.
     "crates/jj-store-jj/src/query/memory/retained.rs#shared_pool_admission_does_not_wait_on_busy_cache_slots",
     "crates/jj-store-cli/tests/local_browser/index_tasks.rs#local_task_eviction_keeps_reservation_until_active_reader_exits",
     "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#warm_graph_starts_while_another_operation_is_preparing"
+  ]
+},
+{
+  "id": "E-READ-029",
+  "tasks": [
+    "M11.4"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change mnwyokzl",
+  "kind": "Viewport-owned repository card metadata with two actual concurrent reads across cancellation and refresh",
+  "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; TypeScript5.9.3; macOS ARM64. Existing documented Design Core validation dependency setup retained; no new dependency substitution.",
+  "formats": "No HTTP/schema/authority/native identity, cursor or domain capacity change. Internal data-source review methods accept an optional local cancellation signal. Discovery exposes repository names independently of card metadata; viewport leases retain exact authorized independent pins.",
+  "files": [
+    "web/src/lib/controller/projects-repositories.svelte.ts",
+    "web/src/lib/controller/local-repository-directory.ts",
+    "web/src/lib/controller/native-data-source.ts",
+    "web/src/lib/controller/http-local-store-data-source.ts",
+    "web/src/lib/controller/http-local-work-data-source.ts",
+    "web/src/lib/ui/store-work/visible-repository.ts",
+    "web/src/lib/ui/store-work/StoreRepositoryDirectoryRow.svelte",
+    "web/src/lib/ui/store-work/StoreProjectsRepositories.svelte",
+    "web/src/lib/ui/store-work/StoreWorkRepositories.svelte",
+    "web/src/lib/ui/store-work/StoreProjects.svelte",
+    "web/tests/vite/projects-repository-visibility.test.ts",
+    "web/tests/vite/visible-repository.test.ts",
+    "web/tests/vite/projects-repositories.test.ts",
+    "spec/src/api.md",
+    "spec/src/projects.md",
+    "spec/src/ui.md",
+    "docs/implementation-plan.md",
+    "spec/src/milestones.md",
+    "web/src/lib/controller/local-review-snapshot.ts",
+    "spec/src/architecture.md"
+  ],
+  "requirements": [
+    "JST-WORK-008",
+    "JST-WORK-009",
+    "JST-UI-015",
+    "JST-API-001"
+  ],
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repository-visibility.test.ts (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Exact regression observes100metadata directory calls for100discovered repositories before any visible-card lease, rather than0. visible-cards-before.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/projects-repositories.test.ts (after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "9pass/663ms. Discovery with0metadata requests, global two-read admission including ignored cancellation, late-result suppression, visible-only refresh, hidden stale reload, deduplicated/ref-counted observation, reset isolation and unchanged error/auth/pin behavior. visible-cards-after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/visible-repository.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/projects-hub.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "41direct consumer tests pass/5.22s. Includes local review/work transport, Projects restoration, viewport action entry/update/exit/unmount and cancellation during shared local snapshot observation with no subsequent collaboration/graph work. visible-cards-consumers.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/visible-repository.test.ts (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "13pass/723ms after final failure cleanup aborts leftover sibling metadata transports while retaining the error episode. Re-runs complete changed viewport/controller subset; direct local/hub consumers were unchanged since their41-test pass. visible-cards-final.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "9stories pass/24.69s through a fresh browser/Vite process. Directory and linked cards, list/grid/narrow/read-only interactions, link/add focus/dialog behavior and scoped failed metadata/dismissal recovery. Accessibility/runtime diagnostic guards remain active. visible-cards-stories.log. Visual baselines remain pending."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Web/catalog0errors/0warnings,190catalog modules; ownership1validator/23chapters/172requirements; architecture971modules. web-check-029-final.log/catalog-check-029.log/ownership-029.log/architecture-029.log. UI-only slice runs no Rust lanes."
+    },
+    {
+      "command": "pnpm spec:first (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Protected controller/source map additionally requires api.md; recorded independent directory-read/cancellation/partial-activity boundary there without changing transport schemas. spec-first-029.log."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "13protected files/3canonical chapters;5validators/23chapters/172requirements. spec-first-029-after.log/spec-029.log."
+    },
+    {
+      "command": "pnpm exec prettier --write <changed controller/UI/test/canonical/plan paths>; pnpm exec prettier --check <same paths>",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact changed paths in this evidence files list excluding the historical ledger. format-029.log/format-tests-029.log/format-cancellation-029.log/format-final-029.log/format-check-029.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte -t \"Failed repository details retain successful metadata\"",
+      "result": "fail",
+      "failures": 1,
+      "note": "Story title filter selects0targets/6skipped; not acceptance evidence. Corrected to the complete directly affected directory story family. visible-cards-error-story-final.log."
+    },
+    {
+      "command": "pnpm check:architecture (final cancellation addition)",
+      "result": "fail",
+      "failures": 1,
+      "note": "http-local-store-data-source.ts reaches301counted lines. Extracted the existing exact repository/profile/metadata-pin validator to local-review-snapshot.ts and retained its calls. No budget exemption. architecture-029-final.log."
+    },
+    {
+      "command": "pnpm check:progress (initial E-READ-029 entry)",
+      "result": "fail",
+      "failures": 7,
+      "note": "Seven test references lacked required exact selectors; repaired all new-entry references without altering historical evidence. progress-029.log."
+    },
+    {
+      "command": "pnpm check:progress (named-reference repair)",
+      "result": "fail",
+      "failures": 3,
+      "note": "Story declarations are not test definitions supported by the ledger checker. Removed three Storybook references from tests; story files and actual browser commands remain recorded. progress-029-after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/visible-repository.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/projects-hub.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "42 tests/5 files pass after final cancellation and validator extraction; visible-cards-consumers-final.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "6 stories pass through fresh browser/Vite/40.53s; visible-cards-stories-final.log. Corrects the zero-target filter probe. Visual baselines remain pending."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final extracted validator checks: web/catalog0errors/0warnings;190catalog modules,972production modules; ownership1validator/23chapters/172requirements. Logs *-029-committed.log."
+    },
+    {
+      "command": "pnpm spec:first (after validator extraction)",
+      "result": "fail",
+      "failures": 1,
+      "note": "New helper additionally maps to architecture.md. Recorded viewport/controller and unchanged pin-validation boundary there; spec-first-029-committed.log."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final15protected files/5chapters;5validators/23chapters/172requirements and138task bookkeeping pass. Logs spec-first-029-complete.log/spec-029-complete.log/progress-029-complete.log. No milestone promotion."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/projects.md spec/src/ui.md web/src/lib/controller/http-local-store-data-source.ts web/src/lib/controller/http-local-work-data-source.ts web/src/lib/controller/local-repository-directory.ts web/src/lib/controller/local-review-snapshot.ts web/src/lib/controller/native-data-source.ts web/src/lib/controller/projects-repositories.svelte.ts web/src/lib/ui/store-work/StoreProjects.svelte web/src/lib/ui/store-work/StoreProjectsRepositories.svelte web/src/lib/ui/store-work/StoreRepositoryDirectoryRow.svelte web/src/lib/ui/store-work/StoreWorkRepositories.svelte web/src/lib/ui/store-work/visible-repository.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/visible-repository.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "All final changed source/test/chapter/plan paths pass; ledger historical bytes excluded. format-029-complete.log."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Card reads still use existing bounded code/Work/Review pages, including mandatory prepared history for a cold local code card. Lightweight server summaries remain delivery work. Offscreen names remain navigable; incomplete metadata homes make activity partial. Large directory DOM/render/window and native/local capacity qualification remain deferred.",
+    "Root-bound collaboration/search projections and keyset paging, native immutable cache/additional-operation construction and prepared local operation/prefix/comparison/deep/native RPC lookup remain implementation features.",
+    "Complete combined qualification is deferred: comprehensive integration/contracts, full cold production browser, latest Linux/native large fixtures, release/RSS/pressure/fault/real-RustFS, registry-only dependency qualification and Help review refresh. Original dev services, main, source Linux repo and visual baselines are untouched."
+  ],
+  "next": "Continue lightweight repository summaries and collaboration projections alongside remaining high-priority native/local indexed read delivery in the retained temporary workspace. Complete combined verification remains its separate later slice.",
+  "scope": "Deliver bounded viewport-owned card requests, immediate navigation, cancellation/refresh and partial metadata behavior with focused controller/transport/browser evidence; no full-plan or milestone completion.",
+  "tests": [
+    "web/tests/vite/projects-repository-visibility.test.ts#directory discovery shows every repository without reading hidden card metadata",
+    "web/tests/vite/projects-repository-visibility.test.ts#visible card reads stay at two while canceled transports settle and late output is discarded",
+    "web/tests/vite/projects-repository-visibility.test.ts#refresh reads the shown window and defers hidden stale rows until they return",
+    "web/tests/vite/projects-repository-visibility.test.ts#canceling a local card during a shared snapshot read starts no collaboration or graph work",
+    "web/tests/vite/visible-repository.test.ts#viewport entry, identity changes, exit and unmount own exactly one directory lease",
+    "web/tests/vite/projects-repositories.test.ts#directory retries retain an error episode until successful recovery, including queued reads",
+    "web/tests/vite/local-browser.test.ts#local_review_reads_reject_foreign_companion_snapshots",
+    "web/tests/vite/projects-hub.test.ts#refresh becomes busy before discovery and remains busy through reads"
   ]
 }
 ]

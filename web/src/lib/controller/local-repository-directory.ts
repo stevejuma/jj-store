@@ -9,13 +9,19 @@ export async function readLocalRepositoryDirectory(
 ): Promise<RepositoryDirectorySummary> {
   signal?.throwIfAborted();
   const head = await source.snapshot();
+  signal?.throwIfAborted();
   const [tasks, reviews] = await Promise.all([
     work.browse({ kind: "tasks", limit: 256 }, signal),
-    source.reviewThreads(),
+    source.reviewThreads(undefined, signal),
   ]);
+  signal?.throwIfAborted();
   const graph =
     head.heads.length === 1
-      ? await source.graph("log", { operation: head.heads[0]!, limit: 50 })
+      ? await source.graph("log", {
+          operation: head.heads[0]!,
+          limit: 50,
+          signal,
+        })
       : null;
   if (graph) assertPinned(graph.snapshot, source, head.heads[0]!);
   signal?.throwIfAborted();

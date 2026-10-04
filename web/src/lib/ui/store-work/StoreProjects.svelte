@@ -198,6 +198,7 @@
                 {writable}
                 busy={hub.loading}
                 onOpenRepository={controller.actions.openRepository}
+                onVisible={hub.repositories.watch}
               />{/key}
           {:else if task}{#key task.id}<StoreWorkTaskDetail
                 bind:viewportRef={element}

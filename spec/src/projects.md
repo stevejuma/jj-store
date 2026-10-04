@@ -22,6 +22,15 @@ full main-page detail as the repository Reviews tab, with a fixed header and
 composer and scrolling content between them. Thread Focus/Split settings do not
 alter this top-level review navigation.
 
+Repository discovery MUST expose names and links before card metadata reads.
+Only visible rows and a small viewport overscan may request directory metadata;
+scrolling does not drain the complete repository inventory. Retain at most two
+actual reads across viewport changes and refresh, including canceled requests
+whose transports have not settled. Cancel obsolete queued/in-flight reads and
+discard late results. Refresh the visible loaded window; mark retained hidden
+rows stale and reload them when shown. Independent unavailable metadata homes
+remain partial, and existing errors survive retries until successful recovery.
+
 Independent conversion stages complete validated WorkStore snapshots, retaining
 stable entities, actor attribution, versions, reply history and original project
 repository links. Staging cannot select a root; source receipts remain
