@@ -1,5 +1,11 @@
 # Architecture
 
+The service's bounded agent timing projection uses Chrono's standard RFC 3339
+decoder for preserved sanitized Codex JSONL timestamps. It remains a data-only
+read of exact selected evidence, shared by native and local companion
+presentation. No capture provider, persisted format, source identity or
+publication boundary depends on this display projection.
+
 The local service consumes `jj-review` directly for portable source validation.
 The dependency audit permits this owned model boundary while rejecting
 ReviewStore dependencies on publication and core-model dependencies on reviews.

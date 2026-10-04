@@ -85,8 +85,8 @@ shared-package release qualification does not alter those original Git gates.
 | M9.1        | Done        | M8a.4                   | JST-PUB-007,JST-PUB-008                                                                                                                                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                           | Implement AgentStore typed root objects                                                        | E-M9-001 |
 | M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034 |
 | M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023 |
-| M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035 |
-| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-099 |
+| M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035,E-M18-006 |
+| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-099,E-M18-006 |
 | M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                                          | E-M9-033 |
 | M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013                | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014 |
 | M10.1       | Done        | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                                  | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                                    | E-M10-001,E-M10-010,E-M10-013 |
@@ -148,7 +148,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -70496,6 +70496,117 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Supported operational configuration editing and complete read-only deployment inventory. Existing runtime health, storage migration, native desktop lifecycle/bundle, launch reconfiguration, backup execution and full M14/M18 acceptance remain independent. No root aggregate or installed service changes, reset, publication or visual baseline approval.",
   "next": "Try preview7470 Settings: Local service/Limits and Launch, Repository/Protection, Sync/Configuration, Search/Advanced, Storage/Configuration. Operational saves apply after next startup; Search uses explicit Apply. Keep preview concurrency restored to8. Full M14/M18, native desktop bundle/lifecycle and capture-runtime unavailable recovery remain separate gates."
+},
+{
+  "id": "E-M18-006",
+  "tasks": ["M9.4", "M9.5", "M18.8"],
+  "requirements": [
+    "JST-COLLAB-002",
+    "JST-COLLAB-004",
+    "JST-COLLAB-005",
+    "JST-API-001",
+    "JST-MUT-003"
+  ],
+  "date": "2026-10-04",
+  "kind": "Recover recorded Codex session timing",
+  "revision": "enclosing Jujutsu change slzksssp",
+  "before": "Clean main above ylxwsusl/edab2326. Current preview7470 Agents list has6 rows;3 captured Codex sessions have null first/last timing, while3 seeded hook sessions have values. JSONL sanitization intentionally preserves native timestamps inside payloads and leaves occurred_at_millis absent; the shared bounded timing projection reads only that absent field. Exact regression requires native CLI/Desktop list/detail timestamps from selected sanitized evidence without reimport or root publication.",
+  "versions": "JJ0.45.1; locked Chrono0.4.45 reused as a service dependency with std and no default features. Existing product/normalizer profiles unchanged.",
+  "formats": "No public DTO/schema, canonical encoding, native/local metadata, evidence, receipt, cursor, capture parser/recovery or source identity changes. Existing event-ID matching,4,096-event timing bound and optional millisecond fields retained. Qualified sanitized Codex JSONL record timestamps decode as RFC3339; explicit observation timestamps win; missing/malformed/unsupported evidence stays unknown.",
+  "files": [
+    "Cargo.lock",
+    "crates/jj-store-service/Cargo.toml",
+    "crates/jj-store-service/src/collaboration/agent_session_timing/tests.rs",
+    "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
+    "crates/jj-store-service/tests/agent_sessions/timing.rs",
+    "crates/jj-store-service/tests/agent_sessions.rs",
+    "crates/jj-store-service/tests/local_agent/timing.rs",
+    "crates/jj-store-service/tests/local_agent.rs",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/collaboration.md",
+    "spec/src/mutations.md",
+    "spec/src/milestones.md",
+    "spec/src/local-jj.md"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; inspect canonical chapters/ledger, current Cua page and Community/Design Core timing references; pnpm exec tsx .local/agent-session-timing/live.ts before",
+      "result": "pass",
+      "failures": 0,
+      "note": "Observed exactly3 missing captured Codex timing pairs. API proof stored in .local/agent-session-timing/before.json; no raw transcript or credential output."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test agent_sessions codex_transcript_timing_recovers_existing_sanitized_native_timestamps --locked (first)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Test child module needed an explicit path attribute; fixed test registration."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test agent_sessions codex_transcript_timing_recovers_existing_sanitized_native_timestamps --locked (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Exact regression fails with first activity None instead of1704164645123; published sanitized record retains timestamp but optional observation field is empty."
+    },
+    {
+      "command": "cargo check -p jj-store-service; cargo fmt --all; cargo check -p jj-store-service --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Service and direct owned dependencies compile; lock adds only the existing Chrono dependency edge."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test agent_sessions codex_transcript_timing_recovers_existing_sanitized_native_timestamps --locked (after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact regression passes for both CLI0.156.1 and Desktop0.159.2. Millisecond fractions, UTC offsets, out-of-order matched records and ignored unsupported records qualified; list/detail and manifest pin unchanged."
+    },
+    {
+      "command": "cargo test -p jj-store-service --lib --test agent_sessions --test local_agent timing --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "4 tests pass:2 timestamp guards,1 native CLI/Desktop list/detail regression,1 local companion pin regression. Unknown/malformed timestamps, wrong envelope profile/source/integration and safe omissions remain absent; explicit timestamp precedence retained; historical local pin retains old timing after later capture."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test agent_sessions session_detail --locked; cargo test -p jj-store-service --test local_agent browser_agent_presentation_pins_metadata_and_transcript_membership --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "3 native existing detail/timing/bounded-activity regressions and1 local existing browser presentation/membership regression pass."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/api.md spec/src/collaboration.md spec/src/mutations.md spec/src/architecture.md; pnpm exec prettier --check spec/src/api.md spec/src/collaboration.md; pnpm check:architecture; pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "Canonical formatting and dependency boundaries17 packages pass. Supplementary architecture905 modules unchanged. No UI component changes; UI type/build/Storybook and contract generation lanes are out of scope. Root aggregates/full Rust workspace not run."
+    },
+    {
+      "command": "pnpm dev:backend:build; pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Development CLI/server and direct service consumers build with the locked dependency edge. Existing macOS compact-unwind linker diagnostic is informational; installed executables untouched. Rust formatting passes."
+    },
+    {
+      "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:backend:restart (preview cwd)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Only selected preview backend replaced; Vite and fixture retained, Search ready. Main7460/7462 runtime not restarted."
+    },
+    {
+      "command": "pnpm exec tsx .local/agent-session-timing/live.ts after; Python before/after assertions; Cua fresh background Agents tab, AX and screenshot",
+      "result": "pass",
+      "failures": 0,
+      "note": "All6 list rows now show captured start/duration. The3 recovered Codex durations are17m26s,34s,3s. Native manifest/AgentStore snapshot, session IDs, states and evidence/event counts remain identical; previous3 hook timing pairs unchanged. Cold fresh page uses retained historical code operation. Screenshot .local/agent-session-timing/after.png. Temporary proof tab closed; existing review page retained."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/local-jj.md .local/agent-session-timing/evidence.json; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check changed canonical chapters and new evidence",
+      "result": "pass",
+      "failures": 0,
+      "note": "Spec-first8 protected files/6 chapters;5 validators/22 chapters/167 requirements;136 progress tasks. Milestones retain existing status; focused formatting passes. Historical ledger prefix preserved."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Timing read projection and current preview verification only. Full harness release, capture runtime recovery, native desktop packaging and visual baselines remain separate. No user repository reimport, evidence rewrite, reset, installed-tool change or unrelated service restart.",
+  "next": "Use current Agents list; captured start/duration derive from exact selected recorded activity, including previously published Codex records. Preserve deferred harness and broader qualification scope."
 }
 ]
 ```

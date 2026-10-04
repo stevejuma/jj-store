@@ -641,8 +641,14 @@ identities; integration, state, optional parent, coverage and bounded object
 counts are service-owned presentation data rather than serialized WAL records.
 Nullable first and last activity milliseconds are derived only from exact event
 IDs matched to their selected sanitized observation evidence. Missing
-timestamps, unmatched evidence or a session beyond the 4,096-event timing bound
-yields null timing fields.
+observation timestamp fields may be recovered from the original RFC 3339
+timestamp in the matched sanitized Codex JSONL record, only for the qualified
+CLI/Desktop profile, envelope version and local-transcript source/trust. The
+explicit observation timestamp takes precedence. Unrecognized or malformed
+native timestamps, unmatched evidence or a session beyond the 4,096-event timing
+bound yields null timing fields. This read-only projection also recovers timing
+for previously published transcripts; it never rewrites evidence or requires
+reimport, and filesystem modification or ingestion times are not substitutes.
 
 The detail route accepts one canonical full stable session ID. It resolves that
 key only through the current selected AgentStore session catalog and returns 404

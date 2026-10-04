@@ -329,12 +329,16 @@ to which the original command may be applied.
 Recorded local agent reads require an explicit committed companion metadata
 selection. They reuse audited AgentStore closure readers and shared sanitized
 activity/timing/transcript presentation. Session and transcript identities
-remain stable and immutable respectively. Portable code associations retain
-their exact source repository, Git SHA-1 commits, operations and evidence
-capsules; source identity is never substituted with the metadata home. Browser
-relation queries are bounded projections of selected associations and report
-continuation when more qualified records exist. Reads cannot initialize metadata
-or record agents.
+remain stable and immutable respectively. The shared timing projection may
+recover qualified Codex JSONL RFC 3339 timestamps from exact matched sanitized
+evidence when the observation timestamp field is absent. It preserves the
+selected companion pin, including after later capture, and neither rewrites
+recorded evidence nor requires reimport. Portable code associations retain their
+exact source repository, Git SHA-1 commits, operations and evidence capsules;
+source identity is never substituted with the metadata home. Browser relation
+queries are bounded projections of selected associations and report continuation
+when more qualified records exist. Reads cannot initialize metadata or record
+agents.
 
 Local freshness streams revalidate device bindings and perform bounded checks of
 operation heads and the selected companion ref. They announce current selections

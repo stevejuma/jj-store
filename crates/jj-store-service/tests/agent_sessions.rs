@@ -19,6 +19,9 @@ use jj_store_wal::publication::{
 use jj_store_wal::publication::{Limits, PublishOutcome};
 use std::{collections::BTreeMap, collections::BTreeSet, sync::Arc};
 
+#[path = "agent_sessions/timing.rs"]
+mod timing;
+
 const REPOSITORY: m::RepositoryId = m::RepositoryId::new([41; 16]);
 const EPOCH: m::EpochId = m::EpochId::new([42; 16]);
 const PRINCIPAL: m::PrincipalId = m::PrincipalId::new([43; 16]);

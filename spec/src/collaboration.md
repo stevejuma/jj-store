@@ -2297,10 +2297,19 @@ bounded integration, lifecycle, parent, coverage and referenced object counts.
 Session summaries derive optional first and last activity times only by matching
 selected normalized event IDs to timestamps in their exact sanitized observation
 batches; missing or over-bound evidence leaves timing absent rather than
-inferred. Session detail also returns the exact immutable observation-batch,
-event-batch and tool-snapshot IDs selected by that session; tool links retain
-their full stable tool-call IDs. Selected transcript manifests expand only into
-stream descriptors carrying the exact manifest/source identity, generation,
+inferred. For qualified Codex CLI/Desktop JSONL records whose observation
+timestamp field is absent, timing may use the preserved RFC 3339 timestamp in
+the matched sanitized native record. The exact profile/envelope and local
+transcript source/trust remain required; explicit observation timestamps take
+precedence. Invalid, missing and unsupported native timestamps remain unknown.
+This applies to both native and companion-pinned list/detail reads, including
+already published records, without changing immutable evidence, receipts,
+normalization or capture recovery identities. Duration remains the captured
+activity span, not elapsed time since ingestion or a guessed process lifetime.
+Session detail also returns the exact immutable observation-batch, event-batch
+and tool-snapshot IDs selected by that session; tool links retain their full
+stable tool-call IDs. Selected transcript manifests expand only into stream
+descriptors carrying the exact manifest/source identity, generation,
 format/decoder/sanitizer versions, representation, byte and record counts and
 gaps. The same detail resolves a presentation-ready, sequence-ordered activity
 stream from the selected event batches. It preserves session-state, message,

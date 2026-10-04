@@ -12,6 +12,8 @@ mod native_results;
 mod opencode_aliases;
 #[path = "local_agent/portable_review.rs"]
 mod portable_review;
+#[path = "local_agent/timing.rs"]
+mod timing;
 
 fn fixture() -> (tempfile::TempDir, LocalRepository) {
     let root = tempfile::tempdir().unwrap();

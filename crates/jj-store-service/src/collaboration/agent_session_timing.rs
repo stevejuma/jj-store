@@ -1,7 +1,8 @@
 use super::*;
 use jj_store_wal::publication::{
     AgentEventId, AgentEventV1, AgentObjectV1, AgentSessionId, AgentSessionSnapshotV1,
-    normalized_event_id,
+    IntegrationId, NormalizerProfileV1, SanitizedMediaType, SanitizedObservationBatchV1,
+    SanitizedObservationV1, SanitizedRepresentation, SourceKind, SourceTrust, normalized_event_id,
 };
 
 const MAX_TIMING_EVENTS: usize = 4_096;
@@ -47,7 +48,7 @@ pub(crate) async fn resolve(
                     observation.source_sequence,
                     kind,
                 ) == event_id)
-                    .then_some(observation.occurred_at_millis)
+                    .then(|| observed_at_millis(&evidence, &batch.normalizer_version, observation))
                     .flatten()
             });
             if let Some(value) = occurred_at_millis {
@@ -65,6 +66,45 @@ pub(crate) async fn resolve(
         }
     }
     Ok(timing)
+}
+
+// Earlier JSONL readers preserve the native timestamp in the immutable payload,
+// leaving the optional observation field empty. Recover only matched evidence;
+// do not rewrite capture batches or their durable recovery identities.
+fn observed_at_millis(
+    evidence: &SanitizedObservationBatchV1,
+    normalizer: &str,
+    observation: &SanitizedObservationV1,
+) -> Option<i64> {
+    observation.occurred_at_millis.or_else(|| {
+        if evidence.integration != IntegrationId::Codex
+            || evidence.representation != SanitizedRepresentation::SanitizedNative
+            || observation.source_kind != SourceKind::Transcript
+            || observation.source_trust != SourceTrust::LocalTranscript
+            || observation.payload.media_type() != SanitizedMediaType::Json
+        {
+            return None;
+        }
+        let profile = [
+            NormalizerProfileV1::codex_0_156_1(),
+            NormalizerProfileV1::codex_desktop_0_159_2(),
+        ]
+        .into_iter()
+        .find(|profile| profile.identity() == normalizer)?;
+        let value: serde_json::Value = serde_json::from_slice(observation.payload.bytes()).ok()?;
+        if value["capture_format"].as_str() != Some("codex-jsonl/v1")
+            || value["product_version"].as_str() != Some(&profile.product_version)
+        {
+            return None;
+        }
+        let timestamp = value.get("record")?.get("timestamp")?.as_str()?;
+        if timestamp.len() > 64 {
+            return None;
+        }
+        chrono::DateTime::parse_from_rfc3339(timestamp)
+            .ok()
+            .map(|time| time.timestamp_millis())
+    })
 }
 
 fn timing_event(
@@ -100,3 +140,6 @@ fn timing_event(
         _ => None,
     }
 }
+
+#[cfg(test)]
+mod tests;
