@@ -76546,6 +76546,77 @@ entries.
     "Running app unchanged; no public contract/persistence change. Unchanged UI/browser, full contracts and root aggregate lanes out of scope. E-READ-005 registry/full-capture and large-scale/real-RustFS gates remain open."
   ],
   "next": "Commit this verified concurrency slice, then continue staging-inclusive cache quotas and local prepared history."
+},
+{
+  "id": "E-READ-013",
+  "tasks": [
+    "M4.1"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change mvlskuys",
+  "kind": "Repository-scoped preparation cache quotas",
+  "versions": "Rust1.98.1; jj-lib0.45.1; pnpm10.32.1; macOS ARM64.",
+  "formats": "Native formats, cache receipt and public DTOs unchanged; trusted cache policy adds repository byte ceiling. Defaults2GiB/entry,4GiB/repository and16GiB/shared namespace.",
+  "files": [
+    "crates/jj-store-jj/src/query/cache.rs",
+    "spec/src/jj-integration.md",
+    "spec/src/cli.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-JJ-003",
+    "JST-JJ-005",
+    "JST-API-001"
+  ],
+  "tests": [
+    "crates/jj-store-jj/src/query/cache.rs#default_cache_allows_large_preparation_with_a_bounded_total",
+    "crates/jj-store-jj/src/query/cache.rs#repository_reservation_counts_all_epochs_and_preserves_other_repositories"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-jj --lib --locked default_cache_allows_large_preparation_with_a_bounded_total -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before:64MiB entry allowance rejected large preparation capacity expectation. Final entry allowance2GiB leaves headroom for multiple operation caches within4GiB repository allowance; aggregate16GiB."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --lib --locked query::cache:: -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial and final3passed. Multiple repository/epoch receipts, physical receipt bytes, cold reservation, repository-first eviction, reduced-policy reopen and warm corruption detection."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance:: -- --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "24passed; cache retention/recovery, quotas, exact native index bytes, graph semantics, concurrent preparation, cancellation and revocation. Existing linker unwind-size advisory remains."
+    },
+    {
+      "command": "target/debug/deps/native_lifecycle-d9faf2e6f13fc0f1 content_acceptance::index_task_acceptance:: --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "5passed: task lifecycle and reserved interactive capacity."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected package and direct consumer targets pass."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/cli.md; pnpm spec:first; pnpm spec:validate; cargo fmt --all -- --check; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Changed canonical chapter formatting, protected-source mapping, canonical validation and appended ledger consumers pass."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Explicit native preparation reserves staging, scratch, buffered output and receipt within one entry before growth. Per-repository accounting includes all epochs/operations in the shared serving namespace. Independent standalone roots remain independently configured.",
+    "General inline upstream writes and additional-operation builds still use post-build size verification. Immutable generations and shared cross-profile admission remain pending; increased disk ceilings do not lift current commit,work,time or resident-memory limits.",
+    "Larger native/local preparation, remaining endpoint/card/collaboration work and Linux/native2m/10krefs/near-capacity/real-RustFS qualification remain open. Running app unchanged. Unchanged UI,full contracts and root aggregates out of scope; E-READ-005 registry/full-capture limitations retained."
+  ],
+  "next": "Commit the verified quota slice; continue shared bounded traversal and preparation for local history."
 }
 ]
 ```

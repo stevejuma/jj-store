@@ -374,10 +374,11 @@ fails explicitly. Source corruption or denied reads cannot be repaired by cache
 rebuilding and remain errors.
 
 Retention bounds slot count, file count, individual-cache bytes and total
-retained bytes. Defaults retain at most 16 slots, 64 MiB of file bytes per slot,
-256 MiB in total, and 4096 filesystem entries per slot. These are admission and
-retention limits, not measured throughput guarantees. Least-recently-used slots
-are evicted under the namespace lock; failed builds and abandoned staging
+retained bytes. Defaults retain at most 16 slots, 2 GiB of file bytes per slot,
+4 GiB per repository, 16 GiB in total, and 4096 filesystem entries per slot.
+Cold staging shares these byte allowances. These are admission and retention
+limits, not measured throughput guarantees. Least-recently-used slots are
+evicted under the namespace lock; failed builds and abandoned staging
 directories are disposable. Symlinks are never followed. A canceled worker
 retains its lock and permit until it exits. Responses report whether their cache
 was built, reused or rebuilt and retained cache counts/bytes. These are local
@@ -808,3 +809,16 @@ graph-dependent reads without a matching resident retain Busy/preparation
 admission. Cache retained counts on this path describe the most recent completed
 cache observation for that resident; the request performs no eviction.
 Revocation, epoch changes, cancellation and final output checks remain current.
+
+The shared native query-cache namespace defaults to 2 GiB per entry, 4 GiB per
+repository across all epochs/operations, and 16 GiB total. Cold preparation MUST
+reserve its entire entry allowance before creating staging. Existing receipts,
+scratch, buffered segment output and the final receipt consume that allowance;
+staging is never extra capacity. Repository pressure evicts that repository's
+least recently used entries before unrelated repositories. Total pressure uses
+global LRU order. Opening a namespace with a reduced policy reclaims excess
+retained entries before admitting work. A warm read which creates no files does
+not reserve a new entry or evict unrelated pages. These quotas govern one shared
+serving namespace; independent standalone executor roots remain independently
+configured. General upstream inline writes and additional-operation rebuilding
+retain post-build size verification pending guarded immutable generations.

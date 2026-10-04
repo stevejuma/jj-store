@@ -17,6 +17,8 @@ const REVISION: &str = "7c41cdeb16b6b321c64e789a966b6adf723816a5";
 pub struct Policy {
     pub max_entries: usize,
     pub max_entry_bytes: u64,
+    /// Includes every epoch and operation of a repository, plus active staging.
+    pub max_repository_bytes: u64,
     pub max_total_bytes: u64,
     pub max_files: usize,
 }
@@ -24,8 +26,9 @@ impl Default for Policy {
     fn default() -> Self {
         Self {
             max_entries: 16,
-            max_entry_bytes: 64 * 1024 * 1024,
-            max_total_bytes: 256 * 1024 * 1024,
+            max_entry_bytes: 2 * 1024 * 1024 * 1024,
+            max_repository_bytes: 4 * 1024 * 1024 * 1024,
+            max_total_bytes: 16 * 1024 * 1024 * 1024,
             max_files: 4096,
         }
     }
@@ -36,6 +39,8 @@ impl Policy {
             || !(1..=4096).contains(&self.max_files)
             || self.max_entry_bytes == 0
             || self.max_entry_bytes > self.max_total_bytes
+            || self.max_entry_bytes > self.max_repository_bytes
+            || self.max_repository_bytes > 16 * 1024 * 1024 * 1024
             || self.max_total_bytes > 16 * 1024 * 1024 * 1024
         {
             return Err(Error::Limit);
@@ -292,6 +297,12 @@ impl Cache {
             }
         }
         cache.slots.sort_by_key(|slot| (slot.receipt.used, slot.id));
+        while let Some(repository) = cache.slots.iter().find_map(|slot| {
+            let repository = slot.receipt.repository;
+            (cache.repository_bytes(repository) > policy.max_repository_bytes).then_some(repository)
+        }) {
+            cache.evict_repository(repository)?;
+        }
         while cache.bytes() > policy.max_total_bytes {
             cache.evict()?;
         }
@@ -303,13 +314,47 @@ impl Cache {
     fn bytes(&self) -> u64 {
         self.slots.iter().map(|slot| slot.bytes).sum()
     }
+    fn repository_bytes(&self, repository: m::RepositoryId) -> u64 {
+        self.slots
+            .iter()
+            .filter(|slot| slot.receipt.repository == repository)
+            .map(|slot| slot.bytes)
+            .sum()
+    }
+    fn evict_repository(&mut self, repository: m::RepositoryId) -> Result<()> {
+        let index = self
+            .slots
+            .iter()
+            .position(|slot| slot.receipt.repository == repository)
+            .ok_or(Error::Limit)?;
+        self.evict_at(index)
+    }
     fn evict(&mut self) -> Result<()> {
         if self.slots.is_empty() {
             return Err(Error::Limit);
         }
-        let slot = self.slots.remove(0);
+        self.evict_at(0)
+    }
+    fn evict_at(&mut self, index: usize) -> Result<()> {
+        let slot = self.slots.remove(index);
         remove(&self.path(slot.id))?;
         self.evicted += 1;
+        Ok(())
+    }
+    fn reserve(&mut self, repository: m::RepositoryId, bytes: u64) -> Result<()> {
+        if bytes > self.policy.max_entry_bytes {
+            return Err(Error::Limit);
+        }
+        while self.repository_bytes(repository).saturating_add(bytes)
+            > self.policy.max_repository_bytes
+        {
+            self.evict_repository(repository)?;
+        }
+        while self.slots.len() >= self.policy.max_entries
+            || self.bytes().saturating_add(bytes) > self.policy.max_total_bytes
+        {
+            self.evict()?;
+        }
         Ok(())
     }
     pub fn prepare(
@@ -351,11 +396,7 @@ impl Cache {
             remove(&path)?;
             self.damaged = true;
         }
-        while self.slots.len() >= self.policy.max_entries
-            || self.bytes() + self.policy.max_entry_bytes > self.policy.max_total_bytes
-        {
-            self.evict()?;
-        }
+        self.reserve(access.repository(), self.policy.max_entry_bytes)?;
         let slot = (0..self.policy.max_entries)
             .find(|id| !self.slots.iter().any(|s| s.id == *id))
             .ok_or(Error::Limit)?;
@@ -439,9 +480,7 @@ impl Cache {
             .persist(entry.path.join(RECEIPT))
             .map_err(|_| Error::Unavailable)?;
         let (_, size) = inventory(&entry.path, self.policy, budget, false)?;
-        while self.bytes() + size > self.policy.max_total_bytes {
-            self.evict()?;
-        }
+        self.reserve(access.repository(), size)?;
         if entry.staging.is_some() {
             let path = self.path(entry.slot);
             fs::rename(&entry.path, &path).map_err(|_| Error::Unavailable)?;
@@ -484,6 +523,70 @@ impl Cache {
 #[cfg(all(test, unix))]
 mod tests {
     use super::*;
+
+    #[test]
+    fn default_cache_allows_large_preparation_with_a_bounded_total() {
+        let policy = Policy::default();
+        assert_eq!(policy.max_entry_bytes, 2 * 1024 * 1024 * 1024);
+        assert_eq!(policy.max_repository_bytes, 4 * 1024 * 1024 * 1024);
+        assert_eq!(policy.max_total_bytes, 16 * 1024 * 1024 * 1024);
+    }
+
+    #[test]
+    fn repository_reservation_counts_all_epochs_and_preserves_other_repositories() {
+        let directory = tempfile::tempdir().unwrap();
+        let policy = Policy {
+            max_entry_bytes: 32 * 1024,
+            max_repository_bytes: 64 * 1024,
+            max_total_bytes: 128 * 1024,
+            ..Default::default()
+        };
+        let budget = Budget::new(Limits::default()).unwrap();
+        let mut cache = Cache::open(directory.path(), policy, &budget).unwrap();
+        let a = m::RepositoryId::new([1; 16]);
+        let b = m::RepositoryId::new([2; 16]);
+        for (id, repository) in [(0, b), (1, a), (2, a), (3, a)] {
+            let path = cache.path(id);
+            fs::create_dir(&path).unwrap();
+            fs::write(path.join("data"), vec![7; 16 * 1024]).unwrap();
+            let files = inventory(&path, policy, &budget, true).unwrap().0;
+            let receipt = Receipt {
+                version: 1,
+                repository,
+                epoch: m::EpochId::new([id as u8; 16]),
+                operation: m::OperationId::new([id as u8; 64]),
+                used: id as u64,
+                files,
+            };
+            fs::write(path.join(RECEIPT), serde_json::to_vec(&receipt).unwrap()).unwrap();
+        }
+        drop(cache);
+        cache = Cache::open(directory.path(), policy, &budget).unwrap();
+        // Restart/reopen uses physical sizes, including each receipt. Reserving
+        // scratch must evict the old A entries despite B being older globally.
+        cache.reserve(a, policy.max_entry_bytes).unwrap();
+        assert_eq!(cache.slots.iter().map(|s| s.id).collect::<Vec<_>>(), [0, 3]);
+        assert_eq!(cache.evicted, 2);
+        assert!(cache.repository_bytes(a) + policy.max_entry_bytes <= policy.max_repository_bytes);
+        assert!(cache.bytes() + policy.max_entry_bytes <= policy.max_total_bytes);
+        assert!(cache.path(0).exists());
+        fs::create_dir(cache.path(1)).unwrap();
+        for name in ["data", RECEIPT] {
+            fs::copy(cache.path(3).join(name), cache.path(1).join(name)).unwrap();
+        }
+        drop(cache);
+        let smaller = Policy {
+            max_entry_bytes: 20 * 1024,
+            max_repository_bytes: 20 * 1024,
+            ..policy
+        };
+        cache = Cache::open(directory.path(), smaller, &budget).unwrap();
+        assert_eq!(cache.slots.len(), 2);
+        assert_eq!(cache.evicted, 1);
+        cache.reserve(a, smaller.max_entry_bytes).unwrap();
+        assert_eq!(cache.slots.iter().map(|s| s.id).collect::<Vec<_>>(), [0]);
+        assert_eq!(cache.evicted, 2);
+    }
 
     #[test]
     fn warm_cache_verification_does_not_hash_unchanged_large_files() {

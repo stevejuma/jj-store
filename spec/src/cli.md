@@ -1649,3 +1649,9 @@ inverse order MUST also pass: hold preparation after it has evicted the disk
 slot, start an ordinary page from the earlier verified resident, and return the
 original pinned data before releasing preparation. Reads retain fresh
 authorization and no cache-file or native publication side effects.
+
+Cache quota acceptance MUST include multiple operations and epochs of one
+repository alongside an unrelated repository. Cold reservation evicts within the
+pressured repository first, counts scratch and output in the reservation, and
+leaves warm reads available. Restart with a reduced repository quota must
+reclaim excess entries before construction without changing native state.
