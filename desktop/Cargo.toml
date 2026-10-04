@@ -1,4 +1,5 @@
 [workspace]
+members = ["crates/terminal-engine"]
 
 [package]
 name = "jj-store-desktop"
@@ -13,6 +14,10 @@ default = ["native"]
 native = ["dep:tauri", "dep:tauri-build", "dep:tauri-plugin-single-instance", "dep:tauri-plugin-window-state", "dep:tauri-plugin-opener", "dep:tauri-plugin-dialog", "dep:window-vibrancy", "dep:objc2", "dep:block2", "dep:objc2-app-kit", "dep:objc2-foundation"]
 
 [dependencies]
+jj-store-terminal-engine = { path = "crates/terminal-engine" }
+portable-pty = "0.9"
+uuid = { version = "1", features = ["v4", "serde"] }
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tempfile = "3"

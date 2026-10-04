@@ -134,11 +134,12 @@ shared-package release qualification does not alter those original Git gates.
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                                           | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                                                        | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                                            | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                                                  | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005,JST-DESK-006                                                                                                                                                  | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006,E-DESK-007,E-DESK-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M17.1       | In progress | M8a.4                   | JST-DESK-003                                                                                                                                                                                                      | Opt-in bounded parent-pipe service supervision                                                                                 | Retain real RustFS and ordinary process evidence                                               | E-DESK-001,E-DESK-003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                                            | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                                                         | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                                                      | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M17.5 | Partial | M17.2 | JST-DESK-006,JST-UI-002,JST-UI-006,JST-SEC-005 | Desktop repository terminal and retained shell sessions | Native terminal qualified; retain M16 registry and M17.2 host prerequisites | E-DESK-007,E-DESK-008 |
 | M18         | In progress | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Codex, Cursor CLI and OpenCode usable capture; Desktop live gate remains                                                       | Complete Desktop live gate; extended roadmap remains Deferred                                  | E-M17-001,E-M17-002,E-M17-003,E-M17-004,E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-001,E-M18-013,E-M18-017 |
 | M18.0       | Done        | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Canonical gap traceability, agreed defaults and explicit qualification gates                                                   | Start M18.1 exact capture regressions                                                          | E-M17-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.1       | Done        | M18.0                   | JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023                                                                                                                                                                      | Diagnostic-only publication, cross-batch reduction and bounded append                                                          | Start M18.2 configured local capture runtime and readers                                       | E-M17-002,E-M17-003,E-M17-004,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -72283,6 +72284,468 @@ entries.
     "remaining": [],
     "scope": "User-authorized verification and retirement of cursor-opencode only. Other registered workspaces, the parked OpenCode history draft and all running services retained. Product tests and builds out of scope for cleanup; prior qualification gaps unchanged.",
     "next": "Continue review in main at http://127.0.0.1:7460/; any future harness implementation starts from the current main revision."
-  }
+  },
+{
+  "id": "E-DESK-007",
+  "tasks": [
+    "M17",
+    "M17.5"
+  ],
+  "date": "2026-10-04",
+  "kind": "desktop-repository-terminal",
+  "revision": "enclosing Jujutsu change utlypsqk",
+  "files": [
+    "catalog/components/store-terminal/Terminal.stories.svelte",
+    "catalog/fixtures/TerminalFixture.svelte",
+    "catalog/fixtures/terminal-bridge.ts",
+    "desktop/Cargo.lock",
+    "desktop/Cargo.toml",
+    "desktop/README.md",
+    "desktop/build.rs",
+    "desktop/crates/terminal-engine/Cargo.toml",
+    "desktop/crates/terminal-engine/src/context.rs",
+    "desktop/crates/terminal-engine/src/context_tests.rs",
+    "desktop/crates/terminal-engine/src/damage.rs",
+    "desktop/crates/terminal-engine/src/env_fence.rs",
+    "desktop/crates/terminal-engine/src/env_fence_tests.rs",
+    "desktop/crates/terminal-engine/src/fences.rs",
+    "desktop/crates/terminal-engine/src/lib.rs",
+    "desktop/crates/terminal-engine/src/lifecycle.rs",
+    "desktop/crates/terminal-engine/src/lifecycle_tests.rs",
+    "desktop/crates/terminal-engine/src/listener.rs",
+    "desktop/crates/terminal-engine/src/path.rs",
+    "desktop/crates/terminal-engine/src/process_tree.rs",
+    "desktop/crates/terminal-engine/src/pty_io.rs",
+    "desktop/crates/terminal-engine/src/reader.rs",
+    "desktop/crates/terminal-engine/src/shared.rs",
+    "desktop/crates/terminal-engine/src/shell.rs",
+    "desktop/crates/terminal-engine/src/units.rs",
+    "desktop/crates/terminal-engine/tests/clusters.rs",
+    "desktop/crates/terminal-engine/tests/cursor.rs",
+    "desktop/crates/terminal-engine/tests/fences.rs",
+    "desktop/crates/terminal-engine/tests/latency.rs",
+    "desktop/crates/terminal-engine/tests/resize.rs",
+    "desktop/crates/terminal-engine/tests/scrollback.rs",
+    "desktop/crates/terminal-engine/tests/slicing.rs",
+    "desktop/crates/terminal-engine/tests/slicing_adversarial.rs",
+    "desktop/crates/terminal-engine/tests/snapshot.rs",
+    "desktop/permissions/autogenerated/terminal_ack.toml",
+    "desktop/permissions/autogenerated/terminal_attach.toml",
+    "desktop/permissions/autogenerated/terminal_close.toml",
+    "desktop/permissions/autogenerated/terminal_detach.toml",
+    "desktop/permissions/autogenerated/terminal_focus.toml",
+    "desktop/permissions/autogenerated/terminal_input.toml",
+    "desktop/permissions/autogenerated/terminal_list.toml",
+    "desktop/permissions/autogenerated/terminal_open.toml",
+    "desktop/permissions/autogenerated/terminal_resize.toml",
+    "desktop/permissions/autogenerated/terminal_scroll.toml",
+    "desktop/permissions/autogenerated/terminal_targets.toml",
+    "desktop/permissions/autogenerated/terminal_viewport_ready.toml",
+    "desktop/src/lib.rs",
+    "desktop/src/native.rs",
+    "desktop/src/native_window.rs",
+    "desktop/src/terminal/commands.rs",
+    "desktop/src/terminal/io.rs",
+    "desktop/src/terminal/mod.rs",
+    "desktop/src/terminal/runtime.rs",
+    "desktop/src/terminal/session.rs",
+    "desktop/src/terminal/targets.rs",
+    "desktop/src/terminal/transport.rs",
+    "desktop/src/terminal/wire.rs",
+    "desktop/tests/terminal_sessions.rs",
+    "desktop/tests/terminal_targets.rs",
+    "docs/ui-provenance.json",
+    "package.json",
+    "pnpm-lock.yaml",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/desktop.md",
+    "spec/src/security.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "web/src/lib/desktop-chrome.ts",
+    "web/src/lib/terminal/bridge.ts",
+    "web/src/lib/terminal/colors.ts",
+    "web/src/lib/terminal/controller.svelte.ts",
+    "web/src/lib/terminal/controls.svelte.ts",
+    "web/src/lib/terminal/keyboard.ts",
+    "web/src/lib/terminal/palette.ts",
+    "web/src/lib/terminal/renderer.ts",
+    "web/src/lib/terminal/selection.ts",
+    "web/src/lib/ui/store-application/StoreApplication.svelte",
+    "web/src/lib/ui/store-application/StoreApplicationHeaderActions.svelte",
+    "web/src/lib/ui/store-application/StoreApplicationMain.svelte",
+    "web/src/lib/ui/store-terminal/StoreTerminalDock.svelte",
+    "web/src/lib/ui/store-terminal/StoreTerminalToggle.svelte",
+    "web/src/lib/ui/store-terminal/StoreTerminalToggleIcon.svelte",
+    "web/src/lib/ui/store-terminal/StoreTerminalWorkspace.svelte",
+    "web/src/lib/ui/store-terminal/TerminalViewport.svelte",
+    "web/src/lib/ui/store-terminal/terminal.css",
+    "web/tests/vite/terminal.test.ts"
+  ],
+  "tests": [
+    "desktop/tests/terminal_sessions.rs#repository_session_reuses_open_identity_and_retains_detached_output",
+    "desktop/tests/terminal_sessions.rs#closing_a_noisy_detached_shell_is_bounded",
+    "desktop/tests/terminal_sessions.rs#closing_terminal_ends_background_job_in_separate_process_group",
+    "desktop/tests/terminal_targets.rs#target_resolution_uses_protected_reads_and_rechecks_identity",
+    "desktop/tests/terminal_targets.rs#native_targets_require_ready_workspace_links_and_current_revision"
+  ],
+  "runs": [
+    {
+      "command": "pnpm install --frozen-lockfile; pnpm add -D @tauri-apps/api@^2",
+      "result": "pass",
+      "failures": 0,
+      "note": "Workspace dependencies installed; existing local-package hook substituted sibling Design Core (local validation only). Initial unquoted package range was rejected by zsh; quoted retry succeeded. /tmp/jj-terminal-install.log and api-install.log."
+    },
+    {
+      "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/desktop/target cargo test --manifest-path desktop/Cargo.toml --no-default-features --locked --test terminal_sessions",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before: terminal module absent. /tmp/jj-terminal-before.log."
+    },
+    {
+      "command": "cargo test --manifest-path desktop/Cargo.toml --no-default-features --test terminal_sessions",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial retained-session target 1/1. Shared ignored desktop target directory only. /tmp/jj-terminal-runtime.log."
+    },
+    {
+      "command": "cargo check --manifest-path desktop/Cargo.toml --locked",
+      "result": "fail",
+      "failures": 1,
+      "note": "Fresh workspace had no staged resources directory; created ignored directory before host check. /tmp/jj-terminal-native-check.log initial run."
+    },
+    {
+      "command": "cargo check --manifest-path desktop/Cargo.toml --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Native Tauri bridge compiles. Initial unused transport accessor later removed. /tmp/jj-terminal-native-check.log."
+    },
+    {
+      "command": "cargo test --manifest-path desktop/Cargo.toml --workspace --no-default-features --locked",
+      "result": "fail",
+      "failures": 1,
+      "note": "Copied Buzz-only reserved-environment source include absent; replaced cross-app assertion with jj-store secret canaries while retaining real PTY environment tests."
+    },
+    {
+      "command": "cargo test --manifest-path desktop/Cargo.toml --workspace --no-default-features --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial full directly affected native host/engine suites pass. /tmp/jj-terminal-rust-tests.log. Superseded by final lifecycle suite below."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "fail",
+      "failures": 3,
+      "note": "Initial integration: InputEvent narrowing, public resize handle API and settings section corrected; two initial warnings then one accessibility warning repaired. /tmp/jj-terminal-web-check.log."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "0 errors/warnings before later extraction. /tmp/jj-terminal-web-final.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "0 errors/warnings; catalog boundary passes. /tmp/jj-terminal-catalog-check.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/terminal.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "4 controller and keyboard regressions. /tmp/jj-terminal-units.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-terminal/Terminal.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "2/3 pass; axe rejected close button within tablist. Moved active close action outside tablist without suppressions. /tmp/jj-terminal-stories.log. Interim color extraction also required restoring renderer BOLD constant."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-terminal/Terminal.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "3/3 interactions and accessibility. /tmp/jj-terminal-stories-after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/DesktopChrome.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte catalog/components/store-terminal/Terminal.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "21/21 direct shell consumers including terminal, with normal axe rules. Wider lane justified by shared main-body composition extraction. /tmp/jj-terminal-consumers.log."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 2,
+      "note": "Renderer and shell source budgets exceeded. Extracted color handling and production main-body composition rather than relaxing limits."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "936 modules. /tmp/jj-terminal-architecture-final.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Pinned Buzz provenance, owned Svelte components and public foundational APIs; local Design Core substitution prevents registry-only qualification. /tmp/jj-terminal-ownership.log."
+    },
+    {
+      "command": "pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "Production asset build passes. /tmp/jj-terminal-web-build.log."
+    },
+    {
+      "command": "cargo test --manifest-path desktop/Cargo.toml --no-default-features --locked --test terminal_sessions --test terminal_targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "3 session and 2 target regressions. /tmp/jj-terminal-regressions.log and regressions-final.log."
+    },
+    {
+      "command": "cargo test --manifest-path desktop/Cargo.toml --no-default-features --locked --test terminal_sessions",
+      "result": "fail",
+      "failures": 1,
+      "note": "3/4 pass; newly added background-job regression detects separate-process-group cleanup gap. /tmp/jj-terminal-jobs.log. Repaired by respecting libproc child PID count; exact regression and final suite below pass."
+    },
+    {
+      "command": "cargo fmt --manifest-path desktop/Cargo.toml --all; pnpm exec prettier --write <changed UI sources and provenance>",
+      "result": "pass",
+      "failures": 0,
+      "note": "Pinned Rust formatting and focused UI formatting. /tmp/jj-terminal-format*.log."
+    },
+    {
+      "command": "cargo test --manifest-path desktop/Cargo.toml --no-default-features --locked --test terminal_sessions closing_terminal_ends_background_job_in_separate_process_group",
+      "result": "pass",
+      "failures": 0,
+      "note": "jobs-fixed.log: exact separate-process-group cleanup regression passes after interpreting proc_listchildpids return as a PID count, with byte-sized input buffer. PTY reads use nonblocking poll so noisy or idle readers cancel promptly."
+    },
+    {
+      "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/desktop/target cargo test --manifest-path desktop/Cargo.toml --workspace --no-default-features --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "rust-final.log:109 passed,0 failed,2 ignored. Ignored tests are staged managed-runtime qualification and release-mode idle-host latency; neither is described as a pass. This full directly affected desktop/engine lane is required by shared IPC/process lifecycle, not a root Rust workspace run."
+    },
+    {
+      "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/desktop/target cargo test --manifest-path desktop/Cargo.toml --no-default-features --locked --test terminal_targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "targets-last.log:3/3 pass, including newly added native multiple-ready-links/current-revision test after the full109-test run. Local registrations and native links are separately exercised; stale/foreign/malformed targets are refused."
+    },
+    {
+      "command": "cargo clippy --manifest-path desktop/Cargo.toml --workspace --all-targets --locked -- -D warnings (initial)",
+      "result": "fail",
+      "failures": 2,
+      "note": "clippy.log:two collapsible-if diagnostics in host shutdown. Collapsed existing nested cleanup condition; no lint suppressions."
+    },
+    {
+      "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/desktop/target cargo clippy --manifest-path desktop/Cargo.toml --workspace --all-targets --locked -- -D warnings (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "clippy-final.log and native-lint-last.log:strict native desktop/engine all-target checks pass. Only the native.rs module description changed afterward; terminal logic unchanged."
+    },
+    {
+      "command": "pnpm spec:validate (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "spec.log:unsupported verification status Partial; changed requirement status to the supported vocabulary, with qualification details in this ledger."
+    },
+    {
+      "command": "pnpm dlx @tauri-apps/cli@2.11.4 build --debug --bundles app (initial); cargo build --manifest-path desktop/Cargo.toml --locked (diagnostic attempt)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Native packager rejected JS API2.12.1 versus Rust Tauri2.11.5; diagnostic-only generate_context invocation then produced E0283. Removed temporary diagnostic; aligned JS API to2.11.1 with manifest~2.11.1. Bundle/build logs retain these failures."
+    },
+    {
+      "command": "pnpm add -D @tauri-apps/api@2.11.1; final manifest range~2.11.1; pnpm install --ignore-pnpmfile --lockfile-only --frozen-lockfile",
+      "result": "pass",
+      "failures": 0,
+      "note": "api-align.log and lock-registry.log pass. Final tracked lock preserves original registry Design Core0.2.0 and adds only Tauri API2.11.1; removed hook-generated absolute/file substitutions and pnpmfile checksum from the publishable lock. Existing local-package hook and node_modules are unchanged; all UI acceptance here uses that documented local Design Core setup."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-terminal/Terminal.stories.svelte (collapse regression)",
+      "result": "fail",
+      "failures": 1,
+      "note": "collapse-user.log:one failed/three passed because Enter collapses the preceding content pane, not the terminal. Corrected to ArrowDown keyboard resize/collapse. Native cold opening also exposed generic onCollapse hiding a fresh panel; it now hides only after an actual user drag-end/keyup reports a collapsed pane. No primitive override."
+    },
+    {
+      "command": "pnpm catalog:check (header refinement initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "header-catalog.log:one test typing error from unsupported getByRole exact option; removed that invalid option."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/terminal.test.ts; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-terminal/Terminal.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "units-last.log4/4 and header-stories.log4/4; header icon/expanded state, hide focus, folder selection/missing-link settings, retained drafts/navigation, resize/maximize, Cmd+J, IME, bracketed paste and selection/copy boundaries. Normal interaction and axe checks; no visual baselines changed."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/DesktopChrome.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte catalog/components/store-terminal/Terminal.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "header-consumers.log:22/22 across4 direct story families after header integration. Main-body extraction and shared header placement justify these direct shell consumers; no full catalog claim."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "header-check.log and catalog-qualified.log:zero errors/warnings,185 catalog modules; header-architecture.log940 modules; header-ownership.log passes. Community header/icon source inspected before Design Core public primitives; source attribution and ownership retained."
+    },
+    {
+      "command": "pnpm web:build; node scripts/desktop.mjs stage --server-dir /Users/stevejuma/code/lapismd/jj-store/target/debug --rustfs-runtime /Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs --web-root /Users/stevejuma/code/lapismd/jj-store-desktop-terminal/web/dist",
+      "result": "pass",
+      "failures": 0,
+      "note": "header-build.log/header-stage.log and close-build.log/close-stage.log:production builds and212 staged assets pass. Existing CSS/global and large-chunk build warnings remain; no Vite development CSP used for native acceptance."
+    },
+    {
+      "command": "TAURI_CONFIG=acceptance-config CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/desktop/target pnpm dlx @tauri-apps/cli@2.11.4 build --debug --bundles app --config acceptance-config; same environment tauri bundle --debug --bundles app --config acceptance-config after frontend-only updates",
+      "result": "pass",
+      "failures": 0,
+      "note": "Native build and header-bundle.log/close-bundle.log pass. acceptance-config is identifier com.lapismd.jj-store.terminal-acceptance and productName jj-store-terminal-acceptance. Unique debug app reuses explicit ignored development binaries and private disposable state; no ordinary app, installed tools or existing deployment replaced."
+    },
+    {
+      "command": "Launch unique debug app with JJ_STORE_DESKTOP_DATA_DIR=/private/tmp/jst-xvsdkapu/state; CUA native WKWebView controls; ps/process identity checks",
+      "result": "pass",
+      "failures": 0,
+      "note": "Cold real embedded RustFS and production assets:registered local repository opens at verified cwd; input/output, tabs, navigation retention, maximize/restore, header toggle/expanded icon and Cmd+J work. Initial long fixture path exceeded Unix socket bound; shortened only disposable state path. Quit killed app, service, RustFS, terminal shells and separate-group sleep job. Restart opens a fresh shell, never old sessions. Web Inspector location.reload() preserved output and PID3945; new input reported the same PID. Production CSP still rejects ipc://; Tauri postMessage fallback succeeds. Inspector hotkey denied devtools permission, context Inspect Element used. Reload logs cancelled old HTTP requests/stale callback; accepted new renderer and terminal reattached. No new permission/CSP relaxation. Native SSE reconnect log noise retained as observation, not terminal failure."
+    },
+    {
+      "command": "Native WKWebView close; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/terminal.test.ts -t \"ignores callbacks\" (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "close-before.log:one failed/four skipped; closing tab correctly kills shell but late focus callback emits obsolete Terminal unavailable toast. Added session-liveness guards to input/scroll/focus/ack/resize and callback failure handling while retaining failures for active sessions."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/terminal.test.ts; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-terminal/Terminal.stories.svelte; pnpm web:check; pnpm check:architecture; focused Prettier",
+      "result": "pass",
+      "failures": 0,
+      "note": "close-after.log5/5; close-stories.log4/4 with axe; close-web.logzero errors/warnings; close-architecture.log940 modules. New exact regression proves obsolete errors are ignored after close and active-session errors remain visible. Wider shell consumers already22/22 and unchanged by this private controller repair."
+    },
+    {
+      "command": "Rebuild/stage/rebundle production UI; launch unique debug app cold; CUA close and Quit; Python os.kill(pid,0) assertions",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-final.json:successful tab close produced no error notice and removed shell8880 and background sleep9372. Explicit Quit removed app8574, service8638 and RustFS8639 as well. Renderer reload/header evidence above retained. CUA querying an already-quit app launched a failed default-state test instance; terminated only that owned acceptance instance before correctly relaunching private state. All final disposable processes are gone."
+    },
+    {
+      "command": "pnpm spec:first; pnpm check:progress; focused document Prettier (first final audit)",
+      "result": "fail",
+      "failures": 7,
+      "note": "final-first.log:architecture chapter missing for package dependency changes; added owned desktop engine/renderer boundary. final-progress.log:five unsupported whole-file test references; retained valid Rust named tests and exact UI commands in runs. final-doc-format.log:one desktop chapter formatting issue; formatted only changed chapters. Product checks unchanged."
+    },
+    {
+      "command": "pnpm spec:validate; cargo fmt --manifest-path desktop/Cargo.toml --all -- --check; historical evidence object/raw-prefix assertions",
+      "result": "pass",
+      "failures": 0,
+      "note": "final-spec.log:22 chapters/168 requirements; native Rust formatting passes. All413 prior evidence objects and their raw JSON prefix preserved; only new M17.5 row, M17 requirement/evidence links and E-DESK-007 changed."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check spec/src/desktop.md spec/src/architecture.md spec/src/verification.md desktop/README.md .local/desktop-terminal-evidence/final-entry.json (after final audit repairs)",
+      "result": "pass",
+      "failures": 0,
+      "note": "final-first2.log:81 protected files/7 canonical chapters; final-spec2.log:22 chapters/168 requirements; final-progress2.log:137 tasks; final-format2.log:formatting passes. All logs and native-final.json retained in ignored .local/desktop-terminal-evidence. No product edits after final native close regression acceptance."
+    }
+  ],
+  "versions": "macOS27.0 ARM64 (26A428); Rust1.98.1; Tauri2.11.5/Rust runtime2.11.4; Tauri JS API2.11.1; portable-pty0.9.0; Alacritty terminal0.26.0; Buzz ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be; pnpm10.32.1 (dlx reports12.6.0).",
+  "formats": "Desktop-only typed terminal targets/sessions/frames with subscription sequences and viewport generation. Existing protected HTTP folder reads unchanged. Versioned device dock geometry; in-memory shell sessions/output/open identities; no repository publication format change.",
+  "scope": "Completed repository-terminal implementation in isolated Jujutsu workspace desktop-terminal at b11c0486, including user-requested header toggle beside details, expanded bottom-panel icon and Buzz-style muted rounded toolbar with no footer. Native runtime, owned PTY engine and direct shell consumers only; repository authority/HTTP shell access unchanged. UI acceptance uses existing local Design Core substitution, while tracked manifest/lock retain registry ranges. Registry-resolved package acceptance stays with M16; wider M17.2 host/dirty-edit/distribution gates remain open, so M17.5 is Partial despite passing narrow terminal acceptance. Ignored release latency/staged managed-runtime tests are not claimed passed; native cold terminal proof is independently recorded. Root aggregates, unrelated crates/stories, visual baselines, resets, installation, main landing and publication are out of scope.",
+  "result": "pass",
+  "remaining": [],
+  "next": "Retain this committed workspace for integration; complete existing M16 registry consumer and M17.2-M17.4 desktop distribution gates separately."
+},
+{
+  "id": "E-DESK-008",
+  "tasks": [
+    "M17",
+    "M17.5"
+  ],
+  "date": "2026-10-04",
+  "kind": "desktop-terminal-main-integration",
+  "revision": "enclosing Jujutsu change nrwwnrqz",
+  "files": [
+    "spec/src/api.md",
+    "spec/src/ui.md",
+    "spec/src/milestones.md"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st in main and desktop-terminal; jj workspace list; jj log/diff from utlypsqk- to main and terminal",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both workspaces clean. Main9faf8cc6 has newer committed Cursor/OpenCode capture settings/runtime work. Only API/architecture/UI/ledger paths overlap; no terminal production-code overlap."
+    },
+    {
+      "command": "jj new @- utlypsqk -m \"Merge desktop repository terminal into main\"; resolve canonical append conflicts; historical object/raw-prefix assertions",
+      "result": "pass",
+      "failures": 0,
+      "note": "Merged terminal0b027a43 with main9faf8cc6 without rewriting either parent. Three canonical files conflicted:API/UI appended chapters retain both features; ledger retains all418 main evidence objects and raw JSON prefix plus unchanged E-DESK-007. Architecture auto-merged. All81 non-spec files from terminal change match feature bytes, including native runtime/tests, UI/tests, dependencies and provenance. M17.5 remains Partial and existing qualification limits are retained."
+    },
+    {
+      "command": "pnpm install --offline --no-frozen-lockfile; restore unchanged registry lock bytes; inspect node_modules/.modules.yaml",
+      "result": "pass",
+      "failures": 0,
+      "note": "Installed Tauri API2.11.1 into main using cached packages. Existing local Design Core hook used for local validation; publishable lock remains byte-identical to terminal commit with registry ranges. No dependency points into retired workspace."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/terminal.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "merge-units.log:5/5 pass, including uncertain-open identity, renderer reattachment, stale target fencing and obsolete-close callback regression."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/DesktopChrome.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte catalog/components/store-terminal/Terminal.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "merge-stories.log:22/22 pass in fresh Storybook/Vite process with interaction and accessibility; direct merged shell consumers only."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership; pnpm spec:validate; pnpm exec prettier --check spec/src/api.md spec/src/ui.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web/catalog diagnostics;186 catalog modules,941 web modules; ownership and22 chapters/168 requirements pass. Canonical conflict formatting passes."
+    },
+    {
+      "command": "pnpm check:progress before integration evidence entry",
+      "result": "fail",
+      "failures": 1,
+      "note": "Merge correctly required a new evidence entry rather than reusing either parent evidence; added this E-DESK-008 record."
+    },
+    {
+      "command": "Hash-verified copy of .local/desktop-terminal-evidence to main; assert clean kpqlktmk workspace; jj workspace forget desktop-terminal; remove exact jj-store-desktop-terminal directory",
+      "result": "pass",
+      "failures": 0,
+      "note": "105 retained evidence files verified by SHA-256 before deletion. Rechecked temporary workspace was clean at original empty change. Removed only desktop-terminal registration and directory; other workspaces untouched. Previous native acceptance processes already stopped; no active temporary workspace services found. Main retains the committed terminal parent and all historical acceptance records."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first (default merge comparison)",
+      "result": "fail",
+      "failures": 1,
+      "note": "merge-progress-final.log validates137 tasks. spec:first default @- is ambiguous for two-parent merge; rerun with explicit main and terminal bases. Complete historical evidence preserved; no product failure."
+    },
+    {
+      "command": "pnpm spec:first --base 9faf8cc6 --head @; pnpm spec:first --base utlypsqk --head @ (initial explicit-reference attempt)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Explicit base/head mode uses Git object references: @ resolved to Git HEAD and gave an uninformative no-change result; utlypsqk was rejected as a bad Git revision. Neither attempt qualifies the merge. Corrected both bases and merged head to actual commit IDs below."
+    },
+    {
+      "command": "pnpm spec:first --base 9faf8cc6452c --head 12e58fe23fc4f6e70099396a2ef906d6698431fe; pnpm spec:first --base 0b027a439054 --head 12e58fe23fc4f6e70099396a2ef906d6698431fe",
+      "result": "pass",
+      "failures": 0,
+      "note": "Actual merge compared against both actual parent commits:main81 protected files/7 canonical chapters;terminal77 protected files/10 canonical chapters. Later edit adds only these evidence results. Final progress bookkeeping also passes137 tasks."
+    }
+  ],
+  "versions": "macOS ARM64; pnpm10.32.1; Tauri JS API2.11.1. Native engine/toolchain evidence remains E-DESK-007.",
+  "formats": "No additional product, storage, API, native IPC or persisted-format change during integration.",
+  "result": "pass",
+  "remaining": [],
+  "scope": "User-authorized main-workspace merge and retirement only. Prior verified terminal files are byte-identical; canonical append conflicts preserve main capture work. Direct UI units, shell interaction/accessibility, type, ownership and architecture checked in main. Native build/lifecycle rerun, root aggregates, unrelated capture suites, visual baselines, package release and service restarts are out of scope because merge introduced no production-code resolution. Original E-DESK-007 native/cold evidence remains valid, with registry-only Design Core and broader desktop distribution qualification separately pending.",
+  "next": "Finalize the merge commit in main with clean working copy; retain copied evidence for existing release qualification."
+}
 ]
 ```

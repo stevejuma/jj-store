@@ -1795,3 +1795,10 @@ profiles. Cursor sources use cached ordinary coverage and repository binding,
 but never advertise an inactive-history import target. OpenCode endpoint errors
 do not turn the entire capture service unavailable. Source GETs remain cached
 and perform no live directory scan or endpoint request.
+
+## Desktop terminal consumer
+
+The desktop host consumes existing protected local repository registrations and
+workspace-link reads to resolve terminal targets. These routes remain read-only
+and do not execute shells. Terminal frames and controls use the desktop-only
+Tauri interface, not an HTTP or repository publication API.

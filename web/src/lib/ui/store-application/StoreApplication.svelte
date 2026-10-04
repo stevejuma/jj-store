@@ -1,5 +1,7 @@
 <script lang="ts">
-  import StoreApplicationPlaceholder from "./StoreApplicationPlaceholder.svelte";
+  import { provideTerminalControls } from "../../terminal/controls.svelte.js";
+  provideTerminalControls();
+  import StoreApplicationMain from "./StoreApplicationMain.svelte";
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
   // Adapted from CommunityApplication's shell composition; all state is local.
@@ -18,24 +20,19 @@
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreThreadFocus from "../store-threads/StoreThreadFocus.svelte";
   import { createApplicationThreadPanel as ownThreadPanel } from "../store-threads/thread-panel.svelte.js";
-  import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
   import { onDestroy, setContext, untrack } from "svelte";
   import type { StoreApplicationProps } from "./application-props.js";
   import { isMacDesktopWindow } from "../../desktop-chrome.js";
   import "./store-application.css";
   import { workspaceNavigationKey } from "./workspace-navigation.js";
-  import StoreWorkspaceSectionHeader from "./StoreWorkspaceSectionHeader.svelte";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
   import StoreApplicationNavigation from "./StoreApplicationNavigation.svelte";
-  import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
   import type {
     StorePage,
     CommunityNavigationItemModel,
   } from "../community-navigation/model.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
-  import StoreRepositoryNotices from "./StoreRepositoryNotices.svelte";
   import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
-  import StoreSettings from "../store-settings/StoreSettings.svelte";
   import StoreSettingsRepository from "../store-settings/StoreSettingsRepository.svelte";
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import type { StoreSettingsSection } from "../store-settings/model.js";
@@ -218,75 +215,27 @@
           />{/snippet}
       </StoreApplicationNavigation>{/if}
   </AppShell.Sidebar>
-  <AppShell.Main>
-    {#if settingsOpen}
-      {#if shell.mobile.resolvedMode === "mobile"}
-        <AppShell.Toolbar>
-          <AppShell.Sidebar.Toggle side="left" sidebarName="settings" />
-          {@render settingsRepository()}
-        </AppShell.Toolbar>
-      {/if}
-      <StoreSettings
-        {controller}
-        section={settingsSection}
-        onClose={closeSettings}
-      />
-    {:else}
-      {#if shell.mobile.resolvedMode === "mobile"}
-        <AppShell.Toolbar>
-          <CommunityApplicationMobileNavigation
-            model={{ canNavigateBack, canNavigateForward, navigate }}
-          />
-          {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
-              {controller}
-            />{:else if current.page === "threads"}<StoreThreadsBreadcrumb
-              {controller}
-            />{/if}
-          <div class="store-application__details-toggle">
-            <AppShell.Sidebar.Toggle
-              side="right"
-              sidebarController={detailsRail}
-              sidebarName="details"
-            />
-          </div>
-        </AppShell.Toolbar>
-      {/if}
-      <AppShell.Body
-        layout="regions"
-        label={current.page === "files"
-          ? "Repository files workspace"
-          : undefined}
-        class={current.page === "files"
-          ? "store-application__files-body"
-          : undefined}
-      >
-        <div class="store-application__body-frame">
-          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current)) && current.page !== "threads"}
-            {#if !(current.page === "reviews" && current.reviewThreadId)}<StoreRepositoryTabs
-                page={current.page}
-                local={controller.state.repository.profile === "git_sha1_jj045"}
-                onSelect={selectPage}
-              />{/if}
-            {#if current.page !== "reviews"}<StoreWorkspaceSectionHeader
-                {controller}
-                disabled={workspaceBlocked}
-              />{/if}
-            <StoreRepositoryNotices {controller} />{/if}
-          <div class="store-application__body-regions" data-page={current.page}>
-            {#key current.repository + current.page}
-              {#if children}{@render children(
-                  current.page,
-                  current.repository,
-                )}{:else}<StoreApplicationPlaceholder
-                  repository={current.repository}
-                  page={current.page}
-                />{/if}
-            {/key}
-          </div>
-        </div>
-      </AppShell.Body>
-    {/if}
-  </AppShell.Main>
+  <StoreApplicationMain
+    {controller}
+    {shell}
+    {current}
+    {settingsOpen}
+    {settingsSection}
+    {settingsRepository}
+    {closeSettings}
+    {conflictOpen}
+    {workspaceBlocked}
+    {canNavigateBack}
+    {canNavigateForward}
+    {navigate}
+    {detailsRail}
+    {selectPage}
+    {children}
+    linkFolder={() => {
+      openSettings();
+      selectSettings("repository");
+    }}
+  />
   {#if !settingsOpen}<StoreApplicationRightPanels
       {controller}
       {shell}

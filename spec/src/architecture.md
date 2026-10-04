@@ -639,6 +639,16 @@ listener. It has no dependencies on upstream JJ, model, WAL, storage or service
 crates. The root Cargo workspace excludes the host. See [desktop](desktop.md)
 for lifetime and qualification contracts.
 
+The desktop workspace owns `jj-store-terminal-engine`, adapted from the pinned
+Buzz PTY/Alacritty implementation. Its bounded queues, parser, process cleanup
+and in-memory grid depend only on terminal/platform libraries. The host resolves
+eligible folders through existing protected loopback reads using a bounded HTTP
+client, then exposes named exact-origin Tauri commands. Neither engine nor
+renderer can select repository roots or publish metadata. The web bundle uses
+the released Tauri JavaScript API, aligned to the host's minor version, while
+the Svelte terminal controller owns tab selection and disposable subscriptions.
+No shell HTTP route or core storage dependency is introduced.
+
 Native glass and traffic-light layout depend only on the host's independently
 locked Tauri, window-vibrancy and minimal AppKit bindings. The renderer receives
 one boolean appearance command restricted to the managed main window and exact

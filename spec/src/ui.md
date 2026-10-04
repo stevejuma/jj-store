@@ -1919,3 +1919,15 @@ and unlinked sources; absent native message/tool timing remains unknown. Cursor
 settings explain the one-time `jj agent setup cursor --transcript-capture` step.
 Saved/effective values and restart-required state apply independently to both
 Cursor products and the configured OpenCode API endpoint.
+
+## Desktop repository terminal
+
+JST-UI-002 and JST-UI-006 include the native-only repository bottom dock.
+Sessions belong to their original repository and folder across navigation. Hide
+preserves the shell; Close terminates a tab. The shell retains repository and
+editor state while rendering tabs, folder choice, accessible output, a resizable
+dock and maximize/restore. Cmd+J toggles only with a repository selected and
+returns focus on hide. Unsupported browser clients do not advertise the
+terminal. Missing folders explain how to link an existing folder; operational
+failures use the shared notification service. Stories exercise the production
+dock with a fake bridge and remain visual-pending.

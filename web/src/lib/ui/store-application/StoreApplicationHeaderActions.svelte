@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreTerminalToggle from "../store-terminal/StoreTerminalToggle.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import type { StoreController } from "../../controller/contracts.js";
@@ -31,6 +32,7 @@
     onclick={() => controller.actions.refresh()}
     ><RefreshCwIcon aria-hidden="true" /></Button
   >{/if}
+<StoreTerminalToggle {disabled} />
 <span class="community-app-shell__sidebar-action">
   <Button
     variant="default"

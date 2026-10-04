@@ -107,6 +107,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/svelte-query": "^6.3.0",
     "@tanstack/svelte-virtual": "^3.13.39",
+    "@tauri-apps/api": "~2.11.1",
     "@types/node": "^24.19.0",
     "@vitest/browser-playwright": "^4.1.11",
     "ajv": "^8.20.0",
