@@ -1,0 +1,48 @@
+/* Task page chrome stays outside its independently scrolling body. */
+.store-projects[data-task-detail] {
+  display: flex;
+  flex-direction: column;
+}
+.store-projects[data-task-detail] > .store-projects__tab-root,
+.store-projects[data-task-detail] [data-ui-part="tabs-content"] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.community-projects__task-detail {
+  display: grid;
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: 0;
+  overflow: hidden;
+}
+.community-projects__task-detail-header {
+  margin: 1.15rem 1.25rem 0.85rem 0.5rem;
+  background: var(--background);
+}
+.community-projects__task-scroll {
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+}
+.community-projects__task-body {
+  padding: 0 1.25rem 1rem 0.85rem;
+}
+.community-projects__task-body .community-projects__task-meta {
+  margin-top: 0;
+}
+.community-projects__task-target {
+  margin-inline-end: 0.5rem;
+}
+.community-projects__task-footer {
+  min-width: 0;
+  padding: 0.75rem 1.25rem 1rem 0.85rem;
+  background: var(--background);
+}
+.community-projects__task-footer .community-projects__task-composer {
+  margin-top: 0;
+  --community-chat-composer-editor-max-height-override: 7rem;
+}

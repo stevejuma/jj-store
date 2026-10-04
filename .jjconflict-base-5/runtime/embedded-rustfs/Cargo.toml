@@ -1,0 +1,23 @@
+[workspace]
+
+[package]
+name = "jj-store-embedded-rustfs"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.98.1"
+license = "Apache-2.0"
+publish = false
+
+[[bin]]
+name = "jj-store-rustfs"
+path = "src/main.rs"
+
+[dependencies]
+rustfs = { version = "=1.0.0", default-features = false }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+[profile.dev]
+debug = 0
+
+[profile.test]
+debug = 0

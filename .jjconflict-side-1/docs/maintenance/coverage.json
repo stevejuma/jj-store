@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed independent task audience witness keys and final audience regression; event settlements remain scoped process-local hints and current authorization remains authoritative.",
-      "fingerprint": "03d17e2e022050716dcdf0b7466909cdc4223c00f9b9f6054ea22e92fb84e9ee"
+      "reason": "Reviewed owned stacks version-1 validated intent and receipt records; manual distinguishes contracts from unimplemented executor, journal and checkout capability.",
+      "fingerprint": "8eeb114b344d71247da7b2a484bd0629d0c66a4112ee19888e0ee6e1124312fb"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed preservation of queued event deadlines across unrelated notices, bounded retries only for retained healthy dirtiness, and cold regression for prompt two-client Work refresh.",
-      "fingerprint": "831cc56f9909fa1f28ea5f4c5163316889a8371ab64c65c52fcbc4a3d61a8500"
+      "reason": "Reviewed synchronous canceled-read ownership release and exact reaction argument invalidation; browsing controls, shared reads and capability limits remain accurate.",
+      "fingerprint": "c5a7f5d9526b7b18dd6922e1cab781d8526e9cd6a966311714b05a00732ca652"
     }
   },
   {

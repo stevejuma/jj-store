@@ -79,3 +79,16 @@ state-owner settlements. Refcounted monitors coalesce filesystem hints and use
 bounded metadata checks to cover missed notifications. They do not walk history
 or poll storage statistics. Witnesses are hints; every reopened read retains
 current authorization and its original pin. Terminal output uses its own stream.
+
+Canceling a read releases that caller's lease before an identical retry starts.
+Other active callers retain their shared transport. Targeted reaction
+invalidation uses the request arguments independently of snapshot-epoch keys.
+
+## Stacks contract foundation
+
+The service owns versioned local stacks intent, exact file/hunk selection,
+preparation and receipt records. These distinguish code publication, device
+selection and physical checkout completion. They currently define validated
+contracts, with no executable stack commands or HTTP mutation capability.
+Recoverable checkout and named-combination execution remain qualification work;
+opening a view does not create or snapshot a combination.

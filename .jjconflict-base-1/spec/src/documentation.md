@@ -41,6 +41,12 @@ validation, preserved evidence and process ownership checks. Presentation-only
 Help changes may retain accurate manual prose after explicit review; sidebar
 sizing follows the application navigation requirements.
 
+Stacks contract and read-lifecycle delivery reviews service/application coverage
+against the owning source. The manual distinguishes validated command records
+from executable stack operations and keeps recoverable checkout qualification
+explicit. Read cancellation and exact-target cache invalidation retain shared
+read ownership without changing repository authority.
+
 Bounded-read integration regenerates the combined API reference and reviews
 source coverage after rebasing. The manual describes files-first enrichment,
 independent reference windows and explicit operation-bound preparation/cancel

@@ -48,3 +48,29 @@ test("the final observer release aborts obsolete transport", async () => {
   expect(shared?.aborted).toBe(true);
   queries.clear();
 });
+
+test("an immediate same-key retry cannot inherit released transport", async () => {
+  const queries = createStoreQueryClient();
+  const abort = new AbortController();
+  const signals: AbortSignal[] = [];
+  const options = {
+    queryKey: ["immediate-retry"],
+    staleTime: 0,
+    queryFn: ({ signal }: { signal: AbortSignal }) => {
+      signals.push(signal);
+      return signals.length === 1
+        ? new Promise<string>(() => {})
+        : Promise.resolve("fresh");
+    },
+  };
+  const pending = readQuery(queries, options, abort.signal);
+  const rejected = expect(pending).rejects.toBeDefined();
+  abort.abort();
+  expect(signals[0].aborted).toBe(true);
+  const retry = readQuery(queries, options);
+  await rejected;
+  expect(await retry).toBe("fresh");
+  expect(signals).toHaveLength(2);
+  expect(signals[1].aborted).toBe(false);
+  queries.clear();
+});

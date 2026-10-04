@@ -1,0 +1,101 @@
+# Agent capture
+
+Ordinary Git-backed JJ repositories use the local companion metadata store.
+Agent capture runs in the CLI process without a native server connection.
+`jj agent initialize --request-id <id>` explicitly initializes this metadata;
+the first successful enablement can initialize it too. Status and session reads
+on an uninitialized repository leave both metadata and actor state absent.
+
+`jj agent sessions [--limit <count>] [--cursor <cursor>]` reads a pinned local
+session page. Continue with the returned cursor to keep the same metadata
+snapshot across processes. `jj agent receipt <request-id>` returns the original
+local capture or initialization receipt. These two commands currently target the
+local Git profile. Native repository collaboration reads remain available
+through the existing local API.
+
+`jj agent code-evidence --operation <full-operation-id>` inspects one explicitly
+selected code operation. Its JSON output includes a typed source reference and
+the exact capsule. It stages immutable Git objects without selecting metadata.
+Initialize metadata first to establish the source repository identity.
+
+`jj agent associate --request-id <id> --record <association.json>` and
+`jj agent checkpoint --request-id <id> --record <checkpoint.json>` accept
+complete `CodeAssociationV2` and `AgentCheckpointVersionV2` documents. Use the
+source reference from code evidence in each operation anchor; commit anchors
+pair that reference with a profile-tagged commit from the capsule. Agent facts
+name exact selected sessions and immutable dependencies. Corrections include the
+prior version in the record and pass its object ID through `--expected-version`.
+
+Before publication the CLI privately journals the complete request, including
+exact capsule bytes. Unknown outcomes retain it.
+`jj agent retry-provenance <id>` retries that original request without requiring
+the input document or source operation store. A matching durable receipt
+completes the journal entry; `jj agent receipt <id>` inspects a completed
+request.
+
+`jj agent associations` and `jj agent checkpoints` read bounded local pages with
+`--limit` and `--cursor`. Continuations keep one selected metadata snapshot and
+cannot move between those catalogs. Reads do not initialize metadata or device
+state. Code associations are explicit assertions; hooks currently capture agent
+activity without automatically asserting code causality.
+
+`jj agent drain` retries the private sanitized spool in source order using the
+repository's backend. Local requests are synchronized before ref publication;
+native requests retain their prepared RPC delta. A prepared request cannot move
+between those profiles. Unknown outcomes leave the original request pending.
+
+`jj agent status` probes Codex, Cursor, and OpenCode against the exact supported
+versions and reports detection, desired enablement, and setup separately.
+
+`jj agent enable --non-interactive --agent <codex|cursor|opencode>` records an
+explicit device-local choice. Use `--dry-run` to preview the resulting registry
+without changing it. Detection does not authorize every installed harness.
+
+`jj agent setup <codex|cursor|opencode>` installs one enabled, exact-version
+integration in the current project. Codex and Cursor receive owned entries in
+their existing hook documents; OpenCode receives the namespaced
+`.opencode/plugins/jj-store-agent.ts` plugin. Unrelated configuration is
+preserved. Use `--dry-run` to preview the target without creating directories,
+backups, ownership state, or hooks.
+
+A real setup compiles and caches MongoDB Kingfisher's pinned in-process rules
+before installing the hook. The first setup can take longer; later hook
+processes reuse the private device-local cache.
+
+`jj agent setup cursor --transcript-capture` instead installs metadata-only
+transcript hooks for Cursor Desktop 3.22.7 and CLI 2026.09.26-dd393fe. Run it
+from the exact linked native workspace after enabling Cursor. This mode skips
+hook sanitizer warming because the configured server sanitizes bounded JSONL
+messages. Hooks write a private binding/activity hint beside the approved
+transcript and do not enqueue prompt, response or tool messages. Use `--dry-run`
+to preview; switching an existing owned setup mode requires removal followed by
+setup. Server capture settings remain opt-in and take effect after restart. See
+the [local capture guide](../capture-preview.md) for root and OpenCode API
+setup.
+
+The registry is user-restricted, contains no credentials or transcript content,
+and is bound to one repository, physical workspace, and stable device identity.
+A missing executable, failed probe, or different version is reported without
+forwarding harness stderr.
+
+Before changing a project file, setup stores its exact original bytes and the
+intended content hash in the device-local registry area. Repeated setup is
+idempotent. Status reports a later edit as drifted, and setup refuses to replace
+it. Symlinked project configuration paths fail closed.
+
+`jj agent remove <codex|cursor|opencode> [--dry-run]` disables one integration
+and removes only its recorded jj-store-owned artifact. It restores the exact
+backed-up project file, or deletes a plugin file that did not exist before
+setup. Changed target bytes and symlinked paths fail closed. Interrupted cleanup
+resumes from the private ownership record; repeated removal is harmless.
+
+Installed hooks call the internal `jj agent hook <codex|cursor|opencode>`
+entrypoint. It verifies the enabled registry state, exact owned project artifact
+and warmed Kingfisher cache, then sanitizes one bounded standard-input event
+before allocating durable source order and enqueuing the sanitized observation.
+Invalid or oversized input is represented only by a fixed omission record. Hook
+commands produce no normal output and never persist raw input. Pending capture
+publication is attempted for three seconds after durable enqueue. An unavailable
+native server, unknown outcome, stale request, or timeout leaves the capture in
+the private spool without failing the hook; the next hook invocation retries the
+oldest exact source-ordered request before later observations.
