@@ -103,6 +103,7 @@ export function productionStoreView(
       searchStatusError: data.searchStatusError,
       indexPreparation: data.indexPreparation,
       indexPreparationError: data.indexPreparationError,
+      indexTaskStatus: data.indexTaskStatus,
       indexOperation:
         (data.neededIndex ? snapshotOperation(data.neededIndex) : null) ??
         route.snapshotOperationId,

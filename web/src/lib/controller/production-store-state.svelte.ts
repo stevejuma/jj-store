@@ -61,6 +61,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   searchStatusError: string;
   indexPreparation: import("./contracts.js").StoreLoadStatus;
   indexPreparationError: string;
+  indexTaskStatus: import("../api/client.js").Task["status"] | null;
   bookmarks: Bookmark[];
   choices: RepositoryChoice[];
   workingCopies: RepositoryWorkingCopy[];
@@ -169,6 +170,7 @@ export function createProductionStoreState(): ProductionStoreState {
     searchStatusError: "",
     indexPreparation: "idle",
     indexPreparationError: "",
+    indexTaskStatus: null,
     bookmarks: [],
     choices: [],
     workingCopies: [],

@@ -173,6 +173,11 @@ export function startProductionStoreLifecycle(options: {
   fetcher?: typeof fetch;
   signal: AbortSignal;
 }) {
+  if (options.history.error)
+    Object.assign(options.data.status, {
+      navigation: "failed",
+      error: options.history.error,
+    });
   followProductionExternalRoutes(options);
   void initializeProductionStore(options);
 }

@@ -110,6 +110,7 @@ export interface StoreSettingsState extends WorkspaceLinkSettings {
   readonly searchStatusError: string;
   readonly indexPreparation: StoreLoadStatus;
   readonly indexPreparationError: string;
+  readonly indexTaskStatus: import("../api/client.js").Task["status"] | null;
   readonly indexOperation: string | null;
 }
 export interface StoreControllerState {
@@ -201,6 +202,7 @@ export interface StoreController {
     linkWorkspace(): Promise<void>;
     pickWorkspaceFolder(): Promise<void>;
     prepareIndex(): Promise<void>;
+    cancelIndex(): Promise<void>;
     setSearchDraft(
       patch: Partial<import("./search-settings.js").SearchDraft>,
     ): void;

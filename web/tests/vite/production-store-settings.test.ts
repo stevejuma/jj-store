@@ -86,8 +86,8 @@ test("settings skip unavailable search and prepare the selected operation", asyn
 
   data.capabilities = capabilities(true);
   await settings.prepareIndex();
-  expect(prepareIndex).toHaveBeenCalledWith(operation);
-  expect(indexTask).toHaveBeenCalledWith("task-1");
+  expect(prepareIndex).toHaveBeenCalledWith(operation, expect.any(AbortSignal));
+  expect(indexTask).toHaveBeenCalledWith("task-1", expect.any(AbortSignal));
   expect(restore).toHaveBeenCalledOnce();
   expect(searchStatus).not.toHaveBeenCalled();
   expect(data.indexPreparation).toBe("ready");
@@ -117,7 +117,10 @@ test("settings prefer the operation reported by an index-lag response", async ()
   });
 
   await settings.prepareIndex();
-  expect(prepareIndex).toHaveBeenCalledWith(lagOperation);
+  expect(prepareIndex).toHaveBeenCalledWith(
+    lagOperation,
+    expect.any(AbortSignal),
+  );
   expect(data.neededIndex).toBeNull();
 });
 
@@ -159,7 +162,7 @@ test("graph preparation works without text search and preserves search health", 
   });
 
   await settings.prepareIndex();
-  expect(prepareIndex).toHaveBeenCalledWith(operation);
+  expect(prepareIndex).toHaveBeenCalledWith(operation, expect.any(AbortSignal));
   expect(restore).toHaveBeenCalledOnce();
   expect(data.indexPreparation).toBe("ready");
   expect(searchStatus).not.toHaveBeenCalled();
@@ -189,4 +192,199 @@ test("graph preparation requires the native index-task capability", async () => 
   await settings.prepareIndex();
   expect(prepareIndex).not.toHaveBeenCalled();
   expect(data.indexPreparation).toBe("idle");
+});
+
+test("preparation stops before polling after navigation during its delay", async () => {
+  vi.useFakeTimers();
+  try {
+    const data = createProductionStoreState();
+    data.capabilities = capabilities(false);
+    let current = true;
+    const indexTask = vi.fn(async () => task(operation, "ready"));
+    const source = {
+      prepareIndex: vi.fn(async () => task(operation, "running")),
+      indexTask,
+    } as unknown as StoreDataSource;
+    const restore = vi.fn(async () => {});
+    const settings = createProductionStoreSettings({
+      data,
+      source: () => source,
+      operation: () => operation,
+      version: () => 1,
+      current: () => current,
+      restore,
+    });
+    const pending = settings.prepareIndex();
+    await vi.advanceTimersByTimeAsync(1);
+    current = false;
+    await vi.advanceTimersByTimeAsync(5000);
+    await pending;
+    expect(indexTask).not.toHaveBeenCalled();
+    expect(restore).not.toHaveBeenCalled();
+    expect(data.indexPreparation).toBe("idle");
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+test("preparation cancels only its original task and waits for terminal status", async () => {
+  vi.useFakeTimers();
+  try {
+    const data = createProductionStoreState();
+    data.capabilities = capabilities(false);
+    let selected = operation;
+    const cancelIndexTask = vi.fn(async (_id: string) => ({
+      ...task(operation, "running"),
+      status: "canceling",
+    }));
+    const indexTask = vi.fn(async () => ({
+      ...task(operation, "running"),
+      status: "canceled",
+    }));
+    const prepareIndex = vi.fn(async () => task(operation, "running"));
+    const source = {
+      prepareIndex,
+      indexTask,
+      cancelIndexTask,
+    } as unknown as StoreDataSource;
+    const restore = vi.fn(async () => {});
+    const settings = createProductionStoreSettings({
+      data,
+      source: () => source,
+      operation: () => selected,
+      version: () => 1,
+      current: () => true,
+      restore,
+    });
+    const pending = settings.prepareIndex();
+    await vi.advanceTimersByTimeAsync(1);
+    selected = "ef".repeat(64);
+    await settings.cancelIndex();
+    await settings.cancelIndex();
+    await settings.prepareIndex();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(cancelIndexTask).toHaveBeenCalledTimes(1);
+    expect(cancelIndexTask.mock.calls[0]?.[0]).toBe("task-1");
+    expect(data.indexPreparation).toBe("loading");
+    expect(data.indexTaskStatus).toBe("canceling");
+    await vi.advanceTimersByTimeAsync(5000);
+    await pending;
+    expect(data.indexTaskStatus).toBe("canceled");
+    expect(data.indexPreparation).toBe("idle");
+    expect(data.indexPreparationError).toBe("");
+    expect(prepareIndex).toHaveBeenCalledTimes(1);
+    expect(restore).not.toHaveBeenCalled();
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+test("clearing preparation aborts a pending observation and releases its timer", async () => {
+  vi.useFakeTimers();
+  try {
+    const data = createProductionStoreState();
+    data.capabilities = capabilities(false);
+    let pendingSignal: AbortSignal | undefined;
+    const indexTask = vi.fn(
+      (_id: string, signal: AbortSignal) =>
+        new Promise<Task>((_resolve, reject) => {
+          pendingSignal = signal;
+          signal.addEventListener(
+            "abort",
+            () => reject(new DOMException("Aborted", "AbortError")),
+            { once: true },
+          );
+        }),
+    );
+    const source = {
+      prepareIndex: async () => task(operation, "running"),
+      indexTask,
+    } as unknown as StoreDataSource;
+    const settings = createProductionStoreSettings({
+      data,
+      source: () => source,
+      operation: () => operation,
+      version: () => 1,
+      current: () => true,
+      restore: async () => {},
+    });
+    const pending = settings.prepareIndex();
+    await vi.advanceTimersByTimeAsync(500);
+    expect(indexTask).toHaveBeenCalledTimes(1);
+    settings.clear();
+    await pending;
+    expect(pendingSignal?.aborted).toBe(true);
+    expect(vi.getTimerCount()).toBe(0);
+    expect(data.indexPreparation).toBe("idle");
+    expect(data.indexTaskStatus).toBeNull();
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+test("cancel transport failure remains unconfirmed and polls without replaying cancel", async () => {
+  vi.useFakeTimers();
+  try {
+    const data = createProductionStoreState();
+    data.capabilities = capabilities(false);
+    const cancelIndexTask = vi.fn(async () => {
+      throw new Error("offline");
+    });
+    const indexTask = vi.fn(async () => task(operation, "running"));
+    const source = {
+      prepareIndex: async () => task(operation, "running"),
+      indexTask,
+      cancelIndexTask,
+    } as unknown as StoreDataSource;
+    const settings = createProductionStoreSettings({
+      data,
+      source: () => source,
+      operation: () => operation,
+      version: () => 1,
+      current: () => true,
+      restore: async () => {},
+    });
+    const pending = settings.prepareIndex();
+    await vi.advanceTimersByTimeAsync(1);
+    await settings.cancelIndex();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(data.indexPreparation).toBe("loading");
+    expect(data.indexTaskStatus).toBe("running");
+    expect(data.indexPreparationError).toContain("Cancellation is unconfirmed");
+    await vi.advanceTimersByTimeAsync(27500);
+    expect(indexTask).toHaveBeenCalledTimes(8);
+    expect(cancelIndexTask).toHaveBeenCalledTimes(1);
+    await settings.cancelIndex();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(cancelIndexTask).toHaveBeenCalledTimes(2);
+    settings.clear();
+    await pending;
+    expect(vi.getTimerCount()).toBe(0);
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+test("native task cancellation is bodyless and carries the observation signal", async () => {
+  const { Client } = await import("../../src/lib/api/client.js");
+  const { HttpStoreWriteDataSource } =
+    await import("../../src/lib/controller/http-store-write-data-source.js");
+  const abort = new AbortController();
+  const fetcher = vi.fn(
+    async (_url: string | URL | Request, init?: RequestInit) => {
+      expect(init?.method).toBe("POST");
+      expect(init?.body).toBeUndefined();
+      expect(init?.signal).toBeInstanceOf(AbortSignal);
+      return new Response(JSON.stringify(task(operation, "ready")), {
+        headers: { "content-type": "application/json" },
+      });
+    },
+  );
+  const source = new HttpStoreWriteDataSource(
+    new Client(repository, null, () => {}, fetcher),
+  );
+  await source.cancelIndexTask("task-1", abort.signal);
+  expect(fetcher.mock.calls[0]?.[0]).toBe(
+    `/v1/repos/${repository}/index/tasks/task-1/cancel`,
+  );
 });

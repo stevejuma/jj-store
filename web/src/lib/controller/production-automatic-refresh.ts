@@ -50,6 +50,7 @@ export function createProductionAutomaticRefresh(options: {
         projects.loading ||
         projects.detail?.state.writing ||
         threads.busy ||
+        data.indexPreparation === "loading" ||
         data.reviewActionRequestId ||
         ["refreshing", "loading"].includes(data.status.reviewAction) ||
         ["previewing", "prepared", "applying", "unknown"].includes(

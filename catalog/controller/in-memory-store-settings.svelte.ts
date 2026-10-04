@@ -107,6 +107,7 @@ export function createInMemoryStoreSettings(options: {
         searchStatusError,
         indexPreparation,
         indexPreparationError: "",
+        indexTaskStatus: indexPreparation === "loading" ? "running" : null,
         indexOperation: options.operation(),
       };
     },
@@ -117,6 +118,9 @@ export function createInMemoryStoreSettings(options: {
       searchStatusState = mode === "failed" ? "failed" : "ready";
       searchStatusError =
         mode === "failed" ? "Search status could not be loaded." : "";
+    },
+    async cancelIndex() {
+      indexPreparation = "idle";
     },
     async prepareIndex() {
       if (!options.operation()) return;

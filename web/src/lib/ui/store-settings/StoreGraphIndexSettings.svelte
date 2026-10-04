@@ -38,6 +38,16 @@
                 ? "Preparing graph index…"
                 : "Prepare graph index"}</Button
             >
+            {#if preparing}
+              <Button
+                variant="outline"
+                disabled={settings.indexTaskStatus !== "running"}
+                onclick={() => void controller.actions.cancelIndex()}
+                >{settings.indexTaskStatus === "canceling"
+                  ? "Canceling…"
+                  : "Cancel preparation"}</Button
+              >
+            {/if}
           </div>
         {:else}<span>Graph preparation is not available.</span>{/if}
       </dd>
@@ -52,7 +62,17 @@
       </div>{/if}
     {#if preparing}<div>
         <dt>Status</dt>
-        <dd><span role="status">Preparing the graph index…</span></dd>
+        <dd>
+          <span role="status"
+            >{settings.indexTaskStatus === "canceling"
+              ? "Canceling graph index preparation…"
+              : "Preparing the graph index…"}</span
+          >
+        </dd>
+      </div>
+    {:else if settings.indexTaskStatus === "canceled"}<div>
+        <dt>Status</dt>
+        <dd><span role="status">Graph index preparation canceled.</span></dd>
       </div>
     {:else if settings.indexPreparation === "ready"}<div>
         <dt>Status</dt>
@@ -63,6 +83,6 @@
     noticeKey="graph-index"
     title="Graph index preparation failed"
     message={settings.indexPreparationError}
-    pending={preparing}
+    pending={false}
   />
 </section>

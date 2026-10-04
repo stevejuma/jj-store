@@ -98,3 +98,15 @@ for (const status of ["refreshing", "loading"] as const) {
     }
   });
 }
+
+test("graph preparation retains its read scope until terminal status", async () => {
+  const f = fixture();
+  f.data.indexPreparation = "loading";
+  f.updates.request();
+  await vi.advanceTimersByTimeAsync(10000);
+  expect(f.refresh).not.toHaveBeenCalled();
+  f.data.indexPreparation = "idle";
+  await vi.advanceTimersByTimeAsync(5000);
+  expect(f.refresh).toHaveBeenCalledTimes(1);
+  f.abort.abort();
+});

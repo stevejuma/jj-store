@@ -65,7 +65,7 @@ export class HttpStoreWriteDataSource {
     );
   }
 
-  prepareIndex(operation: string) {
+  prepareIndex(operation: string, signal?: AbortSignal) {
     return this.client.request<Task>(
       "index/tasks",
       {},
@@ -73,11 +73,23 @@ export class HttpStoreWriteDataSource {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ operation }),
+        signal,
       },
     );
   }
 
-  indexTask(id: string) {
-    return this.client.request<Task>(`index/tasks/${encodeURIComponent(id)}`);
+  indexTask(id: string, signal?: AbortSignal) {
+    return this.client.request<Task>(
+      `index/tasks/${encodeURIComponent(id)}`,
+      {},
+      { signal },
+    );
+  }
+  cancelIndexTask(id: string, signal?: AbortSignal) {
+    return this.client.request<Task>(
+      `index/tasks/${encodeURIComponent(id)}/cancel`,
+      {},
+      { method: "POST", signal },
+    );
   }
 }

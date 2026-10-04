@@ -170,8 +170,18 @@ export interface StoreDataSource {
   previewMutation(request: StoreMutationRequest): Promise<StoreMutationPreview>;
   applyMutation(request: StoreMutationRequest): Promise<StoreMutationOutcome>;
   mutationStatus(requestId: string): Promise<StoreMutationStatusResponse>;
-  prepareIndex(operation: string): Promise<Task | Model<"LocalIndexTask">>;
-  indexTask(id: string): Promise<Task | Model<"LocalIndexTask">>;
+  prepareIndex(
+    operation: string,
+    signal?: AbortSignal,
+  ): Promise<Task | Model<"LocalIndexTask">>;
+  indexTask(
+    id: string,
+    signal?: AbortSignal,
+  ): Promise<Task | Model<"LocalIndexTask">>;
+  cancelIndexTask(
+    id: string,
+    signal?: AbortSignal,
+  ): Promise<Task | Model<"LocalIndexTask">>;
   events(
     after: string | undefined,
     signal: AbortSignal,

@@ -112,6 +112,7 @@ export function createInMemoryStoreController(
     refreshSettings: settings.refresh,
     ...unavailableManagementActions,
     prepareIndex: settings.prepareIndex,
+    cancelIndex: settings.cancelIndex,
     async loadMore() {},
     search: search.search,
     selectSearchResult: search.select,

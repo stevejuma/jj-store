@@ -28,16 +28,21 @@ export class HttpLocalIndexDataSource extends HttpLocalCodeDataSource {
     fullId(value.id, 32);
     return value;
   }
-  async prepareIndex(operation: string) {
+  async prepareIndex(operation: string, signal?: AbortSignal) {
     const head = await this.snapshot();
+    signal?.throwIfAborted();
     const pin = {
       operation: fullId(operation),
       generation: String(head.generation),
     };
     const task = this.validateIndexTask(
-      await this.client.request<Model<"LocalIndexTask">>("index/tasks", {
-        operation: pin.operation,
-      }),
+      await this.client.request<Model<"LocalIndexTask">>(
+        "index/tasks",
+        {
+          operation: pin.operation,
+        },
+        signal,
+      ),
       pin,
     );
     if (this.#indexPins.size >= 32)
@@ -45,23 +50,27 @@ export class HttpLocalIndexDataSource extends HttpLocalCodeDataSource {
     this.#indexPins.set(task.id, pin);
     return task;
   }
-  async indexTask(id: string) {
+  async indexTask(id: string, signal?: AbortSignal) {
     const pin = this.#indexPins.get(fullId(id, 32));
     if (!pin) throw new ApiError("task_reset");
     return this.validateIndexTask(
-      await this.read<Model<"LocalIndexTask">>(`index/tasks/${id}`),
+      await this.read<Model<"LocalIndexTask">>(
+        `index/tasks/${id}`,
+        undefined,
+        signal,
+      ),
       pin,
       id,
     );
   }
-  async cancelIndexTask(id: string) {
+  async cancelIndexTask(id: string, signal?: AbortSignal) {
     const pin = this.#indexPins.get(fullId(id, 32));
     if (!pin) throw new ApiError("task_reset");
     return this.validateIndexTask(
       await this.client.request<Model<"LocalIndexTask">>(
         `index/tasks/${id}/cancel`,
         undefined,
-        undefined,
+        signal,
         "POST",
       ),
       pin,

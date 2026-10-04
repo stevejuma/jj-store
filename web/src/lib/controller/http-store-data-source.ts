@@ -276,11 +276,14 @@ export class HttpStoreDataSource
   mutationStatus(requestId: string) {
     return this.#writes.mutationStatus(requestId);
   }
-  prepareIndex(operation: string) {
-    return this.#writes.prepareIndex(operation);
+  prepareIndex(operation: string, signal?: AbortSignal) {
+    return this.#writes.prepareIndex(operation, signal);
   }
-  indexTask(id: string) {
-    return this.#writes.indexTask(id);
+  cancelIndexTask(id: string, signal?: AbortSignal) {
+    return this.#writes.cancelIndexTask(id, signal);
+  }
+  indexTask(id: string, signal?: AbortSignal) {
+    return this.#writes.indexTask(id, signal);
   }
   close() {
     this.#active = false;

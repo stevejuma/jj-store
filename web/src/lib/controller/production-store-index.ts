@@ -1,4 +1,4 @@
-import { snapshotOperation } from "./repository-profile.js";
+import { createIndexPreparation } from "./production-index-preparation.js";
 import { createProductionSearchSettings } from "./production-search-settings.js";
 import { createProductionStorageSettings } from "./production-storage-settings.js";
 import { createProductionSyncSettings } from "./production-sync-settings.js";
@@ -14,6 +14,7 @@ export function createProductionStoreSettings(input: {
   operation?: () => string | null;
   route?: () => StoreRoute;
   version: () => number;
+  signal?: () => AbortSignal;
   current: (ticket: number, source: StoreDataSource) => boolean;
   restore: () => Promise<void>;
 }) {
@@ -23,6 +24,7 @@ export function createProductionStoreSettings(input: {
       input.operation ?? (() => input.route?.().snapshotOperationId ?? null),
   };
   const { data } = options;
+  const index = createIndexPreparation(options);
   const search = createProductionSearchSettings(options);
   const storage = createProductionStorageSettings({
     ...options,
@@ -38,6 +40,7 @@ export function createProductionStoreSettings(input: {
   const workspaces = createProductionWorkspaceLinks(options);
 
   function clear() {
+    index.clear();
     workspaces.clear();
     storage.clear();
     sync.clear();
@@ -74,50 +77,6 @@ export function createProductionStoreSettings(input: {
     }
   }
 
-  async function prepareIndex() {
-    const { data } = options;
-    const operation =
-      (data.neededIndex ? snapshotOperation(data.neededIndex) : null) ??
-      options.operation();
-    if (
-      !operation ||
-      !data.capabilities?.index_tasks ||
-      data.indexPreparation === "loading"
-    )
-      return;
-    const source = options.source();
-    const ticket = options.version();
-    data.indexPreparation = "loading";
-    data.indexPreparationError = "";
-    try {
-      let task = await source.prepareIndex(operation);
-      while (
-        options.current(ticket, source) &&
-        ["running", "canceling"].includes(task.status)
-      ) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        task = await source.indexTask(task.id);
-      }
-      if (!options.current(ticket, source)) return;
-      if (task.status !== "ready") {
-        data.indexPreparation = "failed";
-        data.indexPreparationError =
-          task.status === "canceled"
-            ? "Graph index preparation was canceled."
-            : "Graph index preparation failed.";
-        return;
-      }
-      data.neededIndex = null;
-      data.status.error = "";
-      data.indexPreparation = "ready";
-      await options.restore();
-    } catch (cause) {
-      if (!options.current(ticket, source)) return;
-      data.indexPreparation = "failed";
-      data.indexPreparationError = storeErrorMessage(cause);
-    }
-  }
-
   async function refresh() {
     await Promise.all([
       refreshSearch(),
@@ -134,6 +93,7 @@ export function createProductionStoreSettings(input: {
     ...search,
     clear,
     refresh,
-    prepareIndex,
+    prepareIndex: index.prepareIndex,
+    cancelIndex: index.cancelIndex,
   };
 }

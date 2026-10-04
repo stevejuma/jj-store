@@ -108,6 +108,7 @@ export function createProductionStoreActions(options: {
     retryStorage: options.settings.retryStorage,
     controlSync: options.settings.controlSync,
     prepareIndex: options.settings.prepareIndex,
+    cancelIndex: options.settings.cancelIndex,
     async loadMore(collection) {
       if (collection === "workspaces")
         await options.reader.loadWorkingCopies(

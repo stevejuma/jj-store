@@ -88,6 +88,7 @@ function source(overrides: Partial<StoreDataSource> = {}): StoreDataSource {
     diff: unavailable,
     conflicts: unavailable,
     prepareIndex: unavailable as (operation: string) => Promise<Task>,
+    cancelIndexTask: unavailable as (id: string) => Promise<Task>,
     indexTask: unavailable as (id: string) => Promise<Task>,
     events: unavailable,
     close() {},

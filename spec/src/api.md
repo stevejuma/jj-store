@@ -1940,3 +1940,10 @@ resumes retain the original operation, generation and complete query. Files,
 references, headers and operation metadata remain independently readable. A
 local error must not fabricate a native snapshot/epoch. The browser validates
 the error pin and all start/status/cancel responses before resuming that query.
+
+Native and local browser index-task adapters forward the owning observation's
+abort signal for start, status and bodyless cancel requests. Aborting that HTTP
+observation is not a server cancellation result. Clients serialize polling and
+explicit cancellation for the captured task ID, retain the original operation,
+and continue observing an unconfirmed cancel without automatically replaying the
+cancel command. Server-confirmed canceled and ready outcomes are distinct.

@@ -67,8 +67,6 @@ export function createProductionStoreController(
     current,
     report: (cause) => reportProductionStoreError(data, cause),
   });
-  if (history.error)
-    Object.assign(data.status, { navigation: "failed", error: history.error });
 
   const {
     projects,
@@ -116,6 +114,7 @@ export function createProductionStoreController(
     source: activeSource,
     route: () => history.route,
     version,
+    signal,
     current,
     restore: reader.restorePage,
   });

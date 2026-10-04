@@ -2017,3 +2017,20 @@ route inputs advance. Starting and polling use only the local task endpoints;
 responses must match the source repository, registration and original operation.
 Completion retries the pinned view and leaves files/reference navigation
 available. Local task state cannot fabricate native epoch or cache-report data.
+
+Graph preparation retains one exact task and serializes start, status and cancel
+requests. Polling backs off from 500 ms to five seconds, has no overlapping
+requests, and rechecks the active read scope before every request. Navigation,
+disconnect and teardown abort obsolete observations and clear the polling timer;
+this does not claim that the server worker was canceled. Both the recovery
+action and Repository settings expose Cancel once a task is known. A cancel
+request keeps preparation pending until the server reports ready, failed or
+canceled; transport errors leave cancellation unconfirmed, retain the exact task
+and allow an explicit retry. Cancel never starts or retargets preparation. A
+confirmed cancel keeps the original recovery condition available without
+presenting it as an unexpected failure.
+
+Automatic repository refresh queues updates while preparation is being observed,
+so a periodic reload cannot discard the task after five seconds. Explicit
+navigation still stops obsolete observations; terminal preparation releases the
+refresh guard.
