@@ -259,6 +259,45 @@ fn cache_bytes(path: &std::path::Path) -> u64 {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn resident_indexes_preserve_multiple_historical_operation_scopes() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let cold = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let (repo, b) = child(&repo, &a, "B").await;
+            let (repo, _) = child(&repo, &b, "C").await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let mut query = log("at_operation(@-, all()) | at_operation(@--, all())");
+            if let q::Request::Log { workspace, .. } = &mut query {
+                *workspace = Some("fixture".into());
+            }
+            let expected = read
+                .graph(
+                    &executor(cold.path(), q::Limits::default()),
+                    query.clone(),
+                    page(100),
+                )
+                .await
+                .unwrap();
+            let exec = executor(root.path(), q::Limits::default());
+            read.prepare_index(&exec, q::Cancellation::default())
+                .await
+                .unwrap();
+            let warm = read.graph(&exec, query.clone(), page(100)).await.unwrap();
+            assert_eq!(warm.data, expected.data);
+            assert_eq!(
+                read.graph(&exec, query, page(100)).await.unwrap().data,
+                expected.data
+            );
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn graph_cache_recovery_rechecks_permission_and_serializes_independent_executors() {
     use jj_store_service::administration::{TokenChange, TokenRequest};
     tokio::task::LocalSet::new()

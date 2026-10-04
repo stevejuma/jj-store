@@ -9,7 +9,11 @@ use jj_lib::{
     repo::RepoLoader,
     store::Store,
 };
-use std::{fmt, path::Path};
+use std::{
+    fmt,
+    path::Path,
+    sync::atomic::{AtomicBool, Ordering},
+};
 
 pub(super) struct Admission {
     commits: BTreeSet<m::CommitId>,
@@ -45,6 +49,8 @@ struct GuardedIndexStore {
     budget: Arc<Budget>,
     path: PathBuf,
     preparation_bytes: Option<u64>,
+    resident: Option<Arc<cache::resident::Saved>>,
+    disk_verified: AtomicBool,
 }
 impl fmt::Debug for GuardedIndexStore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -76,7 +82,24 @@ impl IndexStore for GuardedIndexStore {
                 .await
                 .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
         }
-        let index = self.inner.get_index_at_op(operation, store).await?;
+        let index: Box<dyn ReadonlyIndex> = if let Some(resident) = &self.resident
+            && operation.id().as_bytes() == resident.operation.as_bytes()
+        {
+            Box::new(resident.index.clone())
+        } else {
+            if let Some(resident) = &self.resident
+                && !self.disk_verified.load(Ordering::Acquire)
+            {
+                resident
+                    .verify_disk(&self.budget)
+                    .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+                // The namespace lock remains held. This job may now build more
+                // operation indexes; subsequent loads must not compare its own
+                // new files against the entry's original receipt.
+                self.disk_verified.store(true, Ordering::Release);
+            }
+            self.inner.get_index_at_op(operation, store).await?
+        };
         // Warm indexes need the same hard bound, even when no commits are read.
         // Also applies to additional operations loaded by native predicates.
         let count = index
@@ -109,6 +132,7 @@ pub(super) fn loader(
     path: &Path,
     budget: Arc<Budget>,
     preparation_bytes: Option<u64>,
+    resident: Option<Arc<cache::resident::Saved>>,
 ) -> Result<RepoLoader> {
     stores
         .verify_cache_binding(path)
@@ -123,6 +147,8 @@ pub(super) fn loader(
                 budget: budget.clone(),
                 path: path.to_owned(),
                 preparation_bytes,
+                resident: resident.clone(),
+                disk_verified: AtomicBool::new(false),
             }))
         }),
     );

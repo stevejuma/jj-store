@@ -772,3 +772,18 @@ discarded. Existing hard index limits, cache receipts and native persisted
 formats remain unchanged by this construction stage. Large resident indexes,
 immutable generation reuse, aggregate quotas and local-profile preparation
 require their separate qualification; this stage does not enable them.
+
+Warm native graph reads MAY reuse an already verified immutable in-memory index
+under the same cache namespace lease. Retained residents bind repository, epoch,
+operation, cache path and exact receipt file set; they have an LRU count bound
+and a conservative byte bound no greater than 256 MiB per executor. Before
+reuse, enumerate the bounded file set and compare device, inode, size, mtime and
+ctime at nanosecond precision. Filesystems without the required metadata use
+full verification. Changed, replaced, missing or added files invalidate reuse. A
+metadata comparison only authorizes using the existing verified in-memory index;
+it MUST NOT substitute for checksumming disk bytes that will be decoded.
+Additional operation indexes retain full disk verification. Process restart,
+eviction and loss of the resident require full checksums before loading. Current
+authorization and loaded-index hard limits still apply. Disk-generation
+immutability, shorter namespace locking and larger aggregate quotas remain
+separate work.

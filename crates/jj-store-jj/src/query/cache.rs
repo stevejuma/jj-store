@@ -1,4 +1,5 @@
 //! Disposable bounded cache slots. Only verified native objects are authority.
+pub(super) mod resident;
 use super::*;
 use blake2::{Blake2b512, Digest as _};
 use std::{
@@ -95,6 +96,7 @@ pub(super) struct Entry {
     state: State,
     staging: Option<tempfile::TempDir>,
     retain: bool,
+    pub resident: Option<Arc<resident::Saved>>,
 }
 impl Drop for Entry {
     fn drop(&mut self) {
@@ -315,6 +317,7 @@ impl Cache {
         access: &dyn ReadAccess,
         stores: &NativeStores,
         budget: &Budget,
+        residents: &resident::Residents,
     ) -> Result<Entry> {
         if let Some(index) = self.slots.iter().position(|slot| {
             slot.receipt.repository == access.repository()
@@ -327,8 +330,12 @@ impl Cache {
             stores
                 .verify_cache_binding(&path)
                 .map_err(|_| Error::Unavailable)?;
-            let valid = inventory(&path, self.policy, budget, true)
-                .is_ok_and(|(files, _)| files == slot.receipt.files);
+            let resident = residents
+                .get(access, &path, &slot.receipt.files, self.policy, budget)
+                .unwrap_or(None);
+            let valid = resident.is_some()
+                || inventory(&path, self.policy, budget, true)
+                    .is_ok_and(|(files, _)| files == slot.receipt.files);
             budget.check()?;
             if valid {
                 return Ok(Entry {
@@ -338,6 +345,7 @@ impl Cache {
                     state: State::Reused,
                     staging: None,
                     retain: false,
+                    resident,
                 });
             }
             remove(&path)?;
@@ -366,6 +374,7 @@ impl Cache {
             },
             staging: Some(staging),
             retain: false,
+            resident: None,
         })
     }
     pub fn remaining_bytes(&self, entry: &Entry, budget: &Budget) -> Result<u64> {
@@ -382,8 +391,19 @@ impl Cache {
         mut entry: Entry,
         access: &dyn ReadAccess,
         budget: &Budget,
+        index: jj_lib::default_index::DefaultReadonlyIndex,
+        residents: &resident::Residents,
     ) -> Result<Report> {
-        let (files, _) = inventory(&entry.path, self.policy, budget, true)?;
+        let files = match &entry.resident {
+            Some(resident)
+                if resident
+                    .verification
+                    .matches(&entry.path, self.policy, budget)? =>
+            {
+                resident.verification.files.clone()
+            }
+            _ => inventory(&entry.path, self.policy, budget, true)?.0,
+        };
         let used = self
             .slots
             .iter()
@@ -427,6 +447,15 @@ impl Cache {
             fs::rename(&entry.path, &path).map_err(|_| Error::Unavailable)?;
             entry.path = path;
         }
+        residents.remember(
+            index,
+            entry.path.clone(),
+            access,
+            receipt.files.clone(),
+            size,
+            self.policy,
+            budget,
+        )?;
         self.slots.push(Slot {
             id: entry.slot,
             receipt,
@@ -439,5 +468,83 @@ impl Cache {
             retained_entries: self.slots.len(),
             retained_bytes: self.bytes(),
         })
+    }
+}
+
+#[cfg(all(test, unix))]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn warm_cache_verification_does_not_hash_unchanged_large_files() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("segment");
+        fs::write(&path, vec![0x35; 2 * 1024 * 1024]).unwrap();
+        let policy = Policy::default();
+        let cold = Budget::new(Limits::default()).unwrap();
+        let first = inventory(directory.path(), policy, &cold, true).unwrap();
+        assert!(cold.stats().work > 30);
+        let small = || {
+            Budget::new(Limits {
+                max_work: 5,
+                ..Limits::default()
+            })
+            .unwrap()
+        };
+        let verification =
+            resident::Verification::capture(directory.path(), first.0.clone(), &cold).unwrap();
+        assert!(
+            verification
+                .matches(directory.path(), policy, &small())
+                .unwrap()
+        );
+        // A writer can restore mtime; same-length content damage still invalidates.
+        let modified = fs::metadata(&path).unwrap().modified().unwrap();
+        fs::write(&path, vec![0x36; 2 * 1024 * 1024]).unwrap();
+        fs::File::options()
+            .write(true)
+            .open(&path)
+            .unwrap()
+            .set_times(fs::FileTimes::new().set_modified(modified))
+            .unwrap();
+        assert!(
+            !verification
+                .matches(directory.path(), policy, &small())
+                .unwrap()
+        );
+        assert_eq!(
+            inventory(directory.path(), policy, &small(), true).unwrap_err(),
+            Error::Limit
+        );
+        let changed = inventory(
+            directory.path(),
+            policy,
+            &Budget::new(Limits::default()).unwrap(),
+            true,
+        )
+        .unwrap();
+        assert_ne!(changed, first);
+        let verified = resident::Verification::capture(directory.path(), changed.0, &cold).unwrap();
+        assert!(
+            verified
+                .matches(directory.path(), policy, &small())
+                .unwrap()
+        );
+        fs::File::options()
+            .write(true)
+            .open(&path)
+            .unwrap()
+            .set_times(fs::FileTimes::new().set_modified(std::time::UNIX_EPOCH))
+            .unwrap();
+        assert!(resident::Verification::capture(directory.path(), first.0, &cold).is_err());
+        assert!(
+            inventory(
+                directory.path(),
+                policy,
+                &Budget::new(Limits::default()).unwrap(),
+                true
+            )
+            .is_ok()
+        );
     }
 }

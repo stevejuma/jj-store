@@ -1634,3 +1634,9 @@ link byte-for-byte with the pinned upstream cold builder. Fixtures include
 equal/skewed timestamps, multi-parent merges and divergent change IDs. Space
 tests MUST prove refusal before scratch or streamed output exceeds the shared
 allowance; failure leaves no ready entry and permits a later authorized retry.
+
+Warm resident-cache acceptance MUST retain same-size corruption detection even
+when a writer restores mtime, plus existing missing-file, receipt, symlink,
+repository/epoch, eviction and revocation checks. A low-work warm verification
+fixture MUST distinguish metadata checks from full-file hashing. New executors
+and process restarts still verify complete disk content.

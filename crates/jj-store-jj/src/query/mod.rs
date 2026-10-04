@@ -272,6 +272,7 @@ pub struct GraphExecutor {
     limits: Limits,
     workers: Workers,
     cache_policy: cache::Policy,
+    residents: Arc<cache::resident::Residents>,
 }
 impl GraphExecutor {
     pub fn new(root: PathBuf, limits: Limits, concurrency: usize) -> Result<Self> {
@@ -301,6 +302,7 @@ impl GraphExecutor {
             limits,
             workers,
             cache_policy,
+            residents: Arc::default(),
         })
     }
     pub async fn execute(
@@ -468,7 +470,7 @@ impl GraphExecutor {
         .map_err(|_| Error::Unavailable)?;
         let settings = UserSettings::from_config(StackedConfig::with_defaults())
             .map_err(|_| Error::Unavailable)?;
-        let entry = cache.prepare(access.as_ref(), &stores, &budget)?;
+        let entry = cache.prepare(access.as_ref(), &stores, &budget, &self.residents)?;
         if matches!(work, Work::Graph(..)) {
             budget.start_index(entry.initialize)?;
         }
@@ -489,6 +491,7 @@ impl GraphExecutor {
             &entry.path,
             budget.clone(),
             preparation_bytes,
+            entry.resident.clone(),
         )?;
         let repo = stores
             .load_at(&loader, access.operation())
@@ -505,9 +508,20 @@ impl GraphExecutor {
         budget.check()?;
         budget.authorize(access.as_ref()).await?;
         // Drop native loaders before replacing/removing their derived files.
+        let resident_index = repo
+            .readonly_index()
+            .downcast_ref::<jj_lib::default_index::DefaultReadonlyIndex>()
+            .ok_or(Error::Unavailable)?
+            .clone();
         drop(repo);
         drop(loader);
-        let cache = cache.finish(entry, access.as_ref(), &budget)?;
+        let cache = cache.finish(
+            entry,
+            access.as_ref(),
+            &budget,
+            resident_index,
+            &self.residents,
+        )?;
         let result = match data {
             Some((data, next)) => Output::Graph(GraphPage {
                 version: 1,
