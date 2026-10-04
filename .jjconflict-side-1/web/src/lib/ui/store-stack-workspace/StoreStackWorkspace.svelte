@@ -130,18 +130,6 @@
       >
         {controller.validation}
       </p>{/if}
-    {#if controller.page === "branches"}
-      <header
-        class="store-application__section-header"
-        role="group"
-        aria-label="Workspace target branch"
-      >
-        <div>
-          <GitBranch aria-hidden="true" />
-          <h1 class="store-application__title">{snapshot.base}</h1>
-        </div>
-      </header>
-    {/if}
     <Tabs.Root
       value={controller.page}
       onValueChange={(value) => {

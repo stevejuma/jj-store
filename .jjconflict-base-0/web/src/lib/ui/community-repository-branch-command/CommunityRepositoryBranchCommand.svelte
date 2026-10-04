@@ -13,6 +13,7 @@
   import type { ScrollAreaStrategy } from "@lapismd/design-core/shadcn/scroll-area";
   let {
     bookmarks,
+    targetBookmark,
     groupWorkspaceBookmarks = false,
     scrollStrategy = "auto",
     workingCopies = [],
@@ -27,6 +28,8 @@
     onLoadMore,
   }: {
     bookmarks: readonly Bookmark[];
+    /** Optional workspace target card, independent of the loaded bookmark filters. */
+    targetBookmark?: Bookmark;
     /** Group the loaded applied bookmarks without changing repository picker defaults. */
     groupWorkspaceBookmarks?: boolean;
     scrollStrategy?: ScrollAreaStrategy;
@@ -128,6 +131,13 @@
   shouldFilter={false}
   disablePointerSelection
 >
+  {#if targetBookmark}
+    <CommandView.List {scrollStrategy} aria-label="Workspace target branch">
+      <CommandView.Group heading="Target branch">
+        {@render bookmarkRow(targetBookmark)}
+      </CommandView.Group>
+    </CommandView.List>
+  {/if}
   {#each workingCopies as workingCopy (workingCopy.workspace)}
     <CommunityWorkingCopyCard
       copy={workingCopy}

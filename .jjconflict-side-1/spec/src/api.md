@@ -1868,6 +1868,17 @@ changing snapshot, request or draft state. Local backend eligibility,
 publication, physical checkout, durability and wire contracts remain deferred
 pending explicit approval of the UI slice.
 
+The snapshot also identifies the workspace target branch and its exact head,
+with author/message metadata for its bookmark card. A separate injected history
+read accepts repository, snapshot revision, branch name, head, bounded limit and
+opaque continuation cursor, and returns newest-first commits plus the next
+cursor. The controller permits one page request at a time, deduplicates commit
+identities, stops at exhaustion and rejects non-advancing cursors. Refreshing to
+a different revision/head invalidates prior pages and late responses; teardown
+also discards late responses. History and its file diff remain read-only and
+separate from applied stacks, draft state and command inputs. This is a mocked
+frontend read contract with no backend or persistence integration.
+
 The frontend command union also carries optional exact selections to stage after
 confirmed branch creation, an optional parent stack for dependent creation,
 explicit above/below placement for empty commits and new branch heads,

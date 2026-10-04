@@ -43,6 +43,14 @@ export function workspaceFixture(
     availability: "ready",
     revision: 1,
     base: "main",
+    target: {
+      name: "main",
+      commit: "main-history-240",
+      message: "Main history 240",
+      author: "Alex Morgan",
+      email: "alex@example.test",
+      createdAt: 1791057600,
+    },
     active: "daily",
     workspaces: [
       {

@@ -10,6 +10,7 @@
   } from "../../controller/stack-workspace/files.js";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import Columns from "@lucide/svelte/icons/columns-2";
+  import { TARGET_HISTORY_ORIGIN } from "../../controller/stack-workspace/target-history.svelte.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type {
     WorkspaceCommand,
@@ -27,14 +28,18 @@
   let viewMode = $state<"unified" | "split">("unified"),
     wrap = $state(false);
   const file = $derived(
-    controller.snapshot
-      ? workspaceSourceFiles(controller.snapshot, diff.source).find(
-          (item) => item.path === diff.path,
-        )
-      : undefined,
+    (diff.origin === TARGET_HISTORY_ORIGIN
+      ? (controller.targetHistory.commits.find(
+          (commit) => commit.id === diff.source,
+        )?.files ?? [])
+      : controller.snapshot
+        ? workspaceSourceFiles(controller.snapshot, diff.source)
+        : []
+    ).find((item) => item.path === diff.path),
   );
   const selection = $derived(
-    workspaceAggregateSource(diff.source)
+    diff.origin === TARGET_HISTORY_ORIGIN ||
+      workspaceAggregateSource(diff.source)
       ? null
       : {
           source: diff.source,
@@ -97,7 +102,11 @@
       {/if}
       <ColumnCanvas.Close
         aria-label="Close Diff column"
-        onclick={() => controller.closeDiff(diff.origin)}
+        onclick={() => {
+          if (diff.origin === TARGET_HISTORY_ORIGIN)
+            controller.targetHistory.diff = null;
+          else controller.closeDiff(diff.origin);
+        }}
       /></ColumnCanvas.HeaderActions
     ></ColumnCanvas.Header
   >
@@ -113,12 +122,14 @@
             drag={controller.drag}
             origin={diff.origin}
             path={file.path}
-            selection={workspaceHunkSelection(
-              controller.snapshot!,
-              diff.source,
-              file.path,
-              hunk.id,
-            )}
+            selection={diff.origin === TARGET_HISTORY_ORIGIN
+              ? null
+              : workspaceHunkSelection(
+                  controller.snapshot!,
+                  diff.source,
+                  file.path,
+                  hunk.id,
+                )}
             checked={!selection?.hunks || selection.hunks.includes(hunk.id)}
             selectable={Boolean(selection)}
             disabled={controller.locked}

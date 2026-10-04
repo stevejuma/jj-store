@@ -151,9 +151,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007 |
-| M20 | Partial | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review the completed UI before authorizing Phase 2 | E-M20-001,E-M20-002,E-M20-003,E-M20-004 |
-| M20.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | Review UI; registry foundation qualification and visual approval remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004 |
-| M20.2 | Deferred | M20.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Explicit human approval required after UI review | E-M20-001,E-M20-002,E-M20-003,E-M20-004 |
+| M20 | Partial | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review the completed UI before authorizing Phase 2 | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006 |
+| M20.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | Review UI; registry foundation qualification and visual approval remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006 |
+| M20.2 | Deferred | M20.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Explicit human approval required after UI review | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -78246,6 +78246,312 @@ entries.
     "Published registry-resolved foundation qualification remains pending.",
     "No screenshot comparison, baseline update, package publication or service/backend rebuild."
   ]
+},
+{
+  "id": "E-M20-006",
+  "tasks": [
+    "M20",
+    "M20.1",
+    "M20.2"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change npxlrxyw",
+  "kind": "workspace-target-branch-history",
+  "versions": "JJ 0.45.1; Node 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11. Existing ignored Design Core source validation remains separate from registry qualification.",
+  "formats": "Frontend-only snapshot target metadata and injected, revision/head-pinned bounded history read. No HTTP/RPC/Rust/storage/persistence changes. package.json and pnpm-lock.yaml unchanged.",
+  "result": "pending",
+  "scope": "Add a target bookmark card above Branches column filters using the existing owned repository command picker. One read-only target-history stack uses the existing Card, author, revision graph, virtual rows, inline file list and adjacent diff compositions. History requests load 40 newest-first commits per page and deduplicate concurrent requests and identities. Errors retain the exact cursor and loaded history for retry. Refresh/head changes and teardown discard obsolete replies. Target history never enters the applied-stack snapshot, drafts or mutations. The 240-commit example tests paging to exhaustion and bounded DOM rows, while origin/trunk tests keyboard access independent of bookmark filters. Header geometry reuses the displayed graph inset and measures title containment, icon centering with its border accounted for, and common title/author/chip/commit-content alignment. All 439 prior raw evidence objects are preserved byte-for-byte. UI/controller-only targeted verification covers the shared picker and its repository-log direct consumers; root aggregates, Rust, production builds and backend work are out of scope. Final direct-consumer acceptance passes 64 controller tests and 103 stories in 21 files, with zero type diagnostics. The duplicate target-branch header above the page tabs is removed at user request. The target remains above the Branches column filters, survives ordinary branch selection and tab round trips, and is absent on Workspace. Applied/local grouping remains covered. After removing the duplicate body header, all 83 stack-workspace interaction/accessibility stories in 17 files pass in a fresh Vitest/Vite/browser process; earlier 103-story direct-consumer qualification also covers the unchanged shared picker and repository-log consumers.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+    "catalog/fixtures/StackWorkspaceApplicationFixture.svelte",
+    "catalog/fixtures/stack-workspace/adapter.ts",
+    "catalog/fixtures/stack-workspace/data.ts",
+    "catalog/fixtures/stack-workspace/target-history.ts",
+    "spec/src/api.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "web/src/lib/controller/stack-workspace/controller.svelte.ts",
+    "web/src/lib/controller/stack-workspace/files.ts",
+    "web/src/lib/controller/stack-workspace/presentation.ts",
+    "web/src/lib/controller/stack-workspace/target-history.svelte.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackTargetHistory.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDiff.svelte",
+    "web/tests/vite/stack-workspace-target-history.test.ts"
+  ],
+  "runs": [
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/target-branch-evidence/before.log: valid before regression, target branch option absent."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/target-branch-evidence/after-initial.log: interaction passed but accessibility found an option outside a listbox; fixed Command View composition."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-target-history.test.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/target-branch-evidence/target-unit.log: 6 passed, 1 test incorrectly loaded an extra page after refresh already loaded the initial page. Corrected test synchronization."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "note": ".local/target-branch-evidence/target-stories.log: one scroll assertion needed to reach the newly appended final page, and diff closure exposed one null prop runtime error; keyed history diff iteration retains its exact object until teardown."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-target-history.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/target-unit-after.log: 7/7 controller regressions."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/target-stories-after.log: initial 2/2 interactions/accessibility."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/target-branch-evidence/target-keyboard.log: added custom-target keyboard regression retained a detached option after filter updates; re-query the live card."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/target-keyboard-after.log: 3/3 interactions/accessibility, including origin/trunk keyboard selection."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte -t TargetHeaderUsesTheStackCardLayout",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/target-branch-evidence/header-before.log: exact rendered regression confirms the missing graph inset gives a one-column header grid."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/target-branch-evidence/header-after.log: 3 passed, header measurement omitted its 1px bottom border. The final strengthened regression also bounds text inside the column. Manual DOM inspection exposed an oversized inset from oldest-first graph input; use the actual displayed newest-first revisions."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/target-final.log: 4/4 target interactions/accessibility after restoring the 32px displayed graph inset, with exact title/icon/author/chip alignment and title clipping bounds."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/*.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog*.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/target-branch-evidence/affected-stories.log: 102 passed, existing page-header regression found a duplicate Workspace target branch group name from the new card. The card group now uses Target branch. The process completed before an attempted interrupt; it was not cancelled."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/branches-target-final.log: 7/7 target and existing Branches interactions/accessibility."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace*.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/affected-units.log: 64/64 tests in 7 directly affected controller/drag/history files."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial web-check.log and web-check-final.log both report zero errors/warnings; final qualification is recorded below."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial catalog-check.log and catalog-check-final.log both report zero errors/warnings and 219 catalog modules; final qualification is recorded below."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/target-branch-evidence/architecture.log: controller exceeded 300 counted lines. Extracted its existing exact selection retention into files.ts; no behavior change."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/architecture-after.log: 1024 modules pass the unchanged architectural budget."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/ownership.log: 1 validator, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/*.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog*.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/affected-stories-final.log: 103/103 interactions/accessibility in all 21 affected files. Fresh Vitest-owned Vite/browser process; target geometry and existing body header both pass."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/web-check-qualified.log: zero errors and warnings after the final presentation correction."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/catalog-check-qualified.log: zero errors and warnings, 219 catalog modules."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/architecture-qualified.log: 1024 modules, unchanged architectural limits."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/spec-validate.log: 5 validators, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/spec-first.log: 16 protected files, 3 canonical chapters."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/progress.log: 141 tasks; evidence bookkeeping only."
+    },
+    {
+      "command": "pnpm exec prettier --check catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte catalog/fixtures/StackWorkspaceApplicationFixture.svelte catalog/fixtures/stack-workspace/adapter.ts catalog/fixtures/stack-workspace/data.ts catalog/fixtures/stack-workspace/target-history.ts spec/src/api.md spec/src/ui.md spec/src/verification.md web/src/lib/controller/stack-workspace/controller.svelte.ts web/src/lib/controller/stack-workspace/files.ts web/src/lib/controller/stack-workspace/presentation.ts web/src/lib/controller/stack-workspace/target-history.svelte.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte web/src/lib/ui/store-stack-workspace/StoreStackTargetHistory.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDiff.svelte web/tests/vite/stack-workspace-target-history.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/format-check.log: all 19 changed code/story/test/spec files pass; milestones.md deliberately excluded to preserve 439 historical raw evidence objects."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/progress-final.log: 141 tasks; completed prior final-ledger validation."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/spec-validate-final.log: 5 validators, 23 chapters, 173 requirements; completed prior final-ledger validation."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte -t 'Workspace target appears only in the Branches column'",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/target-row-before.log: 3 skipped; human-readable title did not match the generated export name. No regression qualification; corrected filter in next run."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte -t WorkspaceTargetAppearsOnlyInTheBranchesColumn",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/target-branch-evidence/target-row-before-exact.log: 1 failed, 2 skipped; exact regression detects the duplicate page header before source removal."
+    },
+    {
+      "command": "pnpm exec prettier --write catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte spec/src/ui.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/target-row-format.log: changed presentation, story and canonical text formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte -t WorkspaceTargetAppearsOnlyInTheBranchesColumn",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/target-row-after-exact.log: 1 passed, 2 skipped after source removal; retained target card and tab round trip verified."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/web-check-after-removal.log: zero errors and warnings."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/catalog-check-after-removal.log: zero errors and warnings; 219 modules."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/ownership-after-removal.log: 1 validator, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/architecture-after-removal.log: 1024 modules; unchanged limits."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/spec-first-after-removal.log: 17 protected files, 3 canonical chapters."
+    },
+    {
+      "command": "pnpm exec prettier --check catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte catalog/fixtures/StackWorkspaceApplicationFixture.svelte catalog/fixtures/stack-workspace/adapter.ts catalog/fixtures/stack-workspace/data.ts catalog/fixtures/stack-workspace/target-history.ts spec/src/api.md spec/src/ui.md spec/src/verification.md web/src/lib/controller/stack-workspace/controller.svelte.ts web/src/lib/controller/stack-workspace/files.ts web/src/lib/controller/stack-workspace/presentation.ts web/src/lib/controller/stack-workspace/target-history.svelte.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte web/src/lib/ui/store-stack-workspace/StoreStackTargetHistory.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDiff.svelte web/tests/vite/stack-workspace-target-history.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/format-after-removal.log: checks all 20 changed files excluding milestones; 439 historical evidence objects preserved."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/*.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/workspace-stories-after-removal.log: 83/83 interaction/accessibility stories in all 17 directly affected stack-workspace files; fresh Vitest/Vite/browser process after exact regression passed."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/progress-after-removal.log: 141 tasks; updated E-M20-006 validated."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/target-branch-evidence/spec-validate-after-removal.log: 5 validators, 23 chapters, 173 requirements; updated E-M20-006 validated."
+    }
+  ],
+  "stories": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte#Target header uses the stack card layout",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte#Workspace target supports keyboard selection above the filters",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte#Target branch opens its own commit stack",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceTarget.stories.svelte#Large target history loads lazily on scroll",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte#Workspace target appears only in the Branches column"
+  ],
+  "browser_acceptance": "Running owned Storybook PID 92150 on 6057 was retained with HMR. Fresh in-app-browser tab verified the main target card, one stack, the corrected 32px/332px header grid, and selected commit inline files. After duplicate page-header removal, the live app shell was rechecked with the target selected and entry-240.ts expanded inline. Updated screenshot: .local/target-branch-evidence/target-history-in-app-shell.png. Automated stories use fresh Vitest browser contexts. No screenshot comparison or visual baseline update.",
+  "remaining": [
+    "UI review and visual baseline approval remain separate.",
+    "Released registry-resolved Design Core qualification remains pending under the existing temporary source validation setup.",
+    "Backend execution, physical checkout and durable workspace persistence require explicit approval."
+  ],
+  "next": "Review the UI slice; proceed with local backend integration only after explicit approval."
 }
 ]
 ```

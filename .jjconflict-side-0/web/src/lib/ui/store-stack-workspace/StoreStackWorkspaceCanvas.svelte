@@ -6,6 +6,7 @@
   import StoreStackUnstaged from "./StoreStackUnstaged.svelte";
   import StoreStackWorkspaceSpacer from "./StoreStackWorkspaceSpacer.svelte";
   import StoreStackLane from "./StoreStackLane.svelte";
+  import StoreStackTargetHistory from "./StoreStackTargetHistory.svelte";
   import StoreStackWorkspaceDiff from "./StoreStackWorkspaceDiff.svelte";
   import {
     activeWorkspace,
@@ -14,6 +15,7 @@
   } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceCommand } from "../../controller/stack-workspace/types.js";
+  import { TARGET_HISTORY_ORIGIN } from "../../controller/stack-workspace/target-history.svelte.js";
   let {
     controller,
     showStackActions = true,
@@ -46,6 +48,14 @@
         pathLevel: 0,
         collapsible: true,
       },
+      [TARGET_HISTORY_ORIGIN]: {
+        resizable: true,
+        defaultWidth: 390,
+        minWidth: 310,
+        maxWidth: 640,
+        pathLevel: 0,
+        collapsible: true,
+      },
       working: {
         resizable: true,
         defaultWidth: 330,
@@ -75,7 +85,10 @@
     registeredStacks = ids;
   });
   $effect(() => {
-    const origins = controller.diffs.map((diff) => diff.origin);
+    const origins = [
+      ...controller.diffs.map((diff) => diff.origin),
+      ...(controller.targetHistory.diff ? [TARGET_HISTORY_ORIGIN] : []),
+    ];
     untrack(() => {
       for (const origin of origins) {
         const id = `diff-${origin}`;
@@ -151,9 +164,23 @@
           <CommunityRepositoryBranchCommand
             groupWorkspaceBookmarks
             scrollStrategy="styled"
+            targetBookmark={{
+              name: snapshot.target.name,
+              targets: [snapshot.target.commit],
+              description: snapshot.target.message,
+              author: snapshot.target.author,
+              authorEmail: snapshot.target.email,
+              updatedAt: snapshot.target.createdAt,
+            }}
             bookmarks={stackBookmarks(snapshot)}
-            selected={controller.selectedBranch ?? ""}
+            selected={controller.targetHistory.active
+              ? snapshot.target.name
+              : (controller.selectedBranch ?? "")}
             onSelect={(name) => {
+              if (name === snapshot.target.name) {
+                void controller.selectTargetBranch();
+                return;
+              }
               const stack = snapshot.stacks.find((item) =>
                 item.heads.some((head) => head.name === name),
               );
@@ -162,6 +189,12 @@
           />
         </ColumnCanvas.Body>
       </ColumnCanvas.Column>
+      {#if controller.targetHistory.active}
+        <StoreStackTargetHistory {controller} />
+        {#each controller.targetHistory.diff && registeredDiffs.includes(TARGET_HISTORY_ORIGIN) ? [controller.targetHistory.diff] : [] as diff (diff.origin)}
+          <StoreStackWorkspaceDiff {controller} {diff} {onCommand} />
+        {/each}
+      {/if}
     {/if}
     {#each stacks.filter( (stack) => registeredStacks.includes(stack.id) ) as stack (stack.id)}<StoreStackLane
         {controller}

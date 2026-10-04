@@ -133,3 +133,19 @@ export function workspaceFileSelection(
     return null;
   return { source: owner, path, hunks: file!.hunks.map((hunk) => hunk.id) };
 }
+/** Preserve exact branch/commit selections only while their originating stack owns them. */
+export function retainedStackSelections(
+  snapshot: WorkspaceSnapshot,
+  selections: Record<string, string>,
+) {
+  return Object.fromEntries(
+    Object.entries(selections).filter(([id, selection]) =>
+      snapshot.stacks.some(
+        (stack) =>
+          stack.id === id &&
+          (workspaceSourceStack(snapshot, selection)?.id === id ||
+            stack.commits.some((commit) => commit.id === selection)),
+      ),
+    ),
+  );
+}

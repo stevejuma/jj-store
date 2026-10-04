@@ -12,6 +12,22 @@ export type StackCommit = {
   files: WorkspaceFile[];
 };
 export type StackHead = { name: string; commit: string };
+export type WorkspaceTargetBranch = StackHead &
+  Pick<StackCommit, "message" | "author" | "email" | "createdAt">;
+export type WorkspaceHistoryRequest = {
+  repository: string;
+  revision: number;
+  branch: string;
+  head: string;
+  limit: number;
+  cursor?: string;
+};
+export type WorkspaceHistoryPage = {
+  /** Newest first, pinned to the requested branch head. */
+  commits: StackCommit[];
+  nextCursor?: string;
+  total?: number;
+};
 export type WorkspaceStack = {
   id: string;
   name: string;
@@ -42,6 +58,7 @@ export type WorkspaceSnapshot = {
   revision: number;
   base: string;
   active: string;
+  target: WorkspaceTargetBranch;
   workspaces: NamedWorkspace[];
   stacks: WorkspaceStack[];
   conflicts: WorkspaceConflict[];
@@ -143,6 +160,9 @@ export type WorkspaceOutcome =
   { status: "committed"; snapshot: WorkspaceSnapshot } | { status: "unknown" };
 export interface StackWorkspaceAdapter {
   read(): Promise<WorkspaceSnapshot>;
+  readTargetHistory(
+    request: WorkspaceHistoryRequest,
+  ): Promise<WorkspaceHistoryPage>;
   preview(request: WorkspaceRequest): Promise<WorkspacePreview>;
   apply(request: WorkspaceRequest): Promise<WorkspaceOutcome>;
   status(requestId: string): Promise<WorkspaceOutcome>;

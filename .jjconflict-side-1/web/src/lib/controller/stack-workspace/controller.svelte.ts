@@ -1,10 +1,12 @@
 import { WorkspaceDragSession } from "./drag-session.svelte.js";
+import { WorkspaceTargetHistory } from "./target-history.svelte.js";
 import { WorkspaceCommitDrafts } from "./commit-drafts.svelte.js";
 import {
   workspaceSourceFiles,
   workspaceSourceStack,
   workspaceBranchSource,
   workspaceAggregateSource,
+  retainedStackSelections,
 } from "./files.js";
 import { activeWorkspace, retainedWorkspaceSelection } from "./presentation.js";
 import {
@@ -45,7 +47,16 @@ export class StackWorkspaceController {
   #read = 0;
   #closed = false;
   #command = 0;
-  constructor(readonly adapter: StackWorkspaceAdapter) {}
+  readonly targetHistory: WorkspaceTargetHistory;
+  constructor(readonly adapter: StackWorkspaceAdapter) {
+    this.targetHistory = new WorkspaceTargetHistory(adapter);
+  }
+  async selectTargetBranch() {
+    if (this.locked || !this.snapshot || this.#closed) return;
+    this.selectedStack = this.selectedBranch = null;
+    this.selectedCommit = this.selectedPath = this.selection = null;
+    await this.targetHistory.select();
+  }
   async refresh() {
     if (this.#closed || this.pending || this.preview || this.busy) return;
     const ticket = ++this.#read;
@@ -62,6 +73,7 @@ export class StackWorkspaceController {
   }
   selectStack(id: string, branch?: string) {
     if (this.locked) return;
+    this.targetHistory.active = false;
     this.selectedStack = id;
     this.selectedBranch =
       branch ??
@@ -173,17 +185,12 @@ export class StackWorkspaceController {
           : {}),
       });
     }
-    this.stackSelections = Object.fromEntries(
-      Object.entries(this.stackSelections).filter(([id, selection]) =>
-        snapshot.stacks.some(
-          (stack) =>
-            stack.id === id &&
-            (workspaceSourceStack(snapshot, selection)?.id === id ||
-              stack.commits.some((commit) => commit.id === selection)),
-        ),
-      ),
+    this.stackSelections = retainedStackSelections(
+      snapshot,
+      this.stackSelections,
     );
     this.snapshot = snapshot;
+    this.targetHistory.sync(snapshot);
     this.diffs = [...diffs.values()];
     const active = this.diffs.find(
       (diff) => diff.source === this.source && diff.path === this.selectedPath,
@@ -286,6 +293,7 @@ export class StackWorkspaceController {
   }
   close() {
     this.drag.clear();
+    this.targetHistory.close();
     this.#closed = true;
     this.#read++;
     this.#command++;

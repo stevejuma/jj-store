@@ -251,12 +251,22 @@ combinations.
 The Branches picker groups applied bookmarks under Applied and all other loaded
 bookmarks under Local branches, using the existing Command View groups and
 retaining search, filters and keyboard selection. Workspace chips align to the
-trailing edge of each branch title row. A repository-style branch row above the
-body tabs identifies the workspace target branch; selecting a stack does not
-change that target. Only the Branches tab shows that row. Selected stacks expose
-Apply to workspace or Unapply from workspace in a body action card rather than
-the column header. Membership actions keep the existing preview and mock apply
-flow, update branch groups after confirmation, and remain disabled while a
+trailing edge of each branch title row. The page starts with its body tabs,
+without a duplicate target-branch header. The Branches column places a
+selectable workspace target branch card above its filter tabs, reusing the
+repository bookmark card. Selecting a stack does not change that target. Only
+the Branches tab shows this card. Selecting it opens one read-only stack with
+that branch's entire history, newest first. History loads in bounded pages near
+the scroll edge and uses the existing virtual revision rows so large histories
+do not render every commit. The history card supplies the same graph inset as
+ordinary stack cards so its header icon stays beside vertically aligned title,
+author and chip rows, aligned with commit content. Selecting a commit expands
+its changed files inline; opening a file places its read-only diff to the right
+of the history column. Target history cannot be applied, staged or rewritten.
+Selecting another branch returns to the ordinary stack flow. Selected stacks
+expose Apply to workspace or Unapply from workspace in a body action card rather
+than the column header. Membership actions keep the existing preview and mock
+apply flow, update branch groups after confirmation, and remain disabled while a
 command is pending. Delete local remains visibly unavailable as in the source
 reference. Workspace stacks retain Unapply in their menus without the body card.
 

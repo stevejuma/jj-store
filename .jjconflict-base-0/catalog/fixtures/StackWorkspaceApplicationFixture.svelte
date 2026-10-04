@@ -10,15 +10,21 @@
     page = "workspace",
     linked = true,
     continuousStack = false,
+    targetBranch = "main",
   }: {
     page?: "branches" | "workspace";
     linked?: boolean;
     continuousStack?: boolean;
+    targetBranch?: string;
   } = $props();
   const controller = untrack(() => createInMemoryStoreController("stacks"));
   const layoutStorage = untrack(createMemoryStoryStorage);
   const stackWorkspace = untrack(() => {
     const snapshot = workspaceStoryFixture();
+    snapshot.base = snapshot.target.name = targetBranch;
+    snapshot.target.commit = `${targetBranch}-history-240`;
+    snapshot.target.message = `${targetBranch === "main" ? "Main" : targetBranch} history 240`;
+    for (const stack of snapshot.stacks) stack.base = targetBranch;
     if (continuousStack)
       snapshot.stacks[0]!.heads = [snapshot.stacks[0]!.heads[0]!];
     snapshot.repository = controller.state.route.repository;

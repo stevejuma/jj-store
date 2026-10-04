@@ -67,18 +67,17 @@ export function stackRevisions(
   stack: WorkspaceStack,
   commits = stack.commits,
 ): RepositoryLogRevision[] {
+  const parents = new Map(
+    stack.commits.map((commit, index) => [
+      commit.id,
+      index > 0 ? [stack.commits[index - 1]!.id] : [],
+    ]),
+  );
   return commits.map((commit) => ({
     eventId: commit.id,
     changeId: commit.changeId,
     commitId: commit.id,
-    parents:
-      stack.commits.findIndex((item) => item.id === commit.id) > 0
-        ? [
-            stack.commits[
-              stack.commits.findIndex((item) => item.id === commit.id) - 1
-            ]!.id,
-          ]
-        : [],
+    parents: parents.get(commit.id) ?? [],
     message: commit.message,
     reason: "checkpoint",
     createdAt: commit.createdAt,

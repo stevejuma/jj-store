@@ -46,7 +46,9 @@
       within(column).getByRole("tab", { name: "Workspace" }),
     );
     await waitFor(() =>
-      expect(within(column).getAllByRole("option")).toHaveLength(3),
+      expect(
+        within(branchGroup(column, "Applied")).getAllByRole("option"),
+      ).toHaveLength(3),
     );
     expect(
       within(column).queryByText("Local branches", { exact: true }),
@@ -117,36 +119,38 @@
 />
 
 <Story
-  name="Workspace target branch appears above body tabs"
+  name="Workspace target appears only in the Branches column"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const target = await canvas.findByRole("group", {
-      name: "Workspace target branch",
-    });
-    expect(within(target).getByRole("heading", { name: "main" })).toBeVisible();
+    const column = await canvas.findByRole("region", { name: "Branches" });
+    const target = within(column).getByRole("option", { name: "main" });
+    expect(target).toBeVisible();
+    expect(
+      canvas.queryByRole("group", { name: "Workspace target branch" }),
+    ).toBeNull();
     const navigation = canvas.getByRole("navigation", {
       name: "Stack workspace navigation",
     });
     expect(target.getBoundingClientRect().bottom).toBeLessThanOrEqual(
-      navigation.getBoundingClientRect().top,
+      within(column).getByRole("tab", { name: "All" }).getBoundingClientRect()
+        .top,
     );
     await userEvent.click(
       canvas.getByRole("option", { name: "feature/search" }),
     );
-    expect(within(target).getByRole("heading", { name: "main" })).toBeVisible();
+    expect(target).toBeVisible();
     await userEvent.click(
       within(navigation).getByRole("tab", { name: "Workspace" }),
     );
-    expect(
-      canvas.queryByRole("group", { name: "Workspace target branch" }),
-    ).toBeNull();
+    expect(canvas.queryByRole("region", { name: "Branches" })).toBeNull();
     await userEvent.click(
       within(navigation).getByRole("tab", { name: "Branches" }),
     );
     expect(
-      within(
-        canvas.getByRole("group", { name: "Workspace target branch" }),
-      ).getByRole("heading", { name: "main" }),
+      within(canvas.getByRole("region", { name: "Branches" })).getByRole(
+        "option",
+        { name: "main" },
+      ),
     ).toBeVisible();
   }}
 />
