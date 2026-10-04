@@ -1,5 +1,12 @@
 # Typed mutations
 
+Independent conversion stages typed historical domain snapshots without altering
+the source. Translation maps immutable repository-bound references explicitly;
+only the destination provider may select these audited roots. Original source
+receipts remain provenance and never authorize destination commands. Preparation
+selects supported historical roots only in a new independent destination, with
+stable synthetic request identities and explicit source-to-destination maps.
+
 Agent session, message and tool duration timing are bounded read projections
 over exact selected event evidence. Recovering qualified Codex JSONL timestamps
 from sanitized payloads does not stage or publish objects, alter immutable
@@ -918,3 +925,11 @@ workspace, catalog and current Write policy. Transcript-mode hook messages are
 never separately published; source/spool receipts and manifest CAS remain the
 only AgentStore publication path. Capture controls apply to all configured
 lanes.
+
+Installation-native creation is LocalTrusted Admin-only and publishes through
+existing native provisioning and manifest CAS. The exact versioned name/request
+binds durable generated repository and epoch identities before reservation.
+Status/retry recovers that same destination after unknown outcomes; changed
+intent conflicts. Discovery is finalized only after verifying the published
+repository identity. It does not mutate a source repository, project links or
+checkout files.

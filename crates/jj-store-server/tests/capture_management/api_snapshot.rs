@@ -8,7 +8,7 @@ mod native_api;
 async fn published(f: &Fixture) -> CaptureSourceCoverage {
     // Cold native sanitizer preparation can outlive the foreground command
     // acknowledgement. Observe the original publication without resending it.
-    tokio::time::timeout(Duration::from_secs(120), async {
+    let result = tokio::time::timeout(Duration::from_secs(120), async {
         loop {
             match f
                 .manager
@@ -32,12 +32,23 @@ async fn published(f: &Fixture) -> CaptureSourceCoverage {
             tokio::time::sleep(Duration::from_millis(10)).await;
         }
     })
-    .await
-    .unwrap()
+    .await;
+    if result.is_err() {
+        panic!(
+            "publication did not settle: {:?}",
+            f.manager
+                .sources(f.actor, CaptureSourceQuery::default())
+                .await
+        );
+    }
+    result.unwrap()
 }
 #[tokio::test]
 async fn api_snapshot_progress_is_native_receipt_backed_and_body_free() {
     let mut f = Fixture::new(true).await;
+    // This fixture qualifies publication inspection, not rule compilation.
+    // Prepare the real scanner before starting its bounded capture worker.
+    jj_store_capture::agent_sanitization::warm_kingfisher_cache(&f.source.privacy().cache).unwrap();
     let native = native_api::Api::new(
         f.source.workspace(source::A).to_str().unwrap().into(),
         vec![],

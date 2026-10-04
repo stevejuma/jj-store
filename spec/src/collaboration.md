@@ -13,6 +13,9 @@ log/reference reads do not run when restoring Threads. Cached reads retain
 current repository-session isolation and cursor-reset behavior; no batch API or
 durable read index is added.
 
+Retention eviction selects only completed materializations; an initializing
+entry remains owned by its original read.
+
 Collaboration reads share validated immutable materializations keyed by
 repository, authority epoch and exact domain root references. Each request
 independently captures its complete manifest envelope and rechecks current
@@ -113,6 +116,18 @@ contributors, excerpts, counts and activity, and excludes tombstoned Threads.
 Native links encode repository, Thread/project/task and code-operation
 identities. New Thread links use `thread=` on Threads; legacy `channel=` stays
 readable and Review routes retain their own `thread=` interpretation.
+
+Independent conversion translates repository-bound AgentStore and ReviewStore
+references through exhaustive typed fields, preserves sanitized payloads and
+stable logical identities, and rebuilds repository anchor relation catalogs.
+Staging returns independent roots without publication capability. Source
+receipts remain archived provenance; destination retries use their own retained
+identities. Code provenance and non-repository review evidence require qualified
+portable carriers and fail preflight while that qualification is absent. Thread
+and Reaction conversion preserves exact reply parents, observed additions and
+retractions, session/review links and raster bytes. Repository-bound slots and
+dependent references are explicitly rekeyed and their catalogs rebuilt. Source
+actor and origin attribution remain provenance without granting access.
 
 ## Requirements
 

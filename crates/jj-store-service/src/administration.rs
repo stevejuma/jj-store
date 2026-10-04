@@ -58,6 +58,15 @@ impl RepositoryHost {
             max_blob,
         })
     }
+    /// Private conversion staging retains configured guards and bounded service limits.
+    pub fn with_conversion_store(&self, store: Arc<dyn ObjectStore>) -> Self {
+        let mut host = self.clone();
+        host.store = store;
+        host
+    }
+    pub fn conversion_store(&self) -> Arc<dyn ObjectStore> {
+        self.store.clone()
+    }
     /// Lazy binding needs no mutable repository directory or bucket listing.
     /// The selected manifest policy establishes existence and access together.
     pub fn endpoint(

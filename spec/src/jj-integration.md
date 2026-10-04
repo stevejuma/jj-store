@@ -85,6 +85,12 @@ separate histories. Multiple operation heads are legal. CLI repository opening
 can use native reconciliation, but HTTP GET cannot. Backend copy lookup and
 submodule data need full coverage beyond the reference SimpleBackend.
 
+Independent conversion uses a read-only bounded source capsule and owned raw
+object archive. The integration boundary translates all selected code references
+and ancestry/evolution dependencies into fresh destination identities, retaining
+optional predecessor-map semantics. It never reconciles source heads or
+snapshots physical checkout files. Native codecs and envelopes remain unchanged.
+
 ## Requirements
 
 | ID         | Requirement                                                                                                                                                                          |
@@ -658,7 +664,8 @@ repository JJ then Git configuration when the host has no usable email.
 Configuration reads MUST remain read-only, expose only the email and never load
 aliases or other configuration into query evaluation. Authenticated native
 serving MUST omit host identity hints; explicit request context remains the
-query authority.
+query authority. Secure repository fallback requires a metadata binding that
+resolves to the exact registered metadata directory.
 
 ## M18 opt-in checkpoint coordinator
 

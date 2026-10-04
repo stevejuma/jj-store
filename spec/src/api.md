@@ -1,5 +1,15 @@
 # Read APIs and browser
 
+LocalTrusted installation Admin conversion uses strict versioned preview/start
+bodies and original-request status. Preview returns a bounded eligibility result
+and archive digest; start must match that digest and one explicit source
+operation. Accepted requests retain the exact source archive and generated
+destination identities before preparation or publication. Status resumes final
+publication from retained prepared artifacts. Interrupted preparation requires
+an explicit retry and status polling does not allocate new staging attempts;
+absence is not rejection. Reports expose mappings and provenance digests, never
+private archive bodies or source credentials.
+
 Thread directory and selected conversation reads start concurrently through the
 repository/session/profile query cache. Navigation cancels obsolete reads;
 confirmed reactions invalidate and reload only their exact target, retaining
@@ -1366,6 +1376,17 @@ maps for Projects/Repositories sections and individual projects. It cannot
 restore authorization, credentials, repository snapshots or capability claims.
 
 ## Filesystem local repository API
+
+LocalTrusted Admin installations with native authority advertise
+`local_native_repository_creation`. POST `/v1/local/repositories/native` accepts
+only V1 request identity and discovery name; GET
+`/v1/local/repositories/native/requests/{request_id}` resolves that exact
+installation-owned request. The server durably retains repository and epoch
+identities before name reservation and manifest publication, then registers the
+verified repository. Replays cannot allocate another repository, changed intent
+fails conflict, and unknown outcomes retain the original request. Creation does
+not require a physical workspace. Filesystem-only and authenticated deployments
+do not advertise or admit this capability.
 
 LocalTrusted administrative installation endpoints under
 `/v1/local/repositories` inspect, register, remove and recover device-local

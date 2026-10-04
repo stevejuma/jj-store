@@ -162,6 +162,7 @@ pub(super) async fn prepare(
                     provider,
                     registry.clone(),
                 )
+                .map(|manager| manager.with_native_host(host.clone()))
             })
             .transpose()?
             .map(|manager| {

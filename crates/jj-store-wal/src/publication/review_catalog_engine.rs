@@ -20,6 +20,16 @@ impl<'source> ReviewCatalogEditor<'source> {
     async fn stage_review_object(&self, object: &ReviewObjectV1) -> Result<ReviewObjectRef> {
         self.objects.stage_review_object(object).await
     }
+    /// Builds an independent catalog from validated selections without publication.
+    pub async fn create_conversion_catalog(
+        &self,
+        entries: BTreeMap<ReviewCatalogKey, ReviewObjectRef>,
+    ) -> Result<Option<ReviewObjectRef>> {
+        if entries.len() > 100_000 {
+            return Err(Error::Limit("conversion review catalog"));
+        }
+        self.build_review_catalog(String::new(), entries).await
+    }
     pub async fn apply_delta(
         &self,
         base: &dyn ReviewSnapshotRead,

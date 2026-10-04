@@ -1,5 +1,19 @@
 # Specification governance
 
+Main integration of repository creation and conversion preserves both parents'
+capture and desktop work, milestone gates and original evidence entries.
+Additive document conflicts require no product-code replacement. The combined
+route inventory and generated client pass every registered HTTP/SSE capture;
+focused provider, UI and cold browser checks qualify the merged consumer.
+Persistent review startup keeps the existing installation, repository, app-saved
+capture settings and RustFS data in LocalTrusted HMR mode.
+
+Repository conversion contract changes run the complete registered HTTP/SSE
+capture lane before enabling their generated client capability. Provider and
+installation recovery regressions, isolated real-storage restart and cold
+production browser evidence qualify the bounded conversion slice separately from
+remaining M13 code-command and portable-anchor milestones.
+
 Appearance integration retains both completed histories and their original
 evidence entries without milestone promotion. Runtime relocation reuses the
 existing fixture and installation identity; workspace retirement follows
@@ -911,3 +925,19 @@ Repository terminal adaptations are maintained inside the desktop host and owned
 web UI with pinned Buzz Apache-2.0 provenance. Native terminal evidence covers
 engine, folder admission, transport and process lifetime independently of
 browser fixture interactions; no visual baseline approval is implied.
+
+Native browser creation registers the server
+`native_creation_http_is_local_admin_only_and_captures_contracts` capture with
+`JJ_STORE_NATIVE_CREATION_CONTRACT_CAPTURE`. Its additive request/status routes
+require the complete registered HTTP/SSE contract lane and generated-client
+checks. Server creation/reopen and production cold browser recovery/gating
+remain distinct evidence. Neither qualifies local/native conversion or a real
+RustFS migration.
+
+M13 independent conversion primitives remain governed by local-jj.md, with
+native JJ translation under jj-integration.md, typed collaboration references
+under collaboration.md, Work snapshots under projects.md and staging/closure
+audits under publication.md. Qualification must retain source operation/metadata
+pins, full history and exact evidence, explicit mapping reports and source-safe
+failure/recovery evidence. Primitive tests do not enable conversion capability
+or complete durable publication, browser or cold RustFS acceptance.

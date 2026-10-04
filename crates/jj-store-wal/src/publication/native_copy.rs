@@ -199,7 +199,7 @@ impl Coordinator {
         Ok(())
     }
 
-    async fn include_domains(
+    pub(super) async fn include_domains(
         &self,
         domains: Option<RepositoryDomains>,
         records: &mut BTreeSet<RecordRef>,
@@ -319,4 +319,52 @@ async fn put_exact(
         }
     }
     Ok(())
+}
+
+impl Coordinator {
+    /// Exact validated domain records only. No settings, grants or operational WAL are exported.
+    pub async fn conversion_domain_archive(
+        &self,
+        domains: Option<RepositoryDomains>,
+    ) -> Result<Vec<(RecordRef, Vec<u8>)>> {
+        let mut references = BTreeSet::new();
+        let mut domains = domains;
+        if let Some(domains) = &mut domains {
+            domains.git = None;
+        }
+        self.include_domains(domains, &mut references).await?;
+        let mut remaining = 16 * 1024 * 1024usize;
+        let mut out = Vec::new();
+        for reference in references {
+            let bytes = self
+                .records
+                .store
+                .get(&reference.key(self.records.repository)?, None)
+                .await?
+                .read_bounded((remaining as u64).min(MAX_RECORD_BYTES))
+                .await?;
+            if records::digest(&bytes) != reference.digest {
+                return Err(Error::Corrupt("conversion source record"));
+            }
+            remaining = remaining
+                .checked_sub(bytes.len())
+                .ok_or(Error::Limit("conversion archive bytes"))?;
+            out.push((reference, bytes));
+        }
+        Ok(out)
+    }
+    pub async fn conversion_receipt_archive(&self, reference: RecordRef) -> Result<Vec<u8>> {
+        let _: Receipt = self.records.get(reference, RecordKind::Receipt).await?;
+        let bytes = self
+            .records
+            .store
+            .get(&reference.key(self.records.repository)?, None)
+            .await?
+            .read_bounded(MAX_RECORD_BYTES)
+            .await?;
+        if records::digest(&bytes) != reference.digest {
+            return Err(Error::Corrupt("conversion receipt identity"));
+        }
+        Ok(bytes)
+    }
 }

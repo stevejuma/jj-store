@@ -6,6 +6,7 @@
   import { projectsSidebarModel } from "../store-work/projects-sidebar-model.js";
   import { withThreadNavigation } from "../store-threads/thread-navigation.js";
   import StoreLocalFolders from "../store-settings/StoreLocalFolders.svelte";
+  import StoreNativeRepositoryCreate from "../store-settings/StoreNativeRepositoryCreate.svelte";
   import StoreWorkDialog from "../store-work/StoreWorkDialog.svelte";
   import { projectsBusy } from "../store-work/projects-initial-loading.js";
   let {
@@ -47,7 +48,12 @@
   );
 </script>
 
-{#snippet navigation(add?: () => void, disabled = false)}
+{#snippet navigation(
+  add?: () => void,
+  disabled = false,
+  create?: () => void,
+  creationDisabled = false,
+)}
   <CommunityNavigation
     model={{
       ...model,
@@ -75,6 +81,18 @@
                 },
               ]
             : []),
+          ...(section.id === "repositories" &&
+          create &&
+          controller.state.nativeRepositoryCreation
+            ? [
+                {
+                  id: "create-native-repository",
+                  kind: "add-repository" as const,
+                  label: "Create server repository",
+                  disabled: creationDisabled,
+                },
+              ]
+            : []),
         ],
       })),
     }}
@@ -86,7 +104,8 @@
     {footer}
     onSelect={(item) => {
       if (item.disabled) return;
-      if (item.kind === "add-repository") add?.();
+      if (item.id === "create-native-repository") create?.();
+      else if (item.kind === "add-repository") add?.();
       else if (item.kind === "add-project") createProject = true;
       else onSelect(item);
     }}
@@ -94,12 +113,18 @@
 {/snippet}
 
 {#if controller.state.accessMode === "local_trusted"}
-  <StoreLocalFolders {controller} mode="add">
-    {#snippet trigger(add, unavailable)}{@render navigation(
-        add,
-        unavailable,
-      )}{/snippet}
-  </StoreLocalFolders>
+  <StoreNativeRepositoryCreate {controller}>
+    {#snippet trigger(create, creationDisabled)}
+      <StoreLocalFolders {controller} mode="add">
+        {#snippet trigger(add, unavailable)}{@render navigation(
+            add,
+            unavailable,
+            create,
+            creationDisabled,
+          )}{/snippet}
+      </StoreLocalFolders>
+    {/snippet}
+  </StoreNativeRepositoryCreate>
 {:else}{@render navigation()}{/if}
 
 {#if createProject}<StoreWorkDialog
