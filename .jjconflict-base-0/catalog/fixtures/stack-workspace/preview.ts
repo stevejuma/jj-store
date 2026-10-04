@@ -49,7 +49,7 @@ export function fixtureSummary(
     case "unapply_stack":
       return `Remove “${stackName(command.stack)}” from “${workspace.name}”. The stack, other combinations and unassigned edits remain.`;
     case "move_commit":
-      return `Move “${commitName(command.commit)}” to “${stackName(command.stack)}”. Named combinations using these stacks will show the updated histories.`;
+      return `Move “${commitName(command.commit)}” to ${command.branch ? `branch “${command.branch}” in ` : ""}“${stackName(command.stack)}”. Named combinations using these stacks will show the updated histories.`;
     case "squash":
       return `Combine “${commitName(command.commit)}” into “${commitName(command.target)}”, retaining both sets of changes and messages. The source commit entry is removed.`;
     case "uncommit":
@@ -81,6 +81,8 @@ export function fixtureSummary(
     case "create_commit":
       return `Create an empty commit “${command.message}” in “${stackName(command.stack)}”. Unassigned edits remain.`;
     case "reorder_commit":
+      if ("target" in command)
+        return `Place “${commitName(command.commit)}” ${command.placement} “${commitName(command.target)}” within its stack. Identities and file changes are retained.`;
       return `Move “${commitName(command.commit)}” ${command.direction} within its stack. File changes are retained.`;
     case "resolve_conflict":
       return `Resolve ${command.path} with the reviewed text and retain it as an unassigned workspace edit.`;

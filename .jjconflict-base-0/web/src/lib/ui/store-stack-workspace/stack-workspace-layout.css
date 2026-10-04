@@ -1,0 +1,73 @@
+/* Application column layout; Scroll Area owns rail geometry and mechanics. */
+.stack-workspace__header {
+  display: flex;
+  align-items: center;
+  min-height: var(--ui-shell-header-height, 3rem);
+}
+.stack-workspace__nav {
+  flex-wrap: wrap;
+}
+.stack-workspace__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-inline-start: auto;
+  flex-wrap: wrap;
+}
+.stack-workspace__footer-items {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.stack-workspace__branch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+.stack-workspace__views,
+.stack-workspace__content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  flex-direction: column;
+}
+.stack-workspace__canvas-scroll {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  min-height: 0;
+}
+.stack-workspace
+  [data-ui-part="column"]:not([data-column-id="branches"])
+  [data-ui-part="column-body"] {
+  padding-inline-end: 0;
+}
+.stack-workspace
+  [data-ui-part="column"]:not([data-column-id="branches"])
+  [data-ui-part="column-body"]
+  > [data-ui-part="scroll-area"]
+  > [data-ui-part="scroll-area-viewport"] {
+  padding-inline-end: 0.5rem;
+}
+.stack-workspace[data-page="workspace"]
+  .stack-workspace__unstaged-body
+  > [data-ui-part="scroll-area"]
+  > [data-ui-part="scroll-area-viewport"] {
+  padding-inline-end: 1rem;
+}
+.stack-workspace__canvas {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  min-height: 0;
+}
+.stack-workspace .stack-workspace__canvas {
+  padding-top: 0;
+}
+.stack-workspace[data-page="workspace"] .stack-workspace__unstaged-body {
+  padding-inline-start: 0.5rem;
+}

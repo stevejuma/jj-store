@@ -1,6 +1,13 @@
 <script lang="ts">
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import Folder from "@lucide/svelte/icons/folder";
+  import FolderKanban from "@lucide/svelte/icons/folder-kanban";
+  import GitBranch from "@lucide/svelte/icons/git-branch";
+  import GitBranchPlus from "@lucide/svelte/icons/git-branch-plus";
+  import File from "@lucide/svelte/icons/file";
+  import Pencil from "@lucide/svelte/icons/pencil";
+  import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
@@ -18,6 +25,8 @@
   import StoreStackWorkspacePicker from "./StoreStackWorkspacePicker.svelte";
   import StoreStackWorkspaceActions from "./StoreStackWorkspaceActions.svelte";
   import "./stack-workspace.css";
+  import "./stack-workspace-layout.css";
+  import "./stack-workspace-drag.css";
   let {
     controller,
     showStackActions = true,
@@ -38,6 +47,10 @@
   function command(value: WorkspaceCommand) {
     if (controller.locked) return;
     controller.validation = "";
+    if (value.kind === "move_commit" && value.branch) {
+      void controller.prepare(value);
+      return;
+    }
     if (value.kind === "edit_commit" && controller.snapshot) {
       if (!controller.commitDrafts.edit(controller.snapshot, value.commit))
         controller.validation =
@@ -74,6 +87,7 @@
 
 <section
   class="stack-workspace community-projects"
+  data-page={controller.page}
   aria-label="Local stack workspace"
 >
   {#if showPicker}<header class="stack-workspace__header">
@@ -116,6 +130,18 @@
       >
         {controller.validation}
       </p>{/if}
+    {#if controller.page === "branches"}
+      <header
+        class="store-application__section-header"
+        role="group"
+        aria-label="Workspace target branch"
+      >
+        <div>
+          <GitBranch aria-hidden="true" />
+          <h1 class="store-application__title">{snapshot.base}</h1>
+        </div>
+      </header>
+    {/if}
     <Tabs.Root
       value={controller.page}
       onValueChange={(value) => {
@@ -152,17 +178,48 @@
       >
     </Tabs.Root>
     <footer class="stack-workspace__footer">
-      <span class="stack-workspace__folder">Folder: {snapshot.folder}</span
-      ><span
-        >{activeWorkspace(snapshot).name} · Base: {snapshot.base} · {activeWorkspace(
-          snapshot,
-        ).applied.length} applied stacks · {activeWorkspace(snapshot).unassigned
-          .length} unassigned files</span
-      ><span role="status">{controller.outcome}</span
-      >{#if formCommand && !controller.locked}<Button
-          variant="ghost"
-          size="sm"
-          onclick={() => (formOpen = true)}>Edit retained draft</Button
+      <div class="stack-workspace__footer-items">
+        <CommunityChip
+          variant="muted"
+          shape="square"
+          class="stack-workspace__folder"
+        >
+          {#snippet leading()}<Folder size={14} aria-hidden="true" />{/snippet}
+          {snapshot.folder}
+        </CommunityChip>
+        <CommunityChip variant="muted" shape="square">
+          {#snippet leading()}<FolderKanban
+              size={14}
+              aria-hidden="true"
+            />{/snippet}
+          {activeWorkspace(snapshot).name}
+        </CommunityChip>
+        <CommunityChip variant="muted" shape="square">
+          {#snippet leading()}<GitBranch
+              size={14}
+              aria-hidden="true"
+            />{/snippet}
+          {snapshot.base}
+        </CommunityChip>
+        <CommunityChip variant="muted" shape="square">
+          {#snippet leading()}<GitBranchPlus
+              size={14}
+              aria-hidden="true"
+            />{/snippet}
+          {activeWorkspace(snapshot).applied.length} applied stacks
+        </CommunityChip>
+        <CommunityChip variant="muted" shape="square">
+          {#snippet leading()}<File size={14} aria-hidden="true" />{/snippet}
+          {activeWorkspace(snapshot).unassigned.length} unstaged files
+        </CommunityChip>
+      </div>
+      <span role="status">{controller.outcome}</span
+      >{#if formCommand && !controller.locked}<CommunityChip
+          variant="muted"
+          shape="square"
+          onclick={() => (formOpen = true)}
+          >{#snippet leading()}<Pencil aria-hidden="true" />{/snippet}Edit
+          retained draft</CommunityChip
         >{/if}
     </footer>
   {/if}

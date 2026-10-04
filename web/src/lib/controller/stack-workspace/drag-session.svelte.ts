@@ -12,7 +12,7 @@ export class WorkspaceDragSession {
   payload = $state<string | null>(null);
   feedback = $state<(WorkspaceDropFeedback & { key: string }) | null>(null);
   key(target: WorkspaceDropTarget) {
-    return `${target.kind}:${target.id ?? ""}`;
+    return `${target.kind}:${target.id ?? ""}${target.branch !== undefined ? `:${JSON.stringify(target.branch)}` : ""}`;
   }
   start(event: DragEvent, payload: WorkspaceDrag) {
     event.stopPropagation();

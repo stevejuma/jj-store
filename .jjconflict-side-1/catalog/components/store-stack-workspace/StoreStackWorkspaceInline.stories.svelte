@@ -40,8 +40,9 @@
       const other = name === "feature/model" ? "src/api.ts" : "src/model.ts";
       expect(within(files).getByRole("button", { name: own })).toBeVisible();
       expect(within(files).queryByRole("button", { name: other })).toBeNull();
-      expect(within(header).getByText("Selected")).toBeVisible();
-      expect(files.previousElementSibling).toBe(header);
+      expect(header).toHaveAttribute("data-selected");
+      expect(getComputedStyle(header, "::before").width).toBe("4px");
+      expect(files.parentElement!.previousElementSibling).toBe(header);
       expect(files.getBoundingClientRect().top).toBeGreaterThanOrEqual(
         header.getBoundingClientRect().bottom - 1,
       );
@@ -103,6 +104,11 @@
     const start = composer.querySelector<HTMLElement>(
       ".stack-workspace__stage-start",
     )!;
+    const dropButton = within(drop).getByRole("button", {
+      name: "Assign to feature/api",
+    });
+    expect(getComputedStyle(dropButton).borderStyle).toBe("dashed");
+    expect(getComputedStyle(dropButton).borderWidth).toBe("2px");
     expect(getComputedStyle(start).borderTopWidth).toBe("1px");
     expect(
       Math.abs(

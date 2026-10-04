@@ -30,6 +30,7 @@
     selectedFiles,
     rowActions,
     rowDropState,
+    rowDropPlacement,
     avatarSize = "small",
     showSelectedChip = false,
     graphInset = 0,
@@ -55,6 +56,9 @@
     rowDropState?: (
       revision: RepositoryLogRevision,
     ) => "idle" | "valid" | "invalid";
+    rowDropPlacement?: (
+      revision: RepositoryLogRevision,
+    ) => "above" | "below" | undefined;
     avatarSize?: "small" | "xsmall";
     showSelectedChip?: boolean;
     graphInset?: number;
@@ -139,6 +143,7 @@
         style:--community-revision-graph-row-height="{rowHeight}px"
         data-revision-id={row.revision.eventId}
         data-drop-target-state={rowDropState?.(row.revision)}
+        data-drop-placement={rowDropPlacement?.(row.revision)}
         class:stack-workspace__drop-target={Boolean(rowDropState)}
         draggable={draggable?.(row.revision)}
         use:measureBookmarkRow={row.revision.eventId}

@@ -11,42 +11,8 @@
   color: var(--foreground);
   background: var(--background);
 }
-.stack-workspace__header {
-  display: flex;
-  align-items: center;
-  min-height: var(--ui-shell-header-height, 3rem);
-}
-.stack-workspace__nav {
-  flex-wrap: wrap;
-}
-.stack-workspace__controls {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  margin-inline-start: auto;
-  flex-wrap: wrap;
-}
-.stack-workspace__views,
-.stack-workspace__content {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  flex-direction: column;
-}
-.stack-workspace__canvas-scroll {
-  width: 100%;
-  min-width: 0;
-  flex: 1;
-  min-height: 0;
-}
-.stack-workspace__canvas {
-  width: 100%;
-  min-width: 0;
-  flex: 1;
-  min-height: 0;
-}
 .stack-workspace__footer {
+  color: var(--muted-foreground);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -54,15 +20,6 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border-top: 1px solid var(--border);
-  font-size: var(--community-text-secondary);
-}
-.stack-workspace__lane-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  color: var(--muted-foreground);
   font-size: var(--community-text-secondary);
 }
 .stack-workspace__stage-card,
@@ -88,6 +45,10 @@
 .stack-workspace__stage-form {
   border-top: 1px solid var(--border);
 }
+.stack-workspace__stage-form {
+  padding: 0;
+  gap: 0;
+}
 .stack-workspace__staged-header {
   display: flex;
   align-items: center;
@@ -99,7 +60,7 @@
   width: 1rem;
   height: 1rem;
 }
-.stack-workspace__staged-header [data-ui-component="toggle-group"] {
+.stack-workspace__staged-actions {
   margin-inline-start: auto;
 }
 .stack-workspace__staged-list {
@@ -108,7 +69,20 @@
 .stack-workspace__drop {
   min-height: 4rem;
   white-space: normal;
-  border-style: dashed;
+  border: 2px dashed var(--border);
+  background: transparent;
+  color: var(--muted-foreground);
+  box-shadow: none;
+}
+.stack-workspace__commit-fields {
+  gap: 0;
+}
+.stack-workspace__commit-description-row {
+  padding: 0.75rem;
+}
+.stack-workspace__commit-title-row {
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem;
 }
 .stack-workspace__bookmark-header {
   display: grid;
@@ -201,11 +175,17 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
+  padding-inline-end: 0.5rem;
   border-bottom: 1px solid var(--border);
-  background: var(--muted);
+  background: color-mix(in srgb, var(--foreground) 4%, var(--background));
 }
 .stack-workspace__bookmark-menu {
   margin-inline-start: auto;
+}
+.stack-workspace__menu-trigger {
+  --accent: color-mix(in srgb, var(--foreground) 24%, var(--background));
+  --muted: var(--accent);
+  --ui-column-canvas-header-action-hover: var(--accent);
 }
 .stack-workspace__request {
   overflow-wrap: anywhere;
@@ -238,8 +218,7 @@
 .stack-workspace__commit-actions {
   display: flex;
   gap: 0.5rem;
-  padding: 0;
-  padding-top: 0.75rem;
+  padding: 0.75rem;
 }
 .stack-workspace__commit-actions > button {
   flex: 1;
@@ -258,47 +237,37 @@
   cursor: pointer;
 }
 
-.stack-workspace__unstaged-body {
-  padding-inline: 0.5rem;
+/* Changeyard's rounded selected marker, adapted without changing row geometry. */
+.stack-workspace__branch-files {
+  padding: 0.5rem;
+  padding-inline-start: var(--stack-graph-inset);
 }
-/* Changeyard's target ring and inset dashed guide, adapted to owned semantic tokens. */
-.stack-workspace__drop-target {
-  position: relative;
+.stack-workspace__bookmark-header[data-selected] {
+  border-bottom: 0;
 }
-.stack-workspace__drop-target[data-drop-target-state="valid"],
-.stack-workspace__drop-target[data-drop-target-state="invalid"] {
-  --stack-drop-color: var(--primary);
-  outline: 2px solid
-    color-mix(in srgb, var(--stack-drop-color) 70%, transparent);
-  outline-offset: -2px;
+.stack-workspace__branch-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
 }
-.stack-workspace__drop-target[data-drop-target-state="invalid"] {
-  --stack-drop-color: var(--destructive);
-  cursor: not-allowed;
+.stack-workspace__bookmark-card .community-chip[data-chip-tone="neutral"] {
+  background: color-mix(in srgb, var(--foreground) 14%, var(--background));
+  border-color: color-mix(in srgb, var(--foreground) 22%, var(--background));
 }
-.stack-workspace__drop-target[data-drop-target-state="valid"]::after,
-.stack-workspace__drop-target[data-drop-target-state="invalid"]::after {
+.stack-workspace__bookmark-header[data-selected]::before,
+.stack-workspace
+  .community-revision-graph__item--selected
+  > .community-revision-graph__row::before {
   content: "";
   position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 3rem;
+  max-height: calc(100% - 0.5rem);
+  transform: translateY(-50%);
+  border-radius: 0 999px 999px 0;
+  background: var(--primary);
   pointer-events: none;
-  inset: 0.25rem;
-  border: 2px dashed
-    color-mix(in srgb, var(--stack-drop-color) 80%, transparent);
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--stack-drop-color) 10%, transparent);
-}
-.stack-workspace__drop-guide {
-  position: absolute;
-  pointer-events: none;
-  inset-inline: 0.75rem;
-  top: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius);
-  color: var(--foreground);
-  background: var(--background);
-  font-size: var(--community-text-secondary);
 }

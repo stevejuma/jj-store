@@ -1,5 +1,6 @@
 import { workspaceSourceFiles } from "./files.js";
 import { activeWorkspace } from "./presentation.js";
+import { moveCommitProblem, sortCommitProblem } from "./commit-placement.js";
 import type {
   WorkspaceCommand,
   WorkspaceSelection,
@@ -17,6 +18,8 @@ export function workspaceDrop(
   value: string,
   target: "workspace" | "stack" | "stage" | "commit" | "working",
   id = "",
+  branch?: string,
+  placement?: "above" | "below",
 ): WorkspaceCommand | null {
   try {
     const item = JSON.parse(value) as WorkspaceDrag;
@@ -32,7 +35,12 @@ export function workspaceDrop(
       target === "stack" &&
       id
     )
-      return { kind: "move_commit", commit: item.commit, stack: id };
+      return {
+        kind: "move_commit",
+        commit: item.commit,
+        stack: id,
+        ...(branch !== undefined ? { branch } : {}),
+      };
     if (
       item.kind === "commit" &&
       typeof item.commit === "string" &&
@@ -40,7 +48,9 @@ export function workspaceDrop(
       id &&
       id !== item.commit
     )
-      return { kind: "squash", commit: item.commit, target: id };
+      return placement
+        ? { kind: "reorder_commit", commit: item.commit, target: id, placement }
+        : { kind: "squash", commit: item.commit, target: id };
     if (
       item.kind === "folder" &&
       Array.isArray(item.selections) &&
@@ -103,11 +113,14 @@ export function workspaceDrop(
 export type WorkspaceDropTarget = {
   kind: "workspace" | "stack" | "stage" | "commit" | "working";
   id?: string;
+  branch?: string;
+  placement?: "above" | "below";
 };
 export type WorkspaceDropFeedback = {
   state: "valid" | "invalid";
   message: string;
   command?: WorkspaceCommand;
+  placement?: "above" | "below";
 };
 
 /** Changeyard-style preview feedback, based only on the currently pinned UI snapshot. */
@@ -128,7 +141,13 @@ export function workspaceDropFeedback(
     !snapshot.folder
   )
     return invalid("Local changes are unavailable while a command is pending.");
-  const command = workspaceDrop(payload, target.kind, target.id);
+  const command = workspaceDrop(
+    payload,
+    target.kind,
+    target.id,
+    target.branch,
+    target.placement,
+  );
   if (!command) return invalid("This target does not accept the dragged item.");
   if (!snapshot.capabilities.includes(command.kind))
     return invalid("This operation is unavailable in this repository.");
@@ -155,14 +174,23 @@ export function workspaceDropFeedback(
   if (
     "target" in command &&
     command.target !== "unassigned" &&
-    (!commit(command.target) || commit(command.target)?.immutable)
+    (!commit(command.target) ||
+      (command.kind !== "reorder_commit" && commit(command.target)?.immutable))
   )
     return invalid("The destination commit is unavailable or immutable.");
-  if (
-    command.kind === "move_commit" &&
-    stack?.commits.some((item) => item.id === command.commit)
-  )
-    return invalid("Choose another stack.");
+  if (command.kind === "move_commit") {
+    const problem = moveCommitProblem(snapshot, command);
+    if (problem) return invalid(problem);
+  }
+  if (command.kind === "reorder_commit" && "target" in command) {
+    const problem = sortCommitProblem(
+      snapshot,
+      command.commit,
+      command.target,
+      command.placement,
+    );
+    if (problem) return invalid(problem);
+  }
   if (
     command.kind === "squash" &&
     !snapshot.stacks.some(
@@ -205,9 +233,18 @@ export function workspaceDropFeedback(
           ? "Move changes back to Unstaged"
           : "Move changes into this commit"
         : command.kind === "move_commit"
-          ? "Move commit to this stack"
-          : command.kind === "squash"
-            ? "Squash into this commit"
-            : "Apply this stack";
-  return { state: "valid", message, command };
+          ? command.branch
+            ? `Move commit to branch ${command.branch}`
+            : "Move commit to this stack"
+          : command.kind === "reorder_commit" && "target" in command
+            ? `Place commit ${command.placement} this row`
+            : command.kind === "squash"
+              ? "Squash into this commit"
+              : "Apply this stack";
+  return {
+    state: "valid",
+    message,
+    command,
+    ...(target.placement ? { placement: target.placement } : {}),
+  };
 }

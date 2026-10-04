@@ -42,6 +42,7 @@
         {...props}
         variant="ghost"
         size="icon-sm"
+        class="stack-workspace__menu-trigger"
         aria-label={`Actions for ${commit.message.split("\n")[0]}`}
         {disabled}><Ellipsis aria-hidden="true" /></Button
       >{/snippet}</Menu.Trigger

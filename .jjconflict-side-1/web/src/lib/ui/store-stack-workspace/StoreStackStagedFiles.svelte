@@ -33,7 +33,9 @@
   <Card.Header class="stack-workspace__staged-header">
     <Check aria-hidden="true" /><ColumnCanvas.Title>Staged</ColumnCanvas.Title
     ><ColumnCanvas.Count>{files.length}</ColumnCanvas.Count>
-    <FileListingViewModeToggle bind:mode />
+    <Card.Action class="stack-workspace__staged-actions"
+      ><FileListingViewModeToggle bind:mode /></Card.Action
+    >
   </Card.Header>
   <Card.Content class="stack-workspace__staged-list">
     <FileListing

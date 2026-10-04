@@ -2140,7 +2140,7 @@
     },
     {
       "local": "web/src/lib/ui/store-stack-workspace/StoreStackLane.svelte",
-      "reason": "Bookmark sections, commit actions and assignment targets composed from existing application components.",
+      "reason": "Bookmark sections, commit actions and assignment targets composed from existing application components. Branches-only Apply/Unapply and disabled Delete local action card is copied from StackHeaderActions into the column body using the existing Card and Button primitives.",
       "sources": [
         {
           "repository": "changeyard",
@@ -2155,12 +2155,19 @@
           "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
           "license": null,
           "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        },
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/branches-view.tsx#StackHeaderActions",
+          "revision": "b0caf0741f17454f2bc48ef3448d741d231f9299",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
         }
       ]
     },
     {
       "local": "web/src/lib/ui/store-stack-workspace/StoreStackBookmarkCard.svelte",
-      "reason": "Locally maintained Changeyard bookmark card grouping, composed with owned author, time, revision graph and file components; aligned small avatars, continuous stems and trailing commit actions.",
+      "reason": "Locally maintained Changeyard bookmark card grouping, composed with owned author, time, revision graph and file components; aligned small avatars, continuous stems and trailing commit actions. Exact branch-header commit drops, inset inline branch files and the rounded left selection marker copied from the JJ board. Owned follow-up uses wrapping chips, inset content-aligned file lists, concise visible headings and selection markers without text chips.",
       "sources": [
         {
           "repository": "changeyard",
@@ -2324,7 +2331,7 @@
     },
     {
       "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceForm.svelte",
-      "reason": "Adapted independent/dependent creation from the user Changeyard reference with existing exclusive Toggle Group and owned repository Command View picker.",
+      "reason": "Adapted independent/dependent creation from the user Changeyard reference with existing exclusive Toggle Group, owned Settings form rows and repository Command View picker; assignment destinations show branch names while previewing exact head commit identities.",
       "sources": [
         {
           "repository": "changeyard",
@@ -2363,12 +2370,51 @@
     },
     {
       "local": "web/src/lib/ui/store-stack-workspace/StoreStackStagedFiles.svelte",
-      "reason": "Copied Changeyard staged header/count/list-mode and file rows above a separated composer, using public Card, Column Canvas title/count and File Listing.",
+      "reason": "Copied Changeyard staged header/count/list-mode and file rows above a separated composer, using public Card, Column Canvas title/count and File Listing. Staged list controls occupy the public Card Action slot at the header edge.",
       "sources": [
         {
           "repository": "changeyard",
           "path": "packages/vcs/src/views/jj-board-view.tsx#StackStartCommitPanel",
           "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/stack-workspace-drag.css",
+      "reason": "Locally maintained Changeyard target shading and dashed guide, with an opaque readable label and threshold insertion borders adapted to owned semantic tokens.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx#workspaceDropTargetOverlayClassName",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/controller/stack-workspace/commit-placement.ts",
+      "reason": "Owned validation for exact branch-header destinations, immutable descendants and commit row insertion thresholds, extending the copied Changeyard drag contract for the explicitly requested commit moves and sorting.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/vcs-workspace-dnd.ts",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "reason": "Applied/local branch grouping and trailing Workspace chip copied from the Changeyard branch inventory composition; retained owned repository branch rows, filters, virtualization and Command View keyboard selection. Grouping is opt-in for the Stacks Branches tab.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/branches-view.tsx#BranchRow",
+          "revision": "b0caf0741f17454f2bc48ef3448d741d231f9299",
           "license": null,
           "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
         }

@@ -18,6 +18,7 @@
     scrollStrategy = "auto",
     selectedPath = null,
     title = "Changed files",
+    ariaLabel = title,
     compact = false,
     error = "",
     hasMore = false,
@@ -32,6 +33,7 @@
     scrollStrategy?: ScrollAreaStrategy;
     selectedPath?: string | null;
     title?: string | undefined;
+    ariaLabel?: string | undefined;
     compact?: boolean | undefined;
     error?: string | undefined;
     hasMore?: boolean | undefined;
@@ -81,7 +83,7 @@
   class:community-revision-graph-files--inline-styled={compact &&
     scrollStrategy === "styled"}
   data-ui-part="changed-files"
-  aria-label={title}
+  aria-label={ariaLabel}
   aria-busy={initialLoading || loading}
 >
   <div class="community-revision-graph-files__header">

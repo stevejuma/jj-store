@@ -981,3 +981,25 @@ interaction/accessibility checks, web/catalog type checks, ownership,
 architecture and document/progress checks. Rust, checkout integration, public
 transport generation and visual baselines are outside this slice. Explicit human
 approval is required before backend implementation.
+
+Follow-up header drops and positional sorting retain exact branch and commit
+identities in frontend mock commands. Extracted placement validation and drag
+styles remain locally maintained with their source attribution. Geometry and
+native hover evidence cover inline file alignment, selection markers, wrapping
+chips, balanced stack/diff content padding before edge-aligned scrollbars,
+aligned menu controls and Settings-style command forms. Only the Branches picker
+retains its existing insets; stack and diff columns use the spacing on either
+tab. Stack metadata omits the redundant Applied/Base row while keeping conflict
+status in the header. Hover evidence includes light and dark modes. Native
+pointer scenarios restore a neutral pointer position so adjacent stories retain
+their own hover state; assertions remain unchanged. These refinements do not
+open the backend approval gate.
+
+Branch presentation additionally reuses the repository header row for the
+workspace target above the tabs, opt-in Command View grouping for applied/local
+branches, and owned Card/Button membership actions inside the selected stack
+body. Footer values and the retained-draft action share the existing muted chip
+surface. The commit title remains the public Input in a separated row, with the
+public application composer below it. These refinements require their exact
+interaction, theme, geometry and accessibility scenarios without screenshot
+comparison or checkout execution.

@@ -1880,3 +1880,11 @@ refresh preserves the same source while it exists. Hunk transfers resolve the
 aggregate to one mutable owning commit before staging or previewing a command.
 Ambiguous ownership remains read-only. Selecting a branch never replaces another
 column's open diff.
+
+Commit movement may carry an exact destination branch name with its stack
+identity. A header drop inserts the commit at that segment's head. Row sorting
+carries an exact target commit and above/below placement; existing directional
+reorder commands remain supported. Header feedback is scoped by stack and
+branch. Feedback and preview validation reject missing targets, self or
+redundant positions and moves that rewrite immutable history. These remain
+frontend mock inputs with no transport or persistence change.

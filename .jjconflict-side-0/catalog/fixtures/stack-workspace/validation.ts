@@ -1,5 +1,9 @@
 import { activeWorkspace } from "../../../web/src/lib/controller/stack-workspace/presentation.js";
 import {
+  moveCommitProblem,
+  sortCommitProblem,
+} from "../../../web/src/lib/controller/stack-workspace/commit-placement.js";
+import {
   WorkspaceCommandError,
   type WorkspaceCommand,
   type WorkspaceSnapshot,
@@ -73,6 +77,7 @@ export function validateFixtureCommand(
   if ("target" in command) {
     if (
       command.target !== "unassigned" &&
+      command.kind !== "reorder_commit" &&
       findCommit(snapshot, command.target).commit.immutable
     )
       fail("The destination commit is immutable.");
@@ -123,7 +128,16 @@ export function validateFixtureCommand(
     fail("This conflict is no longer present.");
   if (command.kind === "undo" && !snapshot.canUndo)
     fail("There is no command to undo.");
-  if (command.kind === "reorder_commit") {
+  if (command.kind === "reorder_commit" && "target" in command) {
+    const problem = sortCommitProblem(
+      snapshot,
+      command.commit,
+      command.target,
+      command.placement,
+    );
+    if (problem) fail(problem);
+  }
+  if (command.kind === "reorder_commit" && "direction" in command) {
     const { stack, commit } = findCommit(snapshot, command.commit);
     const index =
       stack.commits.indexOf(commit) + (command.direction === "up" ? 1 : -1);
@@ -138,11 +152,10 @@ export function validateFixtureCommand(
       findCommit(snapshot, command.target).stack.id
   )
     fail("Choose a squash destination in the same stack.");
-  if (
-    command.kind === "move_commit" &&
-    findCommit(snapshot, command.commit).stack.id === command.stack
-  )
-    fail("Choose another stack.");
+  if (command.kind === "move_commit") {
+    const problem = moveCommitProblem(snapshot, command);
+    if (problem) fail(problem);
+  }
   if (command.kind === "split" && command.selection.source !== command.commit)
     fail("Choose changes from the commit being split.");
   if (

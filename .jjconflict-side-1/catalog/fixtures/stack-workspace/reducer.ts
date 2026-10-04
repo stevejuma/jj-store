@@ -9,6 +9,7 @@ import type {
 } from "../../../web/src/lib/controller/stack-workspace/types.js";
 import { reduceMenuFixture } from "./menu-reducer.js";
 import { fixtureCommit } from "./data.js";
+import { placedCommits } from "../../../web/src/lib/controller/stack-workspace/commit-placement.js";
 import {
   findCommit,
   removeCommit,
@@ -113,11 +114,30 @@ export function reduceFixture(
     case "move_commit": {
       const source = findCommit(snapshot, command.commit);
       removeCommit(snapshot, command.commit);
-      stack!.commits.push(source.commit);
+      const head = stack!.heads.find((head) => head.name === command.branch);
+      const index = head
+        ? stack!.commits.findIndex((commit) => commit.id === head.commit) + 1
+        : stack!.commits.length;
+      stack!.commits.splice(index, 0, source.commit);
+      if (head) head.commit = source.commit.id;
       break;
     }
     case "reorder_commit": {
       const { stack: owner, commit } = findCommit(snapshot, command.commit);
+      if ("target" in command) {
+        const sorted = placedCommits(
+          owner,
+          command.commit,
+          command.target,
+          command.placement,
+        );
+        removeCommit(snapshot, command.commit);
+        owner.commits = sorted;
+        if (command.placement === "above")
+          for (const head of owner.heads)
+            if (head.commit === command.target) head.commit = command.commit;
+        break;
+      }
       const index = owner.commits.indexOf(commit),
         other = index + (command.direction === "up" ? 1 : -1);
       [owner.commits[index], owner.commits[other]] = [

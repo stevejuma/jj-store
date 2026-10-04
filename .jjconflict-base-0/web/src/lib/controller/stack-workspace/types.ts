@@ -97,8 +97,14 @@ export type WorkspaceCommand =
       selections?: WorkspaceSelection[];
     }
   | { kind: "reword"; commit: string; message: string }
-  | { kind: "move_commit"; commit: string; stack: string }
+  | { kind: "move_commit"; commit: string; stack: string; branch?: string }
   | { kind: "reorder_commit"; commit: string; direction: "up" | "down" }
+  | {
+      kind: "reorder_commit";
+      commit: string;
+      target: string;
+      placement: "above" | "below";
+    }
   | { kind: "squash"; commit: string; target: string }
   | {
       kind: "split";

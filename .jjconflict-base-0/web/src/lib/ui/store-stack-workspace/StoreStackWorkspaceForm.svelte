@@ -8,7 +8,6 @@
   import * as ToggleGroup from "@lapismd/design-core/shadcn/toggle-group";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
-  import StoreStackWorkspaceChoice from "./StoreStackWorkspaceChoice.svelte";
   import { commandTitle } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import {
@@ -58,17 +57,35 @@
       ? (controller.snapshot?.stacks.map((stack) => ({
           id: stack.id,
           name: stack.name,
+          destination: stack.id,
         })) ?? [])
       : [
           ...(command?.kind === "transfer" &&
           command.selection.source !== "unassigned"
-            ? [{ id: "unassigned", name: "Unstaged" }]
+            ? [
+                {
+                  id: "unassigned",
+                  name: "Unstaged",
+                  destination: "unassigned",
+                },
+              ]
             : []),
           ...(controller.snapshot?.stacks.flatMap((stack) =>
-            stack.commits.map((commit) => ({
-              id: commit.id,
-              name: `${stack.name} · ${commit.message.split("\n")[0]}`,
-            })),
+            stack.heads.flatMap((head) => {
+              const commit = stack.commits.find(
+                (item) => item.id === head.commit,
+              );
+              return commit
+                ? [
+                    {
+                      id: JSON.stringify([stack.id, head.name]),
+                      name: head.name,
+                      destination: head.commit,
+                      description: commit.message.split("\n")[0],
+                    },
+                  ]
+                : [];
+            }),
           ) ?? []),
         ],
   );
@@ -86,9 +103,11 @@
     }
     if ("name" in value) value.name = name;
     if ("message" in value) value.message = message;
-    if ("target" in value) value.target = target;
+    const destination =
+      items.find((item) => item.id === target)?.destination ?? target;
+    if ("target" in value) value.target = destination;
     if (value.kind === "move_commit" || value.kind === "create_commit")
-      value.stack = target;
+      value.stack = destination;
     await controller.prepare(value);
     if (controller.preview) open = false;
   }
@@ -110,8 +129,13 @@
             /></StoreWorkField
           >{/if}
         {#if command.kind === "create_stack"}
-          <Field.Field>
-            <Field.Title>Branch relationship</Field.Title>
+          <StoreWorkField
+            label="Branch relationship"
+            description={relationship === "dependent"
+              ? "Create a branch that depends on a selected stack."
+              : "Create an independent branch in a new stack."}
+            disabled={controller.busy}
+          >
             <ToggleGroup.Root
               type="single"
               variant="outline"
@@ -127,14 +151,11 @@
               >
               <ToggleGroup.Item value="dependent">Dependent</ToggleGroup.Item>
             </ToggleGroup.Root>
-            <Field.Description
-              >{relationship === "dependent"
-                ? "Create a branch that depends on a selected stack."
-                : "Create an independent branch in a new stack."}</Field.Description
-            >
-          </Field.Field>
+          </StoreWorkField>
           {#if relationship === "dependent"}<StoreWorkField
               label="Add to stack"
+              description="Choose the existing stack for this branch."
+              disabled={controller.busy}
             >
               <StoreRepositoryPicker
                 label="Add to stack"
@@ -169,21 +190,41 @@
           >{/if}
         {#if command.kind === "move_commit" || command.kind === "create_commit" || command.kind === "transfer"}<StoreWorkField
             label="Destination"
-            ><StoreStackWorkspaceChoice
+            description={command.kind === "transfer"
+              ? "Choose the branch whose head will receive these changes."
+              : "Choose the stack that will receive this commit."}
+            disabled={controller.busy}
+            ><StoreRepositoryPicker
               label="Destination"
-              value={target}
-              {items}
+              value={items.find((item) => item.id === target)?.id ??
+                items.find((item) => item.destination === target)?.id ??
+                target}
+              controlled
+              repositories={items}
+              emptyLabel={command.kind === "transfer"
+                ? "Choose branch"
+                : "Choose stack"}
+              searchLabel={command.kind === "transfer"
+                ? "Search branches"
+                : "Search stacks"}
+              groupLabel={command.kind === "transfer" ? "Branches" : "Stacks"}
+              emptyResult="No matching destinations."
+              scrollStrategy="styled"
               disabled={controller.busy}
               onChange={(value) => (target = value)}
             /></StoreWorkField
           >{/if}
-        {#if selections.length}<ul aria-label="Selected changes">
-            {#each selections as selection}<li>
-                {selection.path}{selection.hunks
-                  ? ` · ${selection.hunks.length} hunk(s)`
-                  : " · entire file"}
-              </li>{/each}
-          </ul>{/if}
+        {#if selections.length}<StoreWorkField
+            label="Selected changes"
+            description="Only these files or hunks will move."
+            ><ul aria-label="Selected changes">
+              {#each selections as selection}<li>
+                  {selection.path}{selection.hunks
+                    ? ` · ${selection.hunks.length} hunk(s)`
+                    : " · entire file"}
+                </li>{/each}
+            </ul></StoreWorkField
+          >{/if}
       </Field.Group>{/if}
     {#if controller.validation}<Field.Error>{controller.validation}</Field.Error
       >{/if}

@@ -233,19 +233,47 @@ workspace picker occupies the centered top body header, using the same ghost
 repository picker as Settings and the same header slot as the Projects
 breadcrumb; branch filters remain in their body column. The column canvas fills
 the available page width and retains trailing space and its public settings. The
-canvas starts directly below the body tabs without an extra layout gap. Every
-branch, Unstaged, stack and diff column can be resized with pointer and keyboard
-controls. Unstaged uses the public sticky-column behavior when horizontal
-scrolling passes it. The branch column uses the owned repository branch command
-picker, including its filters and dependent bookmark selection. Opening a file
-diff inserts it immediately to the right of its originating Unstaged or stack
-column. Each origin retains its own open file, hunk selection and diff controls;
-opening, selecting or closing another stack's diff does not replace it. Refresh
-and commands preserve valid diffs, remove unavailable sources and hunks, and
-clear Unstaged selections when switching named combinations.
+canvas starts directly below the body tabs without an extra layout gap or top
+canvas padding. Every branch, Unstaged, stack and diff column can be resized
+with pointer and keyboard controls. Unstaged uses the public sticky-column
+behavior when horizontal scrolling passes it. The branch column uses the owned
+repository branch command picker, including its filters and dependent bookmark
+selection. Opening a file diff inserts it immediately to the right of its
+originating Unstaged or stack column. Each origin retains its own open file,
+hunk selection and diff controls; opening, selecting or closing another stack's
+diff does not replace it. Refresh and commands preserve valid diffs, remove
+unavailable sources and hunks, and clear Unstaged selections when switching
+named combinations.
+
+The Branches picker groups applied bookmarks under Applied and all other loaded
+bookmarks under Local branches, using the existing Command View groups and
+retaining search, filters and keyboard selection. Workspace chips align to the
+trailing edge of each branch title row. A repository-style branch row above the
+body tabs identifies the workspace target branch; selecting a stack does not
+change that target. Only the Branches tab shows that row. Selected stacks expose
+Apply to workspace or Unapply from workspace in a body action card rather than
+the column header. Membership actions keep the existing preview and mock apply
+flow, update branch groups after confirmation, and remain disabled while a
+command is pending. Delete local remains visibly unavailable as in the source
+reference. Workspace stacks retain Unapply in their menus without the body card.
+
+The workspace footer reuses lightly shaded owned chips for folder, named
+workspace, base branch, applied-stack count and unstaged-file count. Existing
+Folder, Project and Git branch icons identify the corresponding values without
+the redundant Folder: or Base: prefixes; count icons retain their text labels.
+The retained-draft action pairs its label with the existing edit icon and uses
+the same chip surface. Neutral theme foreground at seven-percent tint supplies a
+very light grey in light mode and the corresponding subdued dark-mode surface.
 
 The horizontal canvas, column bodies, branch and workspace Command Views, and
-expanded file lists use explicit styled shadcn Scroll Areas. Inline commit and
+expanded file lists use explicit styled shadcn Scroll Areas. Stack and diff
+columns on both tabs reserve content padding before their vertical scrollbar,
+matching the eight-pixel left inset around stack cards while the rail stays
+against the column's right border. The Branches picker column retains its
+existing insets without the additional scrollbar reserve; its selected stack and
+adjacent diff columns receive the same balanced spacing as Workspace stack and
+diff columns. Stack columns omit the redundant Applied and Base metadata row;
+conflict status remains visible in the column header. Inline commit and
 staged-file lists keep natural row height within their column's styled viewport.
 Unstaged contains only its file list in the body; listing modes, browse and
 collapse controls live in its vertically centered header row, without a
@@ -255,45 +283,71 @@ that branch segment; its title button provides the same keyboard action. The
 selected branch shows its own changed files immediately under its header inside
 the same card, including the top branch; lower branch files are excluded. The
 column header selects the top branch and never moves its list above the commit
-composer. Selected commit rows show a leading Selected chip without shifting
-their author avatars. Catalog examples include multiple commits in each bookmark
-stack. Kebab menus size to their contents with a wider minimum and viewport
-bounds; Unapply stack uses the eject icon. Page action buttons show icons with
-accessible names and shadcn tooltips. The named workspace selector reuses the
-repository Command View picker with search and preserves the active combination
-until the previewed switch succeeds. Dependent bookmark cards use an SVG
-connector with the same stroke and exact horizontal center as the commit stems
-in both adjacent cards, verified from rendered geometry before and after
+composer. Selected branch headers and commit rows carry the same rounded left
+border marker copied from Changeyard; expanded branch files use the same inset
+spacing as commit files, aligned to the branch content above without a header
+separator. Header chips share the available row and wrap when space is limited.
+Expanded branch and commit lists show only Changed files as their heading,
+retaining specific accessible names. The left marker indicates selection without
+a redundant Selected chip. Neutral header and commit chips retain an opaque
+surface distinct from the row hover. Catalog examples include multiple commits
+in each bookmark stack. Kebab menus size to their contents with a wider minimum
+and viewport bounds; Unapply stack uses the eject icon. Page action buttons show
+icons with accessible names and shadcn tooltips. The named workspace selector
+reuses the repository Command View picker with search and preserves the active
+combination until the previewed switch succeeds. Dependent bookmark cards use an
+SVG connector with the same stroke and exact horizontal center as the commit
+stems in both adjacent cards, verified from rendered geometry before and after
 selection and resizing. Row measurements coalesce outside resize observer
 delivery and cancel on teardown. Cards have an optional action bar with an
-empty-commit action, Push presentation and trailing menu. Push remains disabled
-in this UI slice. Workspace diffs place view, wrapping and split actions in the
-column header. Creating or amending a commit uses file/hunk drop targets rather
-than redundant diff body buttons. Each hunk has its own draggable card
-containing its patch, with the exact unified range/context header in a compact
-shaded monospace strip, selection and keyboard assignment controls. Split panes
-have names that distinguish their originating stack/file/hunk. Aggregate hunks
-may be dragged only when one mutable origin owns the path and hunk identity;
-ambiguous or immutable sources remain read-only. Each drag carries only that
-source hunk. Native file and directory row drags use public File Listing
-callbacks. Whole-file drags require one mutable owner for all hunks; directories
-carry exact loaded file selections. Changeyard-derived feedback distinguishes
-staging a new commit, transferring files/hunks to a mutable commit, moving or
-squashing commits, and returning committed changes to Unstaged. Staging panels
-and individual stack bodies accept drops. One active target shows an inset
-dashed guide and explicit valid/invalid text with an icon; foreign drags,
-immutable or stale sources, self-targets and pending commands cannot mutate or
-stage changes. Entering target children preserves its guide; leaving, dropping,
-cancelling or teardown clears drag feedback. Drops stage files or open an exact
-preview and never apply a command immediately. Unstaged has a small horizontal
-body inset.
+empty-commit action, Push presentation and trailing menu. Its background remains
+visibly distinct from an adjacent hovered commit. Push remains disabled in this
+UI slice. Branch action-bar and commit kebabs align at the same trailing inset.
+Kebab buttons use the existing ghost-button hover mechanics with a contextual
+semantic surface that remains distinct from the surrounding row in either theme.
+Workspace diffs place view, wrapping and split actions in the column header.
+Creating or amending a commit uses file/hunk drop targets rather than redundant
+diff body buttons. Each hunk has its own draggable card containing its patch,
+with the exact unified range/context header in a compact shaded monospace strip,
+selection and keyboard assignment controls. Split panes have names that
+distinguish their originating stack/file/hunk. Aggregate hunks may be dragged
+only when one mutable origin owns the path and hunk identity; ambiguous or
+immutable sources remain read-only. Each drag carries only that source hunk.
+Native file and directory row drags use public File Listing callbacks.
+Whole-file drags require one mutable owner for all hunks; directories carry
+exact loaded file selections. Changeyard-derived feedback distinguishes staging
+a new commit, transferring files/hunks to a mutable commit, moving or squashing
+commits, and returning committed changes to Unstaged. Staging panels and
+individual stack bodies accept drops. Branch headers accept mutable commit drops
+into that exact branch segment, including dependent segments and moves between
+segments of the same stack. Missing branches, the source's current segment and
+moves that rewrite immutable history reject the drop. Commit row sorting uses
+the top and bottom quarter of the row as above/below insertion targets with a
+visible edge border; the center retains the squash target. Sorting retains
+identities and changes, and rejects self, redundant, stale and immutable
+rewrites. Header drops and sorting open exact previews before apply. One active
+target shows an inset dashed guide and explicit valid/invalid text with an icon.
+Its opaque background and foreground stacking keep the guide readable above the
+target shading and underlying content; foreign drags, immutable or stale
+sources, self-targets and pending commands cannot mutate or stage changes.
+Entering target children preserves its guide; leaving, dropping, cancelling or
+teardown clears drag feedback. Drops stage files or open an exact preview and
+never apply a command immediately. Unstaged has a small horizontal body inset.
 
-Creating a stack offers Independent and Dependent choices using the existing
-exclusive toggle group. Independent creates a separate stack at the base;
-Dependent requires an existing stack selected through the owned searchable
+Creating a stack uses the existing Settings form group and separate bordered
+rows for Name, Branch relationship and the conditional Add to stack picker.
+Labels and descriptions occupy the leading content area with controls alongside
+or below them at narrow widths. Independent and Dependent choices use the
+existing exclusive toggle group. Independent creates a separate stack at the
+base; Dependent requires an existing stack selected through the owned searchable
 Command View and creates its new top branch segment without duplicating history.
-Commit menus expose Copy change ID/hash/message, Add empty commit above/below,
-Create branch above/below, Reword, Edit, Delete and the existing movement/split
+Assign selected changes uses the same Settings rows for Destination and Selected
+changes. Its searchable Command View lists branch names with the exact head
+commit title; the chosen head identity remains the previewed destination.
+Committed changes may also return to Unstaged through that picker. Commit
+movement dialogs reuse the same picker for their stack destinations. Commit
+menus expose Copy change ID/hash/message, Add empty commit above/below, Create
+branch above/below, Reword, Edit, Delete and the existing movement/split
 commands. Branch menus expose Copy name, Create branch above/below, Add empty
 commit, Squash all commits, Rename, Delete and Unapply. Copy remains available
 for immutable commits; history mutations validate their exact target and reject
@@ -304,16 +358,24 @@ retains the original commit. Branch-segment deletion and squash preserve lower
 segments; every simulated mutation supports the same preview, stale and undo
 rules. Remote tracking and PR actions remain outside the local UI scope.
 
-The idle commit panel has two separated sections: a shaded drop target above the
-Start a commit action. Starting or dropping changes switches to a stack-like
-card with a Staged header, count, folder/list controls and file rows above a
-separate composer section. Creating a commit opens an inline stack form with a
-compact title input and the owned application composer for its description.
-Dropping files or hunks opens that form and lists staged files; multiple drops
-retain their exact selections. Staging and cancelling do not mutate the mock
-snapshot. Drafts are scoped to the named combination and stack, survive preview
-cancellation and unknown outcomes, and clear only after confirmed commit
-success.
+The idle commit panel has two separated sections: a shaded drop target with a
+visible two-pixel dashed border above the Start a commit action. Starting or
+dropping changes switches to a stack-like card with a Staged header, count,
+folder/list controls and file rows above a separate composer section. Staged
+listing controls align to the far right of their header. Creating a commit opens
+an inline stack form with a normal-height title input of at least 36 pixels, in
+its own bottom-bordered row with a separator spanning the full card width
+without horizontal insets, and the owned application composer for its
+description. Dropping files or hunks opens that form and lists staged files;
+multiple drops retain their exact selections. Staging and cancelling do not
+mutate the mock snapshot. Drafts are scoped to the named combination and stack,
+survive preview cancellation and unknown outcomes, and clear only after
+confirmed commit success.
+
+Branch-header file lists reuse the commit-row file listing with an inset around
+the panel. Selected commit rows and branch headers retain their selection labels
+and show the Changeyard-style rounded left border marker without shifting the
+graph, avatars or row contents.
 
 Named combinations share this folder while retaining independent unassigned
 edits. Preview text identifies destinations and explains deletion of a stack or

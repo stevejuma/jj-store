@@ -2,6 +2,7 @@
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import * as Card from "@lapismd/design-core/shadcn/card";
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
   import StoreStackCommitComposer from "./StoreStackCommitComposer.svelte";
   import GitBranch from "@lucide/svelte/icons/git-branch";
@@ -67,21 +68,16 @@
       ></ColumnCanvas.Title
     >
     <ColumnCanvas.Count>{stack.commits.length}</ColumnCanvas.Count>
+    {#if stack.conflicts}<CommunityChip tone="warning">Conflicts</CommunityChip
+      >{/if}
     <ColumnCanvas.HeaderActions>
-      {#if !applied}<Button
-          variant="ghost"
-          size="sm"
-          disabled={controller.locked}
-          aria-label={`Apply ${stack.name}`}
-          onclick={() => onCommand({ kind: "apply_stack", stack: stack.id })}
-          >Apply to workspace</Button
-        >{/if}
       <Menu.Root
         ><Menu.Trigger
           >{#snippet child({ props })}<Button
               {...props}
               variant="ghost"
               size="icon-sm"
+              class="stack-workspace__menu-trigger"
               aria-label={`Actions for ${stack.name}`}
               disabled={controller.locked}
               ><Ellipsis aria-hidden="true" /></Button
@@ -146,13 +142,36 @@
     <StoreStackDropGuide
       feedback={controller.drag.for({ kind: "stack", id: stack.id })}
     />
-    <div class="stack-workspace__lane-meta">
-      <CommunityChip>{applied ? "Applied" : "Not applied"}</CommunityChip><span
-        >Base: {stack.base}</span
-      >{#if stack.conflicts}<CommunityChip tone="warning"
-          >Conflicts</CommunityChip
-        >{/if}
-    </div>
+    {#if controller.page === "branches"}
+      <Card.Root class="stack-workspace__stage-card">
+        <Card.Content class="stack-workspace__branch-actions">
+          <Button
+            size="sm"
+            disabled={controller.locked}
+            aria-label={`${applied ? "Unapply" : "Apply"} ${stack.name}`}
+            onclick={() =>
+              onCommand({
+                kind: applied ? "unapply_stack" : "apply_stack",
+                stack: stack.id,
+              })}
+          >
+            {applied ? "Unapply from workspace" : "Apply to workspace"}
+            {#if applied}<Eject
+                data-icon="inline-end"
+                aria-hidden="true"
+              />{:else}<LogIn data-icon="inline-end" aria-hidden="true" />{/if}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled
+            title="Deleting local refs is not available yet."
+          >
+            Delete local<Trash data-icon="inline-end" aria-hidden="true" />
+          </Button>
+        </Card.Content>
+      </Card.Root>
+    {/if}
     {#if controller.page === "workspace"}<StoreStackCommitComposer
         {controller}
         {stack}
@@ -180,7 +199,6 @@
           name={group.head.name}
           commits={group.commits}
           {onCommand}
-          {onDrop}
         />
       {/each}
     </div>

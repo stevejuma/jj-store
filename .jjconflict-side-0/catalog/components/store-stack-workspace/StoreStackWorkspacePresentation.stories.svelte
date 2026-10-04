@@ -29,10 +29,8 @@
     )!;
     await userEvent.click(header);
     expect(
-      within(
-        stack.querySelector<HTMLElement>(".stack-workspace__bookmark-header")!,
-      ).getByText("Selected", { exact: true }),
-    ).toBeVisible();
+      stack.querySelector(".stack-workspace__bookmark-header"),
+    ).toHaveAttribute("data-selected");
     expect(
       within(stack).getByRole("region", {
         name: "Changed files in branch feature/api",
@@ -44,22 +42,17 @@
     const selected = stack.querySelector<HTMLElement>(
       '[aria-current="true"] .community-revision-graph__row',
     )!;
-    const chip = within(selected).getByText("Selected", { exact: true });
-    expect(chip).toBeVisible();
-    expect(chip.getBoundingClientRect().right).toBeLessThanOrEqual(
-      within(selected)
-        .getByRole("button", { name: "Expose repository API" })
-        .getBoundingClientRect().left,
-    );
+    expect(
+      within(selected).queryByText("Selected", { exact: true }),
+    ).toBeNull();
+    expect(getComputedStyle(selected, "::before").width).toBe("4px");
     const bookmarkHeader = stack.querySelector<HTMLElement>(
       ".stack-workspace__bookmark-header",
     )!;
     await userEvent.click(bookmarkHeader);
     expect(
-      within(
-        stack.querySelector<HTMLElement>(".stack-workspace__bookmark-header")!,
-      ).getByText("Selected", { exact: true }),
-    ).toBeVisible();
+      stack.querySelector(".stack-workspace__bookmark-header"),
+    ).toHaveAttribute("data-selected");
     expect(
       within(stack).queryByText("Selected", {
         selector: ".community-revision-graph__row *",
@@ -74,7 +67,7 @@
     await userEvent.click(
       within(header).getByRole("button", { name: "Actions for feature/api" }),
     );
-    expect(within(header).queryByText("Selected", { exact: true })).toBeNull();
+    expect(bookmarkHeader).not.toHaveAttribute("data-selected");
     await userEvent.keyboard("{Escape}");
   }}
 />

@@ -124,6 +124,29 @@
 <Story name="Empty bookmarks" args={{ bookmarks: [] }} />
 
 <Story
+  name="Workspace chip sits at the title row edge"
+  play={async ({ canvasElement }) => {
+    const branch = within(canvasElement).getByRole("option", { name: "main" });
+    const chip = within(branch).getByText("Workspace", { exact: true });
+    const heading = branch.querySelector<HTMLElement>(
+      ".community-bookmark-card__heading",
+    )!;
+    expect(
+      Math.abs(
+        chip.getBoundingClientRect().right -
+          heading.getBoundingClientRect().right,
+      ),
+    ).toBeLessThanOrEqual(1);
+    const title = heading.querySelector<HTMLElement>(
+      '[data-ui-part="item-label"]',
+    )!;
+    expect(title.getBoundingClientRect().right).toBeLessThanOrEqual(
+      chip.getBoundingClientRect().left,
+    );
+  }}
+/>
+
+<Story
   name="Empty filter states"
   args={{
     bookmarks: bookmarks.filter(

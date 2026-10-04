@@ -133,11 +133,13 @@
       <ColumnCanvas.Column
         resizable
         id="branches"
+        aria-label="Branches"
         title="Branches"
         count={stackBookmarks(snapshot).length}
       >
         <ColumnCanvas.Body scrollStrategy="styled">
           <CommunityRepositoryBranchCommand
+            groupWorkspaceBookmarks
             scrollStrategy="styled"
             bookmarks={stackBookmarks(snapshot)}
             selected={controller.selectedBranch ?? ""}

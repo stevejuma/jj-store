@@ -41,7 +41,22 @@
     expect(
       within(form).getByLabelText("Commit title").getBoundingClientRect()
         .height,
-    ).toBeLessThanOrEqual(28);
+    ).toBeGreaterThanOrEqual(36);
+    expect(
+      getComputedStyle(
+        within(form).getByLabelText("Commit title").parentElement!,
+      ).borderBottomWidth,
+    ).toBe("1px");
+    const titleRow = within(form).getByLabelText("Commit title").parentElement!;
+    const card = form.closest<HTMLElement>('[data-ui-part="card"]')!;
+    const titleBounds = titleRow.getBoundingClientRect();
+    const cardBounds = card.getBoundingClientRect();
+    expect(
+      Math.abs(titleBounds.left - (cardBounds.left + 1)),
+    ).toBeLessThanOrEqual(1);
+    expect(
+      Math.abs(titleBounds.right - (cardBounds.right - 1)),
+    ).toBeLessThanOrEqual(1);
     expect(form.querySelector(".community-chat-composer")).not.toBeNull();
     await userEvent.type(
       within(form).getByLabelText("Commit title"),
@@ -212,11 +227,11 @@
       "Move to stack",
     );
     await userEvent.click(
-      await portal.findByRole("button", { name: "Destination" }),
+      await portal.findByRole("combobox", { name: "Destination" }),
     );
     await userEvent.click(
       await portal.findByRole("option", {
-        name: "feature/workspace",
+        name: /feature\/workspace/,
       }),
     );
     await userEvent.click(

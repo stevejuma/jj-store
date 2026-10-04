@@ -21,6 +21,8 @@
   } from "../../projects/repository-log-graph.js";
   import { stackRevisions } from "../../controller/stack-workspace/presentation.js";
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
+  import { commitDropPlacement } from "../../controller/stack-workspace/commit-placement.js";
+  import { WORKSPACE_DRAG_TYPE } from "../../controller/stack-workspace/drag.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type {
     StackCommit,
@@ -34,7 +36,6 @@
     commits,
     showActions = true,
     onCommand,
-    onDrop,
   }: {
     controller: StackWorkspaceController;
     stack: WorkspaceStack;
@@ -42,7 +43,6 @@
     commits: StackCommit[];
     showActions?: boolean;
     onCommand: (command: WorkspaceCommand) => void;
-    onDrop: (event: DragEvent, target: "commit", id: string) => void;
   } = $props();
   const graphInset = $derived(
     repositoryLogSvgWidth(buildRepositoryLogGraph(stackRevisions(stack))),
@@ -60,6 +60,11 @@
       : null,
   );
   const branchSource = $derived(workspaceBranchSource(stack.id, name));
+  const headerTarget = $derived({
+    kind: "stack" as const,
+    id: stack.id,
+    branch: name,
+  });
   const branchSelected = $derived(
     controller.stackSelections[stack.id] === branchSource,
   );
@@ -75,6 +80,24 @@
           .revisionId
       : undefined;
   }
+  function rowTarget(event: DragEvent) {
+    const row =
+      event.target instanceof Element
+        ? event.target.closest<HTMLElement>("[data-revision-id]")
+        : null;
+    if (!row?.dataset.revisionId) return null;
+    return {
+      kind: "commit" as const,
+      id: row.dataset.revisionId,
+      placement: commitDropPlacement(
+        controller.drag.payload ??
+          event.dataTransfer?.getData(WORKSPACE_DRAG_TYPE) ??
+          null,
+        row.getBoundingClientRect(),
+        event.clientY,
+      ),
+    };
+  }
 </script>
 
 <Card.Root
@@ -82,11 +105,31 @@
   style={`--stack-graph-inset: ${graphInset}px`}
 >
   <Card.Header
-    class="stack-workspace__bookmark-header"
+    class="stack-workspace__bookmark-header stack-workspace__drop-target"
+    data-selected={branchSelected || undefined}
+    data-drop-target-state={controller.drag.state(headerTarget)}
+    ondragover={(event) =>
+      controller.drag.over(
+        event,
+        headerTarget,
+        controller.snapshot,
+        controller.locked,
+      )}
+    ondragleave={(event) => controller.drag.leave(event, headerTarget)}
+    ondrop={(event) => {
+      const command = controller.drag.drop(
+        event,
+        headerTarget,
+        controller.snapshot,
+        controller.locked,
+      );
+      if (command) onCommand(command);
+    }}
     onclick={() => {
       if (!controller.locked) controller.selectStackFiles(stack.id, name);
     }}
   >
+    <StoreStackDropGuide feedback={controller.drag.for(headerTarget)} />
     <GitBranch aria-hidden="true" />
     <div>
       <Card.Title
@@ -108,28 +151,30 @@
             timestamp={tip.createdAt}
           /></Card.Description
         >{/if}
-      {#if branchSelected}<CommunityChip size="compact" variant="muted"
-          >Selected</CommunityChip
-        >{/if}
-      <CommunityChip variant="muted">Local bookmark</CommunityChip>
+      <div class="stack-workspace__branch-chips">
+        <CommunityChip variant="muted">Local bookmark</CommunityChip>
+      </div>
     </div>
   </Card.Header>
   {#if branchSelected}
-    <CommunityProjectsRepositoryLogFiles
-      title={`Changed files in branch ${name}`}
-      compact
-      scrollStrategy="styled"
-      files={workspaceSourceFiles(controller.snapshot!, branchSource).map(
-        (file) => ({
-          path: file.path,
-          additions: file.hunks.length,
-          deletions: file.hunks.length,
-        }),
-      )}
-      selectedPath={diff?.source === branchSource ? diff.path : null}
-      onSelectPath={(path) => controller.selectFile(branchSource, path)}
-      fileDrag={workspaceFileDrag(controller, () => branchSource)}
-    />
+    <Card.Content class="stack-workspace__branch-files">
+      <CommunityProjectsRepositoryLogFiles
+        title="Changed files"
+        ariaLabel={`Changed files in branch ${name}`}
+        compact
+        scrollStrategy="styled"
+        files={workspaceSourceFiles(controller.snapshot!, branchSource).map(
+          (file) => ({
+            path: file.path,
+            additions: file.hunks.length,
+            deletions: file.hunks.length,
+          }),
+        )}
+        selectedPath={diff?.source === branchSource ? diff.path : null}
+        onSelectPath={(path) => controller.selectFile(branchSource, path)}
+        fileDrag={workspaceFileDrag(controller, () => branchSource)}
+      />
+    </Card.Content>
   {/if}
   {#if showActions}<StoreStackBookmarkActions
       stack={stack.id}
@@ -160,11 +205,11 @@
         controller.drag.start(event, { kind: "commit", commit: id });
     }}
     ondragover={(event) => {
-      const id = eventCommit(event);
-      if (id)
+      const target = rowTarget(event);
+      if (target)
         controller.drag.over(
           event,
-          { kind: "commit", id },
+          target,
           controller.snapshot,
           controller.locked,
         );
@@ -181,8 +226,16 @@
         );
     }}
     ondrop={(event) => {
-      const id = eventCommit(event);
-      if (id) onDrop(event, "commit", id);
+      const target = rowTarget(event);
+      if (target) {
+        const command = controller.drag.drop(
+          event,
+          target,
+          controller.snapshot,
+          controller.locked,
+        );
+        if (command) onCommand(command);
+      }
     }}
   >
     <CommunityProjectsRevisionGraph
@@ -190,9 +243,11 @@
       avatarSize="xsmall"
       {graphInset}
       continuous
-      showSelectedChip
       rowDropState={(revision) =>
         controller.drag.state({ kind: "commit", id: revision.eventId })}
+      rowDropPlacement={(revision) =>
+        controller.drag.for({ kind: "commit", id: revision.eventId })
+          ?.placement}
       endBorder={false}
       selectedId={controller.selectedCommitFor(stack.id)}
       graphLabel={`Commits in ${name}`}
@@ -224,7 +279,8 @@
       {/snippet}
       {#snippet selectedFiles()}
         {#if selected}<CommunityProjectsRepositoryLogFiles
-            title={`Changed files in ${name}`}
+            title="Changed files"
+            ariaLabel={`Changed files in ${name}`}
             files={selected.files.map((file) => ({
               path: file.path,
               additions: file.hunks.length,

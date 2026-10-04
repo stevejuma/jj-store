@@ -85,7 +85,7 @@
           {...props}
           variant="ghost"
           size="icon-sm"
-          class="stack-workspace__bookmark-menu"
+          class="stack-workspace__bookmark-menu stack-workspace__menu-trigger"
           aria-label={`Branch actions for ${name}`}
           {disabled}><Ellipsis aria-hidden="true" /></Button
         >{/snippet}

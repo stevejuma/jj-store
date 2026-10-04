@@ -78,6 +78,12 @@
       '[data-ui-part="trailing-spacer"]',
     )!;
     await expect(spacer.getBoundingClientRect().width).toBe(240);
+    const footer = body.querySelector<HTMLElement>(".stack-workspace__footer")!;
+    expect(footer.textContent).not.toMatch(/Folder:|Base:/);
+    expect(
+      within(footer).getByText("Daily work", { exact: true }),
+    ).toBeVisible();
+    expect(within(footer).getByText("main", { exact: true })).toBeVisible();
   }}
 />
 <Story name="Branches in app shell" args={{ page: "branches" }} />
@@ -343,8 +349,8 @@
       }),
     );
     await expect(
-      within(stack).getByText("Selected", { exact: true }),
-    ).toBeVisible();
+      stack.querySelector(".stack-workspace__bookmark-header"),
+    ).toHaveAttribute("data-selected");
     const files = within(stack).getByRole("region", {
       name: "Changed files in branch feature/api",
     });
@@ -366,9 +372,7 @@
       within(stack).getByRole("button", { name: "Expose repository API" }),
     );
     await expect(
-      within(stack)
-        .getByText("Selected", { exact: true })
-        .closest("[data-revision-id]"),
+      stack.querySelector('[aria-current="true"] [data-revision-id]'),
     ).toHaveAttribute("data-revision-id", "api2");
     await waitFor(() => {
       for (const row of stack.querySelectorAll<HTMLElement>(

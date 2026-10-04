@@ -151,9 +151,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007 |
-| M20 | Partial | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review the completed UI before authorizing Phase 2 | E-M20-001 |
-| M20.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | Review UI; registry foundation qualification and visual approval remain separate | E-M20-001 |
-| M20.2 | Deferred | M20.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Explicit human approval required after UI review | E-M20-001 |
+| M20 | Partial | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review the completed UI before authorizing Phase 2 | E-M20-001,E-M20-002 |
+| M20.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | Review UI; registry foundation qualification and visual approval remain separate | E-M20-001,E-M20-002 |
+| M20.2 | Deferred | M20.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Explicit human approval required after UI review | E-M20-001,E-M20-002 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -76566,6 +76566,852 @@ entries.
   "scope": "Phase 1 UI only: owned Changeyard adaptations and existing application/public foundational components, injected production controller and isolated stateful mock. Branch headers reveal only their own segment files inline, including the top branch. Idle commit cards separate drop and start sections, then become staged-file/composer cards. Independent/dependent creation, Command View parent picking, copy/above/below/reword/edit/delete menus, exact preview/recovery/undo, native file/folder/hunk drag guides, resizable columns, sticky Unstaged and adjacent independent diffs are exercised. Production has no catalog import or live adapter. No persisted format, generated transport, storage, Rust or checkout implementation changed. Full jj-store aggregates and Rust lanes are out of scope under the controlling UI verification policy. All 434 historical evidence objects remain byte-identical.",
   "next": "Review the mocked app-shell Storybook on port 6057. Publish/qualify the foundational release separately; require explicit human approval before Phase 2 backend work.",
   "ui_acceptance": "57/57 focused controller/history units and 90/90 affected interaction/accessibility stories, zero web/catalog diagnostics, architecture and UI ownership passed. Browser native README.md drag opened a staged card and retained the source until apply. Captures: .local/stack-workspace-ui-evidence/inline-branch-card.png and inline-staged-card.png."
+},
+{
+  "id": "E-M20-002",
+  "tasks": [
+    "M20",
+    "M20.1",
+    "M20.2"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change mrymlyux",
+  "kind": "frontend-controller-and-storybook-refinements",
+  "versions": "JJ 0.45.1, Node 26.9.0, pnpm 10.32.1, Svelte 5.57.1, Storybook 10.5.7, Vitest 4.1.11; existing ignored Design Core source validation setup at xmmtwsry/3a2ba27c plus zlyuvqyv/d7ebf3e1; registry release qualification remains separate",
+  "formats": "Frontend mock commands only: optional exact destination branch and exact above/below sorting target. No HTTP/RPC/Rust schema or persisted format change.",
+  "files": [
+    "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceCommands.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceFooter.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceForms.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceInline.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceMenus.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspacePresentation.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte",
+    "catalog/fixtures/stack-workspace/preview.ts",
+    "catalog/fixtures/stack-workspace/reducer.ts",
+    "catalog/fixtures/stack-workspace/validation.ts",
+    "docs/ui-provenance.json",
+    "spec/src/api.md",
+    "spec/src/milestones.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "web/src/lib/controller/stack-workspace/commit-placement.ts",
+    "web/src/lib/controller/stack-workspace/drag-session.svelte.ts",
+    "web/src/lib/controller/stack-workspace/drag.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogFiles.svelte",
+    "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte",
+    "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackBookmarkActions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackBookmarkCard.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackCommitActions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackCommitComposer.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackLane.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackStagedFiles.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceForm.svelte",
+    "web/src/lib/ui/store-stack-workspace/stack-workspace-drag.css",
+    "web/src/lib/ui/store-stack-workspace/stack-workspace-layout.css",
+    "web/src/lib/ui/store-stack-workspace/stack-workspace.css",
+    "web/tests/vite/stack-workspace-header-drops.test.ts",
+    "web/tests/vite/stack-workspace-sorting.test.ts"
+  ],
+  "tests": [
+    "web/tests/vite/stack-workspace-header-drops.test.ts#commit header drops retain the exact branch and isolate feedback per header",
+    "web/tests/vite/stack-workspace-header-drops.test.ts#moving into a dependent header preserves upper commits and supports undo",
+    "web/tests/vite/stack-workspace-header-drops.test.ts#commits move between branch segments but reject their current segment",
+    "web/tests/vite/stack-workspace-header-drops.test.ts#stale and immutable branch header targets reject drops and previews",
+    "web/tests/vite/stack-workspace-header-drops.test.ts#header moves can append above immutable ancestors without rewriting them",
+    "web/tests/vite/stack-workspace-sorting.test.ts#commit row edge drops preserve above and below placement instead of squashing",
+    "web/tests/vite/stack-workspace-sorting.test.ts#exact row sorting retains identities and rejects immutable rewrites and redundant positions",
+    "web/tests/vite/stack-workspace-sorting.test.ts#sorting thresholds use rendered quarters and leave file drags in the center"
+  ],
+  "runs": [
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/all-architecture-final.log.  New header story family exceeded the 400 counted-line budget; split presentation refinements from header drag scenarios."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/all-consumer-stories-final.log. Test Files  1 failed | 18 passed (19) | Tests  1 failed | 102 passed (103) 102/103 passed; existing BookmarkCards CSS assertion failed with inherited native pointer position. Exact standalone and paired scenarios passed; new pointer stories now park at the neutral corner. Assertion unchanged."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/all-header-refinements-final.log. Test Files  1 passed (1) | Tests  11 passed (11)"
+    },
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/architecture-check.log. web architecture ok (1012 modules)"
+    },
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/architecture-final.log. web architecture ok (1012 modules)"
+    },
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/architecture-qualified.log. web architecture ok (1013 modules)"
+    },
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/body-architecture-check.log. web architecture ok (1012 modules)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte -t 'InlineFilesAndSelectedRowsUseInsetSpacingAndLeftMarkers|CanvasStartsWithoutTopPadding|BranchActionsDifferFromAdjacentCommitHover|SelectedBranchChipsShareAWrappingRow' --reporter=verbose",
+      "result": "fail",
+      "failures": 2,
+      "note": "Output: .local/stack-header-drops-evidence/body-refinements-after.log. Test Files  1 failed (1) | Tests  2 failed | 2 passed | 5 skipped (9) Two interim failures: synthetic hover did not activate CSS, and chips of different heights require center alignment. Corrected native pointer and center measurement without relaxing geometric tolerance."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte -t 'InlineFilesAndSelectedRowsUseInsetSpacingAndLeftMarkers|CanvasStartsWithoutTopPadding|BranchActionsDifferFromAdjacentCommitHover' --reporter=verbose",
+      "result": "fail",
+      "failures": 3,
+      "note": "Output: .local/stack-header-drops-evidence/body-refinements-before.log. Test Files  1 failed (1) | Tests  3 failed | 5 skipped (8) Three requested layout regressions reproduced. The initial background comparison used synthetic hover; the native follow-up is authoritative for CSS hover."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte -t BookmarkCards --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/branch-hover-exact.log. Test Files  1 passed (1) | Tests  1 passed | 2 skipped (3)"
+    },
+    {
+      "command": "svelte-check --tsconfig catalog/tsconfig.json --fail-on-warnings && node scripts/check-catalog.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/catalog-check.log. svelte-check found 0 errors and 0 warnings | catalog boundaries ok (210 modules)"
+    },
+    {
+      "command": "svelte-check --tsconfig catalog/tsconfig.json --fail-on-warnings && node scripts/check-catalog.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/catalog-final-check.log. svelte-check found 0 errors and 0 warnings | catalog boundaries ok (210 modules)"
+    },
+    {
+      "command": "svelte-check --tsconfig catalog/tsconfig.json --fail-on-warnings && node scripts/check-catalog.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/catalog-qualified.log. svelte-check found 0 errors and 0 warnings | catalog boundaries ok (211 modules)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t BranchAndCommitChipsRemainDistinctOnHover --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/chip-contrast-before.log. Test Files  1 failed (1) | Tests  1 failed | 6 skipped (7)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte -t SelectedBranchChipsShareAWrappingRow --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/chips-before.log. Test Files  1 failed (1) | Tests  1 failed | 8 skipped (9)"
+    },
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/final-architecture-check.log. web architecture ok (1013 modules)"
+    },
+    {
+      "command": "svelte-check --tsconfig catalog/tsconfig.json --fail-on-warnings && node scripts/check-catalog.mjs",
+      "result": "fail",
+      "failures": 2,
+      "note": "Output: .local/stack-header-drops-evidence/final-catalog-check.log. svelte-check found 2 errors and 0 warnings in 1 file Two unsupported Testing Library exact options removed; exact tab name uses an anchored expression, branch body uses its public column identity."
+    },
+    {
+      "command": "svelte-check --tsconfig catalog/tsconfig.json --fail-on-warnings && node scripts/check-catalog.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/final-catalog-repaired.log. svelte-check found 0 errors and 0 warnings | catalog boundaries ok (211 modules)"
+    },
+    {
+      "command": "spec-validator validate --only ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/final-ownership-check.log. Specification validated: 1 validators, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "svelte-check --tsconfig web/tsconfig.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/final-web-check.log. svelte-check found 0 errors and 0 warnings"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'ColumnScrollbarsKeepAnOuterGutter|BranchAndCommitChipsRemainDistinctOnHover' --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/gutter-chip-corrected-final.log. Test Files  1 passed (1) | Tests  2 passed | 5 skipped (7)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'ColumnScrollbarsKeepAnOuterGutter|BranchAndCommitChipsRemainDistinctOnHover' --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/gutter-chip-exact-final.log. Test Files  1 failed (1) | Tests  1 failed | 1 passed | 5 skipped (7) Gutter and chip paint assertions passed, but the branch page lookup used a nonexistent region name. Corrected to the rendered column identity; measurements retained."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/hover-consumers-exact-final.log. Test Files  2 passed (2) | Tests  10 passed (10)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte -t LeftMarkersReplaceSelectedChips --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/marker-only-before.log. Test Files  1 failed (1) | Tests  1 failed | 10 skipped (11)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte -t BranchActionsDifferFromAdjacentCommitHover --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/native-hover-before.log. Test Files  1 passed (1) | Tests  1 passed | 8 skipped (9) Native hover passed for the original default action-bar surface; the subsequently requested softer 4% action background was still implemented and qualified."
+    },
+    {
+      "command": "spec-validator validate --only ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/ownership-check.log. Specification validated: 1 validators, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte -t ColumnScrollbarsKeepAnOuterGutter --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/scroll-gutter-before.log. Test Files  1 failed (1) | Tests  1 failed | 11 skipped (12)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t ColumnScrollbarsKeepAnOuterGutter --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/scroll-gutter-exact-final.log. Test Files  1 passed (1) | Tests  1 passed | 6 skipped (7)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte --testNamePattern InlineFilesAndSelected --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/selection-story-before.log. Test Files  1 failed (1) | Tests  1 failed | 5 skipped (6)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte -t InlineFilesAndSelectedRowsUseInsetSpacingAndLeftMarkers --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/selection-story-final.log. Test Files  1 passed (1) | Tests  1 passed | 5 skipped (6)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte -t ExpandedBranchAndCommitFilesUseAShortHeading --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/short-heading-before.log. Test Files  1 failed (1) | Tests  1 failed | 9 skipped (10)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte --testNamePattern CommitRowThresholds --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/sorting-story-before.log. Test Files  1 failed (1) | Tests  1 failed | 4 skipped (5)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/stack-workspace-sorting.test.ts",
+      "result": "fail",
+      "failures": 2,
+      "note": "Output: .local/stack-header-drops-evidence/sorting-unit-before.log. Test Files  1 failed (1) | Tests  2 failed (2)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/stories-after.log. Test Files  1 failed (1) | Tests  1 failed | 5 passed (6) One selection assertion retained a live CSSStyleDeclaration; copied primitive values before selecting another row. Marker assertions retained."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte --reporter=verbose",
+      "result": "fail",
+      "failures": 4,
+      "note": "Output: .local/stack-header-drops-evidence/stories-before.log. Test Files  1 failed (1) | Tests  4 failed (4)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/stories-consumers-final.log. Test Files  18 passed (18) | Tests  96 passed (96)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/stories-exact-final.log. Test Files  1 passed (1) | Tests  6 passed (6)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/stack-workspace-header-drops.test.ts web/tests/vite/stack-workspace-sorting.test.ts",
+      "result": "fail",
+      "failures": 2,
+      "note": "Output: .local/stack-header-drops-evidence/unit-after.log. Test Files  2 failed (2) | Tests  2 failed | 4 passed (6) Two immutable fixture assertions initially changed only the controller snapshot; corrected to seed the adapter authority before construction. Rejections and unchanged history assertions retained."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/stack-workspace-header-drops.test.ts web/tests/vite/stack-workspace-sorting.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/unit-ancestor-final.log. Test Files  2 passed (2) | Tests  8 passed (8)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/stack-workspace-header-drops.test.ts",
+      "result": "fail",
+      "failures": 4,
+      "note": "Output: .local/stack-header-drops-evidence/unit-before.log. Test Files  1 failed (1) | Tests  4 failed (4)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/stack-workspace.test.ts web/tests/vite/stack-workspace-menus.test.ts web/tests/vite/stack-workspace-branches.test.ts web/tests/vite/store-route-history.test.ts web/tests/vite/stack-workspace-header-drops.test.ts web/tests/vite/stack-workspace-sorting.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/unit-consumers-final.log. Test Files  6 passed (6) | Tests  65 passed (65)"
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/stack-workspace-header-drops.test.ts web/tests/vite/stack-workspace-sorting.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/unit-exact-final.log. Test Files  2 passed (2) | Tests  7 passed (7)"
+    },
+    {
+      "command": "svelte-check --tsconfig web/tsconfig.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/web-all-final-check.log. svelte-check found 0 errors and 0 warnings"
+    },
+    {
+      "command": "svelte-check --tsconfig web/tsconfig.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/web-check.log. svelte-check found 0 errors and 0 warnings"
+    },
+    {
+      "command": "svelte-check --tsconfig web/tsconfig.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/web-final-check.log. svelte-check found 0 errors and 0 warnings"
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/all-consumer-stories-qualified.log. 103/103 stories in 19 directly affected files passed in a fresh test process, with interaction/accessibility and runtime guards. No ResizeObserver or unhandled runtime diagnostic. This is the complete affected lane, not the repository suite."
+    },
+    {
+      "command": "pnpm exec prettier --check catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceInline.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePresentation.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte catalog/fixtures/stack-workspace/preview.ts catalog/fixtures/stack-workspace/reducer.ts catalog/fixtures/stack-workspace/validation.ts docs/ui-provenance.json spec/src/api.md spec/src/ui.md web/src/lib/controller/stack-workspace/commit-placement.ts web/src/lib/controller/stack-workspace/drag-session.svelte.ts web/src/lib/controller/stack-workspace/drag.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogFiles.svelte web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte web/src/lib/ui/store-stack-workspace/StoreStackBookmarkCard.svelte web/src/lib/ui/store-stack-workspace/StoreStackLane.svelte web/src/lib/ui/store-stack-workspace/StoreStackStagedFiles.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte web/src/lib/ui/store-stack-workspace/stack-workspace-drag.css web/src/lib/ui/store-stack-workspace/stack-workspace.css web/tests/vite/stack-workspace-header-drops.test.ts web/tests/vite/stack-workspace-sorting.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/format-qualified.log. All 25 implementation, story, test and canonical/provenance files at that point use Prettier style."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/spec-validate.log. Five validators, 23 chapters and 173 requirements."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/spec-first.log. Provenance edits also map to spec-governance.md. Added the owning follow-up governance paragraph rather than weakening the change map."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/spec-first-repaired.log. Mapped canonical chapter now accompanies the protected changes."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/progress.log. 141 tasks; evidence bookkeeping only."
+    },
+    {
+      "command": "CUA app-shell branch selection, DOM observation and screenshot on Storybook 6057",
+      "result": "pass",
+      "failures": 0,
+      "note": "A fresh preview tab recovered from two stale-tab focus timeouts. Verified the visible Changed files heading, branch-specific accessible name, absence of Selected chips, left marker, available tag row and scrollbar-side gutter. Screenshot: .local/stack-header-drops-evidence/workspace-refinements.jpg. No screenshot comparison or baseline update."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t ContentPaddingSeparatesComponentsFromEdgeScrollbars --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/content-padding-before.log. Test Files  1 failed (1) | Tests  1 failed | 6 skipped (7) Rail was 8px away from column edge."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceMenus.stories.svelte -t 'ContentPaddingSeparatesComponentsFromEdgeScrollbars|CreateIndependentStack|CreateDependentStackWithCommandPicker' --reporter=verbose",
+      "result": "fail",
+      "failures": 2,
+      "note": "Output: .local/stack-header-drops-evidence/padding-after-and-create-rows-before.log. Test Files  1 failed | 1 passed (2) | Tests  2 failed | 1 passed | 10 skipped (13) Padding passed; two creation stories exposed non-Settings form rows."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceMenus.stories.svelte -t AssignSelectedChangesWithSettingsRowsAndBranchCommandPicker --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/assignment-rows-before.log. Test Files  1 failed (1) | Tests  1 failed | 6 skipped (7) Destination was a button instead of the Command View combobox."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceMenus.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'AssignSelectedChangesWithSettingsRowsAndBranchCommandPicker|CreateIndependentStack|CreateDependentStackWithCommandPicker|ContentPaddingSeparatesComponentsFromEdgeScrollbars' --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/padding-and-settings-rows-after.log. Test Files  2 passed (2) | Tests  4 passed | 10 skipped (14) "
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'KebabMenusHaveDistinctHoverAndAlignedBranchControls|ContentPaddingSeparatesComponentsFromEdgeScrollbars' --reporter=verbose",
+      "result": "fail",
+      "failures": 2,
+      "note": "Output: .local/stack-header-drops-evidence/balanced-padding-and-kebab-before.log. Test Files  1 failed (1) | Tests  2 failed | 6 skipped (8) Right card inset was 16px versus 8px left; branch kebab was offset 4px."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceMenus.stories.svelte -t 'KebabMenusHaveDistinctHoverAndAlignedBranchControls|ContentPaddingSeparatesComponentsFromEdgeScrollbars|AssignSelectedChangesWithSettingsRowsAndBranchCommandPicker|CreateIndependentStack|CreateDependentStackWithCommandPicker' --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/balanced-padding-kebab-form-after.log. Test Files  1 failed | 1 passed (2) | Tests  1 failed | 4 passed | 10 skipped (15) Alignment and forms passed; first hover token override gave only 7 RGB-channel contrast."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t KebabMenusHaveDistinctHoverAndAlignedBranchControls --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/kebab-hover-diagnostics.log. Test Files  1 failed (1) | Tests  1 failed | 7 skipped (8) Temporary diagnostics confirmed the public Button hover reads accent after muted. Diagnostics removed."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceForms.stories.svelte -t 'KebabMenusHaveDistinctHoverAndAlignedBranchControls|ContentPaddingSeparatesComponentsFromEdgeScrollbars|AssignSelectedChangesWithSettingsRowsAndBranchCommandPicker|CreateIndependentStack|CreateDependentStackWithCommandPicker' --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/layout-kebab-form-qualified.log. Test Files  2 passed (2) | Tests  5 passed | 6 skipped (11) "
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'KebabMenusHaveDistinctHoverAndAlignedBranchControls|DarkKebabMenusHaveDistinctHoverAndAlignedBranchControls' --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/kebab-light-dark-qualified.log. Test Files  1 failed (1) | Tests  1 failed | 1 passed | 7 skipped (9) Light hover passed; dark hover assertions passed but axe found two shared File Change Stats tone violations. Fixed in Design Core owning source."
+    },
+    {
+      "command": "svelte-check --tsconfig web/tsconfig.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/web-padding-form-check.log. svelte-check found 0 errors and 0 warnings "
+    },
+    {
+      "command": "svelte-check --tsconfig catalog/tsconfig.json --fail-on-warnings && node scripts/check-catalog.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/catalog-padding-form-kebab.log. svelte-check found 0 errors and 0 warnings | catalog boundaries ok (211 modules) "
+    },
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "fail",
+      "failures": 2,
+      "note": "Output: .local/stack-header-drops-evidence/architecture-padding-form-kebab.log.  Two line-budget violations (402-line Menus and 313-line CSS) fixed by separating owned Forms stories and layout CSS; limits unchanged."
+    },
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/architecture-layout-form-final.log. web architecture ok (1014 modules) "
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'Content padding|Stack columns omit' --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/workspace-scroll-scope-before.log. Test Files  1 skipped (1) | Tests  10 skipped (10) Human-spaced name filter selected no tests (10 skipped). Not acceptance evidence; rerun used actual CamelCase test names."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'ContentPadding|StackColumnsOmit' --reporter=verbose",
+      "result": "fail",
+      "failures": 2,
+      "note": "Output: .local/stack-header-drops-evidence/workspace-scroll-scope-before-exact.log. Test Files  1 failed (1) | Tests  2 failed | 8 skipped (10) Two regressions failed: Branches viewport retained 8px extra reserve; redundant Applied metadata still rendered."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'ContentPadding|StackColumnsOmit' --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/workspace-scroll-scope-after.log. Test Files  1 passed (1) | Tests  2 passed | 8 skipped (10) "
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'ContentPadding|StackColumnsOmit' --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/workspace-scroll-scope-all-columns.log. Test Files  1 passed (1) | Tests  2 passed | 8 skipped (10) Strengthened geometry includes an adjacent stack diff; Branches picker, selected stack and diff retain zero Workspace-only reserve."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceForms.stories.svelte -t 'ContentPadding|StackColumnsOmit|Kebab|Settings' --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/layout-source-contrast-final.log. Test Files  2 passed (2) | Tests  5 passed | 8 skipped (13) Five focused scenarios passed, including assignment Command View, padding, metadata removal and light/dark kebab contrast. The two other creation stories are covered by the complete affected lane."
+    },
+    {
+      "command": "svelte-check --tsconfig web/tsconfig.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/web-layout-final.log. svelte-check found 0 errors and 0 warnings "
+    },
+    {
+      "command": "svelte-check --tsconfig catalog/tsconfig.json --fail-on-warnings && node scripts/check-catalog.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/catalog-layout-final.log. svelte-check found 0 errors and 0 warnings | catalog boundaries ok (212 modules) "
+    },
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/architecture-layout-scoped.log. web architecture ok (1014 modules) "
+    },
+    {
+      "command": "spec-validator validate --only ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/ownership-scoped-final.log. Specification validated: 1 validators, 23 chapters, 173 requirements. "
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/all-stories-layout-qualified.log. Test Files  20 passed (20) | Tests  107 passed (107) Complete directly affected interaction/accessibility lane after the shared token fix and fresh Storybook restart, not the full repository suite."
+    },
+    {
+      "command": "pnpm exec prettier --check affected changed files",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/new-files-format-check.log. All matched files use Prettier code style! "
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte -t WorkspaceInAppShell --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/footer-before.log. Test Files  1 failed (1) | Tests  1 failed | 7 skipped (8) The app-shell regression found the old Folder:/Base: prefixes and combined workspace text."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte -t WorkspaceInAppShell --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/footer-after.log. Test Files  1 failed (1) | Tests  no tests A newly imported pair of count icons triggered a mid-test Vite optimizer reload and one failed import suite. Reused existing GitBranchPlus/File icon paths already present in the app and its optimizer list; no test or runtime configuration change."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte -t WorkspaceInAppShell --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/footer-qualified.log. Test Files  1 passed (1) | Tests  1 passed | 7 skipped (8) App-shell footer interaction/accessibility passes using the existing subtle CommunityChip with Folder, Project, Git branch and count icons; both redundant prefixes removed."
+    },
+    {
+      "command": "svelte-check --tsconfig web/tsconfig.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/web-footer-final.log. svelte-check found 0 errors and 0 warnings "
+    },
+    {
+      "command": "svelte-check --tsconfig catalog/tsconfig.json --fail-on-warnings && node scripts/check-catalog.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/catalog-footer-final.log. svelte-check found 0 errors and 0 warnings | catalog boundaries ok (212 modules) "
+    },
+    {
+      "command": "node scripts/web-architecture.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/architecture-footer-final.log. web architecture ok (1014 modules) "
+    },
+    {
+      "command": "pnpm exec prettier --check affected changed files",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/format-all-ui-final.log. All matched files use Prettier code style! "
+    },
+    {
+      "command": "pnpm test:storybook src/shared/diff/file-change-stats/FileChangeStats.stories.svelte -t DarkCountsRetainReadableContrast --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/before.log. One story failed with two insufficient-contrast count tones before the owning source token correction."
+    },
+    {
+      "command": "pnpm test:storybook src/shared/diff/file-change-stats/FileChangeStats.stories.svelte -t DarkCountsRetainReadableContrast --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/after.log. Exact regression passed: 1 story, 2 skipped."
+    },
+    {
+      "command": "pnpm test:storybook src/shared/diff/file-change-stats/FileChangeStats.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/all-count-stories.log. All 3 owning File Change Stats scenarios passed."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/spec-first.log. 2 protected files and 2 canonical chapters passed in Design Core."
+    },
+    {
+      "command": "pnpm checks",
+      "result": "fail",
+      "failures": 47,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/checks.log. Source units 715/715 passed; 47 Storybook import suites failed with a setup SyntaxError Unexpected token /; 492 tests passed. Fresh retry cleared the setup failure."
+    },
+    {
+      "command": "pnpm checks",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/checks-retry.log. Source units 715 and stories 652 passed; workspace pointer lane had one cold readiness timeout and 13 passes."
+    },
+    {
+      "command": "node scripts/with-storybook-env.mjs playwright test -c playwright.workspace.config.ts -g 'centre drop shows the full overlay before moving a tab'",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/workspace-ready-exact.log. Started while the original runner server was shutting down; exact cold test failed readiness with connection loss/incomplete resources."
+    },
+    {
+      "command": "node scripts/with-storybook-env.mjs playwright test -c playwright.workspace.config.ts -g 'centre drop shows the full overlay before moving a tab'",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/workspace-ready-isolated.log. Fresh isolated server had one 45-second readiness timeout with slow transforms and no network errors. Assertions and timeout unchanged."
+    },
+    {
+      "command": "node scripts/with-storybook-env.mjs playwright test -c playwright.workspace.config.ts -g 'centre drop shows the full overlay before moving a tab'",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/workspace-ready-isolated-retry.log. Exact isolated cold test passed unchanged; 35.8 seconds test time, 57.8 seconds command duration."
+    },
+    {
+      "command": "pnpm checks",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/checks-isolated-final.log. Source workspace pointer tests 14/14 passed; shell first-test total timeout failed once, with 10 shell passes. Assertions and default timeout unchanged."
+    },
+    {
+      "command": "node scripts/with-storybook-env.mjs playwright test -c playwright.shell.config.ts -g 'horizontal pans reveal and dismiss both edge lanes'",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/shell-mobile-exact.log. Exact shell regression passed cold, unchanged; 22.8 seconds test time and 30.9 seconds command duration."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm checks",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: /Users/stevejuma/code/lapismd/design-core/.local/diff-count-contrast/checks-qualified.log. Complete required nonvisual Design Core qualification passed: 715 units/111 files, 652 stories/209 files, 14 workspace pointer, 11 shell, 3 AI and 36 shadcn browser tests; 1 platform-specific shadcn test skipped. Formatting, governance, types, static build and audit passed. Shared published tokens require the owning source checks under Design Core AGENTS.md. Existing ResizeObserver/proxy diagnostics appeared in source stories; no assertion or timeout was weakened. Committed zlyuvqyv/d7ebf3e1."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/spec-scoped-final.log. 5 validators, 23 chapters and 173 requirements passed before final branch/footer follow-up."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/spec-first-scoped-final.log. 31 protected files and 4 canonical chapters passed before final branch/footer follow-up."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 8,
+      "note": "Output: .local/stack-header-drops-evidence/progress-scoped-final.log. Eight bookkeeping failures: deleted Choice file listed as present and seven story names in the named-test-only field."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 8,
+      "note": "Output: .local/stack-header-drops-evidence/progress-scoped-repaired.log. Same eight issues remained after converting CamelCase story names to display names. Fixed metadata by listing removed files and moving story names to story_scenarios."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/progress-scoped-qualified.log. 141 tasks passed; bookkeeping only."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/all-stories-final-qualified.log. 107/107 interaction/accessibility scenarios passed after footer icon and Pencil changes, before subsequent branch/body-action/footer-tone/composer refinements."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceFooter.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte -t 'AppliedBranchesHaveTheirOwnGroup|ApplyAndUnapplyActionsOccupyTheStackBody|WorkspaceTargetBranchAppearsAboveBodyTabs|RetainedDraftMatchesThe.*FooterChips|WorkspaceChipSitsAtTheTitleRowEdge' --reporter=verbose",
+      "result": "fail",
+      "failures": 6,
+      "note": "Output: .local/stack-header-drops-evidence/branch-footer-before.log. Six requested branch/footer regressions failed before implementation. The target-row query initially used banner and was corrected to an explicit named group before implementation."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte -t WorkspaceTargetBranchAppearsAboveBodyTabs --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/branch-target-before-exact.log. Exact named-group regression reproduced the missing workspace target row above body tabs."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceFooter.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte -t 'AppliedBranchesHaveTheirOwnGroup|ApplyAndUnapplyActionsOccupyTheStackBody|WorkspaceTargetBranchAppearsAboveBodyTabs|RetainedDraftMatchesThe.*FooterChips|WorkspaceChipSitsAtTheTitleRowEdge' --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/branch-footer-after.log. Five scenarios passed; group-search scenario held a stale group element with three initial options. Live UI search returned only feature/model. The test now resolves the current group on each wait; the one-option assertion remains unchanged."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceCommands.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceInline.stories.svelte -t InlineCommitWithStagedFilesAndHunks|IdleAndStagedCommitCards --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/composer-borders-before.log. The title-height regression failed before its change. The second filter name selected no test; the actual StartCommitBecomesAStagedStackCard regression was rerun separately."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceInline.stories.svelte -t StartCommitBecomesAStagedStackCard --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/drop-border-before-exact.log. Exact drop-target geometry failed: one-pixel border instead of requested two-pixel dashed border."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceFooter.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceCommands.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceInline.stories.svelte -t 'AppliedBranchesHaveTheirOwnGroup|ApplyAndUnapplyActionsOccupyTheStackBody|WorkspaceTargetBranchAppearsAboveBodyTabs|RetainedDraftMatchesThe.*FooterChips|WorkspaceChipSitsAtTheTitleRowEdge|InlineCommitWithStagedFilesAndHunks|StartCommitBecomesAStagedStackCard' --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/branch-footer-composer-exact.log. Seven scenarios passed; stale group reference still failed the search assertion. Fixed by resolving the current Applied group inside the unchanged one-option wait."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/web-branch-footer-final.log. 0 errors and 0 warnings."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/catalog-branch-footer-final.log. One story type error: ByRoleOptions does not accept exact. Replaced it with anchored Create stack accessible-name expression; query semantics unchanged."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/architecture-branch-footer-final.log. 1016 modules passed."
+    },
+    {
+      "command": "pnpm exec prettier --write named changed UI/story/canonical/provenance files",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/branch-footer-format.log. Formatted only named changed files; historical milestone ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write named changed UI/story/canonical/provenance files",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/composer-borders-format.log. Formatted only named changed files; historical milestone ledger excluded."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceCommands.stories.svelte -t InlineCommitWithStagedFilesAndHunks --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/title-full-width-before.log. Rendered separator edges were inset from the card before the requested full-width title-row change."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t ContentPaddingSeparatesComponentsFromEdgeScrollbars --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": "Output: .local/stack-header-drops-evidence/branch-scroll-before-exact.log. Branches selected stack/diff viewports had 0px reserve instead of 8px before the requested scope extension; the Branches picker still expects 0px."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceFooter.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceCommands.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceInline.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t 'AppliedBranchesHaveTheirOwnGroup|ApplyAndUnapplyActionsOccupyTheStackBody|WorkspaceTargetBranchAppearsAboveBodyTabs|RetainedDraftMatchesThe.*FooterChips|WorkspaceChipSitsAtTheTitleRowEdge|InlineCommitWithStagedFilesAndHunks|StartCommitBecomesAStagedStackCard|ContentPaddingSeparatesComponentsFromEdgeScrollbars' --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/branch-footer-composer-qualified.log. 9/9 passed, 18 skipped: current Applied group filtering, exact body Apply/Unapply transitions, fixed workspace target row, trailing Workspace chip geometry, light/dark matching footer surfaces and edit icon with retained form values, dashed staging drop border, normal-height title and full-width separator, and balanced stack/diff scrollbar spacing on both tabs while the Branches picker stays unchanged."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/catalog-branch-footer-qualified.log. 0 errors and 0 warnings; 214 catalog modules passed."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/ownership-branch-footer-qualified.log. 1 ownership validator, 23 chapters and 173 requirements passed. No Changeyard/Community dependencies."
+    },
+    {
+      "command": "pnpm exec prettier --write named changed files",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/title-full-width-format.log. Formatted only named changed files; historical evidence excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write named changed files",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/docs-layout-final-format.log. Formatted only named changed files; historical evidence excluded."
+    },
+    {
+      "command": "vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/all-stories-branch-footer-qualified.log. 113/113 complete directly affected interaction/accessibility scenarios in 22 files passed on the final branch/body-action/footer-tone/composer/scrollbar code; not the full repository suite."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/architecture-branch-footer-qualified.log. 1016 modules passed on the final UI code."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/spec-complete-qualified.log. 5 validators, 23 chapters and 173 requirements passed."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/spec-first-complete-qualified.log. 37 protected files and 4 canonical chapters passed."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/progress-complete-qualified.log. 141 tasks passed; evidence bookkeeping only."
+    },
+    {
+      "command": "pnpm exec prettier --check all changed files except spec/src/milestones.md and the mirrored evidence JSON",
+      "result": "pass",
+      "failures": 0,
+      "note": "Output: .local/stack-header-drops-evidence/format-complete-qualified.log. All changed files passed formatting; historical evidence ledger was deliberately preserved without whole-file reformatting."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "UI review and visual approval remain separate; no screenshot comparison or baseline update.",
+    "Registry-resolved foundational release acceptance remains separate.",
+    "Phase 2 backend, physical checkout and durable named workspace execution require explicit human approval."
+  ],
+  "scope": "UI-only follow-up: exact branch header commit moves, threshold sorting and visible insertion borders, opaque drag guides, right-aligned staged controls, inset branch files aligned with commit content, plain Changed files headings with specific accessible names, wrapping header chips, left selection markers without Selected text chips, distinct action/neutral-chip surfaces, Settings-style creation/assignment forms with searchable branch Command View destinations, aligned kebab hover, and no redundant Applied/Base metadata row. Footer values use existing lightly shaded icon chips without Folder:/Base: prefixes, with readable applied-stack and unstaged-file counts; Edit retained draft uses the existing Pencil icon. Scrollbar content insets apply to stack/diff columns on both tabs: cards retain balanced 8px space before the edge-aligned rail; Unstaged accounts for the rail without card margins. The Branches picker alone retains its existing insets; its selected stack and adjacent diffs receive the balanced content reserve. Conflict status stays in the column header. Production uses owned copied components and public foundations; no live adapter or checkout/backend implementation. Root aggregates, Rust builds/tests and production built-bundle lanes are out of scope under the UI-only verification policy. Only owned Storybook 6057 was restarted for foundational token changes and remains running. Historical evidence objects remain byte-identical. Final branch presentation groups applied/local bookmarks with an opt-in existing Command View, aligns Workspace chips to the title row edge, shows the unchanged workspace target above the Branches tabs, and moves Apply/Unapply into a body Card with unavailable Delete local matching the copied source. Footer chips and retained draft action share a very light neutral theme surface. Commit creation has a visible dashed drop border and normal-height title input above a full-width row separator. Source provenance records Changeyard b0caf074; all behavior remains mocked.",
+  "next": "Review the mocked workspace UI; obtain explicit approval before Phase 2 backend work.",
+  "ui_acceptance": "65/65 focused controller/history units (controller code unchanged since that run) and 113/113 complete directly affected interaction/accessibility stories in 22 files passed. Web and catalog checks have zero errors/warnings; 214 catalog and 1016 architecture modules passed; UI ownership passed. Exact final regression group 9/9 passed, measuring trailing chips, full-width title separator, 36px input and balanced scroll reserve on stack/diff columns in both tabs while the Branches picker retains 0px reserve. Footer themes preserve drafts and show the Pencil edit icon with matching very light surfaces. Browser proof: .local/stack-header-drops-evidence/workspace-refinements.jpg and branches-refinements.jpg. First 435 historical evidence objects remain byte-identical.",
+  "removed_files": [
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceChoice.svelte"
+  ],
+  "story_scenarios": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte#Content padding separates components from edge scrollbars",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte#Stack columns omit redundant application and base metadata",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte#Kebab menus have distinct hover and aligned branch controls",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte#Dark kebab menus have distinct hover and aligned branch controls",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceForms.stories.svelte#Assign selected changes with settings rows and branch command picker",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceForms.stories.svelte#Create independent stack",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceForms.stories.svelte#Create dependent stack with command picker",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte#Applied branches have their own group",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte#Apply and unapply actions occupy the stack body",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceBranches.stories.svelte#Workspace target branch appears above body tabs",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceFooter.stories.svelte#Retained draft matches the light footer chips",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceFooter.stories.svelte#Retained draft matches the dark footer chips",
+    "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte#Workspace chip sits at the title row edge"
+  ],
+  "source_acceptance": "Design Core dark count contrast corrected upstream and committed d7ebf3e1 after complete required nonvisual checks. Current ignored foundational validation setup hardlinks byte-identical source tokens; tracked package manifest and lockfile unchanged. Registry-resolved release qualification remains separately pending."
 }
 ]
 ```

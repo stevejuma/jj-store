@@ -100,20 +100,19 @@
       <Card.Content
         class="stack-workspace__stage-content stack-workspace__stage-form"
       >
-        <Field.Group>
-          <Field.Field>
+        <Field.Group class="stack-workspace__commit-fields">
+          <Field.Field class="stack-workspace__commit-title-row">
             <Field.Label for={`${id}-title`} class="sr-only"
               >Commit title</Field.Label
             >
             <Input
               id={`${id}-title`}
               bind:value={draft.title}
-              style="height: 1.75rem;"
               placeholder="Commit title (required)"
               disabled={controller.locked}
             />
           </Field.Field>
-          <Field.Field>
+          <Field.Field class="stack-workspace__commit-description-row">
             <Field.Title class="sr-only">Commit description</Field.Title>
             <CommunityChatComposer
               mode="form"
