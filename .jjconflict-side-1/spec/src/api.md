@@ -1906,3 +1906,8 @@ frontend mock inputs with no transport or persistence change.
 Compact column panel toggles and independent accessible column titles are
 presentation-only under JST-UI-020. The source-controlled icon and its
 hover/focus preview add no request, command, persistence or transport fields.
+
+Unstaged pinning uses Design Core's public `fixed` presentation property. Its
+expanded/collapsed position and temporary capacity fallback introduce no new
+workspace adapter, command, transport or persisted layout fields; file/hunk drag
+semantics and adjacent diff origins retain the existing frontend contract.

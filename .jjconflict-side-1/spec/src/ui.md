@@ -238,15 +238,18 @@ headers and collapsed rails, with controlled state and reversible hover/focus
 bar previews. Consumer icons and controller actions remain supported. The canvas
 starts directly below the body tabs without an extra layout gap or top canvas
 padding. Every branch, Unstaged, stack and diff column can be resized with
-pointer and keyboard controls. Unstaged uses the public sticky-column behavior
-when horizontal scrolling passes it. The branch column uses the owned repository
-branch command picker, including its filters and dependent bookmark selection.
-Opening a file diff inserts it immediately to the right of its originating
-Unstaged or stack column. Each origin retains its own open file, hunk selection
-and diff controls; opening, selecting or closing another stack's diff does not
-replace it. Refresh and commands preserve valid diffs, remove unavailable
-sources and hunks, and clear Unstaged selections when switching named
-combinations.
+pointer and keyboard controls. Unstaged uses the public `fixed` column property
+to retain its full expanded width or normal collapsed rail while the canvas
+scrolls horizontally, with no replacement return rail. Pinning releases
+temporarily when the scrolling columns cannot fit their minimum width and
+restores as space returns, without changing saved widths or collapsed state. The
+branch column uses the owned repository branch command picker, including its
+filters and dependent bookmark selection. Opening a file diff inserts it
+immediately to the right of its originating Unstaged or stack column. Each
+origin retains its own open file, hunk selection and diff controls; opening,
+selecting or closing another stack's diff does not replace it. Refresh and
+commands preserve valid diffs, remove unavailable sources and hunks, and clear
+Unstaged selections when switching named combinations.
 
 The Branches picker groups applied bookmarks under Applied and all other loaded
 bookmarks under Local branches, using the existing Command View groups and

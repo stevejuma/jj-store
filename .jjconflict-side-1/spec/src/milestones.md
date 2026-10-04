@@ -151,9 +151,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007 |
-| M20 | Partial | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review the completed UI before authorizing Phase 2 | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006 |
-| M20.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | Review UI; registry foundation qualification and visual approval remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006 |
-| M20.2 | Deferred | M20.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Explicit human approval required after UI review | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006 |
+| M20 | Partial | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review the completed UI before authorizing Phase 2 | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007 |
+| M20.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | Review UI; registry foundation qualification and visual approval remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007 |
+| M20.2 | Deferred | M20.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Explicit human approval required after UI review | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -78552,6 +78552,217 @@ entries.
     "Backend execution, physical checkout and durable workspace persistence require explicit approval."
   ],
   "next": "Review the UI slice; proceed with local backend integration only after explicit approval."
+},
+{
+  "id": "E-M20-007",
+  "tasks": [
+    "M20",
+    "M20.1",
+    "M20.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "enclosing Jujutsu change snolpwml",
+  "kind": "fixed-unstaged-column",
+  "versions": "JJ 0.45.1; Node 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; existing temporary Design Core source validation at source change mvvwvwon / f19b990e, separate from registry qualification.",
+  "formats": "UI-only presentation. No snapshot, command, adapter, transport, Rust, persisted width/collapse or V2 layout format change. package.json and pnpm-lock.yaml unchanged.",
+  "result": "pending",
+  "scope": "Use public Design Core fixed on Unstaged instead of sticky. Assert the original expanded column stays at the external Scroll Area edge within one CSS pixel and retains its width; collapsed rail pins and restores the full column. File controls, per-origin adjacent diffs, keyboard column resizing and file staging into a later stack remain functional. The source owns leading-prefix ordering, capacity fallback/restoration, compact exclusion, logical direction and adaptive pair allocation. The new scenario is extracted without changing its public story ID to meet module-size policy. All 440 historical raw evidence objects remain byte-identical. Consumer targeted policy covers UI types, exact and direct-consumer stories, ownership and governance; root aggregates, Rust builds/tests, production bundle and backend lanes are out of scope. Source package qualification is complete and committed separately; consumer UI acceptance is complete. Remaining entries concern separately gated review, registry publication and Phase 2.",
+  "files": [
+    "web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspacePresentation.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+    "spec/src/api.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "runs": [
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspacePresentation.stories.svelte -t UnstagedHeaderAndStyledCanvas",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/fixed-columns-evidence/before.log: Import failed before tests: existing local file dependency had changed source hardlinks but omitted the newly added pinning helper; refreshed with the package manager."
+    },
+    {
+      "command": "pnpm install --offline --force --no-frozen-lockfile --ignore-scripts",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/dependency-refresh.log: Refreshed existing local Design Core validation dependency. Restored byte-identical tracked pnpm-lock.yaml from the pre-install copy; package.json unchanged. No installed dependency source edited."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspacePresentation.stories.svelte -t UnstagedHeaderAndStyledCanvas",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/fixed-columns-evidence/before-refreshed.log: Valid regression before consumer edit: Unstaged has no data-fixed attribute."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspacePresentation.stories.svelte -t UnstagedHeaderAndStyledCanvas",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/after.log: 1 passed, 5 skipped; full width and collapsed pinning, resize, file controls, adjacent diff and staging into feature/workspace."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/*.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog*.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/consumer-stories.log: 99 passed in 20 files; direct-consumer interaction and accessibility acceptance. Fresh browser process."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/web-check.log: 0 errors and 0 warnings."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/catalog-check.log: 0 errors and 0 warnings; 219 modules before story extraction."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/ownership.log: Pass: production remains repository-owned, no catalog/source-reference dependency."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/fixed-columns-evidence/architecture.log: Expanded presentation story exceeded the 400-line module bound; moved the pinning scenario into a colocated story file under the same title."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/fixed-columns-evidence/spec-first.log: Requires mapped API chapter alongside UI chapter; documented that pinning adds no transport or adapter fields."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/spec-validate.log: 5 validators, 23 chapters, 173 requirements pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/spec-first-final.log: 2 protected files and 2 canonical chapters pass before story extraction."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/pinning-final.log: Extracted identical pinning scenario passes 1/1 interactions/accessibility."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/architecture-final.log: 1025 modules pass."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/catalog-check-final.log: 0 errors/warnings; 220 modules pass after extraction."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePresentation.stories.svelte spec/src/ui.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/format.log: Formatted current source and canonical updates; milestones never formatted."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/api.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/format-api.log: Formatted boundary note."
+    },
+    {
+      "command": "pnpm exec prettier --write catalog/components/store-stack-workspace/StoreStackWorkspacePresentation.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/format-split.log: Formatted extracted scenario."
+    },
+    {
+      "command": "pnpm storybook --port 6057",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/storybook.log: Restarted only the owned consumer Storybook after refresh; live app-shell browser verification completed."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/progress.log: 141 tasks pass; evidence bookkeeping only."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/spec-first-recorded.log: 3 protected files, 3 canonical chapters pass after story extraction and ledger update."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/spec-validate-recorded.log: 5 validators, 23 chapters, 173 requirements pass with new evidence."
+    },
+    {
+      "command": "pnpm exec prettier --check catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePresentation.stories.svelte web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte spec/src/api.md spec/src/ui.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/format-final.log: all changed source and canonical prose is formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm checks",
+      "result": "pass",
+      "failures": 0,
+      "note": "Run in /Users/stevejuma/code/lapismd/design-core; .local/fixed-columns-evidence/source/checks-confirmed.log. Required full nonvisual gate passes; no screenshot comparison or baseline changes."
+    },
+    {
+      "command": "pnpm spec:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Run in /Users/stevejuma/code/lapismd/design-core after final evidence edits; .local/fixed-columns-evidence/source/spec-check-final.log passes validate, mdbook and spec-first."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/progress-final.log: 141 tasks pass after final source evidence was recorded."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/spec-first-final-ledger.log: 3 protected files and 3 canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/spec-validate-final.log: 5 validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/fixed-columns-evidence/format-verification-final.log: Final source revision reference formatted."
+    }
+  ],
+  "stories": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte#Unstaged header and styled canvas"
+  ],
+  "browser_acceptance": "Owned Storybook restarted on literal loopback port 6057. In-app browser confirms pinned Unstaged at x=289 with retained 330px expanded width while feature/workspace is visible after horizontal scrolling. Screenshot: .local/fixed-columns-evidence/pinned-unstaged.jpg. No screenshot comparison or baseline updates.",
+  "remaining": [
+    "UI review and visual approval remain separate.",
+    "Registry-resolved Design Core qualification requires a separately approved release; manifests remain portable.",
+    "Stack backend execution, physical checkout and durable combinations require explicit approval after UI review."
+  ],
+  "next": "Review UI; proceed with backend integration only after explicit approval.",
+  "source_verification": "Design Core committed separately as f19b990e (mvvwvwon). Full pnpm checks passes with 722 units, 663 stories, 14 Workspace/11 Shell/3 AI/48 shadcn browser passes and one existing platform-specific skip. Existing autocomplete story failed in one aggregate run, passed unchanged in isolation, then passed in the final complete aggregate. Source evidence copied under .local/fixed-columns-evidence/source; source specification/record owns detailed intermediate failures and fixes."
 }
 ]
 ```

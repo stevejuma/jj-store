@@ -36,7 +36,7 @@
 <ColumnCanvas.Column
   id="working"
   columnTitle="Unstaged"
-  sticky
+  fixed
   resizable
   aria-label="Unstaged files"
 >
