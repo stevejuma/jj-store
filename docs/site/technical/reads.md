@@ -28,6 +28,31 @@ concatenating pages from incompatible selections. APIs retain exact identity
 widths and lossless integer values; see
 [transport semantics](../reference/transport.md).
 
+## Bounded code reads and preparation
+
+Native reads retain a verified immutable catalog root and check membership for
+each requested object. They do not enumerate the complete committed inventory
+just to open a session. Local Git-backed reads capture the selected operation
+and view, then follow the requested directory, references, file or comparison.
+Files load direct directory rows before independent header and attribution
+reads. Bookmarks and workspaces have separate windows and exact-name lookup.
+
+Commit history uses explicitly prepared, disposable JJ indexes. Preparation has
+a separate work budget and one background worker, preserving interactive
+capacity. Native and local generations share disk reservations: 4 GiB per
+repository and 16 GiB total, including staging. A shared 1 GiB resident-index
+estimate is admitted before decoding and retained by active readers. This is an
+index estimate, not a process-RSS limit. Derived caches never select code or
+bypass current authorization.
+
+Local prepared log, commit detail and evolution reads reuse operation-bound
+visibility and annotations. Cold reads report rebuild-required for the exact
+selection. Cancellation remains pending until the worker exits. Cache loss,
+expiry or restart can require preparation again. Deep historical/prefix and
+operation lookup, native visibility reuse, collaboration/card projections and
+full large-scale/fault qualification remain ongoing work; ordinary bounded read
+results do not qualify the whole large-repository plan.
+
 ## Search as a projection
 
 Tantivy indexes are rebuildable adapters. The ordered committed reader follows

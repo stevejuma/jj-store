@@ -30,6 +30,14 @@ validation, preserved evidence and process ownership checks. Presentation-only
 Help changes may retain accurate manual prose after explicit review; sidebar
 sizing follows the application navigation requirements.
 
+Bounded-read integration regenerates the combined API reference and reviews
+source coverage after rebasing. The manual describes files-first enrichment,
+independent reference windows and explicit operation-bound preparation/cancel
+recovery, while keeping unqualified historical/native/collaboration projections
+and large-scale memory/fault gates explicit. Cache admission estimates are not
+process-RSS qualification. Read optimizations do not weaken publication or
+companion selection authority.
+
 Embedded Help MUST inherit the active application's resolved palette, typography
 and chrome preferences on open, page navigation and live appearance changes. Its
 Markdown site retains navigation, content and table-of-contents regions styled

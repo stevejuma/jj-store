@@ -31,6 +31,21 @@ selecting a specific parent. Keep that choice when interpreting a diff or
 creating an exact review anchor. Conflict-aware presentation preserves terms
 rather than manufacturing a flattened file.
 
+Files displays its current directory window before loading commit details,
+per-path history and repository documents. Optional metadata can remain loading
+or unavailable while the file list stays usable. Bookmark and workspace lists
+load bounded windows; use their continuation controls to browse more entries. An
+explicit selected name remains usable outside the first window.
+
+## Prepare history when requested
+
+If a history view requires preparation, use **Prepare graph index** for the
+selected operation. Files and repository metadata remain independently usable
+while it runs. Large repositories can take longer to prepare. **Cancel
+preparation** requests cancellation of that task; wait for its confirmed status.
+Changing repositories stops observation of the old task. Preparing or canceling
+an index does not publish a code change.
+
 ## Navigation and copying
 
 Repository, workspace, file and supported collaboration deep links preserve

@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed conversion domain archives, verified WorkStore staging and manifest-last copying; publication and recovery pages remain accurate and the local architecture now explains independent conversion.",
-      "fingerprint": "3b3854061ade68eba06d68b5fe3249267d1e949d518109736363f15122664816"
+      "reason": "Reviewed bounded catalog-root membership while preserving full publication/recovery closure proofs, staged exclusion and manifest CAS; storage explains point reads without changing publication or snapshot semantics.",
+      "fingerprint": "7bef126fd51cc54b9420577dcea1e538cd7512e1955a6adb84d7bac1bb2d8a10"
     }
   },
   {
@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented bounded independent native/local conversion, source operation pins, fresh destination log, exact evidence, unsupported representations and no-replace local publication.",
-      "fingerprint": "566f5fceb4d4c45770f69d1a050f3a026b2a3c6acf9bbae1cea6106dab370b58"
+      "reason": "Reviewed scoped read-only local code access and prepared operation-bound visibility, conflict annotations and cancellation. Local technical docs explain source preservation; Git and conversion semantics remain unchanged.",
+      "fingerprint": "8b71d5c29837cc2e6c31de130d7a092471a921edaef2c156e34c97a45cc5f52f"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed new creation/conversion interfaces and native OpenCode timing projection; architecture and conversion guidance distinguish independent destinations, original request recovery and unknown timing.",
-      "fingerprint": "bf168e50f87ce956ecb9799ec2b5b3406f11ac045d099e35b8551ac6177ed917"
+      "reason": "Reviewed separate interactive/preparation admission, shared derived-cache reservations and current authorization. Architecture/transport describe operation-bound tasks; independent conversion still uses its complete bounded archive.",
+      "fingerprint": "da47cf5f447745327d6ea1bb02acc6283a470947f50acaddf0b55af00c0e05ab"
     }
   },
   {
@@ -109,8 +109,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Regenerated CLI help from the merged parser including Cursor transcript-capture setup; native tutorial distinguishes browser creation from workspace creation and attachment.",
-      "fingerprint": "ee8d20326138ccb8238c0257bec859424b94d446bc511c3d2d14016db8bff629"
+      "reason": "Reviewed paired CLI/server local-reader/task wiring and source pins. Command syntax, explicit development binaries and installation/task recovery tutorials remain accurate; regenerated parser references introduce no new syntax.",
+      "fingerprint": "b7ccd2beebade8a91a6e968fef3f309b14681d5c61f5c4d45d0d417eb9abf87c"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed LocalTrusted creation/conversion routes and merged Help asset admission; conversion guide and generated schema reference preserve independent asset and authorization boundaries.",
-      "fingerprint": "10737fec810fa131ff5999acdf9713de7c71f62ae7e67ddd1af7bb814d883cc2"
+      "reason": "Reviewed combined local/native preparation and conversion route registration, scoped local identity reads and current authorization. Transport documents exact rebuild pins and bodyless cancel; security and conversion guarantees remain accurate.",
+      "fingerprint": "b7557797936932ff44424bd3bc12c5612061392a50bdb9dc8b06863e3108af52"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed merged repository menus, conversion dialogs, capture settings and terminal composition with Help; browsing, setup and settings guides now describe available actions and retained request/draft behavior.",
-      "fingerprint": "e7377eda48e1c1e9d5f9278d3001345695cb82eb35e661b3f900eebdeccd0855"
+      "reason": "Documented files-first enrichment, bounded bookmark/workspace windows and explicit preparation/cancel recovery in browsing and Advanced settings. Reviewed shared conversion/terminal/lifecycle integration; editing and conversion drafts retain their semantics.",
+      "fingerprint": "06b7568b010c83171ec3f2ceb86279b9a7acac658024cd9ee9718c638fb5f428"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated CLI and API reference from merged command definitions and OpenAPI, including creation/conversion and configured capture fields; transport semantics remain unchanged.",
-      "fingerprint": "e97d8b87c9e6c2d905d39a6d2c83bc13c038b270f244ffea1055abaffff00d28"
+      "reason": "Regenerated combined API references from executable OpenAPI, including local task endpoints, metadata flags and workspaces. Transport distinguishes native/local rebuild pins and observation from confirmed worker cancellation; CLI syntax is unchanged.",
+      "fingerprint": "118df2381a4c9916e36850cb200f0b9ff994d1cad5c90adc60d6045edbd58161"
     }
   }
 ]

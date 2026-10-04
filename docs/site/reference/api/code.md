@@ -3365,6 +3365,17 @@ Requires current repository read permission. Unknown query fields are rejected. 
       "explode": true
     },
     {
+      "name": "include_last_change",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "boolean",
+        "default": true
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
       "name": "limit",
       "in": "query",
       "required": false,
@@ -3562,6 +3573,10 @@ Requires current repository read permission. Unknown query fields are rejected. 
         "type": "boolean",
         "default": true
       },
+      "include_last_change": {
+        "type": "boolean",
+        "default": true
+      },
       "limit": {
         "type": "integer",
         "format": "uint",
@@ -3657,6 +3672,17 @@ Runs the same authorized GET validation and drops the body. No JSON, binary byte
     },
     {
       "name": "recursive",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "boolean",
+        "default": true
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
+      "name": "include_last_change",
       "in": "query",
       "required": false,
       "schema": {
@@ -3770,6 +3796,10 @@ Runs the same authorized GET validation and drops the body. No JSON, binary byte
         "default": ""
       },
       "recursive": {
+        "type": "boolean",
+        "default": true
+      },
+      "include_last_change": {
         "type": "boolean",
         "default": true
       },

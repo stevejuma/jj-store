@@ -36,6 +36,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         }
       ]
     },
+    "local_snapshot": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/LocalCodeSnapshot"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "heads": {
       "anyOf": [
         {
@@ -179,6 +189,42 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "pattern": "^[0-9a-f]{128}$",
   "minLength": 128,
   "maxLength": 128
+}
+```
+
+## LocalCodeSnapshot
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "profile": {
+      "type": "string"
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "generation": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    }
+  },
+  "required": [
+    "version",
+    "profile",
+    "repository",
+    "generation",
+    "operation"
+  ]
 }
 ```
 
@@ -9999,6 +10045,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "string",
   "enum": [
+    "not_used",
     "built",
     "reused",
     "rebuilt"
@@ -10481,6 +10528,29 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 ```text
 {
   "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Target"
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "workspace"
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "targets"
+      ]
+    },
     {
       "type": "object",
       "properties": {
@@ -11571,7 +11641,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "type": "string",
   "enum": [
     "merge",
-    "budget"
+    "budget",
+    "not_requested"
   ]
 }
 ```
@@ -13184,6 +13255,9 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "code_browse": {
       "type": "boolean"
     },
+    "index_tasks": {
+      "type": "boolean"
+    },
     "collaboration": {
       "type": "boolean"
     },
@@ -13222,6 +13296,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "version",
     "profile",
     "code_browse",
+    "index_tasks",
     "collaboration",
     "agents",
     "reviews",
@@ -13267,42 +13342,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "data",
     "next_cursor",
     "previous_cursor"
-  ]
-}
-```
-
-## LocalCodeSnapshot
-
-```text
-{
-  "type": "object",
-  "properties": {
-    "version": {
-      "type": "integer",
-      "format": "uint32",
-      "minimum": 0
-    },
-    "profile": {
-      "type": "string"
-    },
-    "repository": {
-      "$ref": "#/components/schemas/RepositoryId"
-    },
-    "generation": {
-      "type": "integer",
-      "format": "uint64",
-      "minimum": 0
-    },
-    "operation": {
-      "$ref": "#/components/schemas/OperationId"
-    }
-  },
-  "required": [
-    "version",
-    "profile",
-    "repository",
-    "generation",
-    "operation"
   ]
 }
 ```
@@ -13365,7 +13404,39 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "properties": {
         "kind": {
           "type": "string",
+          "const": "commit_summary"
+        },
+        "data": {
+          "$ref": "#/components/schemas/LocalCodeObject"
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
           "const": "file"
+        },
+        "data": {
+          "$ref": "#/components/schemas/LocalFileContent"
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "file_at"
         },
         "data": {
           "$ref": "#/components/schemas/LocalFileContent"
@@ -14792,7 +14863,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "type": "string",
   "enum": [
     "merge",
-    "budget"
+    "budget",
+    "not_requested"
   ]
 }
 ```
@@ -14849,6 +14921,29 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 ```text
 {
   "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/LocalReferencesTarget"
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "workspace"
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "targets"
+      ]
+    },
     {
       "type": "object",
       "properties": {
@@ -15999,6 +16094,102 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "binary",
     "too_large",
     "invalid_path"
+  ]
+}
+```
+
+## LocalIndexTask
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "id": {
+      "type": "string"
+    },
+    "snapshot": {
+      "$ref": "#/components/schemas/LocalCodeSnapshot"
+    }
+  },
+  "required": [
+    "version",
+    "id",
+    "snapshot"
+  ],
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "running"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "canceling"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "stats": {
+          "$ref": "#/components/schemas/LocalGraphStats"
+        },
+        "status": {
+          "type": "string",
+          "const": "ready"
+        }
+      },
+      "required": [
+        "status",
+        "stats"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "error": {
+          "$ref": "#/components/schemas/GraphError"
+        },
+        "status": {
+          "type": "string",
+          "const": "failed"
+        }
+      },
+      "required": [
+        "status",
+        "error"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "canceled"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    }
   ]
 }
 ```

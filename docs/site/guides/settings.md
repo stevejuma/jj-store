@@ -39,6 +39,11 @@ spinner disappearing means a complete index. Sync exposes configured worker
 state, finite waits, pause/resume and explicit reconciliation. A remote outage
 does not require moving ordinary reads to the upstream.
 
+Repository Advanced settings can prepare the selected graph index and show its
+retained task status. Use **Cancel preparation** to stop that task and wait for
+the confirmed outcome. Navigation may stop observing it; a canceled HTTP request
+alone does not establish that the server worker stopped.
+
 ## Integrity and checkpoints
 
 Storage integrity checks operate on a prepared exact target with finite budgets.

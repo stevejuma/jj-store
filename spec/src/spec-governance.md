@@ -193,8 +193,22 @@ union of changed paths and retains every parent's evidence signatures. Merely
 combining existing entries does not satisfy the same-change integration gate;
 the merge must add or update evidence absent from every parent. The published
 spec-first CLI accepts explicit common-ancestor and merge commit IDs through
-`--base` and `--head` for merge qualification; its default `@-` selection is
-single-parent only.
+`--base` and `--head` for Git merge qualification; its default JJ `@-` selection
+is single-parent only. The installed 0.1.0 CLI uses Git for explicit revision
+arguments. JJ workspace stack qualification therefore enumerates the actual
+`jj diff` paths and passes all of them through the supported `--file` interface,
+alongside the default JJ gate for the integration change.
+
+Bounded-read integration rebases the completed slices onto committed main while
+preserving its repository conversion, terminal, capture settings and bundled
+Help surfaces. Integration verifies the combined native/local routes and
+generated contracts, native and local reader consumers, and
+files/reference/preparation controller lifetimes. The ledger retains every
+bounded-read evidence object and main entry; renamed historical test references
+follow their owning test changes. Landing completed slices does not qualify the
+remaining large-scale preparation, endpoint audit, collaboration/card
+projections or fault/RustFS gates. Both main and the retained follow-up
+workspace start from the verified integrated tip.
 
 Landing the M13 workspace preserves native Projects browsing and development
 fixture evidence alongside the local companion evidence. Integration resolves

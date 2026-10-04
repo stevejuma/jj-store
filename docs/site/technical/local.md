@@ -42,6 +42,17 @@ project, task and supported collaboration CLI commands can run without the
 native service. Browser access still requires the application server to admit
 the device folder and supply authorized, pinned reads.
 
+## Read-only code browsing
+
+Metadata, bookmark/workspace windows and selected directory/file/comparison
+reads use scoped operation-pinned access. They do not rebuild the source index,
+import missing extra metadata or walk all Git history before dispatch. Detailed
+commits, log and evolution use a separately prepared generation with
+selected-view visibility and exact conflict-aware reference annotations. Its
+read-only decoder and preparation outputs are owned by the application, outside
+source repository authority. Query admission and current device registration
+remain independent from preparation admission.
+
 ## Portability and limits
 
 Device paths, access grants, credentials and active execution journals are not

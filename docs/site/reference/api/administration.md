@@ -2603,6 +2603,16 @@ Requires current repository read permission. Unknown query fields are rejected. 
       }
     },
     {
+      "name": "exact",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "string"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
       "name": "at_op",
       "in": "query",
       "required": false,
@@ -2644,6 +2654,7 @@ Requires current repository read permission. Unknown query fields are rejected. 
         "type": "string",
         "enum": [
           "bookmarks",
+          "workspaces",
           "changes",
           "all"
         ],
@@ -2827,6 +2838,12 @@ Requires current repository read permission. Unknown query fields are rejected. 
     "type": "object",
     "additionalProperties": false,
     "properties": {
+      "exact": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
       "at_op": {
         "type": [
           "string",
@@ -2850,6 +2867,7 @@ Requires current repository read permission. Unknown query fields are rejected. 
         "type": "string",
         "enum": [
           "bookmarks",
+          "workspaces",
           "changes",
           "all"
         ],
@@ -2907,6 +2925,16 @@ Runs the same authorized GET validation and drops the body. No JSON, binary byte
       }
     },
     {
+      "name": "exact",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "string"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
       "name": "at_op",
       "in": "query",
       "required": false,
@@ -2948,6 +2976,7 @@ Runs the same authorized GET validation and drops the body. No JSON, binary byte
         "type": "string",
         "enum": [
           "bookmarks",
+          "workspaces",
           "changes",
           "all"
         ],
@@ -3040,6 +3069,12 @@ Runs the same authorized GET validation and drops the body. No JSON, binary byte
     "type": "object",
     "additionalProperties": false,
     "properties": {
+      "exact": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
       "at_op": {
         "type": [
           "string",
@@ -3063,6 +3098,7 @@ Runs the same authorized GET validation and drops the body. No JSON, binary byte
         "type": "string",
         "enum": [
           "bookmarks",
+          "workspaces",
           "changes",
           "all"
         ],

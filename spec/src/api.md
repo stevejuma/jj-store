@@ -1481,6 +1481,12 @@ a local worker. Parallel startup code and project reads cannot fail merely
 because the bounded worker pool is briefly occupied. Cancellation before
 admission performs no folder work.
 
+Cold bounded-read integration acceptance uses the current capability-dependent
+repository Add menu and folder controls alongside files, prepared history and
+AgentStore reads. It preserves the source JJ operation, working files and
+companion selection; menu presentation changes do not grant native authority to
+a filesystem-only installation.
+
 ## Browser appearance state
 
 Device appearance is browser-owned presentation state under JST-UI-018. It is

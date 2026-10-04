@@ -42,6 +42,14 @@ lifetimes. It does not infer commitment from a successful upload. Committed
 responses and refresh events lead to a new selected snapshot. Historical
 selections remain pinned until the user changes them.
 
+The read service separates interactive requests from explicitly bounded index
+preparation. Verified immutable generations retain the exact operation and
+current authorization checks. One preparation worker preserves interactive
+capacity; shared disk reservations and resident-index estimates are disposable
+resource controls. They do not replace manifest or source-operation authority.
+See [reads and refresh](reads.md) for the supported endpoints and remaining
+large-repository qualification limits.
+
 ## What is authoritative?
 
 | State                         | Authority                                       | Rebuildable or device-local data        |

@@ -140,7 +140,7 @@ test("local_repository_opens_files_history_agents_and_accessible_folder_controls
   await add.focus();
   await add.press("Enter");
   await page
-    .getByRole("menuitem", { name: "Add local repository", exact: true })
+    .getByRole("menuitem", { name: "Add Local Repository", exact: true })
     .click();
   await expect(
     page.getByRole("dialog", { name: "Add local JJ folder" }),

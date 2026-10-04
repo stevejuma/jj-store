@@ -30,6 +30,11 @@ streaming and temporary storage rather than loading an entire arbitrary file in
 memory. The transport and dependency walker enforce independent size and graph
 limits; a limit failure leaves the candidate unpublished.
 
+Ordinary native application reads pin a verified committed catalog root and
+prove requested membership along its bounded catalog paths. They do not need a
+complete inventory audit before reading one object. Publication, recovery and
+explicit complete-inventory consumers retain their separate closure checks.
+
 ## Embedded storage
 
 The native local installation owns a persistent embedded RustFS runtime, volume,
