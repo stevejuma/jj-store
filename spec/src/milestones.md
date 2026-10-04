@@ -149,7 +149,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015 |
-| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001 |
+| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -72050,6 +72050,77 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   ],
   "scope": "Manual and asset delivery only. Shared HTTP/desktop asset loaders justify complete direct asset/packaging regressions. Existing repository identity/storage/API protocols remain unchanged. No full workspace suite, new real-RustFS qualification, fixture reset, installed CLI replacement, package publication or hosting.",
   "next": "Review the manual and Help in the documentation workspace. Keep M19 Partial until registry-only foundational-package and packaged native-host release qualification are completed; no hosting/publication requested."
+},
+{
+  "id": "E-DOC-002",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change ptltynkp",
+  "kind": "Help sidebar alignment and workspace preview",
+  "versions": "macOS ARM64; Svelte 5.57.1; Playwright 1.63.0 Chromium and WebKit; existing local Design Core validation hook.",
+  "formats": "No repository, API, browser or documentation manifest format change.",
+  "files": [
+    "web/src/lib/ui/store-help/StoreHelp.svelte",
+    "web/src/lib/ui/store-application/StoreApplication.svelte",
+    "docs/maintenance/coverage.json",
+    "spec/src/ui.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "web/tests/browser/help.spec.ts#Help is available from the installation sidebar before a repository exists"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; inspect Community navigation, Design Core Button/AppShell and official shadcn-svelte Button documentation; live browser geometry comparison",
+      "result": "fail",
+      "failures": 1,
+      "note": "Clean working copy before edits. Help used a 48x36 button at x=0 with icon center x=19; Projects used 32x32 at x=8 with center x=24. No product mutation during measurement."
+    },
+    {
+      "command": "JJ_STORE_DEV_PORT=7484 JJ_STORE_DEV_BACKEND_PORT=7486 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:restart (CommandLineTools DEVELOPER_DIR/CXXFLAGS)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Fresh isolated documentation-workspace initialization built web/docs/native binaries and seeded code plus agent activity. Sample review seeding failed: development review seed could not read src/lib.rs. Shutdown logged its existing five-second limit. Incomplete fixture preserved without reset; 7460/7462 and other deployments untouched. No complete fixture marker fabricated."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web/catalog errors or warnings; 182 catalog and 931 architecture modules; ownership valid."
+    },
+    {
+      "command": "pnpm exec vite build --config web/vite.config.ts; node scripts/web-manifest.mjs; node scripts/docs.mjs stage; pnpm exec playwright test --config web/playwright.docs.config.ts -g \"Help is available from the installation sidebar\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh production build and docs stage; 2/2 exact Chromium/WebKit sidebar Help tests pass, including focus return and keyboard boundary. 117 docs assets, 9 rendered diagrams, valid links/anchors. Existing foundational CSS :global and bundle-size warnings remain; no visual baselines updated."
+    },
+    {
+      "command": "pnpm docs:review application <specific spacing review>; pnpm docs:review; changed-file Prettier --write",
+      "result": "pass",
+      "failures": 0,
+      "note": "Reviewed browsing/editing/settings prose; workflow unchanged. Application fingerprint updated and all source reviews current."
+    },
+    {
+      "command": "JJ_STORE_DEVELOPMENT_STATE_ROOT=<documentation-workspace>/.local/dev-demo ./target/debug/jj-store run --config <documentation-workspace>/.local/dev-demo/local/server.toml --format=json; curl app/help; cold browser reload and collapsed/expanded geometry comparison",
+      "result": "pass",
+      "failures": 0,
+      "note": "Direct native built preview recovered at loopback 7484 using the preserved partial fixture; both app and Help HTTP 200. Help/Projects both 32x32 at x=8 with icon center x=24 collapsed; both 264x36 at x=12 with icon center x=31 expanded in 288px sidebar. Startup fixture remains partial; this is a built preview, not managed HMR mode."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; changed-file pnpm exec prettier --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Spec-first covers 3 protected files and 4 canonical chapters; 5 validators, 23 chapters, 171 requirements; 137 tasks; changed-file formatting passes. Existing 414 evidence entries preserved. Live corrected sidebar screenshot saved in ignored workspace fixture; no baseline update."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Narrow application-owned Help geometry. All 414 prior evidence entries preserved. M19 remains Partial; registry/native-host release gates remain in E-DOC-001. Existing cold exact browser test and live before/after geometry cover the change without adding an implementation-mirroring test. Rust, root aggregates, full browser/Storybook/storage suites and visual baselines are out of scope. Development fixture seeding failure remains explicit and is not a Help acceptance failure.",
+  "next": "Use the built workspace preview on 7484 to review Help. Repair or resume the incomplete demo seeding separately before using managed dev:ui for this fixture."
 }
 ]
 

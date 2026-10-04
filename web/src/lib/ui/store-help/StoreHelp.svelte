@@ -5,7 +5,10 @@
   import BookOpenIcon from "@lucide/svelte/icons/book-open";
   import XIcon from "@lucide/svelte/icons/x";
   import { helpSession, admittedHelpMessage } from "./help-session.js";
-  let { compact = false }: { compact?: boolean } = $props();
+  let {
+    compact = false,
+    sidebar = false,
+  }: { compact?: boolean; sidebar?: boolean } = $props();
   let dialog = $state<HTMLDialogElement>();
   let frame = $state<HTMLIFrameElement>();
   let opened = $state(false);
@@ -110,15 +113,23 @@
 </script>
 
 <svelte:window onmessage={message} />
-<Button
-  variant="ghost"
-  class="store-help-trigger"
-  aria-label="Help"
-  title={compact ? "Help" : undefined}
-  onclick={open}
+<div
+  class="store-help-entry"
+  data-sidebar={sidebar || undefined}
+  data-compact={compact || undefined}
 >
-  <BookOpenIcon aria-hidden="true" />{#if !compact}<span>Help</span>{/if}
-</Button>
+  <Button
+    variant="ghost"
+    size={compact ? "icon-sm" : "default"}
+    class="store-help-trigger"
+    data-compact={compact || undefined}
+    aria-label="Help"
+    title={compact ? "Help" : undefined}
+    onclick={open}
+  >
+    <BookOpenIcon aria-hidden="true" />{#if !compact}<span>Help</span>{/if}
+  </Button>
+</div>
 <dialog
   bind:this={dialog}
   class="store-help"
@@ -153,9 +164,21 @@
 </dialog>
 
 <style>
+  .store-help-entry[data-sidebar] {
+    padding-inline: 0.75rem;
+  }
+  .store-help-entry[data-compact] {
+    display: flex;
+    justify-content: center;
+    padding-inline: 0.5rem;
+  }
   :global(.store-help-trigger) {
     width: 100%;
     justify-content: flex-start;
+  }
+  :global(.store-help-trigger[data-compact]) {
+    width: 2rem;
+    justify-content: center;
   }
   .store-help {
     position: fixed;

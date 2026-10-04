@@ -23,6 +23,8 @@ become SVG at build time. Scripts, fonts, search and diagrams are bundled.
 The source review gate records content fingerprints and a topic-specific review
 explanation. A passing gate proves acknowledged source coverage, not prose
 correctness. The progress ledger remains the sole qualification record.
+Presentation-only Help changes may retain accurate manual prose after explicit
+review; sidebar sizing follows the application navigation requirements.
 
 Verification covers generators and negative drift fixtures, actual configuration
 parsing, built-site links/search, HTTP asset admission, iframe focus and

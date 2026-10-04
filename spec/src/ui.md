@@ -1908,3 +1908,8 @@ full-viewport modal embeds the bundled site, traps focus, handles Escape from
 its same-origin frame and returns focus on dismissal. The underlying application
 remains mounted, preserving route, drafts and pending commands. Docs page/scroll
 state remains session-only.
+
+The Help entry follows primary sidebar navigation geometry: a centered 2rem icon
+button with 0.5rem horizontal rail padding when collapsed, and a full-width
+labelled button inset by 0.75rem when expanded. Connection-screen Help retains
+its standalone layout.

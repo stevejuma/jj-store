@@ -129,8 +129,8 @@
       "docs/site/guides/settings.md"
     ],
     "review": {
-      "reason": "Reviewed Help keyboard boundaries and capture of the actual trigger for focus restoration: WebKit mouse clicks do not necessarily focus buttons. Verified retained drafts and current-page behavior against lifecycle and browsing guidance.",
-      "fingerprint": "ca8d2bbabe4206b4fbac18377311c26edd6529379a0e7e47933d70e8593e22b1"
+      "reason": "Reviewed the Help spacing change against browsing, editing and settings guidance: only sidebar button geometry changes; the existing Help workflow, keyboard behavior and connection layout remain accurate.",
+      "fingerprint": "8ad4a1e60fef7fea4fefeb1676b23b007215b0d0eebd1fcef7f183ce035808f0"
     }
   },
   {

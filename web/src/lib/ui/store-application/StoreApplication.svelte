@@ -207,7 +207,7 @@
         onSelect={select}
         onSearch={() => (searchOpen = true)}
       >
-        {#snippet footer()}<StoreHelp {compact} /><CommunityProfileMenu
+        {#snippet footer()}<StoreHelp {compact} sidebar /><CommunityProfileMenu
             member={controller.state.member}
             authenticated={controller.state.authenticated}
             {compact}

@@ -1780,6 +1780,10 @@ worker command ownership.
 
 ## Bundled application documentation
 
+The Help entry uses the primary sidebar's collapsed and expanded spacing. This
+presentation change preserves the same overlay, local document routes and
+admission policy.
+
 Bundled Help is independently allowlisted under `/help/`, with a separate
 512-file, 8-MiB-per-file and 32-MiB-total bound. The existing browser bundle
 retains its own bounds. Application documents may frame same-origin content, but
