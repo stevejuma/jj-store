@@ -94,7 +94,10 @@ async fn describe(
 ) -> Result<Commit> {
     budget.authorize(access.as_ref()).await?;
     let id = cid(commit.id())?;
-    if !access.inventory().contains(&m::ObjectKey::Commit(id)) {
+    if !budget
+        .until(access.contains(m::ObjectKey::Commit(id)))
+        .await??
+    {
         return Err(Error::NotCommitted);
     }
     let targets = repo
@@ -353,7 +356,10 @@ pub(super) async fn run(
             Nodes::Operations(nodes)
         }
         Request::Evolution { commit } => {
-            if !access.inventory().contains(&m::ObjectKey::Commit(commit)) {
+            if !budget
+                .until(access.contains(m::ObjectKey::Commit(commit)))
+                .await??
+            {
                 return Err(Error::NotCommitted);
             }
             let starts = [b::CommitId::from_bytes(commit.as_bytes())];

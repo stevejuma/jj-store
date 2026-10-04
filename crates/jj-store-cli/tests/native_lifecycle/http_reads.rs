@@ -544,8 +544,8 @@ async fn authenticated_repository_discovery_reauthorizes_one_token_per_repositor
     assert_eq!(
         body["repositories"],
         serde_json::json!([
-            {"id":repositories[0].0,"name":"lapis/alpha","permission":"read","principal": ACTOR},
-            {"id":repositories[1].0,"name":"lapis/beta","permission":"write","principal": m::PrincipalId::new([99;16])}
+            {"profile":"native_v1","availability":"ready","id":repositories[0].0,"name":"lapis/alpha","permission":"read","principal": ACTOR},
+            {"profile":"native_v1","availability":"ready","id":repositories[1].0,"name":"lapis/beta","permission":"write","principal": m::PrincipalId::new([99;16])}
         ])
     );
 

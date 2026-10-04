@@ -54,7 +54,7 @@ impl Registry {
         self.nodes = self
             .entries
             .values()
-            .map(|entry| entry.pin.inventory.len())
+            .map(|entry| entry.pin.retained_nodes())
             .sum();
     }
 }
@@ -236,7 +236,7 @@ impl SnapshotCursors {
         registry.prune(now);
         let nodes = registry
             .nodes
-            .checked_add(entry.pin.inventory.len())
+            .checked_add(entry.pin.retained_nodes())
             .ok_or(Error::Limit)?;
         if registry.entries.len() >= self.limits.snapshots || nodes > self.limits.inventory_nodes {
             return Err(Error::Busy);

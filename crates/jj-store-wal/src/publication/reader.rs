@@ -1,6 +1,35 @@
 //! Read-only manifest-selected log and inventory traversal for durable consumers.
 use super::*;
 
+#[cfg(test)]
+#[path = "reader_tests.rs"]
+mod tests;
+
+/// Verify one descriptor against the selected immutable catalog root.
+/// Publication/recovery establish complete closure. Readers separately verify
+/// each dependency they follow: enumerating all dependencies here would turn a
+/// single view read into one lookup per bookmark, before reference pagination.
+pub(super) async fn inventory_member(
+    store: Arc<dyn ObjectStore>,
+    repository: RepositoryId,
+    root: Option<RecordRef>,
+    key: ObjectKey,
+) -> Result<Option<VerifiedNode>> {
+    if root.is_none() {
+        return Err(Error::Corrupt("missing committed inventory"));
+    }
+    let records = Records::new(store, repository);
+    let catalog = Catalog::new(records.clone());
+    let Some(reference) = catalog.get(root, object_key(key)).await? else {
+        return Ok(None);
+    };
+    let node: VerifiedNode = records.get(reference, RecordKind::Inventory).await?;
+    if node.key != key {
+        return Err(Error::Corrupt("inventory catalog key"));
+    }
+    Ok(Some(node))
+}
+
 /// Constructed only by selected history traversal, never by deserializing a cursor.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SelectedRecord {

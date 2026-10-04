@@ -933,3 +933,13 @@ Status/retry recovers that same destination after unknown outcomes; changed
 intent conflicts. Discovery is finalized only after verifying the published
 repository identity. It does not mutate a source repository, project links or
 checkout files.
+
+## Read capability membership
+
+Application content read pins retain a checked immutable manifest inventory root
+and bounded request-local membership lookups. Every requested object requires
+selected membership and current permission; opening a read does not audit an
+entire repository. The explicit complete-inventory path remains bounded for
+mutation preparation and adapter consumers, with their existing Write and source
+authorization. This separation does not weaken mutation preconditions, complete
+publication closure audits or manifest CAS.

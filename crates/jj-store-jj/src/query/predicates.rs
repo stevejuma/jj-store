@@ -211,7 +211,7 @@ pub(super) async fn preflight(
         return Ok(());
     }
     let mut shapes = BTreeMap::new();
-    for key in access.inventory() {
+    for key in budget.until(access.inventory()).await??.iter() {
         let m::ObjectKey::Commit(id) = key else {
             continue;
         };

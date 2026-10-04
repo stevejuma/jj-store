@@ -419,8 +419,11 @@ impl q::ReadAccess for BoundAccess {
     fn operation(&self) -> m::OperationId {
         roots::ROOT_OPERATION
     }
-    fn inventory(&self) -> &BTreeSet<m::ObjectKey> {
-        q::ReadAccess::inventory(self.inner.as_ref())
+    async fn contains(&self, key: m::ObjectKey) -> q::Result<bool> {
+        q::ReadAccess::contains(self.inner.as_ref(), key).await
+    }
+    async fn inventory(&self) -> q::Result<Arc<BTreeSet<m::ObjectKey>>> {
+        q::ReadAccess::inventory(self.inner.as_ref()).await
     }
     async fn authorize(&self) -> q::Result<()> {
         q::ReadAccess::authorize(self.inner.as_ref()).await

@@ -160,7 +160,7 @@ impl GraphPager {
         })
         .await
     }
-    /// Resumes with a new request/session and the original complete inventory.
+    /// Resumes with a new request/session and the original immutable inventory root.
     /// `operation` may be omitted but cannot contradict the cursor when supplied.
     pub async fn resume(
         &self,

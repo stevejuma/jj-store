@@ -194,6 +194,7 @@ impl BackendAuthority for ReadOnlyAuthority {
         let ids: BTreeSet<_> = self
             .access
             .inventory()
+            .await?
             .iter()
             .filter_map(|key| {
                 if let m::ObjectKey::Copy(id) = key {
@@ -226,6 +227,7 @@ impl OperationAuthority for ReadOnlyAuthority {
         let ids: BTreeSet<_> = self
             .access
             .inventory()
+            .await?
             .iter()
             .filter_map(|key| {
                 if let m::ObjectKey::Operation(id) = key {
@@ -288,17 +290,34 @@ impl ReadStore {
             let id: m::CommitId = id.parse().ok()?;
             m::ObjectKey::from_parts(kind.parse().ok()?, *id.as_bytes())
         })()
-        .filter(|id| {
-            id.storage_path(self.access.repository()) == key.as_str()
-                && (self.access.inventory().contains(id)
-                    || self.staged.as_ref().is_some_and(|staged| {
-                        staged.lock().expect("command staged objects").contains(id)
-                    }))
-        });
-        object.ok_or_else(|| {
+        .filter(|id| id.storage_path(self.access.repository()) == key.as_str());
+        let Some(object) = object else {
             self.budget.fail(Error::NotCommitted);
-            storage::Error::Invalid("query inventory")
-        })
+            return Err(storage::Error::Invalid("query inventory"));
+        };
+        let staged = self.staged.as_ref().is_some_and(|staged| {
+            staged
+                .lock()
+                .expect("command staged objects")
+                .contains(&object)
+        });
+        let committed = if staged {
+            true
+        } else {
+            self.budget
+                .until(self.access.contains(object))
+                .await
+                .and_then(|result| result)
+                .map_err(|error| {
+                    self.budget.fail(error);
+                    storage::Error::Invalid("query inventory")
+                })?
+        };
+        if !committed {
+            self.budget.fail(Error::NotCommitted);
+            return Err(storage::Error::Invalid("query inventory"));
+        }
+        Ok(object)
     }
 }
 #[async_trait::async_trait]

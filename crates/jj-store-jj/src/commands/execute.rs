@@ -92,7 +92,7 @@ pub(super) async fn commit(
     budget: &Budget,
 ) -> Result<jj_lib::commit::Commit> {
     budget.check()?;
-    if !access.inventory().contains(&m::ObjectKey::Commit(id)) {
+    if !access.contains(m::ObjectKey::Commit(id)).await? {
         return Err(query::Error::NotCommitted.into());
     }
     let id = b::CommitId::from_bytes(id.as_bytes());
@@ -147,6 +147,7 @@ pub(super) async fn run(
     let access: Arc<dyn ReadAccess> = Arc::new(super::access::Access(mutation));
     if access
         .inventory()
+        .await?
         .iter()
         .filter(|key| matches!(key, m::ObjectKey::Commit(_)))
         .count()

@@ -379,7 +379,7 @@ impl ContentReader {
 impl Context {
     async fn member(&self, key: m::ObjectKey) -> Result<()> {
         self.budget.authorize(self.access.as_ref()).await?;
-        if !self.access.inventory().contains(&key) {
+        if !self.budget.until(self.access.contains(key)).await?? {
             return Err(Error::NotCommitted);
         }
         Ok(())

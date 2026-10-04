@@ -7,7 +7,10 @@ pub use jj_store_object::ByteRange;
 use jj_store_wal::{self as wal, publication::Manifest};
 use serde::Serialize;
 use std::{collections::BTreeSet, sync::Arc, time::Duration};
-use tokio::time::{Instant, timeout_at};
+use tokio::{
+    sync::{Mutex, OnceCell},
+    time::{Instant, timeout_at},
+};
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum Error {
@@ -80,12 +83,15 @@ pub enum OpenRead {
     SelectHead(HeadSnapshot),
     Pinned(CommittedRead),
 }
-/// Private construction binds a checked inventory and exact operation to one
+/// Private construction binds a checked inventory root and exact operation to one
 /// authorized request. The DTO is information, not a deserializable capability.
 pub struct CommittedRead {
     session: Arc<NativeSession>,
     snapshot: ReadSnapshot,
-    inventory: Arc<BTreeSet<m::ObjectKey>>,
+    base: Arc<wal::publication::ManifestSnapshot>,
+    members: Mutex<BTreeSet<m::ObjectKey>>,
+    inventory: OnceCell<Arc<BTreeSet<m::ObjectKey>>>,
+    max_objects: usize,
     deadline: Instant,
 }
 /// Immutable filtering information, never authorization. Only a checked native
@@ -108,9 +114,13 @@ impl VisibleView {
 #[derive(Clone)]
 pub(crate) struct ReadPin {
     pub snapshot: ReadSnapshot,
-    pub inventory: Arc<BTreeSet<m::ObjectKey>>,
+    base: Arc<wal::publication::ManifestSnapshot>,
 }
 impl ReadPin {
+    /// Root and head identities retained by a cursor; lookup caches stay local.
+    pub(crate) fn retained_nodes(&self) -> usize {
+        1 + self.snapshot.authority.heads.len()
+    }
     pub async fn resume(
         &self,
         session: Arc<NativeSession>,
@@ -119,14 +129,14 @@ impl ReadPin {
         if session.repository != self.snapshot.authority.repo_id {
             return Err(Error::Denied);
         }
-        if self.inventory.len() > limits.max_objects {
-            return Err(Error::Limit);
-        }
         let deadline = session.read_deadline(limits)?;
         let read = Arc::new(CommittedRead {
             session,
             snapshot: self.snapshot.clone(),
-            inventory: self.inventory.clone(),
+            base: self.base.clone(),
+            members: Mutex::new(BTreeSet::new()),
+            inventory: OnceCell::new(),
+            max_objects: limits.max_objects,
             deadline,
         });
         read.authorize().await?;
@@ -162,20 +172,16 @@ impl NativeSession {
                 None if manifest.heads.len() == 1 => *manifest.heads.first().unwrap(),
                 None => return Ok(OpenRead::SelectHead(manifest.into())),
             };
-            let inventory: BTreeSet<_> = self
-                .coordinator
-                .inventory(&base, limits.max_objects)
-                .await?
-                .into_iter()
-                .map(|node| node.key)
-                .collect();
             let read = CommittedRead {
                 session: self.clone(),
                 snapshot: ReadSnapshot {
                     authority: manifest.into(),
                     operation_id: selected,
                 },
-                inventory: Arc::new(inventory),
+                base: Arc::new(base),
+                members: Mutex::new(BTreeSet::new()),
+                inventory: OnceCell::new(),
+                max_objects: limits.max_objects,
                 deadline,
             };
             read.authorize_object(m::ObjectKey::Operation(selected))
@@ -190,7 +196,7 @@ impl CommittedRead {
         self.authorize().await?;
         Ok(ReadPin {
             snapshot: self.snapshot.clone(),
-            inventory: self.inventory.clone(),
+            base: self.base.clone(),
         })
     }
     /// Check current policy and epoch without replacing the captured snapshot.
@@ -216,10 +222,26 @@ impl CommittedRead {
     /// Knowing an ID or uploading it cannot make it part of this read session.
     pub async fn authorize_object(&self, key: m::ObjectKey) -> Result<()> {
         self.authorize().await?;
-        if !self.inventory.contains(&key) {
-            return Err(Error::NotCommitted);
-        }
-        Ok(())
+        within_deadline(self.deadline, async {
+            let mut members = self.members.lock().await;
+            if !members.contains(&key) {
+                if members.len() >= self.max_objects {
+                    return Err(Error::Limit);
+                }
+                if self
+                    .base
+                    .inventory_member(self.session.object_store.clone(), key)
+                    .await?
+                    .is_none()
+                {
+                    return Err(Error::NotCommitted);
+                }
+                members.insert(key);
+            }
+            drop(members);
+            self.authorize().await
+        })
+        .await
     }
 }
 
@@ -314,8 +336,34 @@ impl jj_store_jj::query::ReadAccess for CommittedRead {
     fn operation(&self) -> m::OperationId {
         self.snapshot.operation_id
     }
-    fn inventory(&self) -> &BTreeSet<m::ObjectKey> {
-        &self.inventory
+    async fn contains(&self, key: m::ObjectKey) -> query::Result<bool> {
+        match self.authorize_object(key).await {
+            Ok(()) => Ok(true),
+            Err(Error::NotCommitted) => Ok(false),
+            Err(error) => Err(query_error(error)),
+        }
+    }
+    async fn inventory(&self) -> query::Result<Arc<BTreeSet<m::ObjectKey>>> {
+        self.authorize().await.map_err(query_error)?;
+        let keys = within_deadline(self.deadline, async {
+            self.inventory
+                .get_or_try_init(|| async {
+                    Ok(Arc::new(
+                        self.base
+                            .inventory(self.session.object_store.clone(), self.max_objects)
+                            .await?
+                            .into_iter()
+                            .map(|node| node.key)
+                            .collect(),
+                    ))
+                })
+                .await
+                .cloned()
+        })
+        .await
+        .map_err(query_error)?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(keys)
     }
     async fn authorize(&self) -> jj_store_jj::query::Result<()> {
         self.authorize().await.map_err(query_error)

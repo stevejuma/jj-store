@@ -28,8 +28,13 @@ impl ReadAccess for Access {
     fn operation(&self) -> m::OperationId {
         self.0.operation()
     }
-    fn inventory(&self) -> &BTreeSet<m::ObjectKey> {
-        self.0.inventory()
+    async fn contains(&self, key: m::ObjectKey) -> query::Result<bool> {
+        self.0.authorize_write().await?;
+        self.0.contains(key).await
+    }
+    async fn inventory(&self) -> query::Result<Arc<BTreeSet<m::ObjectKey>>> {
+        self.0.authorize_write().await?;
+        self.0.inventory().await
     }
     async fn authorize(&self) -> query::Result<()> {
         self.0.authorize_write().await

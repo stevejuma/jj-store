@@ -31,7 +31,7 @@ shared-package release qualification does not alter those original Git gates.
 | M3.2        | Done        | M3.1                    | JST-JJ-001,JST-JJ-004,JST-JJ-005                                                                                                                                                                                  | Create edit describe log restart op-log evolog; multi-workspace                                                                | Retain native slice acceptance                                                                 | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | M3.3        | Done        | M3.2                    | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                                                                                                                                                                   | Custom command presentation and capability parity                                                                              | Retain native slice acceptance                                                                 | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | M4          | Deferred    | M3                      | JST-API-001,JST-API-005                                                                                                                                                                                           | Registry-only/shared-deployment browser finalization beyond the functional local application                                   | Future shared/package release                                                                  | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-M4-018,E-SCOPE-001,E-UI-007,E-UI-008,E-UI-016,E-UI-017,E-UI-018                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| M4.1        | Done        | M3                      | JST-API-001,JST-API-002,JST-JJ-003                                                                                                                                                                                | Pinned three-graph reads with zero GET publications                                                                            | Retain pinned read conformance                                                                 | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M4.1        | Done        | M3                      | JST-API-001,JST-API-002,JST-JJ-003                                                                                                                                                                                | Pinned three-graph reads with zero GET publications                                                                            | Retain pinned read conformance                                                                 | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-READ-001 |
 | M4.2        | Done        | M4.1                    | JST-API-003,JST-API-006                                                                                                                                                                                           | Committed SSE and generated API contract deployment qualification                                                              | Retain real RustFS/TLS SSE conformance                                                         | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001,E-UI-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M4.3        | Deferred    | M4.1,M5,M6              | JST-API-004,JST-API-005                                                                                                                                                                                           | Shared/authenticated browser and separately packaged dependency finalization                                                   | Future shared/package release                                                                  | E-SCOPE-001,E-UI-007,E-UI-008,E-M4-018,E-UI-016,E-UI-017,E-UI-018                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M4.4        | Done        | Bootstrap               | JST-UI-001                                                                                                                                                                                                        | Isolated catalog types, interaction/a11y and static build                                                                      | Implement shell stories                                                                        | E-UI-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -74994,6 +74994,170 @@ entries.
   "remaining": [],
   "scope": "Documentation workspace retirement only. Product checks are recorded in E-DOC-006 and are not repeated for ledger-only cleanup. M19 remains Partial with foundational registry-only and packaged native-host release gates unchanged. Retained fixture files are archival evidence, not a running relocated installation.",
   "next": "Continue documentation and Help development in the main jj-store workspace; retired preview URLs are stopped."
-}
+},
+  {
+    "id": "E-READ-001",
+    "tasks": [
+      "M4.1"
+    ],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change pmnkmqxz",
+    "kind": "Manifest-root application read membership and large-repository implementation scope",
+    "versions": "Rust 1.98.1; jj-lib 0.45.1; Node 26.9.0; pnpm 10.32.1; native V1 objects and existing manifest formats.",
+    "formats": "No persisted or HTTP/RPC wire encoding changes. ReadAccess adds asynchronous point membership and explicit complete enumeration. Cursor pins retain checked manifests/root/head identities rather than full object inventories. Mutation and adapter guards remain current; source closure audits remain in publication/recovery. Repository directory expectation now includes already-shipped native_v1/ready discriminants.",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/query_resources.rs",
+      "crates/jj-store-jj/examples/content_qualification.rs",
+      "crates/jj-store-jj/examples/query_qualification.rs",
+      "crates/jj-store-jj/src/commands/access.rs",
+      "crates/jj-store-jj/src/commands/execute.rs",
+      "crates/jj-store-jj/src/query/access.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/src/query/graphs.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/src/query/predicates.rs",
+      "crates/jj-store-service/src/adapter/read.rs",
+      "crates/jj-store-service/src/commands.rs",
+      "crates/jj-store-service/src/pagination.rs",
+      "crates/jj-store-service/src/pagination/cursors.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/reader.rs",
+      "crates/jj-store-wal/src/publication/reader_tests.rs",
+      "docs/implementation-plan.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md"
+    ],
+    "requirements": [
+      "JST-API-001",
+      "JST-API-002",
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-005"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle.rs#read_session_point_lookup_does_not_materialize_inventory",
+      "crates/jj-store-cli/tests/native_lifecycle.rs#read_session_enforces_inventory_and_elapsed_budgets",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#point_membership_reads_radix_paths_instead_of_the_inventory",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#point_membership_checks_traversed_dependencies_and_descriptor_keys"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj workspace list; jj workspace add --name bounded-reads -r @ ../jj-store-bounded-reads",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main was clean at b11c0486 plus empty parent change. New isolated workspace preserves other workspaces, the active dev fixture and Linux checkout."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test native_lifecycle --locked read_session_point_lookup_does_not_materialize_inventory -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before production changes were compiled: one requested operation failed with Limit because total inventory exceeded max_objects=1. Later builds use the isolated workspace target cloned from the existing cache."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked publication::reader::tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final two point-lookup regressions pass: a 4096-object catalog needs at most one radix path plus its descriptor; followed dependencies require their own membership; historical roots, wrong descriptor keys and complete audit failures remain explicit. Earlier direct-dependency eager variant also passed before being replaced to avoid one lookup per bookmark."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked read_session_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 read-session tests pass, including exact new regression, staged exclusion, revocation, historical pins, request object/deadline limits and epoch replacement."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked",
+        "result": "fail",
+        "failures": 3,
+        "note": "Escalation: shared ReadAccess changed across content, graph, mutation and adapter consumers. 185 pass. Existing discovery expectation missed profile/availability; two real-time deadlines failed under unrestricted test contention."
+      },
+      {
+        "command": "/Users/stevejuma/code/lapismd/jj-store/target/debug/deps/native_lifecycle-e6652c34f7ed2d93 --exact content_acceptance::http_acceptance::authenticated_repository_discovery_reauthorizes_one_token_per_repository",
+        "result": "fail",
+        "failures": 1,
+        "note": "Saved pre-production-change binary reproduces missing native_v1/ready expected fields. Exact response assertion corrected without changing discovery behavior."
+      },
+      {
+        "command": "target/debug/deps/native_lifecycle-e6652c34f7ed2d93 typed_resolve_rebases_descendants_updates_references_and_preserves_evolution --nocapture; target/debug/deps/native_lifecycle-e6652c34f7ed2d93 http_reads_unpolled_response_expiry_releases_transport_and_native_slots --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both deadline scenarios pass individually with unchanged production limits (11.73s and 1.43s). Full relevant suite will use bounded test concurrency."
+      },
+      {
+        "command": "pnpm install --frozen-lockfile --offline --ignore-scripts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Tracked local-source pnpmfile checksum does not match lockfile. No lockfile change was made."
+      },
+      {
+        "command": "pnpm install --frozen-lockfile --offline --ignore-scripts --ignore-pnpmfile",
+        "result": "pass",
+        "failures": 0,
+        "note": "Installed registry-resolved lockfile dependencies offline; no local package substitution or lockfile edit."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial draft lacked mutations ownership chapter and used an unmapped standalone plan path. Added mapped chapter and moved plan into existing docs/implementation-plan.md; no governance rule weakened."
+      },
+      {
+        "command": "pnpm spec:first; pnpm check:boundaries; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Mapped canonical gate, 17-package boundary check and 167-requirement validation pass."
+      },
+      {
+        "command": "cargo fmt --all -- --check; pnpm exec prettier --check docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/mutations.md spec/src/publication.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused Rust/document formatting passes."
+      },
+      {
+        "command": "cargo check -p jj-store-wal -p jj-store-jj -p jj-store-service -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All targets of affected native read packages and their direct Rust consumers compile."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked -- --test-threads=4",
+        "result": "pass",
+        "failures": 0,
+        "note": "188 passed, 0 failed in 64.44s. Production timeouts unchanged; bounded test concurrency avoids unrelated test contention."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "136-task progress ledger validates."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md; jj file show -r @- spec/src/milestones.md | pnpm exec prettier --check --stdin-filepath spec/src/milestones.md",
+        "result": "fail",
+        "failures": 2,
+        "note": "Whole-ledger formatting warning reproduces in parent. Historical ledger bytes preserved; new evidence uses formatted JSON. No historical whitespace rewrite."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Local JJ Linux fix, independent files/bookmarks loading, on-demand preparation, RPC/query/collaboration projections and large-scale cold/real-RustFS acceptance remain later slices.",
+      "UI and root aggregate lanes are out of scope for this native read-capability slice; visual baselines remain unapproved."
+    ],
+    "next": "Implement query-specific local JJ access, then remaining bounded-read slices and large-scale qualification."
+  }
 ]
+
 ```

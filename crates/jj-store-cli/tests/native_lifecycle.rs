@@ -861,6 +861,39 @@ async fn protection_can_freeze_multiple_existing_divergent_incarnations() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn read_session_point_lookup_does_not_materialize_inventory() {
+    use jj_store_service::reads::{OpenRead, ReadLimits};
+    let f = Fixture::new().await;
+    let before = f.session.snapshot().await.unwrap();
+    assert!(before.inventory(f.store.clone(), 100).await.unwrap().len() > 1);
+    let OpenRead::Pinned(read) = f
+        .session
+        .open_read(
+            None,
+            ReadLimits {
+                max_objects: 1,
+                ..ReadLimits::default()
+            },
+        )
+        .await
+        .expect("one requested operation must not charge unrelated inventory objects")
+    else {
+        panic!("sole head must pin")
+    };
+    let selected = read.snapshot().await.unwrap().operation_id;
+    read.authorize_object(m::ObjectKey::Operation(selected))
+        .await
+        .unwrap();
+    read.authorize_object(m::ObjectKey::Operation(selected))
+        .await
+        .unwrap();
+    assert_eq!(
+        f.session.snapshot().await.unwrap().manifest(),
+        before.manifest()
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn read_session_pins_history_and_reports_divergent_heads_without_publication() {
     use jj_store_service::reads::{OpenRead, ReadLimits};
     tokio::task::LocalSet::new()
@@ -997,18 +1030,31 @@ async fn read_session_excludes_staged_operations_and_rechecks_revocation() {
 async fn read_session_enforces_inventory_and_elapsed_budgets() {
     use jj_store_service::reads::{Error, OpenRead, ReadLimits};
     let f = Fixture::new().await;
-    assert!(matches!(
-        f.session
-            .open_read(
-                None,
-                ReadLimits {
-                    max_objects: 1,
-                    ..ReadLimits::default()
-                }
-            )
+    let OpenRead::Pinned(tiny) = f
+        .session
+        .open_read(
+            None,
+            ReadLimits {
+                max_objects: 1,
+                ..ReadLimits::default()
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!("sole head")
+    };
+    // Opening charges only the selected operation. A second distinct object
+    // still exceeds this request's object budget; complete enumeration is bounded.
+    assert_eq!(
+        tiny.authorize_object(m::ObjectKey::View(roots::ROOT_VIEW))
             .await,
         Err(Error::Limit)
-    ));
+    );
+    assert_eq!(
+        jj_store_jj::query::ReadAccess::inventory(&tiny).await,
+        Err(jj_store_jj::query::Error::Limit)
+    );
     assert!(matches!(
         f.session
             .open_read(

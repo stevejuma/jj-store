@@ -5,6 +5,68 @@ behavior. [milestones.md](../spec/src/milestones.md) is the single
 implementation progress ledger. The [original attachment](reference/README.md)
 is archived unchanged as non-normative reference material.
 
+## Large repository read implementation
+
+This work implements bounded native and local Git-backed JJ application reads.
+The baseline is `b11c0486`; the isolated Jujutsu workspace is `bounded-reads`.
+The current dev fixture and `/Users/stevejuma/code/linux` remain unchanged.
+
+### Baseline and acceptance
+
+The Linux read probe reached the local 64 MiB admission limit while reading
+commit 19,467 of roughly 1.48 million reachable Git commits. Query information
+and one-bookmark requests both failed before dispatch. Native reads likewise
+capture the complete committed inventory before returning selected objects.
+
+Qualify files, bookmarks, history and collaboration reads on both profiles.
+Interactive work must follow the selected objects and page, with separately
+bounded, cancelable preparation for derived indexes. Preserve native identities,
+publication authority, exact source pins, current authorization, staged-object
+exclusion, explicit conflicts and complete-result semantics. Retain persisted
+formats and collaboration capacity limits. Do not enable deferred capabilities.
+
+### Ordered slices
+
+1. Native catalog-root read pins and verified point membership; local
+   query-specific operation/view access and scoped commit/path/term reads.
+2. Independent directory rows, batched attribution, header and landing document
+   loading; workspace paging and exact reference resolution; page-only target
+   hydration, direct-child tree traversal and seekable continuations.
+3. On-demand preparation for both profiles, bounded disk-backed traversal,
+   immutable verified cache segments and actual-work query admission. One
+   background worker reserves interactive capacity. Default cache quotas are 4
+   GiB per repository and 16 GiB total, including staging. Preserve pinned JJ
+   evaluation. Cover graph visibility, operation differences, prefix lookup,
+   copy lineage and search; add paged native RPC lookup contracts.
+4. Root-bound collaboration read/search projections, keyset pages and
+   lightweight repository summaries. Load visible cards with at most two
+   concurrent reads; refresh loaded windows and cancel obsolete requests.
+5. Cold/warm large-scale qualification: Linux, a native two-million-commit
+   fixture, 10,000 bookmarks including shared targets, large/deep directories,
+   near-capacity collaboration data, deep pages, cache loss/corruption,
+   cancellation, restart, revocation and publication races. Measure work,
+   latency and memory separately. Include focused contracts/UI/real-RustFS
+   acceptance; retain visual-pending status.
+
+### Endpoint audit
+
+| Surface                           | Baseline work                                                   | Required read shape                                                         |
+| --------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Local code query                  | Complete retained operations, commits and trees before dispatch | Operation/view access; scoped membership; prepared historical lookup        |
+| Native read session               | Entire committed inventory and dependency audit                 | Checked immutable catalog root and point membership                         |
+| References/workspaces             | All targets and changes; browser drains every page              | Exact resolution, independent workspace pages and selected target hydration |
+| Paths/commit header               | Descendant scanning and attribution; graph for header           | Direct directory page, independent metadata batch and object summary        |
+| Query cache/history               | Whole cache hashing; total-commit admission                     | Verified immutable generations and actual work budgets                      |
+| Operation differences/copies      | Whole set materialization before paging                         | Indexed or retained bounded continuation                                    |
+| Code search visibility            | Complete ancestor set per read                                  | Operation-bound derived visibility lookup                                   |
+| Work/Agent/Review/Thread/Reaction | Complete cold domain reconstruction                             | Validated root projection and targeted records/ranges                       |
+| Application search                | All current bodies and all matching results                     | Root-bound search index and keyset continuation                             |
+| Repository cards                  | Task/review/history pages for summaries                         | Lightweight summaries for visible cards                                     |
+
+Each verified slice updates the canonical chapters and `spec/src/milestones.md`
+with actual commands, failures and remaining gates before its Jujutsu commit.
+This document is an implementation checklist, not verification evidence.
+
 ## Agent capture: usable local preview
 
 Replanned 3 October 2026 at the user's request. This replaces the previous

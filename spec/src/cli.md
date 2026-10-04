@@ -1576,3 +1576,8 @@ repository or invoking commands. Configuration examples use the production
 loader; shared authored long help remains embedded in executable help. Generated
 manual links translate repository-only capture preview references to the
 published capture guide; shared executable help retains its source context.
+
+Application read regression coverage includes manifest-root point membership
+under a one-object request budget. The complete inventory remains explicitly
+bounded for callers that request enumeration; opening an application content
+read no longer enumerates all stored objects.

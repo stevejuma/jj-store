@@ -65,7 +65,10 @@ pub trait ReadAccess: Send + Sync {
     fn repository(&self) -> m::RepositoryId;
     fn epoch(&self) -> m::EpochId;
     fn operation(&self) -> m::OperationId;
-    fn inventory(&self) -> &BTreeSet<m::ObjectKey>;
+    /// Point membership must not require complete inventory enumeration.
+    async fn contains(&self, key: m::ObjectKey) -> Result<bool>;
+    /// Explicit complete enumeration under the capability's trusted bound.
+    async fn inventory(&self) -> Result<Arc<BTreeSet<m::ObjectKey>>>;
     async fn authorize(&self) -> Result<()>;
 }
 #[derive(Clone, Copy)]
@@ -381,6 +384,7 @@ impl GraphExecutor {
         budget.check()?;
         let count = access
             .inventory()
+            .await?
             .iter()
             .filter(|key| matches!(key, m::ObjectKey::Commit(_)))
             .count();

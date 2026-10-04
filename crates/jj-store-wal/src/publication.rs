@@ -403,6 +403,21 @@ impl ManifestSnapshot {
         }
         Ok(settings.data)
     }
+    /// Selected point membership, independent of total repository object count.
+    /// Callers authorize before and after accessing this immutable selection.
+    pub async fn inventory_member(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        key: ObjectKey,
+    ) -> Result<Option<VerifiedNode>> {
+        reader::inventory_member(
+            store,
+            self.manifest.repository,
+            self.manifest.inventory,
+            key,
+        )
+        .await
+    }
     /// Complete bounded committed inventory. Callers authorize the request
     /// before invoking this read-only traversal of selected catalog references.
     pub async fn inventory(

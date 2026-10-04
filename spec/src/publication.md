@@ -628,3 +628,14 @@ assignments, code heads or Thread lifecycle.
 A validated immutable AgentStore cache selection retains its audited append
 witnesses together with the object closure. Attaching a request reader preserves
 these witnesses without granting authorization or reauditing an unrelated pin.
+
+## Manifest-selected point membership
+
+Application readers may verify one object against a checked manifest's immutable
+inventory catalog root without materializing the whole repository. The radix
+path and inventory record identity are verified; each dependency followed by a
+reader requires its own selected membership check. A point read never enumerates
+all references in a view or descendants of a tree. An existing object-store key
+is never proof of committed membership. Complete closure audits remain required
+by publication, recovery and explicit integrity operations. Later publications
+cannot replace a retained reader's catalog root.

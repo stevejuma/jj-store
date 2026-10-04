@@ -87,8 +87,13 @@ impl q::ReadAccess for Fixture {
     fn operation(&self) -> m::OperationId {
         self.operation
     }
-    fn inventory(&self) -> &BTreeSet<m::ObjectKey> {
-        &self.inventory
+    async fn contains(&self, key: m::ObjectKey) -> q::Result<bool> {
+        self.authorize().await?;
+        Ok(self.inventory.contains(&key))
+    }
+    async fn inventory(&self) -> q::Result<Arc<BTreeSet<m::ObjectKey>>> {
+        self.authorize().await?;
+        Ok(Arc::new(self.inventory.clone()))
     }
     async fn authorize(&self) -> q::Result<()> {
         Ok(())

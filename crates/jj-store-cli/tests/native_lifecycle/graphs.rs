@@ -478,8 +478,11 @@ impl q::ReadAccess for PausedAccess {
     fn operation(&self) -> m::OperationId {
         self.inner.operation()
     }
-    fn inventory(&self) -> &BTreeSet<m::ObjectKey> {
-        self.inner.inventory()
+    async fn contains(&self, key: m::ObjectKey) -> q::Result<bool> {
+        q::ReadAccess::contains(self.inner.as_ref(), key).await
+    }
+    async fn inventory(&self) -> q::Result<Arc<BTreeSet<m::ObjectKey>>> {
+        q::ReadAccess::inventory(self.inner.as_ref()).await
     }
     async fn authorize(&self) -> q::Result<()> {
         if self.calls.fetch_add(1, std::sync::atomic::Ordering::SeqCst) == 1 {

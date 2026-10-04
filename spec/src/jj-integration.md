@@ -677,3 +677,12 @@ transactions and locks. Preexisting dirty work remains a separate baseline;
 no-change observations do not manufacture code operations. Immutable provenance
 intents avoid hash cycles and late associations never rewrite published
 operation identities.
+
+## Query membership capabilities
+
+Owned read access separates verified point membership from explicitly bounded
+inventory enumeration. Content and object guards use point membership; graph
+preparation and legacy complete enumeration request their own bounded inventory.
+A request-local membership cache is bounded and never retained in read cursors.
+Every path rechecks current authorization and preserves the captured catalog
+root and native operation. This changes no persisted JJ or WAL encoding.

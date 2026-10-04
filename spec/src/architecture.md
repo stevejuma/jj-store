@@ -695,3 +695,13 @@ The application manual is a separate MkDocs Material build from Markdown. Its
 static HTML, search and build-time Mermaid SVGs are bundled for browser and
 desktop Help. Documentation generators consume command/schema definitions and do
 not become repository authority.
+
+## Bounded application read ownership
+
+Application sessions retain checked immutable catalog roots. The WAL layer owns
+verified catalog point membership; the service owns request authorization,
+limits and credential-free source pins; the JJ boundary requests individual
+objects separately from explicit complete enumeration. Derived read/index
+preparation remains subordinate to these authorities. The staged
+large-repository read work is described in `docs/implementation-plan.md`; each
+delivered slice requires independent evidence in the milestone ledger.

@@ -343,9 +343,12 @@ committed inventory. Staged candidates and objects published after selection
 cannot enter that session's membership set.
 
 The owned read capability has no publication methods and cannot be reconstructed
-from its informational DTO. Inventory count and elapsed time are capped by
-trusted server limits. Each later access rechecks current permission and epoch
-while retaining the original snapshot. Epoch changes require reselection; later
+from its informational DTO. Interactive sessions retain the immutable inventory
+catalog root, not a complete repository inventory. Requested object membership
+uses verified catalog point lookups. Distinct requested objects and elapsed time
+are capped by trusted server limits; complete inventory enumeration has its own
+explicit bound. Each later access rechecks current permission and epoch while
+retaining the original snapshot. Epoch changes require reselection; later
 publications in the same epoch do not silently replace the selected view. The
 graph layer owns index/query budgets and workspace-dependent revsets; the
 pagination layer binds continuations. HTTP and browser integration consume these
@@ -392,8 +395,9 @@ identical even after publication or checkpointing.
 
 Expired pins and server restarts return an explicit cursor-reset result. They
 never fall back to latest. Invalid signatures or changed query bindings fail
-explicitly. Pin count, retained inventory nodes, request concurrency and token
-size are bounded. The process-local registry requires sticky routing in any
+explicitly. Pin count, retained inventory roots and head identities, request
+concurrency and token size are bounded. Pins do not retain request-local
+membership caches. The process-local registry requires sticky routing in any
 future multi-instance deployment; the first release serves one instance.
 
 ## Native content reads
