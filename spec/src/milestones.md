@@ -150,7 +150,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006 |
+| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -74949,6 +74949,51 @@ entries.
   "remaining": [],
   "scope": "Merge acceptance only: docs runtime/assets/tooling and directly affected UI consumers, with canonical source review for features added since the branch. M19 remains Partial; foundational registry-only and packaged WKWebView/DMG release gates from E-DOC-001 remain unchanged. No package publication, deployment, fixture reset, repository conversion, broad storage/contract rerun or visual baseline update.",
   "next": "Commit the validated merge, preserve documentation workspace local evidence, stop only its owned previews and retire that clean workspace."
+},
+{
+  "id": "E-DOC-007",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change vrsptlyk",
+  "kind": "Validated documentation workspace retirement",
+  "versions": "Jujutsu 0.45.1; macOS ARM64; merged application documentation 73f579fb.",
+  "formats": "Operational cleanup and evidence bookkeeping only; no product or state format changes.",
+  "files": [
+    "spec/src/milestones.md"
+  ],
+  "tests": [],
+  "runs": [
+    {
+      "command": "jj --no-pager st in both workspaces; jj log -r \"soumsxws & ::zpoqtoun\"; jj workspace list; ps/lsof ownership and listener checks",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both workspaces clean after validated merge 73f579fb; complete documentation history is an ancestor of main. Verified documentation preview PID 43922 and Python PID 45991 by command and exact working directory before signaling only those processes. Server and its RustFS child exited; listeners 7480/7484 are closed."
+    },
+    {
+      "command": "Copy and SHA-256 compare documentation .local, .scratch, .pnpmfile.cjs, docs/build and web/test-results into main .local/documentation-integration/retired-workspace; write retirement-manifest.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "1705 evidence/fixture files totaling 29920405 bytes preserved with equal pre-copy, post-copy and destination inventories. Includes original screenshots, logs, generated manual and partial fixture; no fixture reset or live-state migration. Generated caches, dependencies and binaries remain rebuildable."
+    },
+    {
+      "command": "jj workspace forget documentation; remove exact verified /Users/stevejuma/code/lapismd/jj-store-documentation directory; jj workspace list; jj --no-pager st",
+      "result": "pass",
+      "failures": 0,
+      "note": "Temporary workspace registration and directory removed after merged product validation and evidence preservation. Main clean before this ledger entry. Other workspace registrations and services left intact."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:validate; pnpm exec prettier --check .local/documentation-integration/retirement-entry.md; final parent-ledger and path checks",
+      "result": "pass",
+      "failures": 0,
+      "note": "138 tasks, five validators, 23 chapters and 172 requirements; new evidence formatting passes. Both parent evidence sets remain JSON-identical, retired directory is absent and the copied Mermaid dependency resolves entirely within main."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Documentation workspace retirement only. Product checks are recorded in E-DOC-006 and are not repeated for ledger-only cleanup. M19 remains Partial with foundational registry-only and packaged native-host release gates unchanged. Retained fixture files are archival evidence, not a running relocated installation.",
+  "next": "Continue documentation and Help development in the main jj-store workspace; retired preview URLs are stopped."
 }
 ]
 ```
