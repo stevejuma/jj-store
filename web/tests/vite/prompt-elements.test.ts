@@ -1,4 +1,40 @@
 import { describe, expect, test } from "vitest";
+import { promptTagTokens } from "../../src/lib/ui/store-collaboration/prompt-tag-tokens.js";
+
+test("XML syntax highlighting preserves arbitrary names, inert attributes and exact characters", () => {
+  const label =
+    "<自定义:scope source=\"cli > desktop\" mode='local' enabled />";
+  const tokens = promptTagTokens(label);
+  expect(tokens.map((token) => token.text).join("")).toBe(label);
+  expect(
+    tokens.filter((token) => token.kind === "name").map((token) => token.text),
+  ).toContain("自定义:scope");
+  expect(
+    tokens
+      .filter((token) => token.kind === "attribute")
+      .map((token) => token.text),
+  ).toEqual(["source", "mode", "enabled"]);
+  expect(
+    tokens
+      .filter((token) => token.kind === "string")
+      .map((token) => token.text),
+  ).toEqual(['"cli > desktop"', "'local'"]);
+  expect(
+    tokens
+      .filter((token) => token.kind === "punctuation")
+      .map((token) => token.text),
+  ).toEqual(["<", "/>"]);
+  for (const source of [
+    "</name>",
+    '<unknown broken="unterminated>',
+    '<script onclick="alert(1)">',
+  ])
+    expect(
+      promptTagTokens(source)
+        .map((token) => token.text)
+        .join(""),
+    ).toBe(source);
+});
 import {
   maskPromptTags,
   matchPromptElements,

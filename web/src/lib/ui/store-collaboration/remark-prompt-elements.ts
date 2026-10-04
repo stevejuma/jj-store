@@ -122,17 +122,33 @@ export function remarkPromptElements(this: { parser?: unknown }) {
       for (const section of sections) {
         children.push(...markdown(at, section.open.start));
         const stop = section.close?.end ?? section.open.end;
+        const body = section.close
+          ? build(section.open.end, section.close.start, section.children)
+          : [];
+        const compact =
+          !section.children.length &&
+          !/[\r\n]/.test(
+            source
+              .slice(section.open.end, section.close?.start ?? section.open.end)
+              .trim(),
+          ) &&
+          (body.length === 0 ||
+            (body.length === 1 && body[0]!.type === "paragraph"));
         children.push({
           type: "agentPromptElement",
           data: {
             hName: "div",
             hProperties: {
-              title: PROMPT_ELEMENT_MARKER + section.open.label,
+              title:
+                PROMPT_ELEMENT_MARKER +
+                JSON.stringify({
+                  label: section.open.label,
+                  closing: section.close?.label,
+                  compact,
+                }),
             },
           },
-          children: section.close
-            ? build(section.open.end, section.close.start, section.children)
-            : [],
+          children: compact && body.length === 1 ? body[0]!.children : body,
           position: { start: point(section.open.start), end: point(stop) },
         });
         at = stop;

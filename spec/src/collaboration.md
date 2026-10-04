@@ -3188,9 +3188,13 @@ cannot release, retarget or retry the command.
 Agent prompt-element disclosures are presentation derived from recorded text,
 independent of harness identity. Their renderer never modifies captured source,
 canonical content, media type, request identity or copy values. Markup
-attributes are inert text; the shared Markdown safe-HTML and link policy still
-applies to element bodies. Malformed, unfinished or excessively nested markup
-falls back to visible literal text rather than discarding source.
+attributes are inert text, including highlighted names and values. Compact
+single-line leaf presentation retains both tags and safe inline Markdown;
+nested/multiline nodes retain disclosures. Borderless rows preserve child-level
+indentation and syntax token colors without modifying attribute text. The shared
+Markdown safe-HTML and link policy still applies to element bodies. Malformed,
+unfinished or excessively nested markup falls back to visible literal text
+rather than discarding source.
 
 ### Editable local capture configuration
 

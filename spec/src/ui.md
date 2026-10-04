@@ -1791,13 +1791,28 @@ elements. Balanced arbitrary element names, nested sections and literal
 attributes render as initially collapsed Design Core disclosures; Markdown
 before, between, inside and after those elements remains on the shared safe Mira
 pipeline. Fenced/indented code, inline code and escaped examples remain literal.
-Self-closing elements are inert labels; incomplete or mismatched tags remain
-readable literal text. No harness tag allowlist, HTML attribute execution,
-source rewriting or persisted disclosure state is introduced. Activity messages
-and recorded transcript chunks share this behavior; ordinary comments and
-repository Markdown retain their existing rendering. Exact source remains the
-Copy message value. Nested controls are keyboard accessible and expansion must
-remeasure virtual rows without clipping following messages.
+Self-closing elements are inert highlighted labels. A paired leaf whose trimmed
+body occupies one source line and parses as one Markdown paragraph renders an
+inline row with opening tag, safe inline Markdown and exact closing tag, without
+a disclosure icon. This includes bodies surrounded by newlines and empty paired
+leaves. Nested, multiline and block Markdown bodies retain disclosures. All
+displayed tags use syntax colors for node names, attributes, quoted values and
+angle-bracket punctuation, derived from generic XML syntax and the current
+appearance palette. Node names mix their tag token 20% toward foreground for
+contrast. Attribute identifiers use the palette's constant token mixed 15%
+toward foreground, remaining distinct from punctuation and quoted values. Tags
+are borderless text on the surrounding surface, without an inline-code
+background. Each child level indents by 1rem, with compact and disclosed sibling
+tag labels aligned in the same icon column. Attribute text remains inert;
+highlighting preserves every source character. Sibling node gaps are at most
+0.25rem without compressing Markdown paragraph spacing inside longer bodies.
+Incomplete or mismatched tags remain readable literal text. No harness tag
+allowlist, HTML attribute execution, source rewriting or persisted disclosure
+state is introduced. Activity messages and recorded transcript chunks share this
+behavior; ordinary comments and repository Markdown retain their existing
+rendering. Exact source remains the Copy message value. Nested controls are
+keyboard accessible and expansion must remeasure virtual rows without clipping
+following messages.
 
 ### Complete supported configuration settings
 

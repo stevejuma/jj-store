@@ -122,12 +122,45 @@ for (const fallback of [false, true]) {
       await expect(
         context.getByRole("link", { name: "safe links" }),
       ).toHaveAttribute("href", "https://example.com/");
-      await context
-        .getByRole("button", {
-          name: '<arbitrary_limits category="host">',
-          exact: true,
-        })
-        .click();
+      await expect(
+        context.locator('[data-prompt-element^="<arbitrary_limits "] button'),
+      ).toHaveCount(0);
+      const leaf = context.locator(
+        '[data-prompt-element^="<arbitrary_limits "]',
+      );
+      const childTag = leaf.locator(".store-prompt-tag").first();
+      const offsets = await childTag.evaluate((element) => {
+        const parent = element.closest(
+          ".store-prompt-element__body",
+        )!.parentElement!;
+        const parentTag = parent.querySelector("button .store-prompt-tag")!;
+        const siblingTag = parent.querySelector(
+          '[data-prompt-element="<environment_context>"] button .store-prompt-tag',
+        )!;
+        return {
+          indent:
+            element.getBoundingClientRect().left -
+            parentTag.getBoundingClientRect().left,
+          siblingDifference:
+            element.getBoundingClientRect().left -
+            siblingTag.getBoundingClientRect().left,
+        };
+      });
+      expect(offsets.indent).toBeGreaterThanOrEqual(16);
+      expect(offsets.siblingDifference).toBe(0);
+      expect(
+        await leaf.evaluate(
+          (element) => getComputedStyle(element).borderTopWidth,
+        ),
+      ).toBe("0px");
+      const attribute = parent.locator('[data-xml-token="attribute"]');
+      expect(
+        await attribute.evaluate((element) => getComputedStyle(element).color),
+      ).not.toBe(
+        await parent
+          .locator('[data-xml-token="string"]')
+          .evaluate((element) => getComputedStyle(element).color),
+      );
       await expect(
         context.getByText("cargo test", { exact: true }),
       ).toBeVisible();
@@ -153,9 +186,12 @@ for (const fallback of [false, true]) {
           return second.y - (first.y + first.height);
         })
         .toBeGreaterThanOrEqual(-1);
-      await context
-        .getByRole("button", { name: "<another-tool.context>", exact: true })
-        .click();
+      await expect(
+        context.getByRole("button", {
+          name: "<another-tool.context>",
+          exact: true,
+        }),
+      ).toHaveCount(0);
       await expect(
         context.getByText("Markdown", { exact: true }),
       ).toBeVisible();
@@ -214,12 +250,12 @@ test("cold prompt markup attributes are inert and malformed sections remain visi
   await expect(
     context.getByRole("link", { name: "reference" }),
   ).toHaveAttribute("href", "https://example.com/");
+  await expect(context.locator('[data-prompt-element^="<image "]')).toHaveText(
+    '<image src="https://example.invalid/leak" />',
+  );
   await expect(
-    context.getByText('<image src="https://example.invalid/leak" />', {
-      exact: true,
-    }),
-  ).toBeVisible();
-  await context.getByRole("button", { name: "<script>", exact: true }).click();
+    context.getByRole("button", { name: "<script>", exact: true }),
+  ).toHaveCount(0);
   await expect(
     context.getByText("window.promptExecuted = true", { exact: true }),
   ).toBeVisible();

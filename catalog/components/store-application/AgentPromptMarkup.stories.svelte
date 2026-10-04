@@ -30,10 +30,11 @@
       "href",
       "https://example.com/",
     );
-    const child = c.getByRole("button", {
-      name: '<arbitrary_limits category="host">',
-    });
-    await userEvent.click(child);
+    await expect(
+      canvasElement.querySelector(
+        '[data-prompt-element^="<arbitrary_limits "] button',
+      ),
+    ).toBeNull();
     await expect(c.getByText("cargo test", { exact: true })).toBeVisible();
     await userEvent.click(
       c.getByRole("button", { name: "<environment_context>" }),
@@ -43,9 +44,9 @@
       "<literal><keep_this /></literal>",
     );
     await expect(c.queryByRole("button", { name: "<literal>" })).toBeNull();
-    await userEvent.click(
-      c.getByRole("button", { name: "<another-tool.context>" }),
-    );
+    await expect(
+      c.queryByRole("button", { name: "<another-tool.context>" }),
+    ).toBeNull();
     await expect(c.getByText("Markdown", { exact: true })).toBeVisible();
     await context.focus();
     await userEvent.keyboard("{Enter}");
@@ -56,6 +57,93 @@
     await expect(c.getByText("<example />", { exact: true })).toBeVisible();
   }
 </script>
+
+<Story
+  name="Compact XML leaves retain closing tags, Markdown and highlighted syntax"
+  args={{
+    content:
+      "<context>\n<current_date>\n2026-10-04\n</current_date>\n<timezone>Europe/London</timezone>\n<value source=\"cli > desktop\" mode='local'>Use **Markdown**.</value>\n<empty />\n<child><leaf>Nested</leaf></child>\n<notes>First line\nSecond line</notes>\n</context>",
+  }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(await c.findByRole("button", { name: "<context>" }));
+    const date = canvasElement.querySelector<HTMLElement>(
+      '[data-prompt-element="<current_date>"]',
+    )!;
+    const timezone = canvasElement.querySelector<HTMLElement>(
+      '[data-prompt-element="<timezone>"]',
+    )!;
+    await waitFor(() => expect(date).toBeVisible());
+    await expect(date).toHaveTextContent(
+      "<current_date>2026-10-04</current_date>",
+    );
+    await expect(date.querySelector("button")).toBeNull();
+    await expect(date.querySelector("svg")).toBeNull();
+    await expect(date.querySelectorAll("p")).toHaveLength(0);
+    const row = (label: string) =>
+      Array.from(canvasElement.querySelectorAll("[data-prompt-element]")).find(
+        (element) => element.getAttribute("data-prompt-element") === label,
+      )!;
+    const tagLeft = (label: string) =>
+      row(label).querySelector(".store-prompt-tag")!.getBoundingClientRect()
+        .left;
+    await waitFor(() => {
+      expect(
+        tagLeft("<current_date>") - tagLeft("<context>"),
+      ).toBeGreaterThanOrEqual(16);
+      expect(tagLeft("<current_date>")).toBe(tagLeft("<child>"));
+    });
+    await userEvent.click(c.getByRole("button", { name: "<child>" }));
+    const leaf = canvasElement.querySelector('[data-prompt-element="<leaf>"]')!;
+    await waitFor(() => expect(leaf).toBeVisible());
+    await waitFor(() =>
+      expect(tagLeft("<leaf>") - tagLeft("<child>")).toBeGreaterThanOrEqual(16),
+    );
+    for (const element of [date, row("<child>"), leaf]) {
+      await expect(getComputedStyle(element).borderTopWidth).toBe("0px");
+    }
+    await expect(date.querySelectorAll('[data-xml-token="name"]')).toHaveLength(
+      2,
+    );
+    await expect(
+      date.querySelectorAll('[data-xml-token="punctuation"]'),
+    ).toHaveLength(4);
+    const value = canvasElement.querySelector<HTMLElement>(
+      '[data-prompt-element^="<value "]',
+    )!;
+    await expect(value.querySelector("strong")).toHaveTextContent("Markdown");
+    await expect(
+      Array.from(value.querySelectorAll('[data-xml-token="attribute"]')).map(
+        (el) => el.textContent,
+      ),
+    ).toEqual(["source", "mode"]);
+    await expect(
+      Array.from(value.querySelectorAll('[data-xml-token="string"]')).map(
+        (el) => el.textContent,
+      ),
+    ).toEqual(['"cli > desktop"', "'local'"]);
+    await expect(
+      timezone.getBoundingClientRect().top -
+        date.getBoundingClientRect().bottom,
+    ).toBeLessThanOrEqual(4);
+    await expect(c.getByRole("button", { name: "<notes>" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+    const tag = value.querySelector('[data-xml-token="name"]')!;
+    const attr = value.querySelector('[data-xml-token="attribute"]')!;
+    const str = value.querySelector('[data-xml-token="string"]')!;
+    await expect(getComputedStyle(attr).color).not.toBe(
+      getComputedStyle(tag).color,
+    );
+    await expect(getComputedStyle(attr).color).not.toBe(
+      getComputedStyle(str).color,
+    );
+    await expect(
+      new Set([tag, attr, str].map((el) => getComputedStyle(el).color)).size,
+    ).toBeGreaterThan(1);
+  }}
+/>
 
 <Story
   name="Nested arbitrary prompt elements preserve Markdown"
@@ -126,12 +214,13 @@
       "href",
       "https://example.com/",
     );
-    await expect(
-      c.getByText('<image src="https://example.invalid/leak" />', {
-        exact: true,
-      }),
-    ).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "<script>" }));
+    const imageLabel = canvasElement.querySelector(
+      '[data-prompt-element^="<image "]',
+    )!;
+    await expect(imageLabel).toHaveTextContent(
+      '<image src="https://example.invalid/leak" />',
+    );
+    await expect(c.queryByRole("button", { name: "<script>" })).toBeNull();
     await expect(
       c.getByText("window.promptExecuted = true", { exact: true }),
     ).toBeVisible();

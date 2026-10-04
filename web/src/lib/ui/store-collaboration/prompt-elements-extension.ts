@@ -21,8 +21,26 @@ function rehypePromptElements() {
         typeof title === "string" &&
         title.startsWith(PROMPT_ELEMENT_MARKER)
       ) {
-        node.tagName = "storepromptelement";
-        node.properties = { label: title.slice(PROMPT_ELEMENT_MARKER.length) };
+        try {
+          const presentation = JSON.parse(
+            title.slice(PROMPT_ELEMENT_MARKER.length),
+          );
+          if (
+            typeof presentation.label !== "string" ||
+            typeof presentation.compact !== "boolean" ||
+            (presentation.closing !== undefined &&
+              typeof presentation.closing !== "string")
+          )
+            return;
+          node.tagName = "storepromptelement";
+          node.properties = {
+            label: presentation.label,
+            closing: presentation.closing,
+            compact: presentation.compact,
+          };
+        } catch {
+          /* Malformed internal metadata stays ordinary safe markup. */
+        }
       }
       node.children?.forEach(visit);
     }

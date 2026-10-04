@@ -1705,7 +1705,9 @@ Agent activity and recorded transcript APIs retain their exact text content. The
 browser may derive generic nested prompt-element disclosures through the safe
 Markdown extension described in `ui.md`; tag names and literal attributes never
 become trusted metadata or executable HTML. Preview expansion changes only
-presentation, with Copy message retaining the complete original body. No
+presentation, with Copy message retaining the complete original body. Compact
+single-line leaf rows include the closing tag and safe inline Markdown, while
+syntax coloring treats source attributes only as escaped text spans. No
 transport schema, media type, stored transcript or review anchor changes.
 
 ### Installation configuration editing

@@ -70953,6 +70953,166 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Tool timing and directly affected Agent list/transcript presentation only; no milestone promotion, evidence rewrite, reimport/reset, publication, installed-tool change or unrelated restart. Full release/harness qualification, root aggregates/full Rust workspace, unrelated contract inventory and visual baseline approval are outside narrow acceptance. Prior strict Clippy baseline warnings remain separately recorded in E-M18-007; this slice runs affected all-target check.",
   "next": "Use refreshed preview. Known recorded duration appears before each tool detail chevron; padding belongs inside each row before its icon. Unknown timing stays absent; broader release and visual qualification remain separate."
+},
+{
+  "id": "E-M18-009",
+  "tasks": [
+    "M9.5",
+    "M18.8"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change xrpomkus",
+  "kind": "Compact, highlighted, borderless XML prompt rows with explicit child indentation",
+  "versions": "Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; existing CodeMirror XML and Lezer highlight parsers; released Design Core Collapsible/Button and safe Mira preview.",
+  "formats": "Presentation-only internal prompt metadata now carries guarded label/closing/compact values after safe Markdown sanitization. No source, transport/schema, persisted transcript, review-anchor, capture or server format changes. Arbitrary tags and attributes are escaped token text; one source-line Markdown leaf renders inline, other bodies retain disclosures.",
+  "files": [
+    "catalog/components/store-application/AgentPromptMarkup.stories.svelte",
+    "catalog/components/store-application/AgentToolGroups.stories.svelte",
+    "catalog/components/store-application/agent-tool-duration-play.ts",
+    "spec/src/api.md",
+    "spec/src/collaboration.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/store-collaboration/StorePromptElement.svelte",
+    "web/src/lib/ui/store-collaboration/StorePromptTag.svelte",
+    "web/src/lib/ui/store-collaboration/prompt-elements-extension.ts",
+    "web/src/lib/ui/store-collaboration/prompt-tag-tokens.ts",
+    "web/src/lib/ui/store-collaboration/remark-prompt-elements.ts",
+    "web/tests/browser/agent-prompt-markup.spec.ts",
+    "web/tests/vite/prompt-elements.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; read tracked/parent guidance, JJ skill, canonical UI/API/collaboration chapters and milestones; inspect Community Markdown presentation and Design Core Button/highlight tokens",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main change xrpomkus continues the authorized XML slice. Preview is a clean descendant. All implementation belongs to main. No unrelated changes, server resets or installed executables touched."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (initial compact regression)",
+      "result": "fail",
+      "failures": 1,
+      "note": "before.log: six existing stories pass; compact/highlighting story fails once before implementation."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (initial after)",
+      "result": "fail",
+      "failures": 3,
+      "note": "stories.log: fragmented token spans changed accessible names for attribute-bearing triggers. Four pass; fixed by explicit aria-label preserving the exact original opening tag."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (accessible-name correction)",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories-corrected.log: all seven interaction/accessibility stories pass before subsequent indentation/border/attribute requests."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (initial cold build)",
+      "result": "fail",
+      "failures": 2,
+      "note": "browser.log: desktop/mobile fail Axe contrast, tag name #22863a on inherited inline-code background #f4f5f7, ratio4.24. Inert/malformed scenario passes. Copy, Markdown, keyboard and virtualization assertions pass before Axe."
+    },
+    {
+      "command": "pnpm check:architecture (first)",
+      "result": "fail",
+      "failures": 1,
+      "note": "architecture.log: preceding slice left AgentToolGroups story at413 counted lines after its late icon assertions, exceeding400. Historical E-M18-008 remains unchanged. Extracted existing duration play function into owned catalog helper; behavior unchanged."
+    },
+    {
+      "command": "pnpm spec:first (first)",
+      "result": "fail",
+      "failures": 1,
+      "note": "spec-first.log: UI change requires mapped api.md alongside ui.md. Updated mapped API paragraph without transport/schema changes; corrected run passes."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (indentation regression)",
+      "result": "fail",
+      "failures": 1,
+      "note": "indent-before.log: six pass, new hierarchy assertion fails. Live before measurement independently confirms parent label1056px, compact child1046px, disclosed child1067px; only10px body padding and1px row border."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte (first indentation after)",
+      "result": "fail",
+      "failures": 2,
+      "note": "stories-final.log:12 pass, compact geometry and attribute contrast fail. Exact tool family all seven passes. Neutral attribute palette changed to distinct constant token; mix toward foreground fixes lighter story surface contrast."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (subsequent indentation checks)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Each of stories-indent-final.log, stories-verified.log and stories-diagnostic.log records one compact geometry failure and six passes. Diagnostics show parent label586.1875px versus child346px: catalog lacked justify-start utility output. Replaced utility-dependent trigger layout with explicit owned CSS and retained16px geometry assertion; temporary diagnostic logging removed."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (first hierarchy build)",
+      "result": "fail",
+      "failures": 2,
+      "note": "browser-latest.log: desktop observes15px due transparent1px Button border; mobile asynchronous separate bounding-box reads encounter remount. Removed trigger border and made geometry read atomic within current subtree; assertions remain16px plus aligned sibling labels."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (first borderless build)",
+      "result": "fail",
+      "failures": 2,
+      "note": "browser-verified.log: functional/copy/geometry checks pass; Axe rejects tag color on highlighted message surface (#e5e5e6 ratio3.67) and mobile hover surface. Names mix20% toward foreground, attributes15%; no global palette change or weakened accessibility checks."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/prompt-elements.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "units.log and units-final.log: eight parser/token units pass. Generic arbitrary/Unicode names, inert attributes, exact character reconstruction, malformed syntax, nesting/code/reference boundaries preserved. No added dependency."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories-accepted.log: all seven interactions and Axe checks pass. Compact children and deeper leaf labels indent16px per level, align with disclosed siblings, keep closing tags/inline Markdown without buttons, retain <=4px sibling gaps and borderless rows; distinct attribute/string/name colors. Nested and multiline disclosures remain keyboard accessible."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentToolGroups.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "tool-stories.log and stories-final.log: exact seven direct tool stories pass after duration play helper extraction, preserving prior icon padding and timing behavior. No broader tool changes."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check (initial/final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both affected type checks pass with zero errors/warnings; latest catalog176-module boundary. web-check-verified.log and catalog-check-verified.log. No Rust source, schema or contract generation changed."
+    },
+    {
+      "command": "pnpm web:build (initial/final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "All builds pass, including build-accepted.log. Existing chunk-size warning retained. Production asset manifest generated; no Rust binary rebuild. Required cold browser verification consumes final built UI via existing explicit browser_preview executable on isolated7458."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/agent-xml-compact/playwright.config.ts agent-prompt-markup.spec.ts (final cold build)",
+      "result": "pass",
+      "failures": 0,
+      "note": "browser-contrast.log and final browser-accepted.log: three scenarios pass, covering desktop activity, touch-mobile recorded chunks and inert/malformed sections. Real built-asset router, exact clipboard source, safe links/code, keyboard expand/collapse, virtual-row resizing, no overlap/viewport overflow, child indentation and Axe all qualify this surface. Fresh isolated service stopped by Playwright."
+    },
+    {
+      "command": "pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; focused Prettier; pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Architecture908-module, UI ownership, package boundaries, changed-file formatting and canonical/mapped chapter checks pass. Final style-only correction consumes the same narrow surface. Root aggregates/full Rust/full browser inventory remain out of scope."
+    },
+    {
+      "command": "jj --no-pager st; jj workspace update-stale (clean preview); Cua live DOM geometry, syntax colors and screenshot",
+      "result": "pass",
+      "failures": 0,
+      "note": "Preview7470 HMR synchronized from main. Actual Focus view measures parent393px, compact children409px, grandchildren425px; all row and trigger borders0. Attribute type blue, name green, quoted value navy. Current user view opened transient disclosures for inspection; route, source, drafts, settings, preferences unchanged. Temporary proof tab closed. Screenshot .local/agent-xml-compact/after.png and geometry.json; no visual baseline approval."
+    },
+    {
+      "command": "pnpm check:progress; final architecture check; historical evidence-prefix assertions",
+      "result": "pass",
+      "failures": 0,
+      "note": "progress-final.log:136 tasks pass. architecture-accepted.log:908-module source limits pass after final CSS. All406 prior evidence objects and raw prefix remain unchanged; no milestone status promoted. Main slice committed with explicit JJ message and clean preview refreshed afterward."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "XML transcript presentation and direct tool-story source-size correction only. No milestone promotion, historical evidence rewrite, Rust build, reimport/reset, service installation, main-runtime restart or publication. Root aggregates, full browser/Storybook inventories, unrelated packages and visual baseline approval are out of scope under targeted verification policy.",
+  "next": "Use refreshed preview7470. Broader harness/release and visual-baseline qualification remain separately governed."
 }
 ]
 ```
