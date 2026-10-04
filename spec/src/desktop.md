@@ -135,3 +135,10 @@ selected automatically. Only versioned dock geometry is persisted. Existing
 refresh retains historical selections, editor drafts and pending mutations. Cold
 native WKWebView and production-CSP evidence remains distinct from fixture
 stories.
+
+## Bundled application documentation
+
+JST-DOC-003 bundles the generated manual with paired desktop resources. Staging
+validates its independent allowlist and preserves nested documentation assets.
+Help fills the application viewport beneath native window controls, using the
+existing external-link policy.

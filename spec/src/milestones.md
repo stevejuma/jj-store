@@ -150,6 +150,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M19 | Partial | M4.9 | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -74139,6 +74140,815 @@ entries.
   "result": "pass",
   "remaining": [],
   "next": "Retain the current source review server and regression coverage. Released foundational dependency acceptance, wider M13 qualification and visual baselines remain separately governed; no milestone status change is made by this UI slice."
+},
+{
+  "id": "E-DOC-001",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change omkyroqp",
+  "kind": "Application manual and bundled Help delivery",
+  "versions": "JJ 0.45.1; Rust 1.98.1/macOS ARM64; MkDocs 1.6.1; Material 9.6.23; Mermaid 11.12.0; Playwright 1.63.0; Python 3.14.3. Browser source acceptance uses the repository existing local Design Core hook; registry-only acceptance is separate.",
+  "formats": "Server config 2 unchanged; browser manifest 1 unchanged; independent Help manifest 1 with 512 files, 8 MiB/file and 32 MiB total; no repository format or API changes.",
+  "files": [
+    ".gitignore",
+    ".prettierignore",
+    "README.md",
+    "crates/jj-store-cli/examples/docs_reference.rs",
+    "crates/jj-store-http/src/assets.rs",
+    "crates/jj-store-http/src/assets/help.rs",
+    "crates/jj-store-http/tests/assets.rs",
+    "crates/jj-store-server/tests/configuration.rs",
+    "docs/cli/server-config.md",
+    "docs/cli/work.md",
+    "docs/maintenance/arguments.json",
+    "docs/maintenance/coverage.json",
+    "docs/site/assets/embed.js",
+    "docs/site/assets/manual.css",
+    "docs/site/cli/index.md",
+    "docs/site/cli/jj-agent.md",
+    "docs/site/cli/jj-project.md",
+    "docs/site/cli/jj-replica.md",
+    "docs/site/cli/jj-review.md",
+    "docs/site/cli/jj-store-client.md",
+    "docs/site/cli/jj-store.md",
+    "docs/site/cli/jj-sync.md",
+    "docs/site/cli/jj-task.md",
+    "docs/site/concepts/collaboration.md",
+    "docs/site/concepts/glossary.md",
+    "docs/site/concepts/projects.md",
+    "docs/site/concepts/repositories.md",
+    "docs/site/concepts/snapshots.md",
+    "docs/site/contributing/development.md",
+    "docs/site/contributing/documentation.md",
+    "docs/site/faq.md",
+    "docs/site/getting-started/contexts.md",
+    "docs/site/getting-started/install.md",
+    "docs/site/getting-started/local.md",
+    "docs/site/getting-started/native.md",
+    "docs/site/getting-started/work.md",
+    "docs/site/guides/browsing.md",
+    "docs/site/guides/capture.md",
+    "docs/site/guides/editing.md",
+    "docs/site/guides/git.md",
+    "docs/site/guides/reviews.md",
+    "docs/site/guides/search.md",
+    "docs/site/guides/settings.md",
+    "docs/site/guides/sync.md",
+    "docs/site/guides/troubleshooting.md",
+    "docs/site/guides/work.md",
+    "docs/site/index.md",
+    "docs/site/reference/api/administration.md",
+    "docs/site/reference/api/code.md",
+    "docs/site/reference/api/collaboration.md",
+    "docs/site/reference/api/installation.md",
+    "docs/site/reference/api/search.md",
+    "docs/site/reference/api/types.md",
+    "docs/site/reference/api/work.md",
+    "docs/site/reference/capabilities.md",
+    "docs/site/reference/configuration.md",
+    "docs/site/reference/defaults.md",
+    "docs/site/reference/environment.md",
+    "docs/site/reference/http-api.md",
+    "docs/site/reference/queries.md",
+    "docs/site/reference/security.md",
+    "docs/site/reference/transport.md",
+    "docs/site/technical/architecture.md",
+    "docs/site/technical/capture.md",
+    "docs/site/technical/lifecycle.md",
+    "docs/site/technical/local.md",
+    "docs/site/technical/publication.md",
+    "docs/site/technical/reads.md",
+    "docs/site/technical/replication.md",
+    "docs/site/technical/storage.md",
+    "mkdocs.yml",
+    "package.json",
+    "pnpm-lock.yaml",
+    "pyproject.toml",
+    "scripts/check-progress.mjs",
+    "scripts/desktop-resources.mjs",
+    "scripts/desktop.mjs",
+    "scripts/docs.mjs",
+    "scripts/docs.test.mjs",
+    "scripts/docs/assets.mjs",
+    "scripts/docs/diagrams.mjs",
+    "scripts/docs/hooks.py",
+    "scripts/docs/references.mjs",
+    "scripts/docs/review.mjs",
+    "scripts/docs/site.py",
+    "spec-validator.config.mjs",
+    "spec/src/SUMMARY.md",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/desktop.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/security.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "uv.lock",
+    "web/playwright.docs.config.ts",
+    "web/src/lib/ui/store-application/StoreApplication.svelte",
+    "web/src/lib/ui/store-application/StoreConnection.svelte",
+    "web/src/lib/ui/store-help/StoreHelp.svelte",
+    "web/src/lib/ui/store-help/help-session.ts",
+    "web/tests/browser/help.spec.ts",
+    "web/tests/help-session.test.ts",
+    "web/vite.config.ts"
+  ],
+  "tests": [
+    "crates/jj-store-http/tests/assets.rs#documentation_routes_are_preloaded_and_have_scoped_framing_policy",
+    "crates/jj-store-http/tests/assets.rs#documentation_manifest_rejects_invalid_closures",
+    "crates/jj-store-http/tests/assets.rs#documentation_rejects_leaf_directory_and_root_symlinks",
+    "crates/jj-store-server/tests/configuration.rs#documentation_configuration_examples_use_production_validation"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; jj workspace add ../jj-store-documentation --name documentation -r @- -m \"Build documentation site and embedded Help\"; inspect JJ docs source/rendered site and owning specifications",
+      "result": "pass",
+      "failures": 0,
+      "note": "Isolated workspace parent b11c0486. Original working files preserved. Markdown/Material and generated full-screen Help follow the user-selected plan; no publication."
+    },
+    {
+      "command": "node --test scripts/web-manifest.test.mjs; pnpm docs:check (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "2 existing asset-generator tests passed; documentation command absent before implementation."
+    },
+    {
+      "command": "pnpm install --frozen-lockfile; pnpm install --ignore-pnpmfile --frozen-lockfile; pnpm web:check (registry baseline)",
+      "result": "fail",
+      "failures": 24,
+      "note": "Existing hook checksum mismatch blocked first install; registry-only install passed. Registry Design Core 0.2.0 lacks APIs already used on parent: 23 Svelte errors in 9 files. No release claim. Logs retained in ignored .scratch."
+    },
+    {
+      "command": "pnpm add -D --save-exact --ignore-pnpmfile mermaid@11.12.0; uv lock; uv sync --locked; pnpm install --no-frozen-lockfile --lockfile=false",
+      "result": "pass",
+      "failures": 0,
+      "note": "Locked documentation dependencies; restored existing source dependency validation setup without changing registry package ranges or installing/publishing global tools."
+    },
+    {
+      "command": "cargo run --quiet --locked -p jj-store-cli --example docs_reference (initial/fixed environment); pnpm docs:generate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial vectorscan build could not find C++ headers. All succeeding Cargo commands use DEVELOPER_DIR=/Library/Developer/CommandLineTools and CXXFLAGS=-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1. 126 visible command nodes generated without opening a repository; defaults come from Rust. Hidden hooks excluded. Reviewed argument descriptions fill absent parser prose and fail on new undocumented arguments."
+    },
+    {
+      "command": "pnpm docs:check (strict build iterations)",
+      "result": "fail",
+      "failures": 5,
+      "note": "Caught Mermaid semicolon parsing, shared-help stale browser link, unprocessed 404 inline scripts, unneeded source maps and oversized highlighted API page. Fixed build hooks and split generated API by domain; original asset limits retained."
+    },
+    {
+      "command": "pnpm docs:check (after repairs)",
+      "result": "pass",
+      "failures": 0,
+      "note": "9 network-disabled Mermaid renders; strict MkDocs navigation plus HTML/CSS link closure and anchor validation. 117 assets, approximately 12.7 MB. Generated refs match the parser and checked-in OpenAPI; source fingerprints acknowledge mapped crate/web/desktop sources and reject uncovered new crates."
+    },
+    {
+      "command": "pnpm docs:test; node --test scripts/web-manifest.test.mjs; pnpm exec tsx --test web/tests/help-session.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "6 documentation regressions, 1 production configuration-parser test, 2 existing manifest tests and 1 frame-message boundary test pass. Negative fixtures cover stale prose review, new sources, generated reference drift, missing/unsafe/symlink assets, broken anchors, inline scripts, external runtime files and preflight-safe desktop staging."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-http --test assets",
+      "result": "pass",
+      "failures": 0,
+      "note": "Complete directly affected HTTP asset suite: 9 passed. Application frame-ancestors remains none; only Help permits same-origin framing; exact preloaded routes enforce independent bounds."
+    },
+    {
+      "command": "pnpm web:check (initial new middleware)",
+      "result": "fail",
+      "failures": 10,
+      "note": "10 JS check errors in new Vite middleware were repaired with typed JSDoc and narrowing; final web diagnostics zero."
+    },
+    {
+      "command": "pnpm docs:test:browser (initial three Chromium runs)",
+      "result": "fail",
+      "failures": 4,
+      "note": "Initial 2 test failures used input fill without Material key events and headings without their permalink marker. Next 1 selected a hidden search link after dismissing search. Third 1 exposed actual theme accessibility defects: unnamed search dialog, footer contrast, color-only links. Fixed explicit reader markup/styles and realistic keyboard interactions; original search, dismissal, draft and Axe assertions retained."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "All 49 governance tests passed. Escalated because source mapping and progress evidence policy changed; docs and new build configuration now require same-change evidence."
+    },
+    {
+      "command": "pnpm docs:test:browser (first Chromium/WebKit run); pnpm exec playwright install webkit",
+      "result": "fail",
+      "failures": 5,
+      "note": "3 Chromium passes; sidebar Shift+Tab escaped focus (1 failure), and the newly pinned WebKit runtime was absent (4 launch failures). Installed WebKit 26.6/v2359 and implemented explicit same-origin iframe focus boundaries."
+    },
+    {
+      "command": "pnpm docs:test:browser (keyboard-boundary run)",
+      "result": "fail",
+      "failures": 2,
+      "note": "All 4 Chromium scenarios and 2 WebKit scenarios passed. WebKit mouse clicks do not automatically focus a button: 2 focus-return assertions exposed capture of the previously active element instead of the actual trigger. Fixed by retaining the click currentTarget; kept the assertions."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final source setup: zero web/catalog errors or warnings, 182 catalog modules, 931 architecture modules, valid UI ownership. No visual baselines changed."
+    },
+    {
+      "command": "Vite createServer smoke with generated /help assets on isolated 7482, then server.close()",
+      "result": "pass",
+      "failures": 0,
+      "note": "117 admitted assets served at /help/ with scoped same-origin framing. An earlier check raced the concurrently cleaning site build and returned unavailable; sequential rerun after generation passed. No backend or fixture startup."
+    },
+    {
+      "command": "Changed-file Prettier check; targeted rustfmt --check; uv run --locked python -m py_compile scripts/docs/hooks.py scripts/docs/site.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatting and Python syntax pass; the historical milestone JSON prefix is not reformatted. Root aggregate check/test/build/spec:check and unrelated Rust/browser/storage lanes remain out of scope."
+    },
+    {
+      "command": "pnpm spec:validate; pnpm spec:first; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "23 canonical chapters, 171 requirements; 95 protected files and 9 canonical chapters; 137 tasks. This ledger tracks partial release qualification without promoting other milestones."
+    },
+    {
+      "command": "pnpm docs:test:browser (final after WebKit trigger fix)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh production web/docs build followed by 8/8 cold Chromium/WebKit tests under the real Rust asset router. Covers network-denied external requests, local search, SVG load, deep links, same-origin navigation, desktop-width and 390px layout, Escape/search dismissal, iframe Tab boundary, actual-trigger focus return, unsent draft and route/scroll retention, missing docs retry, no-repository installation sidebar and Axe. No native packaged WKWebView claim."
+    },
+    {
+      "command": "pnpm docs:generate; node --test scripts/docs.test.mjs (final reference aliases); node scripts/docs.mjs stage",
+      "result": "pass",
+      "failures": 0,
+      "note": "Visible argument aliases also derive from Clap; no parser command executes. Six tooling regressions remain passing. Final strict site generation and delivery stage retain the complete manual and reference closure. Docs source and specification remain separate."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Registry-resolved Design Core qualification remains blocked by pre-existing published API gaps.",
+    "Packaged native WKWebView/DMG cold acceptance and visual baselines are not claimed by browser-engine and resource-staging tests."
+  ],
+  "scope": "Manual and asset delivery only. Shared HTTP/desktop asset loaders justify complete direct asset/packaging regressions. Existing repository identity/storage/API protocols remain unchanged. No full workspace suite, new real-RustFS qualification, fixture reset, installed CLI replacement, package publication or hosting.",
+  "next": "Review the manual and Help in the documentation workspace. Keep M19 Partial until registry-only foundational-package and packaged native-host release qualification are completed; no hosting/publication requested."
+},
+{
+  "id": "E-DOC-002",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change ptltynkp",
+  "kind": "Help sidebar alignment and workspace preview",
+  "versions": "macOS ARM64; Svelte 5.57.1; Playwright 1.63.0 Chromium and WebKit; existing local Design Core validation hook.",
+  "formats": "No repository, API, browser or documentation manifest format change.",
+  "files": [
+    "web/src/lib/ui/store-help/StoreHelp.svelte",
+    "web/src/lib/ui/store-application/StoreApplication.svelte",
+    "docs/maintenance/coverage.json",
+    "spec/src/ui.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "web/tests/browser/help.spec.ts#Help is available from the installation sidebar before a repository exists"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; inspect Community navigation, Design Core Button/AppShell and official shadcn-svelte Button documentation; live browser geometry comparison",
+      "result": "fail",
+      "failures": 1,
+      "note": "Clean working copy before edits. Help used a 48x36 button at x=0 with icon center x=19; Projects used 32x32 at x=8 with center x=24. No product mutation during measurement."
+    },
+    {
+      "command": "JJ_STORE_DEV_PORT=7484 JJ_STORE_DEV_BACKEND_PORT=7486 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:restart (CommandLineTools DEVELOPER_DIR/CXXFLAGS)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Fresh isolated documentation-workspace initialization built web/docs/native binaries and seeded code plus agent activity. Sample review seeding failed: development review seed could not read src/lib.rs. Shutdown logged its existing five-second limit. Incomplete fixture preserved without reset; 7460/7462 and other deployments untouched. No complete fixture marker fabricated."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web/catalog errors or warnings; 182 catalog and 931 architecture modules; ownership valid."
+    },
+    {
+      "command": "pnpm exec vite build --config web/vite.config.ts; node scripts/web-manifest.mjs; node scripts/docs.mjs stage; pnpm exec playwright test --config web/playwright.docs.config.ts -g \"Help is available from the installation sidebar\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh production build and docs stage; 2/2 exact Chromium/WebKit sidebar Help tests pass, including focus return and keyboard boundary. 117 docs assets, 9 rendered diagrams, valid links/anchors. Existing foundational CSS :global and bundle-size warnings remain; no visual baselines updated."
+    },
+    {
+      "command": "pnpm docs:review application <specific spacing review>; pnpm docs:review; changed-file Prettier --write",
+      "result": "pass",
+      "failures": 0,
+      "note": "Reviewed browsing/editing/settings prose; workflow unchanged. Application fingerprint updated and all source reviews current."
+    },
+    {
+      "command": "JJ_STORE_DEVELOPMENT_STATE_ROOT=<documentation-workspace>/.local/dev-demo ./target/debug/jj-store run --config <documentation-workspace>/.local/dev-demo/local/server.toml --format=json; curl app/help; cold browser reload and collapsed/expanded geometry comparison",
+      "result": "pass",
+      "failures": 0,
+      "note": "Direct native built preview recovered at loopback 7484 using the preserved partial fixture; both app and Help HTTP 200. Help/Projects both 32x32 at x=8 with icon center x=24 collapsed; both 264x36 at x=12 with icon center x=31 expanded in 288px sidebar. Startup fixture remains partial; this is a built preview, not managed HMR mode."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; changed-file pnpm exec prettier --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Spec-first covers 3 protected files and 4 canonical chapters; 5 validators, 23 chapters, 171 requirements; 137 tasks; changed-file formatting passes. Existing 414 evidence entries preserved. Live corrected sidebar screenshot saved in ignored workspace fixture; no baseline update."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Narrow application-owned Help geometry. All 414 prior evidence entries preserved. M19 remains Partial; registry/native-host release gates remain in E-DOC-001. Existing cold exact browser test and live before/after geometry cover the change without adding an implementation-mirroring test. Rust, root aggregates, full browser/Storybook/storage suites and visual baselines are out of scope. Development fixture seeding failure remains explicit and is not a Help acceptance failure.",
+  "next": "Use the built workspace preview on 7484 to review Help. Repair or resume the incomplete demo seeding separately before using managed dev:ui for this fixture."
+},
+{
+  "id": "E-DOC-003",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change nsnyowlt",
+  "kind": "Application-styled documentation and live Help appearance",
+  "versions": "macOS ARM64; Svelte 5.57.1; MkDocs 1.6.1 and Material 9.6.23; Playwright 1.63.0 Chromium and WebKit; existing local Design Core validation hook.",
+  "formats": "No repository, API, browser or documentation manifest format change. Generated closure adds local app palette/font assets and dark Mermaid variants.",
+  "files": [
+    "docs/maintenance/coverage.json",
+    "docs/site/assets/layout.css",
+    "docs/site/assets/manual.css",
+    "docs/site/assets/theme.js",
+    "docs/site/contributing/documentation.md",
+    "docs/site/guides/browsing.md",
+    "mkdocs.yml",
+    "scripts/docs/diagrams.mjs",
+    "scripts/docs/hooks.py",
+    "scripts/docs/site.py",
+    "scripts/docs/theme.mjs",
+    "scripts/docs.mjs",
+    "scripts/docs.test.mjs",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/playwright.docs.config.ts",
+    "web/src/lib/ui/store-help/StoreHelp.svelte",
+    "web/tests/browser/help-theme.spec.ts",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "web/tests/browser/help-theme.spec.ts#embedded Help follows live application appearance across pages and reopening",
+    "web/tests/browser/help-theme.spec.ts#standalone documentation retains themed search and responsive navigation",
+    "scripts/docs.test.mjs#generated closure requires both local diagram theme variants"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; inspect Community presentation, Design Core shell/button/font sources and application appearance; pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"embedded Help follows\" (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Clean working change. Exact new regression failed because the generated manual did not inherit Nord from the application."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"embedded Help follows\" (intermediate)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Two successive assertion failures: equivalent CSS custom-property hex/HSL serializations and ambiguous .md-typeset locator. Compare rendered background colors and scope typography to article; top-frame initialization preserves preference updates. Exact Chromium then passed."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts (first theme suite)",
+      "result": "fail",
+      "failures": 2,
+      "note": "10/12 passed. Both standalone dark Axe checks exposed Material slate link specificity overriding app tokens (4.23 contrast). Raised token mapping specificity; full contrast assertions retained."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"standalone documentation retains\" (intermediate)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Mobile menu click exposed Material direction-selector specificity: the widened drawer still used its old left offset and intercepted the toolbar. Matched the direction selector and retained mobile title positioning. Another run used fill without Material keyboard search events; changed to actual typing as in existing Help tests. Exact Chromium then passed."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts (second theme suite)",
+      "result": "fail",
+      "failures": 1,
+      "note": "11/12 passed. Chromium stalled during the second drawer boundingBox call, which remained pending until context cleanup; no failure screenshot completed. WebKit and the preceding exact Chromium run passed. Preserve geometry assertion and rerun unchanged after final heading CSS."
+    },
+    {
+      "command": "node --test scripts/docs.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "7/7 tooling regressions, including valid, absent, remote and empty dark-diagram variants; bounded closure/staging and source drift remain covered."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web/catalog diagnostics; 182 catalog modules; 932 architecture modules; ownership valid. Web/catalog rerun after final Svelte edits also passed."
+    },
+    {
+      "command": "pnpm web:build; node scripts/docs.mjs stage; pnpm docs:review application <appearance review>; pnpm docs:review",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh production web build and strict final docs generation; 138 files, 13232172 bytes, valid links and anchors; 9 diagrams with light/dark variants and local fonts. Existing foundational CSS :global and bundle-size warnings remain. User requested TOC heading refinement: transparent muted heading without Material white shadow at intermediate widths. All explicit source reviews current."
+    },
+    {
+      "command": "Changed-file pnpm exec prettier --write/--check; uv run --locked python -m py_compile scripts/docs/hooks.py scripts/docs/site.py; pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatting and Python syntax pass; spec-first 16 protected files and 4 canonical chapters; 5 validators, 23 chapters and 171 requirements. Historical ledger prefix excluded from reformatting."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"standalone documentation retains\"; pnpm exec playwright test --config web/playwright.docs.config.ts (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact standalone Chromium passed unchanged after final CSS, then 12/12 complete cold Help tests passed in 1.2m. Fresh native asset-router process, actual generated assets, live Nord/Buzz/Original Dark inheritance and font sizes, dark/light SVG loads, standalone palette/search/mobile drawer, external-network denial, CSP, Axe, draft/page/focus retention and unavailable-doc recovery. Earlier renderer stall did not recur; no timeout or assertion weakening."
+    },
+    {
+      "command": "Graceful restart of only the documentation config process; curl app/help; browser reload, inherited-theme and computed TOC heading inspection",
+      "result": "pass",
+      "failures": 0,
+      "note": "Loopback 7484 app/Help HTTP 200. Existing five-second shutdown warning recurred; read-only preview restarted with preserved partial fixture. App and Help both Buzz; TOC heading has transparent background and no shadow at the user viewport. Full app reload refreshed cached stylesheet. Saved ignored .local/dev-demo/help-app-theme.png; no visual baseline changes. Other deployments untouched."
+    },
+    {
+      "command": "pnpm check:progress; parseLedger historical comparison",
+      "result": "pass",
+      "failures": 0,
+      "note": "137 tasks; all 415 historical evidence objects and their raw JSON prefix preserved. M19 remains Partial. No storage/identity release qualification claimed."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Generated manual presentation and read-only appearance inheritance only. Existing app palettes and released fonts are bundled; host attributes are observed without parent writes, preference storage access or a new messaging/API protocol. Complete Help browser lane justified by shared generated assets and embedded/standalone consumers. All 415 previous evidence entries and raw JSON prefix preserved. M19 remains Partial; foundational registry-only and packaged WKWebView release gates remain in E-DOC-001. Unrelated Rust, root aggregate, full browser/Storybook/storage lanes and visual baselines are out of scope.",
+  "next": "Review themed Help in the documentation workspace preview on 7484. Foundational registry-only and packaged WKWebView release qualification remain separate M19 gates."
+},
+{
+  "id": "E-DOC-004",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change wtyoqnzs",
+  "kind": "Help search alignment and TOC divider refinement",
+  "versions": "macOS ARM64; MkDocs 1.6.1 and Material 9.6.23; Playwright 1.63.0 Chromium/WebKit; existing source validation setup.",
+  "formats": "Presentation CSS only; no asset manifest, repository, API or preference format change.",
+  "files": [
+    "docs/site/assets/layout.css",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "web/tests/browser/help-theme.spec.ts#standalone documentation retains themed search and responsive navigation",
+    "web/tests/browser/help.spec.ts#bundled Help preserves a draft without a repository and works without external network"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; inspect Community and Design Core search/input sources; live Help geometry and computed-style inspection",
+      "result": "fail",
+      "failures": 3,
+      "note": "Clean workspace. Before: TOC left border 1px; search x=1151.8 vs visible TOC x=1127 at 1351px viewport; search used muted background while reading panel used background. User confirmed alignment to the TOC rail."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/site/assets/layout.css spec/src/documentation.md (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Canonical prose wrapping needed formatting; repaired with the same files passed to prettier --write."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/site/assets/layout.css spec/src/documentation.md; node scripts/docs.mjs stage",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh strict generated docs and stage: 138 admitted assets, 13232381 bytes; links and anchors valid, 9 diagrams with light/dark variants. Explicit source review checks current."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --grep \"standalone documentation retains|bundled Help preserves a draft\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "4/4 exact Chromium/WebKit tests on a fresh native asset-router process: standalone search, theme switch, Axe and mobile drawer; embedded search, network independence, keyboard dismissal and draft preservation. Existing tests retained without new CSS-mirroring assertions."
+    },
+    {
+      "command": "pnpm web:check; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web errors/warnings; UI ownership validator passes."
+    },
+    {
+      "command": "Verify preview process ownership; graceful restart only documentation preview; curl app/help; reload app and inspect current themed Help",
+      "result": "pass",
+      "failures": 0,
+      "note": "App/help HTTP 200 at 7484. After: search and TOC both x=1127, search width 212px; search and reading panel both oklch(1 0 0); TOC left border 0px. Ignored screenshot .local/dev-demo/help-search-alignment.png. Existing five-second shutdown warning recurred; preview restarted with preserved partial fixture and no reset or unrelated process restart."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; changed-file pnpm exec prettier --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "1 protected file and 2 canonical chapters; 5 validators, 23 chapters and 171 requirements; 137 tasks. Changed CSS/prose formatting passes; historical ledger entries remain unchanged."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Narrow application-owned documentation stylesheet refinement. Fresh generated assets justify cold exact search/reader tests; generator implementation, theme lifecycle and application components unchanged. Full Help, tooling, catalog, unrelated UI/Rust/root aggregate lanes and visual baselines are out of scope. Preserve all 416 prior evidence objects and raw JSON prefix. M19 remains Partial with E-DOC-001 release gates unchanged.",
+  "next": "Review the refined Help search and TOC in the running documentation-workspace preview."
+},
+{
+  "id": "E-DOC-005",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change soumsxws",
+  "kind": "Documentation navigation defaults, rail spacing and app-style search",
+  "versions": "macOS ARM64; MkDocs 1.6.1 / Material 9.6.23; Playwright 1.63.0 Chromium and WebKit; existing foundational source validation setup.",
+  "formats": "Presentation and generated navigation defaults only; repository, API, preference and asset manifest formats unchanged.",
+  "files": [
+    "docs/site/assets/layout.css",
+    "docs/site/assets/theme.js",
+    "docs/site/contributing/documentation.md",
+    "docs/site/guides/browsing.md",
+    "mkdocs.yml",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/ui.md",
+    "web/tests/browser/help-theme.spec.ts",
+    "web/tests/browser/help.spec.ts",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "web/tests/browser/help-theme.spec.ts#standalone documentation retains themed search and responsive navigation",
+    "web/tests/browser/help-theme.spec.ts#embedded Help follows live application appearance across pages and reopening",
+    "web/tests/browser/help.spec.ts#bundled Help preserves a draft without a repository and works without external network"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; inspect Community/Design Core/app navigation sources and live rail geometry; pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"standalone documentation retains\" (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Exact test expected Original Dark but received Buzz Dark. Live desktop rails reserved 88px/24px inner padding, leaving 184px nav widths in 288px/224px rails. Landing groups were expanded. User requested full width, collapsed groups and Original defaults, then compact rows, removal of duplicate title, visible hover feedback, inset/gapped TOC links and muted app-style search."
+    },
+    {
+      "command": "pnpm web:check; pnpm check:ui-ownership; node --test scripts/docs.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web diagnostics, valid UI ownership; 7/7 tooling tests."
+    },
+    {
+      "command": "pnpm spec:first (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Updated browser tests also map to api.md. Added the presentation-default/no-host-preference-or-admission-change contract to that chapter."
+    },
+    {
+      "command": "pnpm exec prettier --write <changed files>; node scripts/docs.mjs stage; pnpm exec playwright test --config web/playwright.docs.config.ts --project chromium --grep \"standalone documentation retains\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Original/Original Dark switch and collapsed/expand/collapse navigation checks pass; generated links/anchors valid. Stage repeated after user-requested styling refinements; final closure 138 assets, 13222489 bytes, 9 light/dark diagram pairs."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts (first full run)",
+      "result": "fail",
+      "failures": 1,
+      "note": "11/12 passed. WebKit exposed an existing unscoped h1 assertion racing navigation while search result headings remained present. Scoped the assertion to the reading panel without changing the expected destination. Exact WebKit draft/search regression then passed."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --project webkit --grep \"bundled Help preserves a draft\"; pnpm exec playwright test --config web/playwright.docs.config.ts (after selector correction)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact WebKit 1/1 and complete cold Help lane 12/12 pass. Covers Original defaults, collapse/expansion, embedded live theme inheritance, local search, mobile drawer, Axe, external-network denial, unavailable docs recovery and draft/page/focus preservation."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.docs.config.ts --grep \"standalone documentation retains|bundled Help preserves a draft\" (after row/hover refinements and again after final search styling)",
+      "result": "pass",
+      "failures": 0,
+      "note": "4/4 Chromium/WebKit cases on each fresh native asset-router run after regenerated assets. Final search uses the same foreground 3%/8% idle/hover mix, inset border and muted placeholder as the app-owned search trigger. Complete theme/navigation lane already passed; later CSS-only refinements repeat their exact reader/search consumers."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; changed-file pnpm exec prettier --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "7 protected files / 3 chapters before ledger update; 5 validators, 23 chapters and 171 requirements. Formatting passes."
+    },
+    {
+      "command": "Refresh standalone preview; inspect final widths, row/TOC/search styles and actual hover; restart only documentation-owned preview listeners; curl asset/header checks",
+      "result": "pass",
+      "failures": 0,
+      "note": "Verified Original theme, full-width desktop rails, hidden duplicate title, collapsed groups, 31.6px primary rows, actual hover=true with muted background, 10px TOC link inset and 4px item gap. Search uses foreground 3% idle mix and muted placeholder. Saved ignored .local/dev-demo/help-original-rails.png. Python preview had inconsistent cached/304 assets; same loopback 7480 server now uses no-store and unconditional asset responses, restoring complete JS/search initialization. User standalone tab refreshed without changing its selected page. Built app preview on 7484 restarted with latest assets; preserved partial fixture, existing five-second shutdown warning, no unrelated service changes."
+    },
+    {
+      "command": "Refresh/reconnect existing in-app browser tab 4 after restarting its server",
+      "result": "fail",
+      "failures": 1,
+      "note": "Computer-use CDP focus command timed out on the existing app tab across refresh, inspection and reconnection. Server remains available with new assets; automatic refresh of this existing browser tab is unverified. Cold embedded Chromium/WebKit acceptance passes independently. Temporary QA tab closed and user standalone tab retained."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; changed-file pnpm exec prettier --check; curl http://127.0.0.1:7484/help/; parseLedger historical comparison; jj --no-pager st; jj --no-pager diff",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final checks after ledger update: 137 tasks; 7 protected files and 4 canonical chapters; 5 validators, 23 chapters and 171 requirements. Changed-file formatting passes, app Help returns HTTP 200, and all 417 historical evidence entries retain their original content and raw JSON prefix. Reviewed the complete slice before committing."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Shared generated navigation/theme defaults justify complete cold Help coverage plus tooling tests; later cosmetic refinements use exact direct consumers. All 417 historical evidence entries and raw JSON prefix preserved. M19 remains Partial with registry-only and packaged WKWebView gates unchanged. No Rust, full repository, catalog, visual baseline, publication or unrelated service work.",
+  "next": "Use refreshed standalone docs on 7480; existing app Help may need a manual reload because its browser-control session timed out. M19 registry-only and packaged native-host gates remain separate."
+},
+{
+  "id": "E-DOC-006",
+  "tasks": [
+    "M19"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change zpoqtoun",
+  "kind": "Main integration of application manual and bundled Help",
+  "versions": "macOS ARM64; JJ 0.45.1; MkDocs 1.6.1 / Material 9.6.23; Playwright 1.63.0 Chromium/WebKit; inherited foundational source validation setup.",
+  "formats": "No new repository, API, preference or asset manifest format. CLI/API references regenerated against merged main contracts.",
+  "files": [
+    ".gitignore",
+    ".prettierignore",
+    "README.md",
+    "crates/jj-store-cli/examples/docs_reference.rs",
+    "crates/jj-store-http/src/assets/help.rs",
+    "crates/jj-store-http/src/assets.rs",
+    "crates/jj-store-http/tests/assets.rs",
+    "crates/jj-store-server/tests/configuration.rs",
+    "docs/cli/server-config.md",
+    "docs/cli/work.md",
+    "docs/maintenance/arguments.json",
+    "docs/maintenance/coverage.json",
+    "docs/site/assets/embed.js",
+    "docs/site/assets/layout.css",
+    "docs/site/assets/manual.css",
+    "docs/site/assets/theme.js",
+    "docs/site/cli/index.md",
+    "docs/site/cli/jj-agent.md",
+    "docs/site/cli/jj-project.md",
+    "docs/site/cli/jj-replica.md",
+    "docs/site/cli/jj-review.md",
+    "docs/site/cli/jj-store-client.md",
+    "docs/site/cli/jj-store.md",
+    "docs/site/cli/jj-sync.md",
+    "docs/site/cli/jj-task.md",
+    "docs/site/concepts/collaboration.md",
+    "docs/site/concepts/glossary.md",
+    "docs/site/concepts/projects.md",
+    "docs/site/concepts/repositories.md",
+    "docs/site/concepts/snapshots.md",
+    "docs/site/contributing/development.md",
+    "docs/site/contributing/documentation.md",
+    "docs/site/faq.md",
+    "docs/site/getting-started/contexts.md",
+    "docs/site/getting-started/install.md",
+    "docs/site/getting-started/local.md",
+    "docs/site/getting-started/native.md",
+    "docs/site/getting-started/work.md",
+    "docs/site/guides/browsing.md",
+    "docs/site/guides/capture.md",
+    "docs/site/guides/conversion.md",
+    "docs/site/guides/editing.md",
+    "docs/site/guides/git.md",
+    "docs/site/guides/reviews.md",
+    "docs/site/guides/search.md",
+    "docs/site/guides/settings.md",
+    "docs/site/guides/sync.md",
+    "docs/site/guides/troubleshooting.md",
+    "docs/site/guides/work.md",
+    "docs/site/index.md",
+    "docs/site/reference/api/administration.md",
+    "docs/site/reference/api/code.md",
+    "docs/site/reference/api/collaboration.md",
+    "docs/site/reference/api/installation.md",
+    "docs/site/reference/api/search.md",
+    "docs/site/reference/api/types.md",
+    "docs/site/reference/api/work.md",
+    "docs/site/reference/capabilities.md",
+    "docs/site/reference/configuration.md",
+    "docs/site/reference/defaults.md",
+    "docs/site/reference/environment.md",
+    "docs/site/reference/http-api.md",
+    "docs/site/reference/queries.md",
+    "docs/site/reference/security.md",
+    "docs/site/reference/transport.md",
+    "docs/site/technical/architecture.md",
+    "docs/site/technical/capture.md",
+    "docs/site/technical/lifecycle.md",
+    "docs/site/technical/local.md",
+    "docs/site/technical/publication.md",
+    "docs/site/technical/reads.md",
+    "docs/site/technical/replication.md",
+    "docs/site/technical/storage.md",
+    "mkdocs.yml",
+    "package.json",
+    "pnpm-lock.yaml",
+    "pyproject.toml",
+    "scripts/check-progress.mjs",
+    "scripts/desktop-resources.mjs",
+    "scripts/desktop.mjs",
+    "scripts/docs/assets.mjs",
+    "scripts/docs/diagrams.mjs",
+    "scripts/docs/hooks.py",
+    "scripts/docs/references.mjs",
+    "scripts/docs/review.mjs",
+    "scripts/docs/site.py",
+    "scripts/docs/theme.mjs",
+    "scripts/docs.mjs",
+    "scripts/docs.test.mjs",
+    "spec/src/SUMMARY.md",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/desktop.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/security.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "spec-validator.config.mjs",
+    "uv.lock",
+    "web/playwright.docs.config.ts",
+    "web/src/lib/ui/store-application/StoreApplication.svelte",
+    "web/src/lib/ui/store-application/StoreConnection.svelte",
+    "web/src/lib/ui/store-help/StoreHelp.svelte",
+    "web/src/lib/ui/store-help/help-session.ts",
+    "web/tests/browser/help-theme.spec.ts",
+    "web/tests/browser/help.spec.ts",
+    "web/tests/help-session.test.ts",
+    "web/vite.config.ts"
+  ],
+  "tests": [
+    "scripts/docs.test.mjs#shared agent long help links target published manual pages",
+    "crates/jj-store-http/tests/assets.rs#documentation_routes_are_preloaded_and_have_scoped_framing_policy",
+    "crates/jj-store-server/tests/configuration.rs#documentation_configuration_examples_use_production_validation",
+    "web/tests/browser/help-theme.spec.ts#embedded Help follows live application appearance across pages and reopening",
+    "web/tests/browser/help-theme.spec.ts#standalone documentation retains themed search and responsive navigation",
+    "web/tests/browser/help.spec.ts#bundled Help preserves a draft without a repository and works without external network"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st in main and documentation; jj workspace list; jj log/diff; jj new pkrqsmov soumsxws -m <merge description>; inspect both parent ledgers and stale topic fingerprints",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both workspaces clean before merge. Resolved seven additive canonical/ledger conflicts and one StoreApplication import conflict, retaining the terminal composition plus Help. Preserved every original evidence object: 427 main plus five documentation-only entries. Updated 11 stale topic reviews after reading current code/contracts and correcting capture, conversion, creation and terminal prose; added terminal-engine source coverage."
+    },
+    {
+      "command": "pnpm docs:generate; reuse pinned registry Mermaid 11.12.0 installation closure from documentation node_modules; pnpm web:build (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "References regenerated successfully and production UI built; strict MkDocs found the new shared agent help link to repository-only capture-preview.md. Reused 123 package directories for the newly merged pinned Mermaid dependency without changing existing foundational validation links. Existing CSS :global and bundle-size warnings remain."
+    },
+    {
+      "command": "node --test --test-name-pattern=\"shared agent long help\" scripts/docs.test.mjs (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "New regression reproduced missing ../capture-preview.md in the generated manual. The generator now maps this shared-source link to the published capture guide; executable long help remains unchanged."
+    },
+    {
+      "command": "node --test --test-name-pattern=\"shared agent long help\" scripts/docs.test.mjs (after); node --test scripts/docs.test.mjs; pnpm docs:generate; node scripts/docs.mjs stage",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact regression 1/1 and complete docs tooling 8/8 pass, including desktop Help resource staging. Strict final build validates links/anchors and 139 admitted files, 13486725 bytes, nine local light/dark Mermaid pairs. Generated CLI/API references match merged sources and every topic review is current."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture; pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web/catalog diagnostics; 190 catalog modules, 960 architecture modules, valid ownership and 49/49 governance tests. Shared generator/change-map and browser/desktop asset delivery justify their complete direct tooling lanes; no root aggregate invoked."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-http --test assets; cargo test --locked -p jj-store-server --test configuration documentation_configuration_examples_use_production_validation -- --exact; pnpm exec tsx --test web/tests/help-session.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "9/9 HTTP asset tests, 1/1 production configuration-loader example and 1/1 exact same-origin frame protocol test pass. Admission, bounds, symlinks, CSP and framing remain covered; no unrelated Rust suite."
+    },
+    {
+      "command": "cargo build --locked -p jj-store-http --example browser_preview; pnpm exec playwright test --config web/playwright.docs.config.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "12/12 cold merged Chromium/WebKit Help cases pass on fresh native asset-router process and current production web/docs assets: live theme, Original palette, collapsed/mobile navigation, search, Axe, network denial, draft retention, missing-doc recovery and focus/dismissal."
+    },
+    {
+      "command": "pnpm spec:first (default merge base)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Existing validator cannot use @- for a two-parent merge. Retried using explicit full commit hashes for each parent and the merged head; no product or spec rule changed."
+    },
+    {
+      "command": "pnpm spec:first --base <8b94ae12 full hash> --head <merged full hash>; pnpm spec:first --base <fecf1a25 full hash> --head <merged full hash>; pnpm spec:validate; parseLedger comparison against both parents; changed-file pnpm exec prettier --write",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both explicit spec-first comparisons pass (100 protected/9 canonical and 257 protected/16 canonical); specification: five validators, 23 chapters, 172 requirements. Both parent evidence sets and all main milestone states preserved. Formatting excludes historical ledger prefix and generated references."
+    },
+    {
+      "command": "pnpm check:progress; pnpm exec prettier --check <all merged documentation-supported files except historical ledger>; jj version",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final progress checker passes 138 tasks; all matched changed files formatted. Jujutsu 0.45.1. Original evidence records remain unchanged and M19 stays Partial."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Merge acceptance only: docs runtime/assets/tooling and directly affected UI consumers, with canonical source review for features added since the branch. M19 remains Partial; foundational registry-only and packaged WKWebView/DMG release gates from E-DOC-001 remain unchanged. No package publication, deployment, fixture reset, repository conversion, broad storage/contract rerun or visual baseline update.",
+  "next": "Commit the validated merge, preserve documentation workspace local evidence, stop only its owned previews and retire that clean workspace."
 }
 ]
 ```

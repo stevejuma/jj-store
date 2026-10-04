@@ -1566,3 +1566,13 @@ The composed LocalTrusted browser installation can create a native repository
 through its installation-owned manager without invoking a CLI subprocess or
 creating a physical workspace. CLI provisioning contracts remain unchanged;
 filesystem-only installations do not advertise native creation.
+
+## Bundled application documentation
+
+JST-DOC-002 derives the checked-in CLI reference from the registered upstream
+command tree augmented with owned extensions and the standalone ServerCli
+parser. A development-only example emits the inventory without loading a
+repository or invoking commands. Configuration examples use the production
+loader; shared authored long help remains embedded in executable help. Generated
+manual links translate repository-only capture preview references to the
+published capture guide; shared executable help retains its source context.

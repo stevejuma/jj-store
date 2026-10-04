@@ -2,6 +2,7 @@
   import { provideTerminalControls } from "../../terminal/controls.svelte.js";
   provideTerminalControls();
   import StoreApplicationMain from "./StoreApplicationMain.svelte";
+  import StoreHelp from "../store-help/StoreHelp.svelte";
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
   // Adapted from CommunityApplication's shell composition; all state is local.
@@ -203,7 +204,7 @@
         onSelect={select}
         onSearch={() => (searchOpen = true)}
       >
-        {#snippet footer()}<CommunityProfileMenu
+        {#snippet footer()}<StoreHelp {compact} sidebar /><CommunityProfileMenu
             member={controller.state.member}
             authenticated={controller.state.authenticated}
             {compact}

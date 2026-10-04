@@ -9,11 +9,16 @@ use axum::{
 use serde::Deserialize;
 use std::{collections::BTreeMap, fs, io::Read, path::Path};
 
-const STRICT_CSP: &str = "default-src 'none'; script-src 'self'; style-src 'self' 'sha256-+A14ONesVdzkn6nr37Osn+rUqNz4oFGZFDbLXrlae04='; style-src-attr 'unsafe-hashes' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
-const DEVELOPMENT_ANNOTATION_CSP: &str = "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
+mod help;
+
+const STRICT_CSP: &str = "default-src 'none'; script-src 'self'; style-src 'self' 'sha256-+A14ONesVdzkn6nr37Osn+rUqNz4oFGZFDbLXrlae04='; style-src-attr 'unsafe-hashes' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
+const DEVELOPMENT_ANNOTATION_CSP: &str = "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
 
 #[derive(Clone)]
-pub struct BrowserAssets(BTreeMap<String, (Bytes, &'static str)>);
+pub struct BrowserAssets(
+    BTreeMap<String, (Bytes, &'static str)>,
+    Option<help::HelpAssets>,
+);
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Manifest {
@@ -123,7 +128,7 @@ impl BrowserAssets {
         if !files.contains_key("/") {
             return Err("browser index absent");
         }
-        Ok(Self(files))
+        Ok(Self(files, help::HelpAssets::load(&root)?))
     }
     pub fn router(&self) -> Router {
         self.router_with_csp(STRICT_CSP)
@@ -153,6 +158,9 @@ impl BrowserAssets {
                     }
                 }),
             );
+        }
+        if let Some(help) = &self.1 {
+            router = router.merge(help.router());
         }
         router
     }

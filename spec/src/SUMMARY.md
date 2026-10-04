@@ -18,6 +18,7 @@
 - [Security and deployment](security.md)
 - [Adapters and Tantivy](adapters.md)
 - [Compatibility and release](compatibility.md)
+- [Application documentation](documentation.md)
 - [Specification governance](spec-governance.md)
 - [Implementation progress](milestones.md)
 - [Verification](verification.md)

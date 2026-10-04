@@ -3,9 +3,16 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath } from "node:url";
 import { uiDevelopmentServer } from "../scripts/dev-ui-config.mjs";
+import { documentationPlugin } from "../scripts/docs/assets.mjs";
 export default defineConfig({
   root: fileURLToPath(new URL(".", import.meta.url)),
-  plugins: [tailwindcss(), svelte()],
+  plugins: [
+    tailwindcss(),
+    svelte(),
+    documentationPlugin(
+      fileURLToPath(new URL("../docs/build", import.meta.url)),
+    ),
+  ],
   resolve: { dedupe: ["svelte", "bits-ui"] },
   worker: { format: "es" },
   // Match the catalog: source-distributed rune modules use the normal compiler.

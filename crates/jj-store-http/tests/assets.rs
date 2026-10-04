@@ -232,3 +232,106 @@ fn browser_agent_icon_directory_symlink_is_rejected() {
     symlink(root.path(), root.path().join("agent-icons")).unwrap();
     assert!(BrowserAssets::load(root.path()).is_err());
 }
+
+fn help(root: &std::path::Path, files: &[&str]) {
+    fs::create_dir_all(root.join("help/concepts")).unwrap();
+    fs::write(root.join("help/index.html"), "<h1>Help</h1>").unwrap();
+    fs::write(root.join("help/concepts/index.html"), "<h1>Concepts</h1>").unwrap();
+    fs::write(
+        root.join("help/asset-manifest.json"),
+        serde_json::json!({"version":1,"files":files}).to_string(),
+    )
+    .unwrap();
+}
+#[tokio::test]
+async fn documentation_routes_are_preloaded_and_have_scoped_framing_policy() {
+    let root = tempfile::tempdir().unwrap();
+    bundle(root.path());
+    help(root.path(), &["index.html", "concepts/index.html"]);
+    let router = BrowserAssets::load(root.path()).unwrap().router();
+    fs::remove_dir_all(root.path().join("help")).unwrap();
+    for path in ["/help/", "/help/index.html", "/help/concepts/"] {
+        let response = router
+            .clone()
+            .oneshot(Request::builder().uri(path).body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let csp = response.headers()["content-security-policy"]
+            .to_str()
+            .unwrap();
+        assert!(csp.contains("frame-ancestors 'self'"));
+        assert!(csp.contains("script-src 'self';"));
+        assert!(!csp.contains("unsafe-eval"));
+        assert_eq!(response.headers()["x-content-type-options"], "nosniff");
+    }
+    for path in [
+        "/help/asset-manifest.json",
+        "/help/missing.html",
+        "/help/../index.html",
+    ] {
+        assert_eq!(
+            router
+                .clone()
+                .oneshot(Request::builder().uri(path).body(Body::empty()).unwrap())
+                .await
+                .unwrap()
+                .status(),
+            StatusCode::NOT_FOUND
+        );
+    }
+    assert_eq!(
+        router
+            .oneshot(Request::builder().uri("/help").body(Body::empty()).unwrap())
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::PERMANENT_REDIRECT
+    );
+}
+#[test]
+fn documentation_manifest_rejects_invalid_closures() {
+    let root = tempfile::tempdir().unwrap();
+    bundle(root.path());
+    for files in [
+        vec!["index.html", "index.html"],
+        vec!["index.html", "../index.html"],
+        vec!["index.html", "unknown.js"],
+        vec!["concepts/index.html"],
+        vec!["index.html", "asset-manifest.json"],
+        vec!["index.html", "a/b/c/d/e/f/g/h/i.html"],
+        vec!["index.html"; 513],
+    ] {
+        help(root.path(), &files);
+        assert!(BrowserAssets::load(root.path()).is_err(), "{files:?}");
+    }
+    help(root.path(), &["index.html"]);
+    fs::File::create(root.path().join("help/index.html"))
+        .unwrap()
+        .set_len(8 * 1024 * 1024 + 1)
+        .unwrap();
+    assert!(BrowserAssets::load(root.path()).is_err());
+}
+#[cfg(unix)]
+#[test]
+fn documentation_rejects_leaf_directory_and_root_symlinks() {
+    use std::os::unix::fs::symlink;
+    let root = tempfile::tempdir().unwrap();
+    bundle(root.path());
+    help(root.path(), &["index.html", "concepts/index.html"]);
+    fs::remove_file(root.path().join("help/index.html")).unwrap();
+    symlink(
+        root.path().join("index.html"),
+        root.path().join("help/index.html"),
+    )
+    .unwrap();
+    assert!(BrowserAssets::load(root.path()).is_err());
+    fs::remove_file(root.path().join("help/index.html")).unwrap();
+    help(root.path(), &["index.html", "concepts/index.html"]);
+    fs::remove_dir_all(root.path().join("help/concepts")).unwrap();
+    symlink(root.path(), root.path().join("help/concepts")).unwrap();
+    assert!(BrowserAssets::load(root.path()).is_err());
+    fs::remove_dir_all(root.path().join("help")).unwrap();
+    symlink(root.path(), root.path().join("help")).unwrap();
+    assert!(BrowserAssets::load(root.path()).is_err());
+}

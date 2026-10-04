@@ -1833,3 +1833,23 @@ and do not execute shells. Terminal frames and controls use the desktop-only
 Tauri interface, not an HTTP or repository publication API. Maximizing the dock
 closes the application-owned details sidebar through local layout state; this
 presentation action adds no terminal IPC command or server mutation.
+
+## Bundled application documentation
+
+The Help entry uses the primary sidebar's collapsed and expanded spacing. This
+presentation change preserves the same overlay, local document routes and
+admission policy.
+
+Help reads same-origin presentation attributes to inherit live application
+appearance; it adds no API, mutation or credential transport. Generated fonts,
+palette CSS and diagram variants remain in the independent documentation asset
+manifest and use the existing CSP. Standalone docs do not read app preferences.
+The standalone Original palette and initial navigation collapse are local
+presentation defaults; they do not change host preferences or asset admission.
+
+Bundled Help is independently allowlisted under `/help/`, with a separate
+512-file, 8-MiB-per-file and 32-MiB-total bound. The existing browser bundle
+retains its own bounds. Application documents may frame same-origin content, but
+only documentation responses permit same-origin ancestors; API responses remain
+unframeable. New browser builds include Help; older valid bundles without a help
+directory remain loadable.

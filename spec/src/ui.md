@@ -1968,3 +1968,27 @@ hide. Unsupported browser clients do not advertise the terminal. Missing folders
 explain how to link an existing folder; operational failures use the shared
 notification service. Stories exercise the production dock with a fake bridge
 and remain visual-pending.
+
+## Bundled application documentation
+
+JST-DOC-003 adds installation-level Help above the profile footer. The
+full-viewport modal embeds the bundled site, traps focus, handles Escape from
+its same-origin frame and returns focus on dismissal. The underlying application
+remains mounted, preserving route, drafts and pending commands. Docs page/scroll
+state remains session-only.
+
+The Help entry follows primary sidebar navigation geometry: a centered 2rem icon
+button with 0.5rem horizontal rail padding when collapsed, and a full-width
+labelled button inset by 0.75rem when expanded. Connection-screen Help retains
+its standalone layout.
+
+The generated manual uses the app's semantic palette, local DM Sans and Source
+Code Pro fonts, typography scale, sidebar chrome and rounded content surfaces.
+The same-origin frame observes only the host's appearance attributes and glass
+opacity, including previews and cross-tab/system updates. Theme changes preserve
+the current documentation page, scroll, search and the application's drafts.
+Embedded Help hides its independent palette selector; the standalone site keeps
+a light/dark switch using the Original palette. Light/dark Mermaid images follow
+the resolved color mode. The navigation rails fill their allotted widths without
+fixed inner padding; groups initially collapse on the landing page and reveal
+the selected page's path after navigation.

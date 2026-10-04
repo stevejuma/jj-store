@@ -117,6 +117,7 @@ formats.
 | Protected area                                                                                                                                                                                                                                 | Required chapter     |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | `^(?:catalog/\|\.storybook/\|docs/catalog\.md$)`                                                                                                                                                                                               | `ui.md`              |
+| `^(?:docs/(?:site/\|maintenance/)\|mkdocs\.yml$\|pyproject\.toml$\|uv\.lock$)`                                                                                                                                                                 | `documentation.md`   |
 | `^desktop/`                                                                                                                                                                                                                                    | `desktop.md`         |
 | `^rustfmt\.toml$`                                                                                                                                                                                                                              | `spec-governance.md` |
 | `^crates/jj-store-model/`                                                                                                                                                                                                                      | `identity.md`        |
@@ -143,6 +144,12 @@ Git interoperability additionally protects
 and requires `git-interop.md`.
 
 ## Verification scope
+
+Help presentation bundling consumes the existing application palette sources and
+released local fonts. Changes to its asset generation and theme lifecycle run
+the documentation-tool regressions and complete cold Help browser lane,
+including embedded inheritance and standalone behavior. No repository storage or
+Rust contract changes are implied by these presentation assets.
 
 Installation capture management adds a server-package response capture to the
 shared contract runner. Fixture selection binds package and test binary
@@ -953,3 +960,11 @@ Inline close placement shares CSS grid columns with the tablist without nesting
 interactive controls or admitting non-tab children. Buzz reference attribution
 stays in `docs/ui-provenance.json`; hover, keyboard focus and accessibility
 evidence remains separate from visual-baseline approval.
+
+## Application documentation governance
+
+JST-DOC-001 through JST-DOC-004 govern the independently published manual,
+source-derived references, review coverage, and locally embedded Help. The
+change map additionally maps `docs/site/`, `docs/maintenance/`, `mkdocs.yml`,
+`pyproject.toml` and `uv.lock` to `documentation.md`. Documentation checks are
+part of normal checks and generated Help is part of browser/desktop packaging.

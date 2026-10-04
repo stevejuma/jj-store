@@ -1,0 +1,161 @@
+[
+  {
+    "id": "publication",
+    "sources": [
+      "crates/jj-store-wal/src",
+      "crates/jj-store-object/src",
+      "crates/jj-store-model/src"
+    ],
+    "pages": [
+      "docs/site/technical/publication.md",
+      "docs/site/technical/storage.md",
+      "docs/site/concepts/snapshots.md"
+    ],
+    "review": {
+      "reason": "Reviewed conversion domain archives, verified WorkStore staging and manifest-last copying; publication and recovery pages remain accurate and the local architecture now explains independent conversion.",
+      "fingerprint": "3b3854061ade68eba06d68b5fe3249267d1e949d518109736363f15122664816"
+    }
+  },
+  {
+    "id": "collaboration",
+    "sources": [
+      "crates/jj-agent/src",
+      "crates/jj-collab/src",
+      "crates/jj-review/src",
+      "crates/jj-work/src"
+    ],
+    "pages": [
+      "docs/site/guides/work.md",
+      "docs/site/guides/reviews.md",
+      "docs/site/concepts/collaboration.md"
+    ],
+    "review": {
+      "reason": "Reviewed merged domain types and conversion history contracts; WorkStore, review and thread semantics retain original repository links and typed identity mapping, documented in the conversion guide.",
+      "fingerprint": "35fcd6910d9def742c877b968419a75372cb40b014f06c8274c4bd0e05fbf84e"
+    }
+  },
+  {
+    "id": "capture",
+    "sources": ["crates/jj-store-capture/src"],
+    "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
+    "review": {
+      "reason": "Documented configured Cursor Desktop/CLI transcript binding, exact supported versions and OpenCode read-only loopback capture; retained inactive-history and Codex Desktop qualification limits.",
+      "fingerprint": "9efb9c831011b633e22d53bd669fd759a9512bbc3d5e9ea099020b94827c6cc7"
+    }
+  },
+  {
+    "id": "local",
+    "sources": ["crates/jj-store-jj/src"],
+    "pages": [
+      "docs/site/technical/local.md",
+      "docs/site/guides/git.md",
+      "docs/site/guides/conversion.md"
+    ],
+    "review": {
+      "reason": "Documented bounded independent native/local conversion, source operation pins, fresh destination log, exact evidence, unsupported representations and no-replace local publication.",
+      "fingerprint": "566f5fceb4d4c45770f69d1a050f3a026b2a3c6acf9bbae1cea6106dab370b58"
+    }
+  },
+  {
+    "id": "services",
+    "sources": ["crates/jj-store-service/src", "crates/jj-store-rpc/src"],
+    "pages": [
+      "docs/site/technical/architecture.md",
+      "docs/site/reference/transport.md",
+      "docs/site/guides/conversion.md"
+    ],
+    "review": {
+      "reason": "Reviewed new creation/conversion interfaces and native OpenCode timing projection; architecture and conversion guidance distinguish independent destinations, original request recovery and unknown timing.",
+      "fingerprint": "bf168e50f87ce956ecb9799ec2b5b3406f11ac045d099e35b8551ac6177ed917"
+    }
+  },
+  {
+    "id": "search",
+    "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
+    "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
+    "review": {
+      "fingerprint": "d0853ca22543d19bdfc7ffb4921059e3301a76730f6f1dfb83746a7091b971cb",
+      "reason": "Initial search manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "replication",
+    "sources": ["crates/jj-store-replication/src"],
+    "pages": ["docs/site/technical/replication.md", "docs/site/guides/sync.md"],
+    "review": {
+      "fingerprint": "1be4dc1693d106f6387bb8812c8b998ffae097aa5e4acdc04e88f0ccf7eb3ed2",
+      "reason": "Initial replication manual reviewed against the selected implementation, its public contracts and canonical qualification limits."
+    }
+  },
+  {
+    "id": "configuration",
+    "sources": ["crates/jj-store-server/src"],
+    "pages": [
+      "docs/site/reference/configuration.md",
+      "docs/site/reference/environment.md",
+      "docs/site/technical/lifecycle.md"
+    ],
+    "review": {
+      "reason": "Reviewed installation-owned native creation and durable conversion journals plus configured capture roots/endpoints; configuration and lifecycle pages now describe current profiles and restart semantics.",
+      "fingerprint": "77eb079c691ef302c9221221e88b63a37a96844e7c418af80deb3049a414e731"
+    }
+  },
+  {
+    "id": "cli",
+    "sources": ["crates/jj-store-cli/src"],
+    "pages": [
+      "docs/site/cli/index.md",
+      "docs/site/getting-started/install.md",
+      "docs/site/getting-started/work.md"
+    ],
+    "review": {
+      "reason": "Regenerated CLI help from the merged parser including Cursor transcript-capture setup; native tutorial distinguishes browser creation from workspace creation and attachment.",
+      "fingerprint": "ee8d20326138ccb8238c0257bec859424b94d446bc511c3d2d14016db8bff629"
+    }
+  },
+  {
+    "id": "http",
+    "sources": ["crates/jj-store-http/src"],
+    "pages": [
+      "docs/site/reference/transport.md",
+      "docs/site/reference/security.md",
+      "docs/site/guides/conversion.md"
+    ],
+    "review": {
+      "reason": "Reviewed LocalTrusted creation/conversion routes and merged Help asset admission; conversion guide and generated schema reference preserve independent asset and authorization boundaries.",
+      "fingerprint": "10737fec810fa131ff5999acdf9713de7c71f62ae7e67ddd1af7bb814d883cc2"
+    }
+  },
+  {
+    "id": "application",
+    "sources": ["web/src"],
+    "pages": [
+      "docs/site/guides/browsing.md",
+      "docs/site/guides/editing.md",
+      "docs/site/guides/settings.md",
+      "docs/site/guides/conversion.md"
+    ],
+    "review": {
+      "reason": "Reviewed merged repository menus, conversion dialogs, capture settings and terminal composition with Help; browsing, setup and settings guides now describe available actions and retained request/draft behavior.",
+      "fingerprint": "e7377eda48e1c1e9d5f9278d3001345695cb82eb35e661b3f900eebdeccd0855"
+    }
+  },
+  {
+    "id": "desktop",
+    "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
+    "pages": ["docs/site/technical/lifecycle.md"],
+    "review": {
+      "reason": "Documented repository-bound PTY lifetime, exact window/origin bridge, filtered environment, bounded frame delivery and Quit cleanup; kept packaged WKWebView qualification separate.",
+      "fingerprint": "760ee55703b172712620efe39e2e3aa20478dcf7527837a48657fe3335b53cb1"
+    }
+  },
+  {
+    "id": "contracts",
+    "sources": ["schemas/openapi.json", "docs/cli"],
+    "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
+    "review": {
+      "reason": "Regenerated CLI and API reference from merged command definitions and OpenAPI, including creation/conversion and configured capture fields; transport semantics remain unchanged.",
+      "fingerprint": "e97d8b87c9e6c2d905d39a6d2c83bc13c038b270f244ffea1055abaffff00d28"
+    }
+  }
+]

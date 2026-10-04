@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreHelp from "../store-help/StoreHelp.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreRepositoryPicker from "./StoreRepositoryPicker.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
@@ -130,6 +131,7 @@
         {pending}
       />
     </Card.Content>
+    <StoreHelp />
   </Card.Root>
 </main>
 

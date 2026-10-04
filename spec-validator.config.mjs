@@ -49,6 +49,11 @@ export default defineConfig(tableRequirements(), {
       ],
       rules: [
         {
+          pattern:
+            "^(?:docs/(?:site/|maintenance/)|mkdocs\\.yml$|pyproject\\.toml$|uv\\.lock$)",
+          chapters: ["spec/src/documentation.md"],
+        },
+        {
           pattern: "^docs/capture-preview\\.md$",
           chapters: ["spec/src/cli.md", "spec/src/collaboration.md"],
         },
@@ -147,12 +152,13 @@ export default defineConfig(tableRequirements(), {
         },
       ],
       protected: [
-        "^(?:rustfmt\\.toml$|desktop/|catalog/|\\.storybook/|crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
+        "^(?:mkdocs\\.yml$|pyproject\\.toml$|uv\\.lock$|rustfmt\\.toml$|desktop/|catalog/|\\.storybook/|crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
       ],
     },
   },
   check: {
     lanes: [
+      { name: "documentation", command: "pnpm", args: ["docs:check"] },
       {
         name: "catalog-cold-browser",
         command: "pnpm",

@@ -30,13 +30,14 @@ The default request limits are eight concurrent requests, 30 seconds and 32 MiB
 per native blob. Configure one serving instance per storage namespace; the local
 state lock does not provide distributed fencing.
 
-Background search indexing is deferred from the local release. Its retained
-future configuration is opt-in: add one `[[search]]` entry per repository with
-`repository` and `token_environment`, whose name starts with
-`JJ_STORE_SEARCH_TOKEN_`. Supply a read token for that repository in the named
-environment variable. Use the existing token administration commands to
-issue/revoke it; the server never creates search credentials or reads them from
-a checkout. Rotate by restarting with the replacement environment value.
+Native background search indexing is opt-in: add one `[[search]]` entry per
+repository with `repository` and `token_environment`, whose name starts with
+`JJ_STORE_SEARCH_TOKEN_` for authenticated access. Supply a read token for that
+repository in the named environment variable. LocalTrusted indexing uses the
+installation principal and does not require that token reference. Use the
+existing token administration commands to issue/revoke it; the server never
+creates search credentials or reads them from a checkout. Rotate by restarting
+with the replacement environment value.
 
 `search.source.scopes.<scope>` selects `kind = "bookmark"` or `"workspace"` and
 a native name. With no scopes, only retained metadata is indexed. Source options
