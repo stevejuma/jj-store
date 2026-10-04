@@ -33,6 +33,13 @@ export interface GraphQuery {
   commit?: string;
 }
 
+export interface ReferenceQuery {
+  kind?: "bookmarks" | "workspaces" | "changes" | "all";
+  exact?: string;
+  query?: string;
+  signal?: AbortSignal;
+}
+
 export interface PathQuery {
   includeLastChange?: boolean;
   anchor?: string;
@@ -73,6 +80,7 @@ export interface StoreDataSource {
   references(
     operation: string,
     cursor?: string,
+    query?: ReferenceQuery,
   ): Promise<Browse.CodeWindow<Browse.CodeReferences>>;
   graph(
     kind: "log" | "operations" | "evolution",

@@ -514,3 +514,9 @@ and do not admit unrelated Git objects. Legacy bare-ID reads retain their
 membership checks. `include_last_change=false` returns file rows independently
 of history; explicit attribution shares one bounded parent traversal across the
 page.
+
+Local workspace windows and exact bookmark/workspace resolution consume only the
+selected operation/view and returned target records. Neither needs a JJ index or
+retained commit ancestry. Names are compared exactly, including case and
+slashes; missing selections remain absent and must never fall back to another
+target.

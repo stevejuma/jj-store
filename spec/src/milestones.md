@@ -21192,7 +21192,7 @@ entries.
       "web/tests/vite/store-workspaces.test.ts#a missing workspace fails without silently loading a different working copy",
       "web/tests/vite/store-workspaces.test.ts#workspace context permits independent explicit revision inspection",
       "web/tests/vite/store-workspaces.test.ts#working-copy cards distinguish two workspace names sharing the same commit",
-      "web/tests/vite/store-workspaces.test.ts#workspace discovery follows every pinned reference page and preserves shared targets",
+      "web/tests/vite/store-workspaces.test.ts#workspace discovery reads one pinned window and rejects a mismatched operation",
       "web/tests/vite/store-workspaces.test.ts#explicit Refresh follows the workspace's new working copy at the captured operation",
       "web/tests/vite/store-workspaces.test.ts#workspace discovery continues the displayed first page without recapturing its snapshot",
       "web/tests/browser/workspaces.spec.ts#workspace names sharing a commit survive cold reload, tabs, history and explicit Refresh",
@@ -21396,7 +21396,7 @@ entries.
     "tests": [
       "web/tests/browser/repository-navigation.spec.ts#right rail destinations match repository tabs and preserve workspace snapshot",
       "web/tests/browser/repository-navigation.spec.ts#phone overflow supports keyboard selection, reload, resize and right rail navigation",
-      "web/tests/browser/repository-navigation.spec.ts#request errors stay in the main body while the right rail stays minimal"
+      "web/tests/browser/repository-navigation.spec.ts#request errors use notifications while the right rail stays minimal"
     ],
     "runs": [
       {
@@ -75621,6 +75621,225 @@ entries.
     "Existing Design Core registry release qualification and visual baseline approval remain pending. Full unrelated aggregate lanes are out of scope."
   ],
   "next": "Implement independent workspace paging and exact reference resolution; retain the contract/capture qualification gap and complete the remaining large-repository plan."
+},
+{
+  "id": "E-READ-005",
+  "tasks": [
+    "M4.1",
+    "M13.4"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change kqmuytop",
+  "kind": "Independent workspace windows and exact reference startup selection",
+  "versions": "Rust 1.98.1; jj-lib 0.45.1; Node 26.9.0; pnpm 10.32.1. Inherited temporary Design Core source validation from E-READ-004; registry lockfile unchanged.",
+  "formats": "Additive workspaces reference kind and exact selector for native/local requests. Signed cursors bind exact selector. Persisted native objects, manifest/WAL and local companion formats unchanged.",
+  "files": [
+    "crates/jj-store-cli/tests/local_browser.rs",
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/browsing.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/http_browsing.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/reference_windows.rs",
+    "crates/jj-store-http/src/routes.rs",
+    "crates/jj-store-jj/src/local_browser/mod.rs",
+    "crates/jj-store-jj/src/local_browser/references.rs",
+    "crates/jj-store-jj/src/query/content/references.rs",
+    "crates/jj-store-service/src/pagination/browsing.rs",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/cli.md",
+    "spec/src/compatibility.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/contracts.ts",
+    "web/src/lib/controller/http-local-code-data-source.ts",
+    "web/src/lib/controller/http-store-data-source.ts",
+    "web/src/lib/controller/native-data-source.ts",
+    "web/src/lib/controller/native-presentation.ts",
+    "web/src/lib/controller/production-reference-reader.ts",
+    "web/src/lib/controller/production-route-restorer.ts",
+    "web/src/lib/controller/production-store-actions.ts",
+    "web/src/lib/controller/production-store-loaders.ts",
+    "web/src/lib/controller/production-store-reader.svelte.ts",
+    "web/src/lib/controller/production-store-state.svelte.ts",
+    "web/src/lib/controller/production-store-view.ts",
+    "web/src/lib/controller/store-workspaces.ts",
+    "web/src/lib/ui/store-application/StoreWorkspacePicker.svelte",
+    "web/tests/browser/repository-navigation.spec.ts",
+    "web/tests/browser/workspaces.spec.ts",
+    "web/tests/vite/production-reference-reader.test.ts",
+    "web/tests/vite/store-workspaces.test.ts",
+    "spec/src/mutations.md",
+    "web/src/lib/controller/http-reference-reads.ts"
+  ],
+  "requirements": [
+    "JST-LOCAL-004",
+    "JST-JJ-003",
+    "JST-API-001",
+    "JST-UI-005",
+    "JST-UI-006"
+  ],
+  "tests": [
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#local_metadata_and_bookmark_pages_do_not_load_history_or_index",
+    "crates/jj-store-cli/tests/native_lifecycle/reference_windows.rs#workspace_windows_seek_filter_and_resolve_exact_names_without_history",
+    "web/tests/vite/store-workspaces.test.ts#workspace pages do not drain bookmarks or later workspace pages",
+    "web/tests/vite/production-reference-reader.test.ts#exact bookmark outside the first window stays selected when pickers arrive",
+    "web/tests/browser/workspaces.spec.ts#workspace names sharing a commit survive cold reload, tabs, history and explicit Refresh"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked local_metadata_and_bookmark_pages_do_not_load_history_or_index -- --exact bounded_reads::local_metadata_and_bookmark_pages_do_not_load_history_or_index",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before: workspaces request rejected as unknown enum variant. Exact rerun after implementation passes with 10,000 bookmarks, corrupt derived index, one history visit and exact bookmark-9999 lookup."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-workspaces.test.ts -t 'workspace pages do not drain'",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before: expected one request, observed two due to draining reference windows. Owning file rerun passes after explicit workspace-window contract."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked local_metadata_and_bookmark_pages_do_not_load_history_or_index -- --exact bounded_reads::local_metadata_and_bookmark_pages_do_not_load_history_or_index",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial implementation compiler diagnostics (borrowed closure item/lifetime inference) corrected with owned bounded page selections. Final exact regression: 1 passed."
+    },
+    {
+      "command": "pnpm contracts:generate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Regenerated additive native/local Workspaces and exact-selector schemas and TypeScript contracts."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=2 web/tests/vite/production-reference-reader.test.ts web/tests/vite/store-workspaces.test.ts web/tests/vite/projects-code-navigation.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "23 passed: independent startup, selected name outside first window, no drain, stale continuation rejection, coalescing, optional failure, exact missing-name rejection, retained workspace and Projects routes."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=2 web/tests/vite/production-store-workspaces.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/local-browser-merge.test.ts web/tests/vite/production-store-events.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "47 direct consumer tests passed."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked browsing_acceptance:: -- --test-threads=2",
+      "result": "fail",
+      "failures": 2,
+      "note": "Initial test fixture used wrong publication method/old-new head order. Corrected fixture then corrected metric: native metadata_nodes counts JSON shape nodes; object_reads proves three hydrated records. No production admission or assertion threshold was weakened."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked browsing_acceptance:: -- --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "5 passed including native HTTP: forward/backward filtered workspace windows, exact/missing names, shared-target hydration and cursor mismatch by kind/exact selector."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked -- --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "9 passed; 1 opt-in Linux smoke not rerun because unchanged scoped file algorithms were qualified in E-READ-004. Includes updated real local HTTP contract capture."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "0 errors/warnings; catalog boundaries 182 modules. Temporary source qualification, not registry release acceptance."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreWorkspaces.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh Vite process: 5 interaction/accessibility tests passed. Visual baselines unchanged."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "929 production modules pass architecture limits."
+    },
+    {
+      "command": "pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh built UI; existing chunk-size advisory retained."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/workspaces.spec.ts web/tests/browser/repository-navigation.spec.ts web/tests/browser/reads.spec.ts web/tests/browser/file-editor-navigation.spec.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "Port 7458 already occupied. Preserved existing listener and used temporary copy of the production preview host on 17548 with otherwise identical isolated test configuration."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/bounded-reads/playwright.config.ts web/tests/browser/workspaces.spec.ts web/tests/browser/repository-navigation.spec.ts web/tests/browser/reads.spec.ts web/tests/browser/file-editor-navigation.spec.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "First isolated cold run: 18 passed, 1 stale error-location assertion failed. Parent already uses StoreNotice and actual browser showed Notifications toast; updated test to assert that existing contract and retain right-rail exclusion."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected Rust production and test targets checked."
+    },
+    {
+      "command": "JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/references-local-capture.json target/debug/deps/local_browser-893d8c4057fcb950 --exact filesystem_runtime_registers_and_reads_without_native_storage; JJ_STORE_BROWSING_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/references-native-capture.json target/debug/deps/native_lifecycle-e6652c34f7ed2d93 --exact http_browsing_acceptance::http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured; node --input-type=module (responseValidator on both captures)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both actual capture tests passed; all 43 native/local HTTP/SSE responses conform, including workspace windows and exact selectors."
+    },
+    {
+      "command": "pnpm test:contracts",
+      "result": "pass",
+      "failures": 0,
+      "note": "7 schema tests plus generated TypeScript passed."
+    },
+    {
+      "command": "/Users/stevejuma/code/lapismd/jj-store/target/debug/deps/capture_management-8eb3eacdec15b02e --exact api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Original-workspace existing binary independently reproduced same unchanged 120-second capture timeout from E-READ-004; final teardown 193.11s. Capture owner remains unqualified; no deadline or sanitizer changes."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/bounded-reads/playwright.config.ts web/tests/browser/workspaces.spec.ts web/tests/browser/repository-navigation.spec.ts web/tests/browser/reads.spec.ts web/tests/browser/file-editor-navigation.spec.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final fresh preview process: 19 passed, including accessible workspace pagination and missing-name recovery. Temporary isolated example removed after completion; existing services preserved."
+    },
+    {
+      "command": "pnpm spec:first; pnpm check:progress",
+      "result": "fail",
+      "failures": 3,
+      "note": "Added owning mutation precondition requirement and updated two renamed historical test pointers without rewriting historical evidence."
+    },
+    {
+      "command": "pnpm exec prettier --check (changed TS/Svelte/canonical chapters excluding milestones); pnpm check:architecture",
+      "result": "fail",
+      "failures": 2,
+      "note": "New mutation prose needed formatter; formatting expanded native HTTP source to 303 counted lines. Extracted the complete reference request helper into http-reference-reads.ts."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=2 web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-reference-reader.test.ts; pnpm web:check; pnpm web:build; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final extraction direct consumers: 18 passed; web 0 errors/warnings; fresh built UI; 930 production modules pass."
+    },
+    {
+      "command": "pnpm spec:first; pnpm check:progress; pnpm spec:validate; pnpm check:ui-ownership; cargo fmt --all -- --check; pnpm exec prettier --check (changed TS/Svelte/canonical chapters excluding milestones)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Spec-first, 136-task ledger, 167 requirements, ownership and focused formatting pass. Historical ledger formatting preserved. Full unrelated aggregate suites remain out of scope."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Historical lookup/graph preparation, actual-work admission, immutable cache segments/quotas, operation/copy/search/RPC and collaboration/card projections remain in subsequent implementation slices.",
+    "Large-scale Linux/native 2m/near-capacity/cold/cache-loss/real-RustFS gates and full contract capture remain pending; no milestone or full-plan completion claimed. Registry Design Core release qualification and visual approval remain pending. Unrelated root aggregates out of scope."
+  ],
+  "next": "Commit this verified reference/startup slice, then implement bounded on-demand history/index preparation and remaining audited reads."
 }
 ]
 ```

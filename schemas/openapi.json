@@ -16855,6 +16855,14 @@
             "schema": { "$ref": "#/components/schemas/RepositoryId" }
           },
           {
+            "name": "exact",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
             "name": "at_op",
             "in": "query",
             "required": false,
@@ -16889,7 +16897,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["bookmarks", "changes", "all"],
+              "enum": ["bookmarks", "workspaces", "changes", "all"],
               "default": "all"
             },
             "style": "form",
@@ -17039,6 +17047,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "exact": { "type": ["string", "null"] },
             "at_op": {
               "type": ["string", "null"],
               "pattern": "^[0-9a-f]{128}$",
@@ -17049,7 +17058,7 @@
             "q": { "type": "string", "default": "" },
             "kind": {
               "type": "string",
-              "enum": ["bookmarks", "changes", "all"],
+              "enum": ["bookmarks", "workspaces", "changes", "all"],
               "default": "all"
             },
             "limit": {
@@ -17078,6 +17087,14 @@
             "in": "path",
             "required": true,
             "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "exact",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
           },
           {
             "name": "at_op",
@@ -17114,7 +17131,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["bookmarks", "changes", "all"],
+              "enum": ["bookmarks", "workspaces", "changes", "all"],
               "default": "all"
             },
             "style": "form",
@@ -17191,6 +17208,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "exact": { "type": ["string", "null"] },
             "at_op": {
               "type": ["string", "null"],
               "pattern": "^[0-9a-f]{128}$",
@@ -17201,7 +17219,7 @@
             "q": { "type": "string", "default": "" },
             "kind": {
               "type": "string",
-              "enum": ["bookmarks", "changes", "all"],
+              "enum": ["bookmarks", "workspaces", "changes", "all"],
               "default": "all"
             },
             "limit": {
@@ -25017,9 +25035,15 @@
                                 "maxLength": 128
                               },
                               "query": { "type": "string" },
+                              "exact": { "type": ["string", "null"] },
                               "kind": {
                                 "type": "string",
-                                "enum": ["bookmarks", "changes", "all"]
+                                "enum": [
+                                  "bookmarks",
+                                  "workspaces",
+                                  "changes",
+                                  "all"
+                                ]
                               },
                               "limit": {
                                 "type": "integer",
@@ -37720,6 +37744,18 @@
             "type": "object",
             "properties": {
               "name": { "type": "string" },
+              "targets": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Target" }
+              },
+              "kind": { "type": "string", "const": "workspace" }
+            },
+            "required": ["kind", "name", "targets"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
               "terms": {
                 "type": "array",
                 "items": {
@@ -39908,6 +39944,20 @@
       },
       "LocalReferencesReference": {
         "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "targets": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LocalReferencesTarget"
+                }
+              },
+              "kind": { "type": "string", "const": "workspace" }
+            },
+            "required": ["kind", "name", "targets"]
+          },
           {
             "type": "object",
             "properties": {

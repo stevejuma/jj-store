@@ -707,3 +707,9 @@ merge semantics; exhaustion reports unavailable attribution without invented
 last-change commits. Lightweight local commit headers expose native commit data
 without requiring visible-change/evolution evaluation. Scoped file content
 requires exact commit/path/file agreement before opening a stream.
+
+Workspace references are projected directly from the pinned view's workspace
+map. Shared targets are hydrated once per window; target annotations on a
+workspace row are scoped to that named workspace. Exact name lookup does not
+invoke substring matching or scan unrelated commit descriptions. Legacy visible
+change enumeration retains its graph semantics and bounded admission.

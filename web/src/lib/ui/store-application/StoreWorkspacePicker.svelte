@@ -52,7 +52,7 @@
           : "Select workspace"}
         disabled={disabled ||
           !view.route.snapshotOperationId ||
-          view.status.bookmarks === "loading"}
+          view.workingCopiesStatus === "loading"}
       >
         <FolderGit2Icon aria-hidden="true" />
         <span>{view.route.workspace ?? emptyLabel}</span>
@@ -85,7 +85,7 @@
     <CommandView.Root label="Select workspace" loop>
       <CommandView.Input
         bind:value={query}
-        placeholder="Search workspaces"
+        placeholder="Search loaded workspaces"
         aria-label="Search workspaces"
       />
       <CommandView.List>
@@ -125,6 +125,25 @@
         </CommandView.Group>
       </CommandView.List>
     </CommandView.Root>
+    {#if view.workingCopiesStatus === "failed"}
+      <p role="status">Workspaces could not be loaded.</p>
+      <Button
+        variant="ghost"
+        size="sm"
+        onclick={() => controller.actions.loadMore("workspaces")}
+        >Retry workspaces</Button
+      >
+    {:else if view.canLoadMoreWorkingCopies}
+      <Button
+        variant="ghost"
+        size="sm"
+        disabled={view.workingCopiesStatus === "refreshing"}
+        onclick={() => controller.actions.loadMore("workspaces")}
+        >{view.workingCopiesStatus === "refreshing"
+          ? "Loading workspaces…"
+          : "Load more workspaces"}</Button
+      >
+    {/if}
   </Popover.Content>
 </Popover.Root>
 

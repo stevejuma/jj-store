@@ -9,6 +9,7 @@ use std::collections::{BTreeMap, BTreeSet};
 #[serde(rename_all = "snake_case")]
 pub enum Kind {
     Bookmarks,
+    Workspaces,
     Changes,
     #[default]
     All,
@@ -18,6 +19,7 @@ pub enum Kind {
 pub struct Request {
     pub operation: m::OperationId,
     pub query: String,
+    pub exact: Option<String>,
     pub kind: Kind,
     pub limit: usize,
     pub anchor: Option<String>,
@@ -37,6 +39,10 @@ pub struct Target {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum Reference {
+    Workspace {
+        name: String,
+        targets: Vec<Target>,
+    },
     Bookmark {
         name: String,
         terms: Vec<Option<m::CommitId>>,
@@ -66,13 +72,22 @@ struct Entry {
 pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     if request.limit == 0
         || request.limit > context.limits.max_page
+        || request.exact.as_ref().is_some_and(|name| name.len() > 1024)
         || request.query.len() > 1024
         || request.anchor.as_ref().is_some_and(|v| v.len() > 4096)
     {
         return Err(Error::Limit);
     }
+    if request.exact.is_some()
+        && (!request.query.is_empty() || request.anchor.is_some() || request.kind == Kind::All)
+    {
+        return Err(Error::Invalid);
+    }
     let operation = context.operation(request.operation).await?;
     let view = context.view(operation.view_id).await?;
+    if request.kind == Kind::Workspaces {
+        return workspace_window(&context, &view, &request).await;
+    }
     if request.kind == Kind::Bookmarks && request.query.is_empty() {
         return bookmark_window(&context, &view, &request).await;
     }
@@ -118,10 +133,19 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     }
     let needle = request.query.to_lowercase();
     entries.retain(|entry| {
+        if request
+            .exact
+            .as_ref()
+            .is_some_and(|name| entry.key != format!("change:{name}"))
+        {
+            return false;
+        }
         needle.is_empty()
             || entry.key.to_lowercase().contains(&needle)
             || match &entry.value {
-                Reference::Bookmark { targets, .. } | Reference::Change { targets, .. } => targets
+                Reference::Bookmark { targets, .. }
+                | Reference::Change { targets, .. }
+                | Reference::Workspace { targets, .. } => targets
                     .iter()
                     .any(|target| target.description.to_lowercase().contains(&needle)),
             }
@@ -146,34 +170,47 @@ async fn bookmark_window(context: &Context, view: &dto::View, request: &Request)
         .as_deref()
         .map(|value| value.strip_prefix("bookmark:").ok_or(Error::Invalid))
         .transpose()?;
-    let mut selected: Vec<_> = match request.direction {
-        Direction::Forward => view
-            .local_bookmarks
-            .range::<str, _>((anchor.map_or(Unbounded, Excluded), Unbounded))
-            .take(request.limit)
-            .collect(),
-        Direction::Backward => view
-            .local_bookmarks
-            .range::<str, _>((Unbounded, anchor.map_or(Unbounded, Excluded)))
-            .rev()
-            .take(request.limit)
-            .collect(),
+    let mut selected: Vec<_> = if let Some(name) = &request.exact {
+        view.local_bookmarks
+            .get_key_value(name)
+            .into_iter()
+            .collect()
+    } else {
+        match request.direction {
+            Direction::Forward => view
+                .local_bookmarks
+                .range::<str, _>((anchor.map_or(Unbounded, Excluded), Unbounded))
+                .take(request.limit)
+                .collect(),
+            Direction::Backward => view
+                .local_bookmarks
+                .range::<str, _>((Unbounded, anchor.map_or(Unbounded, Excluded)))
+                .rev()
+                .take(request.limit)
+                .collect(),
+        }
     };
     if matches!(request.direction, Direction::Backward) {
         selected.reverse();
     }
-    let previous = selected.first().and_then(|(name, _)| {
-        view.local_bookmarks
-            .first_key_value()
-            .filter(|(first, _)| first < name)
-            .map(|_| format!("bookmark:{name}"))
-    });
-    let next = selected.last().and_then(|(name, _)| {
-        view.local_bookmarks
-            .last_key_value()
-            .filter(|(last, _)| last > name)
-            .map(|_| format!("bookmark:{name}"))
-    });
+    let previous = selected
+        .first()
+        .filter(|_| request.exact.is_none())
+        .and_then(|(name, _)| {
+            view.local_bookmarks
+                .first_key_value()
+                .filter(|(first, _)| first < name)
+                .map(|_| format!("bookmark:{name}"))
+        });
+    let next = selected
+        .last()
+        .filter(|_| request.exact.is_none())
+        .and_then(|(name, _)| {
+            view.local_bookmarks
+                .last_key_value()
+                .filter(|(last, _)| last > name)
+                .map(|_| format!("bookmark:{name}"))
+        });
     let mut references = Vec::with_capacity(selected.len());
     let mut hydrated = BTreeMap::new();
     for (name, target) in selected {
@@ -197,6 +234,132 @@ async fn bookmark_window(context: &Context, view: &dto::View, request: &Request)
             conflicted: target.0.len() != 1,
             workspaces: workspace_names(view, &ids),
             targets,
+        };
+        context.budget.output(&value)?;
+        references.push(value);
+    }
+    let page = Page {
+        version: 1,
+        operation: request.operation,
+        references,
+        previous,
+        next,
+        stats: context.budget.stats(),
+    };
+    context.budget.complete_output(&page)?;
+    Ok(page)
+}
+
+async fn workspace_window(context: &Context, view: &dto::View, request: &Request) -> Result<Page> {
+    use std::ops::Bound::{Excluded, Unbounded};
+    let anchor = request
+        .anchor
+        .as_deref()
+        .map(|value| value.strip_prefix("workspace:").ok_or(Error::Invalid))
+        .transpose()?;
+    let needle = request.query.to_lowercase();
+    let matches = |name: &str| -> Result<bool> {
+        context.budget.work(1)?;
+        Ok(needle.is_empty() || name.to_lowercase().contains(&needle))
+    };
+    let select = |iter: &mut dyn Iterator<Item = (&String, &m::CommitId)>| -> Result<Vec<_>> {
+        let mut selected = Vec::new();
+        for (name, id) in iter {
+            if matches(name)? {
+                selected.push((name.clone(), *id));
+                if selected.len() > request.limit {
+                    break;
+                }
+            }
+        }
+        Ok(selected)
+    };
+    let mut selected = if let Some(name) = &request.exact {
+        view.wc_commit_ids
+            .get_key_value(name)
+            .map(|(name, id)| (name.clone(), *id))
+            .into_iter()
+            .collect()
+    } else {
+        match request.direction {
+            Direction::Forward => select(
+                &mut view
+                    .wc_commit_ids
+                    .range::<str, _>((anchor.map_or(Unbounded, Excluded), Unbounded)),
+            )?,
+            Direction::Backward => select(
+                &mut view
+                    .wc_commit_ids
+                    .range::<str, _>((Unbounded, anchor.map_or(Unbounded, Excluded)))
+                    .rev(),
+            )?,
+        }
+    };
+    let more = selected.len() > request.limit;
+    selected.truncate(request.limit);
+    if matches!(request.direction, Direction::Backward) {
+        selected.reverse();
+    }
+    let mut previous = None;
+    let mut next = None;
+    if request.exact.is_none() && !selected.is_empty() {
+        let first = &selected[0].0;
+        let last = &selected[selected.len() - 1].0;
+        let other = match request.direction {
+            Direction::Forward => {
+                let mut found = false;
+                for (name, _) in view.wc_commit_ids.range(..first.clone()).rev() {
+                    if matches(name)? {
+                        found = true;
+                        break;
+                    }
+                }
+                found
+            }
+            Direction::Backward => {
+                let mut found = false;
+                for (name, _) in view
+                    .wc_commit_ids
+                    .range((Excluded(last.clone()), Unbounded))
+                {
+                    if matches(name)? {
+                        found = true;
+                        break;
+                    }
+                }
+                found
+            }
+        };
+        let (has_previous, has_next) = match request.direction {
+            Direction::Forward => (other, more),
+            Direction::Backward => (more, other),
+        };
+        previous = has_previous.then(|| format!("workspace:{first}"));
+        next = has_next.then(|| format!("workspace:{last}"));
+    }
+    let mut references = Vec::with_capacity(selected.len());
+    let mut hydrated = BTreeMap::new();
+    for (name, id) in &selected {
+        context.budget.work(1)?;
+        if !hydrated.contains_key(id) {
+            let commit = context.commit_dto(*id).await?;
+            let target = Target {
+                commit: *id,
+                change: commit.change_id,
+                parents: commit.parents,
+                description: commit.description,
+                author: commit.author,
+                committer: commit.committer,
+                conflicted: !commit.conflict_labels.is_empty() || commit.root_tree.len() != 1,
+                workspaces: vec![],
+            };
+            hydrated.insert(*id, target);
+        }
+        let mut target = hydrated[id].clone();
+        target.workspaces.push(name.clone());
+        let value = Reference::Workspace {
+            name: name.clone(),
+            targets: vec![target],
         };
         context.budget.output(&value)?;
         references.push(value);

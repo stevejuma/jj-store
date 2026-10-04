@@ -222,7 +222,7 @@ impl Executor {
         self.worker(access, move |access, budget| {
             Box::pin(async move {
                 let metadata_only = matches!(&request, Request::QueryInfo)
-                    || matches!(&request, Request::References(r) if r.kind == references::Kind::Bookmarks && r.operation == operation)
+                    || matches!(&request, Request::References(r) if matches!(r.kind, references::Kind::Bookmarks | references::Kind::Workspaces) && r.operation == operation)
                     || matches!(&request, Request::Operation { operation: selected } if *selected == operation);
                 let scoped_commit = match &request { Request::Paths(r) => Some(r.commit), Request::FileAt { commit, .. } | Request::CommitSummary { commit } => Some(*commit), _ => None };
                 let context = Context::open(access, operation, budget, limits, metadata_only, scoped_commit).await?;

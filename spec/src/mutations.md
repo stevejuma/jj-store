@@ -951,3 +951,8 @@ local `file_at` verifies the selected commit/path/file relationship before
 opening content; lightweight summaries and row-only requests grant no write or
 publication capability. Confirmed file saves continue through the existing
 receipt-backed refresh and pinned selection behavior.
+
+Reference picker pagination and exact-name resolution remain reads. They MUST
+NOT change mutation preconditions, pending request identities, selected
+operation checks or physical working-copy state. Resolving a missing
+bookmark/workspace must not silently select another target for a command.

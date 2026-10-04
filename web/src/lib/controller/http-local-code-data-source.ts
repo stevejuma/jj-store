@@ -1,26 +1,32 @@
 import { ApiError, fullId } from "../api/client.js";
 import { codeId } from "./repository-profile.js";
-import type { GraphQuery, PathQuery } from "./native-data-source.js";
+import type {
+  GraphQuery,
+  PathQuery,
+  ReferenceQuery,
+} from "./native-data-source.js";
 import {
   HttpLocalQuery,
   type LocalCodeRequest as Request,
 } from "./http-local-query.js";
 export class HttpLocalCodeDataSource extends HttpLocalQuery {
-  references(operation: string, cursor?: string) {
+  references(operation: string, cursor?: string, input: ReferenceQuery = {}) {
     return this.query<"references">(
       operation,
       {
         kind: "references",
         query: {
           operation,
-          query: "",
-          kind: "all",
+          query: input.query ?? "",
+          exact: input.exact ?? null,
+          kind: input.kind ?? "bookmarks",
           limit: 50,
           anchor: null,
           direction: "forward",
         },
       },
       cursor,
+      input.signal,
     );
   }
   async queryInfo(operation: string) {

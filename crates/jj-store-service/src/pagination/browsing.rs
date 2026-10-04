@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 #[serde(deny_unknown_fields)]
 pub struct ReferenceRequest {
     pub query: String,
+    pub exact: Option<String>,
     pub kind: references::Kind,
     pub limit: usize,
 }
@@ -89,6 +90,7 @@ impl BrowserPager {
                 references::Request {
                     operation: read.snapshot().await?.operation_id,
                     query: request.query,
+                    exact: request.exact,
                     kind: request.kind,
                     limit: request.limit,
                     anchor: position.as_ref().map(|p| p.0.clone()),

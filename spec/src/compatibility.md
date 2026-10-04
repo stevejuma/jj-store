@@ -800,3 +800,8 @@ their contracts. Updated clients use the new variants only with this server
 version. Native/local persisted identities, companion framing and manifest/WAL
 formats remain unchanged. Generated contracts and exact cursor consumers qualify
 these additions independently of large-history preparation.
+
+Version-1 reference requests add optional `exact` and a `workspaces` kind with
+named workspace response rows. Existing bookmark/change forms retain their
+meaning. Updated browser startup requests bounded bookmark/workspace windows
+separately; it does not reinterpret an incomplete page as a complete inventory.

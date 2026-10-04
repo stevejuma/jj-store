@@ -109,6 +109,11 @@ export function createProductionStoreActions(options: {
     controlSync: options.settings.controlSync,
     prepareIndex: options.settings.prepareIndex,
     async loadMore(collection) {
+      if (collection === "workspaces")
+        await options.reader.loadWorkingCopies(
+          Boolean(options.data.workingCopiesCursor),
+          true,
+        );
       if (collection === "bookmarks" && options.data.refsCursor)
         await options.reader.loadReferences(true);
       if (collection === "graph" && options.data.graphCursor)

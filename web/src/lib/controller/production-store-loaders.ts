@@ -54,6 +54,7 @@ export async function readReferences(
   operation: string,
   cursor?: string,
   expected?: Snapshot,
+  query?: import("./native-data-source.js").ReferenceQuery,
 ): Promise<{
   bookmarks: Bookmark[];
   choices: RepositoryChoice[];
@@ -61,7 +62,7 @@ export async function readReferences(
   cursor: string | null;
   snapshot: Snapshot;
 }> {
-  const value = await source.references(fullId(operation), cursor);
+  const value = await source.references(fullId(operation), cursor, query);
   assertPinned(value.snapshot, source, operation);
   assertSameSnapshot(value.snapshot, expected);
   return {

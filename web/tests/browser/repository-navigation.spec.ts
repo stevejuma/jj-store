@@ -126,7 +126,7 @@ test("phone overflow supports keyboard selection, reload, resize and right rail 
   ).toHaveAttribute("data-state", "active");
 });
 
-test("request errors stay in the main body while the right rail stays minimal", async ({
+test("request errors use notifications while the right rail stays minimal", async ({
   page,
 }) => {
   await api(page, { access: "local_trusted" });
@@ -141,7 +141,7 @@ test("request errors stay in the main body while the right rail stays minimal", 
     }),
   );
   await page.goto(`/#/repos/${repo}/log?at_op=${operation}`);
-  const notice = page.getByRole("region", { name: "Repository notices" });
+  const notice = page.getByRole("region", { name: "Notifications" });
   await expect(notice.getByText("Repository request failed")).toBeVisible();
   await page.getByRole("button", { name: "Toggle details" }).click();
   const rail = page.getByRole("complementary", { name: "Repository details" });

@@ -19,39 +19,44 @@ async function workspaceApi(page: Page) {
     const query = new URL(route.request().url()).searchParams;
     expect(query.get("at_op")).toBe(operation);
     const more = query.has("cursor");
-    const workspaces = [more ? "agent/review" : "default"];
+    const exact = query.get("exact");
+    const workspace = query.get("kind") === "workspaces";
+    const workspaces = [exact ?? (more ? "agent/review" : "default")];
     const node = graph.data.data.nodes.find(
       (node: any) => node.commit.id === commit,
     ).commit;
-    const next = more ? null : "workspace-page-2";
+    const next = workspace && !more && !exact ? "workspace-page-2" : null;
     await route.fulfill({
       json: {
         snapshot: structuredClone(graph.snapshot),
         data: {
           version: 1,
           operation,
-          references: [
-            {
-              kind: more ? "change" : "bookmark",
-              name: more ? "" : "main",
-              change: node.change_id,
-              terms: [commit],
-              conflicted: false,
-              workspaces,
-              targets: [
-                {
-                  commit,
-                  change: node.change_id,
-                  parents: [...node.parents],
-                  description: node.description,
-                  author: structuredClone(node.author),
-                  committer: structuredClone(node.committer),
-                  conflicted: node.conflicted,
-                  workspaces,
-                },
-              ],
-            },
-          ],
+          references:
+            exact === "forgotten"
+              ? []
+              : [
+                  {
+                    kind: workspace ? "workspace" : "bookmark",
+                    name: workspace ? workspaces[0] : "main",
+                    change: node.change_id,
+                    terms: [commit],
+                    conflicted: false,
+                    workspaces,
+                    targets: [
+                      {
+                        commit,
+                        change: node.change_id,
+                        parents: [...node.parents],
+                        description: node.description,
+                        author: structuredClone(node.author),
+                        committer: structuredClone(node.committer),
+                        conflicted: node.conflicted,
+                        workspaces,
+                      },
+                    ],
+                  },
+                ],
           previous: null,
           next,
           stats: graph.data.stats,
@@ -66,6 +71,8 @@ async function workspaceApi(page: Page) {
 
 async function choose(page: Page, workspace: string) {
   await page.getByRole("combobox", { name: "Repository workspace" }).click();
+  if (workspace === "agent/review")
+    await page.getByRole("button", { name: "Load more workspaces" }).click();
   await page
     .getByRole("combobox", { name: "Select workspace", exact: true })
     .fill(workspace);
@@ -80,6 +87,15 @@ test("workspace names sharing a commit survive cold reload, tabs, history and ex
 }) => {
   const queries = await workspaceApi(page);
   await page.goto("/");
+  await expect(
+    page.getByRole("combobox", { name: "Repository workspace" }),
+  ).toBeEnabled();
+  expect(
+    queries.filter(
+      (url) =>
+        url.pathname.endsWith("/references") && url.searchParams.has("cursor"),
+    ),
+  ).toHaveLength(0);
   await choose(page, "default");
   await page.getByRole("tab", { name: "Overview", exact: true }).click();
   await expect(

@@ -71,6 +71,24 @@ async fn http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_c
             format!("references?at_op={}&kind=bookmarks&limit=1", f.operation),
         ),
         (
+            "references",
+            format!("references?at_op={}&kind=workspaces&limit=1", f.operation),
+        ),
+        (
+            "references",
+            format!(
+                "references?at_op={}&kind=workspaces&exact=desktop&limit=1",
+                f.operation
+            ),
+        ),
+        (
+            "references",
+            format!(
+                "references?at_op={}&kind=bookmarks&exact=main&limit=1",
+                f.operation
+            ),
+        ),
+        (
             "commits/{commit}/paths",
             format!(
                 "commits/{}/paths?at_op={}&recursive=true&limit=2",
@@ -106,7 +124,7 @@ async fn http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_c
         let (status, body) = json(&router, &f.f.reader, &path).await;
         assert_eq!(status, StatusCode::OK, "{path}: {body}");
         assert_eq!(body["snapshot"]["operation_id"], f.operation.to_string());
-        if template == "references" {
+        if template == "references" && body["next_cursor"].is_string() {
             first_cursor = body["next_cursor"].as_str().map(str::to_owned);
         }
         samples.push(serde_json::json!({

@@ -135,6 +135,7 @@ async fn native_browser_windows_preserve_references_paths_groups_and_exact_diffs
         .references(
             &reader,
             c::references::Request {
+                exact: None,
                 operation: f.operation,
                 query: String::new(),
                 kind: c::references::Kind::Bookmarks,
@@ -163,6 +164,7 @@ async fn native_browser_windows_preserve_references_paths_groups_and_exact_diffs
         .references(
             &reader,
             c::references::Request {
+                exact: None,
                 operation: f.operation,
                 query: String::new(),
                 kind: c::references::Kind::Bookmarks,
@@ -282,6 +284,7 @@ async fn signed_browser_cursors_bind_queries_support_backward_windows_and_reset_
         Arc::new(SnapshotCursors::new(paging::Limits::default(), Arc::new(SystemClock)).unwrap());
     let browser = browse::BrowserPager::with_cursors(reader.clone(), cursors.clone());
     let request = browse::ReferenceRequest {
+        exact: None,
         query: String::new(),
         kind: c::references::Kind::Bookmarks,
         limit: 1,
@@ -332,7 +335,32 @@ async fn signed_browser_cursors_bind_queries_support_backward_windows_and_reset_
         panic!("backward cursor resumes")
     };
     assert_eq!(back.data.references, first.data.references);
+    for changed in [
+        browse::ReferenceRequest {
+            kind: c::references::Kind::Workspaces,
+            ..request.clone()
+        },
+        browse::ReferenceRequest {
+            exact: Some("main".into()),
+            ..request.clone()
+        },
+    ] {
+        assert!(matches!(
+            browser
+                .references(
+                    f.f.session.clone(),
+                    Some(f.operation),
+                    changed,
+                    Some(&next),
+                    None,
+                    c::Direction::Forward
+                )
+                .await,
+            Err(paging::Error::InvalidCursor)
+        ));
+    }
     let changed = browse::ReferenceRequest {
+        exact: None,
         query: "main".into(),
         ..request.clone()
     };
@@ -468,6 +496,7 @@ async fn direct_directory_rows_include_directories_and_bookmark_pages_hydrate_on
         .references(
             &reader(),
             c::references::Request {
+                exact: None,
                 operation: f.operation,
                 query: String::new(),
                 kind: c::references::Kind::Bookmarks,
@@ -483,3 +512,6 @@ async fn direct_directory_rows_include_directories_and_bookmark_pages_hydrate_on
     // operation, view and selected target reads, excluding other bookmarks.
     assert_eq!(page.stats.object_reads, 3, "{:?}", page.stats);
 }
+
+#[path = "reference_windows.rs"]
+mod reference_windows;

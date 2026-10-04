@@ -55,6 +55,7 @@ export function presentReferences(
         });
       }
     }
+    if (reference.kind === "workspace") continue;
     if (reference.kind === "bookmark") {
       const target = reference.targets[0];
       const targets = reference.terms.filter((id): id is string => Boolean(id));

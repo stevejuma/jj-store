@@ -148,6 +148,8 @@ export interface StoreControllerState {
   readonly fileRevisionStatus?: StoreLoadStatus;
   readonly bookmarks: readonly Bookmark[];
   readonly choices: readonly RepositoryChoice[];
+  readonly workingCopiesStatus?: StoreLoadStatus;
+  readonly canLoadMoreWorkingCopies?: boolean;
   readonly workingCopies: readonly RepositoryWorkingCopy[];
   readonly targets: readonly string[];
   readonly snapshot: RepositorySnapshot | undefined;
@@ -219,6 +221,7 @@ export interface StoreController {
     controlSync(action: import("./sync-settings.js").SyncAction): Promise<void>;
     loadMore(
       collection:
+        | "workspaces"
         | "bookmarks"
         | "graph"
         | "evolution"

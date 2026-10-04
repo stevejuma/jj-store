@@ -1,3 +1,4 @@
+import { httpReferences } from "./http-reference-reads.js";
 import { HttpFileReads } from "./http-file-reads.js";
 import { createHttpQuery } from "./http-query.js";
 import { HttpRepositoryTransports } from "./http-repository-transports.js";
@@ -12,6 +13,7 @@ import {
 } from "../api/client.js";
 import type {
   GraphQuery,
+  ReferenceQuery,
   PathQuery,
   SearchQuery,
   StoreDataSource,
@@ -87,15 +89,10 @@ export class HttpStoreDataSource
       this.#client.request("snapshot", {}, { signal }),
     );
   }
-  references(operation: string, cursor?: string) {
-    const query = { at_op: fullId(operation), cursor, limit: 50 };
-    return this.#query<Model<"Window">>(
-      "references",
-      operation,
-      query,
-      (signal) => this.#client.request("references", query, { signal }),
-    );
+  references(operation: string, cursor?: string, input: ReferenceQuery = {}) {
+    return httpReferences(this.#client, this.#query, operation, cursor, input);
   }
+
   graph(kind: "log" | "operations" | "evolution", input: GraphQuery) {
     const query = {
       at_op: fullId(input.operation),

@@ -1,5 +1,5 @@
 import { createHistoryQuery } from "./history-query.svelte.js";
-import { readWorkingCopies } from "./store-workspaces.js";
+import { createProductionReferenceReader } from "./production-reference-reader.js";
 import { fullId } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { createProductionFileReader } from "./production-file-reader.svelte.js";
@@ -14,14 +14,13 @@ import {
   readGraph,
   readOperationInspection,
   readPatch,
-  readReferences,
 } from "./production-store-loaders.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import { restoreProductionStoreRoute } from "./production-route-restorer.js";
 import { createProductionStoreCollaboration } from "./production-store-collaboration.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 
-interface ReaderContext {
+export interface ReaderContext {
   data: ProductionStoreState;
   history: ReturnType<typeof createStoreRouteHistory>;
   source(): StoreDataSource;
@@ -56,36 +55,7 @@ export function createProductionStoreReader(
   const fileReader = createProductionFileReader(context);
   const collaboration = createProductionStoreCollaboration(context);
   const evolution = createProductionEvolutionReader(context);
-  async function loadReferences(more = false) {
-    const source = context.source(),
-      operation = fullId(context.operation() ?? ""),
-      ticket = context.version();
-    data.status.bookmarks = more ? "refreshing" : "loading";
-    try {
-      const value = await readReferences(
-        source,
-        operation,
-        more ? (data.refsCursor ?? undefined) : undefined,
-        more ? (data.refsPageSnapshot ?? undefined) : undefined,
-      );
-      const workingCopies = more
-        ? data.workingCopies
-        : await readWorkingCopies(source, operation, value);
-      if (!context.current(ticket, source)) return;
-      data.bookmarks = more
-        ? [...data.bookmarks, ...value.bookmarks]
-        : value.bookmarks;
-      data.choices = more ? [...data.choices, ...value.choices] : value.choices;
-      data.workingCopies = workingCopies;
-      data.refsCursor = value.cursor;
-      data.refsPageSnapshot = value.snapshot;
-      data.status.bookmarks = data.bookmarks.length ? "ready" : "empty";
-    } catch (cause) {
-      if (!context.current(ticket, source)) return;
-      context.report(cause);
-      data.status.bookmarks = "failed";
-    }
-  }
+  const references = createProductionReferenceReader(context);
   async function loadGraph(more = false) {
     const source = context.source(),
       operation = fullId(context.operation() ?? ""),
@@ -257,7 +227,7 @@ export function createProductionStoreReader(
     if (commit) await fileReader.loadFiles(commit);
   }
   const reads = {
-    loadReferences,
+    ...references,
     loadGraph,
     ...evolution,
     ...fileReader,

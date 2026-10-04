@@ -1869,3 +1869,10 @@ parents. Attribution traverses one shared bounded first-parent chain per window,
 with explicit merge/budget outcomes. Clients load rows before attribution, use
 independent cursor bindings for each query, and join metadata only to matching
 immutable commit/path/term identities. Metadata failure cannot discard rows.
+
+Reference windows support `kind=workspaces` independently of visible-change
+history. Each row names one workspace and its exact selected target. Bookmarks
+and workspaces support an optional `exact` name; exact lookup uses the captured
+view's keyed map, returns no continuation, and rejects a simultaneous text query
+or page anchor. Workspace windows seek their own ordered names and hydrate only
+the requested window. Continuations bind kind, exact name, query and page size.

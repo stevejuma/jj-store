@@ -3,6 +3,8 @@ import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 
 interface RouteReads {
+  prepareReferences?(route: StoreRoute): Promise<boolean>;
+  loadReferencePickers?(): Promise<void>;
   loadReferences(): Promise<void>;
   loadGraph(): Promise<void>;
   loadEvolution(more?: boolean): Promise<void>;
@@ -36,7 +38,7 @@ async function restoreFiles(
   reads: RouteReads,
 ) {
   const workingCopy = data.workingCopies.find(
-    (copy) => copy.workspace === desired.workspace,
+    (copy) => copy.workspace === (desired.workspace ?? "default"),
   );
   const choice = desired.bookmark
     ? data.choices.find(
@@ -79,8 +81,9 @@ async function restoreFiles(
   }
   const commit =
     desired.commitId ??
+    (selected?.targets.length === 1 ? selected.targets[0]! : null) ??
     (!choice ? workingCopy?.commitId : null) ??
-    (selected?.targets.length === 1 ? selected.targets[0]! : null);
+    (!desired.workspace && !choice ? data.workingCopies[0]?.commitId : null);
   if (!commit) {
     data.status.files = data.targets.length > 1 ? "unavailable" : "empty";
     return;
@@ -118,13 +121,19 @@ export async function restoreProductionStoreRoute(
 ) {
   data.status.error = "";
   data.status.navigation = "loading";
-  await reads.loadReferences();
+  const referencesReady = reads.prepareReferences
+    ? await reads.prepareReferences(desired)
+    : await reads
+        .loadReferences()
+        .then(() => data.status.bookmarks !== "failed");
   if (history.route !== desired) return;
-  if (data.status.bookmarks === "failed") {
+  if (!referencesReady) {
     data.status.navigation = "failed";
     return;
   }
   if (
+    desired.page !== "agents" &&
+    desired.page !== "reviews" &&
     desired.workspace &&
     !data.workingCopies.some((copy) => copy.workspace === desired.workspace)
   ) {
@@ -179,4 +188,5 @@ export async function restoreProductionStoreRoute(
     if (desired.reviewThreadId) await reads.loadReview(desired.reviewThreadId);
   }
   data.status.navigation = data.status.error ? "failed" : "ready";
+  void reads.loadReferencePickers?.();
 }

@@ -43,8 +43,8 @@ function window(workspaces: string[], cursor: string | null = null) {
     data: {
       references: [
         {
-          kind: "change",
-          name: "",
+          kind: "workspace",
+          name: workspaces[0],
           change: copy.changeId,
           terms: [commit],
           workspaces,
@@ -185,17 +185,17 @@ test("branch selections preserve loaded references and paging while reading only
   history.destroy();
 });
 
-test("workspace discovery follows every pinned reference page and preserves shared targets", async () => {
+test("workspace discovery reads one pinned window and rejects a mismatched operation", async () => {
   const references = vi.fn(async (_operation: string, cursor?: string) =>
     window(cursor ? ["agent/review"] : ["default"], cursor ? null : "more"),
   );
   const source = { repository, references } as unknown as StoreDataSource;
   const result = await readWorkingCopies(source, operation);
-  expect(result.map((item) => item.workspace)).toEqual([
-    "agent/review",
+  expect(result.workingCopies.map((item) => item.workspace)).toEqual([
     "default",
   ]);
-  expect(references).toHaveBeenNthCalledWith(2, operation, "more");
+  expect(result.cursor).toBe("more");
+  expect(references).toHaveBeenCalledTimes(1);
   references.mockImplementation(async () => ({
     ...window(["default"]),
     snapshot: { ...snapshot, operation_id: "ef".repeat(64) },
@@ -230,15 +230,34 @@ test("workspace discovery continues the displayed first page without recapturing
     window(cursor ? ["agent/review"] : ["default"], cursor ? null : "more"),
   );
   const source = { repository, references } as unknown as StoreDataSource;
-  const first = await readReferences(source, operation);
-  const result = await readWorkingCopies(source, operation, first);
+  const first = await readWorkingCopies(source, operation);
+  const result = await readWorkingCopies(
+    source,
+    operation,
+    first.cursor!,
+    first.snapshot,
+  );
   expect(references).toHaveBeenCalledTimes(2);
-  expect(result).toHaveLength(2);
+  expect(result.workingCopies.map((item) => item.workspace)).toEqual([
+    "agent/review",
+  ]);
   references.mockImplementation(async () => ({
     ...window(["agent/review"]),
     snapshot: { ...snapshot, published_seq: 1 },
   }));
-  await expect(readWorkingCopies(source, operation, first)).rejects.toThrow(
-    "pagination snapshot mismatch",
+  await expect(
+    readWorkingCopies(source, operation, first.cursor!, first.snapshot),
+  ).rejects.toThrow("pagination snapshot mismatch");
+});
+
+test("workspace pages do not drain bookmarks or later workspace pages", async () => {
+  const references = vi.fn(async (_operation: string, cursor?: string) =>
+    window(cursor ? ["agent/review"] : ["default"], cursor ? null : "more"),
   );
+  const source = { repository, references } as unknown as StoreDataSource;
+  await readWorkingCopies(source, operation);
+  expect(references).toHaveBeenCalledTimes(1);
+  expect(references).toHaveBeenCalledWith(operation, undefined, {
+    kind: "workspaces",
+  });
 });

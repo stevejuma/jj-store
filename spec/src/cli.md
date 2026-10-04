@@ -1598,3 +1598,9 @@ Files-first conformance covers row-only reads under a one-commit budget, exact
 local commit/path/file membership, independent commit summaries and shared
 bounded attribution. Cold browser acceptance must keep rows usable while
 metadata is pending or fails and reject obsolete enrichment after navigation.
+
+Reference startup qualification includes 10,000 bookmarks, exact names outside
+the first window, independent workspace reads with an unusable derived index,
+shared targets, missing selections and cursor input changes. Browser acceptance
+keeps explicit Files and collaboration routes usable during pending picker
+reads.

@@ -438,6 +438,7 @@ async fn local_code_reads_pin_operations_and_preserve_repository_state() {
             access.clone(),
             op,
             Request::References(jj_store_jj::local_browser::references::Request {
+                exact: None,
                 operation: op,
                 query: "".into(),
                 kind: Default::default(),
@@ -1360,6 +1361,35 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     );
     drop(stream);
     let mut review_samples = working_copy_acceptance::qualify(&endpoint, id, &folder).await;
+    for (kind, exact) in [
+        ("workspaces", None),
+        ("workspaces", Some("default")),
+        ("bookmarks", Some("missing")),
+    ] {
+        let response: Value = post(
+            &format!("/local/repos/{id}/query"),
+            json!({
+                "operation":operation, "request":{"kind":"references","query":{
+                    "operation":operation,"kind":kind,"query":"","exact":exact,"limit":1,
+                    "anchor":null,"direction":"forward"
+                }},"cursor":null
+            }),
+        )
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+        assert_eq!(response["data"]["kind"], "references");
+        review_samples.push(
+            json!({"path":"/v1/local/repos/{repo}/query","method":"post",
+            "status":200,"media":"application/json","data":response}),
+        );
+    }
+
     review_samples.extend(file_reads.into_iter().map(|data| {
         json!({
             "path":"/v1/local/repos/{repo}/query", "method":"post", "status":200,

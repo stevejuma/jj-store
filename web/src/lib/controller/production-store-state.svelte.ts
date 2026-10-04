@@ -64,6 +64,9 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   bookmarks: Bookmark[];
   choices: RepositoryChoice[];
   workingCopies: RepositoryWorkingCopy[];
+  workingCopiesStatus: import("./contracts.js").StoreLoadStatus;
+  workingCopiesCursor: string | null;
+  workingCopiesSnapshot: Snapshot | null;
   graph: RepositoryLogGraph;
   evolution: ProductionEvolutionState;
   targets: string[];
@@ -169,6 +172,9 @@ export function createProductionStoreState(): ProductionStoreState {
     bookmarks: [],
     choices: [],
     workingCopies: [],
+    workingCopiesStatus: "idle",
+    workingCopiesCursor: null,
+    workingCopiesSnapshot: null,
     graph: emptyGraph(),
     evolution: emptyEvolution(),
     targets: [],
@@ -231,6 +237,9 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.bookmarks = [];
   state.choices = [];
   state.workingCopies = [];
+  state.workingCopiesStatus = "idle";
+  state.workingCopiesCursor = null;
+  state.workingCopiesSnapshot = null;
   state.graph = emptyGraph();
   state.evolution = emptyEvolution();
   state.targets = [];

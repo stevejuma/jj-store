@@ -2001,3 +2001,11 @@ concurrently; only displayed windows request attribution, and repeated document
 IDs reuse already loaded content. Row metadata comes from its own attribution,
 never by copying the selected commit to every row. Loading, unavailable and
 failed optional metadata stay distinct from the file listing's status.
+
+Repository startup loads only the first bookmark and workspace windows. It never
+drains references to discover working copies. Workspace continuation is an
+explicit user action with its own captured snapshot. Route restoration resolves
+selected bookmark/workspace names directly, so a name outside the loaded first
+page remains usable. Explicit commit Files, Agents and Reviews content are not
+blocked by the bookmark picker; optional reference failures retain usable
+content.

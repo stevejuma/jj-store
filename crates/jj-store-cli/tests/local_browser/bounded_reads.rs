@@ -47,6 +47,7 @@ async fn local_metadata_and_bookmark_pages_do_not_load_history_or_index() {
         q::Response::QueryInfo(_)
     ));
     let request = q::references::Request {
+        exact: None,
         operation,
         query: String::new(),
         kind: q::references::Kind::Bookmarks,
@@ -75,11 +76,50 @@ async fn local_metadata_and_bookmark_pages_do_not_load_history_or_index() {
     assert!(page.next.is_some());
     assert!(page.stats.metadata_nodes <= 3, "{:?}", page.stats);
     assert!(page.stats.work < 16, "{:?}", page.stats);
+    // The workspace picker must not discover workspaces by walking change history.
+    let workspace: q::references::Request = serde_json::from_value(serde_json::json!({
+        "operation":operation, "query":"", "kind":"workspaces", "limit":1,
+        "anchor":null, "direction":"forward"
+    }))
+    .unwrap();
+    let q::Response::References(workspaces) = reader
+        .read(access.clone(), operation, q::Request::References(workspace))
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(workspaces.references.len(), 1);
+    assert!(
+        workspaces.stats.metadata_nodes <= 3,
+        "{:?}",
+        workspaces.stats
+    );
+    // Exact bookmark lookup must work outside the first page and hydrate one target.
+    let exact: q::references::Request = serde_json::from_value(serde_json::json!({
+        "operation":operation, "query":"", "kind":"bookmarks", "exact":"bookmark-9999",
+        "limit":1, "anchor":null, "direction":"forward"
+    }))
+    .unwrap();
+    let q::Response::References(exact) = reader
+        .read(access.clone(), operation, q::Request::References(exact))
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    let q::references::Reference::Bookmark { name, .. } = &exact.references[0] else {
+        panic!()
+    };
+    assert_eq!(name, "bookmark-9999");
+    assert!(exact.next.is_none() && exact.previous.is_none());
+    assert!(exact.stats.work < 16, "{:?}", exact.stats);
     let q::Response::References(shared) = reader
         .read(
             access,
             operation,
             q::Request::References(q::references::Request {
+                exact: None,
                 limit: 50,
                 ..request
             }),
@@ -115,6 +155,7 @@ async fn registered_large_repository_metadata_smoke() {
             access.clone(),
             operation,
             q::Request::References(q::references::Request {
+                exact: None,
                 operation,
                 query: String::new(),
                 kind: q::references::Kind::Bookmarks,

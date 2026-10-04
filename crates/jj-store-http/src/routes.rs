@@ -107,6 +107,7 @@ struct Directory {
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct References {
+    exact: Option<String>,
     at_op: Option<m::OperationId>,
     cursor: Option<String>,
     #[serde(default)]
@@ -795,6 +796,7 @@ async fn references(
             context.session,
             args.at_op,
             browsing::ReferenceRequest {
+                exact: args.exact,
                 query: args.q,
                 kind: args.kind,
                 limit: args.limit,

@@ -4258,6 +4258,12 @@ export interface components {
     Reference:
       | {
           name: string;
+          targets: components["schemas"]["Target"][];
+          /** @constant */
+          kind: "workspace";
+        }
+      | {
+          name: string;
           terms: (components["schemas"]["CommitId"] | null)[];
           conflicted: boolean;
           workspaces: string[];
@@ -5243,6 +5249,12 @@ export interface components {
       stats: components["schemas"]["LocalGraphStats"];
     };
     LocalReferencesReference:
+      | {
+          name: string;
+          targets: components["schemas"]["LocalReferencesTarget"][];
+          /** @constant */
+          kind: "workspace";
+        }
       | {
           name: string;
           terms: (components["schemas"]["GitSha1Id"] | null)[];
@@ -19583,10 +19595,11 @@ export interface operations {
   references: {
     parameters: {
       query?: {
+        exact?: string;
         at_op?: string;
         cursor?: string;
         q?: string;
-        kind?: "bookmarks" | "changes" | "all";
+        kind?: "bookmarks" | "workspaces" | "changes" | "all";
         limit?: number;
         anchor?: string;
         direction?: "forward" | "backward";
@@ -19721,10 +19734,11 @@ export interface operations {
   references_head: {
     parameters: {
       query?: {
+        exact?: string;
         at_op?: string;
         cursor?: string;
         q?: string;
-        kind?: "bookmarks" | "changes" | "all";
+        kind?: "bookmarks" | "workspaces" | "changes" | "all";
         limit?: number;
         anchor?: string;
         direction?: "forward" | "backward";
@@ -26318,8 +26332,9 @@ export interface operations {
                 query: {
                   operation: string;
                   query: string;
+                  exact?: string | null;
                   /** @enum {string} */
-                  kind: "bookmarks" | "changes" | "all";
+                  kind: "bookmarks" | "workspaces" | "changes" | "all";
                   /** Format: uint */
                   limit: number;
                   anchor?: string | null;
