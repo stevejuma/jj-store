@@ -143,6 +143,19 @@ Resident retention charges actual framed index allocations and the bounded
 database cache; complete filter files remain in disk quota. The large-file
 admission regression is arithmetic evidence, not measured RSS or scale serving.
 
+E-READ-048 moves cold native receipt hashing after independent quota ownership
+and namespace release, before loading and allocating decode. Admission scans
+bounded names and sizes; healthy immutable recovery keeps its actual-size
+reservation. Checksum damage in privately owned files rebuilds through fresh
+admission; shared damage fails while preserving readers and quota. Work,
+cancellation and deadline failures remain failures. Coarse metadata performs
+full proofs before loading and before namespace reacquisition, with no warm
+resident retention. Explicit filter upgrades reserve writable construction
+capacity before growth, and failed admission before transfer preserves existing
+files. Different embedded operations and deep/difference/search/candidate/RPC
+continuations remain delivery work. Focused regressions do not complete the
+deferred large-fixture, RSS, latency, fault and browser qualification.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

@@ -81203,6 +81203,238 @@ entries.
       "Cold full receipt hashing still holds the namespace on executor recovery. Different embedded-operation references, indexed child neighbors, deep operation/predecessor/copy/search continuations, retained oversized differences/change groups and extreme filter candidate continuation, paged RPCs and remaining local application search/index remain delivery work.",
       "Combined integration/contracts, Linux/native near-capacity fixtures, cold production browser, faults/cancellation/revocation/restart/publication/real RustFS, registry/release and Help/source-review refresh remain deferred. No milestone promotion. Unrelated root aggregates/UI/contract-generation lanes are out of scope. Visual baselines remain unapproved. Inherited __eh_frame linker warning and prior strict-lint gaps remain deferred."
     ]
+  },
+  {
+    "id": "E-READ-048",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "enclosing Jujutsu change pqoyvznw",
+    "kind": "Cold native receipt proof outside the namespace under independent quota ownership",
+    "versions": "Rust1.98.1; jj-lib/jj-cli pinned0.45.1; macOS ARM64.",
+    "formats": "No native/index6/receipt/companion/WAL, public DTO/schema, RPC or signed cursor format changes. Bounded name/type/size admission transfers immutable data into an actual-size reservation or pins an existing charged shared slot before namespace release. Pending checksums are verified before native loading/allocating decode. Private checksum damage discards owned data and rebuilds through fresh construction admission; shared damage fails without resident fallback, unlink or lost charge. Budget/cancellation/deadline errors and failed proof state remain explicit. Coarse metadata rehashes before loading and before namespace reacquisition; stamp-free warm residents are not retained. Final installation uses bounded metadata checks. Explicit filter upgrades reserve the full writable allowance before growth. Failed admission before transfer preserves existing files and receipt.",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/graph_disk_recovery.rs",
+      "crates/jj-store-jj/src/query/cache/proof.rs",
+      "crates/jj-store-jj/src/query/cache/proof_tests.rs",
+      "crates/jj-store-jj/src/query/cache/recovery.rs",
+      "crates/jj-store-jj/src/query/cache.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md"
+    ],
+    "next": "Integrate accumulated bounded-read changes into the current main workspace and verify the combined changes at the user's request; keep the temporary workspace open for different embedded operations and deep/difference/search/candidate/RPC delivery. Complete large-scale qualification remains separate.",
+    "scope": "Private native cold cache ownership/proof and direct graph/content/preparation/HTTP consumers. Exact regressions, focused cache consumers and package boundaries; unrelated full integration, UI, contracts, large fixtures, release/RustFS and visual qualification remain deferred for this delivery slice.",
+    "requirements": ["JST-JJ-003", "JST-JJ-005"],
+    "tests": [
+      "crates/jj-store-jj/src/query/cache/proof_tests.rs#cold_cache_admission_does_not_charge_full_file_hashing_under_namespace",
+      "crates/jj-store-jj/src/query/cache/proof_tests.rs#cold_checksum_damage_rebuilds_private_files_and_preserves_shared_files",
+      "crates/jj-store-jj/src/query/cache/proof_tests.rs#cold_proof_budget_and_cancellation_do_not_become_rebuild_success",
+      "crates/jj-store-jj/src/query/cache/proof_tests.rs#coarse_metadata_rehashes_before_namespace_reacquisition_and_detects_damage",
+      "crates/jj-store-jj/src/query/cache/proof_tests.rs#cold_filter_upgrade_reserves_writable_construction_before_growth",
+      "crates/jj-store-jj/src/query/cache/proof_tests.rs#failed_cold_recovery_admission_preserves_existing_files_and_receipt",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_disk_recovery.rs#existing_disk_projection_recovery_releases_namespace_and_preserves_generations",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_disk_recovery.rs#canceled_disk_projection_recovery_cleans_up_while_namespace_is_busy",
+      "crates/jj-store-cli/tests/native_lifecycle/filter_cache.rs#native_filter_upgrade_and_pinned_cold_recovery_preserve_exact_generation",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked cold_cache_admission_does_not_charge_full_file_hashing_under_namespace -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 49 filtered out; finished in 0.34s cold-proof-before-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::cache::proof_tests -- --nocapture (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 49 filtered out; finished in 1.59s cold-proof-after-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::cache -- --nocapture (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 1.81s cold-proof-cache-units-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::cache -- --nocapture (admission-preservation adjustment)",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 1.61s cold-proof-cache-units-final-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::cache -- --nocapture (failed-proof state preservation)",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 1.72s cold-proof-cache-units-complete-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked cold_cache_admission_does_not_charge_full_file_hashing_under_namespace -- --nocapture (exact after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 54 filtered out; finished in 0.55s cold-proof-exact-final-048.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 59.01s cold-proof-package-check-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cache_acceptance -- --nocapture (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 204 filtered out; finished in 6.06s cold-proof-cache-consumers-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked disk_projection_recovery -- --nocapture (immutable-profile correction)",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 220 filtered out; finished in 2.58s cold-proof-disk-recovery-final-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cache_acceptance -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 204 filtered out; finished in 6.24s; 33.55s command. cold-proof-cache-final-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked disk_projection_recovery -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 220 filtered out; finished in 2.09s; 21.08s command. cold-proof-disk-recovery-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked cache_acceptance -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 204 filtered out; finished in 6.38s; 45.1s command. cold-proof-cache-complete-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked disk_projection_recovery -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 220 filtered out; finished in 2.38s; 25.42s command. cold-proof-disk-recovery-complete-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_query_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 217 filtered out; finished in 1.49s; 19.86s command. cold-proof-graph-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked index_acceptance:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 216 filtered out; finished in 1.95s; 28.28s command. cold-proof-preparation-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked disk_preparation_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 220 filtered out; finished in 0.95s; 17.79s command. cold-proof-disk-preparation-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_filtered_references_seek_pinned_text_before_selected_target_reads -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 221 filtered out; finished in 28.17s; 51.98s command. cold-proof-filter-048.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 221 filtered out; finished in 1.12s; 16.66s command. cold-proof-http-048.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "    Finished `dev` profile [unoptimized] target(s) in 19.40s; 19.78s command. cold-proof-check-final-048.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "; 2.26s command. cold-proof-fmt-048.log."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "package boundaries ok (17 packages); 1.54s command. cold-proof-boundaries-048.log."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validated: 1 validators, 23 chapters, 172 requirements.; 3.46s command. cold-proof-ownership-048.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/architecture.md spec/src/cli.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "docs/implementation-plan.md 70ms (unchanged); Nones command. cold-proof-doc-format-048.log."
+      },
+      {
+        "command": "pnpm check:progress (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress ok (138 tasks; evidence bookkeeping only); Nones command. cold-proof-progress-initial-048.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first gate passed: 7 protected file(s), 4 canonical chapter(s).; Nones command. cold-proof-spec-first-initial-048.log."
+      },
+      {
+        "command": "pnpm spec:validate (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validated: 5 validators, 23 chapters, 172 requirements.; Nones command. cold-proof-spec-initial-048.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress ok (138 tasks; evidence bookkeeping only); 4.2s command. cold-proof-progress-final-048.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first gate passed: 7 protected file(s), 4 canonical chapter(s).; 1.66s command. cold-proof-spec-first-final-048.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validated: 5 validators, 23 chapters, 172 requirements.; 2.33s command. cold-proof-spec-final-048.log."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All matched files use Prettier code style!; 3.24s command. cold-proof-format-final-048.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj; cargo fmt -p jj-store-cli (implementation iterations)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust source formatted before focused tests; final formatting check recorded separately."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "52 unique focused Rust tests and the direct JJ/service/HTTP/RPC/CLI package checks pass. Exact admission regression initially failed1/0pass with Limit under64work. Digest-phase probes prove namespace availability and actual-size/shared quota while hashing8MiB synthetic data. Focused source proof is not a Linux/native large-fixture, RSS or latency proof.",
+      "An intermediate immutable-recovery consumer failed1/1pass because preparation now attempted a writable filter upgrade. Its explicit index-only cache profile preserves the original actual-size and byte-identical assertions; separate native-filter and writable-reservation regressions govern upgrades. No assertion was loosened.",
+      "Different embedded-operation references, indexed child neighbors, deep operation/predecessor/copy/search continuations, retained oversized differences/change groups and extreme filter-candidate continuation, paged RPC and remaining local application search/index features remain delivery work.",
+      "Complete combined qualification, Linux/native large/near-capacity fixtures, construction/disk/RSS/release latency, cold built UI, faults/revocation/restart/publication/real RustFS, registry/release, Help/source-review refresh and separately approved visuals remain deferred. Inherited __eh_frame linker warning and prior strict-lint gaps remain. No milestone promotion. Original dev services, source Linux repository and installed CLIs remain unchanged."
+    ]
   }
 ]
 ```

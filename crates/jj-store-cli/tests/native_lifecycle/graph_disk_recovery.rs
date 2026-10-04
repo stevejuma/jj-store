@@ -47,6 +47,21 @@ fn files(path: &std::path::Path) -> serde_json::Value {
 async fn existing_disk_projection_recovery_releases_namespace_and_preserves_generations() {
     tokio::task::LocalSet::new()
         .run_until(async {
+            // This regression proves immutable recovery, including concurrent
+            // recovery of the same operation. Keep filter upgrades in their
+            // separately governed writable-reservation regression.
+            let index_only = |path: &std::path::Path| {
+                q::GraphExecutor::with_cache_policy(
+                    path.to_owned(),
+                    q::Limits::default(),
+                    2,
+                    q::cache::Policy {
+                        max_files: 32,
+                        ..Default::default()
+                    },
+                )
+                .unwrap()
+            };
             for (preparing, same_operation) in [(false, false), (true, false), (false, true)] {
                 let f = Fixture::new().await;
                 let local = tempfile::tempdir().unwrap();
@@ -62,7 +77,7 @@ async fn existing_disk_projection_recovery_releases_namespace_and_preserves_gene
                 };
                 let newer = pin(&f, other_operation).await;
                 let before = f.session.snapshot().await.unwrap().manifest().clone();
-                let original = executor(root.path(), q::Limits::default());
+                let original = index_only(root.path());
                 let expected = older
                     .graph(&original, log("all()"), page(100))
                     .await
@@ -71,8 +86,8 @@ async fn existing_disk_projection_recovery_releases_namespace_and_preserves_gene
                 let namespace = old_slot.parent().unwrap().to_owned();
                 let old_files = files(&old_slot);
                 drop(original);
-                let recovery = executor(root.path(), q::Limits::default());
-                let separate = executor(root.path(), q::Limits::default());
+                let recovery = index_only(root.path());
+                let separate = index_only(root.path());
                 let gate = Arc::new(PausedOperation {
                     inner: f.store.clone(),
                     operation: m::ObjectKey::Operation(oid(old.op_id())).storage_path(REPO),

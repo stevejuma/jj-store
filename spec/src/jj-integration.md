@@ -1061,7 +1061,14 @@ independent shared pin instead: failed or canceled recovery cannot move or
 delete another reader's files. Reopened namespace completion replaces only that
 slot's bookkeeping without double-counting it. Namespace locks end before
 allocating decode, construction and selected hydration. Cold complete receipt
-hashing under the namespace remains a separate delivery gap. Existing index-only
+hashing MUST run after independent quota ownership and namespace release, before
+native loading or allocating decode. Namespace admission checks only bounded
+names, types and actual sizes against the receipt. A checksum mismatch discards
+an unpinned private generation and rebuilds through fresh construction
+admission; a damaged shared generation fails without deleting another reader's
+files or using resident fallback. Work, deadline and cancellation failures
+retain their precise outcome. Failed admission before ownership transfer
+preserves the existing complete files and receipt. Existing index-only
 generations may be upgraded only by explicit preparation in private ownership;
 checksums and the exact operation still precede use.
 
@@ -1113,14 +1120,19 @@ maximum or copy the index. Remove the old receipt from the private generation so
 receipt replacement cannot allocate an uncharged second receipt. Release the
 namespace before operation/view reads, allocating JJ decode and projection
 derivation. Retain verified file identities/stamps where available; unsupported
-precise metadata retains full checks. Completion installs only the complete
-verified immutable generation against current namespace state. Failed/canceled
-workers retain their reservation until cleanup. Another job may install the same
-pin or an unrelated generation; neither can change the privately owned source.
-An existing readonly disk-filter pin instead retains the unchanged generation in
-place under independent shared ownership, as governed above. The inline/hard
-index thresholds, current authority and allocation leases still apply. No
-repository state or persisted/wire format changes.
+precise metadata performs complete receipt proof before loading and again before
+reacquiring the namespace for installation. It cannot retain a stamp-free warm
+resident. Final namespace checks remain bounded names/types/sizes under the
+generation's independent ownership. Explicit filter upgrades reserve their full
+writable construction allowance before growth, instead of the smaller immutable
+recovery allowance. Completion installs only the complete verified immutable
+generation against current namespace state. Failed/canceled workers retain their
+reservation until cleanup. Another job may install the same pin or an unrelated
+generation; neither can change the privately owned source. An existing readonly
+disk-filter pin instead retains the unchanged generation in place under
+independent shared ownership, as governed above. The inline/hard index
+thresholds, current authority and allocation leases still apply. No repository
+state or persisted/wire format changes.
 
 Shared resident allocation pressure MUST reclaim idle prepared native and local
 generations in process-wide least-recently-used order before refusing new

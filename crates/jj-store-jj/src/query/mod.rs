@@ -669,12 +669,21 @@ impl GraphExecutor {
             return Ok(result);
         }
         let mut entry = entry.ok_or(Error::Unavailable)?;
-        if work.is_query() {
-            budget.start_index(entry.initialize)?;
-        }
         if entry.private() {
             // Construction and recovered disk data have independent ownership.
             drop(cache.take());
+        }
+        if !entry.verify(self.cache_policy, &budget)? {
+            // Damaged private files are disposable. Release their actual-size
+            // reservation before admitting a fresh bounded construction.
+            drop(entry);
+            let mut admission =
+                cache::Cache::reopen(&self.root, self.cache_policy, &budget).await?;
+            entry = admission.rebuild(access.as_ref())?;
+            drop(admission);
+        }
+        if work.is_query() {
+            budget.start_index(entry.initialize)?;
         }
         if entry.initialize {
             stores

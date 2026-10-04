@@ -1895,3 +1895,12 @@ Native admission arithmetic must distinguish bounded reader memory from complete
 filter-file disk quota for a two-million-row index, without raising the process
 pool. This private regression proves retention arithmetic, not measured RSS or
 large-repository serving.
+
+Cold native cache regressions MUST prove namespace admission does not charge
+complete file hashing and that another reader can open the namespace during the
+digest phase while the full actual-size reservation or pinned slot remains
+charged. Prove checksum failure before native reads, automatic private rebuild,
+shared corruption preservation, cancellation/work failure cleanup and the
+coarse-metadata final proof before installation. Existing cold recovery,
+preparation, filter upgrade and pinned-query consumers remain focused gates;
+complete scale/browser/fault qualification stays deferred.

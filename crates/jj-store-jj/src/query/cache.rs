@@ -1,6 +1,9 @@
 //! Disposable bounded cache slots. Only verified native objects are authority.
 pub(super) mod constructed;
 pub(in crate::query) mod generation;
+mod proof;
+#[cfg(all(test, unix))]
+mod proof_tests;
 mod recovery;
 mod reservation;
 pub(super) mod resident;
@@ -111,7 +114,8 @@ pub(super) struct Entry {
     staging: Option<Reservation>,
     pin: Option<Arc<generation::Pin>>,
     admission_evicted: usize,
-    sealed: Option<resident::Verification>,
+    sealed: Option<proof::Seal>,
+    pending: Option<proof::Pending>,
     retain: bool,
     pub resident: Option<Arc<resident::Saved>>,
 }
@@ -127,21 +131,6 @@ impl Drop for Entry {
 impl Entry {
     pub fn private(&self) -> bool {
         self.staging.is_some() || self.pin.is_some()
-    }
-    pub fn seal(&mut self, policy: Policy, budget: &Budget) -> Result<()> {
-        if self.private() && self.sealed.is_none() {
-            // Hash large private generations before reacquiring the namespace.
-            let files = inventory(&self.path, policy, budget, true)?.0;
-            self.sealed = match resident::Verification::capture(&self.path, files, budget) {
-                Ok(verification) => Some(verification),
-                Err(_) => {
-                    // Platforms lacking precise file metadata retain full checks.
-                    budget.check()?;
-                    None
-                }
-            };
-        }
-        Ok(())
     }
 }
 fn plain_dir(path: &Path) -> Result<()> {
@@ -227,6 +216,8 @@ fn inventory(
                     continue;
                 }
                 let digest = if hash {
+                    #[cfg(all(test, unix))]
+                    proof_tests::during_hash(root);
                     let mut input = fs::File::open(&path).map_err(|_| Error::Unavailable)?;
                     let mut buffer = [0; 64 * 1024];
                     let mut digest = Blake2b512::new();
@@ -474,8 +465,8 @@ impl Cache {
                 .get(access, &path, &slot.receipt.files, self.policy, budget)
                 .unwrap_or(None);
             let valid = resident.is_some()
-                || inventory(&path, self.policy, budget, true)
-                    .is_ok_and(|(files, _)| files == slot.receipt.files);
+                || inventory(&path, self.policy, budget, false)
+                    .is_ok_and(|(files, _)| proof::same_sizes(&files, &slot.receipt.files));
             budget.check()?;
             if valid {
                 let upgrade_filters = want_filters
@@ -491,27 +482,33 @@ impl Cache {
                     pin: None,
                     admission_evicted: 0,
                     sealed: None,
-                    retain: false,
+                    pending: None,
+                    // Admission has not transferred these existing files yet.
+                    // A reservation failure must preserve the valid source.
+                    retain: true,
                     resident,
                 };
                 return if entry.resident.is_none() || upgrade_filters {
                     let mut entry = entry;
                     entry.resident = None;
-                    let mut entry = self.recover(entry, slot.receipt, access, budget)?;
-                    if upgrade_filters {
-                        if entry.pin.is_some() {
-                            return Err(Error::Busy);
-                        }
-                        entry.sealed = None;
-                    }
-                    Ok(entry)
+                    self.recover(entry, slot.receipt, access, budget, upgrade_filters)
                 } else {
                     Ok(entry)
                 };
             }
-            remove(&path)?;
+            remove(&path).map_err(|error| match error {
+                Error::Busy => Error::Unavailable,
+                error => error,
+            })?;
             self.damaged = true;
         }
+        self.fresh(access)
+    }
+    pub fn rebuild(&mut self, access: &dyn ReadAccess) -> Result<Entry> {
+        self.damaged = true;
+        self.fresh(access)
+    }
+    fn fresh(&mut self, access: &dyn ReadAccess) -> Result<Entry> {
         let staging = Reservation::within(self, access.repository())?;
         let path = staging.path().join("generation");
         fs::create_dir(&path).map_err(|_| Error::Unavailable)?;
@@ -528,6 +525,7 @@ impl Cache {
             pin: None,
             admission_evicted: self.evicted,
             sealed: None,
+            pending: None,
             retain: false,
             resident: None,
         })
@@ -570,7 +568,7 @@ impl Cache {
                     sealed.files.clone()
                 }
                 Some(_) => return Err(Error::Unavailable),
-                None => inventory(&entry.path, self.policy, budget, true)?.0,
+                None => return Err(Error::Unavailable),
             },
         };
         let used = self
@@ -719,6 +717,7 @@ mod tests {
                 pin: None,
                 admission_evicted: 0,
                 sealed: None,
+                pending: None,
                 retain: false,
                 resident: None,
             });

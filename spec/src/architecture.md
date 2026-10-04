@@ -857,9 +857,17 @@ locks before admission is retried. Recovery moves an unpinned generation into an
 actual-size private reservation, or independently pins an already owned slot in
 place. Native candidate validation uses retained visible change groups and
 freshly admitted bookmark terms, then hydrates only the selected page. Extreme
-candidate continuation and cold full receipt hashing outside the namespace
-remain separate delivery work; full memory, construction and latency
-qualification is deferred.
+candidate continuation remains separate delivery work; full memory, construction
+and latency qualification is deferred.
+
+Cold native receipt proofs run after bounded size admission transfers or pins
+the complete generation and releases the namespace. No decoder sees files before
+the proof. Unpinned checksum damage rebuilds through fresh admission; shared
+damage preserves other readers and fails closed. Precise stamps can reuse the
+proof; coarse metadata requires full checks before loading and before namespace
+reacquisition, without retaining warm residents. Final installation does only
+bounded file metadata checks. Writable explicit upgrades reserve construction
+capacity before growth. No persisted format or repository authority changes.
 
 Native resident visibility and ordered reference groups use flat full-ID arrays
 and compact group boundaries. Their conservative per-indexed-commit admission is

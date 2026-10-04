@@ -1,4 +1,4 @@
-//! Transfer a verified disk generation into private ownership before JJ decoding.
+//! Own admitted disk files before releasing the namespace for complete proof.
 use super::*;
 
 impl Cache {
@@ -8,7 +8,12 @@ impl Cache {
         mut receipt: Receipt,
         access: &dyn ReadAccess,
         budget: &Budget,
+        upgrade: bool,
     ) -> Result<Entry> {
+        entry.pending = Some(proof::Pending {
+            files: receipt.files.clone(),
+            upgrade,
+        });
         let exclusive = match generation::exclusive(&entry.path) {
             Ok(guard) => guard,
             Err(Error::Busy) => {
@@ -16,14 +21,9 @@ impl Cache {
                 // files in place, with an independently held shared pin, then
                 // derive outside the namespace. No allocating decoder runs here.
                 entry.pin = Some(Arc::new(generation::Pin::acquire(&entry.path)?));
-                entry.sealed =
-                    match resident::Verification::capture(&entry.path, receipt.files, budget) {
-                        Ok(value) => Some(value),
-                        Err(_) => {
-                            budget.check()?;
-                            None
-                        }
-                    };
+                if upgrade {
+                    return Err(Error::Busy);
+                }
                 return Ok(entry);
             }
             Err(error) => return Err(error),
@@ -46,7 +46,15 @@ impl Cache {
             .checked_add(old_receipt.max(next_receipt))
             .and_then(|bytes| bytes.checked_add(reservation::OVERHEAD))
             .ok_or(Error::Limit)?;
-        let staging = Reservation::sized(self, access.repository(), charged)?;
+        let staging = Reservation::sized(
+            self,
+            access.repository(),
+            if upgrade {
+                self.policy.max_entry_bytes
+            } else {
+                charged
+            },
+        )?;
         let private = staging.path().join("generation");
         budget.check()?;
         fs::rename(&entry.path, &private).map_err(|_| Error::Unavailable)?;
@@ -54,17 +62,11 @@ impl Cache {
         // Install ownership immediately so any following failure cleans up while
         // the lifetime lock still keeps its quota visible to other workers.
         entry.path = private;
+        entry.retain = false;
         entry.slot = None;
         entry.staging = Some(staging);
         entry.admission_evicted = self.evicted;
         fs::remove_file(entry.path.join(RECEIPT)).map_err(|_| Error::Unavailable)?;
-        entry.sealed = match resident::Verification::capture(&entry.path, receipt.files, budget) {
-            Ok(verification) => Some(verification),
-            Err(_) => {
-                budget.check()?;
-                None
-            }
-        };
         Ok(entry)
     }
 }
