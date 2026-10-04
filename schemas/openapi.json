@@ -39376,6 +39376,11 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "configured_roots": {
+            "type": ["array", "null"],
+            "items": { "$ref": "#/components/schemas/CaptureRootPath" },
+            "maxItems": 16
+          },
           "profile": { "$ref": "#/components/schemas/CaptureHarnessProfile" },
           "product_version": {
             "type": "string",
@@ -39435,6 +39440,12 @@
           "running_sources",
           "degraded_sources"
         ]
+      },
+      "CaptureRootPath": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096,
+        "description": "Startup-selected directory metadata, not a discovered transcript file."
       },
       "CaptureHarnessProfile": {
         "type": "string",

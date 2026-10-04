@@ -1663,3 +1663,12 @@ appear in the response; the read contacts no harness and reads no pending body.
 Capture management is presented in installation-scoped Agents settings. Leaving
 that section cancels visible observations without replacing the original pending
 command or request-ID draft; the section does not select a repository.
+
+LocalTrusted Admin capture status exposes optional `configured_roots` per
+qualified harness as a bounded list of startup-resolved directory paths. Each
+path is an absolute UTF-8 string of at most 4096 characters, with at most
+sixteen paths per harness. The server populates this from retained startup
+metadata, without inspecting directories on GET. Source pages and import
+receipts remain free of transcript files and native session identities. A
+backend that omits the field has unavailable directory metadata, rather than an
+empty configured list.

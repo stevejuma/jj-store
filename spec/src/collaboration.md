@@ -665,8 +665,8 @@ and Write checks, fair scheduling and existing reader/frame budgets remain.
 Pause and terminal stop discard unconsumed hints and dispatch no new scan.
 Cached status exposes discovery phase,
 configured/unchecked/available/unavailable root counts, pending rescan and
-last-settled degraded-source counts without paths, bodies or source proofs.
-Availability describes the last observation, not current coverage or
+last-settled degraded-source counts without transcript files, bodies or source
+proofs. Availability describes the last observation, not current coverage or
 authorization; loss retains observations with a stopped lane.
 
 Cached runtime coverage MUST also group selected qualified harness profiles in
@@ -674,18 +674,25 @@ deterministic profile order, retaining declared product versions, root
 availability and tracked/observed/awaiting/caught-up/running/degraded source
 counts. The current Codex owner has at most two profile groups. These fields
 contain no transcript path, native session key or source proof and require no
-new filesystem work. Root/source totals agree with aggregate observations. They
-describe prepared reader coverage, not real product-surface qualification or
-import authority. Source-level coverage, import and browser controls remain
-separate gates. The installation CLI uses the existing local Admin HTTP manager
-with an explicit literal-loopback URL, conditional policy inputs and exact
-request identity. It performs no repository/device initialization or implicit
-policy refresh and cannot enable or replace capture. Unknown acknowledgement
-retains the original command; native publication and historical import remain
-separate. Completion notifications may hold the larger body-free aggregate
-observation behind bounded indirection; that notification grants no resource
-ownership and does not change the cached Copy runtime snapshot, scheduling or
-settlement.
+new filesystem work. Under current LocalTrusted Admin admission, harness
+coverage also reports the exact approved directory roots resolved at worker
+startup, including default Codex home selection and explicit overrides. At most
+sixteen bounded absolute UTF-8 paths are reported per harness; these are
+configuration metadata, never discovered transcript files, native session keys
+or source proofs. The resolved directory list is retained independently from the
+Copy runtime observation and survives pause and terminal stop. Status reads
+perform no directory inspection. Root/source totals agree with aggregate
+observations. They describe prepared reader coverage, not real product-surface
+qualification or import authority. Source-level coverage, import and browser
+controls remain separate gates. The installation CLI uses the existing local
+Admin HTTP manager with an explicit literal-loopback URL, conditional policy
+inputs and exact request identity. It performs no repository/device
+initialization or implicit policy refresh and cannot enable or replace capture.
+Unknown acknowledgement retains the original command; native publication and
+historical import remain separate. Completion notifications may hold the larger
+body-free aggregate observation behind bounded indirection; that notification
+grants no resource ownership and does not change the cached Copy runtime
+snapshot, scheduling or settlement.
 
 Installation source coverage MUST be a bounded cached device observation, served
 only through current LocalTrusted Admin/configuration/installation and private

@@ -80,6 +80,6 @@ else {
   await configure();
   await runUiDevelopment(root, environment, action === "restart");
   console.log(
-    `\nCodex capture preview (CLI 0.156.1)\nLinked folder: ${layout.repository}\nConfiguration: ${layout.serverConfig}\nStart Codex in that folder, then open Agents.\nSettings > Local service shows capture and pause/resume.\nStop: pnpm dev:capture:stop\nRestart backend: pnpm dev:capture:restart\nFixture and captured history are preserved.`,
+    `\nCodex capture preview (CLI 0.156.1)\nLinked folder: ${layout.repository}\nConfiguration: ${layout.serverConfig}\nStart Codex in that folder, then open Agents.\nSettings > Agents has Capture, Sources, Imports and Diagnostics tabs. Capture shows the configured root paths and pause/resume.\nStop: pnpm dev:capture:stop\nRestart backend: pnpm dev:capture:restart\nFixture and captured history are preserved.`,
   );
 }

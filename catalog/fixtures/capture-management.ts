@@ -27,6 +27,7 @@ export function captureStatus(
       harnesses: [
         {
           profile: "codex-cli-jsonl-v1",
+          configured_roots: ["/Users/capture/.codex/sessions"],
           product_version: "0.156.1",
           roots: 1,
           unchecked_roots: 0,

@@ -20,16 +20,20 @@ Open <http://127.0.0.1:7470/>. Start Codex in `.local/codex-preview/repository`:
 codex -C "$PWD/.local/codex-preview/repository"
 ```
 
-Open Settings → Agents to see the configured profile and source coverage. Let
-discovery observe the session before submitting a prompt. Capture requires a
-fresh supported task start after monitoring has armed; a start missed during
-discovery waits for the next turn or an explicit **Import history**. Source
-growth alone does not authorize importing old history. Import controls show
-body-free source ordinals; a source with no recorded repository binding may be
-unlinked. An import that cannot establish current directory admission remains
-withheld and may return an unknown acknowledgement. Preserve its original
-request ID; a missing receipt does not prove rejection. Clearer source selection
-and an explicit pre-acceptance refusal are deferred usability work.
+Open Settings → Agents → Capture to see the configured profile and actual root
+directories selected at startup. The CLI default resolves to
+`CODEX_HOME/sessions` or `HOME/.codex/sessions`; explicit roots override that
+selection. Sources shows observed sessions; Imports shows history requests;
+Diagnostics contains worker and queue health. Let discovery observe the session
+before submitting a prompt. Capture requires a fresh supported task start after
+monitoring has armed; a start missed during discovery waits for the next turn or
+an explicit **Import history**. Source growth alone does not authorize importing
+old history. Import controls show body-free source ordinals; a source with no
+recorded repository binding may be unlinked. An import that cannot establish
+current directory admission remains withheld and may return an unknown
+acknowledgement. Preserve its original request ID; a missing receipt does not
+prove rejection. Clearer source selection and an explicit pre-acceptance refusal
+are deferred usability work.
 
 The debug build can spend more than two minutes preparing the native sanitizer
 on a cold capture/import. During this work, Capture inspection may temporarily

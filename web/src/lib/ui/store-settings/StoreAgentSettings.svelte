@@ -9,13 +9,21 @@
     management?: CaptureManagement;
     repositoryName?: (id: string) => string;
   } = $props();
+  let tab = $state("capture");
 </script>
 
 <StoreSettingsPage
   section="agents"
+  tabs={[
+    { value: "capture", label: "Capture" },
+    { value: "sources", label: "Sources" },
+    { value: "imports", label: "Imports" },
+    { value: "diagnostics", label: "Diagnostics" },
+  ]}
+  bind:value={tab}
   onRefresh={management?.supported ? () => management!.refresh() : undefined}
   refreshLabel="Refresh capture"
   refreshDisabled={management?.state.busy ?? false}
 >
-  <StoreCaptureSettings {management} {repositoryName} />
+  <StoreCaptureSettings {management} {repositoryName} bind:section={tab} />
 </StoreSettingsPage>

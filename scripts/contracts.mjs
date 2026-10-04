@@ -82,7 +82,7 @@ if (mode === "--check") {
         "jj-store-server",
       ],
       [
-        "coverage::harness_coverage_is_bounded_cached_and_contains_no_roots",
+        "coverage::harness_coverage_is_bounded_cached_and_reports_configured_roots",
         "JJ_STORE_CAPTURE_COVERAGE_CONTRACT_CAPTURE",
         "capture_management",
         "jj-store-server",

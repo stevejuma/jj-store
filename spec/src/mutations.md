@@ -876,3 +876,8 @@ receipt count. It carries no source identity, native key, path, digest, request
 identity or admission proof. Missing coverage is unavailable, not successful
 zero progress. This additive read type grants no mutation, execution or import
 consent and does not initialize journals or retry publication.
+
+Capture management response metadata may include bounded configured harness
+directory roots under current installation-local Admin admission. These
+startup-resolved paths confer no repository Write permission or import authority
+and do not alter the command, receipt or publication contracts.

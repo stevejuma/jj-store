@@ -7,6 +7,10 @@ import {
   count,
 } from "./capture-response-validation.js";
 import { validateSnapshotPublication } from "./capture-snapshot-validation.js";
+import {
+  validateConfiguredRoots,
+  coverageCounts,
+} from "./capture-root-validation.js";
 export { requireCapture } from "./capture-response-validation.js";
 import {
   captureProfiles,
@@ -35,18 +39,6 @@ const importPhase = (v: unknown) =>
   ].includes(v as string);
 const counts = (v: Record<string, unknown>, fields: string[]) =>
   fields.every((f) => count(v[f]));
-const coverageCounts = [
-  "roots",
-  "unchecked_roots",
-  "available_roots",
-  "unavailable_roots",
-  "tracked",
-  "observed_sources",
-  "awaiting_activity",
-  "caught_up",
-  "running_sources",
-  "degraded_sources",
-];
 const profile = (v: unknown) =>
   typeof v === "string" && Object.hasOwn(captureProfiles, v);
 const productVersion = (v: unknown) =>
@@ -105,6 +97,7 @@ export function validateCaptureStatus(
         productVersion(h.product_version) &&
         counts(h, coverageCounts),
     );
+    validateConfiguredRoots(h.configured_roots, h.roots as number | bigint);
     requireCapture(!profiles.has(h.profile as string));
     profiles.add(h.profile as string);
   }

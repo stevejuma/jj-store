@@ -66,6 +66,8 @@ fn capture_management_contract_is_installation_local_and_actor_free() {
     );
     let properties = &schemas["CaptureHarnessCoverage"]["properties"];
     assert!(properties.get("path").is_none() && properties.get("native_session_key").is_none());
+    assert_eq!(properties["configured_roots"]["maxItems"], 16);
+    assert_eq!(schemas["CaptureRootPath"]["maxLength"], 4096);
     assert_eq!(properties["product_version"]["maxLength"], 32);
     // POST inputs must remain bodies, never documented query parameters.
     for operation in [command, rescan] {

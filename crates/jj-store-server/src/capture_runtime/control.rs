@@ -3,6 +3,12 @@ use super::*;
 /// Cloneable controls and bounded private source metadata; no task or storage ownership.
 #[derive(Clone)]
 pub struct CaptureRuntimeControl {
+    pub(super) configured_roots: std::sync::Arc<
+        [(
+            jj_store_capture::profile::CaptureProfile,
+            std::path::PathBuf,
+        )],
+    >,
     pub(super) command: watch::Sender<Command>,
     pub(super) snapshot: watch::Receiver<CaptureRuntimeSnapshot>,
     pub(super) rescan: std::sync::Arc<rescan::RescanSignal>,
@@ -12,6 +18,16 @@ pub struct CaptureRuntimeControl {
     pub(super) imports: tokio::sync::mpsc::Sender<super::imports::ImportCommand>,
 }
 impl CaptureRuntimeControl {
+    /// Startup metadata only; no filesystem reads or interpretation of source files.
+    pub(crate) fn configured_roots(
+        &self,
+    ) -> &[(
+        jj_store_capture::profile::CaptureProfile,
+        std::path::PathBuf,
+    )] {
+        &self.configured_roots
+    }
+
     /// Reads only the cached observation; an unexpectedly lost producer is unavailable.
     pub fn snapshot(&self) -> Result<CaptureRuntimeSnapshot> {
         let mut observed = *self.snapshot.borrow();
@@ -89,6 +105,7 @@ mod tests {
         let (command, _receiver) = watch::channel(Command::Running);
         let (_updates, snapshot) = watch::channel(observed);
         let control = CaptureRuntimeControl {
+            configured_roots: Default::default(),
             command,
             snapshot,
             rescan: Default::default(),
@@ -117,6 +134,7 @@ mod tests {
         let (command, receiver) = watch::channel(Command::Running);
         let (updates, snapshot) = watch::channel(observed);
         let control = CaptureRuntimeControl {
+            configured_roots: Default::default(),
             command,
             snapshot,
             rescan: Default::default(),
@@ -140,6 +158,7 @@ mod tests {
         let (command, _receiver) = watch::channel(Command::Stopped);
         let (updates, snapshot) = watch::channel(observed);
         let control = CaptureRuntimeControl {
+            configured_roots: Default::default(),
             command,
             snapshot,
             rescan: Default::default(),

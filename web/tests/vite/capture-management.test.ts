@@ -348,3 +348,20 @@ test("API snapshot coverage rejects malformed counts and unproved publication", 
   page.sources[0].profile = "codex-cli-jsonl-v1";
   expect(() => validateCaptureSources(page)).toThrow(ApiError);
 });
+
+test("configured harness roots are bounded absolute paths with honest counts", () => {
+  const value = captureStatus();
+  expect(() => validateCaptureStatus(value)).not.toThrow();
+  for (const roots of [
+    ["relative/sessions"],
+    ["/bad\npath"],
+    ["/" + "x".repeat(4096)],
+    ["/same", "/same"],
+    [],
+  ]) {
+    value.runtime!.harnesses[0].configured_roots = roots;
+    expect(() => validateCaptureStatus(value)).toThrow(ApiError);
+  }
+  delete value.runtime!.harnesses[0].configured_roots;
+  expect(() => validateCaptureStatus(value)).not.toThrow();
+});

@@ -18,7 +18,7 @@
   class="store-settings__section"
   aria-labelledby="capture-import-heading"
 >
-  <header><h3 id="capture-import-heading">History import progress</h3></header>
+  <header><h2 id="capture-import-heading">History import progress</h2></header>
   <Field.Group>
     <div class="store-settings__rows">
       <Field.Group class="store-settings__editable-rows">

@@ -13,8 +13,15 @@ async fn missing_reader_link_and_unqualified_publication_withhold_completion_wit
         expected_revision: 0,
         selector: ready(&f).await,
     };
-    f.manager.import(f.actor, request.clone()).await.unwrap();
-    settled(&f, request.request_id).await;
+    // Cold sanitizer preparation can exceed the foreground acknowledgement budget.
+    // Observe only this original request; an unknown outcome does not permit a new one.
+    match f.manager.import(f.actor, request.clone()).await {
+        Ok(outcome) => assert_eq!(outcome.receipt.command, request),
+        Err(Error::Unknown) => {}
+        other => panic!("import acceptance: {other:?}"),
+    }
+    let completed = settled_with_timeout(&f, request.request_id, 240).await;
+    assert_eq!(completed.receipt.as_ref().unwrap().command, request);
     runtime.pause().unwrap();
     tokio::time::timeout(Duration::from_secs(10), async {
         while runtime.snapshot().phase

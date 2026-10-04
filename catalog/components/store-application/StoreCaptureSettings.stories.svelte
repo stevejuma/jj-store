@@ -16,7 +16,9 @@
     await expect(
       c.getByRole("button", { name: "Refresh capture" }),
     ).toBeEnabled();
+    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
     await expect(await c.findByText("Codex CLI source 1")).toBeVisible();
+    await userEvent.click(c.getByRole("tab", { name: "Capture" }));
     await userEvent.click(c.getByRole("button", { name: "Pause capture" }));
     await expect(
       c.getByRole("button", { name: "Rescan capture" }),
@@ -24,10 +26,12 @@
     await userEvent.click(c.getByRole("button", { name: "Resume capture" }));
     await userEvent.click(c.getByRole("button", { name: "Rescan capture" }));
     await expect(c.getByText(/Rescan requested/)).toBeVisible();
+    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
     await expect(
       c.getByRole("button", { name: /Import history for/ }),
     ).toBeDisabled();
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
+    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
     await userEvent.click(
       c.getByRole("button", { name: /Import history for/ }),
     );
@@ -45,10 +49,17 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
+    await userEvent.click(c.getByRole("tab", { name: "Capture" }));
     await userEvent.click(c.getByRole("button", { name: "Pause capture" }));
     await expect(
       c.getByRole("button", { name: "Pause capture" }),
     ).toBeDisabled();
+    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
+    await expect(c.getByText("Capture outcome unknown")).toBeVisible();
+    await expect(
+      c.getByRole("button", { name: "Retry original capture request" }),
+    ).toBeEnabled();
+    await userEvent.click(c.getByRole("tab", { name: "Capture" }));
     await userEvent.click(
       c.getByRole("button", { name: "Retry original capture request" }),
     );
@@ -70,6 +81,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
+    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
     await userEvent.click(
       c.getByRole("button", { name: /Import history for/ }),
     );
@@ -115,9 +127,11 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
+    await userEvent.click(c.getByRole("tab", { name: "Diagnostics" }));
     await expect(
       c.getByText("1 degraded · 0 unavailable observations"),
     ).toBeVisible();
+    await userEvent.click(c.getByRole("tab", { name: "Imports" }));
     await userEvent.type(
       c.getByRole("textbox", { name: "Previous import request ID" }),
       "ef".repeat(16),
@@ -136,7 +150,9 @@
   name="Automatic load and retained request draft"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
     await expect(await c.findByText("Codex CLI source 1")).toBeVisible();
+    await userEvent.click(c.getByRole("tab", { name: "Imports" }));
     await userEvent.type(
       c.getByRole("textbox", { name: "Previous import request ID" }),
       "ef".repeat(16),
@@ -152,12 +168,14 @@
   name="Shared settings rows and action columns"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
     await expect(await c.findByText("Codex CLI source 1")).toBeVisible();
     await expect(
       c.getByRole("heading", { name: "Agents", level: 1 }),
     ).toBeVisible();
     const refresh = c.getByRole("button", { name: "Refresh capture" });
     await expect(refresh.closest(".store-settings__tab-bar")).not.toBeNull();
+    await userEvent.click(c.getByRole("tab", { name: "Capture" }));
     const pause = c.getByRole("button", { name: "Pause capture" });
     const rescan = c.getByRole("button", { name: "Rescan capture" });
     const actions = pause.closest(".store-settings__actions")!;
@@ -171,13 +189,56 @@
     await expect(rescan.getBoundingClientRect().top).toBeGreaterThan(
       pause.getBoundingClientRect().bottom,
     );
+    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
     const sourceAction = c.getByRole("button", { name: /Import history for/ });
     await expect(sourceAction.closest("dl")).toHaveClass(
       "store-settings__rows",
     );
+    await userEvent.click(c.getByRole("tab", { name: "Imports" }));
     const request = c.getByRole("textbox", {
       name: "Previous import request ID",
     });
     await expect(request.closest(".store-settings__rows")).not.toBeNull();
+  }}
+/>
+
+<Story
+  name="Configured CLI root directories"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      await c.findByText("/Users/capture/.codex/sessions", { exact: true }),
+    ).toBeVisible();
+    const paths = c.getByText("/Users/capture/.codex/sessions", {
+      exact: true,
+    });
+    await expect(paths.closest("dl")).toHaveClass("store-settings__rows");
+    await expect(paths.closest("code")).not.toBeNull();
+  }}
+/>
+
+<Story
+  name="Tabs retain drafts and separate diagnostics"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(c.getByRole("tab", { name: "Capture" })).toHaveAttribute(
+      "data-state",
+      "active",
+    );
+    await expect(c.queryByText("Publication backlog")).toBeNull();
+    await userEvent.click(c.getByRole("tab", { name: "Imports" }));
+    await userEvent.type(
+      c.getByRole("textbox", { name: "Previous import request ID" }),
+      "ef".repeat(16),
+    );
+    await userEvent.click(c.getByRole("tab", { name: "Diagnostics" }));
+    await expect(c.getByText("Publication backlog")).toBeVisible();
+    await expect(
+      c.queryByRole("textbox", { name: "Previous import request ID" }),
+    ).toBeNull();
+    await userEvent.click(c.getByRole("tab", { name: "Imports" }));
+    await expect(
+      c.getByRole("textbox", { name: "Previous import request ID" }),
+    ).toHaveValue("ef".repeat(16));
   }}
 />

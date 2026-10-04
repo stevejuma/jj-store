@@ -728,3 +728,8 @@ The M18 preview integration regenerates the combined route inventory: 103 paths,
 current main's working-file, local review, Storage and Sync controls alongside
 all six installation capture routes. Earlier counts describe their historical
 slices. Native storage and capture formats remain unchanged by integration.
+
+Capture coverage adds optional bounded configured directory metadata. Generated
+HTTP schemas and TypeScript must match the actual admitted response. Omission is
+reported as unavailable metadata; qualified new servers report startup-resolved
+roots. Transcript source files and native session keys remain absent.

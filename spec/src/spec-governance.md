@@ -852,3 +852,12 @@ regenerated from combined executable route registrations. This integration
 requires owning-package Rust checks, merged HTTP contract captures, production
 UI type checks and direct lifecycle/controller tests because it combines native
 publication, process startup and client registration boundaries.
+
+The capture coverage response fixture now verifies startup-resolved configured
+directories under local Admin admission while retaining the source-file secrecy
+and no-filesystem-work-on-GET proof. Historical count-only test evidence remains
+archived under its original name; the replacement is recorded in the ledger.
+Cold import-inspection setup accepts an unknown foreground acknowledgement only
+by observing the original request and requiring its exact completed receipt
+before testing unavailable reader or publication evidence. It never substitutes
+a new command or treats a timeout as rejection.

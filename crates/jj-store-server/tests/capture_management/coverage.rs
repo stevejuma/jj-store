@@ -13,7 +13,7 @@ async fn sample(client: &Client, base: &str, samples: &mut Vec<Value>) -> Value 
 }
 
 #[tokio::test(flavor = "current_thread")]
-async fn harness_coverage_is_bounded_cached_and_contains_no_roots() {
+async fn harness_coverage_is_bounded_cached_and_reports_configured_roots() {
     let mut f = Fixture::new(true).await;
     let desktop = f.source.root.path().join("desktop-transcripts");
     fs::create_dir(&desktop).unwrap();
@@ -102,6 +102,12 @@ async fn harness_coverage_is_bounded_cached_and_contains_no_roots() {
         let item = &coverage[index];
         assert_eq!(item["profile"], profile);
         assert_eq!(item["product_version"], version);
+        let root = if index == 0 {
+            f.source.transcript.parent().unwrap()
+        } else {
+            &desktop
+        };
+        assert_eq!(item["configured_roots"], json!([root.to_str().unwrap()]));
         assert_eq!(item["roots"], 1);
         assert_eq!(item["available_roots"], 1);
         assert_eq!(item["unchecked_roots"], 0);
@@ -115,7 +121,7 @@ async fn harness_coverage_is_bounded_cached_and_contains_no_roots() {
     assert!(
         !status
             .to_string()
-            .contains(f.source.root.path().to_str().unwrap())
+            .contains(f.source.transcript.to_str().unwrap())
     );
     f.manager
         .control(f.actor, f.command(1, 0, CaptureControlAction::Pause))
@@ -151,7 +157,7 @@ async fn harness_coverage_is_bounded_cached_and_contains_no_roots() {
     assert_eq!(stopped["runtime"]["phase"], "stopped");
     assert!(samples.iter().all(|s| {
         !s.to_string()
-            .contains(f.source.root.path().to_str().unwrap())
+            .contains(f.source.transcript.to_str().unwrap())
     }));
     if let Some(path) = std::env::var_os("JJ_STORE_CAPTURE_COVERAGE_CONTRACT_CAPTURE") {
         fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();

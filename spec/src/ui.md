@@ -1750,3 +1750,19 @@ of tracked sources. Repeated discovery failures can exceed the 4096-source
 bound; valid counter values MUST NOT disable Capture status or controls. Queue
 counts likewise use their unsigned wire contract rather than the source bound.
 Tracked-source counts remain bounded, and malformed counters remain refused.
+
+Agents settings MUST display each configured CLI root directory as a wrapping
+path in its harness Settings rows. Paths come from the admitted status response
+and reflect startup resolution, including default home selection and overrides.
+Unavailable configuration metadata is explicit; counts never substitute for the
+actual directories. The display does not infer transcript file paths.
+
+Agents settings uses Capture, Sources, Imports and Diagnostics tabs in the
+shared sticky section strip. Capture exposes policy controls and configured root
+paths; Sources shows observed coverage and explicit history enrollment; Imports
+owns request inspection/progress; Diagnostics contains worker, queue and harness
+health. One mounted capture owner keeps observation active across tabs.
+Selecting an import explicitly opens Imports; background updates never change
+the tab. Unknown pending commands remain visible and retain exact retry/receipt
+actions on every tab. Tab selection is transient, and import drafts survive tab
+changes.

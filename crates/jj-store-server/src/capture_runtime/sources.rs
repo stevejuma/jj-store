@@ -47,6 +47,7 @@ mod tests {
                 sources: vec![],
             }));
             let control = CaptureRuntimeControl {
+                configured_roots: Default::default(),
                 command,
                 snapshot,
                 sources,

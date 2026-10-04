@@ -10,14 +10,20 @@ pub(super) fn policy(
         paused: snapshot.paused,
     }
 }
-pub(super) fn runtime(snapshot: CaptureRuntimeSnapshot) -> CaptureRuntimeStatus {
+pub(super) fn runtime(
+    snapshot: CaptureRuntimeSnapshot,
+    roots: &[(
+        jj_store_capture::profile::CaptureProfile,
+        std::path::PathBuf,
+    )],
+) -> CaptureRuntimeStatus {
     let status = snapshot.status;
     CaptureRuntimeStatus {
         harnesses: status
             .harnesses
             .into_iter()
             .flatten()
-            .map(harness)
+            .map(|status| harness(status, roots))
             .collect(),
         phase: phase(snapshot.phase),
         discovery: CaptureDiscoveryStatus {
@@ -45,8 +51,27 @@ pub(super) fn runtime(snapshot: CaptureRuntimeSnapshot) -> CaptureRuntimeStatus 
         source_limit_reached: status.source_limit_reached,
     }
 }
-fn harness(status: crate::capture_supervisor::CodexHarnessStatus) -> CaptureHarnessCoverage {
+fn harness(
+    status: crate::capture_supervisor::CodexHarnessStatus,
+    roots: &[(
+        jj_store_capture::profile::CaptureProfile,
+        std::path::PathBuf,
+    )],
+) -> CaptureHarnessCoverage {
     CaptureHarnessCoverage {
+        configured_roots: Some(
+            roots
+                .iter()
+                .filter(|(profile, _)| *profile == status.profile)
+                .map(|(_, path)| {
+                    CaptureRootPath(
+                        path.to_str()
+                            .expect("startup-qualified UTF-8 root")
+                            .to_owned(),
+                    )
+                })
+                .collect(),
+        ),
         profile: profile(status.profile),
         product_version: status.profile.product_version().into(),
         roots: status.roots,

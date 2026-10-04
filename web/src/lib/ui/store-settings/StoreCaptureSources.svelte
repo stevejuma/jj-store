@@ -12,8 +12,12 @@
   let {
     management,
     repositoryName,
-  }: { management: CaptureManagement; repositoryName: (id: string) => string } =
-    $props();
+    onImport,
+  }: {
+    management: CaptureManagement;
+    repositoryName: (id: string) => string;
+    onImport?: () => void;
+  } = $props();
   const state = $derived(management.state);
   const sources = $derived(state.sources);
   const allowed = $derived(
@@ -31,7 +35,7 @@
   class="store-settings__section"
   aria-labelledby="capture-source-heading"
 >
-  <header><h3 id="capture-source-heading">Source coverage</h3></header>
+  <header><h2 id="capture-source-heading">Source coverage</h2></header>
   <div class="store-settings__rows store-settings__rows--controls">
     <div>
       <div>
@@ -109,7 +113,10 @@
                     !captureHistorySupported(source.profile) ||
                     !source.awaiting_activity ||
                     source.running}
-                  onclick={() => management.importHistory(source.selector)}
+                  onclick={() => {
+                    void management.importHistory(source.selector);
+                    onImport?.();
+                  }}
                 >
                   <DownloadIcon
                     data-icon="inline-start"

@@ -5591,6 +5591,7 @@ export interface components {
       rescan_pending: boolean;
     };
     CaptureHarnessCoverage: {
+      configured_roots?: components["schemas"]["CaptureRootPath"][] | null;
       profile: components["schemas"]["CaptureHarnessProfile"];
       product_version: string;
       /** Format: uint */
@@ -5614,6 +5615,8 @@ export interface components {
       /** Format: uint */
       degraded_sources: number;
     };
+    /** @description Startup-selected directory metadata, not a discovered transcript file. */
+    CaptureRootPath: string;
     /** @enum {string} */
     CaptureHarnessProfile:
       | "codex-cli-jsonl-v1"

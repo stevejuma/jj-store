@@ -65,6 +65,7 @@ impl RunningCodexCapture {
             watch::channel(std::sync::Arc::new(supervisor.import_targets()));
         let rescan = std::sync::Arc::new(rescan::RescanSignal::default());
         let (import_commands, imports) = tokio::sync::mpsc::channel(1);
+        let configured_roots = supervisor.configured_roots();
         let task = runtime.spawn(drive(
             supervisor,
             receiver,
@@ -80,6 +81,7 @@ impl RunningCodexCapture {
         ));
         Ok(Self {
             control: CaptureRuntimeControl {
+                configured_roots,
                 command,
                 snapshot,
                 rescan,

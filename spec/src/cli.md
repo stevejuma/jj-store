@@ -1468,3 +1468,9 @@ qualification gate.
 The local preview exposes capture management through Settings → Agents, with the
 shared divided Settings rows and header refresh. Local service retains service
 and device-folder management.
+
+The capture runtime retains the same resolved directory roots given to discovery
+at startup. LocalTrusted Admin Settings → Agents displays those paths, including
+Codex home defaults and explicit configured overrides; changing configuration
+requires backend restart. Count-only coverage is insufficient for directory
+configuration inspection.

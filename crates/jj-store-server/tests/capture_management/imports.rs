@@ -45,9 +45,6 @@ async fn ready(f: &Fixture) -> String {
     .await
     .unwrap()
 }
-async fn settled(f: &Fixture, request_id: RequestId) -> CaptureImportStatus {
-    settled_with_timeout(f, request_id, 10).await
-}
 async fn settled_with_timeout(
     f: &Fixture,
     request_id: RequestId,

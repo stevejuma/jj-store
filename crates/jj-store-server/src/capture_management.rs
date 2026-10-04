@@ -95,8 +95,11 @@ impl Manager {
                 .binding
                 .as_ref()
                 .and_then(|b| b.runtime.get())
-                .and_then(|r| r.snapshot().ok())
-                .map(report::runtime),
+                .and_then(|r| {
+                    r.snapshot()
+                        .ok()
+                        .map(|snapshot| report::runtime(snapshot, r.configured_roots()))
+                }),
         }
     }
     fn disabled() -> CaptureStatus {

@@ -148,7 +148,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -68761,6 +68761,257 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "formats": "Current AgentStore and capture API unchanged; all393 historical evidence objects preserved byte-for-byte; UI-only settings composition",
   "scope": "Dedicated installation Agents section; shared rows, actions, public Alert/Empty/Field components and optional header refresh. Root aggregate/Rust suites out of scope under targeted UI policy. Visual baselines remain visual-pending; live in-app visual inspection unavailable due browser connection. Existing backend busy/cold performance caveat unchanged. User-requested configured root paths follow as a separate cross-layer slice.",
   "next": "Expose actual configured CLI capture roots in typed status and these shared settings rows; preserve existing backend configuration and authorization."
+},
+{
+  "id": "E-M18-003",
+  "tasks": [
+    "M18",
+    "M18.8"
+  ],
+  "date": "2026-10-04",
+  "kind": "capture-settings",
+  "revision": "enclosing JJ change kyvxzyzu",
+  "files": [
+    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+    "catalog/fixtures/capture-management.ts",
+    "crates/jj-store-http/src/contract/capture_tests.rs",
+    "crates/jj-store-server/src/capture_management/report.rs",
+    "crates/jj-store-server/src/capture_management.rs",
+    "crates/jj-store-server/src/capture_runtime/control.rs",
+    "crates/jj-store-server/src/capture_runtime/sources.rs",
+    "crates/jj-store-server/src/capture_runtime.rs",
+    "crates/jj-store-server/src/capture_supervisor/tests/observations.rs",
+    "crates/jj-store-server/src/capture_supervisor.rs",
+    "crates/jj-store-server/tests/capture_management/coverage.rs",
+    "crates/jj-store-server/tests/capture_management/http.rs",
+    "crates/jj-store-server/tests/capture_management/imports/inspection.rs",
+    "crates/jj-store-server/tests/capture_management/imports.rs",
+    "crates/jj-store-server/tests/capture_management/rescan.rs",
+    "crates/jj-store-service/src/capture_management.rs",
+    "docs/capture-preview.md",
+    "schemas/openapi.json",
+    "scripts/contracts.mjs",
+    "scripts/dev-capture.mjs",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/collaboration.md",
+    "spec/src/compatibility.md",
+    "spec/src/mutations.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/capture-root-validation.ts",
+    "web/src/lib/controller/capture-validation.ts",
+    "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureImport.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureRoots.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+    "web/tests/browser/local-capture-settings.spec.ts",
+    "web/tests/vite/capture-management.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "crates/jj-store-server/tests/capture_management/coverage.rs#harness_coverage_is_bounded_cached_and_reports_configured_roots",
+    "crates/jj-store-server/src/capture_supervisor/tests/observations.rs#configured_roots_retain_default_home_override_and_explicit_selection",
+    "crates/jj-store-server/tests/capture_management/imports/inspection.rs#missing_reader_link_and_unqualified_publication_withhold_completion_without_repair",
+    "crates/jj-store-http/src/contract/capture_tests.rs#capture_management_contract_is_installation_local_and_actor_free",
+    "web/tests/vite/capture-management.test.ts#configured harness roots are bounded absolute paths with honest counts",
+    "web/tests/browser/local-capture-settings.spec.ts#cold capture controls preserve intent and snapshot",
+    "web/tests/browser/local-capture-settings.spec.ts#visible capture follows observations and stops when settings closes"
+  ],
+  "removed_tests": [
+    "crates/jj-store-server/tests/capture_management/coverage.rs#harness_coverage_is_bounded_cached_and_contains_no_roots"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; jj --no-pager diff; jj --no-pager log",
+      "result": "pass",
+      "failures": 0,
+      "note": "Preview workspace only; no unrelated edits; original main preserved."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test capture_management --locked coverage::harness_coverage_is_bounded_cached_and_reports_configured_roots -- --exact (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Expected missing configured_roots regression: null instead of exact configured paths."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test capture_management --locked coverage::harness_coverage_is_bounded_cached_and_reports_configured_roots -- --exact (after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "1 test; exact CLI/Desktop paths, paused-directory rename and no GET directory I/O; transcript file secrecy retained."
+    },
+    {
+      "command": "cargo test -p jj-store-server --lib --locked configured_roots_retain_default_home_override_and_explicit_selection (first)",
+      "result": "fail",
+      "failures": 1,
+      "note": "New fixture used a different pending capacity than configured; corrected fixture to its existing spool capacity."
+    },
+    {
+      "command": "cargo test -p jj-store-server --lib --locked configured_roots_retain_default_home_override_and_explicit_selection (corrected)",
+      "result": "pass",
+      "failures": 0,
+      "note": "1 test; default HOME, CODEX_HOME override and explicit roots; no directory creation."
+    },
+    {
+      "command": "cargo test -p jj-store-server --lib --locked capture_runtime",
+      "result": "pass",
+      "failures": 0,
+      "note": "4 control/source cached-observation tests passed."
+    },
+    {
+      "command": "cargo test -p jj-store-http --lib capture_management_contract_is_installation_local_and_actor_free --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "1 schema test;16 directory roots and4096 character path bound; actor-free contract retained."
+    },
+    {
+      "command": "pnpm contracts:generate; pnpm contracts:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Generated OpenAPI/TypeScript match;221 actual HTTP/SSE responses conform;7 tooling tests and TypeScript contract consumer passed. Complete contract inventory required by changed public response and fixture registration."
+    },
+    {
+      "command": "cargo check -p jj-store-service -p jj-store-http -p jj-store-server --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected Rust package checks passed."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test capture_management --locked",
+      "result": "fail",
+      "failures": 1,
+      "note": "13 passed; import-inspection setup incorrectly unwrapped a cold Unknown acknowledgement."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test capture_management --locked imports::inspection::missing_reader_link_and_unqualified_publication_withhold_completion_without_repair -- --exact (retry before correction)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Same Unknown acknowledgement reproduced without changing product code. Fixed setup to observe original request and require exact completed receipt; never resend with a new identity."
+    },
+    {
+      "command": "pnpm web:check (initial and final); pnpm catalog:check; pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "Web/catalog0 errors/warnings;166 catalog modules; production bundle and asset manifest passed; existing chunk warning retained."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte (first tabs run)",
+      "result": "fail",
+      "failures": 6,
+      "note": "Top-level tab sections retained h3 headings; Axe heading-order failures. Corrected Sources/Imports headings to h2."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/SettingsNavigation.stories.svelte (after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "14 passed:10 Capture/4 Navigation. Actual root paths, tabs, retained drafts, exact pending retries across tabs, action geometry and accessibility."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-management.test.ts web/tests/vite/capture-freshness.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "17 passed; root validation and observation lifecycle."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-management.test.ts (after helper extraction)",
+      "result": "pass",
+      "failures": 0,
+      "note": "11 passed; bounded absolute unique paths/counts and absent metadata remain accepted explicitly."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (first tabs run)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Settled-opacity wait targeted source Import action after explicit import opened Imports. Retargeted Refresh import status;2 other tests passed."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/integration/playwright-settings.config.ts local-capture-settings.spec.ts (corrected)",
+      "result": "pass",
+      "failures": 0,
+      "note": "3 cold built-bundle tests; desktop/mobile Axe0; aligned/stacked rows and no overflow; actual root fixture, draft retention, polling across tabs and teardown. Existing compiled disposable browser host; no substituted product runtime evidence."
+    },
+    {
+      "command": "pnpm check:architecture (first, then first extraction)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Response validator exceeded300 counted lines at319, then301; extracted root paths and coverage field list to focused helper."
+    },
+    {
+      "command": "pnpm check:architecture (after extraction); pnpm check:ui-ownership; pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "869 modules; ownership validator;17 package boundaries."
+    },
+    {
+      "command": "cargo fmt --all; cargo fmt --all -- --check; pnpm exec prettier --write changed UI/tests/specs; pnpm exec prettier --check changed non-Rust files excluding historical milestones ledger",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatting passed without rewriting archived ledger entries."
+    },
+    {
+      "command": "pnpm dev:backend:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "Preview CLI/server binaries rebuilt; existing compact-unwind linker warning retained."
+    },
+    {
+      "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:capture:restart",
+      "result": "pass",
+      "failures": 0,
+      "note": "Only isolated preview backend restarted; Vite HMR and complete fixture/history preserved; ports7470/7472."
+    },
+    {
+      "command": "Python urllib GET http://127.0.0.1:7470/v1/local/capture with X-Jj-Store-Protocol:1; bounded three reads",
+      "result": "fail",
+      "failures": 3,
+      "note": "All three proper reads returned existing409 capture_control_busy. Initial exploratory requests missing protocol or complete Fetch Metadata correctly returned403; admission remained intact."
+    },
+    {
+      "command": "CUA tab2: profile > Settings > Agents; inspect AX; save .local/integration/agents-settings-tabs-live.png",
+      "result": "pass",
+      "failures": 0,
+      "note": "Live Capture shows /Users/stevejuma/.codex/sessions, four shared tabs and dedicated Agents sidebar. Intermittent busy source read retains available root snapshot and disables commands. User historical repository route retained. No native-app retry or capture mutation."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test capture_management --locked imports::inspection::missing_reader_link_and_unqualified_publication_withhold_completion_without_repair -- --exact (corrected)",
+      "result": "pass",
+      "failures": 0,
+      "note": "1 cold test passed; exact original completed receipt required before corrupting reader/publication evidence. Removed now-unused short-settlement helper; final binary verifies no new dead-code warning."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; cargo fmt --all -- --check; pnpm exec prettier --check spec/src/architecture.md spec/src/spec-governance.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "Spec-first30 protected paths/8 chapters before final added test files;5 validators/22 chapters/166 requirements;135 tasks; changed documents/Rust format passed."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test capture_management --locked (final complete binary)",
+      "result": "pass",
+      "failures": 0,
+      "note": "14 passed;0 failed. Corrected cold inspection requires original completed receipt; unused setup helper removed; no new dead-code warning."
+    },
+    {
+      "command": "pnpm spec:first (final); evidence-preservation/ledger-structure scripts",
+      "result": "pass",
+      "failures": 0,
+      "note": "30 protected files/9 canonical chapters;395 entries including this slice; all394 historical evidence objects retained byte-for-byte;39 unique files."
+    },
+    {
+      "command": "pnpm check:progress (final pass ledger); pnpm exec prettier --check .local/integration/e-m18-003.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "135 tasks; new evidence entry formatting passed; historical ledger formatting and objects preserved."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "versions": "JJ0.45.1;Codex CLI0.156.1;pnpm10.32.1; inherited Design Core temporary local validation unchanged",
+  "formats": "Current AgentStore only; native/capture persistence formats unchanged. Additive optional bounded configured_roots status metadata;221 actual HTTP/SSE response contracts. All394 earlier evidence objects preserved byte-for-byte.",
+  "scope": "Four Agents settings tabs with shared rows/action columns, one observation owner, retained drafts and exact pending actions. Actual startup-resolved directory roots under unchanged LocalTrusted Admin admission, including HOME/CODEX_HOME and explicit selections. Complete contract lane required; root aggregates, unrelated UI/Rust suites out of scope. Stories remain visual-pending; no baseline approval. Existing cold sanitizer performance and intermittent capture busy remain deferred; broader M18 harness/release scope unchanged.",
+  "next": "Try Settings > Agents in the running preview; gather tab/roots feedback before reopening deferred capture performance or harness work."
 },
 {
     "id": "E-UI-095",

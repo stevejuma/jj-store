@@ -33,6 +33,7 @@ async function openSettings(page: Page) {
   await expect(
     page.getByRole("combobox", { name: "Settings repository" }),
   ).toHaveCount(0);
+  await page.getByRole("tab", { name: "Capture", exact: true }).click();
 }
 async function bootstrap(page: Page, supported = true) {
   await api(page, { access: "local_trusted" });
@@ -141,9 +142,19 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   ).toBeVisible();
   const route = await page.evaluate(() => location.hash);
   await openSettings(page);
+  await expect(
+    page.getByText("/Users/capture/.codex/sessions", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Publication backlog", { exact: true }),
+  ).toHaveCount(0);
+  await page.screenshot({
+    path: test.info().outputPath("agents-settings-capture.png"),
+  });
   await expect
     .poll(() => paths.includes("/v1/local/capture/sources"))
     .toBe(true);
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
   await expect(page.getByText("Codex CLI source 1")).toBeVisible();
   const sourceRow = page.getByText("Codex CLI source 1").locator("..");
   const columns = await sourceRow.evaluate((row) => {
@@ -152,6 +163,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
     return { labelRight: label.right, controlLeft: control.left };
   });
   expect(columns.controlLeft).toBeGreaterThan(columns.labelRight);
+  await page.getByRole("tab", { name: "Capture", exact: true }).click();
   await page.getByRole("button", { name: "Pause capture" }).click();
   await expect(page.getByText("Capture outcome unknown")).toBeVisible();
   await page
@@ -180,6 +192,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   expect(controls[3].request_id).not.toBe(controls[0].request_id);
   await page.getByRole("button", { name: "Rescan capture" }).click();
   await expect(page.getByText(/Rescan requested/)).toBeVisible();
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
   await expect(
     page.getByRole("button", { name: /Import history for/ }),
   ).toBeDisabled();
@@ -199,7 +212,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   await expect(page.getByText("2,048 / 1,024 bytes")).toBeVisible();
   await page.getByRole("button", { name: "Refresh import status" }).click();
   const historyAction = page.getByRole("button", {
-    name: /Import history for/,
+    name: "Refresh import status",
   });
   await expect(historyAction).toBeEnabled();
   // Public Button animates disabled opacity; inspect the settled enabled view.
@@ -213,6 +226,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   });
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
   const mobileColumns = await sourceRow.evaluate((row) => {
     const label = row.querySelector("dt")!.getBoundingClientRect();
     const control = row.querySelector("dd")!.getBoundingClientRect();
@@ -276,10 +290,13 @@ test("visible capture follows observations and stops when settings closes", asyn
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();
   await openSettings(page);
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
   await expect(page.getByText("Codex CLI source 1")).toBeVisible();
+  await page.getByRole("tab", { name: "Imports", exact: true }).click();
   await page
     .getByRole("textbox", { name: "Previous import request ID" })
     .fill("ef".repeat(16));
+  await page.getByRole("tab", { name: "Capture", exact: true }).click();
   value.policy!.paused = true;
   value.runtime!.phase = "paused";
   await page.clock.fastForward(5151);
@@ -294,6 +311,7 @@ test("visible capture follows observations and stops when settings closes", asyn
   await page.clock.fastForward(15000);
   expect(reads).toBe(serviceReads);
   await page.getByRole("button", { name: "Agents", exact: true }).click();
+  await page.getByRole("tab", { name: "Imports", exact: true }).click();
   await expect(
     page.getByRole("textbox", { name: "Previous import request ID" }),
   ).toHaveValue("ef".repeat(16));
@@ -303,6 +321,7 @@ test("visible capture follows observations and stops when settings closes", asyn
   await page.clock.fastForward(15000);
   expect(reads).toBe(closedReads);
   await openSettings(page);
+  await page.getByRole("tab", { name: "Imports", exact: true }).click();
   await expect(
     page.getByRole("textbox", { name: "Previous import request ID" }),
   ).toHaveValue("ef".repeat(16));

@@ -652,3 +652,7 @@ without introducing another authority, runtime or legacy storage profile.
 Agent capture management has a dedicated installation-scoped Agents settings
 section. It composes the owned shared Settings rows and foundational controls;
 repository navigation and the capture observation lifecycle remain independent.
+Capture retains startup-resolved harness directories beside the cached Copy
+observation, so admitted settings reads expose configuration without directory
+inspection. The four Agents settings tabs share one mounted observation owner
+and retain request drafts and exact pending commands across tab changes.

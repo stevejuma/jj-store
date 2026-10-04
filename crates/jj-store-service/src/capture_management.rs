@@ -99,9 +99,17 @@ pub enum CaptureHarnessProfile {
     OpencodeReadOnlyApiV1,
     OpencodeExportJsonV1,
 }
+/// Startup-selected directory metadata, not a discovered transcript file.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(transparent)]
+pub struct CaptureRootPath(#[schemars(length(min = 1, max = 4096))] pub String);
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CaptureHarnessCoverage {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[schemars(length(max = 16))]
+    pub configured_roots: Option<Vec<CaptureRootPath>>,
     pub profile: CaptureHarnessProfile,
     #[schemars(length(min = 1, max = 32))]
     pub product_version: String,

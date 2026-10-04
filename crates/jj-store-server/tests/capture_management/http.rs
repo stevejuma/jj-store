@@ -160,7 +160,7 @@ async fn local_capture_http_derives_actor_revalidates_authority_and_captures_con
     assert_eq!(f.bytes(), bytes);
     assert!(samples.iter().all(|s| {
         !s.to_string()
-            .contains(f.source.root.path().to_str().unwrap())
+            .contains(f.source.transcript.to_str().unwrap())
     }));
     if let Some(path) = std::env::var_os("JJ_STORE_CAPTURE_MANAGEMENT_CONTRACT_CAPTURE") {
         fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();

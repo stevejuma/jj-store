@@ -89,6 +89,7 @@ pub enum CodexSupervisorPoll {
 pub struct CodexCaptureSupervisor {
     selectors: SourceSelectors,
     config: AgentCaptureConfig,
+    configured_roots: Arc<[(jj_store_capture::profile::CaptureProfile, PathBuf)]>,
     resources: CodexSupervisorResources,
     discovery: OwnedWorker<DiscoveryWork>,
     discovery_coverage: discovery::RootObservations,
@@ -115,6 +116,11 @@ pub struct CodexCaptureSupervisor {
     api_first: bool,
 }
 impl CodexCaptureSupervisor {
+    pub(crate) fn configured_roots(
+        &self,
+    ) -> Arc<[(jj_store_capture::profile::CaptureProfile, PathBuf)]> {
+        self.configured_roots.clone()
+    }
     /// Pure configuration selection; root/file operations occur only in owned steps.
     pub fn prepare(
         config: AgentCaptureConfig,
@@ -169,6 +175,7 @@ impl CodexCaptureSupervisor {
         }
         let discovery_coverage =
             discovery::RootObservations::configured(roots.iter().map(|(profile, _)| *profile));
+        let configured_roots = Arc::from(roots.clone());
         let discovery = OwnedWorker::new(
             DiscoveryWork::new(roots, Duration::from_secs(config.rescan_seconds)),
             deadline,
@@ -180,6 +187,7 @@ impl CodexCaptureSupervisor {
         Ok(Some(Self {
             selectors: SourceSelectors::new()?,
             config,
+            configured_roots,
             resources,
             discovery,
             discovery_coverage,
