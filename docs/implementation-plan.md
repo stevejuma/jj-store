@@ -82,6 +82,12 @@ reserves no unrelated construction maximum. Local operation/deep lookup and
 local application search projections remain delivery work. These focused
 deliveries do not complete the later combined qualification gate.
 
+E-READ-042 adds sorted retained local operation-prefix lookup with historical
+metadata fingerprints, charged lookup work and existing cold HTTP recovery.
+Ready prefix pages need no commit/tree/index preflight; plain metadata pages
+retain their cold reader. Prepared operation comparison, indexed child neighbors
+and deep continuations remain separate delivery work.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

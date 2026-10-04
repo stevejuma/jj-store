@@ -1837,3 +1837,8 @@ Private recovery retains current native operation/view admission, hard/inline
 limits, selected visibility and cancellation cleanup while unrelated cache
 preparation proceeds. Focused fixture evidence does not qualify Linux/native
 scale, production browser or release behavior.
+
+Filesystem-browser preparation regressions cover retained operation-prefix
+selection, ambiguity, suffixes and small read budgets without source index
+repair. This adds no installed CLI command; complete scale/lifecycle and release
+qualification remains deferred.

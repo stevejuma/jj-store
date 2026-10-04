@@ -14,6 +14,7 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     );
     fs::write(folder.join("file.txt"), "historical body\n").unwrap();
     jj(&folder, &["describe", "-m", "Historical"]);
+    let historical_operation = jj(&folder, &["op", "log", "--no-graph", "-n", "1", "-T", "id"]);
     let commit = jj(
         &folder,
         &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
@@ -143,6 +144,17 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     let cold_references: Value = cold_references.json().await.unwrap();
     assert_eq!(cold_references["code"], "index_rebuild_required");
     assert_eq!(cold_references["local_snapshot"]["operation"], operation);
+    let operation_prefix = json!({"operation":operation,"cursor":null,
+        "request":{"kind":"graph","query":[{"graph":"operations_filtered",
+            "query":format!("from:{}",&historical_operation[..9])},{"limit":1,"after":null}]}});
+    let cold_prefix = post(&query_path, operation_prefix.clone())
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(cold_prefix.status(), reqwest::StatusCode::CONFLICT);
+    let cold_prefix: Value = cold_prefix.json().await.unwrap();
+    assert_eq!(cold_prefix["code"], "index_rebuild_required");
+    assert_eq!(cold_prefix["local_snapshot"]["operation"], operation);
     let task: Value = post(
         &format!("/local/repos/{id}/index/tasks"),
         json!({"operation":operation}),
@@ -198,6 +210,22 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     };
     assert!(stats(&warm) < stats(&cold), "cold={cold}, warm={warm}");
     assert!(stats(&warm) <= 3, "{warm}");
+    let prefix: Value = post(&query_path, operation_prefix)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(prefix["snapshot"]["operation"], operation);
+    assert_eq!(prefix["data"]["data"]["data"]["graph"], "operations");
+    assert_eq!(
+        prefix["data"]["data"]["data"]["nodes"][0]["id"],
+        historical_operation
+    );
+    assert!(stats(&prefix) <= 8, "{prefix}");
     let first: Value = post(&query_path, references.clone())
         .send()
         .await

@@ -8,6 +8,14 @@ uncertainty remains explicit. Browser cards request these summaries through
 their existing independent operation pins; read workers retain current access,
 cancellation and admission. No storage authority or persisted format changes.
 
+Local explicit preparation exports selected-ancestor operation identities and
+canonical fingerprints through the owned bounded scratch writer. A verified
+fixed-width disposable projection shares disk reservations and resident memory
+admission with the prepared generation. Prefix reads use this owned lookup and
+the read-only operation store, with current source fingerprints, access and
+ordinary bounds; they need no commit repository. Native index output and source
+authority stay unchanged.
+
 Compact native/local ReviewStore activity is a read-only service projection of
 the admitted first catalog window. It returns counts and maximum accepted times,
 without anchor/comment presentation or causal event ordering. Provider closure

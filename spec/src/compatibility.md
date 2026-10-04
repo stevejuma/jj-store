@@ -1,5 +1,12 @@
 # Compatibility and release
 
+Local prepared operation lookup uses a disposable fixed-width identity and
+canonical-fingerprint artifact bound to one operation, with a whole-file
+checksum and bounded loading. It is not a native, Git, companion, WAL or public
+API format. Native commit-index output remains unchanged; source normalization
+and pinned JJ selector semantics remain authoritative. Complete scale, cold
+lifecycle and release qualification is deferred.
+
 The additive native/local WorkStore activity routes use body-free version-1
 native and version-2 local pages with independent snapshot profiles. Finite
 1..256-group pages and strict local companion/query bodies accompany generated

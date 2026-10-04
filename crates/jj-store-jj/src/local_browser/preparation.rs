@@ -106,6 +106,14 @@ impl prepared::Source for LocalSource {
     fn change_len(&self) -> usize {
         self.loader.store().change_id_length()
     }
+    fn operation_lookup(&self) -> bool {
+        true
+    }
+    fn operation_digest(&self, operation: &Operation) -> Result<[u8; 32]> {
+        let value =
+            dto::Operation::try_from(operation.store_operation()).map_err(|_| Error::Corrupt)?;
+        operation_store::fingerprint(&value, &self.budget)
+    }
     async fn operation(&self, id: &o::OperationId) -> Result<Operation> {
         self.budget.authorize(&self.pin).await?;
         bounded_op_file(

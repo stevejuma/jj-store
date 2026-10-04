@@ -2036,3 +2036,8 @@ recovery flow. Continuations preserve lexical order and hydrate only page
 targets. A different embedded operation or nonempty description search keeps its
 previous bounded dispatch until separately indexed. Reference DTOs, signed
 cursors and preparation task contracts are unchanged.
+
+Local operation-prefix graph queries use ready exact-operation generations and
+existing rebuild-required recovery when cold. This delivery changes no request,
+response, cursor or public schema. Read-only plain operation pages retain their
+metadata-only cold path.

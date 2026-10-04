@@ -167,7 +167,9 @@ impl Request {
             self,
             Self::Commit { .. }
                 | Self::Graph(GraphRequest::Log { .. } | GraphRequest::Evolution { .. }, _)
-        ) || matches!(self, Self::References(r) if r.query.is_empty()
+        ) || matches!(self, Self::Graph(GraphRequest::OperationsFiltered { query }, _)
+            if crate::query::language::operations::Filter::parse(query).is_ok_and(|filter| filter.needs_prefix_lookup()))
+            || matches!(self, Self::References(r) if r.query.is_empty()
             && matches!(r.kind, references::Kind::Changes | references::Kind::All))
     }
     /// Ordinary scoped reads can reuse ready point membership while retaining

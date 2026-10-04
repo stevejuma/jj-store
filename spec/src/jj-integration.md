@@ -21,7 +21,17 @@ the exact prepared visible membership without creating per-request ancestor
 sets. Different head selections fail closed. Prepared log, commit detail and
 evolution readers use fresh authorized scoped stores, and operation/predecessor
 traversal retains ordinary cancellation, byte, work and record limits. No source
-index repair, extra-table import or publication is permitted.
+index repair, extra-table import or publication is permitted. Prepared local
+operation prefixes resolve against sorted retained ancestor identities, without
+commit-index access or a second full membership walk. Their read-only operation
+store retains fresh metadata, cancellation and source admission, and rejects
+foreign/future operations.
+
+Prepared operation prefix reads compare historical source metadata against
+captured canonical fingerprints because SimpleOpStore does not hash operation
+filenames. Fingerprint mismatch fails explicitly. Prefix resolution and
+membership charge logarithmic lookup work; child suffixes retain the pinned
+upstream bounded operation walk until indexed neighbor lookup is delivered.
 
 WorkStore comment reactions use the existing native RPC collaboration command
 and read envelopes with an additive typed target. Exact WorkStore selection is

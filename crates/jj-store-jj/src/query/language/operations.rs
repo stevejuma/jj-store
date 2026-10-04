@@ -205,6 +205,20 @@ impl Filter {
         head: &Operation,
         mut work: impl FnMut() -> Result<()>,
     ) -> Result<Operation> {
+        self.start_at_with_membership(head, &mut work, false).await
+    }
+    /// Only for an operation store that proves every resolved/read identity
+    /// against an immutable retained-ancestor projection.
+    pub(crate) async fn start_at_admitted(&self, head: &Operation) -> Result<Operation> {
+        self.start_at_with_membership(head, &mut || Ok(()), true)
+            .await
+    }
+    async fn start_at_with_membership(
+        &self,
+        head: &Operation,
+        work: &mut impl FnMut() -> Result<()>,
+        admitted: bool,
+    ) -> Result<Operation> {
         let Some(selector) = &self.from else {
             return Ok(head.clone());
         };
@@ -218,6 +232,9 @@ impl Filter {
                         "Operation selector is missing or ambiguous in this history.",
                     ),
                 })?;
+        if admitted {
+            return Ok(selected);
+        }
         let heads = [head.clone()];
         let stream = jj_lib::op_walk::walk_ancestors(&heads);
         let mut stream = std::pin::pin!(stream);

@@ -624,9 +624,14 @@ metadata directly, without loading commits, trees, views or a commit index.
 Native responses report `not_used` for the graph cache. Operation ordering,
 parent/child selectors relative to `@`, filtering, pinned membership,
 authorization and cancellation retain pinned JJ semantics. ID-prefix selectors
-retain their existing complete admission until the prepared operation lookup is
-qualified. Local reads must not repair or rewrite a damaged commit index as a
-side effect of reading operation metadata.
+use a sorted retained-operation identity/fingerprint projection from explicit
+preparation. Bind it to the exact selected operation and generation; resolve
+prefixes by binary search while preserving missing/ambiguous and parent/child
+selector semantics. Fresh operation metadata, current access and ordinary read
+limits remain mandatory. Prefix membership MUST NOT rescan all ancestors, load
+commits/trees or repair source indexes. Cold HTTP prefix queries return
+exact-operation rebuild-required recovery. Local reads must not repair or
+rewrite a damaged commit index as a side effect of reading operation metadata.
 
 Selected historical commit summaries, directories and scoped file reads MUST
 prove only the requested commit's retained membership. Follow exact commit
@@ -721,6 +726,19 @@ upstream rereads must agree with the fresh selection. Changed source records
 fail explicitly rather than combining old visibility/annotations with another
 view. This check retains supported upstream normalization and adds no
 authoritative source format or metadata write.
+
+Local preparation MAY export a checksum-verified fixed-width operation-identity
+projection from the already bounded ordered scratch tables. Charge its bytes
+before writing and resident memory before allocation. The projection contains
+only the selected operation, its retained ancestors and canonical operation
+fingerprints, is disposable, and grants no source mutation or publication
+capability.
+
+Prepared operation prefix reads compare historical source metadata against
+captured canonical fingerprints because SimpleOpStore does not hash operation
+filenames. Fingerprint mismatch fails explicitly. Prefix resolution and
+membership charge logarithmic lookup work; child suffixes retain the pinned
+upstream bounded operation walk until indexed neighbor lookup is delivered.
 
 Ready local generations MUST also supply point membership to selected historical
 commit summaries, directory windows, scoped files, diffs, changed-path pages and

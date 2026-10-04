@@ -79920,6 +79920,159 @@ entries.
     ],
     "next": "Continue prepared local operation/prefix/comparison and indexed reference/deep lookup in the retained workspace; complete combined qualification in the later slice.",
     "scope": "Private numeric review reuse and directly affected native/local providers with focused correctness, package and governance evidence."
+  },
+  {
+    "id": "E-READ-042",
+    "tasks": ["M13.4"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change volopptk",
+    "kind": "Prepared retained local operation-prefix lookup with canonical source fingerprints and bounded disk/resident admission",
+    "versions": "Rust1.98.1 (48a229cea); jj-lib0.45.1; stock JJ0.45.1; macOS ARM64.",
+    "formats": "Disposable local-operations artifact: JSTLOP1 NUL magic, selected64-byte operation, sorted96-byte operation/fingerprint records and SHA256 checksum. Export reuses ordered retained-operation scratch; reserves bytes before writing and resident192bytes/record plus64KiB before allocation. Native index segment/link bytes, public routes/schemas/cursors, native/WAL/companion/receipt formats and ordinary read limits unchanged.",
+    "files": [
+      "crates/jj-store-cli/tests/local_browser/preparation.rs",
+      "crates/jj-store-cli/tests/local_browser/prepared_operations.rs",
+      "crates/jj-store-cli/tests/local_browser/prepared_points_http.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-jj/src/local_browser/graphs.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/operation_store.rs",
+      "crates/jj-store-jj/src/local_browser/preparation/graph.rs",
+      "crates/jj-store-jj/src/local_browser/preparation.rs",
+      "crates/jj-store-jj/src/query/language/operations.rs",
+      "crates/jj-store-jj/src/query/prepared/mod.rs",
+      "crates/jj-store-jj/src/query/prepared/operations.rs",
+      "docs/implementation-plan.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md"
+    ],
+    "requirements": ["JST-LOCAL-004", "JST-JJ-003", "JST-API-001"],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/prepared_operations.rs#prepared_operation_prefixes_resolve_with_only_selected_metadata",
+      "crates/jj-store-cli/tests/local_browser/prepared_points_http.rs#local_point_http_uses_ready_membership_and_only_falls_back_when_cold",
+      "crates/jj-store-cli/tests/local_browser/preparation.rs#local_preparation_matches_upstream_without_trees_or_source_index_writes",
+      "crates/jj-store-cli/tests/local_browser/preparation.rs#prepared_local_log_preserves_conflicts_and_filtered_native_edges",
+      "crates/jj-store-jj/src/query/prepared/operations.rs#operation_identity_writer_refuses_growth_before_exceeding_reserved_bytes",
+      "crates/jj-store-jj/src/query/prepared/operations.rs#lookup_preserves_exact_odd_missing_and_ambiguous_prefixes_under_admission",
+      "crates/jj-store-jj/src/query/prepared/operations.rs#lookup_rejects_corrupt_framing_checksum_order_membership_and_source_selection"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_prefixes_resolve_with_only_selected_metadata -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failure/12.52s: prepared prefix path returns Invalid before implementation. operation-prefix-before-042.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj --locked (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial owning package check passes. operation-prefix-check-initial-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_prefixes_resolve_with_only_selected_metadata -- --nocapture (initial after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/9.77s: ready full/odd/uppercase/parent prefixes. operation-prefix-after-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_prefixes_resolve_with_only_selected_metadata -- --nocapture (strengthened child)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failure/10.35s: child suffix still walks retained operations and correctly hits tiny budget. Recorded indexed child neighbors as separate work; retained default semantic equivalence and explicit small-budget Limit. operation-prefix-final-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_prefixes_resolve_with_only_selected_metadata -- --nocapture (fingerprints)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/21.97s: remove all disposable Git objects, damage commit indexes, reject later/ambiguous prefixes and replaced historical protobuf, then restore/retry. operation-prefix-fingerprint-042.log. Denied access added afterward and passes in final subset."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::prepared::operations:: -- --nocapture; cargo test -p jj-store-jj --lib --locked query::prepared:: -- --nocapture (initial/final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial2lookup tests; then6builder tests pass twice (0.23s/0.40s), including writer disk admission and corruption/selection/order/checksum/limit/cancellation guards. operation-prefix-unit/builder/builder-final-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::language::operations:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2parser tests pass. operation-prefix-parser-042.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected JJ and direct service/HTTP/CLI packages pass (2m31s with lock waits). operation-prefix-check-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_ -- --nocapture (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "6pass/1fail (29.62s): exact prepared/upstream directory assertion sees new intentional local-operations file; upstream segment/link bytes match. operation-prefix-prepared-regressions-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_preparation_ -- --nocapture (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1pass/1fail (4.74s): same new disposable artifact in exact directory comparison. Updated exactly two fixtures to validate artifact framing/selection/order/checksum and compare every remaining upstream file byte-for-byte. operation-prefix-preparation-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_point_http_uses_ready_membership_and_only_falls_back_when_cold -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/10.40s: exact cold409 rebuild-required pin, ready historical prefix and selected source/point proofs. Disposable service cleaned up. operation-prefix-http-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked operation_pages_ignore_corrupt_commit_indexes -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/5.55s: plain metadata-only cold pages retain independence. operation-prefix-cold-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked history_queries_filter_sparse_ancestry_before_paging_and_never_publish -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/1.17s: native selector and sparse-filter semantics preserved. operation-prefix-native-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_preparation_matches_upstream_without_trees_or_source_index_writes -- --nocapture; cargo test -p jj-store-cli --test local_browser --locked prepared_local_log_preserves_conflicts_and_filtered_native_edges -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both original failed tests repaired:1pass/5.26s and1pass/5.65s. Exact native index bytes retained. operation-prefix-preparation-repaired/log-repaired-042.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_ -- --nocapture; cargo test -p jj-store-cli --test local_browser --locked local_preparation_ -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "7prepared tests/34.12s and2preparation tests/6.17s. Direct point/detail/reference/operation/visibility/HTTP/preparation consumers pass. operation-prefix-prepared-final/preparation-final-042.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli; cargo fmt -p jj-store-jj -p jj-store-cli -- --check; pnpm check:boundaries; pnpm check:ui-ownership; pnpm exec prettier --write spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/compatibility.md spec/src/jj-integration.md spec/src/local-jj.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed Rust/docs formatting,17package boundaries and1ownership validator pass; exact log prefixes operation-prefix-rust-format/boundaries/ownership/format[-final]-042.log. Final fixture Rust formatted again."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:first; pnpm spec:validate; cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final ledger formatting,138task bookkeeping,13protected files/7canonical chapters,5validators/23chapters/172requirements and Rust formatting pass. operation-prefix-ledger-format/progress/spec-first/spec/rust-format-final-042.log."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "19 unique focused Rust tests pass. Operation-prefix delivery complete; overall bounded-read qualification and milestone remain pending. Source fingerprints preserve SimpleOpStore normalization and reject replaced historical operation data even with a retained lookup.",
+      "Prepared operation comparisons, indexed filtered references/child neighbors and deep operation/predecessor/copy/search continuations, paged native RPC, local operation-difference/change-group paging and remaining local application search/index delivery remain open.",
+      "Full combined integration/contracts, Linux/native/near-capacity fixtures, measured RSS/release latency, complete cold production browser, fault/revocation/restart/publication/real-RustFS, registry/release and Help/source-review refresh remain deferred. UI code/public schemas unchanged; UI suites/build and contract regeneration are out of scope. Main/Linux source and original dev services untouched. Visual baselines remain unapproved; inherited __eh_frame linker warning and earlier strict-lint gaps remain deferred."
+    ],
+    "next": "Continue prepared local operation comparison and indexed change-group windows in the retained temporary workspace; complete qualification in the later slice.",
+    "scope": "Private local preparation/metadata lookup plus common selector helper and direct local/native consumers; no installed CLI or server restart."
   }
 ]
 ```

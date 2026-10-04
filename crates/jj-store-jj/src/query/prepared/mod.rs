@@ -4,6 +4,7 @@
 //! Ordering and format follow jj-lib's Apache-2.0 default_index builder (format
 //! 6), with Kahn's queue ordered by committer timestamp then commit ID.
 mod disk;
+pub(crate) mod operations;
 mod segment;
 mod tables;
 use super::{Error, Result, access::Budget};
@@ -119,6 +120,12 @@ pub(crate) trait Source {
     fn max_parents(&self) -> usize;
     fn commit_len(&self) -> usize;
     fn change_len(&self) -> usize;
+    fn operation_lookup(&self) -> bool {
+        false
+    }
+    fn operation_digest(&self, _: &Operation) -> Result<[u8; 32]> {
+        Err(Error::Invalid)
+    }
     async fn operation(&self, id: &jj_lib::op_store::OperationId) -> Result<Operation>;
     async fn view(&self, operation: &Operation) -> Result<jj_lib::view::View>;
     async fn commit(&self, id: &backend::CommitId) -> Result<CommitFields>;
@@ -241,7 +248,11 @@ async fn build_with_tables(
             budget.work(1)?;
             disk.put(PENDING, commit.as_bytes(), &[])?;
         }
-        disk.put(SEEN_OPS, id.as_bytes(), &[])?;
+        if budget.operation_lookup() {
+            disk.put(SEEN_OPS, id.as_bytes(), &budget.operation_digest(&op)?)?;
+        } else {
+            disk.put(SEEN_OPS, id.as_bytes(), &[])?;
+        }
     }
     let mut total = 0u32;
     let commit_len = budget.commit_len();
@@ -310,6 +321,9 @@ async fn build_with_tables(
     }
     if emitted != total {
         return Err(Error::Corrupt);
+    }
+    if budget.operation_lookup() {
+        operations::write(path, operation, &disk, budget, space.clone())?;
     }
     segment::write(
         path, operation, &mut disk, total, commit_len, change_len, budget, space,

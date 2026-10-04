@@ -375,7 +375,11 @@ pub(super) async fn run_operations(
         GraphRequest::OperationsFiltered { query } => query,
         _ => "",
     })?;
-    let heads = [filter.start_at(head, || budget.work(1)).await?];
+    let heads = [if access.prepared.is_some() {
+        filter.start_at_admitted(head).await?
+    } else {
+        filter.start_at(head, || budget.work(1)).await?
+    }];
     let stream = jj_lib::op_walk::walk_ancestors(&heads);
     let mut stream = std::pin::pin!(stream);
     let mut nodes = vec![];

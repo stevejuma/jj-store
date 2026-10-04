@@ -1,6 +1,7 @@
 use super::{ReadBinding, jj};
 use jj_lib::{index::IndexStore as _, object_id::ObjectId as _};
 use jj_store_jj::{local_browser as q, query::Cancellation};
+use sha2::{Digest as _, Sha256};
 use std::{
     collections::BTreeMap,
     fs,
@@ -25,6 +26,36 @@ fn files(root: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
     let mut out = BTreeMap::new();
     visit(root, root, &mut out);
     out
+}
+
+fn prepared_index_files(
+    root: &Path,
+    selected: jj_store_model::OperationId,
+) -> BTreeMap<PathBuf, Vec<u8>> {
+    let mut files = files(root);
+    let operations = files
+        .remove(Path::new("local-operations"))
+        .expect("local preparation exports retained operation identities");
+    assert!(operations.len() >= 104 + 96);
+    assert_eq!((operations.len() - 104) % 96, 0);
+    assert_eq!(&operations[..8], b"JSTLOP1\0");
+    assert_eq!(&operations[8..72], selected.as_bytes());
+    let checksum_at = operations.len() - 32;
+    assert_eq!(
+        &operations[checksum_at..],
+        Sha256::digest(&operations[..checksum_at]).as_slice()
+    );
+    let records = &operations[72..checksum_at];
+    assert!(
+        records
+            .chunks_exact(96)
+            .any(|row| &row[..64] == selected.as_bytes())
+    );
+    for pair in records.chunks_exact(96).collect::<Vec<_>>().windows(2) {
+        assert!(pair[0][..64] < pair[1][..64]);
+    }
+    // Every remaining file must be exactly the pinned upstream index output.
+    files
 }
 
 /// Explicit external-repository qualification; only private derived files are written.
@@ -229,7 +260,10 @@ async fn local_preparation_matches_upstream_without_trees_or_source_index_writes
         .await
         .unwrap();
     assert_eq!(prepared.snapshot().operation, operation);
-    assert_eq!(files(prepared.path()), expected_files);
+    assert_eq!(
+        prepared_index_files(prepared.path(), operation),
+        expected_files
+    );
     let prepared = Arc::new(prepared);
     let small = q::Executor::with_workers(
         jj_store_jj::query::workers::Workers::new(1).unwrap(),
@@ -503,7 +537,10 @@ async fn prepared_local_log_preserves_conflicts_and_filtered_native_edges() {
         .await
         .unwrap();
     let expected_files = files(expected.path());
-    assert_eq!(files(prepared.path()), expected_files);
+    assert_eq!(
+        prepared_index_files(prepared.path(), operation),
+        expected_files
+    );
     for (relative, bytes) in expected_files {
         let path = metadata.join("index").join(relative);
         fs::create_dir_all(path.parent().unwrap()).unwrap();

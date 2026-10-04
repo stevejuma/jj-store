@@ -42,6 +42,7 @@ fn selection(pin: &Pin, operation: m::OperationId, budget: &Budget) -> Result<[u
     Ok(hash.digest.finalize().into())
 }
 pub(super) struct Resident {
+    operations: prepared::operations::Lookup,
     index: DefaultReadonlyIndex,
     visibility: Arc<super::visibility::Visibility>,
     selection: [u8; 32],
@@ -144,6 +145,13 @@ pub(super) async fn load(
         return Err(Error::IndexBudget);
     }
     Ok(Resident {
+        operations: prepared::operations::Lookup::load(
+            directory.path(),
+            operation,
+            source.limits.max_metadata_records,
+            |amount| source.budget.work(amount),
+            |bytes| source.budget.read_bytes(bytes),
+        )?,
         visibility: super::visibility::Visibility::build(&index, source).await?,
         selection: selection(&source.pin, operation, &source.budget)?,
         index,
@@ -155,6 +163,24 @@ pub(super) async fn load(
 }
 
 impl Prepared {
+    pub(in super::super) fn operation_fingerprint(
+        &self,
+        id: m::OperationId,
+        budget: &Budget,
+    ) -> Result<Option<[u8; 32]>> {
+        self.resident
+            .operations
+            .fingerprint(id, |amount| budget.work(amount))
+    }
+    pub(in super::super) fn resolve_operation(
+        &self,
+        prefix: &jj_lib::object_id::HexPrefix,
+        budget: &Budget,
+    ) -> Result<jj_lib::object_id::PrefixResolution<o::OperationId>> {
+        self.resident
+            .operations
+            .resolve(prefix, |amount| budget.work(amount))
+    }
     pub(in super::super) fn reference_changes(
         &self,
     ) -> &BTreeMap<String, super::visibility::VisibleChange> {
@@ -321,6 +347,14 @@ impl Executor {
                     budget.clone(),
                     limits,
                 );
+                if matches!(
+                    &request,
+                    Request::Graph(GraphRequest::OperationsFiltered { .. }, _)
+                ) {
+                    // Prefix membership comes from the prepared operation-ID
+                    // projection. Operation pages need no commit repository.
+                    return context.dispatch(operation, request, true).await;
+                }
                 if !matches!(&request, Request::Commit { .. } | Request::Graph(_, _)) {
                     // Indexed point membership admits only selected commits;
                     // their tree/file grants still cross the scoped backend.
