@@ -72087,6 +72087,61 @@ entries.
     ],
     "scope": "Approved opt-in LocalTrusted active capture in exactly linked native repositories, current AgentStore only. Independent fixtures and real CLI/API/embedded-RustFS evidence. M18 In progress and M18.2 Partial retained. Parked OpenCode history bookmark unchanged. Root aggregate lanes, unrelated preview/service restarts, publication, inactive-history import, export/database readers, cloud Cursor, advanced subagents, setup wizard and extra platforms/versions out of scope.",
     "next": "Enable the selected harness in Settings > Agents > Configuration, restart the local server, and follow docs/capture-preview.md for pinned Cursor transcript hooks or a running OpenCode API. Complete the remaining Desktop live gate in a verified disposable workspace. Changes are locally integrated; full multi-harness release qualification remains pending."
+  },
+  {
+    "id": "E-M18-018",
+    "tasks": ["M18.2", "M18.8"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change wqvwruzt",
+    "kind": "Main workspace backend rebuild and settings review startup",
+    "versions": "Integrated settings d269d6de and capture b5942af7; macOS ARM64 development binaries; existing main embedded-RustFS fixture; Vite HMR at7460 with API7462.",
+    "formats": "No repository/schema/configuration change. Existing native fixture, saved configuration and Vite process retained. Only main checkout development backend replaced.",
+    "files": ["spec/src/milestones.md"],
+    "runs": [
+      {
+        "command": "jj st/log in default and cursor-opencode workspaces",
+        "result": "pass",
+        "failures": 0,
+        "note": "Default already clean on b5942af7, matching feature committed parent. No second merge or history rewrite required; parked OpenCode history remains separate."
+      },
+      {
+        "command": "JJ_STORE_TRANSCRIPT_CACHE=/tmp/jj-store-cursor-opencode-rules pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main development CLI/backend build passed in3m30s. macOS linker __eh_frame warning retained. /tmp/jj-cursor-main-review-build.log."
+      },
+      {
+        "command": "JJ_STORE_TRANSCRIPT_CACHE=/tmp/jj-store-cursor-opencode-rules pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main backend18306 replaced by56370; Vite99289 retained. Main URL http://127.0.0.1:7460/; search ready. Main fixture and ui-server.toml bytes unchanged; same repository1bdb89c409c1b891ac7f180c01a265d5. Preview7470/7472 and other services untouched. /tmp/jj-cursor-main-review-restart.log."
+      },
+      {
+        "command": "Production HTTP capture/status/settings reads with original Origin/Fetch Metadata/protocol admission",
+        "result": "pass",
+        "failures": 0,
+        "note": "Old running backend returned404 for capture/settings before rebuild; new backend returns200 for both. Desired/effective configuration and resolved defaults available. /tmp/jj-cursor-main-review-api-proof.json."
+      },
+      {
+        "command": "Cold review-page reload; Settings > Agents > Configuration CUA inspection",
+        "result": "pass",
+        "failures": 0,
+        "note": "Verified Codex, Cursor Desktop/CLI and OpenCode sections, editable switches/budgets, resolved roots, endpoint, saved/effective state and action layout. Capture remains opt-in Disabled; no configuration save or model prompt sent. User-visible review tab retained. /tmp/jj-cursor-main-settings-review.png."
+      },
+      {
+        "command": "GET /v1/repos/1bdb89c409c1b891ac7f180c01a265d5/agent/sessions after backend restart",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing main fixture Agent sessions return503 {version:1,code:unavailable}; repeated read and UI confirm unavailable. Previous binary displayed3 seeded sessions. No reset, migration or deletion performed. This is a retained-fixture upgrade diagnostic, not a new-harness capture acceptance claim."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Investigate existing main fixture Agent-session503 without resetting or silently migrating retained history.",
+      "Real Cursor Desktop cold qualification remains pending as recorded in E-M18-017."
+    ],
+    "scope": "Authorized local main-workspace review restart only. Prior implementation/qualification evidence unchanged; no milestone promotion, root aggregate lanes, fresh harness prompts, installed CLI replacement, publication or fixture reset.",
+    "next": "Review the retained main settings tab at7460. Diagnose the existing fixture Agent-session read failure separately from passing configuration startup; preserve current-only AgentStore policy and retained user data."
   }
 ]
 ```
