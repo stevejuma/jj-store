@@ -36,6 +36,16 @@ export interface GraphQuery {
   commit?: string;
 }
 
+/** Head/base range and cursor stay bound to one explicit code operation. */
+export interface StackHistoryQuery {
+  operation: string;
+  head: string;
+  base?: string;
+  cursor?: string;
+  limit?: number;
+  signal?: AbortSignal;
+}
+
 export interface ReferenceQuery {
   kind?: "bookmarks" | "workspaces" | "changes" | "all";
   exact?: string;
@@ -93,6 +103,9 @@ export interface StoreDataSource {
     kind: "log" | "operations" | "evolution",
     query: GraphQuery,
   ): Promise<Browse.CodeEnvelope<Browse.CodeGraph>>;
+  stackHistory?(
+    query: StackHistoryQuery,
+  ): Promise<Browse.CodeEnvelope<Model<"LocalStackHistoryPage">>>;
   commitSummary?(
     id: string,
     operation: string,

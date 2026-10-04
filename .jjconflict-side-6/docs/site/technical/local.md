@@ -53,6 +53,14 @@ read-only decoder and preparation outputs are owned by the application, outside
 source repository authority. Query admission and current device registration
 remain independent from preparation admission.
 
+The local query contract also supports bounded stack history from an exact head.
+A supplied base excludes its ancestors; omitting the base reads target history.
+The response retains graph parents and annotations at the selected operation.
+Continue with the opaque query-bound cursor. Comparing the boundary and head
+trees gives the net changed paths, including removal of changes later reverted.
+These are read APIs; they do not apply stacks, snapshot disk edits or change
+checkout files.
+
 ## Portability and limits
 
 Device paths, access grants, credentials and active execution journals are not

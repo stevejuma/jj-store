@@ -13541,6 +13541,22 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "properties": {
         "kind": {
           "type": "string",
+          "const": "stack_history"
+        },
+        "data": {
+          "$ref": "#/components/schemas/LocalStackHistoryPage"
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
           "const": "query_info"
         },
         "data": {
@@ -14327,6 +14343,65 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "object_reads",
     "object_bytes",
     "work"
+  ]
+}
+```
+
+## LocalStackHistoryPage
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "head": {
+      "$ref": "#/components/schemas/GitSha1Id"
+    },
+    "base": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/GitSha1Id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "commits": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LocalGraphCommitNode"
+      }
+    },
+    "next": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/GitSha1Id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stats": {
+      "$ref": "#/components/schemas/LocalGraphStats"
+    }
+  },
+  "required": [
+    "version",
+    "operation",
+    "head",
+    "base",
+    "commits",
+    "next",
+    "stats"
   ]
 }
 ```

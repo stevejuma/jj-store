@@ -893,3 +893,10 @@ use the new feed only when advertised; older servers retain bounded visible
 fallback and their original repository subscriptions. The server adds notify 8.2
 as a host-only filesystem hint dependency. It enters no storage, model or WAL
 authority, and committed metadata checks remain required after any hint.
+
+The version-1 LocalTrusted read schema gains an additive typed stack-history
+request/response variant. Git SHA-1 heads and optional boundaries remain
+explicit; operation/binding pins and opaque cursor admission are unchanged.
+Offline OpenAPI and client generation plus actual local HTTP response capture
+cover this shape. Native object codecs, companion metadata, WAL and checkout
+formats do not change.

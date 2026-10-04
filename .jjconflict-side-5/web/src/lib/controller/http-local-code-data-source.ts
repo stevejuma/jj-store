@@ -72,6 +72,38 @@ export class HttpLocalCodeDataSource extends HttpLocalQuery {
       input.signal,
     );
   }
+  async stackHistory(
+    input: import("./native-data-source.js").StackHistoryQuery,
+  ) {
+    const limit = input.limit ?? 40;
+    if (!Number.isInteger(limit) || limit < 1 || limit > 500)
+      throw new ApiError("invalid_stack_page");
+    const head = codeId(input.head, this.profile);
+    const base =
+      input.base === undefined ? null : codeId(input.base, this.profile);
+    const result = await this.query<"stack_history">(
+      input.operation,
+      { kind: "stack_history", query: { head, base, limit, after: null } },
+      input.cursor,
+      input.signal,
+    );
+    const page = result.data;
+    if (
+      page.version !== 1 ||
+      page.operation !== input.operation ||
+      page.head !== head ||
+      page.base !== base
+    )
+      throw new ApiError("snapshot_mismatch");
+    if (
+      !Array.isArray(page.commits) ||
+      page.commits.length > limit ||
+      Boolean(page.next) !== Boolean(result.next_cursor) ||
+      (result.next_cursor !== null && result.next_cursor === input.cursor)
+    )
+      throw new ApiError("invalid_stack_page");
+    return result;
+  }
   commit(id: string, operation: string) {
     return this.query<"commit">(operation, {
       kind: "commit",

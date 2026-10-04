@@ -25,6 +25,12 @@ body and an interrupted observation is not confirmed cancellation. Keep
 observing the captured task until its terminal status; never retarget it to a
 newer selection. These tasks build derived indexes and do not publish code.
 
+Local `stack_history` queries retain an exact operation, head and optional base.
+Their opaque continuation belongs to that range and page size; raw internal
+anchors are refused. The client checks the nested range as well as the envelope
+and refuses oversized or non-advancing pages. This additive read variant grants
+no stack mutation or physical checkout capability.
+
 ## Mutations
 
 Typed commands carry a stable request identity, exact intent and applicable

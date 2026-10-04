@@ -1,0 +1,143 @@
+.community-projects-repository-log-diff__column--stacked {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.community-projects-repository-log-diff__column--stacked
+  [data-ui-part="column-body"] {
+  overflow: hidden;
+}
+
+.community-projects-repository-log-diff__stack {
+  display: flex;
+  box-sizing: border-box;
+  min-height: 0;
+  width: 100%;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow: auto;
+}
+
+.community-projects-repository-log-diff__operation-card,
+.community-projects-repository-log-diff__file-card {
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 100%;
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+  border-radius: var(--ui-column-canvas-radius, var(--radius));
+  background: var(--background);
+}
+
+.community-projects-repository-log-diff__file-card {
+  min-height: 0;
+}
+
+.community-projects-repository-log-diff__card-header {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: var(--ui-column-canvas-header-height, 2.5rem);
+  padding-inline: 0.75rem;
+  padding-inline-start: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--jj-store-row-background);
+}
+
+.community-projects-repository-log-diff__operation-toggle {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 0.5rem;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--font-weight-semibold, 600);
+  text-align: left;
+  cursor: pointer;
+}
+
+.community-projects-repository-log-diff__operation-toggle svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: var(--muted-foreground);
+  transition: transform 120ms ease;
+}
+
+.community-projects-repository-log-diff__operation-toggle[aria-expanded="false"]
+  svg {
+  transform: rotate(-90deg);
+}
+
+.community-projects-repository-log-diff__operation-toggle span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-projects-repository-log-diff__card-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.community-projects-repository-log-diff__card-actions
+  [data-ui-part="column-close"] {
+  color: var(--muted-foreground);
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+}
+
+.community-projects-repository-log-diff__card-actions
+  [data-ui-part="column-close"]:is(:hover, :focus-visible) {
+  background: color-mix(
+    in srgb,
+    var(--foreground) 18%,
+    var(--background)
+  ) !important;
+  color: var(--ui-column-canvas-header-action-hover-foreground, inherit);
+}
+
+.community-projects-repository-log-diff__file-card
+  .ui-diff-file-diff-composer__file {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.community-projects-repository-log-diff__file-card
+  .ui-diff-file-diff-composer__header {
+  border-bottom: 1px solid var(--border);
+  background: var(--jj-store-row-background);
+}
+
+.community-projects-repository-log-diff__file-card .ui-diff-file-diff {
+  min-height: 0;
+  height: auto;
+}
+
+.community-projects-repository-log-diff__empty {
+  min-height: 12rem;
+  padding: 1.5rem;
+  color: var(--muted-foreground);
+}
+
+.community-projects-repository-log-diff__empty [data-ui-part="empty-title"] {
+  color: var(--foreground);
+  font-size: var(--community-text-body);
+}
+
+.community-projects-repository-log-diff__empty
+  [data-ui-part="empty-description"] {
+  max-width: 28rem;
+  font-size: var(--community-text-secondary);
+}

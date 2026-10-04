@@ -6462,6 +6462,60 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                   "properties": {
                     "kind": {
                       "type": "string",
+                      "const": "stack_history"
+                    },
+                    "query": {
+                      "type": "object",
+                      "properties": {
+                        "head": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{40}$",
+                          "minLength": 40,
+                          "maxLength": 40
+                        },
+                        "base": {
+                          "description": "None means bounded target history. Some excludes all base ancestors.",
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^[0-9a-f]{40}$",
+                          "minLength": 40,
+                          "maxLength": 40
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "format": "uint",
+                          "minimum": 0
+                        },
+                        "after": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^[0-9a-f]{40}$",
+                          "minLength": 40,
+                          "maxLength": 40
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "head",
+                        "limit"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "query"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
                       "const": "query_info"
                     }
                   },

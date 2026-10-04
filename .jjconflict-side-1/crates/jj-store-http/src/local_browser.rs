@@ -471,6 +471,7 @@ fn apply_anchor(request: &mut local::Request, anchor: Option<Anchor>) -> Result<
     use local::Request as R;
     let absent = match request {
         R::Graph(_, p) => p.after.is_none(),
+        R::StackHistory(p) => p.after.is_none(),
         R::Paths(p) => p.anchor.is_none(),
         R::References(p) => p.anchor.is_none(),
         R::DiffPaths(p) => p.anchor.is_none(),
@@ -483,6 +484,7 @@ fn apply_anchor(request: &mut local::Request, anchor: Option<Anchor>) -> Result<
     if let Some(anchor) = anchor {
         match (request, anchor) {
             (R::Graph(_, p), Anchor::Graph(a)) => p.after = Some(a),
+            (R::StackHistory(p), Anchor::Graph(local::ObjectKey::Commit(a))) => p.after = Some(a),
             (R::Paths(p), Anchor::Path(a, back)) => {
                 p.anchor = Some(a);
                 p.direction = if back {
@@ -665,6 +667,10 @@ async fn query(
     };
     let (next, previous) = match &data {
         local::Response::Graph(p) => (p.next.map(Anchor::Graph), None),
+        local::Response::StackHistory(p) => (
+            p.next.map(|id| Anchor::Graph(local::ObjectKey::Commit(id))),
+            None,
+        ),
         local::Response::Paths(p) => (
             p.next.clone().map(|a| Anchor::Path(a, false)),
             p.previous.clone().map(|a| Anchor::Path(a, true)),

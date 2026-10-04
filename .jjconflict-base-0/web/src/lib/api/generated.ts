@@ -5361,6 +5361,11 @@ export interface components {
         }
       | {
           /** @constant */
+          kind: "stack_history";
+          data: components["schemas"]["LocalStackHistoryPage"];
+        }
+      | {
+          /** @constant */
           kind: "query_info";
           data: components["schemas"]["QueryInfo"];
         }
@@ -5562,6 +5567,16 @@ export interface components {
       object_bytes: number;
       /** Format: uint64 */
       work: number;
+    };
+    LocalStackHistoryPage: {
+      /** Format: uint32 */
+      version: number;
+      operation: components["schemas"]["OperationId"];
+      head: components["schemas"]["GitSha1Id"];
+      base: components["schemas"]["GitSha1Id"] | null;
+      commits: components["schemas"]["LocalGraphCommitNode"][];
+      next: components["schemas"]["GitSha1Id"] | null;
+      stats: components["schemas"]["LocalGraphStats"];
     };
     LocalCommitDetail: {
       object: components["schemas"]["LocalCodeObject"];
@@ -28779,6 +28794,18 @@ export interface operations {
                       | null;
                   },
                 ];
+              }
+            | {
+                /** @constant */
+                kind: "stack_history";
+                query: {
+                  head: string;
+                  /** @description None means bounded target history. Some excludes all base ancestors. */
+                  base?: string | null;
+                  /** Format: uint */
+                  limit: number;
+                  after?: string | null;
+                };
               }
             | {
                 /** @constant */

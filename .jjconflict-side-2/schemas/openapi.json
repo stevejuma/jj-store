@@ -26779,6 +26779,48 @@
                       {
                         "type": "object",
                         "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "stack_history"
+                          },
+                          "query": {
+                            "type": "object",
+                            "properties": {
+                              "head": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{40}$",
+                                "minLength": 40,
+                                "maxLength": 40
+                              },
+                              "base": {
+                                "description": "None means bounded target history. Some excludes all base ancestors.",
+                                "type": ["string", "null"],
+                                "pattern": "^[0-9a-f]{40}$",
+                                "minLength": 40,
+                                "maxLength": 40
+                              },
+                              "limit": {
+                                "type": "integer",
+                                "format": "uint",
+                                "minimum": 0
+                              },
+                              "after": {
+                                "type": ["string", "null"],
+                                "pattern": "^[0-9a-f]{40}$",
+                                "minLength": 40,
+                                "maxLength": 40
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["head", "limit"]
+                          }
+                        },
+                        "required": ["kind", "query"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
                           "kind": { "type": "string", "const": "query_info" }
                         },
                         "required": ["kind"],
@@ -42591,6 +42633,14 @@
           {
             "type": "object",
             "properties": {
+              "kind": { "type": "string", "const": "stack_history" },
+              "data": { "$ref": "#/components/schemas/LocalStackHistoryPage" }
+            },
+            "required": ["kind", "data"]
+          },
+          {
+            "type": "object",
+            "properties": {
               "kind": { "type": "string", "const": "query_info" },
               "data": { "$ref": "#/components/schemas/QueryInfo" }
             },
@@ -43008,6 +43058,40 @@
           "object_reads",
           "object_bytes",
           "work"
+        ]
+      },
+      "LocalStackHistoryPage": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "operation": { "$ref": "#/components/schemas/OperationId" },
+          "head": { "$ref": "#/components/schemas/GitSha1Id" },
+          "base": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/GitSha1Id" },
+              { "type": "null" }
+            ]
+          },
+          "commits": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LocalGraphCommitNode" }
+          },
+          "next": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/GitSha1Id" },
+              { "type": "null" }
+            ]
+          },
+          "stats": { "$ref": "#/components/schemas/LocalGraphStats" }
+        },
+        "required": [
+          "version",
+          "operation",
+          "head",
+          "base",
+          "commits",
+          "next",
+          "stats"
         ]
       },
       "LocalCommitDetail": {

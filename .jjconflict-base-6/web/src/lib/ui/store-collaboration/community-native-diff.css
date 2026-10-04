@@ -1,0 +1,152 @@
+/* CommunityProjects.css diff workbench (Apache-2.0). */
+.community-projects__diff-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.community-projects__diff-summary {
+  position: sticky;
+  z-index: 3;
+  top: calc(
+    var(--community-project-tabs-height) +
+      var(--community-project-review-section-height)
+  );
+  min-height: var(--community-project-review-toolbar-height);
+  box-sizing: border-box;
+  justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+}
+
+.community-projects__diff-summary-copy {
+  display: grid;
+  gap: 0.05rem;
+}
+
+.community-projects__diff-summary-copy > span {
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 400;
+}
+
+.community-projects__diff-summary-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.community-projects__diff-layout {
+  display: grid;
+  min-height: 30rem;
+  grid-template-columns: minmax(12rem, 17rem) minmax(0, 1fr);
+}
+
+.community-projects__diff-layout[data-file-list-open="false"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.community-projects__diff-layout > aside {
+  position: sticky;
+  top: calc(
+    var(--community-project-tabs-height) +
+      var(--community-project-review-section-height) +
+      var(--community-project-review-toolbar-height)
+  );
+  align-self: start;
+  border-right: 1px solid var(--border);
+  background: var(--background);
+}
+
+.community-projects__changed-files-scroll-area {
+  max-height: calc(
+    100dvh - var(--community-project-tabs-height) -
+      var(--community-project-review-section-height) -
+      var(--community-project-review-toolbar-height) - 1rem
+  );
+  min-height: min(
+    30rem,
+    calc(
+      100dvh - var(--community-project-tabs-height) -
+        var(--community-project-review-section-height) -
+        var(--community-project-review-toolbar-height) - 1rem
+    )
+  );
+  padding: 0.5rem;
+}
+
+.community-projects__diff-content {
+  min-width: 0;
+  overflow: visible;
+}
+
+.community-projects__diff-content {
+  box-sizing: border-box;
+  padding: 0.5rem;
+}
+
+.community-projects__diff-content > [data-ui-component="file-diff-composer"] {
+  --ui-diff-file-sticky-offset: calc(
+    var(--community-project-tabs-height) +
+      var(--community-project-review-section-height) +
+      var(--community-project-review-toolbar-height)
+  );
+}
+
+.community-projects__diff-sidebar-toggle[data-ui-component="button"][data-variant="ghost"] {
+  flex: none;
+  border-radius: 0.5rem;
+  color: var(--muted-foreground);
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+}
+
+.community-projects__diff-sidebar-toggle[data-ui-component="button"][data-variant="ghost"]:is(
+    :hover,
+    :focus-visible
+  ) {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--muted) 42%, transparent);
+}
+
+.community-projects__changed-files-toolbar {
+  display: flex;
+  min-height: 2rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.1rem 0.25rem 0.45rem;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+}
+
+.community-projects__changed-files-filter {
+  margin-bottom: 0.45rem;
+}
+
+.community-projects__viewed-file {
+  display: flex;
+  min-width: max-content;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+}
+@media (max-width: 760px) {
+  .community-projects__diff-layout {
+    grid-template-columns: 1fr;
+  }
+  .community-projects__diff-layout > aside {
+    position: static;
+    min-height: 0;
+    max-height: 13rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+}

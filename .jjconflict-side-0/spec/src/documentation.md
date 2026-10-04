@@ -47,6 +47,11 @@ from executable stack operations and keeps recoverable checkout qualification
 explicit. Read cancellation and exact-target cache invalidation retain shared
 read ownership without changing repository authority.
 
+Bounded stack-history delivery regenerates the API reference from the executable
+local query inventory and reviews the local/HTTP/application/contract sources.
+The manual describes exact head/base reads and opaque continuations without
+presenting them as stack execution or physical working-copy snapshots.
+
 Bounded-read integration regenerates the combined API reference and reviews
 source coverage after rebasing. The manual describes files-first enrichment,
 independent reference windows and explicit operation-bound preparation/cancel

@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed integrated prepared visibility, bounded resident reclamation and external local heads/companion monitoring; no source authority or Git transport semantics changed.",
-      "fingerprint": "4fb4ed317303c6fae9112758caf02e5c11095c1cb1f9e98ad39a94f13b22fc92"
+      "reason": "Reviewed typed bounded stack-history ranges against the prepared graph reader; explicit operation, head/base, graph annotations and unchanged source authority remain documented.",
+      "fingerprint": "3e773a317c0dd1d8595a0bacc1df0a4a895fbe3df59432e8c04134cfe3f22a8a"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed advertised authenticated application SSE ready/changed/reset, bounded replay and current delivery authorization; transport reference documents lifetime and outage fallback.",
-      "fingerprint": "f48f3033163a12fb79fa56f54ee1f173a5620e2f37cb9e1e4fd9c69b2c93d7be"
+      "reason": "Reviewed executable local stack_history query and generated response inventory; opaque query-bound continuation and raw-anchor refusal retain existing admission.",
+      "fingerprint": "0302ba6730fd79f2bb858a4bb98b0dd8fbf317249c9edc173c4b13865a361093"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed synchronous canceled-read ownership release and exact reaction argument invalidation; browsing controls, shared reads and capability limits remain accurate.",
-      "fingerprint": "c5a7f5d9526b7b18dd6922e1cab781d8526e9cd6a966311714b05a00732ca652"
+      "reason": "Reviewed operation/range/version validation and bounded non-advancing page rejection for stackHistory transport; no production stack commands are enabled.",
+      "fingerprint": "b17a84f0e1f9fdaf6594894adad0d204965d719ea587523451101452927d4a1a"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated application event schemas and actual SSE capture; event hints do not replace authorized reads or durable command receipts.",
-      "fingerprint": "0e69029a71e1fa4203280a8e2b814b7b97a00ccb4cedfc0ef7281a7cb4c47610"
+      "reason": "Regenerated OpenAPI client for the additive local stack-history query; registered HTTP capture inventory independently validates the actual responses.",
+      "fingerprint": "cb590d2896ea9bfa37cf4fc41576a3433980eeca2171be054b9afcd9558514ec"
     }
   }
 ]

@@ -1,0 +1,114 @@
+[
+  {
+    "hook_event_name": "sessionStart",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "session_id": "conv_demo",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "is_background_agent": false,
+    "composer_mode": "agent"
+  },
+  {
+    "hook_event_name": "beforeSubmitPrompt",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "prompt": "Update the parser"
+  },
+  {
+    "hook_event_name": "preToolUse",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "tool_name": "Write",
+    "tool_use_id": "edit_1",
+    "tool_input": { "path": "<workspace>/src/lib.rs", "text": "fn main() {}" }
+  },
+  {
+    "hook_event_name": "postToolUse",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "tool_name": "Write",
+    "tool_use_id": "edit_1",
+    "tool_input": { "path": "<workspace>/src/lib.rs", "text": "fn main() {}" },
+    "tool_output": "{\"success\":true}"
+  },
+  {
+    "hook_event_name": "preToolUse",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "tool_name": "Shell",
+    "tool_use_id": "shell_1",
+    "tool_input": { "command": "cargo test" }
+  },
+  {
+    "hook_event_name": "postToolUseFailure",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "tool_name": "Shell",
+    "tool_use_id": "shell_1",
+    "tool_input": { "command": "cargo test" },
+    "error_message": "test failed",
+    "failure_type": "error",
+    "is_interrupt": false
+  },
+  {
+    "hook_event_name": "preToolUse",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "tool_name": "Read",
+    "tool_use_id": "read_1",
+    "tool_input": { "path": "<workspace>/src/lib.rs" }
+  },
+  {
+    "hook_event_name": "postToolUse",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "tool_name": "Read",
+    "tool_use_id": "read_1",
+    "tool_input": { "path": "<workspace>/src/lib.rs" },
+    "tool_output": "{\"success\":true,\"text\":\"fn main() {}\"}"
+  },
+  {
+    "hook_event_name": "afterFileEdit",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "file_path": "<workspace>/src/lib.rs",
+    "edits": [{ "old_string": "fn old() {}", "new_string": "fn main() {}" }]
+  },
+  {
+    "hook_event_name": "afterAgentResponse",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "text": "Updated the parser."
+  },
+  {
+    "hook_event_name": "sessionEnd",
+    "conversation_id": "conv_demo",
+    "generation_id": "gen_1",
+    "session_id": "conv_demo",
+    "cursor_version": "3.22.7",
+    "workspace_roots": ["<workspace>"],
+    "reason": "completed",
+    "duration_ms": 1000,
+    "is_background_agent": false,
+    "final_status": "completed"
+  }
+]

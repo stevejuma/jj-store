@@ -418,6 +418,9 @@ impl Executor {
                 if let Request::Graph(graph, page) = &request {
                     graphs::validate(graph, page, 0, &budget)?;
                 }
+                if let Request::StackHistory(request) = &request {
+                    request.validate(&budget)?;
+                }
                 let operation = prepared.snapshot.operation;
                 if matches!(&request, Request::References(r) if r.operation != operation) {
                     return Err(Error::NotCommitted);
@@ -482,7 +485,10 @@ impl Executor {
                     budget.clone(),
                     limits,
                 );
-                if !matches!(&request, Request::Commit { .. } | Request::Graph(_, _)) {
+                if !matches!(
+                    &request,
+                    Request::Commit { .. } | Request::Graph(_, _) | Request::StackHistory(_)
+                ) {
                     // Indexed point membership admits only selected commits;
                     // their tree/file grants still cross the scoped backend.
                     // No graph repository or ancestry proof is needed here.

@@ -62,6 +62,9 @@ impl Context {
                     stats: context.budget.stats(),
                 })
             }
+            Request::StackHistory(request) => {
+                Response::StackHistory(stacks::read(context, operation, request).await?)
+            }
             Request::Commit { commit } => {
                 let source = context.commit_record(commit).await?;
                 let native = context.commit(&context.store, commit).await?;

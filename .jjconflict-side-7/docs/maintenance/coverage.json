@@ -1,0 +1,161 @@
+[
+  {
+    "id": "publication",
+    "sources": [
+      "crates/jj-store-wal/src",
+      "crates/jj-store-object/src",
+      "crates/jj-store-model/src"
+    ],
+    "pages": [
+      "docs/site/technical/publication.md",
+      "docs/site/technical/storage.md",
+      "docs/site/concepts/snapshots.md"
+    ],
+    "review": {
+      "reason": "Reviewed bounded catalog-root membership while preserving full publication/recovery closure proofs, staged exclusion and manifest CAS; storage explains point reads without changing publication or snapshot semantics.",
+      "fingerprint": "7bef126fd51cc54b9420577dcea1e538cd7512e1955a6adb84d7bac1bb2d8a10"
+    }
+  },
+  {
+    "id": "collaboration",
+    "sources": [
+      "crates/jj-agent/src",
+      "crates/jj-collab/src",
+      "crates/jj-review/src",
+      "crates/jj-work/src"
+    ],
+    "pages": [
+      "docs/site/guides/work.md",
+      "docs/site/guides/reviews.md",
+      "docs/site/concepts/collaboration.md"
+    ],
+    "review": {
+      "reason": "Reviewed merged domain types and conversion history contracts; WorkStore, review and thread semantics retain original repository links and typed identity mapping, documented in the conversion guide.",
+      "fingerprint": "35fcd6910d9def742c877b968419a75372cb40b014f06c8274c4bd0e05fbf84e"
+    }
+  },
+  {
+    "id": "capture",
+    "sources": ["crates/jj-store-capture/src"],
+    "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
+    "review": {
+      "reason": "Documented configured Cursor Desktop/CLI transcript binding, exact supported versions and OpenCode read-only loopback capture; retained inactive-history and Codex Desktop qualification limits.",
+      "fingerprint": "9efb9c831011b633e22d53bd669fd759a9512bbc3d5e9ea099020b94827c6cc7"
+    }
+  },
+  {
+    "id": "local",
+    "sources": ["crates/jj-store-jj/src"],
+    "pages": [
+      "docs/site/technical/local.md",
+      "docs/site/guides/git.md",
+      "docs/site/guides/conversion.md"
+    ],
+    "review": {
+      "reason": "Reviewed typed bounded stack-history ranges against the prepared graph reader; explicit operation, head/base, graph annotations and unchanged source authority remain documented.",
+      "fingerprint": "3e773a317c0dd1d8595a0bacc1df0a4a895fbe3df59432e8c04134cfe3f22a8a"
+    }
+  },
+  {
+    "id": "services",
+    "sources": ["crates/jj-store-service/src", "crates/jj-store-rpc/src"],
+    "pages": [
+      "docs/site/technical/architecture.md",
+      "docs/site/reference/transport.md",
+      "docs/site/guides/conversion.md"
+    ],
+    "review": {
+      "reason": "Reviewed owned stacks version-1 validated intent and receipt records; manual distinguishes contracts from unimplemented executor, journal and checkout capability.",
+      "fingerprint": "8eeb114b344d71247da7b2a484bd0629d0c66a4112ee19888e0ee6e1124312fb"
+    }
+  },
+  {
+    "id": "search",
+    "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
+    "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
+    "review": {
+      "reason": "Reviewed health-channel semantic notices and accepted search configuration/control settlement; visible consumers react to events and retain bounded explicit recovery.",
+      "fingerprint": "01f48ae00bd2237715ec76baacb1fb072225bccceb7921055ba1ea77599135b9"
+    }
+  },
+  {
+    "id": "replication",
+    "sources": ["crates/jj-store-replication/src"],
+    "pages": ["docs/site/technical/replication.md", "docs/site/guides/sync.md"],
+    "review": {
+      "reason": "Reviewed sync semantic projection suppressing idle scheduler churn while preserving checkpoint, pause and fault notices; replication authority is unchanged.",
+      "fingerprint": "1be4dc1693d106f6387bb8812c8b998ffae097aa5e4acdc04e88f0ccf7eb3ed2"
+    }
+  },
+  {
+    "id": "configuration",
+    "sources": ["crates/jj-store-server/src"],
+    "pages": [
+      "docs/site/reference/configuration.md",
+      "docs/site/reference/environment.md",
+      "docs/site/technical/lifecycle.md"
+    ],
+    "review": {
+      "reason": "Reviewed final capture source/status interest split and cancellation-independent saved configuration notices; saved/effective activation remains explicit.",
+      "fingerprint": "eda4727c37acf896cd4385fa3613c3435290bef01bea9261c6e826bc1d71d89c"
+    }
+  },
+  {
+    "id": "cli",
+    "sources": ["crates/jj-store-cli/src"],
+    "pages": [
+      "docs/site/cli/index.md",
+      "docs/site/getting-started/install.md",
+      "docs/site/getting-started/work.md"
+    ],
+    "review": {
+      "reason": "Reviewed paired CLI/server local-reader/task wiring and source pins. Command syntax, explicit development binaries and installation/task recovery tutorials remain accurate; regenerated parser references introduce no new syntax.",
+      "fingerprint": "b7ccd2beebade8a91a6e968fef3f309b14681d5c61f5c4d45d0d417eb9abf87c"
+    }
+  },
+  {
+    "id": "http",
+    "sources": ["crates/jj-store-http/src"],
+    "pages": [
+      "docs/site/reference/transport.md",
+      "docs/site/reference/security.md",
+      "docs/site/guides/conversion.md"
+    ],
+    "review": {
+      "reason": "Reviewed executable local stack_history query and generated response inventory; opaque query-bound continuation and raw-anchor refusal retain existing admission.",
+      "fingerprint": "0302ba6730fd79f2bb858a4bb98b0dd8fbf317249c9edc173c4b13865a361093"
+    }
+  },
+  {
+    "id": "application",
+    "sources": ["web/src"],
+    "pages": [
+      "docs/site/guides/browsing.md",
+      "docs/site/guides/editing.md",
+      "docs/site/guides/settings.md",
+      "docs/site/guides/conversion.md"
+    ],
+    "review": {
+      "reason": "Reviewed operation/range/version validation and bounded non-advancing page rejection for stackHistory transport; no production stack commands are enabled.",
+      "fingerprint": "b17a84f0e1f9fdaf6594894adad0d204965d719ea587523451101452927d4a1a"
+    }
+  },
+  {
+    "id": "desktop",
+    "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
+    "pages": ["docs/site/technical/lifecycle.md"],
+    "review": {
+      "reason": "Documented repository-bound PTY lifetime, exact window/origin bridge, filtered environment, bounded frame delivery and Quit cleanup; kept packaged WKWebView qualification separate.",
+      "fingerprint": "760ee55703b172712620efe39e2e3aa20478dcf7527837a48657fe3335b53cb1"
+    }
+  },
+  {
+    "id": "contracts",
+    "sources": ["schemas/openapi.json", "docs/cli"],
+    "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
+    "review": {
+      "reason": "Regenerated OpenAPI client for the additive local stack-history query; registered HTTP capture inventory independently validates the actual responses.",
+      "fingerprint": "cb590d2896ea9bfa37cf4fc41576a3433980eeca2171be054b9afcd9558514ec"
+    }
+  }
+]
