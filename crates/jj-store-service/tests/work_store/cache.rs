@@ -78,6 +78,26 @@ async fn work_first_pages_share_selected_roots_and_enforce_fresh_limits() {
     let writer = reader(store.clone(), Permission::Write, 100_000);
     create(writer.clone(), 10).await;
     create(writer.clone(), 11).await;
+    for byte in 10..=11 {
+        WorkCommandService
+            .apply(
+                writer.clone(),
+                &request(
+                    byte + 100,
+                    WorkCommandV1::CreateTask {
+                        id: TaskId::new([byte; 16]),
+                        project: ProjectId::new([byte; 16]),
+                        expected_project_version: 1,
+                        title: "Task".into(),
+                        body: "Private body".into(),
+                        repository: None,
+                        parent: None,
+                    },
+                ),
+            )
+            .await
+            .unwrap();
+    }
     let pager = WorkPager::new(Arc::new(SystemClock));
     let query = WorkBrowseQuery {
         limit: 1,
@@ -87,18 +107,47 @@ async fn work_first_pages_share_selected_roots_and_enforce_fresh_limits() {
     let first = pager.browse(writer.clone(), query.clone()).await.unwrap();
     let cold_reads = store.take();
     assert!(domain_reads(&cold_reads) > 0, "{cold_reads:?}");
-    let (again, details) = tokio::join!(
+    let (again, details, activity) = tokio::join!(
         pager.browse(writer.clone(), query.clone()),
         pager.page(writer.clone(), WorkQuery::default()),
+        pager.activity(
+            writer.clone(),
+            WorkActivityQuery {
+                limit: 1,
+                cursor: None
+            }
+        ),
     );
     assert_eq!(again.unwrap().snapshot, first.snapshot);
     assert_eq!(details.unwrap().snapshot, first.snapshot);
+    let activity = activity.unwrap();
+    assert_eq!(activity.snapshot, first.snapshot);
+    assert_eq!(activity.groups[0].tasks, 1);
+    assert_eq!(activity.total_groups, 2);
     assert_eq!(
         domain_reads(&store.take()),
         0,
         "unchanged roots must not be reconstructed"
     );
     let low = reader(store.clone(), Permission::Read, 1);
+    assert_eq!(
+        pager
+            .activity(low.clone(), WorkActivityQuery::default())
+            .await
+            .unwrap_err(),
+        Error::Limit
+    );
+    let activity_next = WorkActivityQuery {
+        limit: 1,
+        cursor: activity.next_cursor,
+    };
+    assert_eq!(
+        pager
+            .activity(low.clone(), activity_next.clone())
+            .await
+            .unwrap_err(),
+        Error::Limit
+    );
     assert_eq!(
         pager.browse(low.clone(), query.clone()).await.unwrap_err(),
         Error::Limit
@@ -116,9 +165,16 @@ async fn work_first_pages_share_selected_roots_and_enforce_fresh_limits() {
     assert_ne!(fresh.snapshot.work_root, first.snapshot.work_root);
     assert!(domain_reads(&store.take()) > 0);
     store.take();
-    let historical = pager.browse(writer, next).await.unwrap();
+    let historical = pager.browse(writer.clone(), next).await.unwrap();
     assert_eq!(historical.snapshot, first.snapshot);
     assert_eq!(historical.total_matches, 2);
     assert_eq!(historical.projects[0].id, ProjectId::new([11; 16]));
+    assert_eq!(domain_reads(&store.take()), 0);
+    let activity_historical = pager.activity(writer, activity_next).await.unwrap();
+    assert_eq!(activity_historical.snapshot, first.snapshot);
+    assert_eq!(
+        activity_historical.groups[0].project,
+        ProjectId::new([11; 16])
+    );
     assert_eq!(domain_reads(&store.take()), 0);
 }

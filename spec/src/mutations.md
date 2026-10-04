@@ -66,6 +66,13 @@ checks still apply. These read-only projections never retain request principals,
 guards, credentials or accepted command state, and do not change publication,
 durable receipts or domain capacities.
 
+Repository-directory task activity shares these data-only root projections and
+retains complete counts/timestamps for returned repository/project groups.
+Native pages recheck current permission, epoch and inventory admission; local
+pages retain committed companion membership and current folder binding checks.
+Neither aggregate pages nor card refreshes initialize an actor, publish a root,
+replay a command or authorize linked-code access.
+
 Application content search caches only validated immutable Thread/Work fields
 and ordered document keys. Returned snippets, viewer authorization and captured
 manifest envelopes stay request-bound. New roots, edits and tombstones cannot

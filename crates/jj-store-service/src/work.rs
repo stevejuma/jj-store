@@ -1,5 +1,8 @@
 //! Home-authorized native project/task reads and receipt-backed commands.
+mod activity;
 mod browse;
+pub(crate) use activity::activity_rows;
+pub use activity::{WorkActivityGroup, WorkActivityPage, WorkActivityQuery};
 pub(crate) mod projection;
 pub(crate) use browse::browse_rows;
 mod browse_models;

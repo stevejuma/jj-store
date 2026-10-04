@@ -1,5 +1,12 @@
 # Architecture
 
+Body-free WorkStore task activity groups belong to the owned service projection,
+shared by native HTTP and explicit-companion local HTTP. Native root-cache and
+cursor admission charge aggregate data alongside existing keys; transport keeps
+authorization and snapshot envelopes request-bound. Browser repository cards
+consume only returned groups across metadata homes. No upstream JJ, UI, search
+or transport dependency enters the WorkStore model or publication boundary.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies

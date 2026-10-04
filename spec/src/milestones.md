@@ -101,7 +101,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                                                     | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                              | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                                            | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                                 | E-M11-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                                                      | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                              | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                                                    | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                           | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-094,E-READ-029,E-READ-030                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                                                    | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                           | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-094,E-READ-029,E-READ-030,E-READ-036                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                                                   | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                               | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                                                       | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                      | E-M12-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                                           | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                      | E-M12-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -114,7 +114,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                                                       | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                     | E-M13-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                                                     | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                               | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                                                       | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                   | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                                                     | Independent local/native conversion with complete collaboration history                                                        | Retain eligible conversions; qualify portable anchored profiles and remaining prerequisite gates | E-M13-026,E-M13-027,E-M13-028,E-M13-029                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                                               | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                                             | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                               | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017,E-M13-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -27041,7 +27041,7 @@ entries.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
+        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -38975,7 +38975,7 @@ entries.
         "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
         "result": "pass",
         "failures": 0,
-        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+        "note": "Fresh served app on 7460 displays 87e1cd5d\u20268fb9 and 20d6c008\u2026ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
       },
       {
         "command": "pnpm check:progress",
@@ -48781,7 +48781,7 @@ entries.
         "command": "python3 /tmp/jj-land-resolve.py; jj resolve --list; pnpm exec prettier --write (11 resolved files)",
         "result": "pass",
         "failures": 0,
-        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main’s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
+        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main\u2019s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
       },
       {
         "command": "pnpm install --no-frozen-lockfile --lockfile=false; compare installed tooltip-content.svelte to landed Design Core source",
@@ -48919,7 +48919,7 @@ entries.
         "command": "python3 parent evidence and main dependency/runtime metadata audit",
         "result": "pass",
         "failures": 0,
-        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main’s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
+        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main\u2019s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
       },
       {
         "command": "pnpm test:storybook catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
@@ -70153,7 +70153,7 @@ entries.
         "command": "pnpm dev:backend:build; explicit preview JJ_STORE_DEV_ROOT/JJ_STORE_DEV_PORT/JJ_STORE_DEV_BACKEND_PORT/JJ_STORE_DEV_SERVER/JJ_STORE_DEV_RUSTFS_RUNTIME pnpm dev:backend:restart; jj rebase/update-stale; CUA live editor save/restart/restore",
         "result": "pass",
         "failures": 0,
-        "note": "Main executable rebuilt; only isolated preview7470/7472 restarted. Real UI saved readers4→3, restart reports desired/effective3 and no pending configuration; restore4 and restart reports desired/effective4. Fixture/installation/control-policy SHA256 hashes stay identical. First restart used stale preview helper and reset the temporary edit; snapshot main and refresh preview, then repeat successfully with fixed helper. .local/capture-settings-live.json contains proof; screenshot .local/capture-settings-live.png; preview tab retained. Main running fixture and installed services untouched."
+        "note": "Main executable rebuilt; only isolated preview7470/7472 restarted. Real UI saved readers4\u21923, restart reports desired/effective3 and no pending configuration; restore4 and restart reports desired/effective4. Fixture/installation/control-policy SHA256 hashes stay identical. First restart used stale preview helper and reset the temporary edit; snapshot main and refresh preview, then repeat successfully with fixed helper. .local/capture-settings-live.json contains proof; screenshot .local/capture-settings-live.png; preview tab retained. Main running fixture and installed services untouched."
       },
       {
         "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
@@ -70195,7 +70195,7 @@ entries.
     "result": "pass",
     "remaining": [],
     "scope": "Narrow editing acceptance: typed current LocalTrusted Admin configuration, saved/effective/default roots, bounded crash-aware persistence, shared-column editor, stale/unknown drafts and real next-start selection. Runtime pause/rescan/import commands and all durable capture state remain independent. Supplemental strict Clippy warnings are inherited diagnostics outside the gate. The live preview still reports capture_management_unavailable for runtime observations; its worker recovery/availability is not qualified by a settings save. Full M18 multi-harness release, native desktop bundle/lifecycle, arbitrary server/credential editing, hot worker replacement and visual baseline approval remain outside this slice. No root aggregate or installed-service reset/publication.",
-    "next": "Use Settings → Agents → Configuration in preview7470. Save config and restart this selected backend; desktop applies saved config on Quit/reopen with a rebuilt app bundle. Keep the reader limit restored to4. Investigate the retained fixture worker-unavailable diagnostic separately; do not repair journals or infer runtime health from effective config. Continue deferred M18 scope only under its owning gates."
+    "next": "Use Settings \u2192 Agents \u2192 Configuration in preview7470. Save config and restart this selected backend; desktop applies saved config on Quit/reopen with a rebuilt app bundle. Keep the reader limit restored to4. Investigate the retained fixture worker-unavailable diagnostic separately; do not repair journals or infer runtime health from effective config. Continue deferred M18 scope only under its owning gates."
   },
   {
     "id": "E-M14-016",
@@ -78932,6 +78932,222 @@ entries.
       "crates/jj-store-jj/src/query/cache/reservation.rs#reservations_share_native_repository_total_and_lifetime_admission",
       "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines_bound_waits",
       "crates/jj-store-jj/src/query/cache.rs#unretained_primary_cleanup_removes_private_and_renamed_generations"
+    ]
+  },
+  {
+    "id": "E-READ-036",
+    "tasks": ["M11.4", "M13.4"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change ysktstow",
+    "kind": "Replace repository-directory task-summary hydration with complete-root body-free task activity groups",
+    "versions": "Rust1.98.1; jj-lib0.45.1; pnpm10.32.1; macOS ARM64.",
+    "formats": "No authority, storage or capacity changes. Native activity page version1 and local page version2; local companion format and signed cursor envelope unchanged. Two additive HTTP routes bring executable/generated inventory to115 paths (41local/74other). Groups bind optional target repository/project, complete task count and maximum update timestamp. Native cached projection charges ordered aggregate data and slices at1..256 groups; local retains full companion admission and query/pin checks. Browser fetches one group page per visible home without draining task browse.",
+    "files": [
+      "catalog/fixtures/projects-hub-fixture.ts",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_work.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/local_browser/work.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-http/src/work.rs",
+      "crates/jj-store-service/src/local_repository/browser_work.rs",
+      "crates/jj-store-service/src/local_repository.rs",
+      "crates/jj-store-service/src/work/activity.rs",
+      "crates/jj-store-service/src/work/browse_tests.rs",
+      "crates/jj-store-service/src/work/cursors.rs",
+      "crates/jj-store-service/src/work/projection.rs",
+      "crates/jj-store-service/src/work.rs",
+      "crates/jj-store-service/tests/local_work.rs",
+      "crates/jj-store-service/tests/work_store/cache.rs",
+      "docs/implementation-plan.md",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/http-local-work-data-source.ts",
+      "web/src/lib/controller/http-repository-directory.ts",
+      "web/src/lib/controller/http-work-data-source.ts",
+      "web/src/lib/controller/local-repository-directory.ts",
+      "web/src/lib/controller/projects-hub-types.ts",
+      "web/src/lib/controller/projects-repository-types.ts",
+      "web/src/lib/controller/work-types.ts",
+      "web/src/lib/ui/store-work/repository-directory-presentation.ts",
+      "web/tests/vite/projects-repositories.test.ts",
+      "web/tests/vite/projects-repository-visibility.test.ts"
+    ],
+    "requirements": [
+      "JST-WORK-005",
+      "JST-WORK-006",
+      "JST-WORK-009",
+      "JST-API-004",
+      "JST-LOCAL-004",
+      "JST-UI-015"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repositories.test.ts -t 'native directory reads compact' (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing card reader calls task browse and fails the no-summary-hydration regression. work-activity-ui-before-036.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_workstore_pages_commands_permissions_and_contract_capture -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New body-free route returns unknown_route/404. work-activity-http-before-036.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked work:: -- --nocapture (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "2pass: 301-task complete group, 101 ordered groups, bounded deep slice, invalid offsets/limits and selected-window browse. work-activity-units-036.log/work-activity-units-final-036.log."
+      },
+      {
+        "command": "JJ_STORE_WORK_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/performance/work-activity-native-capture-036.json cargo test -p jj-store-cli --test native_lifecycle --locked http_workstore_pages_commands_permissions_and_contract_capture -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0.40s. Actual native first/resumed group pages retain root across publication, reject changed limits and browse cursors, exclude task text and preserve command/access behavior. work-activity-native-036.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test work_store --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "5pass/0.13s: warm task groups share browse/detail root data without domain reads, fresh inventory limits apply to both initial/resumed groups and historical data survives later publication. work-activity-native-service-036.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test local_work --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "11pass/3.32s: pinned complete groups, current roots, changed limits/commits, foreign/staged selection rejection and existing local WorkStore consumers. work-activity-local-service-036.log."
+      },
+      {
+        "command": "JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/performance/work-activity-local-capture-036.json cargo test -p jj-store-cli --test local_browser --locked filesystem_runtime_registers_and_reads_without_native_storage -- --nocapture (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New test assumed CLI request identity was its project identity and the second task received 404. Corrected fixture to use the actual project receipt and deterministic identity ordering. work-activity-local-http-036.log."
+      },
+      {
+        "command": "JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/performance/work-activity-local-capture-036.json cargo test -p jj-store-cli --test local_browser --locked filesystem_runtime_registers_and_reads_without_native_storage -- --nocapture (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/13.28s. Actual local explicit companion pin, first/resumed signed pages, query bounds, hostile Origin rejection and existing filesystem registration/read consumers. work-activity-local-http-corrected-036.log."
+      },
+      {
+        "command": "cargo test -p jj-store-http --lib --locked contract::tests:: -- --nocapture (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "10pass/1fail. Inherited inventory assertion expected 103 paths/30 local; parent generated schema already contains 113/40. Initial +2 adjustment was insufficient. Parent/current schema comparison proves only the two activity routes are newly added. work-activity-contract-shapes-036.log/work-activity-inventory-baseline-036.log."
+      },
+      {
+        "command": "pnpm contracts:generate (initial and final); pnpm exec tsc -p scripts/tsconfig.contracts.json (initial and final); node --input-type=module affected-fixture responseValidator capture validation",
+        "result": "pass",
+        "failures": 0,
+        "note": "Offline Swagger/type generation and generated contract type checks pass. Current schemas validate 50 actual affected-fixture responses, including 4 native/local first/resumed activity pages; finite query limits/page lengths are encoded. work-activity-generate-036.log/work-activity-generate-final-036.log/work-activity-contract-types-036.log/work-activity-contract-types-final-036.log/work-activity-responses-036.log. Complete registered capture inventory remains deferred."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repositories.test.ts web/tests/vite/projects-repository-visibility.test.ts (initial and extended)",
+        "result": "pass",
+        "failures": 0,
+        "note": "12pass then13pass after adding local aggregate/partial-state coverage. work-activity-ui-036.log/work-activity-ui-final-036.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repositories.test.ts web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-agents.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "23pass/3.09s across directory/fixture consumers, including complete cross-home/project counts without task summary loading, viewport cancellation, revoked/foreign snapshots and unloaded-group partial state. work-activity-ui-consumers-036.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "20pass/44.57s: directly affected repository/project card, navigation, membership and directory interaction/accessibility families. Fresh Storybook test process; production cold-browser qualification and visual baselines remain deferred. work-activity-stories-036.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check (ownership-corrected final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web and final catalog0errors/0warnings;190module catalog boundary pass. work-activity-web-check-036.log/work-activity-catalog-check-corrected-036.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership; cargo fmt -p jj-store-service -p jj-store-http -p jj-store-cli; pnpm exec prettier --write changed controller/UI/fixture/test and canonical documents; jj --no-pager diff --git",
+        "result": "pass",
+        "failures": 0,
+        "note": "972-module architecture and UI ownership pass; affected formatting and initial diff review pass. work-activity-architecture-036.log/work-activity-ownership-036.log and work-activity-*-format*-036.log/work-activity-review-036.patch. Root aggregates, full contract capture, scale/RSS/release/cold production/RustFS/registry/Help/visual qualification not run under user delivery split."
+      },
+      {
+        "command": "pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "One fixture type error: union browse snapshot was not narrowed to native before returning an activity page. Fixed by explicit epoch/profile narrowing. work-activity-catalog-check-036.log."
+      },
+      {
+        "command": "pnpm catalog:check (type-corrected)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Type check0errors/0warnings, then catalog boundary rejects direct API type import in fixture. Replaced it with the owned controller WorkActivityPage type. work-activity-catalog-check-final-036.log."
+      },
+      {
+        "command": "cargo test -p jj-store-http --lib --locked contract::tests:: -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "11pass/0.24s. Exact body-free shape, separate native/local snapshots, strict local body and current executable115path inventory. work-activity-contract-shapes-final-036.log."
+      },
+      {
+        "command": "cargo check -p jj-store-service -p jj-store-http -p jj-store-cli --lib --locked; cargo fmt -p jj-store-service -p jj-store-http -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected service/HTTP/CLI libraries and direct transitive consumers compile/22.82s; Rust format passes. work-activity-packages-036.log/work-activity-rust-format-036.log. Inherited oversized __eh_frame linker warning remains."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Required mapped architecture/CLI/compatibility/mutations chapters were missing. Added owning boundary/version/fixture/read-only requirements in this change. work-activity-spec-first-036.log."
+      },
+      {
+        "command": "pnpm check:progress (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two browser evidence references lacked named test fragments. Corrected to exact source test names. work-activity-progress-036.log."
+      },
+      {
+        "command": "pnpm spec:validate (initial); pnpm exec prettier --write spec/src/api.md spec/src/projects.md spec/src/local-jj.md spec/src/ui.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "5validators/23chapters/172requirements and canonical formatting pass. work-activity-spec-036.log/work-activity-doc-format-final-036.log. Additional mapped chapters and final ledger check follow."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/cli.md spec/src/compatibility.md spec/src/mutations.md spec/src/milestones.md; pnpm spec:first; pnpm spec:validate; pnpm check:progress; jj --no-pager diff --git plus added-line whitespace validation (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "29protected files/9mapped chapters,5validators/23chapters/172requirements,138-task bookkeeping, canonical formatting and added-line whitespace pass. work-activity-doc-format-corrected-036.log/work-activity-spec-first-corrected-036.log/work-activity-spec-corrected-036.log/work-activity-progress-corrected-036.log/work-activity-diff-final-036.patch. Focused delivery only; complete qualification remains deferred."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Code and review card summaries still fetch bounded graph/thread pages; their lightweight summaries remain high-priority delivery work.",
+      "Local WorkStore projection/state reuse still needs correct cross-request companion admission. Existing native disk projection decoding still retains namespace; local operation/prefix/comparison/deep/predecessor/copy/search and paged native RPC remain delivery work.",
+      "Combined integration/contracts, Linux/native scale fixtures, isolated RSS/release latency, cold production browser, restart/revocation/publication/fault/real-RustFS, registry-only and Help/source-review qualification remain deferred. No milestone promotion, original dev service or main/Linux source changes; visual baselines remain unapproved."
+    ],
+    "next": "Continue lightweight code/review summaries and admitted local root reuse, then remaining native disk recovery and indexed lookup/RPC delivery; complete combined qualification in its later slice.",
+    "scope": "Body-free complete-root task aggregates for native/local visible repository cards; current authorization, independent pins and cross-home/project activity semantics retained.",
+    "tests": [
+      "crates/jj-store-service/src/work/browse_tests.rs#task_activity_counts_the_complete_root_and_pages_only_compact_groups",
+      "crates/jj-store-service/tests/work_store/cache.rs#work_first_pages_share_selected_roots_and_enforce_fresh_limits",
+      "crates/jj-store-service/tests/local_work.rs#local_task_activity_pages_pin_complete_counts_and_reject_foreign_or_changed_queries",
+      "crates/jj-store-service/tests/local_work.rs#forged_continuations_cannot_read_staged_metadata_candidates",
+      "crates/jj-store-http/src/contract/tests.rs#work_activity_contracts_are_body_free_and_pin_independent_profiles",
+      "crates/jj-store-cli/tests/native_lifecycle/http_work.rs#http_workstore_pages_commands_permissions_and_contract_capture",
+      "crates/jj-store-cli/tests/local_browser.rs#filesystem_runtime_registers_and_reads_without_native_storage",
+      "web/tests/vite/projects-repositories.test.ts#native directory reads compact complete task groups without fetching task summaries",
+      "web/tests/vite/projects-repository-visibility.test.ts#canceling a local card during a shared snapshot read starts no collaboration or graph work"
     ]
   }
 ]

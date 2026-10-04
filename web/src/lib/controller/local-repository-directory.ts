@@ -11,7 +11,7 @@ export async function readLocalRepositoryDirectory(
   const head = await source.snapshot();
   signal?.throwIfAborted();
   const [tasks, reviews] = await Promise.all([
-    work.browse({ kind: "tasks", limit: 256 }, signal),
+    work.taskActivity!({ limit: 256 }, signal),
     source.reviewThreads(undefined, signal),
   ]);
   signal?.throwIfAborted();
@@ -40,9 +40,9 @@ export async function readLocalRepositoryDirectory(
     )[0];
   const dates = [
     ...(latest ? [latest.committer.timestamp.millis] : []),
-    ...tasks.tasks
+    ...tasks.groups
       .filter((t) => (t.repository ?? source.repository) === source.repository)
-      .map((t) => t.actor.updated_at_millis),
+      .map((group) => group.updated_at_millis),
   ];
   return {
     code: graph?.snapshot ?? null,
@@ -61,7 +61,7 @@ export async function readLocalRepositoryDirectory(
     commitsPartial: Boolean(graph?.next_cursor),
     threads: reviews.threads,
     reviewsPartial: Boolean(reviews.next_cursor),
-    tasks: tasks.tasks,
+    taskGroups: tasks.groups,
     tasksPartial: Boolean(tasks.next_cursor),
   };
 }

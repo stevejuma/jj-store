@@ -23,7 +23,8 @@ use crate::sync_management::{
     local_sync_barrier, local_sync_control, local_sync_status, local_sync_wait,
 };
 use crate::work::{
-    apply as work_apply, browse as work_browse, page as work_page, status as work_status,
+    activity as work_activity, apply as work_apply, browse as work_browse, page as work_page,
+    status as work_status,
 };
 use crate::{
     contract::{Document, Reply},
@@ -322,6 +323,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/reaction-assets/{asset}", collab_image, Empty, String, Reply::Raster),
             (get, "/repos/{repo}/content/search", content_search, jj_store_service::content_search::ContentQuery, jj_store_service::content_search::ContentPage, Reply::Json(200)),
             (get, "/repos/{repo}/work/browse", work_browse, jj_store_service::work::WorkBrowseQuery, jj_store_service::work::WorkBrowsePage, Reply::Json(200)),
+            (get, "/repos/{repo}/work/activity", work_activity, jj_store_service::work::WorkActivityQuery, jj_store_service::work::WorkActivityPage, Reply::Json(200)),
             (get, "/repos/{repo}/work", work_page, jj_store_service::work::WorkQuery, jj_store_service::work::WorkPage, Reply::Json(200)),
             (post, "/repos/{repo}/work/commands", work_apply, Empty, jj_store_service::work::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/work/commands/{request_id}", work_status, Empty, jj_store_service::work::Status, Reply::Json(200)),

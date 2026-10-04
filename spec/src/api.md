@@ -8,6 +8,16 @@ preserve independent pins and discard obsolete results. Existing paging,
 authorization and partial-activity contracts remain unchanged; lightweight
 server summary delivery and complete browser qualification are separate slices.
 
+Native `GET /v1/repos/{repo}/work/activity` and local
+`POST /v1/local/repos/{repo}/work/activity` return independently pinned
+body-free task count/timestamp groups with at most 256 rows, total group count
+and bounded query-bound continuations. Local bodies require an explicit
+companion metadata commit and use the existing generation-bound signed cursor
+envelope. Directory cards fetch one group page per home and retain partial state
+for unloaded groups; they do not load task summaries to count activity. Public
+schema and representative transport evidence accompany this performance
+delivery; complete combined contract and browser qualification remain deferred.
+
 Repository entry menus, Settings-style creation/conversion forms, action rows
 and trailing shell spacing change presentation only. Local/server capability
 gates, exact pending creation/conversion identities, preflight and receipt

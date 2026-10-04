@@ -46,7 +46,7 @@ mod browser_reviews;
 pub use browser_reviews::*;
 mod browser_work;
 mod selection;
-pub use browser_work::LocalWorkBrowsePage;
+pub use browser_work::{LocalWorkActivityPage, LocalWorkBrowsePage};
 pub use jj_store_jj::local_metadata::GitOid as MetadataCommit;
 mod work;
 mod work_pages;

@@ -346,6 +346,13 @@ root projection, ordering, counts and bounds as native WorkStore. Browser
 continuations bind repository, binding generation, metadata selection and exact
 query; changed filters or another repository fail closed.
 
+Local task activity pages use the same complete-root body-free
+repository/project groups as native WorkStore. Their explicit companion commit
+is admitted through current committed history, with the existing folder binding
+checks and signed query-specific continuations. Page work copies only selected
+aggregate rows; cross-request local root/projection reuse remains a separate
+performance slice.
+
 Local browser edits and status use the existing CLI device actor and original
 typed WorkStore request. Receipt replay precedes stale entity checks. Transport
 timeouts after dispatch retain the exact request as an unknown outcome; removal

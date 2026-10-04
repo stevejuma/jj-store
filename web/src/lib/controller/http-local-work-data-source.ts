@@ -59,6 +59,19 @@ export class HttpLocalWorkDataSource implements WorkBrowseTransport {
     this.validate(page.snapshot, pin);
     return page;
   }
+  async taskActivity(
+    query: { limit?: number; cursor?: string },
+    signal?: AbortSignal,
+  ) {
+    const pin = await this.pin();
+    const page = await this.read<Model<"LocalWorkActivityPage">>(
+      "work/activity",
+      { metadata_commit: pin, query },
+      signal,
+    );
+    this.validate(page.snapshot, pin);
+    return page;
+  }
   private validate(snapshot: Model<"LocalWorkSnapshot">, pin: string) {
     if (
       snapshot.profile !== "local_jj_git" ||

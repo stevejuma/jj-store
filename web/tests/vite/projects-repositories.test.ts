@@ -2,6 +2,8 @@ import { expect, test } from "vitest";
 import { ApiError, Client } from "../../src/lib/api/client.js";
 import { createProjectsRepositories } from "../../src/lib/controller/projects-repositories.svelte.js";
 import { readRepositoryDirectory } from "../../src/lib/controller/http-repository-directory.js";
+import { readLocalRepositoryDirectory } from "../../src/lib/controller/local-repository-directory.js";
+import type { StoreDataSource } from "../../src/lib/controller/native-data-source.js";
 import { repositoryActivity } from "../../src/lib/ui/store-work/repository-directory-presentation.js";
 import {
   fixtureTransport,
@@ -14,6 +16,112 @@ const repositories = [
   { id: homeA, name: "Parser", permission: "admin" as const },
   { id: homeB, name: "Browser", permission: "read" as const },
 ];
+
+test("native directory reads compact complete task groups without fetching task summaries", async () => {
+  const source = fixtureTransport(homeA);
+  const seed = await source.directory!();
+  if (!("epoch" in seed.work))
+    throw new Error("Expected native fixture snapshot");
+  const workSnapshot = seed.work;
+  let activityReads = 0;
+  const work = {
+    ...source,
+    browse: async () => {
+      throw new Error("Task summary hydration is unnecessary");
+    },
+    taskActivity: async () => {
+      activityReads++;
+      return {
+        version: 1,
+        snapshot: workSnapshot,
+        total_groups: 1,
+        next_cursor: null,
+        groups: [
+          {
+            project: projectId,
+            repository: homeB,
+            tasks: 1200,
+            updated_at_millis: 99,
+          },
+        ],
+      };
+    },
+  };
+  const client = new Client(
+    homeA,
+    null,
+    () => {},
+    async () =>
+      new Response(
+        JSON.stringify({
+          ...seed.code,
+          heads: ["61".repeat(64), "62".repeat(64)],
+        }),
+        { headers: { "content-type": "application/json" } },
+      ),
+  );
+  const summary = await readRepositoryDirectory(client, work);
+  expect(activityReads).toBe(1);
+  const entries = [
+    { repository: repositories[0]!, summary, loading: false, error: "" },
+  ];
+  expect(repositoryActivity(entries, homeB).tasks).toBe(1200);
+  expect(
+    repositoryActivity(entries, homeB, { home: homeA, id: projectId }).tasks,
+  ).toBe(1200);
+  expect(
+    repositoryActivity(entries, homeB, { home: homeB, id: projectId }).tasks,
+  ).toBe(0);
+});
+
+test("local directory uses compact task groups and retains unloaded-group partial state", async () => {
+  const fixture = fixtureTransport(homeA);
+  const snapshot = {
+    profile: "local_jj_git" as const,
+    repo_id: homeA,
+    metadata_commit: "65".repeat(20),
+    work_state_version: 1,
+  };
+  const source = {
+    repository: homeA,
+    snapshot: async () => ({ heads: ["61".repeat(64), "62".repeat(64)] }),
+    reviewThreads: fixture.reviews,
+  } as unknown as StoreDataSource;
+  let calls = 0;
+  const summary = await readLocalRepositoryDirectory(source, {
+    ...fixture,
+    browse: async () => {
+      throw new Error("Task browse should remain unused");
+    },
+    taskActivity: async () => {
+      calls++;
+      return {
+        version: 2,
+        snapshot,
+        total_groups: 300,
+        next_cursor: "more",
+        groups: [
+          {
+            project: projectId,
+            repository: homeB,
+            tasks: 1200,
+            updated_at_millis: 123,
+          },
+        ],
+      };
+    },
+  });
+  expect(calls).toBe(1);
+  expect(summary.work).toEqual(snapshot);
+  expect(summary.tasksPartial).toBe(true);
+  const activity = repositoryActivity(
+    [{ repository: repositories[0]!, summary, loading: false, error: "" }],
+    homeB,
+  );
+  expect(activity.tasks).toBe(1200);
+  expect(activity.partial).toBe(true);
+  expect(activity.updatedAtMillis).toBe(123);
+});
 
 test("directory retries retain an error episode until successful recovery, including queued reads", async () => {
   const targets = [

@@ -169,6 +169,20 @@ reconstruction. Local browse uses the same selected-window projection;
 cross-request local root reuse and comprehensive capacity/pressure qualification
 remain separate slices.
 
+Repository directory task activity MUST use body-free counts and latest task
+update times grouped by optional target repository and project from the complete
+selected WorkStore root. An absent target means the metadata home. Groups sort
+by target identity then project identity and page at 1..256 groups; a returned
+group counts all its tasks regardless of the task browse page size. Native
+groups are retained in the admitted immutable projection and resumed pages slice
+that order without task-summary hydration or rescanning. Local groups retain
+independent committed companion admission. Both transports bind exact pins and
+query limits to their continuations, retain current access checks and report
+unloaded groups explicitly. Cross-home/project card counts MUST sum these groups
+without fetching or draining task browse pages; unloaded homes or groups keep
+activity partial. Code and review summary optimization and local cross-request
+projection reuse remain separate delivery slices.
+
 The installation directory includes Projects, Tasks, Reviews, Agents and
 Repositories. The sidebar reads unfiltered projects independently from main-view
 queries and nests active linked repositories. Reviews remain owned by

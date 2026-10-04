@@ -17,6 +17,8 @@ export type WorkSnapshot =
 export type WorkPage = Model<"WorkPage"> | Model<"LocalWorkPage">;
 export type WorkBrowsePage =
   Model<"WorkBrowsePage"> | Model<"LocalWorkBrowsePage">;
+export type WorkActivityPage =
+  Model<"WorkActivityPage"> | Model<"LocalWorkActivityPage">;
 export type WorkOutcome =
   Model<"WorkCommandOutcome"> | Model<"LocalWorkOutcome">;
 export type WorkStatus = Model<"WorkCommandStatus"> | Model<"LocalWorkOutcome">;

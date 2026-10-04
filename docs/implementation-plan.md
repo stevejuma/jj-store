@@ -76,6 +76,14 @@ remains delivery work, alongside local operation/deep lookup and
 lightweight/root-bound metadata reads. These focused deliveries do not complete
 the later combined qualification gate.
 
+Repository directory task counts now consume one body-free repository/project
+aggregate page from each visible metadata home. Returned groups count their
+complete selected root and preserve maximum task timestamps, cross-home/project
+filters and unloaded-group partial state. Native requests reuse the admitted
+root projection; local transport independently admits its explicit companion
+selection. Card reads no longer hydrate up to 256 task summaries. Lightweight
+code/review metadata and cross-request local root reuse remain delivery work.
+
 ### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:

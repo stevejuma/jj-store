@@ -158,7 +158,8 @@ test("canceling a local card during a shared snapshot read starts no collaborati
   });
   const reviews = vi.fn(),
     graph = vi.fn(),
-    browse = vi.fn();
+    browse = vi.fn(),
+    taskActivity = vi.fn();
   const source = {
     snapshot: async () => {
       await snapshot;
@@ -170,13 +171,14 @@ test("canceling a local card during a shared snapshot read starts no collaborati
   const canceled = new AbortController();
   const read = readLocalRepositoryDirectory(
     source,
-    { ...fixtureTransport(homeA), browse },
+    { ...fixtureTransport(homeA), browse, taskActivity },
     canceled.signal,
   );
   canceled.abort();
   settle();
   await expect(read).rejects.toMatchObject({ name: "AbortError" });
   expect(browse).not.toHaveBeenCalled();
+  expect(taskActivity).not.toHaveBeenCalled();
   expect(reviews).not.toHaveBeenCalled();
   expect(graph).not.toHaveBeenCalled();
 });

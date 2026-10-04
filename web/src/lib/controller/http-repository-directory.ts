@@ -11,12 +11,12 @@ import type { WorkBrowseTransport } from "./projects-hub-types.js";
 /** Independent native pins, bounded pages, no head reconciliation or authority writes. */
 export async function readRepositoryDirectory(
   client: Client,
-  work: Pick<WorkBrowseTransport, "browse" | "reviews">,
+  work: Pick<WorkBrowseTransport, "taskActivity" | "reviews">,
   signal?: AbortSignal,
 ): Promise<RepositoryDirectorySummary> {
   const [head, tasks, reviews] = await Promise.all([
     client.request<Head>("snapshot", {}, { signal }),
-    work.browse({ kind: "tasks", limit: 256 }, signal),
+    work.taskActivity!({ limit: 256 }, signal),
     work.reviews!(undefined, signal),
   ]);
   if (
@@ -67,11 +67,11 @@ export async function readRepositoryDirectory(
     ...reviews.threads.flatMap((thread) =>
       thread.presentation ? [thread.presentation.updated_at_millis] : [],
     ),
-    ...tasks.tasks
+    ...tasks.groups
       .filter(
         (task) => (task.repository ?? client.repository) === client.repository,
       )
-      .map((task) => task.actor.updated_at_millis),
+      .map((group) => group.updated_at_millis),
   ];
   return {
     code: graph?.snapshot ?? null,
@@ -90,7 +90,7 @@ export async function readRepositoryDirectory(
     commitsPartial: Boolean(graph?.next_cursor),
     threads: reviews.threads,
     reviewsPartial: Boolean(reviews.next_cursor),
-    tasks: tasks.tasks,
+    taskGroups: tasks.groups,
     tasksPartial: Boolean(tasks.next_cursor),
   };
 }

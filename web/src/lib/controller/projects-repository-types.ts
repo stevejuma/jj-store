@@ -12,6 +12,6 @@ export interface RepositoryDirectorySummary {
   commitsPartial: boolean;
   threads: Model<"ReviewThreadSummary">[];
   reviewsPartial: boolean;
-  tasks: Model<"WorkTaskSummary">[];
+  taskGroups: Model<"WorkActivityGroup">[];
   tasksPartial: boolean;
 }

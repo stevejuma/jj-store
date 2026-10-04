@@ -28,6 +28,16 @@ export class HttpWorkDataSource implements WorkTransport {
   };
   directory = (signal?: AbortSignal) =>
     readRepositoryDirectory(this.client, this, signal);
+  taskActivity(
+    query: { limit?: number; cursor?: string },
+    signal?: AbortSignal,
+  ) {
+    return this.client.request<Model<"WorkActivityPage">>(
+      "work/activity",
+      { ...query },
+      { signal },
+    );
+  }
   page(query: WorkQuery, signal?: AbortSignal) {
     return this.client.request<Model<"WorkPage">>(
       "work",

@@ -24,6 +24,12 @@ metadata reloads only when shown after invalidation. Metadata loading and
 failures stay row-local, without blocking repository navigation or replaying
 dismissed error episodes.
 
+Repository activity counts consume bounded body-free task groups across metadata
+homes, preserving repository/project filters, maximum timestamps and partial
+state for missing homes or unloaded groups. A visible card does not request
+individual task summaries for its task count. Presentation and navigation remain
+unchanged; code/review summary optimization is separate delivery work.
+
 Repository General settings expose Admin-only format conversion when this
 installation has native storage. Preflight explains an independent destination,
 committed code and supported collaboration history; local export requires a new

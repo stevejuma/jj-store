@@ -405,6 +405,12 @@ fn forged_continuations_cannot_read_staged_metadata_candidates() {
             .unwrap_err(),
         Error::Stale
     );
+    assert_eq!(
+        repository
+            .work_activity_at(candidate.commit(), &WorkActivityQuery::default())
+            .unwrap_err(),
+        Error::Stale
+    );
     let mut cursor: serde_json::Value =
         serde_json::from_slice(&URL_SAFE_NO_PAD.decode(first.next_cursor.unwrap()).unwrap())
             .unwrap();
@@ -545,6 +551,74 @@ fn local_browser_browse_uses_complete_root_and_explicit_committed_pin() {
     assert_eq!(
         other
             .work_browse_at(selected.commit(), &WorkBrowseQuery::default())
+            .unwrap_err(),
+        Error::Stale
+    );
+}
+
+#[test]
+fn local_task_activity_pages_pin_complete_counts_and_reject_foreign_or_changed_queries() {
+    let (_root, repository) = fixture();
+    let first = project(&repository, 70);
+    let second = project(&repository, 71);
+    task(&repository, 72, first, None);
+    task(&repository, 73, first, None);
+    task(&repository, 74, second, None);
+    let selected = repository.metadata_store().read().unwrap().unwrap();
+    let query = WorkActivityQuery {
+        limit: 1,
+        cursor: None,
+    };
+    let page = repository
+        .work_activity_at(selected.commit(), &query)
+        .unwrap();
+    assert_eq!(page.groups.len(), 1);
+    assert_eq!(page.groups[0].tasks, 2);
+    assert_eq!(page.groups[0].project, first);
+    assert_eq!(page.total_groups, 2);
+    let third = project(&repository, 75);
+    task(&repository, 76, third, None);
+    let resumed_query = WorkActivityQuery {
+        cursor: page.next_cursor.clone(),
+        ..query
+    };
+    let resumed = repository
+        .work_activity_at(selected.commit(), &resumed_query)
+        .unwrap();
+    assert_eq!(resumed.snapshot, page.snapshot);
+    assert_eq!(resumed.groups[0].project, second);
+    assert_eq!(resumed.groups[0].tasks, 1);
+    assert_eq!(resumed.total_groups, 2);
+    assert!(resumed.next_cursor.is_none());
+    assert_eq!(
+        repository
+            .work_activity_at(
+                selected.commit(),
+                &WorkActivityQuery {
+                    limit: 2,
+                    ..resumed_query.clone()
+                }
+            )
+            .unwrap_err(),
+        Error::InvalidCursor
+    );
+    let current = repository.metadata_store().read().unwrap().unwrap();
+    assert_eq!(
+        repository
+            .work_activity_at(current.commit(), &resumed_query)
+            .unwrap_err(),
+        Error::InvalidCursor
+    );
+    let fresh = repository
+        .work_activity_at(current.commit(), &WorkActivityQuery::default())
+        .unwrap();
+    assert_eq!(fresh.total_groups, 3);
+    assert_ne!(fresh.snapshot, page.snapshot);
+    let (_other, other) = fixture();
+    project(&other, 77);
+    assert_eq!(
+        other
+            .work_activity_at(selected.commit(), &WorkActivityQuery::default())
             .unwrap_err(),
         Error::Stale
     );

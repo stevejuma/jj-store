@@ -1,5 +1,13 @@
 # CLI and server commands
 
+Native lifecycle and filesystem browser HTTP fixtures cover body-free WorkStore
+task activity groups, exact first/resumed pins and unchanged command receipts.
+Local fixture task links consume the actual CLI project receipt identity;
+request identities are never substituted for generated entity identities. These
+directory read routes add no CLI command, source mutation, installed executable
+change or real-RustFS qualification. Complete performance qualification remains
+the separate deferred slice.
+
 LocalTrusted installations with native storage own an independent conversion
 journal beside device registration. Preview captures a committed source
 operation, start retains the exact bounded archive before staging, and status

@@ -14,6 +14,10 @@ export type WorkBrowseQuery = {
   limit?: number;
 };
 export interface WorkBrowseTransport extends WorkTransport {
+  taskActivity?(
+    query: { limit?: number; cursor?: string },
+    signal?: AbortSignal,
+  ): Promise<import("./work-types.js").WorkActivityPage>;
   agents?(
     cursor?: string,
     signal?: AbortSignal,
