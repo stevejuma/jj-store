@@ -6,6 +6,15 @@ configuration or introduce aliases into query evaluation. Multi-harness capture
 verification retains these boundaries; conditional-expression lint cleanup does
 not change identity selection or native persistence.
 
+The local prepared index adapter retains selected-view visibility and reverse
+reference annotations under shared resident-memory admission. It delegates
+change prefix ambiguity and target ordering to the pinned JJ index, then applies
+the exact prepared visible membership without creating per-request ancestor
+sets. Different head selections fail closed. Prepared log, commit detail and
+evolution readers use fresh authorized scoped stores, and operation/predecessor
+traversal retains ordinary cancellation, byte, work and record limits. No source
+index repair, extra-table import or publication is permitted.
+
 WorkStore comment reactions use the existing native RPC collaboration command
 and read envelopes with an additive typed target. Exact WorkStore selection is
 captured alongside ReactionStore; no code-operation mutation, upstream JJ import

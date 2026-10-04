@@ -444,9 +444,9 @@ invoking construction. Scratch and streamed output share that allowance. One
 shared preparation permit remains held through actual cancellation/worker exit.
 Construction has separate cumulative work, bytes, metadata and deadline limits;
 it never increases ordinary interactive limits. Failed output is deleted and a
-successful handle owns its disposable files. Library handles serve prepared log
-pages; the service owns retained generations and task delivery. Large-scale
-qualification remains a separate gate.
+successful handle owns its disposable files. Library handles serve prepared log,
+commit detail and evolution pages; the service owns retained generations and
+task delivery. Large-scale qualification remains a separate gate.
 
 Preparation MUST NOT invoke GitBackend's implicit extra-metadata import or
 stacked-table reconciliation. It reads compact commit fields from Git and
@@ -604,11 +604,12 @@ This service facade alone does not advertise HTTP or browser preparation
 capability.
 
 The LocalTrusted HTTP composition shares the native cache root and preparation
-worker with local tasks. Log dispatch consumes prepared generations and returns
-an explicit exact-operation rebuild-required result when cold; it does not fall
-back to complete commit/tree preflight. Other local query kinds keep their owned
-dispatch until their prepared reader is qualified. Start/status/cancel transport
-preserves current registration checks and independent source pins.
+worker with local tasks. Log, detailed commit and evolution dispatch consume
+prepared generations and return an explicit exact-operation rebuild-required
+result when cold; it does not fall back to complete commit/tree preflight. Other
+local query kinds keep their owned dispatch until their prepared reader is
+qualified. Start/status/cancel transport preserves current registration checks
+and independent source pins.
 
 Scoped file/header and bookmark/workspace target reads MUST use the same owned
 Git commit decoder as preparation, without GitBackend's extra import or table
@@ -642,3 +643,25 @@ retained operation views and do not repair source indexes/extra tables. Each
 requested commit needs independent membership proof; Git object existence does
 not grant authority. Deep historical membership may still require separately
 qualified prepared lookup. Copy support remains the pinned Git backend profile.
+
+Prepared local generations MUST derive selected-view visibility once during
+bounded preparation, using only indexed parent edges. Retain the exact visible
+commit membership and reverse bookmark/workspace annotations with the immutable
+generation, and admit their memory before growth. Reuse them for log, detailed
+commit and evolution responses instead of reconstructing visibility or scanning
+all references per returned row. Change prefix ambiguity, target order, hidden
+offsets and divergence retain pinned upstream index semantics; an index wrapper
+must reject any different head selection. Each response supplies current access,
+preserves the exact operation and ordinary limits, and hydrates only selected
+commit records. Evolution follows bounded retained operation/predecessor edges
+without loading older views, unrelated commits or trees. Cold detailed history
+queries return exact-operation rebuild-required rather than complete preflight.
+Before JJ's synchronous evolution visit, admit each operation's predecessor
+batch and conservative squared queue work; oversized expansion fails explicitly
+under the ordinary query budget. This bound does not reduce repository capacity
+or increase ordinary limits. Prepared generations retain a canonical
+operation/view digest. Fresh reads MUST agree with that capture, and guarded
+upstream rereads must agree with the fresh selection. Changed source records
+fail explicitly rather than combining old visibility/annotations with another
+view. This check retains supported upstream normalization and adds no
+authoritative source format or metadata write.

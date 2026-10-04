@@ -1,5 +1,6 @@
 //! Explicit construction in caller-reserved private scratch; no source index IO.
 mod graph;
+mod visibility;
 use super::git_read::{commit, extras, shallow_roots};
 use super::*;
 use crate::query::{Cancellation, prepared};

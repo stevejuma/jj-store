@@ -1933,13 +1933,14 @@ with a local snapshot/status; expired or unknown IDs return410 `task_reset`.
 Bounds remain trusted server configuration, never request fields. Native task
 routes and snapshot types remain unchanged.
 
-Local log POST queries use the retained prepared generation. A cold request
-proves its requested operation without commit preflight, then returns409
-`index_rebuild_required` with `local_snapshot`. Both first pages and cursor
-resumes retain the original operation, generation and complete query. Files,
-references, headers and operation metadata remain independently readable. A
-local error must not fabricate a native snapshot/epoch. The browser validates
-the error pin and all start/status/cancel responses before resuming that query.
+Local log, detailed commit and evolution POST queries use the retained prepared
+generation. A cold request proves its requested operation without commit
+preflight, then returns409 `index_rebuild_required` with `local_snapshot`. Both
+first pages and cursor resumes retain the original operation, generation and
+complete query. Files, references, headers and operation metadata remain
+independently readable. A local error must not fabricate a native
+snapshot/epoch. The browser validates the error pin and all start/status/cancel
+responses before resuming that query.
 
 Native and local browser index-task adapters forward the owning observation's
 abort signal for start, status and bodyless cancel requests. Aborting that HTTP

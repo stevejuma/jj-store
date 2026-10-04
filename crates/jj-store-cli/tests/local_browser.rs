@@ -4,6 +4,8 @@ mod bounded_reads;
 mod index_tasks_acceptance;
 #[path = "local_browser/preparation.rs"]
 mod preparation_acceptance;
+#[path = "local_browser/prepared_details.rs"]
+mod prepared_details;
 #[path = "local_browser/reviews.rs"]
 mod review_acceptance;
 #[path = "local_browser/scoped_differences.rs"]
@@ -924,6 +926,22 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     assert_eq!(cold["local_snapshot"]["operation"], operation);
     assert_eq!(cold["local_snapshot"]["repository"], id);
     assert!(cold.get("snapshot").is_none());
+    for request in [
+        json!({"kind":"commit","query":{"commit":"0000000000000000000000000000000000000000"}}),
+        json!({"kind":"graph","query":[{"graph":"evolution","commit":"0000000000000000000000000000000000000000"},{"limit":1,"after":null}]}),
+    ] {
+        let cold = post(
+            &format!("/local/repos/{id}/query"),
+            json!({"operation":operation,"request":request,"cursor":null}),
+        )
+        .send()
+        .await
+        .unwrap();
+        assert_eq!(cold.status(), reqwest::StatusCode::CONFLICT);
+        let cold: Value = cold.json().await.unwrap();
+        assert_eq!(cold["code"], "index_rebuild_required");
+        assert_eq!(cold["local_snapshot"]["operation"], operation);
+    }
     assert_eq!(
         post(
             &format!("/local/repos/{id}/index/tasks"),
@@ -1012,6 +1030,25 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         40
     );
     let selected = &page["data"]["data"]["data"]["nodes"][0]["commit"]["id"];
+    for request in [
+        json!({"kind":"commit","query":{"commit":selected}}),
+        json!({"kind":"graph","query":[{"graph":"evolution","commit":selected},{"limit":1,"after":null}]}),
+    ] {
+        let ready: Value = post(
+            &format!("/local/repos/{id}/query"),
+            json!({"operation":operation,"request":request,"cursor":null}),
+        )
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+        assert_eq!(ready["snapshot"]["operation"], operation);
+        assert_eq!(ready["data"]["kind"], request["kind"]);
+    }
     let mut file_reads = vec![];
     for request in [
         json!({"kind":"commit_summary", "query":{"commit":selected}}),

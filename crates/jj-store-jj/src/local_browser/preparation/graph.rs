@@ -6,11 +6,45 @@ use jj_lib::{
     index::{
         Index as _, IndexStore, IndexStoreError, IndexStoreResult, MutableIndex, ReadonlyIndex,
     },
+    repo::Repo as _,
     store::Store,
 };
+use sha2::Sha256;
 use std::{fs, io::Read as _};
+fn selection(pin: &Pin, operation: m::OperationId, budget: &Budget) -> Result<[u8; 32]> {
+    struct Hash<'a> {
+        digest: Sha256,
+        budget: &'a Budget,
+        failed: Option<Error>,
+    }
+    impl std::io::Write for Hash<'_> {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            if let Err(error) = self.budget.work(1) {
+                self.failed = Some(error.clone());
+                return Err(std::io::Error::other(error));
+            }
+            self.digest.update(bytes);
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let operation = pin.operations.get(&operation).ok_or(Error::Incomplete)?;
+    let view = pin.views.get(&operation.view_id).ok_or(Error::Incomplete)?;
+    let mut hash = Hash {
+        digest: Sha256::new(),
+        budget,
+        failed: None,
+    };
+    serde_json::to_writer(&mut hash, &(operation, view))
+        .map_err(|_| hash.failed.take().unwrap_or(Error::Corrupt))?;
+    Ok(hash.digest.finalize().into())
+}
 pub(super) struct Resident {
     index: DefaultReadonlyIndex,
+    visibility: Arc<super::visibility::Visibility>,
+    selection: [u8; 32],
     metadata: PathBuf,
     extras: Arc<extras::Extras>,
     shallow: BTreeSet<gix::ObjectId>,
@@ -110,6 +144,8 @@ pub(super) async fn load(
         return Err(Error::IndexBudget);
     }
     Ok(Resident {
+        visibility: super::visibility::Visibility::build(&index, source).await?,
+        selection: selection(&source.pin, operation, &source.budget)?,
         index,
         metadata: source.pin.binding.metadata_path().to_owned(),
         extras: source.extras.clone(),
@@ -119,6 +155,13 @@ pub(super) async fn load(
 }
 
 impl Prepared {
+    pub(in super::super) fn annotations(
+        &self,
+        id: m::GitSha1Id,
+        budget: &Budget,
+    ) -> Result<(Vec<Bookmark>, Vec<String>)> {
+        self.resident.visibility.annotations(id, budget)
+    }
     pub(in super::super) async fn contains(&self, id: m::GitSha1Id) -> Result<bool> {
         self.resident
             .index
@@ -171,7 +214,11 @@ impl IndexStore for Index {
         if operation.id().as_bytes() != self.prepared.snapshot.operation.as_bytes() {
             return Err(IndexStoreError::Read(Box::new(Error::NotCommitted)));
         }
-        Ok(Box::new(self.prepared.resident.index.clone()))
+        Ok(Box::new(super::visibility::PreparedIndex {
+            index: self.prepared.resident.index.clone(),
+            visibility: self.prepared.resident.visibility.clone(),
+            budget: self.budget.clone(),
+        }))
     }
     fn write_index(
         &self,
@@ -199,7 +246,22 @@ impl Executor {
         request: GraphRequest,
         page: GraphWindow,
     ) -> Result<GraphPage> {
-        if !matches!(request, GraphRequest::Log { .. }) {
+        let response = self
+            .read_prepared(access, prepared, Request::Graph(request, page))
+            .await?;
+        let Response::Graph(page) = response else {
+            return Err(Error::Invalid);
+        };
+        Ok(page)
+    }
+    /// Detailed history shares the exact prepared operation and current access.
+    pub async fn read_prepared(
+        &self,
+        access: Arc<dyn Access>,
+        prepared: Arc<Prepared>,
+        request: Request,
+    ) -> Result<Response> {
+        if !request.needs_prepared_index() {
             return Err(Error::Invalid);
         }
         let limits = self.limits;
@@ -213,7 +275,9 @@ impl Executor {
                 if access.generation() != prepared.snapshot.generation {
                     return Err(Error::EpochChanged);
                 }
-                graphs::validate(&request, &page, 0, &budget)?;
+                if let Request::Graph(graph, page) = &request {
+                    graphs::validate(graph, page, 0, &budget)?;
+                }
                 let operation = prepared.snapshot.operation;
                 let mut context = Context::open(
                     access,
@@ -225,6 +289,10 @@ impl Executor {
                     false,
                 )
                 .await?;
+                if selection(&context.access, operation, &budget)? != prepared.resident.selection {
+                    return Err(Error::Corrupt);
+                }
+                budget.check()?;
                 Arc::get_mut(&mut context.access)
                     .ok_or(Error::Unavailable)?
                     .prepared = Some(prepared.clone());
@@ -238,7 +306,12 @@ impl Executor {
                     budget.clone(),
                     limits,
                 );
-                let selected = operation_store::selected(&context, operation).await?;
+                let selected = operation_store::selected_for(
+                    &context,
+                    operation,
+                    matches!(request, Request::Graph(GraphRequest::Evolution { .. }, _)),
+                )
+                .await?;
                 let raw = loader(context.access.binding.metadata_path())?;
                 let settings = UserSettings::from_config(StackedConfig::with_defaults())
                     .map_err(|_| Error::Unavailable)?;
@@ -257,16 +330,10 @@ impl Executor {
                     .load_at(&selected)
                     .await
                     .map_err(|_| Error::Unavailable)?;
-                let (data, next) =
-                    graphs::run(&repo, request, page, &context.access, &budget).await?;
-                budget.authorize(&context.access).await?;
-                Ok(GraphPage {
-                    version: 1,
-                    operation,
-                    data,
-                    next,
-                    stats: budget.stats(),
-                })
+                context.store = repo.store().clone();
+                context.scoped = Some(guard);
+                context.repo = Some(repo);
+                context.dispatch(operation, request, false).await
             })
         })
         .await

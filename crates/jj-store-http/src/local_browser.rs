@@ -530,13 +530,13 @@ async fn query(
         operation: query.operation,
     };
     let data = match query.request {
-        local::Request::Graph(request @ local::GraphRequest::Log { .. }, page) => {
+        request if request.needs_prepared_index() => {
             match state
                 .local_tasks
-                .graph(access.clone(), query.operation, request, page)
+                .read(access.clone(), query.operation, request)
                 .await
             {
-                Ok(page) => local::Response::Graph(page),
+                Ok(response) => response,
                 Err(jj_store_service::local_index_tasks::Error::Query(
                     local::Error::IndexRebuildRequired,
                 )) => {

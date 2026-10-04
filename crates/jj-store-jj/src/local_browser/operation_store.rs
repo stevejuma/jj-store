@@ -13,6 +13,7 @@ struct Guard {
     allowed: Mutex<BTreeSet<o::OperationId>>,
     max_operations: usize,
     view: Option<o::ViewId>,
+    evolution: bool,
 }
 impl fmt::Debug for Guard {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -45,6 +46,40 @@ impl OpStore for Guard {
         let value = self.source.read_operation(id).await?;
         let metadata = dto::Operation::try_from(&value).map_err(|_| error(Error::Corrupt))?;
         self.budget.metadata(&metadata).map_err(error)?;
+        if self
+            .access
+            .operations
+            .get(&operation_id(id).map_err(error)?)
+            .is_some_and(|selected| selected != &metadata)
+        {
+            return Err(error(Error::Corrupt));
+        }
+        if self.evolution {
+            // JJ's predecessor walker uses splice/duplicate/topological work
+            // inside one synchronous operation visit. Admit the complete batch
+            // before it can expand its queues, including shared predecessors.
+            let mut edges = 0usize;
+            for prior in value
+                .commit_predecessors
+                .iter()
+                .flat_map(|map| map.values())
+            {
+                self.budget.work(1).map_err(error)?;
+                if prior.len() > 256 {
+                    return Err(error(Error::Limit));
+                }
+                edges = edges
+                    .checked_add(1 + prior.len())
+                    .ok_or_else(|| error(Error::Limit))?;
+            }
+            self.budget
+                .work(
+                    edges
+                        .checked_mul(edges)
+                        .ok_or_else(|| error(Error::Limit))?,
+                )
+                .map_err(error)?;
+        }
         let mut allowed = self.allowed.lock().unwrap();
         for parent in &value.parents {
             self.budget.work(1).map_err(error)?;
@@ -68,9 +103,17 @@ impl OpStore for Guard {
         )
         .map_err(error)?;
         let view = self.source.read_view(id).await?;
-        self.budget
-            .metadata(&dto::View::try_from(&view).map_err(|_| error(Error::Corrupt))?)
-            .map_err(error)?;
+        let metadata = dto::View::try_from(&view).map_err(|_| error(Error::Corrupt))?;
+        self.budget.metadata(&metadata).map_err(error)?;
+        let id = m::ViewId::from_slice(id.as_bytes()).map_err(|_| error(Error::Corrupt))?;
+        if self
+            .access
+            .views
+            .get(&id)
+            .is_some_and(|selected| selected != &metadata)
+        {
+            return Err(error(Error::Corrupt));
+        }
         Ok(view)
     }
     async fn write_view(&self, _: &o::View) -> OpStoreResult<o::ViewId> {
@@ -95,6 +138,13 @@ pub(super) async fn selected(
     context: &Context,
     operation: m::OperationId,
 ) -> Result<jj_lib::operation::Operation> {
+    selected_for(context, operation, false).await
+}
+pub(super) async fn selected_for(
+    context: &Context,
+    operation: m::OperationId,
+    evolution: bool,
+) -> Result<jj_lib::operation::Operation> {
     context.member(ObjectKey::Operation(operation)).await?;
     let id = o::OperationId::from_bytes(operation.as_bytes());
     let source = loader(context.access.binding.metadata_path())?
@@ -106,6 +156,7 @@ pub(super) async fn selected(
         budget: context.budget.clone(),
         allowed: Mutex::new(BTreeSet::from([id.clone()])),
         max_operations: context.limits.max_history_visits,
+        evolution,
         view: context.access.prepared.as_ref().map(|_| {
             o::ViewId::from_bytes(context.access.operations[&operation].view_id.as_bytes())
         }),

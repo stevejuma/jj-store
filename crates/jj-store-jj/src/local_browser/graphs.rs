@@ -101,37 +101,47 @@ pub(super) async fn describe(
         .resolve_change_id(commit.change_id())
         .await
         .map_err(|_| Error::Unavailable)?;
-    let mut bookmarks: Vec<_> = repo
-        .view()
-        .local_bookmarks()
-        .filter_map(|(name, target)| {
-            let added = target.added_ids().any(|id| id == commit.id());
-            let removed = target.removed_ids().any(|id| id == commit.id());
-            (added || removed).then(|| Bookmark {
-                name: name.as_str().to_owned(),
-                remote: None,
-                added,
-                removed,
-                conflicted: target.has_conflict(),
-            })
-        })
-        .collect();
-    bookmarks.extend(
-        repo.view()
-            .all_remote_bookmarks()
-            .filter_map(|(symbol, remote_ref)| {
-                let target = &remote_ref.target;
-                let added = target.added_ids().any(|id| id == commit.id());
-                let removed = target.removed_ids().any(|id| id == commit.id());
-                (added || removed).then(|| Bookmark {
-                    name: symbol.name.as_str().to_owned(),
-                    remote: Some(symbol.remote.as_str().to_owned()),
-                    added,
-                    removed,
-                    conflicted: target.has_conflict(),
+    let (bookmarks, workspaces) =
+        if let Some(prepared) = &access.prepared {
+            prepared.annotations(id, budget)?
+        } else {
+            let mut bookmarks: Vec<_> = repo
+                .view()
+                .local_bookmarks()
+                .filter_map(|(name, target)| {
+                    let added = target.added_ids().any(|id| id == commit.id());
+                    let removed = target.removed_ids().any(|id| id == commit.id());
+                    (added || removed).then(|| Bookmark {
+                        name: name.as_str().to_owned(),
+                        remote: None,
+                        added,
+                        removed,
+                        conflicted: target.has_conflict(),
+                    })
                 })
-            }),
-    );
+                .collect();
+            bookmarks.extend(repo.view().all_remote_bookmarks().filter_map(
+                |(symbol, remote_ref)| {
+                    let target = &remote_ref.target;
+                    let added = target.added_ids().any(|id| id == commit.id());
+                    let removed = target.removed_ids().any(|id| id == commit.id());
+                    (added || removed).then(|| Bookmark {
+                        name: symbol.name.as_str().to_owned(),
+                        remote: Some(symbol.remote.as_str().to_owned()),
+                        added,
+                        removed,
+                        conflicted: target.has_conflict(),
+                    })
+                },
+            ));
+            let workspaces = repo
+                .view()
+                .workspaces_for_wc_commit_id(commit.id())
+                .into_iter()
+                .map(|n| n.as_str().to_owned())
+                .collect();
+            (bookmarks, workspaces)
+        };
     Ok(Commit {
         id,
         change_id: m::ChangeId::from_slice(commit.change_id().as_bytes())
@@ -147,12 +157,7 @@ pub(super) async fn describe(
             .collect::<Result<_>>()?,
         conflicted: commit.has_conflict(),
         bookmarks,
-        workspaces: repo
-            .view()
-            .workspaces_for_wc_commit_id(commit.id())
-            .into_iter()
-            .map(|n| n.as_str().to_owned())
-            .collect(),
+        workspaces,
         visible: targets.as_ref().is_some_and(|t| t.has_visible(commit.id())),
         divergent: targets.as_ref().is_some_and(|t| t.is_divergent()),
     })
@@ -313,7 +318,15 @@ pub(super) async fn run(
             let stream = jj_lib::evolution::walk_predecessors(repo, &starts);
             let mut stream = std::pin::pin!(stream);
             let mut nodes = vec![];
-            while let Some(entry) = stream.try_next().await.map_err(|_| Error::Unavailable)? {
+            while let Some(entry) = stream.try_next().await.map_err(|error| match error {
+                jj_lib::evolution::WalkPredecessorsError::Backend(error) => {
+                    native::map_backend(error)
+                }
+                jj_lib::evolution::WalkPredecessorsError::OpStore(error) => {
+                    crate::query::language::operations::store_error(error)
+                }
+                jj_lib::evolution::WalkPredecessorsError::CycleDetected(_) => Error::Corrupt,
+            })? {
                 budget.authorize(access.as_ref()).await?;
                 match position.visit(ObjectKey::Commit(cid(entry.commit.id())?)) {
                     Action::Skip => continue,

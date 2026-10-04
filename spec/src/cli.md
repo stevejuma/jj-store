@@ -7,6 +7,12 @@ recovers prepared final publication. Explicit retries preserve request and
 destination identities. This browser/API flow does not add an implicit CLI
 migration or execute source repository configuration.
 
+The local-reader acceptance fixture qualifies prepared commit detail and
+evolution against pinned upstream results, including hidden rewrite targets,
+exact bookmark/workspace annotations, old-operation selection and current
+authorization. Ordinary limits remain independent from preparation. This
+qualification changes neither installed executables nor source repository state.
+
 The native lifecycle HTTP fixture additionally qualifies current application
 content search and Thread directory metadata through the same authorized native
 service. This transport acceptance remains independent of a live runner or

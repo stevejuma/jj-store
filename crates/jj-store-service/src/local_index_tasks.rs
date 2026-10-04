@@ -358,7 +358,21 @@ impl IndexTasks {
         request: q::GraphRequest,
         page: q::GraphWindow,
     ) -> Result<q::GraphPage> {
-        if !matches!(request, q::GraphRequest::Log { .. }) {
+        let response = self
+            .read(access, operation, q::Request::Graph(request, page))
+            .await?;
+        let q::Response::Graph(page) = response else {
+            return Err(q::Error::Invalid.into());
+        };
+        Ok(page)
+    }
+    pub async fn read(
+        &self,
+        access: Arc<dyn q::Access>,
+        operation: m::OperationId,
+        request: q::Request,
+    ) -> Result<q::Response> {
+        if !request.needs_prepared_index() {
             return Err(q::Error::Invalid.into());
         }
         Self::authorize(access.as_ref()).await?;
@@ -375,7 +389,7 @@ impl IndexTasks {
         };
         Ok(self
             .executor
-            .graph_prepared(access, prepared, request, page)
+            .read_prepared(access, prepared, request)
             .await?)
     }
 }

@@ -7,6 +7,13 @@ receipts remain provenance and never authorize destination commands. Preparation
 selects supported historical roots only in a new independent destination, with
 stable synthetic request identities and explicit source-to-destination maps.
 
+Prepared local history readers retain read-only operation and backend guards.
+Evolution may follow only retained operation-parent and predecessor edges under
+ordinary admission; neither cache visibility nor reverse reference labels grant
+write capability. Index and operation-store writes remain denied, and cold
+history recovery prepares only disposable derived data without changing source
+heads, companion selection or physical files.
+
 Agent session, message and tool duration timing are bounded read projections
 over exact selected event evidence. Recovering qualified Codex JSONL timestamps
 from sanitized payloads does not stage or publish objects, alter immutable
