@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { api, sample } from "./native-browser-fixture.js";
+import { api, sample, repo } from "./native-browser-fixture.js";
 import {
   captureStatus,
   captureSettings,
@@ -17,7 +17,7 @@ async function openAgents(page: Page) {
   await page.getByRole("menuitem", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Agents", exact: true }).click();
 }
-async function bootstrap(page: Page) {
+async function bootstrap(page: Page, linked = false) {
   await api(page, { access: "local_trusted" });
   await page.route("**/v1/bootstrap", (r) =>
     r.fulfill({
@@ -29,7 +29,7 @@ async function bootstrap(page: Page) {
           local_capture_management: true,
         },
         storage: { ready: true },
-        repositories: [],
+        repositories: linked ? [{ id: repo, name: "Local acceptance" }] : [],
         backups: [],
       },
     }),
@@ -192,12 +192,21 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
       'tbody tr:first-child td:first-child img[src="/agent-icons/codex.svg"]',
     ),
   ).toBeVisible();
+  await expect(
+    table.getByRole("columnheader", { name: "Repository", exact: true }),
+  ).toHaveCount(0);
+  const repositoryLink = table
+    .locator("tbody tr:first-child td:first-child")
+    .getByRole("link");
+  await expect(repositoryLink).toHaveAttribute("aria-disabled", "true");
+  await expect(repositoryLink).not.toHaveAttribute("href");
+  await expect(repositoryLink.locator("svg")).toBeVisible();
   const iconImport = page.getByRole("button", {
     name: "Import history for Codex CLI source 1",
   });
   expect((await iconImport.textContent())?.trim()).toBe("");
   await expect(iconImport).toHaveAttribute("title", "Import history");
-  await expect(table.locator("tfoot td")).toHaveAttribute("colspan", "4");
+  await expect(table.locator("tfoot td")).toHaveAttribute("colspan", "3");
   await expect(table.locator("tfoot time[datetime]")).toBeVisible();
   await statusFilter.click();
   await page.getByRole("option", { name: "Degraded", exact: true }).click();
@@ -262,4 +271,63 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
     page.getByText("completed · Boundary available", { exact: true }),
   ).toBeVisible();
   expect(imported!.selector).toBe(coverage.sources[2].selector);
+});
+
+test("cold source refresh retains coverage and repository link opens its authorized page", async ({
+  page,
+}) => {
+  await bootstrap(page, true);
+  const coverage = mixedCaptureSources();
+  coverage.sources[0].last_bound_repository = repo;
+  let delay = false;
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/v1/local/capture**", async (r) => {
+    const path = new URL(r.request().url()).pathname;
+    if (path.endsWith("/sources") && delay) await gate;
+    const value = path.endsWith("/settings")
+      ? captureSettings()
+      : path.endsWith("/sources")
+        ? coverage
+        : captureStatus();
+    return r.fulfill({ contentType: "application/json", body: pretty(value) });
+  });
+  await page.goto("/");
+
+  await openAgents(page);
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  const table = page.getByRole("table", { name: "Capture sources" });
+  const link = table
+    .locator("tbody tr:first-child td:first-child")
+    .getByRole("link", { name: "Local acceptance" });
+  await expect(link).toHaveAttribute("href", `#/repos/${repo}/files`);
+  await expect(table.locator("tbody > tr")).toHaveCount(3);
+  const timestamp = await table.locator("tfoot time").getAttribute("datetime");
+  delay = true;
+  await page
+    .getByRole("button", { name: "Refresh capture", exact: true })
+    .click();
+  await expect(
+    table.locator('tfoot [data-ui-component="spinner"]'),
+  ).toBeVisible();
+  await expect(table.locator("tbody > tr")).toHaveCount(3);
+  await expect(table.locator("tfoot time")).toHaveAttribute(
+    "datetime",
+    timestamp!,
+  );
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({
+    path: test.info().outputPath("source-footer-refreshing.png"),
+  });
+  release();
+  await expect(
+    table.locator('tfoot [data-ui-component="spinner"]'),
+  ).toHaveCount(0);
+  await link.click();
+  await expect(page).toHaveURL(new RegExp(`/repos/${repo}/files`));
+  await expect(
+    page.getByRole("heading", { name: "Agents", level: 1 }),
+  ).toHaveCount(0);
 });

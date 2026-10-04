@@ -139,16 +139,16 @@ shared-package release qualification does not alter those original Git gates.
 | M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                              |
 | M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002,E-DESK-003,E-DESK-005,E-DESK-006                                                                                                                                                                                                                                                                                                                    |
 | M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                            | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                              |
-| M18         | In progress | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Deliver a usable Codex preview; retain extended roadmap as Deferred                                                            | Usable CLI preview delivered; additional harnesses and broader roadmap remain Deferred         | E-M17-001,E-M17-002,E-M17-003,E-M17-004,E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-001 |
+| M18         | In progress | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Deliver a usable Codex preview; retain extended roadmap as Deferred                                                            | Usable CLI preview delivered; additional harnesses and broader roadmap remain Deferred         | E-M17-001,E-M17-002,E-M17-003,E-M17-004,E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-001,E-M18-013 |
 | M18.0       | Done        | M9.6                    | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023,JST-COLLAB-024,JST-COLLAB-025,JST-COLLAB-026,JST-COLLAB-027,JST-COLLAB-028,JST-COLLAB-029,JST-COLLAB-030 | Canonical gap traceability, agreed defaults and explicit qualification gates                                                   | Start M18.1 exact capture regressions                                                          | E-M17-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.1       | Done        | M18.0                   | JST-COLLAB-021,JST-COLLAB-022,JST-COLLAB-023                                                                                                                                                                      | Diagnostic-only publication, cross-batch reduction and bounded append                                                          | Start M18.2 configured local capture runtime and readers                                       | E-M17-002,E-M17-003,E-M17-004,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| M18.2       | Partial     | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-029,JST-COLLAB-030                                                                                                                         | Codex capture and management qualified; additional readers Deferred                                                            | Reuse completed Codex path in M18.8; defer OpenCode and Cursor completion                      | E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-021,E-M17-022,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-005 |
+| M18.2       | Partial     | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-020,JST-COLLAB-029,JST-COLLAB-030                                                                                                                         | Codex capture and management qualified; additional readers Deferred                                                            | Reuse completed Codex path in M18.8; defer OpenCode and Cursor completion                      | E-M17-005,E-M17-006,E-M17-007,E-M17-008,E-M17-009,E-M17-010,E-M17-011,E-M17-012,E-M17-013,E-M17-014,E-M17-015,E-M17-016,E-M17-017,E-M17-018,E-M17-019,E-M17-020,E-M17-021,E-M17-022,E-M17-023,E-M17-024,E-M17-025,E-M17-026,E-M17-027,E-M17-028,E-M17-029,E-M17-030,E-M17-031,E-M17-032,E-M17-033,E-M17-034,E-M17-035,E-M17-036,E-M17-037,E-M17-038,E-M17-039,E-M17-040,E-M17-041,E-M17-042,E-M17-043,E-M17-044,E-M17-045,E-M17-046,E-M17-047,E-M17-048,E-M17-049,E-M17-050,E-M17-051,E-M17-052,E-M17-053,E-M17-054,E-M17-055,E-M17-056,E-M17-057,E-M17-058,E-M17-059,E-M17-060,E-M17-061,E-M17-062,E-M17-063,E-M17-064,E-M17-065,E-M17-066,E-M17-067,E-M17-068,E-M17-069,E-M17-070,E-M17-071,E-M17-072,E-M17-073,E-M17-074,E-M17-075,E-M17-076,E-M17-077,E-M17-078,E-M17-079,E-M17-080,E-M17-081,E-M18-005,E-M18-013 |
 | M18.3       | Deferred    | M18.2                   | JST-COLLAB-024                                                                                                                                                                                                    | Complete conversations, exact message/plan reviews and versioned replay                                                        | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.4       | Deferred    | M18.3                   | JST-COLLAB-025                                                                                                                                                                                                    | Separately opted-in checkpoint scopes and common canonical producer                                                            | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011 |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -71385,6 +71385,193 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Agents source-table presentation and its internal observation metadata only. No milestone promotion, historical evidence rewrite, server configuration mutation, real history import, Rust build, service reset/install/restart or publication. Root aggregates, full browser/Storybook/Rust inventories, new harness qualification and visual baseline approval remain out of scope under targeted verification.",
   "next": "Use refreshed preview7470. Source update time describes accepted coverage reads; per-source event/modification timing would need separately qualified server evidence."
+},
+{
+  "id": "E-M18-012",
+  "tasks": [
+    "M18.8"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change mpsxrmoz",
+  "kind": "Compact source repository navigation, retained-refresh footer spinner and fair bounded coverage observations",
+  "versions": "Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; Rust1.98.1/macOS ARM64; released Design Core Table/Spinner; existing browser_preview and development RustFS executables.",
+  "formats": "UI first-cell repository links and3-column colspan only; fair one-second acquisition of existing management mutex for status/source/receipt reads. Commands, held physical journals, owned blocking cancellation, authorization, wire schemas, native roots and source formats unchanged. Browser observation freshness remains accepted-read time.",
+  "files": [
+    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+    "catalog/components/store-application/capture-source-table-play.ts",
+    "catalog/fixtures/CaptureSettingsFixture.svelte",
+    "crates/jj-store-server/src/capture_management/imports.rs",
+    "crates/jj-store-server/src/capture_management/observation.rs",
+    "crates/jj-store-server/src/capture_management/sources.rs",
+    "crates/jj-store-server/src/capture_management/tests/observations.rs",
+    "crates/jj-store-server/src/capture_management/tests.rs",
+    "crates/jj-store-server/src/capture_management.rs",
+    "docs/capture-preview.md",
+    "spec/src/api.md",
+    "spec/src/cli.md",
+    "spec/src/collaboration.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSettings.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSourceFooter.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSourceIdentity.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+    "web/src/lib/ui/store-settings/StoreSettings.svelte",
+    "web/tests/browser/local-capture-loading.spec.ts",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "crates/jj-store-server/src/capture_management/tests/observations.rs#cached_observations_queue_before_later_import_work",
+    "crates/jj-store-server/src/capture_management/tests/observations.rs#queued_observation_rechecks_current_authority",
+    "crates/jj-store-server/src/capture_management/tests/observations.rs#timed_out_or_cancelled_observation_releases_its_queue_place"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; read canonical UI/API/CLI/collaboration and milestone chapters; inspect Community then released Design Core Table/Spinner; CDP live capture request timings",
+      "result": "pass",
+      "failures": 0,
+      "note": "Clean main mpsxrmoz after4eff7363. Sources are worker watch-channel catalogs, not request-triggered transcript scans. Persisted private source identities/cursors are separate from reconstructed runtime coverage. Live settings reads8-10ms; status/sources repeatedly409 Busy with150/300/450/600ms backoff and5s fallback polling."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --lib capture_management::tests::observations (before)",
+      "result": "fail",
+      "failures": 3,
+      "note": "rust-before.log: all3 new queue, authority and cancellation regressions fail because reads try-lock immediately."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before)",
+      "result": "fail",
+      "failures": 2,
+      "note": "stories-before.log:18 pass/2 fail; separate repository header persists and refreshing footer has no spinner."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --lib capture_management::tests::observations (after and final); cargo check --locked -p jj-store-server",
+      "result": "pass",
+      "failures": 0,
+      "note": "rust-regression.log and rust-regression-final.log:3 pass. FIFO tests cover status/source/receipt reads preceding later import waiters, current authority after queue admission, one-second Busy and cancellation queue cleanup. rust-check.log passes. Existing linker unwind warning retained."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test capture_management source_pages_",
+      "result": "pass",
+      "failures": 0,
+      "note": "rust-http-sources.log:2 pass for bounded cached pages and current actor/configuration/installation/physical-journal withholding. No wire/schema/generated response change."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories-accepted.log:21 pass including interaction/accessibility. First-cell icon repository link preserves callback identity; no repository column;3-column footer; spinner retains rows and clears on ready; unsaved Agent draft blocks navigation without clearing the draft."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-settings.test.ts web/tests/vite/capture-observation-http.test.ts web/tests/vite/production-capture-management.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "units.log:33 pass across5 direct capture files, preserving pending request identity, accepted source freshness and cancellation."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "browser.log:7 pass/1 fail. New navigation fixture omitted repository from bootstrap, so the expected named repository was absent. Added explicit linked bootstrap only for the navigation scenario; retained actual route and authorization assertions."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold source refresh retains coverage\"; pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "browser-regression.log:1 pass; browser-final.log:8 pass cold. Actual production Settings repository link closes Settings and selects authorized files page; gated source refresh retains rows and accepted datetime, shows footer spinner and clears it. Existing loading/busy, drafts, exact imports, notification dismissal, polling lifetime, desktop/mobile/Axe and narrow containment remain qualified. Isolated7458 service stopped; no Rust rebuild for browser fixture."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership; focused Prettier and rustfmt --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-check-final.log/catalog-check.log: zero errors/warnings,179-module catalog boundary. architecture-final.log:917 modules; boundaries.log:17 packages; ownership.log and format-check.log pass. Initial redundant link role warning and rustfmt module-order diagnostics corrected. Ledger never whole-file formatted."
+    },
+    {
+      "command": "pnpm web:build (final); pnpm spec:first; pnpm spec:validate; pnpm dev:backend:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "build-final.log passes with existing chunk-size warning. spec-first.log:17 protected files/4 owning chapters; spec-validate.log:22 chapters/167 requirements. backend-build.log passes with existing linker warning; checkout-only CLI/server binaries, no installed executable replacement."
+    },
+    {
+      "command": "jj rebase -r uqwlnutu -d mpsxrmoz; jj workspace update-stale; explicit development executable/runtime paths pnpm dev:capture:restart in preview; CDP timing/DOM/screenshot",
+      "result": "pass",
+      "failures": 0,
+      "note": "Preview7470/7472 backend restarted using main target/debug/jj-store and existing embedded runtime. Vite retained, isolated fixture/history preserved, main service/desktop untouched. Live4 source pages all200 with80/109/137/138ms response latency; whole observed settings/status/source chains about130-200ms. This is warm read evidence, not a cold-import guarantee. Real compact table shows repo links under titles and3-column footer. after.jpg and live-timings.json saved; temporary proof tab closed and user tab retained. No real Import/Pause/Rescan/config save submitted."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check docs/capture-preview.md spec/src/api.md spec/src/cli.md spec/src/collaboration.md spec/src/ui.md (final after plan-note restoration)",
+      "result": "pass",
+      "failures": 0,
+      "note": "17 protected files/5 mapped chapters,22 chapters/167 requirements and136 tasks validated. Focused documentation formatting passes. All409 prior evidence objects and raw JSON prefix preserved; only E-M18-012/E-M18-013 updated. Extra broad diagnostic failures remain explicit; root aggregates, other harness/release qualification and visual baseline approval remain outside this narrow acceptance."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Narrow source-table/coverage-read slice only. No milestone promotion, new reader, historical evidence rewrite, wire generation, installed binary/service/main-runtime changes, real import/config command, reset, publication or visual baseline approval. Additional server-library survey failures are recorded independently in E-M18-013; this entry does not claim a full Rust-suite pass. Cold sanitizer/import preparation remains explicitly Deferred in the agreed preview plan.",
+  "next": "Use compact Sources in preview7470; retain focused queue/navigation/spinner coverage. Broader cold sanitizer and timed import qualification stays in E-M18-013 and the deferred roadmap."
+},
+{
+  "id": "E-M18-013",
+  "tasks": [
+    "M18",
+    "M18.2"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change mpsxrmoz",
+  "kind": "Separate broad server-library diagnostic and baseline cold-publication timeout reproduction",
+  "versions": "Rust1.98.1/macOS ARM64 debug profile; same checked-in native sanitizer and retained capture fixtures.",
+  "formats": "Diagnostic evidence only; no assertion, timeout, worker ownership, sanitizer, persistence or wire format weakened. Previous three management production files temporarily selected from parent vsusztpy for baseline compilation, then restored byte-for-byte from task backup before final queue regression.",
+  "files": [
+    "spec/src/milestones.md",
+    "docs/capture-preview.md",
+    "crates/jj-store-server/src/capture_management/tests/scheduled_import.rs",
+    "crates/jj-store-server/src/capture_management/tests/scheduled_import/handoff.rs",
+    "crates/jj-store-server/src/capture_supervisor/opencode/tests.rs",
+    "crates/jj-store-server/src/capture_supervisor/tests.rs"
+  ],
+  "tests": [
+    "crates/jj-store-server/src/capture_management/tests/scheduled_import.rs#accepted_source_refuses_other_request_without_replacing_original_owned_work"
+  ],
+  "runs": [
+    {
+      "command": "cargo test --locked -p jj-store-server --lib",
+      "result": "fail",
+      "failures": 15,
+      "note": "rust-lib.log:95 passed/15 failed/110 total,863.14s. Escalated beyond focused read checks to inspect all existing control/import/runtime/storage consumers sharing the coordination boundary. Thirteen scheduled-import cases fail publication/readiness deadlines (12 at shared published helper scheduled_import.rs:76; one at handoff.rs:47); OpenCode publication did not enter gate; source-degradation readiness times out. New observation regressions, existing cancellation/revocation/physical-journal, foreground, storage lifetime and cold running-loss ownership tests pass. No full-library pass is claimed."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --lib capture_management::tests::scheduled_import::accepted_source_refuses_other_request_without_replacing_original_owned_work -- --exact --nocapture (current)",
+      "result": "fail",
+      "failures": 1,
+      "note": "rust-import-regression.log: same scheduled_import.rs:76 ten-second publication wait expires; process finishes166.43s because retained cold owner drains. No control/source observation is performed after scheduling in this scenario."
+    },
+    {
+      "command": "Temporarily select parent production management status/source/import read implementations via jj file show -r @-; cargo test --locked -p jj-store-server --lib capture_management::tests::scheduled_import::accepted_source_refuses_other_request_without_replacing_original_owned_work -- --exact --nocapture (baseline); restore and verify saved source bytes",
+      "result": "fail",
+      "failures": 1,
+      "note": "rust-import-baseline.log: identical scheduled_import.rs:76 Elapsed failure with pre-change try-lock implementations; process finishes122.71s. This representative cold publication failure predates the queue change. Other broad failures were not individually baseline reproduced and remain unqualified. Current implementation restored after baseline compilation; final three queue regressions pass."
+    },
+    {
+      "command": "pnpm spec:first (after deferred-plan clarification)",
+      "result": "fail",
+      "failures": 1,
+      "note": "JST-GOV-002: docs/implementation-plan.md mapped to architecture.md, which this narrow slice does not change. The extra plan note duplicated existing Deferred scope and was restored from parent instead of expanding the implementation."
+    },
+    {
+      "command": "jj restore --from @- -- docs/implementation-plan.md; verify original ledger prefix and all409 prior evidence objects",
+      "result": "pass",
+      "failures": 0,
+      "note": "Removed only this task's redundant plan edit. Existing cold sanitizer deferral stays unchanged in the accepted plan; current diagnostics remain in E-M18-013 and docs/capture-preview.md. All409 original objects and their raw JSON prefix retained."
+    }
+  ],
+  "result": "fail",
+  "remaining": [
+    "Cold debug sanitizer/import publication qualification and the 13 scheduled import deadline failures remain Deferred in the agreed preview roadmap; one representative is baseline-reproduced.",
+    "The separate OpenCode publication-gate and source-degradation readiness failures remain unqualified; assess independently before claiming broad server/harness completion."
+  ],
+  "scope": "Separate broad diagnostic, not the narrow Sources UI/read acceptance E-M18-012. Existing user-requested usable preview and UI priority retain explicit deferred cold sanitizer/native preparation optimization. No milestone promotion, weakened test, new publication guarantee, installation or reset. Every test process and isolated UI fixture has exited.",
+  "next": "Keep these failures visible. Reopen cold sanitizer/setup and affected publication/readiness qualification as a separate deferred slice; preserve the assertions and gate/ownership contracts."
 }
 ]
+
 ```

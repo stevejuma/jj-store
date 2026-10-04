@@ -5,13 +5,10 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Badge } from "@lapismd/design-core/shadcn/badge";
   import * as Table from "@lapismd/design-core/shadcn/table";
-  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
+  import StoreCaptureSourceIdentity from "./StoreCaptureSourceIdentity.svelte";
   import StoreCaptureSourceFilters from "./StoreCaptureSourceFilters.svelte";
   import StoreCaptureSourceFooter from "./StoreCaptureSourceFooter.svelte";
-  import {
-    captureSourceMatches,
-    captureSourceMember,
-  } from "./capture-source-presentation.js";
+  import { captureSourceMatches } from "./capture-source-presentation.js";
   import {
     captureProfiles,
     captureHistorySupported,
@@ -21,10 +18,14 @@
     management,
     repositoryName,
     onImport,
+    onRepository,
+    repositoryNavigationReason = "",
   }: {
     management: CaptureManagement;
     repositoryName: (id: string) => string;
     onImport?: () => void;
+    onRepository?: (id: string) => void;
+    repositoryNavigationReason?: string;
   } = $props();
   const captureState = $derived(management.state);
   const sources = $derived(captureState.sources);
@@ -37,6 +38,16 @@
         label: `${captureProfiles[source.profile]} source ${index + 1}`,
       }))
       .filter(({ source }) => captureSourceMatches(source, harness, status)),
+  );
+  const navigationReason = $derived(
+    repositoryNavigationReason ||
+      (captureState.settings.dirty || captureState.settings.unknown
+        ? "Save or cancel your Agent configuration before opening a repository."
+        : captureState.settings.saving ||
+            captureState.pending ||
+            captureState.commandBusy
+          ? "Resolve the current Agent request before opening a repository."
+          : ""),
   );
   const allowed = $derived(
     !captureState.settings.saving &&
@@ -78,7 +89,6 @@
         <Table.Header>
           <Table.Row>
             <Table.Head scope="col">Source</Table.Head>
-            <Table.Head scope="col">Repository</Table.Head>
             <Table.Head scope="col">Status</Table.Head>
             <Table.Head scope="col">History</Table.Head>
           </Table.Row>
@@ -87,25 +97,14 @@
           {#each rows as { source, label } (source.selector)}
             <Table.Row>
               <Table.Cell>
-                <div class="store-capture-sources__identity">
-                  <CommunityMemberAvatar
-                    member={captureSourceMember(source)}
-                    size="small"
-                    decorative
-                  />
-                  <div class="store-settings__stack">
-                    <strong>{label}</strong>
-                    <span class="store-settings__row-description"
-                      >{source.product_version}</span
-                    >
-                  </div>
-                </div>
+                <StoreCaptureSourceIdentity
+                  {source}
+                  {label}
+                  {repositoryName}
+                  {onRepository}
+                  {navigationReason}
+                />
               </Table.Cell>
-              <Table.Cell
-                >{source.last_bound_repository
-                  ? repositoryName(source.last_bound_repository)
-                  : "No recorded repository binding"}</Table.Cell
-              >
               <Table.Cell>
                 <div class="store-capture-sources__states">
                   <Badge variant="secondary">{source.phase}</Badge>
@@ -155,7 +154,7 @@
             </Table.Row>
           {:else}
             <Table.Row
-              ><Table.Cell colspan={4}>
+              ><Table.Cell colspan={3}>
                 <div class="store-capture-sources__empty">
                   <strong
                     >{sources.sources.length
@@ -174,7 +173,7 @@
         </Table.Body>
         <Table.Footer
           ><Table.Row
-            ><Table.Cell colspan={4}
+            ><Table.Cell colspan={3}
               ><StoreCaptureSourceFooter
                 {management}
                 shown={rows.length}
@@ -194,11 +193,6 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--card, var(--background));
-  }
-  .store-capture-sources__identity {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
   }
   .store-capture-sources__states {
     display: flex;

@@ -10,7 +10,11 @@
     captureSettingsLayout,
     filteredCaptureSources,
   } from "./capture-harness-play.js";
-  import { sourceTableIdentification } from "./capture-source-table-play.js";
+  import {
+    sourceTableIdentification,
+    sourceRefreshSpinner,
+    sourceRepositoryDraftGuard,
+  } from "./capture-source-table-play.js";
   import CaptureSettingsFixture from "../../fixtures/CaptureSettingsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Capture",
@@ -387,4 +391,15 @@
   name="Source avatars external filters icon import and observed footer"
   args={{ multipleHarnesses: true }}
   play={sourceTableIdentification}
+/>
+
+<Story
+  name="Refreshing sources shows a footer spinner while retaining rows"
+  args={{ delayedObservations: true }}
+  play={sourceRefreshSpinner}
+/>
+
+<Story
+  name="Source repository navigation preserves an unsaved configuration draft"
+  play={sourceRepositoryDraftGuard}
 />

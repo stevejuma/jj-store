@@ -26,12 +26,7 @@ impl Manager {
             return Err(Error::Invalid);
         }
         let this = self.clone();
-        let permit = self
-            .0
-            .gate
-            .clone()
-            .try_lock_owned()
-            .map_err(|_| Error::Busy)?;
+        let permit = self.observation_permit().await?;
         tokio::task::spawn_blocking(move || {
             let _permit = permit;
             if !this.0.authority.admit(actor)? {

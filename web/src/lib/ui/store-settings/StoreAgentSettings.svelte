@@ -5,9 +5,13 @@
   let {
     management,
     repositoryName,
+    onRepository,
+    repositoryNavigationReason,
   }: {
     management?: CaptureManagement;
     repositoryName?: (id: string) => string;
+    onRepository?: (id: string) => void;
+    repositoryNavigationReason?: string;
   } = $props();
   let tab = $state("capture");
 </script>
@@ -26,5 +30,11 @@
   refreshLabel="Refresh capture"
   refreshDisabled={management?.state.busy ?? false}
 >
-  <StoreCaptureSettings {management} {repositoryName} bind:section={tab} />
+  <StoreCaptureSettings
+    {management}
+    {repositoryName}
+    {onRepository}
+    {repositoryNavigationReason}
+    bind:section={tab}
+  />
 </StoreSettingsPage>

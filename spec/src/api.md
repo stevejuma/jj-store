@@ -1622,8 +1622,12 @@ not authorization. Disabled pages are empty without capture-state I/O; an absent
 or unexpectedly lost runtime is unavailable. Known completed stopped
 observations remain readable. Continuations tolerate current membership
 retirement/growth without reusing selectors; foreign runtime generations return
-a distinct stale selection error. This read endpoint cannot enroll sources,
-import history, advance reader cursors, publish roots or change device policy.
+a distinct stale selection error. Status, source and receipt reads use a fair
+coordination queue with a one-second acquisition bound; timeout returns the
+existing Busy response. The wait does not grant authority or retain transcript
+work. Current admission and private journal checks still run after acquisition.
+This read endpoint cannot enroll sources, import history, advance reader
+cursors, publish roots or change device policy.
 
 `POST /v1/local/capture/import` is an actor-free version-1 command with
 request_id, generation, expected_revision and selector. Current local Admin and

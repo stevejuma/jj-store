@@ -10,6 +10,7 @@ use std::{fs, time::Duration};
 mod import_policy;
 mod import_settlement;
 mod native_import;
+mod observations;
 mod rescan;
 mod scheduled_import;
 mod sources;

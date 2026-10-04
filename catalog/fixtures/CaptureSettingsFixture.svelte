@@ -55,6 +55,7 @@
   let visible = $state(true);
   let value = captureStatus();
   let settings = untrack(() => captureSettings(enabled));
+  let openedRepository = $state("");
   let accepted = $state<CaptureImport | null>(null);
   let controlAttempts = 0,
     importAttempts = 0;
@@ -211,9 +212,14 @@
 {#if visible}<StoreAgentSettings
     {management}
     repositoryName={() => "Capture repository"}
+    onRepository={(id) => (openedRepository = id)}
   />{/if}
 <StoreNotificationHost owner={notifications} />
 
 {#if multipleHarnesses && accepted}<output aria-label="Accepted source selector"
     >{accepted.selector}</output
+  >{/if}
+
+{#if openedRepository}<output aria-label="Opened capture repository"
+    >{openedRepository}</output
   >{/if}

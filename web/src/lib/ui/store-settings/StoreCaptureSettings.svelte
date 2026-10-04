@@ -23,11 +23,15 @@
   let {
     management,
     section = $bindable("capture"),
+    onRepository,
+    repositoryNavigationReason,
     repositoryName = () => "Previously bound repository",
   }: {
     management?: CaptureManagement;
     section?: string;
     repositoryName?: (id: string) => string;
+    onRepository?: (id: string) => void;
+    repositoryNavigationReason?: string;
   } = $props();
   const state = $derived(management?.state);
   $effect(() => {
@@ -117,6 +121,8 @@
           <StoreCaptureSources
             {management}
             {repositoryName}
+            {onRepository}
+            {repositoryNavigationReason}
             onImport={() => {
               section = "imports";
             }}
@@ -147,7 +153,12 @@
           />{:else}<StoreCaptureLoading label="Loading capture status" />{/if}
       {/if}
       {#if section === "sources" && !state.value?.enabled && !state.value}
-        <StoreCaptureSources {management} {repositoryName} />
+        <StoreCaptureSources
+          {management}
+          {repositoryName}
+          {onRepository}
+          {repositoryNavigationReason}
+        />
       {/if}
       {#if state.pending?.uncertain}
         <Alert.Root role="status"

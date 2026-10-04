@@ -1755,16 +1755,20 @@ leave global settings and save/cancel controls available. Additional editable
 harness sections require qualified server configuration support.
 
 Sources MUST use a semantic data table within the rounded Settings border, with
-source, repository, state and history-action columns. Source identity includes
-the bundled harness avatar beside its stable label and version. Labelled harness
-and status filters sit outside the border, aligned to the trailing edge above
-the table, and combine over loaded rows only. They MUST NOT alter observed
-coverage, source selectors, paging cursors or import intent. Source labels stay
-stable across filtering. History imports use icon-only buttons with accessible
-names and descriptive tooltips, retaining capability, runtime and exact-selector
-guards; deferred harnesses cannot import history.
+source, state and history-action columns. Source identity includes the bundled
+harness avatar beside its stable label and version. A recorded repository
+appears beneath the title as an icon-bearing link to its existing authorized
+repository page. Missing binding remains explicit; navigation cannot discard
+settings drafts or unresolved commands. Labelled harness and status filters sit
+outside the border, aligned to the trailing edge above the table, and combine
+over loaded rows only. They MUST NOT alter observed coverage, source selectors,
+paging cursors or import intent. Source labels stay stable across filtering.
+History imports use icon-only buttons with accessible names and descriptive
+tooltips, retaining capability, runtime and exact-selector guards; deferred
+harnesses cannot import history.
 
-A full-width footer cell spans the columns and reports coverage status, styled
+A full-width footer cell spans the columns and reports coverage status with a
+spinner during source refresh, retaining the prior rows and counts, and styled
 shown/loaded/observed count badges, the last successful observation through the
 shared relative-time component, and More sources when a cursor exists. This
 browser observation time MUST NOT imply a transcript event or source-file

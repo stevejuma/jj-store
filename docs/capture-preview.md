@@ -38,7 +38,12 @@ are deferred usability work.
 The debug build can spend more than two minutes preparing the native sanitizer
 on a cold capture/import. During this work, Capture inspection may temporarily
 report busy; the original import continues and its receipt can be inspected.
-Performance optimization remains deferred.
+Read-only inspection joins the management queue for at most one second rather
+than losing every race to continuing import work. The source table retains
+accepted rows and shows a footer spinner while refreshing. The source endpoint
+reads the worker's current cached catalog, without scanning transcript folders;
+source identities and cursors are durable private state, while runtime coverage
+is reconstructed after restart. Cold sanitizer optimization remains deferred.
 
 Captured sessions and transcript updates appear automatically in Agents. The
 sample fixture also contains seeded Codex, Cursor and OpenCode sessions; only

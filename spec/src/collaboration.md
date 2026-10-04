@@ -697,7 +697,12 @@ snapshot, scheduling or settlement.
 Installation source coverage MUST be a bounded cached device observation, served
 only through current LocalTrusted Admin/configuration/installation and private
 journal checks. Disabled reads return an empty disabled page without
-capture-state I/O. Enabled reads require an existing runtime observation;
+capture-state I/O. Status, source and import-receipt observations queue fairly
+behind active management work for at most one second, then report Busy. They
+MUST NOT repeatedly lose admission to later import steps or bypass current
+authority and private-journal checks. Cancellation before acquisition removes
+the waiter; after acquisition, the owned blocking observation retains its gate
+until completion. Enabled reads require an existing runtime observation;
 unexpected producer loss withholds stale nonterminal data. A completed stopped
 observation remains readable and grants no ability to restart an owner.
 

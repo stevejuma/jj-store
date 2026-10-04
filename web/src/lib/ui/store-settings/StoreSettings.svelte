@@ -2,6 +2,9 @@
   import { onMount } from "svelte";
   import { AppShell } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
+  import { settingsNavigationReason } from "./settings-navigation.js";
+  import { storeErrorMessage } from "../../controller/store-error.js";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreAppearance from "../store-appearance/StoreAppearance.svelte";
   import StoreRepositorySettings from "./StoreRepositorySettings.svelte";
   import StoreSyncReconciliation from "./StoreSyncReconciliation.svelte";
@@ -24,6 +27,24 @@
     section: StoreSettingsSection;
     onClose?: () => void;
   } = $props();
+  let repositoryError = $state("");
+  async function openCaptureRepository(id: string) {
+    repositoryError = "";
+    try {
+      await controller.actions.openRepository(id);
+      if (
+        controller.state.route.repository === id &&
+        controller.state.status.connection !== "failed"
+      )
+        onClose?.();
+      else
+        repositoryError =
+          controller.state.status.error ||
+          "Repository is unavailable. Refresh repositories before trying again.";
+    } catch (cause) {
+      repositoryError = storeErrorMessage(cause);
+    }
+  }
   onMount(() => {
     void controller.configuration?.observe();
     const timer = setInterval(() => {
@@ -49,8 +70,17 @@
     {:else if section === "service"}
       <StoreServiceSettings {controller} />
     {:else if section === "agents"}
+      <StoreNotice
+        noticeKey="capture-repository"
+        title="Could not open repository"
+        message={repositoryError}
+      />
       <StoreAgentSettings
         management={controller.capture}
+        onRepository={(id) => void openCaptureRepository(id)}
+        repositoryNavigationReason={settingsNavigationReason(
+          controller.state.settings,
+        )}
         repositoryName={(id) =>
           controller.state.repositories.find((r) => r.id === id)?.name ??
           "Previously bound repository"}

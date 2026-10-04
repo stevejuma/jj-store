@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import { Spinner } from "@lapismd/design-core/shadcn/spinner";
   import { Badge } from "@lapismd/design-core/shadcn/badge";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { CaptureManagement } from "../../controller/capture-types.js";
@@ -24,6 +25,9 @@
     role="status"
     aria-label="Source coverage status"
   >
+    {#if state.sourceState === "refreshing" && state.status !== "failed"}<Spinner
+        aria-hidden="true"
+      />{/if}
     <span>{status}</span>
     <div class="store-capture-sources__counts">
       <Badge variant="secondary">{shown.toLocaleString("en-GB")} shown</Badge>

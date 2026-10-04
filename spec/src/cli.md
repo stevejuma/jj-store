@@ -1237,11 +1237,17 @@ identity on each request and retains one selected journal generation and runtime
 control cell. Startup binding shares control channels only, not task or storage
 ownership. The manager's owned bounded blocking operation selects/replays device
 policy and applies its latest state under one coordination gate, surviving
-request cancellation. Durable selection and runtime request acceptance are
-reported separately. Missing or closed runtime controls cannot start another
-owner; accepted policy remains available for restart. Other readers retain their
-startup guard. The explicit local HTTP CLI profile is qualified separately;
-source import and browser coverage presentation remain composition work.
+request cancellation. Read-only status, source and receipt requests use a fair
+one-second bounded acquisition of that same gate so continuing import work
+cannot repeatedly overtake an observation. Timeout remains Busy; waiter
+cancellation releases only its queue place. Once dispatched, an observation
+retains its gate and current-policy checks through owned completion. No scan,
+new cache authority or CLI command is introduced. Durable selection and runtime
+request acceptance are reported separately. Missing or closed runtime controls
+cannot start another owner; accepted policy remains available for restart. Other
+readers retain their startup guard. The explicit local HTTP CLI profile is
+qualified separately; source import and browser coverage presentation remain
+composition work.
 
 Discovery and delivery task panic retains that storage lifetime and process lock
 until the exact running state is destroyed, including after a cancelled drain
