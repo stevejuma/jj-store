@@ -55,7 +55,20 @@ pub struct Prepared {
     resident: graph::Resident,
     _reservation: Option<Arc<crate::query::cache::Reservation>>,
 }
+/// Evictable completed cache ownership; executing readers use independent Arcs.
+pub struct Retained(Arc<crate::query::memory::Retained<Prepared>>);
+impl Retained {
+    pub fn get(&self) -> Option<Arc<Prepared>> {
+        self.0.get()
+    }
+    pub fn present(&self) -> bool {
+        self.0.present()
+    }
+}
 impl Prepared {
+    pub fn retain(self: Arc<Self>) -> Retained {
+        Retained(crate::query::memory::Retained::new(self))
+    }
     pub fn snapshot(&self) -> &Snapshot {
         &self.snapshot
     }

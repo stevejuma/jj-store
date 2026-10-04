@@ -603,6 +603,13 @@ restarted service cannot revive an old task or silently select current heads.
 This service facade alone does not advertise HTTP or browser preparation
 capability.
 
+Completed local generations participate in the same process-wide resident LRU as
+native indexes. Memory pressure may release an idle completed handle and its
+disk reservation before completed TTL expiry. Status and duplicate-start lookup
+must prune evicted handles; selected reads return exact-operation
+rebuild-required recovery. Keep executing reader handles charged until their
+last owner exits and never substitute a later generation after eviction.
+
 The LocalTrusted HTTP composition shares the native cache root and preparation
 worker with local tasks. Log, detailed commit and evolution dispatch consume
 prepared generations and return an explicit exact-operation rebuild-required

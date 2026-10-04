@@ -59,6 +59,12 @@ per-pin and concurrency budgets; a small cache cannot disable a valid query.
 Neither warm reads nor derived directory/reaction indexes stage or publish
 state.
 
+Native/local resident LRU eviction releases only disposable prepared read
+handles. It cannot cancel accepted commands, discard durable receipts, change
+native or companion selections, or replace the operation captured by an active
+reader. A reset preparation task remains a read-recovery condition; starting it
+again grants no mutation capability.
+
 Installation-local capture status and pause/resume use owned service DTOs and a
 transport-independent manager. This is device policy, not a repository mutation:
 the admitted transport supplies the actor, current installation Admin authority

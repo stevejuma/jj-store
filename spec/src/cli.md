@@ -1768,3 +1768,10 @@ Native projection recovery acceptance MUST reopen a previously prepared disk
 generation through a fresh executor, observe rebuild-required under a lower
 inline threshold, explicitly prepare and reproduce the exact pinned rows without
 changing the manifest.
+
+Shared resident admission regression MUST prove global ordering across native
+and local cache owners, refusal without eviction for oversized requests,
+nonblocking admission while a cache slot is busy, and retained
+charges/readability for an executing reader. Exact native cache and local
+preparation-task tests remain the direct delivery consumers; full pressure/RSS
+qualification is deferred.

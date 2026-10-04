@@ -943,3 +943,13 @@ same inline construction threshold as a missing index. Large generations return
 explicit rebuild-required recovery; preparation rebuilds the projection with its
 independent budget from verified disk data. Executor restart does not authorize
 an interactive ancestor traversal above that threshold.
+
+Shared resident allocation pressure MUST reclaim idle prepared native and local
+generations in process-wide least-recently-used order before refusing new
+growth. Keep weak cache registrations and drop their immutable handles outside
+the allocation registry lock. Oversized reservations fail without eviction. An
+executing reader retains its complete allocation lease and remains readable; do
+not evict a generation held by a reader or wait on its cache-slot lock. Native
+disk receipts remain disposable and independently recoverable after resident
+eviction. A local evicted task resets and may be prepared again for the same
+exact operation; it cannot report Ready without a retained generation.

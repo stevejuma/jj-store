@@ -111,19 +111,23 @@ impl Saved {
 }
 #[derive(Default)]
 pub(in super::super) struct Residents {
-    entries: Mutex<Vec<Arc<Saved>>>,
+    entries: Mutex<Vec<Arc<super::super::memory::Retained<Saved>>>>,
     retained: Arc<AtomicU64>,
 }
 impl Residents {
     pub(in super::super) fn get_memory(&self, access: &dyn ReadAccess) -> Option<Arc<Saved>> {
         let mut entries = self.entries.lock().unwrap();
-        let index = entries.iter().position(|e| {
-            e.repository == access.repository()
-                && e.epoch == access.epoch()
-                && e.operation == access.operation()
+        entries.retain(|entry| entry.present());
+        let (index, saved) = entries.iter().enumerate().find_map(|(index, slot)| {
+            slot.get_if(|e| {
+                e.repository == access.repository()
+                    && e.epoch == access.epoch()
+                    && e.operation == access.operation()
+            })
+            .map(|saved| (index, saved))
         })?;
-        let saved = entries.remove(index);
-        entries.push(saved.clone());
+        let slot = entries.remove(index);
+        entries.push(slot);
         Some(saved)
     }
     pub(super) fn get(
@@ -136,16 +140,20 @@ impl Residents {
     ) -> Result<Option<Arc<Saved>>> {
         let saved = {
             let mut entries = self.entries.lock().unwrap();
-            let Some(index) = entries.iter().position(|e| {
-                e.path == path
-                    && e.repository == access.repository()
-                    && e.epoch == access.epoch()
-                    && e.operation == access.operation()
+            entries.retain(|entry| entry.present());
+            let Some((index, saved)) = entries.iter().enumerate().find_map(|(index, slot)| {
+                slot.get_if(|e| {
+                    e.path == path
+                        && e.repository == access.repository()
+                        && e.epoch == access.epoch()
+                        && e.operation == access.operation()
+                })
+                .map(|saved| (index, saved))
             }) else {
                 return Ok(None);
             };
-            let saved = entries.remove(index);
-            entries.push(saved.clone());
+            let slot = entries.remove(index);
+            entries.push(slot);
             saved
         };
         if saved.verification.files == *files && saved.verification.matches(path, policy, budget)? {
@@ -183,7 +191,7 @@ impl Residents {
             }
         };
         let mut entries = self.entries.lock().unwrap();
-        entries.retain(|entry| entry.path != path);
+        entries.retain(|entry| entry.present() && entry.get_if(|e| e.path == path).is_none());
         // Eviction does not free a resident still held by an executing query.
         while !entries.is_empty()
             && (entries.len() >= policy.max_entries
@@ -195,7 +203,7 @@ impl Residents {
             return Ok(());
         }
         self.retained.fetch_add(weight, Ordering::AcqRel);
-        entries.push(Arc::new(Saved {
+        entries.push(super::super::memory::Retained::new(Arc::new(Saved {
             index,
             path,
             repository: access.repository(),
@@ -207,7 +215,7 @@ impl Residents {
             retained: self.retained.clone(),
             report: Mutex::new(report),
             memory: budget.index_memory.clone(),
-        }));
+        })));
         Ok(())
     }
 }

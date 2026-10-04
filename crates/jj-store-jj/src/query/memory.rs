@@ -12,19 +12,61 @@ use std::{
     sync::Mutex,
 };
 pub(crate) mod framing;
+mod retained;
+pub(crate) use retained::Retained;
 
 pub(crate) const LIMIT: u64 = 1024 * 1024 * 1024;
 struct Pool {
     used: AtomicU64,
     limit: u64,
+    clock: AtomicU64,
+    retained: Mutex<Vec<std::sync::Weak<dyn retained::Entry>>>,
 }
 impl Pool {
+    fn new(limit: u64) -> Self {
+        Self {
+            used: AtomicU64::new(0),
+            limit,
+            clock: AtomicU64::new(0),
+            retained: Mutex::default(),
+        }
+    }
+    fn global() -> &'static Arc<Self> {
+        static POOL: OnceLock<Arc<Pool>> = OnceLock::new();
+        POOL.get_or_init(|| Arc::new(Self::new(LIMIT)))
+    }
     fn reserve(self: &Arc<Self>, bytes: u64) -> Result<Lease> {
-        self.used
-            .fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
-                old.checked_add(bytes).filter(|n| *n <= self.limit)
-            })
-            .map_err(|_| Error::Limit)?;
+        if bytes > self.limit {
+            return Err(Error::Limit);
+        }
+        let admit = || {
+            self.used
+                .fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
+                    old.checked_add(bytes).filter(|n| *n <= self.limit)
+                })
+                .is_ok()
+        };
+        if !admit() {
+            let mut entries: Vec<_> = self
+                .retained
+                .lock()
+                .expect("resident registry")
+                .iter()
+                .filter_map(std::sync::Weak::upgrade)
+                .collect();
+            entries.sort_by_key(|entry| entry.used());
+            let mut admitted = false;
+            for entry in entries {
+                entry.evict_idle();
+                if admit() {
+                    admitted = true;
+                    break;
+                }
+            }
+            if !admitted {
+                return Err(Error::Limit);
+            }
+        }
         Ok(Lease {
             pool: self.clone(),
             bytes,
@@ -37,14 +79,7 @@ pub(crate) struct Lease {
 }
 impl Lease {
     pub(crate) fn reserve(bytes: u64) -> Result<Self> {
-        static POOL: OnceLock<Arc<Pool>> = OnceLock::new();
-        POOL.get_or_init(|| {
-            Arc::new(Pool {
-                used: AtomicU64::new(0),
-                limit: LIMIT,
-            })
-        })
-        .reserve(bytes)
+        Pool::global().reserve(bytes)
     }
 }
 impl Drop for Lease {
@@ -89,10 +124,7 @@ mod tests {
     use super::*;
     #[test]
     fn shared_resident_admission_lives_until_the_last_reader_exits() {
-        let pool = Arc::new(Pool {
-            used: AtomicU64::new(0),
-            limit: 100,
-        });
+        let pool = Arc::new(Pool::new(100));
         let native = Arc::new(pool.reserve(60).unwrap());
         let reader = native.clone();
         let local = pool.reserve(40).unwrap();

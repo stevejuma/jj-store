@@ -65,7 +65,7 @@ struct Entry {
     expires: Instant,
     used: Instant,
     cancellation: Cancellation,
-    prepared: Option<Arc<q::preparation::Prepared>>,
+    prepared: Option<q::preparation::Retained>,
 }
 impl Drop for Entry {
     fn drop(&mut self) {
@@ -92,6 +92,9 @@ impl Registry {
     fn prune(&mut self) {
         let now = Instant::now();
         self.0.retain(|_, entry| {
+            if entry.prepared.as_ref().is_some_and(|p| !p.present()) {
+                return false;
+            }
             if now < entry.expires {
                 return true;
             }
@@ -104,14 +107,18 @@ impl Registry {
         access: &dyn q::Access,
         operation: m::OperationId,
     ) -> Option<LocalIndexTask> {
-        self.0
-            .values()
-            .find(|e| {
-                e.matches(access, operation)
-                    && Instant::now() < e.expires
-                    && (matches!(e.task.state, State::Running) || e.prepared.is_some())
-            })
-            .map(|e| e.task.clone())
+        self.0.values().find_map(|e| {
+            if !e.matches(access, operation) || Instant::now() >= e.expires {
+                return None;
+            }
+            if matches!(e.task.state, State::Running) {
+                return Some(e.task.clone());
+            }
+            // Hold the observed generation until the Ready observation is
+            // built, even if another allocator starts reclaiming now.
+            let _prepared = e.prepared.as_ref()?.get()?;
+            Some(e.task.clone())
+        })
     }
     fn evict(&mut self, repository: Option<m::RepositoryId>, prepared_only: bool) -> bool {
         let id = self
@@ -295,7 +302,7 @@ impl IndexTasks {
                         _ if cancellation.is_cancelled() => State::Canceled,
                         Ok(prepared) => {
                             let stats = prepared.stats.clone();
-                            entry.prepared = Some(Arc::new(prepared));
+                            entry.prepared = Some(Arc::new(prepared).retain());
                             State::Ready { stats }
                         }
                         Err(q::Error::Canceled) => State::Canceled,
@@ -346,6 +353,17 @@ impl IndexTasks {
         if Instant::now() >= entry.expires {
             return Err(Error::Reset);
         }
+        let _prepared = if matches!(entry.task.state, State::Ready { .. }) {
+            Some(
+                entry
+                    .prepared
+                    .as_ref()
+                    .and_then(q::preparation::Retained::get)
+                    .ok_or(Error::Reset)?,
+            )
+        } else {
+            None
+        };
         if cancel {
             entry.cancel();
         }
@@ -385,7 +403,11 @@ impl IndexTasks {
                 .find(|entry| entry.matches(access.as_ref(), operation) && entry.prepared.is_some())
                 .ok_or(q::Error::IndexRebuildRequired)?;
             entry.used = Instant::now();
-            entry.prepared.clone().expect("prepared entry")
+            entry
+                .prepared
+                .as_ref()
+                .and_then(q::preparation::Retained::get)
+                .ok_or(q::Error::IndexRebuildRequired)?
         };
         Ok(self
             .executor
