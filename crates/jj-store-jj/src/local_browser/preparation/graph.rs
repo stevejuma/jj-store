@@ -43,6 +43,7 @@ fn selection(pin: &Pin, operation: m::OperationId, budget: &Budget) -> Result<[u
 }
 pub(super) struct Resident {
     operations: prepared::operations::Lookup,
+    commits: super::comparison::Graph,
     index: DefaultReadonlyIndex,
     visibility: Arc<super::visibility::Visibility>,
     selection: [u8; 32],
@@ -79,6 +80,8 @@ pub(super) async fn load(
         &mut || source.budget.work(1),
     )?;
     let memory = Lease::reserve(weight.saturating_add(source.shallow.len() as u64 * 128))?;
+    let graph_memory = Lease::reserve(size.checked_add(8192).ok_or(Error::Limit)?)?;
+    let mut graph_bytes = Vec::with_capacity(usize::try_from(size).map_err(|_| Error::Limit)?);
     let mut input = fs::File::open(segment.path()).map_err(|_| Error::Incomplete)?;
     let mut digest = Blake2b512::new();
     let mut buffer = vec![0; 64 * 1024];
@@ -95,6 +98,7 @@ pub(super) async fn load(
         }
         source.budget.read_bytes(n)?;
         digest.update(&buffer[..n]);
+        graph_bytes.extend_from_slice(&buffer[..n]);
     }
     let hash = digest.finalize();
     if read != size || segment.file_name().to_str() != Some(&format!("{hash:x}")) {
@@ -145,6 +149,12 @@ pub(super) async fn load(
         return Err(Error::IndexBudget);
     }
     Ok(Resident {
+        commits: super::comparison::Graph::load(
+            graph_bytes,
+            graph_memory,
+            source.limits.max_commits,
+            |amount| source.budget.work(amount),
+        )?,
         operations: prepared::operations::Lookup::load(
             directory.path(),
             operation,
@@ -163,6 +173,33 @@ pub(super) async fn load(
 }
 
 impl Prepared {
+    pub(in super::super) fn operation_view_fingerprint(
+        &self,
+        id: m::OperationId,
+        budget: &Budget,
+    ) -> Result<Option<[u8; 32]>> {
+        self.resident
+            .operations
+            .view_fingerprint(id, |amount| budget.work(amount))
+    }
+    pub(in super::super) fn difference(
+        &self,
+        before: &BTreeSet<m::GitSha1Id>,
+        after: &BTreeSet<m::GitSha1Id>,
+        budget: &Budget,
+        maximum: usize,
+    ) -> Result<operations::SetDelta<m::GitSha1Id>> {
+        self.resident
+            .commits
+            .difference(before, after, budget, maximum)
+    }
+    pub(in super::super) fn change_identity(
+        &self,
+        id: m::GitSha1Id,
+        budget: &Budget,
+    ) -> Result<m::ChangeId> {
+        self.resident.commits.change(id, budget)
+    }
     pub(in super::super) fn operation_fingerprint(
         &self,
         id: m::OperationId,

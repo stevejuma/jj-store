@@ -88,6 +88,15 @@ Ready prefix pages need no commit/tree/index preflight; plain metadata pages
 retain their cold reader. Prepared operation comparison, indexed child neighbors
 and deep continuations remain separate delivery work.
 
+E-READ-043 adds prepared historical operation/view admission and bounded
+visibility comparison through the verified commit index. It stops at shared
+ancestry and groups change IDs before selecting a page, hydrating only the
+selected added targets. Complete scale/lifecycle qualification and deeper
+operation/reference/copy/search/RPC continuations remain separate work.
+Changed-frontier discovery still completes under one ordinary visit budget per
+request; retained continuation for oversized differences and repeated group
+discovery remains delivery work.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

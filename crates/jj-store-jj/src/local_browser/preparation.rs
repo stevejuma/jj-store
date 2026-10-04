@@ -1,4 +1,5 @@
 //! Explicit construction in caller-reserved private scratch; no source index IO.
+mod comparison;
 mod graph;
 mod visibility;
 use super::git_read::{commit, extras, shallow_roots};
@@ -113,6 +114,10 @@ impl prepared::Source for LocalSource {
         let value =
             dto::Operation::try_from(operation.store_operation()).map_err(|_| Error::Corrupt)?;
         operation_store::fingerprint(&value, &self.budget)
+    }
+    fn view_digest(&self, view: &View) -> Result<[u8; 32]> {
+        let value = dto::View::try_from(view.store_view()).map_err(|_| Error::Corrupt)?;
+        operation_store::view_fingerprint(&value, &self.budget)
     }
     async fn operation(&self, id: &o::OperationId) -> Result<Operation> {
         self.budget.authorize(&self.pin).await?;

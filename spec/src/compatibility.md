@@ -1,5 +1,12 @@
 # Compatibility and release
 
+Prepared comparison extends the disposable local lookup to version2 records
+containing both operation and view fingerprints. Generations are process-owned
+and rebuilt; this artifact grants no source authority and needs no persisted
+repository migration. A compact read-only decoder of the unchanged pinned
+format-6 segment supplies commit/change identities and parent edges. Public
+operation difference and change-page schemas and cursor profiles are unchanged.
+
 Local prepared operation lookup uses a disposable fixed-width identity and
 canonical-fingerprint artifact bound to one operation, with a whole-file
 checksum and bounded loading. It is not a native, Git, companion, WAL or public

@@ -1,5 +1,19 @@
 # Local Git-backed JJ collaboration
 
+Prepared local operation comparisons MUST admit each requested operation from
+the retained identity lookup and verify fresh operation and view metadata
+against captured canonical fingerprints. They use the already verified immutable
+commit-index bytes for parent edges and change identities, without rereading Git
+commits or trees for visibility. Walk differing frontiers in topological order,
+stop when only shared ancestry remains, and charge visits, queue growth, memory
+and lookup work before use. Oversized differences fail under ordinary limits;
+never return a partial difference as complete. Change pages group indexed IDs
+before selecting their lexical window, then hydrate only selected added targets
+needed for predecessor/parent comparisons. Preserve exact conflict terms,
+explicit parent selection, ordering and forward/backward cursors. Missing ready
+generations use the existing exact-operation rebuild recovery. This disposable
+projection changes no public or authoritative persistence format.
+
 Local task comment reactions resolve only visible exact comment versions in the
 same committed companion selection as ReactionStore, with matching task
 membership. Reaction writes retain other domain selections and task versions;

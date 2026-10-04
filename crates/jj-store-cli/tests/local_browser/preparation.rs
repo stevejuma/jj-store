@@ -36,9 +36,9 @@ fn prepared_index_files(
     let operations = files
         .remove(Path::new("local-operations"))
         .expect("local preparation exports retained operation identities");
-    assert!(operations.len() >= 104 + 96);
-    assert_eq!((operations.len() - 104) % 96, 0);
-    assert_eq!(&operations[..8], b"JSTLOP1\0");
+    assert!(operations.len() >= 104 + 128);
+    assert_eq!((operations.len() - 104) % 128, 0);
+    assert_eq!(&operations[..8], b"JSTLOP2\0");
     assert_eq!(&operations[8..72], selected.as_bytes());
     let checksum_at = operations.len() - 32;
     assert_eq!(
@@ -48,10 +48,10 @@ fn prepared_index_files(
     let records = &operations[72..checksum_at];
     assert!(
         records
-            .chunks_exact(96)
+            .chunks_exact(128)
             .any(|row| &row[..64] == selected.as_bytes())
     );
-    for pair in records.chunks_exact(96).collect::<Vec<_>>().windows(2) {
+    for pair in records.chunks_exact(128).collect::<Vec<_>>().windows(2) {
         assert!(pair[0][..64] < pair[1][..64]);
     }
     // Every remaining file must be exactly the pinned upstream index output.

@@ -80073,6 +80073,170 @@ entries.
     ],
     "next": "Continue prepared local operation comparison and indexed change-group windows in the retained temporary workspace; complete qualification in the later slice.",
     "scope": "Private local preparation/metadata lookup plus common selector helper and direct local/native consumers; no installed CLI or server restart."
+  },
+  {
+    "id": "E-READ-043",
+    "tasks": ["M13.4"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change rlwzuolo",
+    "kind": "Prepared local operation comparisons and selected change-group hydration through bounded immutable graph frontiers",
+    "versions": "Rust1.98.1 (48a229cea 2026-09-01); jj-lib0.45.1; JJ0.45.1; macOS ARM64.",
+    "formats": "Disposable local-operations version2 uses JSTLOP2 NUL magic, selected64-byte operation, sorted128-byte records containing operation ID and canonical operation/view SHA256 fingerprints, and whole-file checksum. Resident256bytes/record plus64KiB admitted before allocation. Compact local decoder retains the already checksum-verified unchanged owned JJ format-6 segment with separate byte admission, validates fixed framing, sorted unique lookup, topological parents/generations and change offsets. Frontier/group/association memory is admitted before growth. Public schemas/routes/cursors, native/WAL/companion/receipt formats and ordinary limits unchanged.",
+    "files": [
+      "crates/jj-store-cli/tests/local_browser/preparation.rs",
+      "crates/jj-store-cli/tests/local_browser/prepared_comparisons.rs",
+      "crates/jj-store-cli/tests/local_browser/prepared_points_http.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-jj/src/local_browser/dispatch.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/operation_changes.rs",
+      "crates/jj-store-jj/src/local_browser/operation_store.rs",
+      "crates/jj-store-jj/src/local_browser/operations.rs",
+      "crates/jj-store-jj/src/local_browser/preparation/comparison.rs",
+      "crates/jj-store-jj/src/local_browser/preparation/comparison_tests.rs",
+      "crates/jj-store-jj/src/local_browser/preparation/graph.rs",
+      "crates/jj-store-jj/src/local_browser/preparation.rs",
+      "crates/jj-store-jj/src/query/prepared/mod.rs",
+      "crates/jj-store-jj/src/query/prepared/operations.rs",
+      "docs/implementation-plan.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md"
+    ],
+    "requirements": ["JST-LOCAL-004", "JST-JJ-003", "JST-API-001"],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/prepared_comparisons.rs#prepared_operation_comparison_skips_shared_history_and_git_objects",
+      "crates/jj-store-cli/tests/local_browser/prepared_comparisons.rs#prepared_operation_change_pages_hydrate_only_selected_groups",
+      "crates/jj-store-cli/tests/local_browser/prepared_points_http.rs#local_point_http_uses_ready_membership_and_only_falls_back_when_cold",
+      "crates/jj-store-jj/src/local_browser/preparation/comparison_tests.rs#frontier_differences_match_exhaustive_ancestry_for_branches_merges_and_redundant_heads",
+      "crates/jj-store-jj/src/local_browser/preparation/comparison_tests.rs#shared_frontiers_stop_early_and_visit_work_and_cancel_limits_fail_explicitly",
+      "crates/jj-store-jj/src/local_browser/preparation/comparison_tests.rs#compact_graph_rejects_invalid_framing_lookup_parents_and_change_offsets",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#disk_preparation_matches_pinned_upstream_index_bytes",
+      "crates/jj-store-cli/tests/local_browser.rs#local_code_reads_cover_graphs_diffs_roots_conflicts_and_multiple_heads"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_comparison_skips_shared_history_and_git_objects -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failure/9.78s: prepared OperationDiff returns Invalid before dispatch. operation-comparison-before-043.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj --locked (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.81s; two temporary unused private-method warnings before change-page integration; removed by the completed implementation. operation-comparison-check-initial-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_change_pages_hydrate_only_selected_groups -- --nocapture (before selected hydration)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failure/11.17s: two-group page reads42 metadata nodes, violating the9-node selected-page bound. operation-change-pages-before-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_comparison_skips_shared_history_and_git_objects -- --nocapture (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/9.01s: historical comparison with a4-visit budget, Git objects/source index removed and replaced historical view rejected/restored. operation-comparison-after-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_change_pages_hydrate_only_selected_groups -- --nocapture (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/10.12s: exact ordinary forward/backward groups/anchors; full window joined without hydrating unselected bodies. operation-change-pages-after-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked local_browser::preparation::comparison:: -- --nocapture (initial)",
+        "result": "fail",
+        "failures": 8,
+        "note": "8 compiler diagnostics: test glob selected preparation Limits instead of ordinary read Limits. Fixed the test-only explicit import. operation-comparison-units-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked local_browser::preparation::comparison:: -- --nocapture (first compiled)",
+        "result": "fail",
+        "failures": 2,
+        "note": "1pass/2fail: compact decoder confused parent-overflow offset zero with an empty parent list. Corrected production decoding to inspect both words; preserved all assertions. operation-comparison-units-final-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked local_browser::preparation::comparison:: -- --nocapture (fixed)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass/0.07s. Exhaustive4096 head-set pairs match independent full ancestry on branches, merges, redundant heads and3-parent overflow. Short tails over100 shared commits need2 admitted identities; malformed framing/lookup/offset/parent/generation, unknown IDs, work/visit/cancel limits reject explicitly. operation-comparison-units-fixed-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_ -- --nocapture; cargo test -p jj-store-cli --test local_browser --locked local_preparation_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "9prepared tests/35.41s plus2preparation tests/7.90s. Direct prefix/reference/log/detail/evolution/point/diff/HTTP consumers including10,000 bookmarks, cancellation/binding and exact upstream local index bytes pass. operation-comparison-prepared/preparation-043.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli --locked (first/final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "20.21s/12.55s; affected JJ and direct service/HTTP/CLI packages pass without new warnings after final production edits. operation-comparison-check/check-final-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_comparison_skips_shared_history_and_git_objects -- --nocapture (strengthened admission)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/20.08s. Warm current denial/generation change rejected, invalid parent explicit, virtual root preserved and later-operation lookup rejected. Resident historical detail/difference still succeeds with source Git/index objects and prepared segment files removed. operation-comparison-admission-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::prepared:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "6pass/0.26s: v2 fingerprint framing plus operation/view lookup, checksum/selection/order, disk-before-write admission and bounded scratch tables. operation-comparison-builder-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked disk_preparation_matches_pinned_upstream_index_bytes -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/1.35s: native default-writer output remains byte-identical to pinned JJ. operation-comparison-native-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_code_reads_cover_graphs_diffs_roots_conflicts_and_multiple_heads -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/6.92s: ordinary local operation/change, root, graph, conflict and multiple-head behavior preserved. operation-comparison-ordinary-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_change_pages_hydrate_only_selected_groups -- --nocapture (final associations; measured; no Git)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three exact passes/9.34s,10.49s,9.69s after association-memory admission and removal of unnecessary selected hydration. Final first two-group page uses4 metadata nodes,5713 charged bytes,2683 work vs42 metadata nodes before. Explicit predecessor groups replay with all Git objects removed;4-visit oversized rewrite still returns Limit. operation-change-pages-final/measured/no-git-043.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_point_http_uses_ready_membership_and_only_falls_back_when_cold -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/8.96s after final production edits: diff/change cold409 exact-operation recovery and ready responses join existing point/prefix/reference/signed-page/source-seal proofs. Disposable filesystem server stopped. operation-comparison-http-final-043.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli; cargo fmt -p jj-store-jj -p jj-store-cli -- --check; pnpm exec prettier --write spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/compatibility.md spec/src/jj-integration.md spec/src/local-jj.md docs/implementation-plan.md; pnpm check:boundaries; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed Rust/docs formatting,17package boundaries and1ownership validator pass. operation-comparison-rust-format/format[-final]/boundaries/ownership-043.log. Final fixture edits formatted; no root aggregates or unrelated lanes run."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final138task bookkeeping,16protected files/7canonical chapters and5validators/23chapters/172requirements pass. operation-comparison-ledger-format/progress/spec-first/spec-043.log. No complete qualification or milestone promotion."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "22 unique focused Rust tests pass. Prepared comparison/page-hydration delivery complete, without overall qualification or milestone promotion. Current/historical metadata retains fresh authorization, generation and source fingerprint checks; virtual roots, invalid parents and future operation exclusion remain explicit.",
+      "Changed-frontier discovery and change-key grouping still complete under one ordinary visit budget per request. Very large rewrites and repeated pages need retained/indexed continuation rather than replaying that discovery; this slice never returns a truncated complete difference.",
+      "Indexed filtered references/child neighbors, deep operation/predecessor/copy/search continuations, paged native RPC and remaining local application search/index delivery remain open.",
+      "Full combined integration/contracts, Linux/native/near-capacity fixtures, measured RSS/release latency, complete cold production browser, fault/revocation/restart/publication/real-RustFS, registry/release and Help/source-review refresh remain deferred. UI code/public schemas unchanged; UI suites/build and contract regeneration are out of scope under the requested split. Main/Linux source and original dev services untouched; workspace remains open. Visual baselines remain unapproved; inherited __eh_frame linker warning and prior strict-lint gaps remain separately deferred."
+    ],
+    "next": "Continue indexed filtered references, operation neighbors and retained deep/difference/search/RPC continuations in this workspace; qualify the complete implementation separately.",
+    "scope": "Private local prepared operation/view admission, compact graph access and change grouping with direct prepared readers and native default-writer byte equivalence. An initial canonical patch-context miss changed no files. No installed CLI or original server restart."
   }
 ]
 ```

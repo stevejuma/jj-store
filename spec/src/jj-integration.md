@@ -1,5 +1,15 @@
 # Native JJ integration
 
+Local prepared operation comparisons retain canonical view fingerprints as well
+as operation fingerprints. They read admitted historical metadata directly and
+compare visibility through bounded immutable index edges, stopping at a shared
+frontier. The compact graph decoder consumes the checksum-verified owned
+format-6 segment, admits its resident bytes before allocation and validates
+framing, sorted lookup, parent ordering and change offsets. Change-group paging
+uses indexed change identities and hydrates only selected added commits. Neither
+comparison repairs a source index, loads trees, invents rewrite relationships,
+changes public DTOs or publishes state.
+
 Native/local code-card summary readers consume only the selected operation/view
 and bounded direct commit heads, excluding the virtual root. Their counts and
 maximum committer timestamps describe that head window; unvisited heads or

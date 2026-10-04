@@ -6,6 +6,8 @@ mod code_summary;
 mod index_tasks_acceptance;
 #[path = "local_browser/preparation.rs"]
 mod preparation_acceptance;
+#[path = "local_browser/prepared_comparisons.rs"]
+mod prepared_comparisons;
 #[path = "local_browser/prepared_details.rs"]
 mod prepared_details;
 #[path = "local_browser/prepared_operations.rs"]

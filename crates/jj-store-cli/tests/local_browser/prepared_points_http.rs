@@ -23,6 +23,29 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
         jj(&folder, &["new", "-m", &format!("Later {n}")]);
     }
     let operation = jj(&folder, &["op", "log", "--no-graph", "-n", "1", "-T", "id"]);
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(folder.join(".jj/repo")));
+    let q::Response::Operation(selected_detail) = q::Executor::new(1)
+        .unwrap()
+        .read(
+            access.clone(),
+            operation.parse().unwrap(),
+            q::Request::Operation {
+                operation: operation.parse().unwrap(),
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    let q::ObjectData::Operation(selected_metadata) = selected_detail.operation.data else {
+        panic!()
+    };
+    let operation_comparison = json!({"operation":operation,"cursor":null,
+        "request":{"kind":"operation_diff","query":{"operation":operation,"parent":null}}});
+    let operation_changes = json!({"operation":operation,"cursor":null,
+        "request":{"kind":"operation_changes","query":{"operation":operation,
+            "parent":selected_metadata.parents[0],"limit":1,"anchor":null,"direction":"forward"}}});
     let installed = installation::initialize_filesystem(&temp.path().join("state")).unwrap();
     let mut config = Config::load(&installed.config).unwrap();
     let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
@@ -155,6 +178,13 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     let cold_prefix: Value = cold_prefix.json().await.unwrap();
     assert_eq!(cold_prefix["code"], "index_rebuild_required");
     assert_eq!(cold_prefix["local_snapshot"]["operation"], operation);
+    for query in [&operation_comparison, &operation_changes] {
+        let cold = post(&query_path, query.clone()).send().await.unwrap();
+        assert_eq!(cold.status(), reqwest::StatusCode::CONFLICT);
+        let cold: Value = cold.json().await.unwrap();
+        assert_eq!(cold["code"], "index_rebuild_required");
+        assert_eq!(cold["local_snapshot"]["operation"], operation);
+    }
     let task: Value = post(
         &format!("/local/repos/{id}/index/tasks"),
         json!({"operation":operation}),
@@ -226,6 +256,34 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
         historical_operation
     );
     assert!(stats(&prefix) <= 8, "{prefix}");
+    let comparison: Value = post(&query_path, operation_comparison)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(comparison["snapshot"]["operation"], operation);
+    assert_eq!(comparison["data"]["data"]["data"]["status"], "difference");
+    assert_eq!(comparison["data"]["data"]["data"]["operation"], operation);
+    assert!(stats(&comparison) <= 9, "{comparison}");
+    let changes: Value = post(&query_path, operation_changes)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(changes["snapshot"]["operation"], operation);
+    assert_eq!(
+        changes["data"]["data"]["groups"].as_array().unwrap().len(),
+        1
+    );
+    assert!(stats(&changes) <= 9, "{changes}");
     let first: Value = post(&query_path, references.clone())
         .send()
         .await
@@ -277,7 +335,6 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     );
     // Even a valid replacement protobuf cannot trigger ordinary fallback from
     // a corrupt ready generation. SimpleOpStore does not hash filenames.
-    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(folder.join(".jj/repo")));
     let operation_id = operation.parse().unwrap();
     let q::Response::Operation(detail) = q::Executor::new(1)
         .unwrap()

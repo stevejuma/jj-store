@@ -1,5 +1,12 @@
 # Architecture
 
+Local prepared comparisons share checksum-verified immutable commit-index bytes
+through a compact bounded decoder. Separate resident admission covers that
+decoder; request queues and result identities remain bounded by ordinary visit,
+work and output limits. Canonical operation/view fingerprints bind historical
+source rereads to the generation. No graph repository, source index repair,
+commit/tree preflight or repository publication is needed for view comparison.
+
 Native and local code summaries use the owned metadata read boundary and a
 finite selected-view head window. They hydrate selected commit records without
 creating a graph/index or visiting ancestors, trees or reference presentations.

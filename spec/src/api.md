@@ -1,5 +1,12 @@
 # Read APIs and browser
 
+Local operation-difference and change-page queries use an exact ready generation
+with independent retained operation/parent admission and fresh canonical source
+checks. Cold queries return the existing rebuild-required selection; ready
+queries follow bounded differing index frontiers and hydrate only selected
+change groups. Existing complete-result, explicit parent selection and signed
+cursor semantics remain unchanged.
+
 Repository directory discovery and metadata loading are independent browser
 reads. Discovery may display authorized names without fetching every card's
 code/WorkStore/ReviewStore pages. Viewport-owned metadata requests share two

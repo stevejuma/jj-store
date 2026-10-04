@@ -126,6 +126,9 @@ pub(crate) trait Source {
     fn operation_digest(&self, _: &Operation) -> Result<[u8; 32]> {
         Err(Error::Invalid)
     }
+    fn view_digest(&self, _: &jj_lib::view::View) -> Result<[u8; 32]> {
+        Err(Error::Invalid)
+    }
     async fn operation(&self, id: &jj_lib::op_store::OperationId) -> Result<Operation>;
     async fn view(&self, operation: &Operation) -> Result<jj_lib::view::View>;
     async fn commit(&self, id: &backend::CommitId) -> Result<CommitFields>;
@@ -249,7 +252,9 @@ async fn build_with_tables(
             disk.put(PENDING, commit.as_bytes(), &[])?;
         }
         if budget.operation_lookup() {
-            disk.put(SEEN_OPS, id.as_bytes(), &budget.operation_digest(&op)?)?;
+            let mut fingerprints = budget.operation_digest(&op)?.to_vec();
+            fingerprints.extend(budget.view_digest(&view)?);
+            disk.put(SEEN_OPS, id.as_bytes(), &fingerprints)?;
         } else {
             disk.put(SEEN_OPS, id.as_bytes(), &[])?;
         }

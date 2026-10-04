@@ -1,5 +1,11 @@
 # CLI and server commands
 
+Prepared local comparison regressions retain exact ordinary operation
+differences and forward/backward change pages, short differing tails over deep
+shared history, missing Git objects, historical source replacement/retry and
+explicit visit limits. These isolated fixtures do not qualify Linux or release
+scale.
+
 Native lifecycle and filesystem-browser regressions cover finite code-summary
 head windows, damaged/missing local derived data, timestamp sample ordering,
 historical operation selection and source preservation. Actual native/local HTTP

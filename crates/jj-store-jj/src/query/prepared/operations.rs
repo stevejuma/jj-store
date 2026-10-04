@@ -6,12 +6,13 @@ use jj_store_model::OperationId;
 use sha2::{Digest as _, Sha256};
 use std::io::{BufReader, BufWriter, Read as _, Write as _};
 
-const MAGIC: &[u8; 8] = b"JSTLOP1\0";
+const MAGIC: &[u8; 8] = b"JSTLOP2\0";
 const FRAMING: u64 = 8 + 64 + 32;
-const RECORD: u64 = 96;
+const RECORD: u64 = 128;
 struct Record {
     id: OperationId,
     digest: [u8; 32],
+    view_digest: [u8; 32],
 }
 pub(crate) struct Lookup {
     ids: Vec<Record>,
@@ -46,7 +47,7 @@ pub(super) fn write(
     output(selected.as_bytes())?;
     let mut row = disk.first(SEEN_OPS)?;
     while let Some((id, fingerprint)) = row {
-        if id.len() != 64 || fingerprint.len() != 32 {
+        if id.len() != 64 || fingerprint.len() != 64 {
             return Err(Error::Corrupt);
         }
         output(&id)?;
@@ -85,7 +86,7 @@ impl Lookup {
         // is fixed-width; no operation bodies, views or reference names survive.
         let memory = Lease::reserve(
             count
-                .checked_mul(192)
+                .checked_mul(256)
                 .and_then(|n| n.checked_add(64 * 1024))
                 .ok_or(Error::Limit)?,
         )?;
@@ -100,7 +101,7 @@ impl Lookup {
         let mut ids = Vec::with_capacity(usize::try_from(count).map_err(|_| Error::Limit)?);
         for _ in 0..count {
             work(1)?;
-            let mut bytes = [0; 96];
+            let mut bytes = [0; 128];
             file.read_exact(&mut bytes).map_err(|_| Error::Corrupt)?;
             digest.update(bytes);
             let id = OperationId::from_slice(&bytes[..64]).map_err(|_| Error::Corrupt)?;
@@ -109,7 +110,8 @@ impl Lookup {
             }
             ids.push(Record {
                 id,
-                digest: bytes[64..].try_into().unwrap(),
+                digest: bytes[64..96].try_into().unwrap(),
+                view_digest: bytes[96..].try_into().unwrap(),
             });
         }
         let mut checksum = [0; 32];
@@ -160,6 +162,18 @@ impl Lookup {
             (Some(id), None) => PrefixResolution::SingleMatch(id),
         })
     }
+    pub(crate) fn view_fingerprint(
+        &self,
+        id: OperationId,
+        mut work: impl FnMut(usize) -> Result<()>,
+    ) -> Result<Option<[u8; 32]>> {
+        work(self.ids.len().max(1).ilog2() as usize + 2)?;
+        Ok(self
+            .ids
+            .binary_search_by_key(&id, |record| record.id)
+            .ok()
+            .map(|index| self.ids[index].view_digest))
+    }
 }
 
 #[cfg(test)]
@@ -200,8 +214,8 @@ mod tests {
         let directory = tempfile::tempdir().unwrap();
         let scratch = directory.path().join("scratch");
         let mut disk = Tables::new(&scratch, Space::new(1024 * 1024), true).unwrap();
-        disk.put(SEEN_OPS, &[1; 64], &[4; 32]).unwrap();
-        disk.put(SEEN_OPS, &[2; 64], &[4; 32]).unwrap();
+        disk.put(SEEN_OPS, &[1; 64], &[4; 64]).unwrap();
+        disk.put(SEEN_OPS, &[2; 64], &[4; 64]).unwrap();
         let selected = jj_lib::op_store::OperationId::from_bytes(&[2; 64]);
         let limit = FRAMING + RECORD * 2 - 1;
         assert_eq!(
@@ -227,7 +241,7 @@ mod tests {
         bytes.extend_from_slice(selected.as_bytes());
         for id in ids {
             bytes.extend_from_slice(id.as_bytes());
-            bytes.extend_from_slice(&[4; 32]);
+            bytes.extend_from_slice(&[4; 64]);
         }
         let checksum = Sha256::digest(&bytes);
         bytes.extend_from_slice(&checksum);
@@ -257,6 +271,16 @@ mod tests {
         .unwrap();
         assert_eq!(admitted, bytes.len());
         assert!(lookup.fingerprint(ids[0], |_| Ok(())).unwrap().is_some());
+        assert_eq!(
+            lookup.view_fingerprint(ids[0], |_| Ok(())).unwrap(),
+            Some([4; 32])
+        );
+        assert!(
+            lookup
+                .view_fingerprint(OperationId::new([4; 64]), |_| Ok(()))
+                .unwrap()
+                .is_none()
+        );
         assert!(
             lookup
                 .fingerprint(OperationId::new([4; 64]), |_| Ok(()))

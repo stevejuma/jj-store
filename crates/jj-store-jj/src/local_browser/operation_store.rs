@@ -25,6 +25,16 @@ fn error(value: Error) -> OpStoreError {
     OpStoreError::Other(Box::new(value))
 }
 pub(super) fn fingerprint(operation: &dto::Operation, budget: &Budget) -> Result<[u8; 32]> {
+    canonical_fingerprint(operation, budget, b"jj-store/local-operation/v1\0")
+}
+pub(super) fn view_fingerprint(view: &dto::View, budget: &Budget) -> Result<[u8; 32]> {
+    canonical_fingerprint(view, budget, b"jj-store/local-view/v1\0")
+}
+fn canonical_fingerprint(
+    value: &impl Serialize,
+    budget: &Budget,
+    domain: &[u8],
+) -> Result<[u8; 32]> {
     use sha2::{Digest as _, Sha256};
     struct Hash<'a> {
         digest: Sha256,
@@ -49,8 +59,8 @@ pub(super) fn fingerprint(operation: &dto::Operation, budget: &Budget) -> Result
         budget,
         failed: None,
     };
-    hash.digest.update(b"jj-store/local-operation/v1\0");
-    serde_json::to_writer(&mut hash, operation)
+    hash.digest.update(domain);
+    serde_json::to_writer(&mut hash, value)
         .map_err(|_| hash.failed.take().unwrap_or(Error::Corrupt))?;
     Ok(hash.digest.finalize().into())
 }
