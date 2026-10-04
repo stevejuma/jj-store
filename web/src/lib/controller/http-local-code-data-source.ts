@@ -10,6 +10,17 @@ import {
   type LocalCodeRequest as Request,
 } from "./http-local-query.js";
 export class HttpLocalCodeDataSource extends HttpLocalQuery {
+  async codeSummary(operation: string, signal?: AbortSignal) {
+    signal?.throwIfAborted();
+    const summary = await this.query<"code_summary">(
+      operation,
+      { kind: "code_summary", query: { limit: 50 } },
+      undefined,
+      signal,
+    );
+    signal?.throwIfAborted();
+    return summary;
+  }
   references(operation: string, cursor?: string, input: ReferenceQuery = {}) {
     return this.query<"references">(
       operation,

@@ -71,6 +71,57 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     .unwrap();
     let id = registered["binding"]["repository"].as_str().unwrap();
     let query_path = format!("/local/repos/{id}/query");
+    let code_summary = json!({"operation":operation,"cursor":null,
+        "request":{"kind":"code_summary","query":{"limit":1}}});
+    let code: Value = post(&query_path, code_summary.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(code["snapshot"]["operation"], operation);
+    assert_eq!(code["data"]["kind"], "code_summary");
+    assert_eq!(code["data"]["data"]["commits"], 1);
+    assert_eq!(code["data"]["data"]["commits_partial"], true);
+    assert_eq!(
+        code["data"]["data"]["latest"]["description"]
+            .as_str()
+            .unwrap()
+            .trim(),
+        "Later 11"
+    );
+    assert!(code["next_cursor"].is_null());
+    assert!(code["previous_cursor"].is_null());
+    if let Some(path) = std::env::var_os("JJ_STORE_CODE_SUMMARY_LOCAL_CAPTURE") {
+        fs::write(path, serde_json::to_vec(&vec![json!({"path":"/v1/local/repos/{repo}/query","method":"post","status":200,"media":"application/json","data":code})]).unwrap()).unwrap();
+    }
+    for limit in [0, 257] {
+        let mut invalid = code_summary.clone();
+        invalid["request"]["query"]["limit"] = json!(limit);
+        assert_eq!(
+            post(&query_path, invalid)
+                .send()
+                .await
+                .unwrap()
+                .status()
+                .as_u16(),
+            413
+        );
+    }
+    let mut invalid = code_summary.clone();
+    invalid["request"]["query"]["unknown"] = json!(1);
+    assert_eq!(
+        post(&query_path, invalid)
+            .send()
+            .await
+            .unwrap()
+            .status()
+            .as_u16(),
+        400
+    );
     let summary = json!({"operation":operation,"cursor":null,
         "request":{"kind":"commit_summary","query":{"commit":commit}}});
     // No ready task exists: the ordinary content path is independently usable.

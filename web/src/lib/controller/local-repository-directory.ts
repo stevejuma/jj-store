@@ -15,29 +15,13 @@ export async function readLocalRepositoryDirectory(
     source.reviewActivity!(signal),
   ]);
   signal?.throwIfAborted();
-  const graph =
+  const summary =
     head.heads.length === 1
-      ? await source.graph("log", {
-          operation: head.heads[0]!,
-          limit: 50,
-          signal,
-        })
+      ? await source.codeSummary!(head.heads[0]!, signal)
       : null;
-  if (graph) assertPinned(graph.snapshot, source, head.heads[0]!);
+  if (summary) assertPinned(summary.snapshot, source, head.heads[0]!);
   signal?.throwIfAborted();
-  const commits =
-    graph?.data.data.graph === "log"
-      ? graph.data.data.nodes
-          .map((n) => n.commit)
-          .filter((c) => !/^0+$/.test(c.id))
-      : [];
-  const latest = commits
-    .slice()
-    .sort(
-      (a, b) =>
-        Number(b.committer.timestamp.millis) -
-        Number(a.committer.timestamp.millis),
-    )[0];
+  const latest = summary?.data.latest;
   const dates = [
     ...(latest ? [latest.committer.timestamp.millis] : []),
     ...tasks.groups
@@ -45,7 +29,7 @@ export async function readLocalRepositoryDirectory(
       .map((group) => group.updated_at_millis),
   ];
   return {
-    code: graph?.snapshot ?? null,
+    code: summary?.snapshot ?? null,
     work: tasks.snapshot,
     review: reviews.snapshot,
     description:
@@ -57,8 +41,8 @@ export async function readLocalRepositoryDirectory(
     updatedAtMillis: dates.length
       ? dates.reduce((max, v) => (v > max ? v : max))
       : null,
-    commits: commits.length,
-    commitsPartial: Boolean(graph?.next_cursor),
+    commits: Number(summary?.data.commits ?? 0),
+    commitsPartial: summary?.data.commits_partial ?? head.heads.length > 1,
     reviews: Number(reviews.activity.threads),
     reviewsPartial: reviews.activity.threads_partial,
     taskGroups: tasks.groups,

@@ -7,8 +7,10 @@ OpenAPI/TypeScript and actual first/resumed response evidence. Native
 manifest/WAL, local companion, signed cursor and domain capacities are
 unchanged. Compact review activity adds two further routes with version-1
 native/local summaries, strict finite windows, independent snapshot profiles and
-explicit sampled-count status. The generated inventory now contains 117 paths
-(42 local and 75 other paths). Activity DTOs carry no persisted-format change.
+explicit sampled-count status. Finite code-head summaries add a native route and
+an operation-pinned local query variant with version-1 summaries and exact
+native/Git identity widths. The generated inventory now contains 118 paths (42
+local and 76 other paths). Summary DTOs carry no persisted-format change.
 Focused delivery evidence does not qualify the complete combined route/browser
 inventory or promote a release milestone.
 

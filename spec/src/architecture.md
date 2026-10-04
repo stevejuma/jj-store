@@ -1,5 +1,13 @@
 # Architecture
 
+Native and local code summaries use the owned metadata read boundary and a
+finite selected-view head window. They hydrate selected commit records without
+creating a graph/index or visiting ancestors, trees or reference presentations.
+Latest metadata describes the newest sampled committer time, and count
+uncertainty remains explicit. Browser cards request these summaries through
+their existing independent operation pins; read workers retain current access,
+cancellation and admission. No storage authority or persisted format changes.
+
 Compact native/local ReviewStore activity is a read-only service projection of
 the admitted first catalog window. It returns counts and maximum accepted times,
 without anchor/comment presentation or causal event ordering. Provider closure

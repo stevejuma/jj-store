@@ -61,19 +61,19 @@ visible-reference reads, native retained visibility/reverse labels, shared idle
 resident eviction, viewport-owned repository metadata reads, and native
 root-bound WorkStore projections with selected-window summary hydration, and
 native application content indexes with retained query keys. Visible card
-loading retains bounded graph windows and now uses compact review activity;
-lightweight server code summaries and review root reuse remain delivery work.
-E-READ-037 adds cross-request local WorkStore root/projection and exact-query
-reuse behind fresh companion/domain admission. Native missing-operation
-construction now uses the owned bounded format writer with compact, admitted
-scratch for interactive and small-cache reads. Immutable resident lookup also
-reuses separately prepared historical operations without copying another slot.
-Cold historical operations now build under separate full reservations and retain
-verified data only. Graph evaluation releases the namespace after completing the
-immutable primary generation, including filtered queries. Missing primary
-generations now use private reserved staging and reacquire the namespace only
-for complete-generation installation. Existing-disk projection recovery now
-moves verified files into an actual-size private reservation and releases the
+loading now uses finite selected-view code-head summaries and compact review
+activity. Review root reuse remains delivery work. E-READ-037 adds cross-request
+local WorkStore root/projection and exact-query reuse behind fresh
+companion/domain admission. Native missing-operation construction now uses the
+owned bounded format writer with compact, admitted scratch for interactive and
+small-cache reads. Immutable resident lookup also reuses separately prepared
+historical operations without copying another slot. Cold historical operations
+now build under separate full reservations and retain verified data only. Graph
+evaluation releases the namespace after completing the immutable primary
+generation, including filtered queries. Missing primary generations now use
+private reserved staging and reacquire the namespace only for
+complete-generation installation. Existing-disk projection recovery now moves
+verified files into an actual-size private reservation and releases the
 namespace before decoding and deriving visibility. It preserves hard/inline
 limits, exact source files and cancellation cleanup; it copies no index and
 reserves no unrelated construction maximum. Local operation/deep lookup and
@@ -97,7 +97,12 @@ Snapshot-page activity streams times without constructing presentation events;
 merged activity needs no causal ordering. Native/local directory cards retain
 their existing partial-count and date policies. Fresh access, complete provider
 closure admission and independent root/companion pins still apply. Root-bound
-review activity reuse and lightweight code metadata remain delivery work.
+review activity reuse remains delivery work. Code summaries read only the first
+lexical nonvirtual head window and return its newest sampled committer metadata;
+unvisited ancestry or additional heads keep counts explicitly incomplete. Cards
+request 50 heads without invoking history preparation. Native/local request
+admission and historical pins retain their existing authority; no trees,
+ancestors or graph indexes are read for these summaries.
 
 ### Deferred complete qualification
 

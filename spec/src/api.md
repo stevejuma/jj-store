@@ -5,8 +5,24 @@ reads. Discovery may display authorized names without fetching every card's
 code/WorkStore/ReviewStore pages. Viewport-owned metadata requests share two
 actual concurrent directory reads, propagate cancellation to their transport,
 preserve independent pins and discard obsolete results. Existing paging,
-authorization and partial-activity contracts remain unchanged; lightweight
-code-summary delivery and complete browser qualification are separate slices.
+authorization and partial-activity contracts remain unchanged; complete browser
+qualification remains a separate slice.
+
+Repository code summaries MUST read only the selected operation/view and a
+bounded first window of its lexically ordered nonvirtual commit heads. Native
+`GET /v1/repos/{repo}/code/summary` and the local operation-pinned
+`code_summary` query accept 1..256 heads; cards request 50. The response
+contains the window's commit count and the commit metadata with maximum
+committer time within that window, with stable first-ID tie breaking. It MUST
+mark the count incomplete if heads are unreturned or any returned commit has a
+nonvirtual parent, without claiming a complete visible-history count or
+repository-wide latest time. Empty-root and fully returned root-child heads may
+report complete counts. No ancestry traversal, commit graph/index construction,
+tree read or reference presentation is required. Native/local identity widths
+and fresh pin checks remain explicit; ambiguous operation heads are not
+reconciled and their card counts remain incomplete. This head-window contract
+replaces the card's former first-50 topological graph sample; full history
+remains a separate graph query.
 
 Native `GET /v1/repos/{repo}/work/activity` and local
 `POST /v1/local/repos/{repo}/work/activity` return independently pinned

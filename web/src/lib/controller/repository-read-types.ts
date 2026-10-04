@@ -9,6 +9,8 @@ export type CodeWindow<T> = CodeEnvelope<T> & {
   previous_cursor: string | null;
 };
 export type CodeGraph = Model<"GraphPage"> | Model<"LocalGraphPage">;
+export type CodeSummary =
+  Model<"NativeCodeSummary"> | Model<"LocalCodeSummary">;
 export type CodeCommitDetail =
   Model<"CommitDetail"> | Model<"LocalCommitDetail">;
 export type CodeOperationDetail =

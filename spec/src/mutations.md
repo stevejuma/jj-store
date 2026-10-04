@@ -1,5 +1,10 @@
 # Typed mutations
 
+Code-card head summaries are read-only projections of explicitly selected
+operation/view references. They do not reconcile ambiguous heads, snapshot dirty
+files, initialize metadata or publish code/collaboration state. Limited windows
+and unloaded ancestors never authorize an inferred complete history count.
+
 Independent conversion stages typed historical domain snapshots without altering
 the source. Translation maps immutable repository-bound references explicitly;
 only the destination provider may select these audited roots. Original source

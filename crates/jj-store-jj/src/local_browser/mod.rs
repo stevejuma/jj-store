@@ -1,5 +1,6 @@
 //! Operation-pinned ordinary GitBackend reads. No checkout or publication methods.
 mod budget;
+pub mod code_summary;
 pub mod conflicts;
 pub mod diff;
 mod diff_copies;
@@ -136,6 +137,9 @@ pub enum Request {
     CommitSummary {
         commit: m::GitSha1Id,
     },
+    CodeSummary {
+        limit: usize,
+    },
     File {
         file: m::GitSha1Id,
     },
@@ -189,6 +193,7 @@ pub enum Response {
     QueryInfo(crate::query::language::QueryInfo),
     Commit(Box<CommitDetail>),
     CommitSummary(Object),
+    CodeSummary(code_summary::Summary),
     File(FileContent),
     FileAt(FileContent),
     Paths(paths::Page),
@@ -257,7 +262,7 @@ impl Executor {
                     Request::Graph(GraphRequest::OperationsFiltered {query}, _) => !crate::query::language::operations::Filter::parse(query)?.needs_prefix_lookup(),
                     _ => false,
                 };
-                let metadata_only = operation_only || matches!(&request, Request::QueryInfo)
+                let metadata_only = operation_only || matches!(&request, Request::QueryInfo | Request::CodeSummary { .. })
                     || matches!(&request, Request::References(r) if matches!(r.kind, references::Kind::Bookmarks | references::Kind::Workspaces) && r.operation == operation)
                     || matches!(&request, Request::Operation { operation: selected } if *selected == operation);
                 let scoped_commits = match &request {

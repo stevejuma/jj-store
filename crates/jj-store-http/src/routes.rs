@@ -63,6 +63,13 @@ struct Selection {
 }
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+struct CodeSummary {
+    at_op: Option<m::OperationId>,
+    #[serde(default = "limit")]
+    limit: usize,
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 struct Log {
     at_op: Option<m::OperationId>,
     cursor: Option<String>,
@@ -338,6 +345,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
             (get, "/repos/{repo}/log", log, Log, Envelope<q::GraphPage>, Reply::Json(200)),
+            (get, "/repos/{repo}/code/summary", code_summary, CodeSummary, Envelope<c::code_summary::Summary>, Reply::Json(200)),
             (get, "/repos/{repo}/references", references, References, browsing::Window<c::references::Page>, Reply::Json(200)),
             (get, "/repos/{repo}/operations", operations, Operations, Envelope<q::GraphPage>, Reply::Json(200)),
             (get, "/repos/{repo}/operations/{operation}", operation, Empty, Envelope<OperationDetail>, Reply::Json(200)),
@@ -626,6 +634,18 @@ async fn object(
     };
     let read = pinned(&context, &state, args.at_op).await?;
     let data = read.object(state.queries.content(), key).await?;
+    envelope(&state, &read, data).await
+}
+async fn code_summary(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<CodeSummary>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let read = pinned(&context, &state, args.at_op).await?;
+    let data = read
+        .code_summary(state.queries.content(), args.limit)
+        .await?;
     envelope(&state, &read, data).await
 }
 async fn graph(

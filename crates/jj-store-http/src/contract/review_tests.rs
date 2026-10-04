@@ -1,6 +1,37 @@
 use super::*;
 
 #[test]
+fn code_summary_contract_has_strict_head_windows_and_native_local_identity_widths() {
+    let doc = openapi();
+    let endpoint = &doc["paths"]["/v1/repos/{repo}/code/summary"]["get"];
+    let parameters = endpoint["parameters"].as_array().unwrap();
+    assert!(!parameters.iter().any(|p| p["name"] == "cursor"));
+    assert_eq!(
+        parameters.iter().find(|p| p["name"] == "limit").unwrap()["schema"]["default"],
+        50
+    );
+    assert_eq!(
+        endpoint["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        "#/components/schemas/Envelope_NativeCodeSummary"
+    );
+    let schemas = &doc["components"]["schemas"];
+    for name in ["NativeCodeSummary", "LocalCodeSummary"] {
+        let props = &schemas[name]["properties"];
+        assert_eq!(props.as_object().unwrap().len(), 5);
+        assert!(props.get("commits_partial").is_some());
+        assert!(props.get("latest").is_some());
+    }
+    assert_eq!(
+        schemas["NativeCodeSummaryLatest"]["properties"]["id"]["$ref"],
+        "#/components/schemas/CommitId"
+    );
+    assert_eq!(
+        schemas["LocalCodeSummaryLatest"]["properties"]["id"]["$ref"],
+        "#/components/schemas/GitSha1Id"
+    );
+}
+
+#[test]
 fn review_activity_contract_is_compact_bounded_and_independently_pinned() {
     let doc = openapi();
     let native = &doc["paths"]["/v1/repos/{repo}/reviews/activity"]["get"];

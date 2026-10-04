@@ -26,6 +26,54 @@ const json = (value: unknown) =>
   new Response(pretty(value), {
     headers: { "content-type": "application/json" },
   });
+
+test("local_code_summary_uses_a_finite_pin_and_forwards_cancellation", async () => {
+  const calls: { body: any; signal?: AbortSignal | null }[] = [];
+  let foreign = "";
+  const source = new HttpLocalStoreDataSource(repository, async (url, init) => {
+    if (String(url).endsWith("snapshot")) return json(head);
+    const body = JSON.parse(String(init?.body));
+    calls.push({ body, signal: init?.signal });
+    assert.deepEqual(body, {
+      operation,
+      request: { kind: "code_summary", query: { limit: 50 } },
+      cursor: null,
+    });
+    return json({
+      snapshot: {
+        version: 1,
+        profile: foreign === "profile" ? "native" : head.profile,
+        repository: foreign === "repository" ? "aa".repeat(16) : repository,
+        generation: foreign === "generation" ? 2 : 1,
+        operation: foreign === "operation" ? "bb".repeat(64) : operation,
+      },
+      data: {
+        kind: "code_summary",
+        data: { version: 1, commits: 1, commits_partial: true, latest: null },
+      },
+      next_cursor: null,
+      previous_cursor: null,
+    });
+  });
+  const controller = new AbortController();
+  assert.equal(
+    (await source.codeSummary(operation, controller.signal)).data.commits,
+    1,
+  );
+  for (foreign of ["profile", "repository", "generation", "operation"]) {
+    await assert.rejects(source.codeSummary(operation), {
+      code: "snapshot_mismatch",
+    });
+  }
+  const before = calls.length;
+  controller.abort();
+  assert.equal(calls[0]?.signal?.aborted, true);
+  await assert.rejects(source.codeSummary(operation, controller.signal), {
+    name: "AbortError",
+  });
+  assert.equal(calls.length, before);
+  source.close();
+});
 function storage() {
   const values = new Map<string, string>();
   return {

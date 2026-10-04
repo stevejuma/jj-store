@@ -604,6 +604,14 @@ retained commit ancestry. Names are compared exactly, including case and
 slashes; missing selections remain absent and must never fall back to another
 target.
 
+Local code-summary queries MUST use the metadata-only selected operation/view
+facade and prove returned commit heads directly through those references. Read
+only the requested first head window and return newest sampled committer
+metadata with explicit incomplete-count status for unvisited ancestry or heads.
+They MUST NOT open a graph repository, rebuild/import an index, traverse older
+commits, read trees or reconcile operation heads. Current folder admission,
+byte/work/cancellation bounds and exact operation pins remain mandatory.
+
 Operation log windows without an ID-prefix selector MUST walk bounded operation
 metadata directly, without loading commits, trees, views or a commit index.
 Native responses report `not_used` for the graph cache. Operation ordering,

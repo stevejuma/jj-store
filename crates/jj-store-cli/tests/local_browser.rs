@@ -1,5 +1,7 @@
 #[path = "local_browser/bounded_reads.rs"]
 mod bounded_reads;
+#[path = "local_browser/code_summary.rs"]
+mod code_summary;
 #[path = "local_browser/index_tasks.rs"]
 mod index_tasks_acceptance;
 #[path = "local_browser/preparation.rs"]

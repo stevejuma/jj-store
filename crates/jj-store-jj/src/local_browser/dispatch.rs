@@ -8,6 +8,9 @@ impl Context {
     ) -> Result<Response> {
         let context = self;
         let value = match request {
+            Request::CodeSummary { limit } => {
+                Response::CodeSummary(code_summary::read(context, operation, limit).await?)
+            }
             Request::QueryInfo => {
                 let mut info = crate::query::language::info(true);
                 let git = context

@@ -77,6 +77,10 @@ export interface StoreDataSource {
   ): Promise<import("./history-query-types.js").HistoryQueryInfo>;
   capabilities(): Promise<RepositoryCapabilities>;
   snapshot(fresh?: boolean): Promise<RepositoryHead>;
+  codeSummary?(
+    operation: string,
+    signal?: AbortSignal,
+  ): Promise<Browse.CodeEnvelope<Browse.CodeSummary>>;
   references(
     operation: string,
     cursor?: string,

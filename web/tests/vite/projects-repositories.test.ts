@@ -17,6 +17,97 @@ const repositories = [
   { id: homeB, name: "Browser", permission: "read" as const },
 ];
 
+test("native code card reads a bounded head summary without requesting history", async () => {
+  const work = fixtureTransport(homeA);
+  const seed = await work.directory!();
+  const queries: string[] = [];
+  const client = new Client(
+    homeA,
+    null,
+    () => {},
+    async (input) => {
+      const url = String(input);
+      queries.push(url);
+      if (url.includes("/snapshot"))
+        return new Response(
+          JSON.stringify({ ...seed.code, heads: seed.code!.heads }),
+          { headers: { "content-type": "application/json" } },
+        );
+      if (!url.includes("/code/summary"))
+        throw new Error("History graph is unnecessary");
+      return new Response(
+        JSON.stringify({
+          snapshot: seed.code,
+          data: {
+            version: 1,
+            commits: 1,
+            commits_partial: true,
+            latest: {
+              id: "71".repeat(64),
+              description: "Newest selected head\nBody",
+              author: seed.contributor,
+              committer: seed.contributor,
+            },
+          },
+          next_cursor: null,
+        }),
+        { headers: { "content-type": "application/json" } },
+      );
+    },
+  );
+  const summary = await readRepositoryDirectory(client, work);
+  expect(summary.description).toBe("Newest selected head");
+  expect(summary.commits).toBe(1);
+  expect(summary.commitsPartial).toBe(true);
+  expect(queries[1]).toContain("limit=50");
+  expect(queries[1]).toContain(`at_op=${seed.code!.operation_id}`);
+});
+
+test("local code card consumes pinned head metadata without requesting a graph", async () => {
+  const work = fixtureTransport(homeA);
+  const seed = await work.directory!();
+  const operation = "61".repeat(64);
+  let reads = 0;
+  const code = {
+    version: 1,
+    profile: "git_sha1_jj045" as const,
+    repository: homeA,
+    generation: 1,
+    operation,
+  };
+  const source = {
+    repository: homeA,
+    profile: code.profile,
+    snapshot: async () => ({ heads: [operation], generation: 1 }),
+    reviewActivity: work.reviewActivity,
+    graph: async () => {
+      throw new Error("Graph is unnecessary");
+    },
+    codeSummary: async (selected: string) => {
+      expect(selected).toBe(operation);
+      reads++;
+      return {
+        snapshot: code,
+        data: {
+          version: 1,
+          commits: 1,
+          commits_partial: true,
+          latest: {
+            id: "71".repeat(20),
+            description: "Selected local head",
+            author: seed.contributor,
+            committer: seed.contributor,
+          },
+        },
+      };
+    },
+  } as unknown as StoreDataSource;
+  const summary = await readLocalRepositoryDirectory(source, work);
+  expect(reads).toBe(1);
+  expect(summary.description).toBe("Selected local head");
+  expect(summary.commitsPartial).toBe(true);
+});
+
 test("native card review activity avoids thread presentation and keeps sample uncertainty", async () => {
   const fixture = fixtureTransport(homeA);
   const seed = await fixture.directory!();
@@ -326,7 +417,7 @@ test("late directory results cannot replace a newer authorized view", async () =
   expect(directory.entries).toHaveLength(0);
 });
 
-test("native directory pins the exact operation, marks paging and rejects foreign snapshots", async () => {
+test("native directory pins the exact operation, marks count uncertainty and rejects foreign snapshots", async () => {
   const source = fixtureTransport(homeA),
     seed = await source.directory!();
   const queries: string[] = [];
@@ -352,21 +443,17 @@ test("native directory pins the exact operation, marks paging and rejects foreig
               operation_id: foreign ? "62".repeat(64) : seed.code!.operation_id,
             },
             data: {
-              data: {
-                graph: "log",
-                nodes: [
-                  {
-                    commit: {
-                      id: "71".repeat(64),
-                      description: "Latest native change\nBody",
-                      author: seed.contributor,
-                      committer: seed.contributor,
-                    },
-                  },
-                ],
+              version: 1,
+              commits: 1,
+              commits_partial: true,
+              latest: {
+                id: "71".repeat(64),
+                description: "Latest native change\nBody",
+                author: seed.contributor,
+                committer: seed.contributor,
               },
             },
-            next_cursor: "more",
+            next_cursor: null,
           };
       return new Response(JSON.stringify(value), {
         headers: { "content-type": "application/json" },
@@ -385,5 +472,9 @@ test("native directory pins the exact operation, marks paging and rejects foreig
   const ambiguous = await readRepositoryDirectory(client, source);
   expect(ambiguous.code).toBeNull();
   expect(ambiguous.description).toBe("Multiple operation heads");
-  expect(queries.filter((query) => query.includes("/log"))).toHaveLength(2);
+  expect(ambiguous.commitsPartial).toBe(true);
+  expect(
+    queries.filter((query) => query.includes("/code/summary")),
+  ).toHaveLength(2);
+  expect(queries.some((query) => query.includes("/log"))).toBe(false);
 });

@@ -1,5 +1,13 @@
 # Native JJ integration
 
+Native/local code-card summary readers consume only the selected operation/view
+and bounded direct commit heads, excluding the virtual root. Their counts and
+maximum committer timestamps describe that head window; unvisited heads or
+nonvirtual parents force explicit incomplete status. They perform no ancestry,
+graph preparation, source index repair or publication. Native manifest
+membership and local scoped pointer proof retain fresh authorization and exact
+pins.
+
 Read-only local identity hints continue to require an exact secure-config
 metadata binding before selecting a repository email. They never migrate
 configuration or introduce aliases into query evaluation. Multi-harness capture

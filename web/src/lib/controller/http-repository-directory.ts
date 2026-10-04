@@ -2,7 +2,7 @@ import {
   ApiError,
   Client,
   type Envelope,
-  type Graph,
+  type Model,
   type Head,
 } from "../api/client.js";
 import type { RepositoryDirectorySummary } from "./projects-repository-types.js";
@@ -29,39 +29,24 @@ export async function readRepositoryDirectory(
     reviews.snapshot.epoch !== head.epoch
   )
     throw new ApiError("snapshot_mismatch");
-  let graph: Envelope<Graph> | null = null;
+  let summary: Envelope<Model<"NativeCodeSummary">> | null = null;
   if (head.heads.length === 1) {
-    graph = await client.request<Envelope<Graph>>(
-      "log",
+    summary = await client.request<Envelope<Model<"NativeCodeSummary">>>(
+      "code/summary",
       {
         at_op: head.heads[0],
-        revset: "all()",
         limit: 50,
-        at_time_millis: Date.now(),
-        user_email: "",
       },
       { signal },
     );
     if (
-      graph.snapshot.operation_id !== head.heads[0] ||
-      graph.snapshot.repo_id !== head.repo_id ||
-      graph.snapshot.epoch !== head.epoch
+      summary.snapshot.operation_id !== head.heads[0] ||
+      summary.snapshot.repo_id !== head.repo_id ||
+      summary.snapshot.epoch !== head.epoch
     )
       throw new ApiError("snapshot_mismatch");
   }
-  const commits =
-    graph?.data.data.graph === "log"
-      ? graph.data.data.nodes
-          .map((node) => node.commit)
-          .filter((commit) => !/^0+$/.test(commit.id))
-      : [];
-  const latest = commits
-    .slice()
-    .sort(
-      (a, b) =>
-        Number(b.committer.timestamp.millis) -
-        Number(a.committer.timestamp.millis),
-    )[0];
+  const latest = summary?.data.latest;
   const dates = [
     ...(latest ? [latest.committer.timestamp.millis] : []),
     ...(reviews.activity.updated_at_millis !== null
@@ -74,7 +59,7 @@ export async function readRepositoryDirectory(
       .map((group) => group.updated_at_millis),
   ];
   return {
-    code: graph?.snapshot ?? null,
+    code: summary?.snapshot ?? null,
     work: tasks.snapshot,
     review: reviews.snapshot,
     description:
@@ -86,8 +71,8 @@ export async function readRepositoryDirectory(
     updatedAtMillis: dates.length
       ? dates.reduce((max, value) => (value > max ? value : max))
       : null,
-    commits: commits.length,
-    commitsPartial: Boolean(graph?.next_cursor),
+    commits: Number(summary?.data.commits ?? 0),
+    commitsPartial: summary?.data.commits_partial ?? head.heads.length > 1,
     reviews: Number(reviews.activity.threads),
     reviewsPartial: reviews.activity.threads_partial,
     taskGroups: tasks.groups,

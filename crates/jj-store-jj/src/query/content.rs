@@ -1,4 +1,5 @@
 //! Complete native metadata and verified binary reads through committed pins.
+pub mod code_summary;
 pub mod conflicts;
 pub mod diff;
 mod diff_copies;
@@ -272,6 +273,17 @@ impl ContentReader {
     ) -> Result<Object> {
         self.execute(store, access, move |context| {
             Box::pin(async move { context.object(key).await })
+        })
+        .await
+    }
+    pub async fn code_summary(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        limit: usize,
+    ) -> Result<code_summary::Summary> {
+        self.execute(store, access, move |context| {
+            Box::pin(async move { code_summary::read(context, limit).await })
         })
         .await
     }

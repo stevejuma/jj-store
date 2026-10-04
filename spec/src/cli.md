@@ -1,5 +1,13 @@
 # CLI and server commands
 
+Native lifecycle and filesystem-browser regressions cover finite code-summary
+head windows, damaged/missing local derived data, timestamp sample ordering,
+historical operation selection and source preservation. Actual native/local HTTP
+summary responses retain strict query bodies, fresh access and operation pins.
+These reads add no CLI command or installed executable change; complete
+Linux/native scale, production-browser and release qualification remain
+deferred.
+
 The native lifecycle and filesystem browser HTTP fixtures cover compact review
 activity windows, partial counts, accepted-event timestamps and explicit local
 historical companion selections. These focused transport proofs retain read
