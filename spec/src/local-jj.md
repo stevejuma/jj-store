@@ -431,6 +431,31 @@ exact conflict terms and workspace links. Description search retains complete
 matching semantics; bounded preparation for wider queries is a separate stage.
 Existing local publication, identity and persisted formats remain unchanged.
 
+Local commit-index construction MAY use the shared disk-backed JJ format-6
+builder through profile-specific admitted readers. Starting from a retained
+operation proof, traversal follows only operation parents, referenced commit
+roots and commit parents; raw Git object existence grants no new roots. Each
+operation, view and commit read rechecks the registered binding and per-object
+byte/shape limits. Preparation does not load trees, decode the repository's
+derived index, reconcile heads or publish native/companion state.
+
+The trusted caller reserves a private disposable output allowance before
+invoking construction. Scratch and streamed output share that allowance. One
+shared preparation permit remains held through actual cancellation/worker exit.
+Construction has separate cumulative work, bytes, metadata and deadline limits;
+it never increases ordinary interactive limits. Failed output is deleted and a
+successful handle owns its disposable files. These library construction handles
+are not yet retained service caches or browser task responses; prepared graph
+delivery, cache generations and large-scale qualification remain separate gates.
+
+Preparation MUST NOT invoke GitBackend's implicit extra-metadata import or
+stacked-table reconciliation. It reads compact commit fields from Git and
+performs bounded read-only seeks in captured, checksum-verified JJ 0.45.1 extra
+metadata segments. Preserve imported and explicit change IDs, shallow roots and
+JJ's commit timestamp ordering. A missing extra record uses upstream's header or
+synthetic change ID without importing it. Segment disagreement, invalid framing
+or identity mismatch fails explicitly; no tree bytes are needed for indexing.
+
 ## Rich history query delivery
 
 The registered-folder `query_info` request MUST share the existing local

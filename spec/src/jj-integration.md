@@ -774,6 +774,14 @@ formats remain unchanged by this construction stage. Large resident indexes,
 immutable generation reuse, aggregate quotas and local-profile preparation
 require their separate qualification; this stage does not enable them.
 
+Native and Git-backed local preparation share traversal and segment writing
+through profile-specific compact readers. The builder retains only parents,
+change IDs and committer timestamps from each commit. Native readers keep the
+existing capability and metadata admission; local readers retain the distinct
+read-only Git/extra-metadata contract in `local-jj.md`. Neither profile may
+substitute an unchecked source index or expose upstream objects through service
+contracts. This shared construction does not change native segment bytes.
+
 Warm native graph reads MAY reuse an already verified immutable in-memory index
 under the same cache namespace lease. Retained residents bind repository, epoch,
 operation, cache path and exact receipt file set; they have an LRU count bound

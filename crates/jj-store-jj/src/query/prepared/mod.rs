@@ -82,6 +82,96 @@ pub(super) async fn build(
     budget: &Budget,
     max_bytes: u64,
 ) -> Result<()> {
+    let source = NativeSource {
+        operation,
+        store,
+        budget,
+    };
+    build_from(path, operation.id(), &source, max_bytes).await
+}
+
+/// Only the traversal calls these readers, with IDs reached from the admitted
+/// operation. Implementations retain profile-specific byte/identity admission.
+pub(crate) struct CommitFields {
+    pub parents: Vec<backend::CommitId>,
+    pub change: backend::ChangeId,
+    pub timestamp: i64,
+}
+
+pub(crate) trait Source {
+    fn check(&self) -> Result<()>;
+    fn work(&self, amount: usize) -> Result<()>;
+    fn max_commits(&self) -> usize;
+    fn max_parents(&self) -> usize;
+    fn commit_len(&self) -> usize;
+    fn change_len(&self) -> usize;
+    async fn operation(&self, id: &jj_lib::op_store::OperationId) -> Result<Operation>;
+    async fn view(&self, operation: &Operation) -> Result<jj_lib::view::View>;
+    async fn commit(&self, id: &backend::CommitId) -> Result<CommitFields>;
+}
+struct NativeSource<'a> {
+    operation: &'a Operation,
+    store: &'a Arc<Store>,
+    budget: &'a Budget,
+}
+impl Source for NativeSource<'_> {
+    fn check(&self) -> Result<()> {
+        self.budget.check()
+    }
+    fn work(&self, amount: usize) -> Result<()> {
+        self.budget.work(amount)
+    }
+    fn max_commits(&self) -> usize {
+        self.budget.limits.max_index_commits
+    }
+    fn max_parents(&self) -> usize {
+        self.budget.limits.metadata.max_parent_edges
+    }
+    fn commit_len(&self) -> usize {
+        self.store.commit_id_length()
+    }
+    fn change_len(&self) -> usize {
+        self.store.change_id_length()
+    }
+    async fn operation(&self, id: &jj_lib::op_store::OperationId) -> Result<Operation> {
+        let data = self
+            .budget
+            .until(self.operation.op_store().read_operation(id))
+            .await?
+            .map_err(|_| Error::Incomplete)?;
+        Ok(Operation::new(
+            self.operation.op_store().clone(),
+            id.clone(),
+            data,
+        ))
+    }
+    async fn view(&self, operation: &Operation) -> Result<jj_lib::view::View> {
+        self.budget
+            .until(operation.view())
+            .await?
+            .map_err(|_| Error::Incomplete)
+    }
+    async fn commit(&self, id: &backend::CommitId) -> Result<CommitFields> {
+        // Bypass the bounded commit-body cache; native capability checks remain.
+        let commit = self
+            .budget
+            .until(self.store.backend().read_commit(id))
+            .await?
+            .map_err(|_| self.budget.failure().unwrap_or(Error::Incomplete))?;
+        Ok(CommitFields {
+            parents: commit.parents,
+            change: commit.change_id,
+            timestamp: commit.committer.timestamp.timestamp.0,
+        })
+    }
+}
+
+pub(crate) async fn build_from(
+    path: &Path,
+    operation: &jj_lib::op_store::OperationId,
+    budget: &impl Source,
+    max_bytes: u64,
+) -> Result<()> {
     budget.check()?;
     let scratch = tempfile::Builder::new()
         .prefix(".prepare-")
@@ -89,7 +179,7 @@ pub(super) async fn build(
         .map_err(io_error)?;
     let space = Space::new(max_bytes);
     let mut disk = Disk::new(&scratch.path().join("graph.redb"), space.clone())?;
-    disk.put(OPS, operation.id().as_bytes(), &[])?;
+    disk.put(OPS, operation.as_bytes(), &[])?;
     // Unlike upstream's operation walk, no frontier or retained view set grows
     // in memory with history. Order is irrelevant to the set of historical roots.
     while let Some((id, _)) = disk.first(OPS)? {
@@ -99,18 +189,11 @@ pub(super) async fn build(
             continue;
         }
         let id = jj_lib::op_store::OperationId::from_bytes(&id);
-        let data = budget
-            .until(operation.op_store().read_operation(&id))
-            .await?
-            .map_err(|_| Error::Incomplete)?;
-        let op = Operation::new(operation.op_store().clone(), id.clone(), data);
+        let op = budget.operation(&id).await?;
         for parent in op.parent_ids() {
             disk.put(OPS, parent.as_bytes(), &[])?;
         }
-        let view = budget
-            .until(op.view())
-            .await?
-            .map_err(|_| Error::Incomplete)?;
+        let view = budget.view(&op).await?;
         for commit in op
             .all_referenced_commit_ids()
             .chain(view.all_referenced_commit_ids())
@@ -121,33 +204,24 @@ pub(super) async fn build(
         disk.put(SEEN_OPS, id.as_bytes(), &[])?;
     }
     let mut total = 0u32;
-    let commit_len = store.commit_id_length();
-    let change_len = store.change_id_length();
+    let commit_len = budget.commit_len();
+    let change_len = budget.change_len();
     while let Some((id, _)) = disk.first(PENDING)? {
         budget.work(1)?;
         disk.remove(PENDING, &id)?;
         if disk.get(NODES, &id)?.is_some() {
             continue;
         }
-        if total as usize >= budget.limits.max_index_commits || total >= 0x7fff_ffff {
-            return Err(budget.fail(Error::IndexBudget));
+        if total as usize >= budget.max_commits() || total >= 0x7fff_ffff {
+            return Err(Error::IndexBudget);
         }
-        // Bypass Store's commit-body cache. The guarded backend still checks
-        // identity, current authorization, membership, bytes and cancellation.
-        let data = budget
-            .until(
-                store
-                    .backend()
-                    .read_commit(&backend::CommitId::from_bytes(&id)),
-            )
-            .await?
-            .map_err(|_| budget.failure().unwrap_or(Error::Incomplete))?;
-        if data.parents.len() > budget.limits.metadata.max_parent_edges {
-            return Err(budget.fail(Error::Limit));
+        let data = budget.commit(&backend::CommitId::from_bytes(&id)).await?;
+        if data.parents.len() > budget.max_parents() {
+            return Err(Error::Limit);
         }
         let node = Node {
-            timestamp: data.committer.timestamp.timestamp.0,
-            change: data.change_id.as_bytes().to_vec(),
+            timestamp: data.timestamp,
+            change: data.change.as_bytes().to_vec(),
             parents: data.parents,
         };
         for parent in &node.parents {

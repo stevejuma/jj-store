@@ -1655,3 +1655,11 @@ repository alongside an unrelated repository. Cold reservation evicts within the
 pressured repository first, counts scratch and output in the reservation, and
 leaves warm reads available. Restart with a reduced repository quota must
 reclaim excess entries before construction without changing native state.
+
+Local preparation acceptance MUST compare complete segment and operation-link
+bytes with a cold JJ 0.45.1 index. The fixture includes rewritten history and a
+later operation excluded by the pin. Missing source trees and a damaged source
+index must not block construction. Verify dirty files, extra metadata, operation
+heads and Git refs remain unchanged; dropping, canceling or exhausting a
+construction must remove private output. Missing extra records must not trigger
+implicit import, and corrupt extra segments must fail before output is retained.

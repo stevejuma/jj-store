@@ -3,13 +3,13 @@ use super::*;
 use blake2::{Blake2b512, Digest as _};
 use std::io::{BufWriter, Write as _};
 
-struct Output<'a> {
+struct Output<'a, S: Source> {
     file: BufWriter<std::fs::File>,
     digest: Blake2b512,
     space: Arc<Space>,
-    budget: &'a Budget,
+    budget: &'a S,
 }
-impl Output<'_> {
+impl<S: Source> Output<'_, S> {
     fn bytes(&mut self, bytes: &[u8]) -> Result<()> {
         self.budget.work(1)?;
         // Reserve buffered bytes too; no write can overshoot the stage allowance.
@@ -26,12 +26,12 @@ impl Output<'_> {
 #[allow(clippy::too_many_arguments)]
 pub(super) fn write(
     path: &Path,
-    operation: &Operation,
+    operation: &jj_lib::op_store::OperationId,
     disk: &mut Disk,
     total: u32,
     commit_len: usize,
     change_len: usize,
-    budget: &Budget,
+    budget: &impl Source,
     space: Arc<Space>,
 ) -> Result<()> {
     let mut position = 0u32;
@@ -192,7 +192,7 @@ pub(super) fn write(
     link.write_all(&digest).map_err(io_error)?;
     link.as_file().sync_all().map_err(io_error)?;
     budget.check()?;
-    link.persist(links.join(operation.id().hex()))
+    link.persist(links.join(operation.hex()))
         .map_err(|e| io_error(e.error))?;
     Ok(())
 }

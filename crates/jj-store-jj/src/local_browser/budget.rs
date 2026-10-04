@@ -9,6 +9,8 @@ pub(super) struct Budget {
     bytes: AtomicU64,
     metadata: AtomicU64,
     output: AtomicU64,
+    byte_limit: u64,
+    metadata_limit: u64,
 }
 impl Budget {
     pub fn new(limits: Limits) -> Self {
@@ -25,7 +27,23 @@ impl Budget {
             bytes: AtomicU64::new(0),
             metadata: AtomicU64::new(0),
             output: AtomicU64::new(0),
+            byte_limit: 64 * 1024 * 1024,
+            metadata_limit: 100_000,
         }
+    }
+    pub(super) fn preparation(
+        limits: &preparation::Limits,
+        cancellation: &crate::query::Cancellation,
+    ) -> Self {
+        let mut budget = Self::new(Limits {
+            timeout: limits.timeout,
+            max_work: limits.max_work,
+            ..Limits::default()
+        });
+        budget.byte_limit = limits.max_read_bytes;
+        budget.metadata_limit = limits.max_metadata_records;
+        budget.cancellation = cancellation.token();
+        budget
     }
     pub fn check(&self) -> Result<()> {
         if self.cancellation.is_cancelled() {
@@ -49,17 +67,17 @@ impl Budget {
         self.charge(&self.work, n as u64, self.limits.max_work as u64)
     }
     pub fn metadata(&self, value: &impl Serialize) -> Result<()> {
-        self.charge(&self.metadata, 1, 100_000)?;
+        self.charge(&self.metadata, 1, self.metadata_limit)?;
         self.charge(
             &self.bytes,
             serde_json::to_vec(value)
                 .map_err(|_| Error::Unavailable)?
                 .len() as u64,
-            64 * 1024 * 1024,
+            self.byte_limit,
         )
     }
     pub fn read_bytes(&self, n: usize) -> Result<()> {
-        self.charge(&self.bytes, n as u64, 64 * 1024 * 1024)
+        self.charge(&self.bytes, n as u64, self.byte_limit)
     }
     pub fn output(&self, value: &impl Serialize) -> Result<()> {
         self.charge(

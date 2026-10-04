@@ -13,6 +13,7 @@ pub mod operation_changes;
 mod operation_store;
 pub mod operations;
 pub mod paths;
+pub mod preparation;
 pub mod references;
 mod scoped;
 pub use crate::query::Error;

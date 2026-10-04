@@ -7,7 +7,7 @@ mod graphs;
 mod index;
 pub mod language;
 pub mod predicates;
-mod prepared;
+pub(crate) mod prepared;
 pub mod workers;
 use crate::{
     backend::BackendLimits,
@@ -243,6 +243,9 @@ pub struct GraphPage {
 #[derive(Clone, Default)]
 pub struct Cancellation(tokio_util::sync::CancellationToken);
 impl Cancellation {
+    pub(crate) fn token(&self) -> tokio_util::sync::CancellationToken {
+        self.0.clone()
+    }
     pub fn cancel(&self) {
         self.0.cancel();
     }
