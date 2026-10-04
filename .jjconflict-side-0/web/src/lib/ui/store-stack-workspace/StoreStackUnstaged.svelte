@@ -33,7 +33,13 @@
   );
 </script>
 
-<ColumnCanvas.Column id="working" sticky resizable aria-label="Unstaged files">
+<ColumnCanvas.Column
+  id="working"
+  columnTitle="Unstaged"
+  sticky
+  resizable
+  aria-label="Unstaged files"
+>
   <ColumnCanvas.Header class="stack-workspace__unstaged-header">
     <ColumnCanvas.Title>Unstaged</ColumnCanvas.Title><ColumnCanvas.Count
       >{files.length}</ColumnCanvas.Count

@@ -233,17 +233,20 @@ workspace picker occupies the centered top body header, using the same ghost
 repository picker as Settings and the same header slot as the Projects
 breadcrumb; branch filters remain in their body column. The column canvas fills
 the available page width and retains trailing space and its public settings. The
-canvas starts directly below the body tabs without an extra layout gap or top
-canvas padding. Every branch, Unstaged, stack and diff column can be resized
-with pointer and keyboard controls. Unstaged uses the public sticky-column
-behavior when horizontal scrolling passes it. The branch column uses the owned
-repository branch command picker, including its filters and dependent bookmark
-selection. Opening a file diff inserts it immediately to the right of its
-originating Unstaged or stack column. Each origin retains its own open file,
-hunk selection and diff controls; opening, selecting or closing another stack's
-diff does not replace it. Refresh and commands preserve valid diffs, remove
-unavailable sources and hunks, and clear Unstaged selections when switching
-named combinations.
+canvas uses Design Core compact rectangular Panel Toggle defaults in column
+headers and collapsed rails, with controlled state and reversible hover/focus
+bar previews. Consumer icons and controller actions remain supported. The canvas
+starts directly below the body tabs without an extra layout gap or top canvas
+padding. Every branch, Unstaged, stack and diff column can be resized with
+pointer and keyboard controls. Unstaged uses the public sticky-column behavior
+when horizontal scrolling passes it. The branch column uses the owned repository
+branch command picker, including its filters and dependent bookmark selection.
+Opening a file diff inserts it immediately to the right of its originating
+Unstaged or stack column. Each origin retains its own open file, hunk selection
+and diff controls; opening, selecting or closing another stack's diff does not
+replace it. Refresh and commands preserve valid diffs, remove unavailable
+sources and hunks, and clear Unstaged selections when switching named
+combinations.
 
 The Branches picker groups applied bookmarks under Applied and all other loaded
 bookmarks under Local branches, using the existing Command View groups and

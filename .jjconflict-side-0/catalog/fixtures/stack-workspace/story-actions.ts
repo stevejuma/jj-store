@@ -78,3 +78,28 @@ export async function dropWorkspaceChange(
   );
   return dataTransfer;
 }
+
+export async function assertCompactColumnToggle(element: HTMLElement) {
+  const canvas = workspaceCanvas(element);
+  await canvas.findByRole("region", { name: "Stack feature/api" });
+  const toggle = canvas.getByRole("button", { name: "Collapse Unstaged" });
+  const icon = toggle.querySelector(
+    '[data-ui-component="panel-toggle"][data-ui-part="icon"]',
+  );
+  expect(icon).not.toBeNull();
+  expect(toggle.getBoundingClientRect().width).toBe(28);
+  expect(toggle.getBoundingClientRect().height).toBe(24);
+  expect(icon!.getBoundingClientRect().width).toBe(18);
+  expect(icon!.getBoundingClientRect().height).toBe(12);
+  await userEvent.click(toggle);
+  const expand = canvas.getByRole("button", {
+    name: "Expand Unstaged column",
+  });
+  expect(
+    expand.querySelector('[data-ui-component="panel-toggle"]'),
+  ).not.toBeNull();
+  await userEvent.click(expand);
+  await expect(
+    canvas.getByRole("button", { name: "Collapse Unstaged" }),
+  ).toHaveAttribute("aria-expanded", "true");
+}

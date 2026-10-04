@@ -1311,3 +1311,9 @@ source-selection clarity and deterministic pre-acceptance refusal, cold debug
 preparation performance, registry-only Design Core release qualification and
 visual baselines remain explicit limitations. This qualifies the local Codex
 preview only; Desktop and the broader M18 roadmap stay deferred.
+
+[E-M20-005](milestones.md) qualifies the Design Core compact Panel Toggle
+defaults under JST-UI-020. The workspace app-shell story measures header/rail
+geometry and collapse/expand; stack workspace and repository log layouts retain
+focused interaction/accessibility acceptance. Source qualification and registry
+release qualification remain distinct.

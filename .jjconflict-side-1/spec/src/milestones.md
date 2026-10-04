@@ -77949,6 +77949,303 @@ entries.
   "next": "Review the UI slice; proceed with local backend integration only after explicit approval.",
   "browser_acceptance": "Owned Storybook 6057 restarted for the new foundational API, then only its sb-vite development transform cache cleared and restarted again because source-distributed dependency transforms were stale. Fresh browser proved the actual accessible trailing spacer and creation form. Proof: .local/stack-spacer-evidence/spacer-in-app-shell.png. No baseline updated. Final live app-shell DOM measured composer and branch gaps as 12px and the borderless prompt as 390px with no background image. Saved .local/stack-spacer-evidence/workspace-final-in-app-shell.png and .local/stack-spacer-evidence/spacer-final-in-app-shell.png; temporary agent tab closed. Owned Storybook 6057 remains running.",
   "source_qualification": "Design Core Jujutsu change nwktxoso / 73e8d5bbeb69 commits the generic public trailingSpacer snippet after complete required nonvisual checks. Final aggregate passed; 715 units, 653 interaction/accessibility stories, static build, formatting/types/governance/audit, 14 workspace, 11 shell, 3 AI and 36 shadcn browsers passed, with one intentional platform skip. Prior readiness/animation failures and exact unchanged cold retries are recorded. No visual comparison or baseline update."
+},
+{
+  "id": "E-M20-005",
+  "tasks": [
+    "M20",
+    "M20.1",
+    "M20.2"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change smlsqupk",
+  "kind": "compact-column-panel-toggles",
+  "versions": "JJ 0.45.1; Node 26.9.0; pnpm 10.32.1; Svelte 5.57.1; consumer Storybook 10.5.7; source Storybook 10.5.2; Vitest 4.1.11; Design Core source qualification is separate from released registry qualification. Design Core source change qwzmvmkk / bab5dc582e33.",
+  "formats": "No backend, storage, API, RPC, controller or persisted layout format changes. Tracked package manifests and registry lockfile remain unchanged. Existing ignored temporary foundational validation resolves byte-identical Design Core source.",
+  "result": "pending",
+  "scope": "Add a compact rectangular Panel Toggle family upstream in Design Core. Default Button geometry is 28×24px and decorative SVG is 18×12px. Controlled expanded state uses a filled bar; hover and keyboard focus reversibly preview the opposite width without changing state or geometry. Right orientation mirrors the bar. Disabled, reduced-motion, forced-color and keyboard semantics remain supported. Column Canvas uses it by default in headers and both collapsed-rail variants, retaining custom icons, rails and transient preview/controller behavior. New optional columnTitle labels custom headers and collapsed rails without generating a second header; Unstaged uses it. The consumer app-shell story measures exact geometry and exercises collapse/expand. Broader direct-consumer stories cover stack workspace and repository log layouts because both use the shared toggle. Source pnpm checks is required by Design Core AGENTS.md for the public family/default change. Consumer root aggregates, Rust, controller units and production builds are out of scope for this UI-only composition slice. All 438 prior raw evidence objects are preserved. Ghost paint uses low-specificity selectors so Column Canvas retains its existing public header action hover colors. Exact new hover-token regression failed before and passed after the source correction.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md",
+    "catalog/fixtures/stack-workspace/story-actions.ts",
+    "spec/src/api.md"
+  ],
+  "runs": [
+    {
+      "command": "pnpm test:storybook src/shared/shadcn/column-canvas/ColumnCanvasToggle.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "Design Core .local/panel-toggle/before.log: Invalid preflight: inline example string contained a script closing tag; moved to external example sources."
+    },
+    {
+      "command": "pnpm test:storybook src/shared/shadcn/column-canvas/ColumnCanvasToggle.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "Design Core .local/panel-toggle/before-exact.log: Valid before regression: shared icon absent."
+    },
+    {
+      "command": "pnpm test:storybook src/shared/shadcn/column-canvas/ColumnCanvasToggle.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Design Core .local/panel-toggle/after.log: Exact initial geometry and collapse/expand regression passed 1/1."
+    },
+    {
+      "command": "pnpm test:storybook src/shared/shadcn/panel-toggle/PanelToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvasToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte",
+      "result": "fail",
+      "failures": 6,
+      "note": "Design Core .local/panel-toggle/stories.log: Redundant output status role caused compilation errors and six Vite overlay accessibility failures; removed redundant role."
+    },
+    {
+      "command": "pnpm test:storybook src/shared/shadcn/panel-toggle/PanelToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvasToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "Design Core .local/panel-toggle/stories-retry.log: Disabled userEvent click rejected pointer-events:none; native disabled behavior retained and verified through browser mouse input."
+    },
+    {
+      "command": "pnpm test:storybook src/shared/shadcn/panel-toggle/PanelToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvasToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Design Core .local/panel-toggle/stories-final.log: 19/19 stories before custom icon regression addition."
+    },
+    {
+      "command": "pnpm test:storybook src/shared/shadcn/panel-toggle/PanelToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvasToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "Design Core .local/panel-toggle/stories-custom.log: Custom example duplicated default and explicit headers; use separate columnTitle accessible metadata."
+    },
+    {
+      "command": "pnpm test:storybook src/shared/shadcn/panel-toggle/PanelToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvasToggle.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Design Core .local/panel-toggle/stories-verified.log: 20/20 including custom icon override, separate accessible title, preview and rail coverage."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:shadcn:pointer tests/shadcn/panel-toggle-pointer.spec.ts",
+      "result": "fail",
+      "failures": 4,
+      "note": "Design Core .local/panel-toggle/pointer.log: Four readiness timeouts after invalid story compilation."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:shadcn:pointer tests/shadcn/panel-toggle-pointer.spec.ts",
+      "result": "fail",
+      "failures": 3,
+      "note": "Design Core .local/panel-toggle/pointer-retry.log: One pass; three focus-dependent expectations failed because story play retained focus. Browser setup now clicks empty body to reset real focus before hover/Tab, with assertions/timeouts unchanged."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:shadcn:pointer tests/shadcn/panel-toggle-pointer.spec.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Design Core .local/panel-toggle/pointer-final.log: 4/4 real pointer/keyboard, geometry, reversed states, disabled, right orientation, reduced-motion and forced-color cases."
+    },
+    {
+      "command": "pnpm check:types",
+      "result": "fail",
+      "failures": 4,
+      "note": "Design Core .local/panel-toggle/types.log: One wrong Root prop (sizing) and three redundant output roles; corrected to public displayMode and native output semantics."
+    },
+    {
+      "command": "pnpm check:types",
+      "result": "pass",
+      "failures": 0,
+      "note": "Design Core .local/panel-toggle/types-retry.log: All four source type lanes found zero errors/warnings."
+    },
+    {
+      "command": "pnpm spec:check",
+      "result": "fail",
+      "failures": 1,
+      "note": "Design Core .local/panel-toggle/spec.log: New verification row appended outside the table; moved into canonical matrix."
+    },
+    {
+      "command": "pnpm spec:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Design Core .local/panel-toggle/spec-retry.log: Validation, mdbook and spec-first passed."
+    },
+    {
+      "command": "pnpm install --lockfile=false --ignore-scripts",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/dependency-refresh.log: Existing ignored local foundation snapshot refreshed; manifest and lockfile unchanged."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte -t WorkspaceInAppShell",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/panel-toggle-evidence/exact.log: Geometry passed; accessible rail used internal working key. Added independent columnTitle metadata instead of default title header."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte -t WorkspaceInAppShell",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/exact-retry.log: 1/1 passed with seven unrelated stories skipped; later header composition fixed to use columnTitle."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte -t WorkspaceInAppShell",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/exact-verified.log: Final composition 1/1 passed after cold refresh; seven unrelated stories skipped."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/web-check.log: zero diagnostics"
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/catalog-check.log: zero diagnostics and 217-module boundary check"
+    },
+    {
+      "command": "pnpm storybook -- --port 6057",
+      "result": "fail",
+      "failures": 1,
+      "note": "Storybook rejected the literal separator as unexpected arguments; no listener started."
+    },
+    {
+      "command": "pnpm storybook --port 6057",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/storybook-6057-retry.log, then storybook-6057-cold.log: Correct owned process restarted. Cleared only its generated sb-vite transform cache for stale source dependency transforms."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRepositoryLog*.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/affected-stories.log: 97/97 stories in all 20 affected story files. Geometry helper later moved without changing assertions to satisfy the 400-line story budget; exact app-shell regression reruns afterward."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/ownership.log: 1 validator, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/panel-toggle-evidence/architecture.log: Application story exceeded 400 counted lines; moved exact assertion group into the existing fixture helper."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/spec-validate.log: 5 validators, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/panel-toggle-evidence/spec-first.log: Web presentation maps to API chapter too; added explicit no-transport contract note."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 2,
+      "note": ".local/panel-toggle-evidence/progress.log: Pending run result is unsupported and remaining field was missing; corrected evidence schema without changing historical entries."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/architecture-retry.log: 1020 modules; exact assertion group moved into existing fixture helper, preserving all checks and the 400-line story cap."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/spec-first-retry.log: 3 protected files and 3 canonical chapters."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/progress-retry.log: 141 tasks; evidence bookkeeping only."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/catalog-helper-check.log: Zero errors/warnings after assertion extraction; 217 catalog modules."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte -t WorkspaceInAppShell",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/exact-helper.log: Exact final helper-based app-shell regression passes 1/1; seven unrelated cases skipped."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRepositoryLog*.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/affected-stories-final.log: 97/97 affected cases in 20 files pass after final public hover-token fix."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm checks",
+      "result": "fail",
+      "failures": 1,
+      "note": "Design Core .local/panel-toggle/checks.log: Intentionally interrupted (exit 130) during shell browser phase after final review found a public header-hover token precedence issue. Previously passed 715 units, 659 stories, type/format/governance, build/audit and workspace browser suite. No completed aggregate qualification claimed."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:shadcn:pointer tests/shadcn/panel-toggle-pointer.spec.ts -g 'column header hover'",
+      "result": "fail",
+      "failures": 1,
+      "note": "Design Core .local/panel-toggle/hover-before.log: Exact hover-token regression fails because Panel Toggle paint masks the custom canvas background token."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm test:shadcn:pointer tests/shadcn/panel-toggle-pointer.spec.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Design Core .local/panel-toggle/pointer-qualified.log: 5/5 native cases pass after lowering ghost paint specificity. Public header hover colors, controlled geometry, native focus, disabled behavior, reduced motion and forced colors retained."
+    },
+    {
+      "command": "STORYBOOK_PORT=9139 pnpm checks",
+      "result": "pass",
+      "failures": 0,
+      "note": "Design Core .local/panel-toggle/checks-final.log: complete required nonvisual gate passes: 715 units, 659 stories, type/format/governance, static build/audit, 14 workspace, 11 shell, 3 AI and 41 shadcn browser cases; one intentional platform skip. Existing nonfatal proxy/ResizeObserver diagnostics remain in unrelated stories; no assertion/timeouts relaxed."
+    },
+    {
+      "command": "pnpm exec prettier --check catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/fixtures/stack-workspace/story-actions.ts web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte spec/src/ui.md spec/src/api.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/format-check.log: changed consumer files formatted; milestones.md intentionally excluded to preserve all historical raw evidence objects."
+    },
+    {
+      "command": "pnpm storybook --port 6057",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/storybook-6057-final.log: final owned preview started; live browser verified compact geometry after source-theme fix."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/progress-final.log: 141 tasks; final source and consumer evidence accepted."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/spec-validate-final.log: 5 validators, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/panel-toggle-evidence/spec-first-final.log: 3 protected files and 3 canonical chapters."
+    }
+  ],
+  "source_acceptance": "Design Core committed qwzmvmkk / bab5dc582e33 after required complete nonvisual qualification. Final gate passes 715 units, 659 Storybook interaction/accessibility cases, type/format/governance, static build/audit, 14 workspace, 11 shell, 3 AI and 41 shadcn browser cases; one intentional platform-specific skip. Five new native panel tests include real hover/focus, reversed bar widths without state/geometry mutation, activation, right orientation, disabled controls, reduced motion, forced colors and public header hover colors. Registry-resolved released acceptance remains separately pending. No assertions or timeouts weakened.",
+  "browser_acceptance": "Owned Storybook 6057 restarted after the final source hover-token fix, clearing only its generated sb-vite cache. Fresh final app-shell page measures one Unstaged header, a 28×24px button and 18×12px icon; initial fresh proof also exercised collapse/expand with correct Unstaged rail label. Final proof saved .local/panel-toggle-evidence/workspace-compact-toggles-final.png. Temporary final proof tab closed. Earlier first-tab reload/reconnect timed out; a fresh tab verified the final result. Owned Storybook 6057 remains running at PID 92150.",
+  "remaining": [
+    "Backend and physical checkout integration still require explicit user approval.",
+    "Published registry-resolved foundation qualification remains pending.",
+    "No screenshot comparison, baseline update, package publication or service/backend rebuild."
+  ]
 }
 ]
 ```

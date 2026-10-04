@@ -1891,3 +1891,7 @@ reorder commands remain supported. Header feedback is scoped by stack and
 branch. Feedback and preview validation reject missing targets, self or
 redundant positions and moves that rewrite immutable history. These remain
 frontend mock inputs with no transport or persistence change.
+
+Compact column panel toggles and independent accessible column titles are
+presentation-only under JST-UI-020. The source-controlled icon and its
+hover/focus preview add no request, command, persistence or transport fields.

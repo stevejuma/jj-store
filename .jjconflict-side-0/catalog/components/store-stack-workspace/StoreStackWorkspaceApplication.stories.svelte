@@ -5,6 +5,7 @@
   import {
     applyPreview,
     messagePreview,
+    assertCompactColumnToggle,
   } from "../../fixtures/stack-workspace/story-actions.js";
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Application",
@@ -18,7 +19,7 @@
   name="Workspace in app shell"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByRole("region", { name: "Stack feature/api" });
+    await assertCompactColumnToggle(canvasElement);
     const views = canvas.getByRole("tablist", {
       name: "Local repository views",
     });
