@@ -86,7 +86,7 @@ shared-package release qualification does not alter those original Git gates.
 | M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034 |
 | M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023 |
 | M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035 |
-| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089 |
+| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082,E-UI-083,E-UI-084,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089,E-UI-099 |
 | M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                                          | E-M9-033 |
 | M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013                | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014 |
 | M10.1       | Done        | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                                  | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                                    | E-M10-001,E-M10-010,E-M10-013 |
@@ -69856,6 +69856,158 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "formats": "Current AgentStore only. Rust code, public schemas/generated contracts, capture persistence and exact pending request identities unchanged. Main and capture ledger histories preserved verbatim.",
   "scope": "UI/controller notification follow-up to already qualified capture stack, rebased on main eb25eacb. Installation-scoped condition notices for operational failures and timed information outcomes; validation/unavailable-content/unknown receipt recovery contextual. Direct UI/controller and cold browser lanes only; Rust/full contract/root aggregate lanes out of scope because their boundary trees are identical. Broader M18 harness/release scope unchanged; existing intermittent capture busy/performance deferred. Stories visual-pending; no baseline approval, push, release or installed service changes.",
   "next": "Main workspace now contains the rebased capture preview and notification integration. Use Settings > Agents in the preserved isolated preview; defer additional harness, capture performance and registry-release qualification as already governed."
+},
+{
+  "id": "E-UI-099",
+  "tasks": [
+    "M9.5"
+  ],
+  "requirements": [
+    "JST-COLLAB-005",
+    "JST-UI-015"
+  ],
+  "date": "2026-10-04",
+  "kind": "Generic agent prompt markup disclosures",
+  "revision": "enclosing Jujutsu change tkwpktrq",
+  "before": "Main clean at krnstxms/f8fc1731. Both production activity and recorded-chunk story regressions fail because arbitrary context elements have no disclosure controls.",
+  "versions": "JJ 0.45.1; Node 24.10.0; pnpm 10.32.1; Mira 0.0.2; locked Svelte 5, Storybook 10.5.7, Vitest 4.1.11, Playwright 1.63.0 and bits-ui 2.19.4. Existing Design Core 0.1.2 source-validation setup inherited unchanged; registry release qualification remains deferred under M4.31.",
+  "formats": "Application-owned Mira remark/rehype/component extension only. Captured source, native identities, storage, public schemas, request/receipt identities and copy values remain unchanged. No dependency or foundational source changes.",
+  "files": [
+    "catalog/components/store-application/AgentPromptMarkup.stories.svelte",
+    "catalog/fixtures/AgentPromptFixture.svelte",
+    "catalog/fixtures/agent-prompt-markup.ts",
+    "spec/src/api.md",
+    "spec/src/collaboration.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte",
+    "web/src/lib/ui/community-message/CommunityMessage.svelte",
+    "web/src/lib/ui/community-message/props.ts",
+    "web/src/lib/ui/store-collaboration/StoreAgentContext.svelte",
+    "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+    "web/src/lib/ui/store-collaboration/StorePromptElement.svelte",
+    "web/src/lib/ui/store-collaboration/prompt-element-ranges.ts",
+    "web/src/lib/ui/store-collaboration/prompt-elements-extension.ts",
+    "web/src/lib/ui/store-collaboration/remark-prompt-elements.ts",
+    "web/tests/browser/agent-prompt-markup.spec.ts",
+    "web/tests/vite/prompt-elements.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "tests": [],
+  "runs": [
+    {
+      "command": "pnpm search remark xml --json; package metadata and README review for remark-mdx and remark-directive",
+      "result": "pass",
+      "failures": 0,
+      "note": "No suitable drop-in tolerant XML prompt renderer found. Directive syntax differs; MDX imposes JSX/expression syntax. Research retained in ignored .local/xml-plugin-research.json, remark-mdx-readme.md and remark-directive-readme.md."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (before)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Both activity and recorded chunk paths lack the arbitrary <harness:context> disclosure. .local/agent-prompt-markup/before.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (repair runs)",
+      "result": "fail",
+      "failures": 10,
+      "note": "Four repair runs: 3 sanitizer marker failures, 3 normalized-link assertions, 2 immediate collapse visibility assertions, 2 incorrect unmount assertions. Safe filtering strips className on div; switch marker to inert title. Bits UI retains hidden content, so await hidden visibility. Final exact run below passes."
+    },
+    {
+      "command": "pnpm catalog:check (before fixture fixes)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Fixture media_type widened to string; an embedded script-like fixture string confused Svelte diagnostics. Add literal typing and move sample to TypeScript fixture; no diagnostic suppression."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/prompt-elements.test.ts (initial)",
+      "result": "pass",
+      "failures": 0,
+      "note": "7 parser boundary tests."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/AgentComments.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "note": "24 unchanged direct consumer stories pass; 2 new prompt collapse assertions fail and 2 other new stories pass. Only the new assertions were repaired; no subsequent production change. .local/agent-prompt-markup/stories.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AgentPromptMarkup.stories.svelte (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "5 interactions/accessibility pass: arbitrary nesting, recorded chunks, malformed and code literals, inert attributes/cross-section references, default safe HTML behavior. Stories remain visual-pending. .local/agent-prompt-markup/after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/prompt-elements.test.ts web/tests/vite/agent-timeline.test.ts web/tests/vite/projects-agent-response.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "13 tests across 3 files. Generic Unicode names/attributes, balance/escape/depth/code boundaries and direct timeline/response consumers. .local/agent-prompt-markup/units.log."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final web and catalog checks: 0 errors/0 warnings, catalog boundaries 172 modules. Web check run before and after sanitizer-marker repair; catalog rerun after both fixture errors and ordinary-renderer fixture addition."
+    },
+    {
+      "command": "pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh production bundle and manifest generated. .local/agent-prompt-markup/build.log."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts agent-prompt-markup.spec.ts (first run)",
+      "result": "fail",
+      "failures": 3,
+      "note": "Initial ignored config used the preview executable, whose compiled asset path points to the older preview bundle irrespective of cwd. Corrected to existing main executable; no Rust rebuild."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts agent-prompt-markup.spec.ts (repair runs)",
+      "result": "fail",
+      "failures": 4,
+      "note": "Three subsequent runs: 2 unopened Copy submenu failures; 1 touch/mobile fixture failure because viewport-only emulation retains desktop hover actions clipped by the existing sidebar header; 1 full-document mobile Axe run exposes existing landmark-one-main/page-has-heading-one findings while main is hidden behind the response sidebar. Use actual touch emulation and scope Axe to changed transcript. Document-level mobile landmarks remain a separate UI gap."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/agent-prompt-markup/playwright.config.ts agent-prompt-markup.spec.ts (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "3 cold built-bundle tests pass. Desktop activity and touch-mobile recorded chunks prove Markdown before/inside/between/after, keyboard disclosures, measured virtual row growth/no overlap, exact original Copy message, no horizontal page overflow and transcript-scoped Axe. Third test proves inert tags/attributes/no network leaks and visible malformed/indented fallback. .local/agent-prompt-markup/browser.log."
+    },
+    {
+      "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "890 UI modules, 17 packages, 1 ownership validator/22 chapters/167 requirements."
+    },
+    {
+      "command": "pnpm exec prettier --write <changed production, fixture, test and canonical chapter files>; pnpm exec prettier --check <same files>",
+      "result": "pass",
+      "failures": 0,
+      "note": "All new/changed source and canonical paragraphs formatted. Historical milestone ledger encodings retained verbatim; only the new evidence entry is formatted."
+    },
+    {
+      "command": "jj rebase -r @ -o tkwpktrq (empty codex-preview workspace); CUA reload7470 and inspect live Codex session",
+      "result": "pass",
+      "failures": 0,
+      "note": "Preview clean before rebase; source refreshed through Vite HMR with backend/fixture untouched. Actual captured <environment_context>, <filesystem> and <cwd> disclosures expand into nested controls and original content. Screenshot .local/agent-prompt-markup/live-preview.png; tab retained for user review."
+    },
+    {
+      "command": "pnpm spec:first (initial updated ledger)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Mapped web scope also requires api.md. Add a browser/transport boundary paragraph preserving exact recorded text and identity; no schema generation needed."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress (final updated canonical chapters and ledger)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Spec-first:14 protected files/5 canonical chapters; validation:5 validators/22 chapters/167 requirements; progress:136 tasks. All historical evidence retained; no milestone status promoted."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "UI-only targeted policy: exact prompt stories and units plus direct agent consumers, focused types, ownership/boundaries and cold built-bundle tests. No root aggregate, Rust, contract generation, dependency refresh, publication, baseline approval, installed-service or data reset work. Case-sensitive balanced markup supports arbitrary names and literal attributes; fenced/indented/inline/escaped examples remain literal. Initially collapsed state is transient. Full-document mobile main/heading findings and existing desktop-hover clipping under viewport-only mobile emulation are separately recorded; scoped transcript accessibility passes.",
+  "next": "Retain the exact prompt and direct-consumer regressions. Preview7470 has the extension and an expanded real captured context for review. Document-level mobile landmark/heading qualification remains separate from this transcript scope."
 }
 ]
 ```

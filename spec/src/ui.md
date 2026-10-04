@@ -1773,3 +1773,16 @@ observations clear a condition and allow a new episode. Ordinary accepted
 outcomes use timed information notices. Disabled/unavailable capture content,
 request-ID validation, exact pending requests and receipt/publication recovery
 remain contextual without duplicate toasts.
+
+Agent message previews opt into a generic remark extension for XML-style prompt
+elements. Balanced arbitrary element names, nested sections and literal
+attributes render as initially collapsed Design Core disclosures; Markdown
+before, between, inside and after those elements remains on the shared safe Mira
+pipeline. Fenced/indented code, inline code and escaped examples remain literal.
+Self-closing elements are inert labels; incomplete or mismatched tags remain
+readable literal text. No harness tag allowlist, HTML attribute execution,
+source rewriting or persisted disclosure state is introduced. Activity messages
+and recorded transcript chunks share this behavior; ordinary comments and
+repository Markdown retain their existing rendering. Exact source remains the
+Copy message value. Nested controls are keyboard accessible and expansion must
+remeasure virtual rows without clipping following messages.

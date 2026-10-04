@@ -34,6 +34,7 @@
 
   let {
     message,
+    promptElements = false,
     author,
     members = [],
     rooms = [],
@@ -194,6 +195,7 @@
       <CommunityMarkdownContent
         class="community-message__content"
         content={message.content}
+        {promptElements}
         mentionPubkeys={message.mentionPubkeys ?? []}
         {members}
         {rooms}

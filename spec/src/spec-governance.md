@@ -871,3 +871,11 @@ recovery, with Rust sources, schemas and generated contracts identical to the
 previously qualified capture tip. Focused controller, shared notification,
 settings navigation, application and cold browser acceptance qualify this
 rebase; unrelated aggregate and Rust lanes remain out of scope.
+
+Agent prompt markup is a UI-only extension of the public Mira remark/component
+API. Focused parser regressions and production transcript stories prove generic
+nesting, Markdown preservation, literal code and malformed-source fallback. Cold
+built-bundle browser acceptance proves scoped enablement, inert attributes,
+keyboard disclosure, copy fidelity and virtual-row expansion on desktop/mobile.
+No native storage, public transport contract or foundational package change is
+part of this slice.

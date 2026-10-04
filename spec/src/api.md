@@ -1677,3 +1677,10 @@ Capture notification dismissal changes presentation only. It neither clears an
 unknown command nor changes its original request identity, draft or receipt.
 Successful observations clear operational failure feedback only after status,
 source coverage and any selected import inspection are accepted.
+
+Agent activity and recorded transcript APIs retain their exact text content. The
+browser may derive generic nested prompt-element disclosures through the safe
+Markdown extension described in `ui.md`; tag names and literal attributes never
+become trusted metadata or executable HTML. Preview expansion changes only
+presentation, with Copy message retaining the complete original body. No
+transport schema, media type, stored transcript or review anchor changes.

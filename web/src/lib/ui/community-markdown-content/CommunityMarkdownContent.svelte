@@ -15,9 +15,11 @@
   } from "./context.js";
   import { previewCommunityMarkdown } from "./preview-mentions.js";
   import { createCommunityMarkdownExtension } from "./syntax.js";
+  import { promptElementsExtension } from "../store-collaboration/prompt-elements-extension.js";
 
   let {
     content,
+    promptElements = false,
     fullWidth = false,
     mentionPubkeys = [],
     members = [],
@@ -30,6 +32,7 @@
     class: className = "",
   }: {
     content: string;
+    promptElements?: boolean;
     /** Fill the parent column instead of centering a readable-width document. */
     fullWidth?: boolean;
     mentionPubkeys?: readonly string[];
@@ -83,7 +86,10 @@
 >
   <MarkdownPreview
     value={preview.content}
-    extensions={[communityMarkdownExtension]}
+    extensions={[
+      communityMarkdownExtension,
+      ...(promptElements ? [promptElementsExtension] : []),
+    ]}
     htmlPolicy="safe"
     highlight
   />

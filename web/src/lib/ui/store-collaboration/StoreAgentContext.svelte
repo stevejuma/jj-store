@@ -159,6 +159,7 @@
           {#snippet row(chunk)}
             <div class="store-collaboration__message" role="listitem">
               <CommunityMessage
+                promptElements
                 message={transcriptMessage(chunk, selected.session)}
                 author={agent}
                 members={[agent]}

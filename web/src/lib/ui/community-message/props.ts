@@ -14,6 +14,7 @@ import type {
 
 export type CommunityMessageProps = {
   message: CommunityMessageModel;
+  promptElements?: boolean;
   author: CommunityMemberModel;
   members?: readonly CommunityMemberModel[];
   rooms?: readonly CommunityRoomModel[];

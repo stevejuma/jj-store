@@ -81,6 +81,7 @@
         {@const author =
           entry.role === "assistant" || entry.role === "tool" ? agent : member}
         <CommunityMessage
+          promptElements
           message={message(entry)}
           {author}
           {members}
