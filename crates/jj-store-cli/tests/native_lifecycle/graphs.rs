@@ -3,6 +3,68 @@ use jj_store_jj::query as q;
 use jj_store_service::reads::{CommittedRead, OpenRead, ReadLimits};
 use std::time::Duration;
 
+struct PointReadsOnly(Arc<CommittedRead>);
+#[async_trait::async_trait]
+impl q::ReadAccess for PointReadsOnly {
+    fn repository(&self) -> m::RepositoryId {
+        q::ReadAccess::repository(self.0.as_ref())
+    }
+    fn epoch(&self) -> m::EpochId {
+        q::ReadAccess::epoch(self.0.as_ref())
+    }
+    fn operation(&self) -> m::OperationId {
+        q::ReadAccess::operation(self.0.as_ref())
+    }
+    async fn contains(&self, key: m::ObjectKey) -> q::Result<bool> {
+        q::ReadAccess::contains(self.0.as_ref(), key).await
+    }
+    async fn inventory(&self) -> q::Result<Arc<BTreeSet<m::ObjectKey>>> {
+        Err(q::Error::IndexBudget)
+    }
+    async fn authorize(&self) -> q::Result<()> {
+        q::ReadAccess::authorize(self.0.as_ref()).await
+    }
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_graph_pages_and_preparation_do_not_enumerate_inventory() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, commit) = initial(&f, local.path(), work.path()).await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let access: Arc<dyn q::ReadAccess> = Arc::new(PointReadsOnly(read.clone()));
+            let exec = executor(
+                root.path(),
+                q::Limits {
+                    max_inline_rebuild_commits: 1,
+                    ..Default::default()
+                },
+            );
+            assert_eq!(
+                exec.execute(f.store.clone(), access.clone(), log("all()"), page(1))
+                    .await
+                    .unwrap_err(),
+                q::Error::IndexRebuildRequired
+            );
+            let prepared = exec
+                .prepare_index(f.store.clone(), access.clone(), q::Cancellation::default())
+                .await
+                .unwrap();
+            assert_eq!(prepared.operation, oid(repo.op_id()));
+            let result = exec
+                .execute(f.store.clone(), access, log("all()"), page(1))
+                .await
+                .unwrap();
+            assert_eq!(commits(&result)[0].commit.id, cid(commit.id()));
+            assert_eq!(result.cache.state, q::cache::State::Reused);
+        })
+        .await;
+}
+
 fn log(expression: &str) -> q::Request {
     q::Request::Log {
         revset: expression.into(),

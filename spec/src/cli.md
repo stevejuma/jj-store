@@ -1622,3 +1622,9 @@ directory, commit summary and exact file with a corrupt source index and a small
 history budget. Reads preserve index files, reject commits introduced after the
 selected operation and retain abandoned/evolution-only membership through its
 operation ancestry. Budget exhaustion must remain explicit.
+
+Native graph acceptance MUST exercise a capability that permits checked point
+membership but rejects complete inventory enumeration. Cold inline admission,
+explicit preparation and warm graph pages must work through that capability,
+while hard index/metadata/work/output limits and canceled-worker ownership
+remain covered independently.

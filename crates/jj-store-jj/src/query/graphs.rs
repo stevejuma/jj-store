@@ -9,12 +9,7 @@ use jj_lib::{
     ui_path::RepoPathUiConverter,
 };
 
-pub(super) fn validate(
-    request: &Request,
-    page: &Page,
-    commits: usize,
-    budget: &Budget,
-) -> Result<()> {
+pub(super) fn validate(request: &Request, page: &Page, budget: &Budget) -> Result<()> {
     match (request, page.after) {
         (
             Request::Operations | Request::OperationsFiltered { .. },
@@ -58,12 +53,7 @@ pub(super) fn validate(
                 return Err(Error::Limit);
             }
         }
-        budget.work(
-            commits
-                .max(1)
-                .checked_mul(revset.len())
-                .ok_or(Error::Limit)?,
-        )?;
+        budget.work(revset.len())?;
     }
     Ok(())
 }

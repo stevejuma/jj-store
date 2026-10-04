@@ -369,7 +369,15 @@ async fn index_tasks_retention_expiry_and_failures_are_explicit() {
             .unwrap_err(),
         tasks::Error::Reset
     );
-    manager.start(f.f.session.clone(), operation).await.unwrap();
+    let restarted = manager.start(f.f.session.clone(), operation).await.unwrap();
+    // Finish the separately owned cache writer before testing hard index limits;
+    // otherwise Busy is a legitimate result before the index can be admitted.
+    assert!(matches!(
+        terminal(&manager, f.f.session.clone(), &restarted.id)
+            .await
+            .state,
+        tasks::State::Ready { .. }
+    ));
     let small = q::GraphExecutor::new(
         root.path().to_owned(),
         q::Limits {

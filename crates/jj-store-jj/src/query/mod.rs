@@ -4,6 +4,7 @@ pub mod admission;
 pub mod cache;
 pub mod content;
 mod graphs;
+mod index;
 pub mod language;
 pub mod predicates;
 pub mod workers;
@@ -394,7 +395,7 @@ impl GraphExecutor {
             if let Some(query) = query
                 && !language::operations::Filter::parse(query)?.needs_prefix_lookup()
             {
-                graphs::validate(request, page, 0, &budget)?;
+                graphs::validate(request, page, &budget)?;
                 let objects = Arc::new(
                     NativeObjects::new(
                         Arc::new(ReadStore::new(store, access.clone(), budget.clone(), false)),
@@ -441,17 +442,8 @@ impl GraphExecutor {
                 return Ok(result);
             }
         }
-        let count = access
-            .inventory()
-            .await?
-            .iter()
-            .filter(|key| matches!(key, m::ObjectKey::Commit(_)))
-            .count();
-        if count > self.limits.max_index_commits {
-            return Err(Error::IndexBudget);
-        }
         if let Work::Graph(request, page) = &work {
-            graphs::validate(request, page, count, &budget)?;
+            graphs::validate(request, page, &budget)?;
         }
         let mut cache = cache::Cache::open(&self.root, self.cache_policy, &budget)?;
         let objects = Arc::new(
@@ -476,23 +468,20 @@ impl GraphExecutor {
         let settings = UserSettings::from_config(StackedConfig::with_defaults())
             .map_err(|_| Error::Unavailable)?;
         let entry = cache.prepare(access.as_ref(), &stores, &budget)?;
+        budget.start_index(entry.initialize && matches!(work, Work::Graph(..)))?;
         if entry.initialize {
-            if matches!(work, Work::Graph(..)) && count > self.limits.max_inline_rebuild_commits {
-                return Err(Error::IndexRebuildRequired);
-            }
             stores
                 .initialize_cache(&settings, &entry.path)
                 .await
                 .map_err(|_| Error::Unavailable)?;
         }
-        let loader = stores
-            .load_cache(&settings, &entry.path)
-            .map_err(|_| Error::Unavailable)?;
+        let loader = index::loader(&stores, &settings, &entry.path, budget.clone())?;
         let repo = stores
             .load_at(&loader, access.operation())
             .await
             .map_err(|_| Error::Unavailable)?;
         budget.check()?;
+        budget.finish_initial_index();
         let data = match work {
             Work::Graph(request, page) => {
                 Some(graphs::run(&repo, request, page, &access, &budget).await?)

@@ -36,6 +36,7 @@ pub(crate) struct Budget {
     work: AtomicU64,
     output: AtomicU64,
     failure: Mutex<Option<Error>>,
+    index: Mutex<Option<super::index::Admission>>,
 }
 impl Budget {
     pub fn new(limits: Limits) -> Result<Self> {
@@ -53,6 +54,7 @@ impl Budget {
             work: AtomicU64::new(0),
             output: AtomicU64::new(0),
             failure: Mutex::new(None),
+            index: Mutex::new(None),
         })
     }
     pub fn fail(&self, error: Error) -> Error {
@@ -114,6 +116,23 @@ impl Budget {
     }
     pub fn work(&self, amount: usize) -> Result<()> {
         self.charge(&self.work, amount as u64, self.limits.max_work as u64)
+    }
+    pub fn start_index(&self, inline: bool) -> Result<()> {
+        *self.index.lock().expect("index admission") = Some(super::index::Admission::new(inline));
+        // The virtual root is indexed without a physical object-store read.
+        self.index_commit(crate::roots::ROOT_COMMIT)
+    }
+    pub fn finish_initial_index(&self) {
+        if let Some(admission) = self.index.lock().expect("index admission").as_mut() {
+            admission.finish_initial_load();
+        }
+    }
+    fn index_commit(&self, id: m::CommitId) -> Result<()> {
+        self.check()?;
+        if let Some(admission) = self.index.lock().expect("index admission").as_mut() {
+            admission.admit(id, self.limits).map_err(|e| self.fail(e))?;
+        }
+        Ok(())
     }
     pub async fn until<T>(&self, future: impl std::future::Future<Output = T>) -> Result<T> {
         self.check()?;
@@ -334,6 +353,11 @@ impl ObjectStore for ReadStore {
     }
     async fn get(&self, key: &Key, range: Option<ByteRange>) -> storage::Result<Download> {
         let object = self.validate(key).await?;
+        if let m::ObjectKey::Commit(id) = object {
+            self.budget
+                .index_commit(id)
+                .map_err(|_| storage::Error::Limit)?;
+        }
         if range.is_some() {
             return Err(storage::Error::Range);
         }

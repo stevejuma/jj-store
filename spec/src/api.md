@@ -1892,3 +1892,12 @@ authorization and cancellation retain pinned JJ semantics. ID-prefix selectors
 retain their existing complete admission until the prepared operation lookup is
 qualified. Local reads must not repair or rewrite a damaged commit index as a
 side effect of reading operation metadata.
+
+Native commit-graph startup and explicit preparation count actual verified
+commit reads rather than materializing the committed inventory for admission.
+Crossing the cold inline threshold returns rebuild-required and discards
+staging; every warm or newly built index still observes the hard index-size
+limit. Syntax work is independent of total retained repository size. This
+preserves query identities, native evaluation, signed continuations, current
+authorization and explicit resource errors; broader prepared-lookup and
+CPU/memory qualification remain separate gates.
