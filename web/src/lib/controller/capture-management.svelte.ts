@@ -151,6 +151,7 @@ export function createCaptureManagement(options: {
           ...page,
           sources: [...current.sources, ...page.sources],
         };
+        state.sourcesObservedAt = Date.now();
       },
       () => {
         state.sourceState = "failed";

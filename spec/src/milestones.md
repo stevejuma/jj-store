@@ -148,7 +148,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010 |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -71262,6 +71262,129 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Installation Agents settings and their direct controller observations only. Existing user/main-runtime/desktop processes and server config untouched. No Rust build, harness reader change, reimport/reset, installation or publication. Root aggregates, full browser/Storybook/Rust inventory, other harness qualification and visual baseline approval are out of scope under the targeted verification policy. No milestone promoted.",
   "next": "Try Configuration and Sources in refreshed preview7470. Retain focused loading/group/filter/notification regressions; broader harness and release work stays deferred."
+},
+{
+  "id": "E-M18-011",
+  "tasks": [
+    "M18.8"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change vsusztpy",
+  "kind": "Source-table avatars, combined filters, icon history actions and observation freshness footer",
+  "versions": "Svelte5.57.1; Storybook10.5.7; Vitest4.1.11; released Design Core Table/Select/Button/Badge; owned CommunityMemberAvatar and CommunityRelativeTime; existing browser_preview executable.",
+  "formats": "Presentation and internal installation-controller metadata only. sourcesObservedAt is browser-clock milliseconds on validated accepted coverage/paging; null until acceptance. No wire/schema/server/persisted transcript changes. Source filters preserve selectors, unfiltered coverage and cursors. No per-source activity/modification timestamps are inferred.",
+  "files": [
+    "catalog/components/store-application/StoreCaptureSettings.stories.svelte",
+    "catalog/components/store-application/capture-harness-play.ts",
+    "catalog/components/store-application/capture-source-table-play.ts",
+    "spec/src/api.md",
+    "spec/src/collaboration.md",
+    "spec/src/ui.md",
+    "spec/src/milestones.md",
+    "web/src/lib/controller/capture-management.svelte.ts",
+    "web/src/lib/controller/capture-observations.ts",
+    "web/src/lib/controller/capture-types.ts",
+    "web/src/lib/ui/store-settings/StoreCaptureSourceFilters.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSourceFooter.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+    "web/src/lib/ui/store-settings/capture-source-presentation.ts",
+    "web/tests/browser/local-capture-loading.spec.ts",
+    "web/tests/vite/capture-freshness.test.ts"
+  ],
+  "tests": [
+    "web/tests/vite/capture-freshness.test.ts#source observation time advances only after accepted coverage",
+    "web/tests/vite/capture-freshness.test.ts#source paging advances observation time only for a validated page"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; jj describe -m \"Refine capture sources with harness avatars, status filters and freshness footer\"; read owning UI/API/collaboration chapters and ledger; inspect Community runtime relative-time presentation and released Design Core table/button exports",
+      "result": "pass",
+      "failures": 0,
+      "note": "Clean main started at vsusztpy after96ffe099. Current source contract has no per-source update timestamp. Quick memory search provides no task-specific implementation facts. New UI remains owned; no sibling source imports."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "stories-before.log:18 existing stories pass; new source avatar/external-status-filter/icon/footer regression fails before implementation."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "units-before.log:8 existing tests pass; new accepted observation-time regression fails before implementation."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (after)",
+      "result": "fail",
+      "failures": 1,
+      "note": "stories-after.log:18 pass, one old row-count assertion includes a newly added spanning footer. Corrected assertions to count body rows and independently verify footer; no product assertions removed."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories-final.log:19 stories pass including interaction/accessibility. First cells identify Codex/Cursor with owned avatars; filters outside border combine over stable source labels; import is icon-only with accessible name; footer spans4 columns and uses shared relative time; exact import selector and prior draft/notification/loading guards retained. Visual-pending remains."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/capture-freshness.test.ts web/tests/vite/capture-management.test.ts web/tests/vite/capture-settings.test.ts web/tests/vite/capture-observation-http.test.ts web/tests/vite/production-capture-management.test.ts (after/final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "units-after.log:32 pass; units-final.log:33 across five files pass with paging freshness added. First successful source observation and accepted continuation update browser time; Busy, real unavailable and rejected duplicate paging retain previous timestamp and selected coverage."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check (initial/final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-check-final.log and catalog-check-final.log: zero errors/warnings; catalog179-module boundary passes. No generated contract change or Rust lane required."
+    },
+    {
+      "command": "pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "build.log: fresh production bundle and asset manifest pass; existing chunk-size warning retained. Cold UI uses explicit existing target/debug/examples/browser_preview without Rust rebuild."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-settings.spec.ts local-capture-loading.spec.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "browser.log: all7 cold tests pass. New table regression measures both filters above/outside border and trailing alignment, avatar first-cell image, combined Codex/degraded filtering, icon-only accessible history button,4-column footer and datetime; desktop/mobile Axe, narrow-screen containment, exact selector, drafts, notifications, loading/retry and polling lifetime remain qualified. Isolated7458 service stopped by Playwright."
+    },
+    {
+      "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership; focused pnpm exec prettier --write/--check",
+      "result": "pass",
+      "failures": 0,
+      "note": "architecture-final.log:916 modules; boundaries.log:17 packages; ownership.log and format-check.log pass. Production table/filter/footer helpers stay under governed source budgets and independent of catalog. Ledger never whole-file formatted."
+    },
+    {
+      "command": "pnpm spec:first (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "spec-first.log: changing capture-types internal controller metadata requires mapped API chapter. Added explicit browser-only successful observation-time semantics to canonical API chapter; no schema or public response change."
+    },
+    {
+      "command": "pnpm spec:first (final); pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-first-final.log and spec-validate.log pass with UI/API/collaboration owning chapters. Canonical requirements distinguish accepted coverage freshness from transcript/file/server update time."
+    },
+    {
+      "command": "jj rebase -r uqwlnutu -d vsusztpy; jj workspace update-stale (clean preview); Cua live table DOM/screenshot",
+      "result": "pass",
+      "failures": 0,
+      "note": "Preview7470 shows Codex avatars, two trailing filters above rounded table, icon imports and full-width footer with current coverage,4 shown/loaded/observed and Updated just now. .local/capture-source-table/after.png saved after ready observation. Temporary proof tab closed; user tab retained. No real capture/import/config command submitted; existing main/desktop/backend processes unchanged."
+    },
+    {
+      "command": "pnpm check:progress; prior evidence object/raw-prefix preservation assertions",
+      "result": "pass",
+      "failures": 0,
+      "note": "progress.log:136 tasks pass. All408 prior evidence objects and raw JSON prefix preserved; ledger not whole-file formatted."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Agents source-table presentation and its internal observation metadata only. No milestone promotion, historical evidence rewrite, server configuration mutation, real history import, Rust build, service reset/install/restart or publication. Root aggregates, full browser/Storybook/Rust inventories, new harness qualification and visual baseline approval remain out of scope under targeted verification.",
+  "next": "Use refreshed preview7470. Source update time describes accepted coverage reads; per-source event/modification timing would need separately qualified server evidence."
 }
 ]
 ```

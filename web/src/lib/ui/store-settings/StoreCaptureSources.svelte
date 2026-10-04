@@ -5,7 +5,13 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Badge } from "@lapismd/design-core/shadcn/badge";
   import * as Table from "@lapismd/design-core/shadcn/table";
-  import * as Select from "@lapismd/design-core/shadcn/select";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
+  import StoreCaptureSourceFilters from "./StoreCaptureSourceFilters.svelte";
+  import StoreCaptureSourceFooter from "./StoreCaptureSourceFooter.svelte";
+  import {
+    captureSourceMatches,
+    captureSourceMember,
+  } from "./capture-source-presentation.js";
   import {
     captureProfiles,
     captureHistorySupported,
@@ -23,29 +29,14 @@
   const captureState = $derived(management.state);
   const sources = $derived(captureState.sources);
   let harness = $state("all");
-  const filters = [
-    { value: "all", label: "All harnesses" },
-    { value: "codex", label: "Codex" },
-    { value: "cursor", label: "Cursor" },
-    { value: "opencode", label: "OpenCode" },
-  ];
-  const profiles = {
-    "codex-cli-jsonl-v1": "codex",
-    "codex-desktop-jsonl-v1": "codex",
-    "cursor-desktop-transcript-v1": "cursor",
-    "opencode-read-only-api-v1": "opencode",
-    "opencode-export-json-v1": "opencode",
-  };
+  let status = $state("all");
   const rows = $derived(
     (sources?.sources ?? [])
       .map((source, index) => ({
         source,
         label: `${captureProfiles[source.profile]} source ${index + 1}`,
       }))
-      .filter(
-        ({ source }) =>
-          harness === "all" || profiles[source.profile] === harness,
-      ),
+      .filter(({ source }) => captureSourceMatches(source, harness, status)),
   );
   const allowed = $derived(
     !captureState.settings.saving &&
@@ -64,71 +55,22 @@
   class="store-settings__section"
   aria-labelledby="capture-source-heading"
 >
-  <header><h2 id="capture-source-heading">Source coverage</h2></header>
-  <div class="store-settings__rows store-settings__rows--controls">
+  <header class="store-settings__section-heading">
     <div>
-      <div>
-        <strong>Observed sources</strong>
-        <p class="store-settings__row-description">
-          Source observations update automatically. Import history explicitly
-          enrolls an inactive source; repository access is checked by the
-          server.
-        </p>
-      </div>
-      <div
-        class="store-capture-sources__counts"
-        role="status"
-        aria-label="Source counts"
-      >
-        {#if sources}
-          <Badge variant="secondary"
-            >{rows.length.toLocaleString("en-GB")} shown</Badge
-          >
-          <Badge variant="outline"
-            >{sources.sources.length.toLocaleString("en-GB")} loaded</Badge
-          >
-          <Badge variant="outline"
-            >{sources.total.toLocaleString("en-GB")} observed</Badge
-          >
-        {/if}
-      </div>
+      <h2 id="capture-source-heading">Source coverage</h2>
+      <p>
+        Sources update automatically. Import history enrolls an inactive source;
+        the server checks repository access.
+      </p>
     </div>
-  </div>
+  </header>
+  <StoreCaptureSourceFilters bind:harness bind:status />
   {#if captureState.sourceState === "failed"}
     <StoreSettingsNotice
       >Refresh capture to select current source coverage.</StoreSettingsNotice
     >
   {/if}
   <div class="store-capture-sources__table">
-    <div class="store-capture-sources__toolbar">
-      <Select.Root type="single" bind:value={harness}>
-        <Select.Trigger aria-label="Filter by harness">
-          {filters.find((f) => f.value === harness)?.label}
-        </Select.Trigger>
-        <Select.Content>
-          <Select.Group>
-            <Select.Label>Harness</Select.Label>
-            {#each filters as f (f.value)}
-              <Select.Item value={f.value} label={f.label}
-                >{f.label}</Select.Item
-              >
-            {/each}
-          </Select.Group>
-        </Select.Content>
-      </Select.Root>
-      {#if sources?.next_cursor}
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={captureState.busy ||
-            !management.supported ||
-            captureState.sourceState !== "ready"}
-          onclick={() => management.moreSources()}
-        >
-          More capture sources
-        </Button>
-      {/if}
-    </div>
     {#if !sources && captureState.sourceState !== "failed"}
       <StoreCaptureLoading label="Loading capture sources" />
     {:else if sources}
@@ -145,11 +87,18 @@
           {#each rows as { source, label } (source.selector)}
             <Table.Row>
               <Table.Cell>
-                <div class="store-settings__stack">
-                  <strong>{label}</strong>
-                  <span class="store-settings__row-description"
-                    >{source.product_version}</span
-                  >
+                <div class="store-capture-sources__identity">
+                  <CommunityMemberAvatar
+                    member={captureSourceMember(source)}
+                    size="small"
+                    decorative
+                  />
+                  <div class="store-settings__stack">
+                    <strong>{label}</strong>
+                    <span class="store-settings__row-description"
+                      >{source.product_version}</span
+                    >
+                  </div>
                 </div>
               </Table.Cell>
               <Table.Cell
@@ -186,7 +135,10 @@
               <Table.Cell>
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="icon-sm"
+                  title={captureHistorySupported(source.profile)
+                    ? "Import history"
+                    : "History import is unavailable for this harness"}
                   aria-label={`Import history for ${label}`}
                   disabled={!allowed ||
                     !captureHistorySupported(source.profile) ||
@@ -197,12 +149,7 @@
                     onImport?.();
                   }}
                 >
-                  <DownloadIcon
-                    data-icon="inline-start"
-                    aria-hidden="true"
-                  />{captureHistorySupported(source.profile)
-                    ? "Import history"
-                    : "Import unavailable"}
+                  <DownloadIcon data-icon="inline-start" aria-hidden="true" />
                 </Button>
               </Table.Cell>
             </Table.Row>
@@ -212,12 +159,12 @@
                 <div class="store-capture-sources__empty">
                   <strong
                     >{sources.sources.length
-                      ? "No sources for this harness"
+                      ? "No sources match these filters"
                       : "No capture sources"}</strong
                   >
                   <p class="store-settings__row-description">
                     {sources.sources.length
-                      ? "Choose another harness or load more sources."
+                      ? "Adjust the harness or status filter, or load more sources."
                       : "No sources are observed in this snapshot."}
                   </p>
                 </div>
@@ -225,6 +172,16 @@
             >
           {/each}
         </Table.Body>
+        <Table.Footer
+          ><Table.Row
+            ><Table.Cell colspan={4}
+              ><StoreCaptureSourceFooter
+                {management}
+                shown={rows.length}
+              /></Table.Cell
+            ></Table.Row
+          ></Table.Footer
+        >
       </Table.Root>
     {/if}
   </div>
@@ -238,23 +195,15 @@
     border-radius: var(--radius);
     background: var(--card, var(--background));
   }
-  .store-capture-sources__toolbar {
+  .store-capture-sources__identity {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    border-block-end: 1px solid var(--border);
+    gap: 0.75rem;
   }
-  .store-capture-sources__counts,
   .store-capture-sources__states {
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
-  }
-  .store-capture-sources__counts {
-    justify-content: flex-end;
   }
   .store-capture-sources__states {
     max-width: 18rem;
@@ -262,10 +211,5 @@
   }
   .store-capture-sources__empty {
     padding: 1rem;
-  }
-  @media (max-width: 40rem) {
-    .store-capture-sources__counts {
-      justify-content: flex-start;
-    }
   }
 </style>

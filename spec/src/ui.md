@@ -1755,15 +1755,24 @@ leave global settings and save/cancel controls available. Additional editable
 harness sections require qualified server configuration support.
 
 Sources MUST use a semantic data table within the rounded Settings border, with
-source, repository, state and history-action columns. A labelled harness filter
-changes only the displayed loaded rows; it MUST NOT alter observed coverage,
-source selectors, paging cursors or import intent. Source labels stay stable
-across filtering. Styled count badges distinguish filtered rows, loaded rows and
-total observed sources, including partial pages. Empty filtered coverage is
-explicit; More sources remains available independently of the filter. Tables
-scroll within their boundary on narrow screens without widening the page. Import
-actions retain current capability, runtime and exact-selector guards; deferred
-harnesses cannot import history.
+source, repository, state and history-action columns. Source identity includes
+the bundled harness avatar beside its stable label and version. Labelled harness
+and status filters sit outside the border, aligned to the trailing edge above
+the table, and combine over loaded rows only. They MUST NOT alter observed
+coverage, source selectors, paging cursors or import intent. Source labels stay
+stable across filtering. History imports use icon-only buttons with accessible
+names and descriptive tooltips, retaining capability, runtime and exact-selector
+guards; deferred harnesses cannot import history.
+
+A full-width footer cell spans the columns and reports coverage status, styled
+shown/loaded/observed count badges, the last successful observation through the
+shared relative-time component, and More sources when a cursor exists. This
+browser observation time MUST NOT imply a transcript event or source-file
+modification time. Only validated accepted coverage or paging advances the time;
+loading, failed, busy or cancelled reads and filters retain it. Empty combined
+filters are explicit; More sources remains available independently of the
+filters. Tables scroll within their boundary on narrow screens without widening
+the page.
 
 ### Usable capture settings lifecycle
 

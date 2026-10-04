@@ -10,6 +10,7 @@
     captureSettingsLayout,
     filteredCaptureSources,
   } from "./capture-harness-play.js";
+  import { sourceTableIdentification } from "./capture-source-table-play.js";
   import CaptureSettingsFixture from "../../fixtures/CaptureSettingsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Capture",
@@ -380,4 +381,10 @@
   name="Sources table filters harnesses with stable selectors and counts"
   args={{ multipleHarnesses: true }}
   play={filteredCaptureSources}
+/>
+
+<Story
+  name="Source avatars external filters icon import and observed footer"
+  args={{ multipleHarnesses: true }}
+  play={sourceTableIdentification}
 />

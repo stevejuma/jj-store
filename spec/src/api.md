@@ -1694,6 +1694,14 @@ responses remain errors; no POST request is retried by this read policy. Loading
 uses Settings skeleton rows, retained data survives refresh, and Capture
 controls stay visible with their existing capability/precondition guards.
 
+The browser may retain the time it accepts a validated source-page observation
+or continuation as session-only presentation metadata. Failed, busy, cancelled
+or rejected reads and local filtering MUST NOT advance that observation time.
+The source response supplies no per-source update timestamp; this metadata MUST
+NOT be presented as transcript activity, file modification time or a
+server-stored fact. Harness/status filtering leaves coverage, cursor identities
+and exact selected import commands unchanged.
+
 LocalTrusted Admin capture status exposes optional `configured_roots` per
 qualified harness as a bounded list of startup-resolved directory paths. Each
 path is an absolute UTF-8 string of at most 4096 characters, with at most

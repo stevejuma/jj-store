@@ -158,11 +158,56 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   });
   await page.getByRole("tab", { name: "Sources", exact: true }).click();
   const table = page.getByRole("table", { name: "Capture sources" });
-  await expect(table.getByRole("row")).toHaveCount(4);
+  await expect(table.locator("tbody > tr")).toHaveCount(3);
   const filter = page.getByRole("button", { name: "Filter by harness" });
   await filter.click();
   await page.getByRole("option", { name: "Codex", exact: true }).click();
-  await expect(table.getByRole("row")).toHaveCount(3);
+  await expect(table.locator("tbody > tr")).toHaveCount(2);
+  const statusFilter = page.getByRole("button", {
+    name: "Filter by source status",
+  });
+  await expect(
+    filter.locator(
+      "xpath=ancestor::div[contains(@class, 'store-capture-sources__table')]",
+    ),
+  ).toHaveCount(0);
+  await expect(
+    statusFilter.locator(
+      "xpath=ancestor::div[contains(@class, 'store-capture-sources__table')]",
+    ),
+  ).toHaveCount(0);
+  const filterBounds = await statusFilter.boundingBox();
+  const tableBounds = await table.boundingBox();
+  expect(filterBounds!.y + filterBounds!.height).toBeLessThan(tableBounds!.y);
+  expect(
+    Math.abs(
+      filterBounds!.x +
+        filterBounds!.width -
+        tableBounds!.x -
+        tableBounds!.width,
+    ),
+  ).toBeLessThan(2);
+  await expect(
+    table.locator(
+      'tbody tr:first-child td:first-child img[src="/agent-icons/codex.svg"]',
+    ),
+  ).toBeVisible();
+  const iconImport = page.getByRole("button", {
+    name: "Import history for Codex CLI source 1",
+  });
+  expect((await iconImport.textContent())?.trim()).toBe("");
+  await expect(iconImport).toHaveAttribute("title", "Import history");
+  await expect(table.locator("tfoot td")).toHaveAttribute("colspan", "4");
+  await expect(table.locator("tfoot time[datetime]")).toBeVisible();
+  await statusFilter.click();
+  await page.getByRole("option", { name: "Degraded", exact: true }).click();
+  await expect(table.locator("tbody > tr")).toHaveCount(1);
+  await expect(page.getByText("1 shown", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Codex Desktop source 3", { exact: true }),
+  ).toBeVisible();
+  await statusFilter.click();
+  await page.getByRole("option", { name: "All statuses", exact: true }).click();
   await expect(page.getByText("2 shown", { exact: true })).toBeVisible();
   await expect(page.getByText("3 loaded", { exact: true })).toBeVisible();
   await expect(page.getByText("5 observed", { exact: true })).toBeVisible();
@@ -172,7 +217,7 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await filter.click();
   await page.getByRole("option", { name: "OpenCode", exact: true }).click();
   await expect(
-    page.getByText("No sources for this harness", { exact: true }),
+    page.getByText("No sources match these filters", { exact: true }),
   ).toBeVisible();
   await filter.click();
   await page.getByRole("option", { name: "Cursor", exact: true }).click();

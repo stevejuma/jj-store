@@ -51,6 +51,8 @@ export interface CaptureManagementState {
   status: StoreLoadStatus;
   sources: Model<"CaptureSourcePage"> | null;
   sourceState: StoreLoadStatus;
+  /** Browser clock in milliseconds when validated source coverage was accepted. */
+  sourcesObservedAt: number | null;
   busy: boolean;
   commandBusy: boolean;
   error: string;
@@ -89,6 +91,7 @@ export const emptyCaptureManagement = (): CaptureManagementState => ({
   status: "idle",
   sources: null,
   sourceState: "idle",
+  sourcesObservedAt: null,
   busy: false,
   commandBusy: false,
   error: "",

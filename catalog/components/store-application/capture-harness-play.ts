@@ -45,7 +45,7 @@ export async function filteredCaptureSources({
   const page = within(canvasElement.ownerDocument.body);
   await userEvent.click(c.getByRole("tab", { name: "Sources" }));
   const table = await c.findByRole("table", { name: "Capture sources" });
-  await expect(within(table).getAllByRole("row")).toHaveLength(4);
+  await expect(table.querySelectorAll("tbody > tr")).toHaveLength(3);
   await expect(c.getByText("3 loaded")).toBeVisible();
   await expect(c.getByText("5 observed")).toBeVisible();
   const filter = c.getByRole("button", { name: "Filter by harness" });
@@ -54,7 +54,7 @@ export async function filteredCaptureSources({
   );
   await userEvent.click(filter);
   await userEvent.click(page.getByRole("option", { name: "Codex" }));
-  await expect(within(table).getAllByRole("row")).toHaveLength(3);
+  await expect(table.querySelectorAll("tbody > tr")).toHaveLength(2);
   await expect(c.getByText("Codex Desktop source 3")).toBeVisible();
   await expect(c.queryByText("Cursor Desktop source 2")).toBeNull();
   await expect(c.getByText("2 shown")).toBeVisible();
@@ -63,7 +63,7 @@ export async function filteredCaptureSources({
   );
   await userEvent.click(filter);
   await userEvent.click(page.getByRole("option", { name: "OpenCode" }));
-  await expect(c.getByText("No sources for this harness")).toBeVisible();
+  await expect(c.getByText("No sources match these filters")).toBeVisible();
   await expect(c.getByText("5 observed")).toBeVisible();
   await waitFor(() =>
     expect(getComputedStyle(filter).pointerEvents).not.toBe("none"),

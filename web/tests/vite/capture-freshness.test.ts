@@ -208,3 +208,71 @@ test("automatic import inspection uses the acknowledged original request", async
     vi.useRealTimers();
   }
 });
+
+test("source observation time advances only after accepted coverage", async () => {
+  const f = fixture();
+  const clock = vi.spyOn(Date, "now");
+  try {
+    clock.mockReturnValue(1_800_000_000_000);
+    expect(f.management.state).toMatchObject({ sourcesObservedAt: null });
+    await f.management.refresh();
+    expect(f.management.state).toMatchObject({
+      sourcesObservedAt: 1_800_000_000_000,
+    });
+    clock.mockReturnValue(1_800_000_060_000);
+    vi.mocked(f.transport.sources).mockRejectedValueOnce(
+      new ApiError("capture_control_busy"),
+    );
+    await f.management.refresh();
+    expect(f.management.state).toMatchObject({
+      sourcesObservedAt: 1_800_000_000_000,
+    });
+    vi.mocked(f.transport.sources).mockRejectedValueOnce(
+      new ApiError("capture_management_unavailable"),
+    );
+    await f.management.refresh();
+    expect(f.management.state).toMatchObject({
+      sourcesObservedAt: 1_800_000_000_000,
+    });
+    await f.management.refresh();
+    expect(f.management.state).toMatchObject({
+      sourcesObservedAt: 1_800_000_060_000,
+    });
+  } finally {
+    f.management.destroy();
+    clock.mockRestore();
+  }
+});
+
+test("source paging advances observation time only for a validated page", async () => {
+  const f = fixture(),
+    clock = vi.spyOn(Date, "now");
+  const first = captureSources(),
+    second = captureSources();
+  first.total = second.total = 3;
+  first.next_cursor = first.sources[0].selector;
+  second.sources[0].selector = second.runtime_generation! + ":0000000000000002";
+  second.next_cursor = second.sources[0].selector;
+  vi.mocked(f.transport.sources).mockImplementation(async (cursor) =>
+    structuredClone(cursor === first.next_cursor ? second : first),
+  );
+  try {
+    clock.mockReturnValue(1_800_000_000_000);
+    await f.management.refresh();
+    clock.mockReturnValue(1_800_000_060_000);
+    await f.management.moreSources();
+    expect(f.management.state).toMatchObject({
+      sourcesObservedAt: 1_800_000_060_000,
+    });
+    clock.mockReturnValue(1_800_000_120_000);
+    await f.management.moreSources();
+    expect(f.management.state.sourceState).toBe("failed");
+    expect(f.management.state).toMatchObject({
+      sourcesObservedAt: 1_800_000_060_000,
+    });
+    expect(f.management.state.sources!.sources).toHaveLength(2);
+  } finally {
+    f.management.destroy();
+    clock.mockRestore();
+  }
+});

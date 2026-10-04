@@ -3183,7 +3183,10 @@ Command refusals, unknown outcomes and exact retry identities remain unchanged;
 automatic read retries MUST NOT resend mutation commands. UI closure or
 visibility cannot cancel, replace or automatically resend a pending command.
 Background source discovery never retargets an accepted import. Only qualified
-Codex profiles expose history import in the initial preview.
+Codex profiles expose history import in the initial preview. Source coverage
+freshness records the browser time of accepted validated observations, retained
+across failed/busy reads and view navigation. It is presentation metadata, not a
+harness activity timestamp or persisted repository fact.
 
 Installation capture feedback follows JST-UI-019: operational failures use
 installation-scoped notifications while exact unknown-command recovery remains

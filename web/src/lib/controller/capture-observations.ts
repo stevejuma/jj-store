@@ -67,6 +67,7 @@ export function createCaptureObservations(options: {
         requireCapture(!page.next_cursor || !visited.has(page.next_cursor));
         if (!current(read)) return false;
         state.sources = page;
+        state.sourcesObservedAt = Date.now();
         state.sourceState = "ready";
         cursors.clear();
         for (const cursor of visited) cursors.add(cursor);
