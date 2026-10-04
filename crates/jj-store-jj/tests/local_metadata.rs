@@ -54,6 +54,57 @@ fn git(path: &Path, args: &[&str]) {
 }
 
 #[test]
+fn identity_observation_does_not_admit_or_read_domain_payloads() {
+    let (root, store) = fixture();
+    assert_eq!(store.identity().unwrap(), None);
+    let staged = candidate(&store, None, &update(1, Domain::Work, None));
+    assert_eq!(store.identity().unwrap(), None);
+    let commit = staged.commit();
+    assert!(matches!(
+        store.publish(staged).unwrap(),
+        PublishOutcome::Committed(_)
+    ));
+    let identity = store.identity().unwrap().unwrap();
+    assert_eq!(identity.commit, commit);
+    assert_eq!(identity.repository, REPOSITORY);
+    let bounded = MetadataStore::open(
+        root.path(),
+        Limits {
+            object_bytes: 1,
+            ..Limits::default()
+        },
+    )
+    .unwrap();
+    assert!(matches!(bounded.read(), Err(Error::Limit)));
+    assert_eq!(bounded.identity().unwrap(), Some(identity));
+    let selected = store.read().unwrap().unwrap();
+    let blob = selected.selection(Domain::Work).unwrap().object.to_string();
+    fs::remove_file(
+        root.path()
+            .join("objects")
+            .join(&blob[..2])
+            .join(&blob[2..]),
+    )
+    .unwrap();
+    assert!(
+        store.read().is_err(),
+        "domain reads still fail on incomplete closure"
+    );
+    assert_eq!(store.identity().unwrap(), Some(identity));
+    let hex = commit.to_string();
+    fs::remove_file(root.path().join("objects").join(&hex[..2]).join(&hex[2..])).unwrap();
+    fs::write(
+        root.path().join("objects").join(&hex[..2]).join(&hex[2..]),
+        b"damaged selected commit",
+    )
+    .unwrap();
+    assert!(
+        store.identity().is_err(),
+        "identity still verifies its selected root"
+    );
+}
+
+#[test]
 fn reads_and_staged_candidates_never_initialize_or_publish() {
     let (_root, store) = fixture();
     assert!(store.read().unwrap().is_none());

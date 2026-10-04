@@ -810,3 +810,11 @@ Operation metadata pages may report graph-cache state `not_used`. Its zero cache
 counters mean no cache observation was needed, not that retained caches were
 removed. Graph node identities, selectors and paging fields are unchanged; no
 native, WAL or companion persistence format changes.
+
+Local code capabilities add `index_tasks` and three local preparation routes.
+Cold local log requests return409 `index_rebuild_required` with the additive
+`local_snapshot` error field. Updated clients validate that local pin and retry
+only after exact-operation preparation; they never reinterpret it as a native
+epoch. Start/status/cancel responses use the local task DTO, and cancellation is
+bodyless. Generated contracts and actual HTTP responses qualify these additions;
+native routes, persisted identities and companion formats remain unchanged.

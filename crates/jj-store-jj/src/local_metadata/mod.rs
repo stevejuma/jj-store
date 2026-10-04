@@ -85,7 +85,7 @@ impl MetadataStore {
     pub fn git_dir(&self) -> &Path {
         &self.git_dir
     }
-    pub fn read(&self) -> Result<Option<Snapshot>> {
+    fn selected_commit(&self) -> Result<Option<GitOid>> {
         let repo = gix::open(&self.git_dir).map_err(Error::other)?;
         let Some(reference) = repo.try_find_reference(STATE_REF).map_err(Error::other)? else {
             return Ok(None);
@@ -93,9 +93,56 @@ impl MetadataStore {
         let id = reference
             .try_id()
             .ok_or(Error::Invalid("symbolic owned state ref"))?;
-        self.read_at(GitOid::from_git(id.detach())?).map(Some)
+        GitOid::from_git(id.detach()).map(Some)
+    }
+    /// Current identity only: no domain/evidence closure is admitted by this observation.
+    pub fn identity(&self) -> Result<Option<Identity>> {
+        self.selected_commit()?
+            .map(|commit| {
+                let selected = self.root_at(commit)?;
+                Ok(Identity {
+                    commit,
+                    repository: selected.repository(),
+                })
+            })
+            .transpose()
+    }
+    pub fn read(&self) -> Result<Option<Snapshot>> {
+        self.selected_commit()?
+            .map(|commit| self.read_at(commit))
+            .transpose()
     }
     pub fn read_at(&self, commit: GitOid) -> Result<Snapshot> {
+        let selected = self.root_at(commit)?;
+        let root = &selected.root;
+        let repo = gix::open(&self.git_dir).map_err(Error::other)?;
+        for selection in root.domains.values() {
+            objects::object(
+                &repo,
+                selection.object,
+                gix::objs::Kind::Blob,
+                self.limits.object_bytes,
+            )?;
+        }
+        if let Some(previous) = root.previous {
+            objects::object(
+                &repo,
+                previous,
+                gix::objs::Kind::Commit,
+                self.limits.root_bytes,
+            )?;
+        }
+        let extras = objects::audit(&repo, &root.retained, self.limits, false)?;
+        if extras
+            .iter()
+            .any(|(id, kind)| root.retained.get(id) != Some(kind))
+        {
+            return Err(Error::Invalid("missing JJ conflict retention"));
+        }
+        Ok(selected)
+    }
+    /// Verified root framing is sufficient to observe identity, not to read domains.
+    fn root_at(&self, commit: GitOid) -> Result<Snapshot> {
         let repo = gix::open(&self.git_dir).map_err(Error::other)?;
         let bytes = objects::object(
             &repo,
@@ -125,12 +172,6 @@ impl MetadataStore {
         let mut expected =
             BTreeMap::from([("state".into(), (state_id, gix::objs::tree::EntryKind::Blob))]);
         for (&domain, selection) in &root.domains {
-            objects::object(
-                &repo,
-                selection.object,
-                gix::objs::Kind::Blob,
-                self.limits.object_bytes,
-            )?;
             expected.insert(
                 domain.name().into(),
                 (selection.object, gix::objs::tree::EntryKind::Blob),
@@ -157,21 +198,6 @@ impl MetadataStore {
             .collect::<Result<Vec<_>>>()?;
         if actual_parents != objects::parents(root.previous, &root.retained) {
             return Err(Error::Invalid("retention parents mismatch"));
-        }
-        if let Some(previous) = root.previous {
-            objects::object(
-                &repo,
-                previous,
-                gix::objs::Kind::Commit,
-                self.limits.root_bytes,
-            )?;
-        }
-        let extras = objects::audit(&repo, &root.retained, self.limits, false)?;
-        if extras
-            .iter()
-            .any(|(id, kind)| root.retained.get(id) != Some(kind))
-        {
-            return Err(Error::Invalid("missing JJ conflict retention"));
         }
         Ok(Snapshot { commit, root })
     }

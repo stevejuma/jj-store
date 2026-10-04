@@ -444,10 +444,9 @@ invoking construction. Scratch and streamed output share that allowance. One
 shared preparation permit remains held through actual cancellation/worker exit.
 Construction has separate cumulative work, bytes, metadata and deadline limits;
 it never increases ordinary interactive limits. Failed output is deleted and a
-successful handle owns its disposable files. Library handles may serve prepared
-log pages but are not yet retained service caches or browser task responses;
-cache generations, task delivery and large-scale qualification remain separate
-gates.
+successful handle owns its disposable files. Library handles serve prepared log
+pages; the service owns retained generations and task delivery. Large-scale
+qualification remains a separate gate.
 
 Preparation MUST NOT invoke GitBackend's implicit extra-metadata import or
 stacked-table reconciliation. It reads compact commit fields from Git and
@@ -602,3 +601,34 @@ authorization wait obeys the same cancellation/deadline as its worker. A
 restarted service cannot revive an old task or silently select current heads.
 This service facade alone does not advertise HTTP or browser preparation
 capability.
+
+The LocalTrusted HTTP composition shares the native cache root and preparation
+worker with local tasks. Log dispatch consumes prepared generations and returns
+an explicit exact-operation rebuild-required result when cold; it does not fall
+back to complete commit/tree preflight. Other local query kinds keep their owned
+dispatch until their prepared reader is qualified. Start/status/cancel transport
+preserves current registration checks and independent source pins.
+
+Scoped file/header and bookmark/workspace target reads MUST use the same owned
+Git commit decoder as preparation, without GitBackend's extra import or table
+reconciliation. Capture bounded source-table heads and parent framing, then seek
+only the requested key and value. Do not materialize or hash unrelated values on
+an interactive point read. Retain open source handles and check file identity,
+size and nanosecond mtime/ctime before and after each seek; when those
+timestamps are insufficient, fall back to bounded full checksums. Missing extra
+records use JJ's header or synthetic change ID without writing a segment or
+retention ref. Point lookup follows the source stacked-table format; it is not a
+whole-file integrity report. Prepared generations still require full checksum
+verification. The legacy complete-admission graph/difference paths retain their
+separate qualification until replaced by the prepared reader.
+
+Device-folder authorization and code/freshness snapshot capture MUST observe the
+current owned companion ref through a lightweight identity read. Verify the
+selected Git commit, tree and canonical state blob, root limits, declared tree
+links and parent framing; do not read domain payloads or traverse retained
+evidence merely to identify the repository. This observation exposes only the
+repository and metadata-commit identity, never a domain Snapshot capability.
+Missing or corrupt selected root data still fails. Domain reads and publication
+retain their complete selected-closure validation, so an unavailable domain
+cannot silently become valid through the identity path. No persisted format or
+capacity ceiling changes.

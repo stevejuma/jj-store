@@ -5,6 +5,7 @@ pub mod diff;
 mod diff_copies;
 pub mod diff_summary;
 pub mod dto;
+mod git_read;
 mod graph_types;
 mod graphs;
 mod history;
@@ -243,8 +244,7 @@ impl Executor {
                 let value = match request {
                     Request::QueryInfo => {
                         let mut info = crate::query::language::info(true);
-                        let git = context
-                            .store
+                        let git = context.scoped.as_ref().map_or(&context.store, |guard| &guard.source)
                             .backend()
                             .downcast_ref::<jj_lib::git_backend::GitBackend>()
                             .ok_or(Error::Unavailable)?
@@ -569,8 +569,8 @@ impl Context {
             // View references prove these targets without reading their ancestry.
             pin.inventory
                 .extend(commits.into_iter().map(ObjectKey::Commit));
-            let scoped = scoped_commit
-                .map(|_| scoped::Guard::new(loader.store().clone(), &pin, budget.clone(), limits));
+            let scoped = (!operation_only)
+                .then(|| scoped::Guard::new(loader.store().clone(), &pin, budget.clone(), limits));
             if let (Some(commit), Some(guard)) = (scoped_commit, &scoped) {
                 history::prove_commit(commit, &selected, &loader, &pin, guard, &budget, limits)
                     .await?;

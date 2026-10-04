@@ -160,6 +160,7 @@ impl Default for Config {
 struct State {
     host: Option<RepositoryHost>,
     local_reader: jj_store_service::local_browser::code::Executor,
+    local_tasks: jj_store_service::local_index_tasks::IndexTasks,
     local_jobs: Arc<Semaphore>,
     search: SearchRegistry,
     config: Config,
@@ -216,7 +217,7 @@ impl HttpApi {
         }
         config.events.validate().map_err(|_| "HTTP event limits")?;
         let queries = q::workers::Executors::new(
-            cache,
+            cache.clone(),
             config.graph,
             config.content,
             q::cache::Policy::default(),
@@ -291,9 +292,16 @@ impl HttpApi {
             queries.workers().clone(),
             config.content,
         );
+        let local_tasks = jj_store_service::local_index_tasks::IndexTasks::new(
+            local_reader.clone(),
+            cache,
+            Default::default(),
+        )
+        .map_err(|_| "HTTP local index task limits")?;
         Ok(Self(Arc::new(State {
             host,
             local_reader,
+            local_tasks,
             search,
             slots: Arc::new(Semaphore::new(config.concurrency)),
             local_jobs: Arc::new(Semaphore::new(config.workers)),

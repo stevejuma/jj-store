@@ -547,3 +547,123 @@ test("filesystem_profile_never_advertises_native_storage_maintenance", async () 
   assert.equal("storage" in source, false);
   source.close();
 });
+
+test("local_preparation_preserves_the_failed_query_pin_and_rejects_mismatched_task_status", async () => {
+  const { ApiError } = await import("../../src/lib/api/client.js");
+  const { createProductionStoreSettings } =
+    await import("../../src/lib/controller/production-store-index.js");
+  const { createProductionStoreState } =
+    await import("../../src/lib/controller/production-store-state.svelte.js");
+  const { reportProductionStoreError } =
+    await import("../../src/lib/controller/production-store-lifecycle.svelte.js");
+  const selected = "66".repeat(64),
+    taskId = "77".repeat(16);
+  const pin = {
+    version: 1,
+    profile: head.profile,
+    repository,
+    generation: 1,
+    operation: selected,
+  };
+  const calls: { path: string; body: any }[] = [];
+  let mismatched = false;
+  const source = new HttpLocalStoreDataSource(repository, async (url, init) => {
+    const path = String(url),
+      body = init?.body ? JSON.parse(String(init.body)) : undefined;
+    calls.push({ path, body });
+    assert.ok(path.startsWith(`/v1/local/repos/${repository}/`));
+    if (path.endsWith("snapshot")) return json(head);
+    if (path.endsWith("capabilities"))
+      return json({
+        version: 1,
+        profile: head.profile,
+        code_browse: true,
+        index_tasks: true,
+        search: false,
+      });
+    if (path.endsWith("query"))
+      return new Response(
+        pretty({
+          version: 1,
+          code: "index_rebuild_required",
+          local_snapshot: pin,
+        }),
+        {
+          status: 409,
+          headers: { "content-type": "application/json" },
+        },
+      );
+    const start = path.endsWith("index/tasks");
+    return json({
+      version: 1,
+      id: taskId,
+      snapshot: { ...pin, operation: mismatched ? operation : selected },
+      status: start ? "running" : "ready",
+      ...(start ? {} : { stats: {} }),
+    });
+  });
+  const data = createProductionStoreState();
+  data.capabilities = await source.capabilities();
+  assert.equal(data.capabilities.index_tasks, true);
+  try {
+    await source.graph("log", { operation: selected });
+    assert.fail("expected preparation");
+  } catch (error) {
+    assert.ok(error instanceof ApiError);
+    assert.equal(error.code, "index_rebuild_required");
+    reportProductionStoreError(data, error);
+  }
+  assert.ok(data.neededIndex && "operation" in data.neededIndex);
+  assert.equal(data.neededIndex.operation, selected);
+  let restored = 0;
+  const settings = createProductionStoreSettings({
+    data,
+    source: () => source,
+    operation: () => operation,
+    version: () => 1,
+    current: () => true,
+    restore: async () => {
+      restored++;
+    },
+  });
+  await settings.prepareIndex();
+  assert.equal(data.indexPreparation, "ready");
+  assert.equal(restored, 1);
+  assert.equal(
+    calls.find((c) => c.path.endsWith("index/tasks"))?.body.operation,
+    selected,
+  );
+  await source.cancelIndexTask(taskId);
+  assert.equal(calls.at(-1)?.body, undefined);
+  mismatched = true;
+  await assert.rejects(source.indexTask(taskId), /snapshot mismatch/);
+  source.close();
+});
+
+test("local_rebuild_errors_reject_a_different_operation_or_registration", async () => {
+  for (const mismatch of [{ operation: "88".repeat(64) }, { generation: 2 }]) {
+    const source = new HttpLocalStoreDataSource(repository, async (url) =>
+      String(url).endsWith("snapshot")
+        ? json(head)
+        : new Response(
+            pretty({
+              code: "index_rebuild_required",
+              local_snapshot: {
+                version: 1,
+                profile: head.profile,
+                repository,
+                generation: 1,
+                operation,
+                ...mismatch,
+              },
+            }),
+            { status: 409, headers: { "content-type": "application/json" } },
+          ),
+    );
+    await assert.rejects(
+      source.graph("log", { operation }),
+      /snapshot mismatch/,
+    );
+    source.close();
+  }
+});

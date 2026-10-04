@@ -128,6 +128,12 @@ pub(crate) struct RootV1 {
     pub receipts: BTreeMap<String, Receipt>,
     pub retained: BTreeMap<GitOid, RetainedKind>,
 }
+/// Lightweight observation of the current owned ref; not a domain-read capability.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Identity {
+    pub commit: GitOid,
+    pub repository: RepositoryId,
+}
 #[derive(Clone, Debug)]
 pub struct Snapshot {
     pub(crate) commit: GitOid,

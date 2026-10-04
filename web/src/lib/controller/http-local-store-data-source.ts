@@ -1,6 +1,6 @@
 import { ApiError, fullId, type Model } from "../api/client.js";
 import { LocalEventParser } from "../api/local-events.js";
-import { HttpLocalCodeDataSource } from "./http-local-code-data-source.js";
+import { HttpLocalIndexDataSource } from "./http-local-index-data-source.js";
 import { HttpLocalWorkDataSource } from "./http-local-work-data-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import {
@@ -9,7 +9,7 @@ import {
 } from "./repository-profile.js";
 import type { AgentDetail } from "./repository-read-types.js";
 export class HttpLocalStoreDataSource
-  extends HttpLocalCodeDataSource
+  extends HttpLocalIndexDataSource
   implements StoreDataSource
 {
   readonly workingCopy: import("./working-copy-types.js").WorkingCopyTransport =
@@ -58,7 +58,7 @@ export class HttpLocalStoreDataSource
       read_api: value.code_browse,
       browsing_windows: value.code_browse,
       events: true,
-      index_tasks: false,
+      index_tasks: value.index_tasks,
       typed_mutations: [],
       conflict_resolution_actions: [],
       conflict_upload_bytes: 0,
@@ -296,6 +296,4 @@ export class HttpLocalStoreDataSource
   previewMutation = () => this.unsupported();
   applyMutation = () => this.unsupported();
   mutationStatus = () => this.unsupported();
-  prepareIndex = () => this.unsupported();
-  indexTask = () => this.unsupported();
 }

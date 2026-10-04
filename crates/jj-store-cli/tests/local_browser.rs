@@ -912,6 +912,86 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     let operation = snapshot["heads"][0].as_str().unwrap();
     assert!(!snapshot["metadata_commit"].is_null());
     let query = json!({"operation":operation,"request":{"kind":"graph","query":[{"graph":"log","revset":"all()","workspace":null,"user_email":"","at_time_millis":1700000000000_i64},{"limit":1,"after":null}]},"cursor":null});
+    let cold = post(&format!("/local/repos/{id}/query"), query.clone())
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(cold.status(), reqwest::StatusCode::CONFLICT);
+    let cold: Value = cold.json().await.unwrap();
+    assert_eq!(cold["code"], "index_rebuild_required");
+    assert_eq!(cold["local_snapshot"]["operation"], operation);
+    assert_eq!(cold["local_snapshot"]["repository"], id);
+    assert!(cold.get("snapshot").is_none());
+    assert_eq!(
+        post(
+            &format!("/local/repos/{id}/index/tasks"),
+            json!({"operation":operation,"max_commits":4000000})
+        )
+        .send()
+        .await
+        .unwrap()
+        .status(),
+        reqwest::StatusCode::BAD_REQUEST
+    );
+    let task: Value = post(
+        &format!("/local/repos/{id}/index/tasks"),
+        json!({"operation":operation}),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(task["snapshot"]["operation"], operation);
+    let task_id = task["id"].as_str().unwrap();
+    let ready_task = tokio::time::timeout(std::time::Duration::from_secs(15), async {
+        loop {
+            let value: Value = read(&format!("/local/repos/{id}/index/tasks/{task_id}"))
+                .send()
+                .await
+                .unwrap()
+                .error_for_status()
+                .unwrap()
+                .json()
+                .await
+                .unwrap();
+            if value["status"] != "running" && value["status"] != "canceling" {
+                break value;
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+        }
+    })
+    .await
+    .unwrap();
+    assert_eq!(ready_task["status"], "ready", "{ready_task}");
+    let cancel_task: Value = client
+        .post(format!(
+            "{endpoint}/local/repos/{id}/index/tasks/{task_id}/cancel"
+        ))
+        .header("x-jj-store-protocol", "1")
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(cancel_task["status"], "ready");
+    assert_eq!(
+        read(&format!(
+            "/local/repos/{id}/index/tasks/{}",
+            "ff".repeat(16)
+        ))
+        .send()
+        .await
+        .unwrap()
+        .status(),
+        reqwest::StatusCode::GONE
+    );
     let page: Value = post(&format!("/local/repos/{id}/query"), query.clone())
         .send()
         .await
@@ -1436,6 +1516,10 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
                 sample("/v1/repositories", "get", repos),
                 sample("/v1/local/repositories/{repo}/reconnect", "post", reconnected),
                 sample("/v1/local/repos/{repo}/snapshot", "get", snapshot),
+                json!({"path":"/v1/local/repos/{repo}/query","method":"post","status":409,"media":"application/json","data":cold}),
+                sample("/v1/local/repos/{repo}/index/tasks", "post", task),
+                sample("/v1/local/repos/{repo}/index/tasks/{task}", "get", ready_task),
+                sample("/v1/local/repos/{repo}/index/tasks/{task}/cancel", "post", cancel_task),
                 sample("/v1/local/repos/{repo}/query", "post", page),
                 sample("/v1/local/repos/{repo}/query", "post", query_info),
                 sample("/v1/local/repos/{repo}/query", "post", filtered_operations),

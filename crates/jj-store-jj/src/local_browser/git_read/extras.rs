@@ -57,7 +57,7 @@ impl Stamp {
         })
     }
 }
-pub(super) struct Extras {
+pub(in super::super) struct Extras {
     heads: Vec<String>,
     segments: BTreeMap<String, Segment>,
 }
@@ -78,6 +78,14 @@ fn bytes(file: &mut fs::File, position: u64, out: &mut [u8]) -> Result<()> {
 }
 impl Extras {
     pub fn open(metadata: &Path, budget: &Budget) -> Result<Self> {
+        Self::capture(metadata, budget, true)
+    }
+    /// Match the source table's keyed read semantics without materializing it.
+    /// Whole-file integrity verification remains a preparation operation.
+    pub fn open_point(metadata: &Path, budget: &Budget) -> Result<Self> {
+        Self::capture(metadata, budget, false)
+    }
+    fn capture(metadata: &Path, budget: &Budget, verify_all: bool) -> Result<Self> {
         let root = metadata.join("store/extra");
         let mut heads = vec![];
         for entry in fs::read_dir(root.join("heads")).map_err(|_| Error::Incomplete)? {
@@ -113,35 +121,43 @@ impl Extras {
             }
             let mut file = fs::File::open(path).map_err(|_| Error::Incomplete)?;
             let stamp = Stamp::read(&file)?;
-            let mut digest = Blake2b512::new();
-            let mut buffer = [0; 64 * 1024];
-            let mut size = 0u64;
-            loop {
-                budget.work(1)?;
-                let n = file.read(&mut buffer).map_err(|_| Error::Incomplete)?;
-                if n == 0 {
-                    break;
+            let size = stamp.size;
+            if size != info.len() {
+                return Err(Error::Corrupt);
+            }
+            if verify_all || !stamp.precise() {
+                let mut digest = Blake2b512::new();
+                let mut buffer = [0; 64 * 1024];
+                let mut size = 0u64;
+                loop {
+                    budget.work(1)?;
+                    let n = file.read(&mut buffer).map_err(|_| Error::Incomplete)?;
+                    if n == 0 {
+                        break;
+                    }
+                    size += n as u64;
+                    if size > info.len() {
+                        return Err(Error::Corrupt);
+                    }
+                    budget.read_bytes(n)?;
+                    digest.update(&buffer[..n]);
                 }
-                size += n as u64;
-                if size > info.len() {
+                if size != info.len() || format!("{:x}", digest.finalize()) != id {
                     return Err(Error::Corrupt);
                 }
-                budget.read_bytes(n)?;
-                digest.update(&buffer[..n]);
-            }
-            if size != info.len() || format!("{:x}", digest.finalize()) != id {
-                return Err(Error::Corrupt);
-            }
-            if Stamp::read(&file)? != stamp {
-                return Err(Error::Corrupt);
+                if Stamp::read(&file)? != stamp {
+                    return Err(Error::Corrupt);
+                }
             }
             let mut word = [0; 4];
+            budget.read_bytes(4)?;
             bytes(&mut file, 0, &mut word)?;
             let parent_len = u32::from_le_bytes(word);
             let parent = match parent_len {
                 0 => None,
                 128 => {
                     let mut value = [0; 128];
+                    budget.read_bytes(value.len())?;
                     bytes(&mut file, 4, &mut value)?;
                     let value = String::from_utf8(value.to_vec()).map_err(|_| Error::Corrupt)?;
                     name(&value)?;
@@ -150,11 +166,12 @@ impl Extras {
                 }
                 _ => return Err(Error::Corrupt),
             };
+            budget.read_bytes(4)?;
             bytes(&mut file, 4 + u64::from(parent_len), &mut word)?;
             let count = u32::from_le_bytes(word);
             let index = 8 + u64::from(parent_len);
             let values = index + u64::from(count) * 24;
-            if values > size {
+            if Stamp::read(&file)? != stamp || values > size {
                 return Err(Error::Corrupt);
             }
             segments.insert(
@@ -299,7 +316,7 @@ fn varint(input: &mut &[u8]) -> Result<u64> {
     Err(Error::Corrupt)
 }
 #[derive(Default)]
-pub(super) struct Record {
+pub(in super::super) struct Record {
     pub change: Option<b::ChangeId>,
     pub predecessors: Vec<b::CommitId>,
     pub trees: Vec<b::TreeId>,
@@ -371,6 +388,75 @@ fn decode(mut input: &[u8]) -> Result<Record> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(unix)]
+    #[test]
+    fn point_lookup_seeks_without_reading_unrelated_large_values() {
+        use std::io::Write as _;
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path().join("store/extra");
+        fs::create_dir_all(root.join("heads")).unwrap();
+        let staging = root.join("staging");
+        let mut file = fs::File::create(&staging).unwrap();
+        file.write_all(&0u32.to_le_bytes()).unwrap();
+        file.write_all(&2u32.to_le_bytes()).unwrap();
+        file.write_all(&[1; 20]).unwrap();
+        file.write_all(&0u32.to_le_bytes()).unwrap();
+        file.write_all(&[2; 20]).unwrap();
+        file.write_all(&18u32.to_le_bytes()).unwrap();
+        file.write_all(&[34, 16]).unwrap();
+        file.write_all(&[7; 16]).unwrap();
+        // An unknown length-delimited field in the unrelated second record.
+        file.write_all(&[90, 128, 128, 128, 40]).unwrap();
+        file.set_len(56 + 18 + 5 + 80 * 1024 * 1024).unwrap();
+        drop(file);
+        let mut file = fs::File::open(&staging).unwrap();
+        let mut digest = Blake2b512::new();
+        let mut buffer = vec![0; 64 * 1024];
+        loop {
+            let n = file.read(&mut buffer).unwrap();
+            if n == 0 {
+                break;
+            }
+            digest.update(&buffer[..n]);
+        }
+        let name = format!("{:x}", digest.finalize());
+        let path = root.join(&name);
+        fs::rename(staging, &path).unwrap();
+        fs::write(root.join("heads").join(&name), []).unwrap();
+        let budget = Budget::new(super::super::super::Limits::default());
+        let extras = Extras::open_point(temp.path(), &budget).unwrap();
+        assert_eq!(
+            extras
+                .change(&[1; 20], &budget)
+                .unwrap()
+                .unwrap()
+                .as_bytes(),
+            &[7; 16]
+        );
+        assert!(budget.stats().object_bytes < 1024, "{:?}", budget.stats());
+        assert!(matches!(
+            extras.change(&[2; 20], &budget),
+            Err(Error::Corrupt)
+        ));
+        assert!(matches!(
+            Extras::open(
+                temp.path(),
+                &Budget::new(super::super::super::Limits::default())
+            ),
+            Err(Error::Limit)
+        ));
+        let original = fs::metadata(&path).unwrap().modified().unwrap();
+        let mut file = fs::OpenOptions::new().write(true).open(&path).unwrap();
+        file.seek(std::io::SeekFrom::Start(58)).unwrap();
+        file.write_all(&[9; 16]).unwrap();
+        file.set_times(fs::FileTimes::new().set_modified(original))
+            .unwrap();
+        assert!(matches!(
+            extras.change(&[1; 20], &budget),
+            Err(Error::Corrupt)
+        ));
+    }
 
     #[test]
     fn extra_change_lookup_preserves_protobuf_replacement_and_legacy_fields() {

@@ -242,7 +242,11 @@ impl Executor {
                     .ok_or(Error::Unavailable)?
                     .prepared = Some(prepared.clone());
                 let guard = scoped::Guard::new(
-                    context.store.clone(),
+                    context
+                        .scoped
+                        .as_ref()
+                        .map_or(&context.store, |guard| &guard.source)
+                        .clone(),
                     &context.access,
                     budget.clone(),
                     limits,

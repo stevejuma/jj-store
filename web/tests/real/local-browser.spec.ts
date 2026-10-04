@@ -62,6 +62,23 @@ test("local_repository_opens_files_history_agents_and_accessible_folder_controls
     await expect(
       page.getByRole("tab", { name: label, exact: true }),
     ).toHaveAttribute("aria-selected", "true");
+    if (section === "log") {
+      const prepare = page.getByRole("button", {
+        name: "Prepare graph index",
+        exact: true,
+      });
+      await expect(prepare).toBeVisible();
+      await prepare.click();
+      await expect(
+        page.getByText("Local browser fixture", { exact: true }).first(),
+      ).toBeVisible();
+      await expect(prepare).toHaveCount(0);
+      expect(
+        new URLSearchParams(new URL(page.url()).hash.split("?")[1]).get(
+          "at_op",
+        ),
+      ).toBe(fixture.operation);
+    }
     await expect(page.locator('[role="alert"]')).toHaveCount(0);
   }
   const sessions = page.getByRole("list", {
@@ -510,9 +527,15 @@ test("physical working copy saves retain drafts and leave recorded state unchang
       editor.getByRole("button", { name: "Save changes" }),
     ).toBeDisabled();
     await editor.getByRole("button", { name: "Check working file" }).click();
-    await expect(editor.getByRole("status")).toContainText(
-      "matches your draft",
-    );
+    await expect(
+      page
+        .getByRole("region", { name: "Notifications", exact: true })
+        .getByRole("status"),
+    ).toContainText("The working file matches your draft.");
+    await expect(editor.getByRole("alert")).toHaveCount(0);
+    await expect(
+      editor.getByRole("button", { name: "Check working file" }),
+    ).toHaveCount(0);
     expect(readFileSync(path, "utf8")).toBe(draft);
     const after = state();
     expect(after.operations).toBe(before.operations);

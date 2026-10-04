@@ -3,6 +3,7 @@ use crate::*;
 mod agents;
 mod conversion;
 mod events;
+mod index_tasks;
 mod reviews;
 mod work;
 mod working_copy;
@@ -59,6 +60,7 @@ pub(crate) struct Capabilities {
     pub version: u32,
     pub profile: &'static str,
     pub code_browse: bool,
+    pub index_tasks: bool,
     pub collaboration: bool,
     pub agents: bool,
     pub reviews: bool,
@@ -95,6 +97,7 @@ pub(super) fn router() -> Router<Arc<State>> {
         };
     }
     endpoints!(register)
+        .merge(index_tasks::router())
         .merge(work::router())
         .merge(working_copy::router())
         .merge(conversion::router())
@@ -337,10 +340,10 @@ async fn capture(state: &State, repo: m::RepositoryId) -> Result<Snapshot> {
         let repo = manager.open(repo).map_err(map)?;
         let commit = repo
             .metadata_store()
-            .read()
+            .identity()
             .map_err(|_| Error::unavailable())?
             .map(|s| {
-                s.commit()
+                s.commit
                     .to_string()
                     .parse()
                     .map_err(|_| Error::unavailable())
@@ -367,6 +370,7 @@ async fn capabilities(
         version: 1,
         profile: local::PROFILE,
         code_browse: true,
+        index_tasks: true,
         collaboration: true,
         agents: true,
         reviews: true,
@@ -518,10 +522,48 @@ async fn query(
         })
         .transpose()?;
     apply_anchor(&mut query.request, anchor)?;
-    let data = state
-        .local_reader
-        .read(access, query.operation, query.request)
-        .await?;
+    let snapshot = local::Snapshot {
+        version: 1,
+        profile: local::PROFILE,
+        repository: repo,
+        generation,
+        operation: query.operation,
+    };
+    let data = match query.request {
+        local::Request::Graph(request @ local::GraphRequest::Log { .. }, page) => {
+            match state
+                .local_tasks
+                .graph(access.clone(), query.operation, request, page)
+                .await
+            {
+                Ok(page) => local::Response::Graph(page),
+                Err(jj_store_service::local_index_tasks::Error::Query(
+                    local::Error::IndexRebuildRequired,
+                )) => {
+                    // A cold response still proves the exact retained operation;
+                    // it never walks commits or repairs a source index.
+                    state
+                        .local_reader
+                        .read(
+                            access,
+                            query.operation,
+                            local::Request::Operation {
+                                operation: query.operation,
+                            },
+                        )
+                        .await?;
+                    return Err(Error::local_rebuild(snapshot));
+                }
+                Err(error) => return Err(error.into()),
+            }
+        }
+        request => {
+            state
+                .local_reader
+                .read(access, query.operation, request)
+                .await?
+        }
+    };
     let make = |anchor| {
         cursor(
             &state.repository_cursor_key,
@@ -557,13 +599,7 @@ async fn query(
         _ => (None, None),
     };
     state.json(&QueryResponse {
-        snapshot: local::Snapshot {
-            version: 1,
-            profile: local::PROFILE,
-            repository: repo,
-            generation,
-            operation: query.operation,
-        },
+        snapshot,
         data,
         next_cursor: next.map(make).transpose()?,
         previous_cursor: previous.map(make).transpose()?,
@@ -577,6 +613,7 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
         };
     }
     endpoints!(register);
+    index_tasks::document(document);
     work::document(document);
     agents::document(document);
     reviews::document(document);

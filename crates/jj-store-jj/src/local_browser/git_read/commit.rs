@@ -21,7 +21,7 @@ fn signature(value: gix::actor::SignatureRef<'_>) -> Result<b::Signature> {
         },
     })
 }
-pub(super) fn read(
+pub(in super::super) fn read(
     backend: &dyn b::Backend,
     git: &gix::Repository,
     extras: &extras::Extras,

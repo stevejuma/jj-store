@@ -53,11 +53,11 @@ impl FolderProvider for LocalFolders {
             .map_err(|_| Error::Unavailable)?;
         let store = jj_store_jj::local_repository::metadata_store(&settings, &metadata)
             .map_err(|_| Error::Unsupported)?;
-        let selected = store.read().map_err(|_| Error::Invalid)?;
+        let selected = store.identity().map_err(|_| Error::Invalid)?;
         Ok(LocalFolder {
             path: root.to_str().ok_or(Error::Invalid)?.into(),
             metadata: metadata.to_str().ok_or(Error::Invalid)?.into(),
-            repository: selected.map(|s| s.repository()),
+            repository: selected.map(|s| s.repository),
         })
     }
     fn open(&self, folder: &LocalFolder) -> Result<LocalRepository> {

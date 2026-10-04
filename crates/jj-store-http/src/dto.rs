@@ -313,6 +313,8 @@ pub(crate) struct ErrorBody {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub snapshot: Option<Box<reads::ReadSnapshot>>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub local_snapshot: Option<Box<jj_store_service::local_browser::code::Snapshot>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub heads: Option<Box<reads::HeadSnapshot>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub search_status: Option<Box<jj_store_tantivy::paging::Status>>,

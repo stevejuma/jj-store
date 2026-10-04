@@ -855,3 +855,16 @@ then into the prepared result. Dropping a requesting future, task or cache entry
 cannot release disk admission while another worker/reader still owns the derived
 files. The preparation cancellation token covers initial authorization as well
 as blocking traversal, and remains effective while the worker owns its permit.
+
+Local scoped commit and reference hydration MUST NOT call upstream GitBackend
+commit reading, which can import missing extras and reconcile stacked tables.
+The owned decoder shares signatures, shallow-root, conflict and extra-field
+semantics with preparation. Interactive source point reads bound table framing
+and keyed seeks instead of loading whole extra segments. This source-format read
+does not replace full checksum admission for a retained prepared generation.
+
+Companion identity observation verifies only the current selected root and its
+declared Git reachability framing. Its distinct owned Identity type cannot be
+used for domain reads or publication. Existing Snapshot admission still verifies
+domain objects, previous selection and retained evidence closures. Local folder
+checks and code freshness polling must not repeat those unrelated audits.

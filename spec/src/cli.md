@@ -1687,3 +1687,27 @@ authorization to prove cancellation and expiry release actual worker/quota
 ownership while interactive reads remain available. Completed expiry must free
 its reservation without status polling. These checks are separate from cold
 HTTP/browser delivery and million-commit qualification.
+
+Local preparation HTTP acceptance MUST capture the actual cold-query local pin,
+start/status/cancel responses and prepared graph page; unknown trusted-limit
+fields are rejected and unknown task IDs reset. Cancel is bodyless under the
+existing API admission rule. A cold filesystem-only browser run must load files,
+prepare the exact history operation through its recovery action, display the
+returned history and preserve physical files, source operations, bookmarks and
+companion selection. Keep registry-release qualification distinct from any
+documented source-dependency validation setup.
+
+Local point-read regression MUST remove extra heads in a disposable repository,
+read an authorized commit/header and bookmark target, and prove that neither
+read imports extra metadata. A separately framed source table larger than the
+interactive byte allowance must permit a small selected record using bounded
+seeks, refuse an oversized selected value, and detect same-size mutation with
+restored mtime. Full preparation checksums and ordinary point admission remain
+distinct measurements.
+
+Identity-only folder admission MUST remain available when a selected domain
+exceeds its read budget or its payload is unavailable; actual domain reads must
+still fail closed. Unselected staged roots remain invisible and a damaged
+selected metadata commit must fail identity observation. Cold filesystem serving
+with recorded Agents must exercise this path through ordinary code requests and
+freshness polling, independently of full collaboration validation.

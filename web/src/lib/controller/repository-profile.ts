@@ -58,7 +58,7 @@ export type LocalCapabilities = Model<"LocalRepositoryCapabilities"> & {
   read_api: boolean;
   browsing_windows: boolean;
   events: boolean;
-  index_tasks: false;
+  index_tasks: boolean;
   typed_mutations: string[];
   conflict_resolution_actions: string[];
   conflict_upload_bytes: 0;

@@ -2009,3 +2009,11 @@ selected bookmark/workspace names directly, so a name outside the loaded first
 page remains usable. Explicit commit Files, Agents and Reviews content are not
 blocked by the bookmark picker; optional reference failures retain usable
 content.
+
+Git-backed repositories use the same graph preparation action when their local
+capability advertises it. A rebuild-required local response retains the exact
+operation and registration generation that failed, even if the current heads or
+route inputs advance. Starting and polling use only the local task endpoints;
+responses must match the source repository, registration and original operation.
+Completion retries the pinned view and leaves files/reference navigation
+available. Local task state cannot fabricate native epoch or cache-report data.

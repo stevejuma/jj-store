@@ -1912,3 +1912,19 @@ Expired/restarted/evicted task IDs reset; they cannot become valid again on
 later completion. A cold prepared-log request reports rebuild-required for its
 exact operation. HTTP and browser delivery require their own contract and
 acceptance before this service capability is advertised.
+
+LocalTrusted code capabilities advertise `index_tasks`. POST
+`/v1/local/repos/{repo}/index/tasks` accepts only an explicit operation and
+returns a local task; GET `/index/tasks/{task}` inspects it and bodyless POST
+`/index/tasks/{task}/cancel` requests cancellation. All three return HTTP200
+with a local snapshot/status; expired or unknown IDs return410 `task_reset`.
+Bounds remain trusted server configuration, never request fields. Native task
+routes and snapshot types remain unchanged.
+
+Local log POST queries use the retained prepared generation. A cold request
+proves its requested operation without commit preflight, then returns409
+`index_rebuild_required` with `local_snapshot`. Both first pages and cursor
+resumes retain the original operation, generation and complete query. Files,
+references, headers and operation metadata remain independently readable. A
+local error must not fabricate a native snapshot/epoch. The browser validates
+the error pin and all start/status/cancel responses before resuming that query.

@@ -27,6 +27,86 @@ fn files(root: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
     out
 }
 
+/// Explicit external-repository qualification; only private derived files are written.
+#[tokio::test]
+#[ignore = "requires JJ_STORE_LARGE_REPO pointing at an existing JJ metadata directory"]
+async fn registered_large_repository_preparation_smoke() {
+    let metadata =
+        PathBuf::from(std::env::var_os("JJ_STORE_LARGE_REPO").expect("explicit metadata path"));
+    let heads_before = files(&metadata.join("op_heads"));
+    let extras_before = files(&metadata.join("store/extra/heads"));
+    let output = tempfile::tempdir().unwrap();
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(metadata.clone()));
+    let executor = q::Executor::new(1).unwrap();
+    let operation = executor.heads(access.clone()).await.unwrap().heads[0];
+    let started = std::time::Instant::now();
+    let preparation = tokio::spawn({
+        let executor = executor.clone();
+        let access = access.clone();
+        let output = output.path().to_path_buf();
+        async move {
+            executor
+                .prepare_index(
+                    access,
+                    operation,
+                    output,
+                    2 * 1024 * 1024 * 1024,
+                    q::preparation::Limits::default(),
+                    Cancellation::default(),
+                )
+                .await
+        }
+    });
+    let interactive = executor
+        .read(access.clone(), operation, q::Request::QueryInfo)
+        .await
+        .unwrap();
+    assert!(matches!(interactive, q::Response::QueryInfo(_)));
+    let prepared = Arc::new(preparation.await.unwrap().unwrap());
+    eprintln!(
+        "large preparation {:?}: {:?}",
+        started.elapsed(),
+        prepared.stats
+    );
+    let mut after = None;
+    let mut ids = std::collections::BTreeSet::new();
+    for number in 0..3 {
+        let started = std::time::Instant::now();
+        let page = executor
+            .graph_prepared(
+                access.clone(),
+                prepared.clone(),
+                q::GraphRequest::Log {
+                    revset: "all()".into(),
+                    workspace: None,
+                    user_email: String::new(),
+                    at_time_millis: 0,
+                },
+                q::GraphWindow { limit: 50, after },
+            )
+            .await
+            .unwrap();
+        eprintln!(
+            "large page {number} {:?}: {:?}",
+            started.elapsed(),
+            page.stats
+        );
+        let q::Nodes::Log(nodes) = page.data else {
+            panic!()
+        };
+        assert_eq!(nodes.len(), 50);
+        for node in nodes {
+            assert!(ids.insert(node.commit.id));
+        }
+        after = page.next;
+        assert!(after.is_some());
+    }
+    assert_eq!(files(&metadata.join("op_heads")), heads_before);
+    assert_eq!(files(&metadata.join("store/extra/heads")), extras_before);
+    drop(prepared);
+    assert_eq!(fs::read_dir(output.path()).unwrap().count(), 0);
+}
+
 #[tokio::test]
 async fn local_preparation_matches_upstream_without_trees_or_source_index_writes() {
     let source = tempfile::tempdir().unwrap();

@@ -76974,6 +76974,197 @@ entries.
     "Native large limits, remaining implicit-import paths, prepared historical/prefix/copy/search/RPC and collaboration/card work remain open. Linux/native2m/10krefs/deep-page/near-capacity/cold/real-RustFS qualification pending. Unchanged UI/native graph/full-contract/root aggregates out of scope; E-READ-005 registry/full-contract limits retained."
   ],
   "next": "Commit task lifecycle, then expose local preparation and prepared log reads in HTTP and the profile-aware browser controller."
+},
+{
+  "id": "E-READ-018",
+  "tasks": [
+    "M4.1",
+    "M13.5"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change mnyolwqt",
+  "kind": "Local prepared-history HTTP/browser delivery and bounded read-only metadata",
+  "versions": "Rust1.98.1; jj-lib0.45.1; Node26.9.0; pnpm10.32.1; macOS ARM64.",
+  "formats": "Persistence and collaboration capacity unchanged. Additive local index_tasks capability, local_snapshot error pin and start/status/bodyless-cancel routes; regenerated OpenAPI and TypeScript.",
+  "files": [
+    "crates/jj-store-cli/src/local_browser.rs",
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs",
+    "crates/jj-store-cli/tests/local_browser/preparation.rs",
+    "crates/jj-store-cli/tests/local_browser.rs",
+    "crates/jj-store-http/src/dto.rs",
+    "crates/jj-store-http/src/error.rs",
+    "crates/jj-store-http/src/lib.rs",
+    "crates/jj-store-http/src/local_browser/index_tasks.rs",
+    "crates/jj-store-http/src/local_browser.rs",
+    "crates/jj-store-jj/src/local_browser/git_read/commit.rs",
+    "crates/jj-store-jj/src/local_browser/git_read/extras.rs",
+    "crates/jj-store-jj/src/local_browser/git_read.rs",
+    "crates/jj-store-jj/src/local_browser/mod.rs",
+    "crates/jj-store-jj/src/local_browser/preparation/graph.rs",
+    "crates/jj-store-jj/src/local_browser/preparation.rs",
+    "crates/jj-store-jj/src/local_browser/scoped.rs",
+    "crates/jj-store-jj/src/local_metadata/mod.rs",
+    "crates/jj-store-jj/src/local_metadata/types.rs",
+    "crates/jj-store-jj/tests/local_metadata.rs",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/cli.md",
+    "spec/src/compatibility.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/api-error.ts",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/api/local-client.ts",
+    "web/src/lib/controller/http-local-index-data-source.ts",
+    "web/src/lib/controller/http-local-query.ts",
+    "web/src/lib/controller/http-local-store-data-source.ts",
+    "web/src/lib/controller/native-data-source.ts",
+    "web/src/lib/controller/repository-profile.ts",
+    "web/tests/real/local-browser.spec.ts",
+    "web/tests/vite/local-browser.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "removed_files": [
+    "crates/jj-store-jj/src/local_browser/preparation/commit.rs",
+    "crates/jj-store-jj/src/local_browser/preparation/extras.rs"
+  ],
+  "requirements": [
+    "JST-JJ-003",
+    "JST-JJ-005",
+    "JST-LOCAL-001",
+    "JST-LOCAL-002",
+    "JST-LOCAL-004",
+    "JST-API-004",
+    "JST-API-006",
+    "JST-UI-019"
+  ],
+  "tests": [
+    "crates/jj-store-cli/tests/local_browser.rs#filesystem_runtime_registers_and_reads_without_native_storage",
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#ordinary_point_reads_do_not_import_missing_extra_metadata",
+    "crates/jj-store-jj/src/local_browser/git_read/extras.rs#point_lookup_seeks_without_reading_unrelated_large_values",
+    "crates/jj-store-jj/tests/local_metadata.rs#identity_observation_does_not_admit_or_read_domain_payloads",
+    "web/tests/vite/local-browser.test.ts#local_preparation_preserves_the_failed_query_pin_and_rejects_mismatched_task_status",
+    "web/tests/real/local-browser.spec.ts#local_repository_opens_files_history_agents_and_accessible_folder_controls"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked filesystem_runtime_registers_and_reads_without_native_storage -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Initial cancel body rejected400; fixed to required bodyless POST. Rerun1passed;36actual HTTP responses captured/validated against generated contracts."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked filesystem_runtime_registers_and_reads_without_native_storage -- --nocapture; node scripts/contracts.mjs --write; pnpm test:contracts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Focused HTTP and generated-contract unit/type checks pass. Full contracts lane retains unrelated sanitizer timeout limitation from E-READ-005."
+    },
+    {
+      "command": "pnpm web:check; pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "0errors/0warnings; production UI built, existing large-chunk advisory. Source-dependency setup inherited, registry qualification still pending."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked ordinary_point_reads_do_not_import_missing_extra_metadata -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before: ordinary point read imported missing extra metadata and created a head."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked ordinary_point_reads_do_not_import_missing_extra_metadata -- --nocapture; cargo test -p jj-store-jj --lib --locked local_browser::git_read -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "1point regression and3decoder units pass.80MiB table point lookup reads under1KiB; selected oversize and same-size mutation with restored mtime fail closed."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_metadata --locked identity_observation_does_not_admit_or_read_domain_payloads -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Initial fixture attempted overwrite of readonly loose object. Removed it before corruption; assertions unchanged."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_metadata --locked identity_observation_does_not_admit_or_read_domain_payloads -- --nocapture; cargo test -p jj-store-jj --test local_metadata --locked; cargo test -p jj-store-cli --test local_browser --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact identity regression1passed; full local metadata14passed and local-browser21passed/1ignored before external-preparation probe addition. Shared identity/scoped-reader consumers justify these module suites."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected packages/direct consumers pass after identity split. Existing linker unwind-size advisory."
+    },
+    {
+      "command": "JJ_STORE_LARGE_REPO=/Users/stevejuma/code/linux/.jj/repo cargo test -p jj-store-cli --test local_browser --locked registered_large_repository_metadata_smoke -- --ignored --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Linux ordinary smoke: operation221.7ms/5.24MB; metadata+bookmark1.252s/2.94MB; directory876.9ms/2.94MB; historical directory1.284s/7.58MB; .clang-format24291bytes.1024history/100000work bounds; not full-history qualification."
+    },
+    {
+      "command": "JJ_STORE_FILESYSTEM_PORT=18778 node scripts/local-browser-acceptance.mjs",
+      "result": "fail",
+      "failures": 3,
+      "note": "Initial cold seeded browser2passed/3Files timeouts. Code authorization repeatedly audited companion domain/evidence closure; identity observation now validates selected root separately."
+    },
+    {
+      "command": "JJ_STORE_FILESYSTEM_PORT=18778 JJ_STORE_LOCAL_BROWSER_KEEP=1 node scripts/local-browser-acceptance.mjs",
+      "result": "fail",
+      "failures": 1,
+      "note": "After identity split4passed/1stale working-copy toast assertion. Captured page showed correct message in Notifications. Locator fixed and recovery-cleared assertions added; no timeout/assertion weakening."
+    },
+    {
+      "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:18778/ JJ_STORE_LOCAL_BROWSER_FIXTURE=<owned-fixture>/browser-fixture.json pnpm exec playwright test --config web/playwright.real.config.ts local-browser.spec.ts --grep \"physical working copy\" --output .scratch/test-results-local-browser-working",
+      "result": "pass",
+      "failures": 0,
+      "note": "1passed, unchanged recorded operations/bookmarks/companion and expected physical Save."
+    },
+    {
+      "command": "target/debug/jj-store run --config <owned-fixture>/state/server.toml --format=json; JJ_STORE_REAL_BASE_URL=http://127.0.0.1:18778/ JJ_STORE_LOCAL_BROWSER_FIXTURE=<owned-fixture>/browser-fixture.json pnpm exec playwright test --config web/playwright.real.config.ts local-browser.spec.ts --output .scratch/test-results-local-browser-final",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh server/browser using retained seeded fixture:5passed/34.7s, Files/history/Agents, Projects, Reviews, reconnect/removal and Save. Visual-pending. Logs under .local/bounded-reads/."
+    },
+    {
+      "command": "pnpm spec:first; pnpm check:architecture",
+      "result": "fail",
+      "failures": 2,
+      "note": "Initial checks required compatibility chapter and class split at300line threshold; both corrected, no governance weakened."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/api.md spec/src/cli.md spec/src/compatibility.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/ui.md web/tests/real/local-browser.spec.ts; cargo fmt --all -- --check; pnpm spec:first; pnpm spec:validate; pnpm check:boundaries; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "167requirements,17packages,931web modules and ownership pass. No whole-ledger formatting."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/local-browser.test.ts web/tests/vite/production-store-settings.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "24passed/2files in4.39s; local task/error pins and shared preparation controller."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 2,
+      "note": "Draft evidence omitted two test-name anchors; corrected named references."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "136task ledger bookkeeping passes with moved-file exemptions and named tests."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "External full Linux preparation probe running with default one-hour bounds/2GiB private disk allowance; no pass claimed here. Native2m,10krefs,deep pages/directories,near-capacity collaboration,global memory,cache/restart/race and real-RustFS qualification remain pending.",
+    "Legacy complete-preflight local detailed commit/diff/evolution/prefix paths still use raw loaders. Scoped read-only guarantee covers ordinary metadata/reference/path/file/header reads and prepared Log. Native larger preparation policy, immutable generations, prepared historical/copy/search/RPC, collaboration projections and visible cards remain open.",
+    "UI local preparation uses existing recovery action. HTTP cancellation is available; shared controller/UI cancel action pending. Ordinary source point extras check framing/identity/stamps with bounded full-checksum fallback for coarse timestamps, without whole-table cryptographic claims. Prepared generations fully verify.",
+    "No original dev service, Linux source checkout or installed CLI changed. E-READ-005 registry-only Design Core and full-contract sanitizer timeout limitations retained. No root aggregate/unaffected native/UI suites or release/publication claim."
+  ],
+  "next": "Commit local HTTP/browser slice; continue native large preparation, remaining scoped/prepared reads, collaboration/cards and scale qualification."
 }
 ]
 ```

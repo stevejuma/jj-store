@@ -87,15 +87,40 @@ export class HttpLocalQuery {
     previous_cursor: string | null;
   }> {
     const head = await this.snapshot();
-    const response = await this.read<Model<"LocalCodeQueryResponse">>(
-      "query",
-      {
-        operation: fullId(operation),
-        request,
-        cursor: cursor ?? null,
-      },
-      signal,
-    );
+    let response: Model<"LocalCodeQueryResponse">;
+    try {
+      response = await this.read<Model<"LocalCodeQueryResponse">>(
+        "query",
+        {
+          operation: fullId(operation),
+          request,
+          cursor: cursor ?? null,
+        },
+        signal,
+      );
+    } catch (cause) {
+      if (
+        cause instanceof ApiError &&
+        cause.code === "index_rebuild_required"
+      ) {
+        const pin = cause.localSnapshot;
+        if (
+          !pin ||
+          pin.version !== 1 ||
+          pin.profile !== this.profile ||
+          pin.repository !== this.repository ||
+          pin.operation !== operation ||
+          String(pin.generation) !== String(head.generation)
+        )
+          throw new ApiError("snapshot_mismatch");
+        throw new ApiError(cause.code, {
+          ...pin,
+          profile: this.profile,
+          heads: [...head.heads],
+        });
+      }
+      throw cause;
+    }
     if (
       response.snapshot.profile !== this.profile ||
       response.snapshot.repository !== this.repository ||

@@ -8,6 +8,7 @@ pub struct Error {
     status: StatusCode,
     code: &'static str,
     snapshot: Option<Box<reads::ReadSnapshot>>,
+    local_snapshot: Option<Box<jj_store_service::local_browser::code::Snapshot>>,
     heads: Option<Box<reads::HeadSnapshot>>,
     length: Option<u64>,
     search_status: Option<Box<jj_store_tantivy::paging::Status>>,
@@ -19,6 +20,7 @@ impl Error {
             status,
             code,
             snapshot: None,
+            local_snapshot: None,
             heads: None,
             length: None,
             search_status: None,
@@ -54,6 +56,12 @@ impl Error {
             ..Self::new(StatusCode::CONFLICT, "select_operation")
         }
     }
+    pub fn local_rebuild(snapshot: jj_store_service::local_browser::code::Snapshot) -> Self {
+        Self {
+            local_snapshot: Some(Box::new(snapshot)),
+            ..Self::new(StatusCode::CONFLICT, "index_rebuild_required")
+        }
+    }
     pub fn rebuild(snapshot: reads::ReadSnapshot) -> Self {
         Self {
             snapshot: Some(Box::new(snapshot)),
@@ -68,6 +76,7 @@ impl IntoResponse for Error {
             diagnostic: self.diagnostic,
             code: self.code,
             snapshot: self.snapshot,
+            local_snapshot: self.local_snapshot,
             heads: self.heads,
             search_status: self.search_status,
         };
@@ -361,6 +370,16 @@ impl From<jj_store_service::local_repository::LocalError> for Error {
                 Self::new(StatusCode::NOT_IMPLEMENTED, "unsupported_local_capability")
             }
             _ => Self::unavailable(),
+        }
+    }
+}
+
+impl From<jj_store_service::local_index_tasks::Error> for Error {
+    fn from(error: jj_store_service::local_index_tasks::Error) -> Self {
+        use jj_store_service::local_index_tasks::Error as E;
+        match error {
+            E::Reset => Self::new(StatusCode::GONE, "task_reset"),
+            E::Query(error) => error.into(),
         }
     }
 }

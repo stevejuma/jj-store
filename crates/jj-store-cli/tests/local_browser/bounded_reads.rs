@@ -3,6 +3,84 @@ use jj_store_jj::{local_browser as q, query::workers::Workers};
 use std::sync::Arc;
 
 #[tokio::test]
+async fn ordinary_point_reads_do_not_import_missing_extra_metadata() {
+    let temp = tempfile::tempdir().unwrap();
+    jj(temp.path(), &["git", "init", "--colocate"]);
+    std::fs::write(temp.path().join("selected.txt"), "selected\n").unwrap();
+    jj(temp.path(), &["describe", "-m", "Selected"]);
+    jj(temp.path(), &["bookmark", "create", "main"]);
+    let operation = jj(
+        temp.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let commit = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let metadata = temp.path().join(".jj/repo");
+    let heads = metadata.join("store/extra/heads");
+    for entry in std::fs::read_dir(&heads).unwrap() {
+        std::fs::remove_file(entry.unwrap().path()).unwrap();
+    }
+    let extra_files = std::fs::read_dir(metadata.join("store/extra"))
+        .unwrap()
+        .count();
+    let reader = q::Executor::new(1).unwrap();
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(metadata.clone()));
+    let summary = reader
+        .read(
+            access.clone(),
+            operation,
+            q::Request::CommitSummary { commit },
+        )
+        .await
+        .unwrap();
+    let q::Response::CommitSummary(summary) = summary else {
+        panic!()
+    };
+    let q::ObjectData::Commit(data) = summary.data else {
+        panic!()
+    };
+    assert_eq!(data.description.trim(), "Selected");
+    assert_eq!(
+        std::fs::read_dir(&heads).unwrap().count(),
+        0,
+        "ordinary reads must not create extra heads"
+    );
+    assert_eq!(
+        std::fs::read_dir(metadata.join("store/extra"))
+            .unwrap()
+            .count(),
+        extra_files
+    );
+    let q::Response::References(page) = reader
+        .read(
+            access,
+            operation,
+            q::Request::References(q::references::Request {
+                operation,
+                query: String::new(),
+                exact: None,
+                kind: q::references::Kind::Bookmarks,
+                limit: 1,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(page.references.len(), 1);
+    assert_eq!(std::fs::read_dir(&heads).unwrap().count(), 0);
+}
+
+#[tokio::test]
 async fn historical_file_reads_stop_after_proving_the_selected_commit() {
     let temp = tempfile::tempdir().unwrap();
     jj(temp.path(), &["git", "init", "--colocate"]);

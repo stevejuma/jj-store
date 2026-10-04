@@ -17,6 +17,7 @@ pub(super) struct Guard {
     commits: Mutex<BTreeSet<m::GitSha1Id>>,
     max_commits: usize,
     prepared: Option<Arc<preparation::Prepared>>,
+    reader: Mutex<Option<git_read::Reader>>,
 }
 impl std::fmt::Debug for Guard {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -39,6 +40,7 @@ impl Guard {
             commits: Mutex::new(BTreeSet::new()),
             max_commits: limits.max_history_visits,
             prepared: pin.prepared.clone(),
+            reader: Mutex::new(None),
         })
     }
     pub fn contains(&self, key: ObjectKey) -> bool {
@@ -121,14 +123,22 @@ impl b::Backend for Scoped {
                 .commit(self.0.source.backend(), id, &self.0.budget)
                 .map_err(error)?
         } else {
-            bounded_git_object(
-                self.0.source.backend(),
-                id_owned,
-                gix::object::Kind::Commit,
-                &self.0.budget,
-            )
-            .map_err(error)?;
-            self.0.source.backend().read_commit(id).await?
+            let mut reader = self.0.reader.lock().expect("scoped source reader");
+            if reader.is_none() {
+                *reader = Some(
+                    git_read::Reader::open(
+                        self.0.source.backend(),
+                        self.0.binding.metadata_path(),
+                        &self.0.budget,
+                    )
+                    .map_err(error)?,
+                );
+            }
+            reader
+                .as_ref()
+                .unwrap()
+                .commit(self.0.source.backend(), id, &self.0.budget)
+                .map_err(error)?
         };
         let data = dto::Commit::try_from(&commit).map_err(|_| error(Error::Corrupt))?;
         self.0.budget.metadata(&data).map_err(error)?;

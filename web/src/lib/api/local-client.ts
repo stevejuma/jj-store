@@ -1,4 +1,11 @@
-import { ApiError, decode, fullId, pretty, responseBytes } from "./client.js";
+import {
+  ApiError,
+  decode,
+  fullId,
+  pretty,
+  responseBytes,
+  type Model,
+} from "./client.js";
 /** LocalTrusted transport; credentials and native repository URLs never enter this client. */
 export class LocalClient {
   readonly closed = new AbortController();
@@ -35,11 +42,12 @@ export class LocalClient {
     path: string,
     body?: unknown,
     signal?: AbortSignal,
+    method?: "POST",
   ): Promise<T> {
     const response = await this.fetch(
       path,
       body === undefined
-        ? { signal }
+        ? { signal, method }
         : {
             signal,
             method: "POST",
@@ -55,7 +63,11 @@ export class LocalClient {
       new TextDecoder("utf-8", { fatal: true }).decode(
         await responseBytes(response, 16 * 1024 * 1024),
       ),
-    ) as T & { code?: string; diagnostic?: { kind: string; message: string } };
+    ) as T & {
+      code?: string;
+      diagnostic?: { kind: string; message: string };
+      local_snapshot?: Model<"LocalCodeSnapshot">;
+    };
     this.closed.signal.throwIfAborted();
     if (!response.ok)
       throw new ApiError(
@@ -63,6 +75,7 @@ export class LocalClient {
         undefined,
         undefined,
         value.diagnostic,
+        value.local_snapshot,
       );
     return value;
   }
