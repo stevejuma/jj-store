@@ -309,3 +309,79 @@
     ).toHaveValue("ef".repeat(16));
   }}
 />
+
+<Story
+  name="Edit disabled local capture configuration"
+  args={{ enabled: false }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
+    const enabled = await c.findByRole("switch", {
+      name: "Enable automatic capture",
+    });
+    await userEvent.click(enabled);
+    const roots = c.getByRole("textbox", { name: "Codex CLI folders" });
+    await userEvent.type(roots, "/tmp/agent-settings/sessions");
+    await userEvent.click(c.getByRole("tab", { name: "Diagnostics" }));
+    await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
+    await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
+    await expect(
+      c.getByRole("textbox", { name: "Codex CLI folders" }),
+    ).toHaveValue("/tmp/agent-settings/sessions");
+    await userEvent.click(
+      c.getByRole("button", { name: "Save configuration" }),
+    );
+    await expect(c.getByText("Disabled · Restart required")).toBeVisible();
+    await expect(
+      c.getByRole("button", { name: "Save configuration" }),
+    ).toBeDisabled();
+    const actions = c
+      .getByRole("button", { name: "Cancel changes" })
+      .closest(".store-settings__actions")!;
+    await expect(getComputedStyle(actions).flexDirection).toBe("column");
+  }}
+/>
+<Story
+  name="Stale configuration keeps the draft"
+  args={{ configurationFailure: "stale" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
+    await userEvent.click(
+      await c.findByRole("switch", { name: "Enable automatic capture" }),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Save configuration" }),
+    );
+    await expect(
+      await page.findByRole("button", {
+        name: "Dismiss Agent configuration needs attention",
+      }),
+    ).toBeVisible();
+    await expect(
+      c.getByRole("button", { name: "Save configuration" }),
+    ).toBeDisabled();
+    await expect(
+      c.getByRole("switch", { name: "Enable automatic capture" }),
+    ).not.toBeChecked();
+  }}
+/>
+<Story
+  name="Unknown save resolves after observation"
+  args={{ configurationFailure: "unknown" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
+    await userEvent.click(
+      await c.findByRole("switch", { name: "Enable automatic capture" }),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Save configuration" }),
+    );
+    await expect(c.getByText(/Save outcome unknown\. Refresh/)).toBeVisible();
+    await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
+    await expect(c.queryByText(/Save outcome unknown\. Refresh/)).toBeNull();
+    await expect(c.getByText("Enabled · Restart required")).toBeVisible();
+  }}
+/>

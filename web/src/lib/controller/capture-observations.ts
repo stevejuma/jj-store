@@ -17,6 +17,7 @@ export function createCaptureObservations(options: {
   transport: CaptureTransport;
   available(): boolean;
   cursors: Set<string>;
+  observeSettings(signal?: AbortSignal): Promise<void>;
 }) {
   const { state, transport, cursors } = options;
   let controller: AbortController | null = null;
@@ -27,6 +28,14 @@ export function createCaptureObservations(options: {
     state.busy = true;
     if (!state.value) state.status = "loading";
     try {
+      if (transport.settings) await options.observeSettings(read.signal);
+      if (!current(read)) return false;
+      if (state.settings.value?.restart_required) {
+        state.status = "idle";
+        state.sourceState = "idle";
+        if (!state.pending) state.error = "";
+        return true;
+      }
       const value = await transport.status(read.signal);
       validateCaptureStatus(value);
       if (!current(read)) return false;
@@ -110,7 +119,8 @@ export function createCaptureObservations(options: {
   return {
     refresh() {
       if (reading) return reading;
-      if (!options.available() || state.busy) return Promise.resolve(false);
+      if (!options.available() || state.busy || state.settings.saving)
+        return Promise.resolve(false);
       controller = new AbortController();
       reading = observe(controller);
       return reading;

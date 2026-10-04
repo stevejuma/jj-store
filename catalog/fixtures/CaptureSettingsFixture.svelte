@@ -14,6 +14,7 @@
     captureReceipt,
     captureSources,
     captureStatus,
+    captureSettings,
   } from "./capture-management.js";
   import "../../web/src/lib/ui/store-settings/StoreSettings.css";
   let {
@@ -23,6 +24,7 @@
     importUnknown = false,
     degraded = false,
     feedbackControls = false,
+    configurationFailure = "",
   }: {
     supported?: boolean;
     enabled?: boolean;
@@ -30,15 +32,33 @@
     importUnknown?: boolean;
     degraded?: boolean;
     feedbackControls?: boolean;
+    configurationFailure?: "" | "stale" | "unknown";
   } = $props();
   const notifications = ownNotifications();
   let failedObservations = false;
   let visible = $state(true);
   let value = captureStatus();
+  let settings = untrack(() => captureSettings(enabled));
   let accepted: CaptureImport | null = null;
   let controlAttempts = 0,
     importAttempts = 0;
   const transport: CaptureTransport = {
+    async settings() {
+      return structuredClone(settings);
+    },
+    async saveSettings(command) {
+      if (configurationFailure === "stale")
+        throw new ApiError("capture_settings_changed");
+      settings = {
+        ...settings,
+        revision: "cd".repeat(32),
+        desired: structuredClone(command.configuration),
+        restart_required: true,
+      };
+      if (configurationFailure === "unknown")
+        throw new TypeError("lost response");
+      return structuredClone(settings);
+    },
     async status() {
       if (failedObservations) throw new ApiError("capture_control_busy");
       const result = structuredClone(value);

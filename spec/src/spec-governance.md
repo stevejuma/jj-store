@@ -879,3 +879,18 @@ built-bundle browser acceptance proves scoped enablement, inert attributes,
 keyboard disclosure, copy fidelity and virtual-row expansion on desktop/mobile.
 No native storage, public transport contract or foundational package change is
 part of this slice.
+
+Local capture configuration editing extends the existing capture HTTP contract
+fixture with saved/effective settings and revision conflicts. Disabled-worker
+saves have separate server persistence evidence. The route/schema change
+requires the complete registered HTTP/SSE contract capture lane because all
+consumers share the generated route inventory. Focused server
+configuration/auth/persistence tests and production Settings interactions
+qualify editing separately from native desktop lifecycle or full M18 release
+qualification.
+
+HMR configuration retention is covered by the exact preflight regression and an
+actual saved/effective backend restart in the preserved isolated preview. This
+proves saved settings are activated without replacing installation identity or
+resetting capture history; it does not qualify the unrelated full HMR release or
+native desktop lifecycle.

@@ -1786,3 +1786,17 @@ and recorded transcript chunks share this behavior; ordinary comments and
 repository Markdown retain their existing rendering. Exact source remains the
 Copy message value. Nested controls are keyboard accessible and expansion must
 remeasure virtual rows without clipping following messages.
+
+### Editable Agents settings
+
+JST-UI-012 includes an Agents Configuration tab using the same divided Settings
+rows, two-column fields and stacked action column as existing settings. Local
+Admin users may edit capture enablement, qualified Codex profile selection,
+absolute directory overrides and bounded worker limits. Defaults and currently
+configured roots MUST remain visible; saved versus startup-effective state and
+restart-required status MUST be explicit. Drafts survive tab navigation and
+refresh. Stale writes never silently overwrite another editor; unknown save
+outcomes retain the original intent until a fresh observation resolves them.
+Operational failures use the shared notification service. Field validation and
+restart guidance may remain contextual. Remote and non-Admin connections do not
+expose editing. No credential or arbitrary TOML editing is introduced.

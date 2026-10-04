@@ -1,3 +1,4 @@
+import { createCaptureSettings } from "./capture-settings-management.js";
 import { ApiError } from "../api/client.js";
 import {
   emptyCaptureManagement,
@@ -33,7 +34,10 @@ export function createCaptureManagement(options: {
   const available = () => alive && options.available();
   const transport = options.transport;
   const cursors = new Set<string>();
+  const configuration = createCaptureSettings({ state, transport, available });
   const ready = () =>
+    !state.settings.saving &&
+    !state.settings.value?.restart_required &&
     available() &&
     !state.busy &&
     state.status === "ready" &&
@@ -43,8 +47,9 @@ export function createCaptureManagement(options: {
     work: () => Promise<void>,
     failed: (cause: unknown) => void,
   ) {
-    if (!available() || state.busy) return;
+    if (!available() || state.busy || state.settings.saving) return;
     state.busy = true;
+    state.commandBusy = true;
     state.error = "";
     state.message = "";
     try {
@@ -53,6 +58,7 @@ export function createCaptureManagement(options: {
       if (available()) failed(cause);
     } finally {
       if (alive) {
+        state.commandBusy = false;
         state.busy = false;
         automatic.request();
       }
@@ -65,7 +71,7 @@ export function createCaptureManagement(options: {
   }
   async function sendPending() {
     const intent = state.pending;
-    if (!intent) return;
+    if (!intent || state.settings.value?.restart_required) return;
     await run(
       async () => {
         if (intent.kind === "control") {
@@ -113,6 +119,7 @@ export function createCaptureManagement(options: {
     transport,
     available,
     cursors,
+    observeSettings: configuration.observe,
   });
   const automatic = createCaptureRefresh({ available, ...observations });
   async function refresh() {
@@ -253,6 +260,9 @@ export function createCaptureManagement(options: {
       return available();
     },
     state,
+    configure: configuration.configure,
+    cancelConfiguration: configuration.cancelConfiguration,
+    saveConfiguration: configuration.saveConfiguration,
     refresh,
     setActive: automatic.setActive,
     moreSources,

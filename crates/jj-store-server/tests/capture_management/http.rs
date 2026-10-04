@@ -98,6 +98,68 @@ async fn local_capture_http_derives_actor_revalidates_authority_and_captures_con
         assert_eq!(status, expected, "{data}");
         samples.push(json!({"path":path,"method":method.as_str().to_lowercase(),"status":status.as_u16(),"media":"application/json","data":data}));
     }
+    let settings = f.manager.settings(f.actor).await.unwrap();
+    let mut desired = settings.desired.clone();
+    desired.max_sources = 8;
+    let save = SaveCaptureSettings {
+        version: 1,
+        expected_revision: settings.revision.clone(),
+        configuration: desired,
+    };
+    for (method, body, expected) in [
+        (Method::GET, None, StatusCode::OK),
+        (
+            Method::POST,
+            Some(serde_json::to_value(&save).unwrap()),
+            StatusCode::OK,
+        ),
+        (
+            Method::POST,
+            Some(serde_json::to_value(&save).unwrap()),
+            StatusCode::CONFLICT,
+        ),
+    ] {
+        let (status, data) = request(
+            &client,
+            &base,
+            method.clone(),
+            "/v1/local/capture/settings",
+            body,
+            None,
+        )
+        .await;
+        assert_eq!(status, expected, "{data}");
+        samples.push(json!({"path":"/v1/local/capture/settings","method":method.as_str().to_lowercase(),"status":status.as_u16(),"media":"application/json","data":data}));
+    }
+    let mut forged = serde_json::to_value(&save).unwrap();
+    forged["actor"] = json!(f.actor);
+    assert_eq!(
+        request(
+            &client,
+            &base,
+            Method::POST,
+            "/v1/local/capture/settings",
+            Some(forged),
+            None
+        )
+        .await
+        .0,
+        StatusCode::BAD_REQUEST
+    );
+    assert_eq!(
+        request(
+            &client,
+            &base,
+            Method::POST,
+            "/v1/local/capture/settings",
+            Some(serde_json::to_value(&save).unwrap()),
+            Some("https://foreign.example")
+        )
+        .await
+        .0,
+        StatusCode::FORBIDDEN
+    );
+    f.save(&f.config);
     let bytes = f.bytes();
     let mut forged = serde_json::to_value(f.command(3, 2, CaptureControlAction::Pause)).unwrap();
     forged["actor"] = json!(f.actor);

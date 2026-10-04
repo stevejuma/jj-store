@@ -61,7 +61,7 @@ impl Authority {
             storage: serde_json::to_value(&config.storage).map_err(|_| Error::Unavailable)?,
         })
     }
-    pub fn admit(&self, actor: PrincipalId) -> Result<bool, Error> {
+    pub(super) fn configuration(&self, actor: PrincipalId) -> Result<Config, Error> {
         if actor != self.actor {
             return Err(Error::Denied);
         }
@@ -89,6 +89,10 @@ impl Authority {
         {
             return Err(Error::Denied);
         }
+        Ok(config)
+    }
+    pub fn admit(&self, actor: PrincipalId) -> Result<bool, Error> {
+        let config = self.configuration(actor)?;
         if !config.agent_capture.enabled {
             return Ok(false);
         }

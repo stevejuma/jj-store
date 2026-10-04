@@ -3,6 +3,7 @@ import type {
   CaptureImportOutcome,
   CaptureSourcePage,
   CaptureStatus,
+  CaptureSettings,
 } from "../../web/src/lib/controller/capture-types.js";
 export const captureGeneration = "ab".repeat(16);
 export function captureStatus(
@@ -117,5 +118,41 @@ export function captureReceipt(
         receipts: 1,
       },
     },
+  };
+}
+
+export function captureSettings(enabled = true): CaptureSettings {
+  const desired = {
+    enabled,
+    max_readers: 4,
+    rescan_seconds: 30,
+    max_sources: 1024,
+    max_pending_bytes: 67108864,
+    harnesses: [
+      {
+        profile: "codex-cli-jsonl-v1" as const,
+        product_version: "0.156.1",
+        roots: [],
+      },
+    ],
+  };
+  return {
+    version: 1,
+    revision: "ab".repeat(32),
+    desired,
+    effective: structuredClone(desired),
+    restart_required: false,
+    defaults: [
+      {
+        profile: "codex-cli-jsonl-v1",
+        product_version: "0.156.1",
+        roots: ["/Users/capture/.codex/sessions"],
+      },
+      {
+        profile: "codex-desktop-jsonl-v1",
+        product_version: "0.159.2",
+        roots: ["/Users/capture/.codex-desktop/sessions"],
+      },
+    ],
   };
 }

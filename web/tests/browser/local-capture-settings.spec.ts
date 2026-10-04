@@ -406,3 +406,93 @@ test("visible capture follows observations and stops when settings closes", asyn
   ).toHaveValue("ef".repeat(16));
   await expect.poll(() => reads).toBeGreaterThan(closedReads);
 });
+
+test("cold local configuration editing retains drafts and announces restart", async ({
+  page,
+}) => {
+  const { captureSettings } =
+    await import("../../../catalog/fixtures/capture-management.js");
+  await bootstrap(page);
+  let settings = captureSettings(false);
+  const saves: unknown[] = [];
+  await page.route("**/v1/local/capture**", async (r) => {
+    const req = r.request();
+    const path = new URL(req.url()).pathname;
+    expect(req.headers()["authorization"]).toBeUndefined();
+    expect(req.headers()["x-jj-store-protocol"]).toBe("1");
+    if (path.endsWith("/settings")) {
+      if (req.method() === "POST") {
+        const command = decode(
+          req.postData()!,
+        ) as import("../../src/lib/controller/capture-configuration.js").CaptureSaveSettings;
+        saves.push(command);
+        expect(command.expected_revision).toBe(settings.revision);
+        settings = {
+          ...settings,
+          desired: command.configuration,
+          revision: "cd".repeat(32),
+          restart_required: true,
+        };
+      }
+      return r.fulfill({
+        contentType: "application/json",
+        body: pretty(settings),
+      });
+    }
+    if (path.endsWith("/sources"))
+      return r.fulfill({
+        json: {
+          ...captureSources(),
+          enabled: false,
+          phase: null,
+          runtime_generation: null,
+          total: 0,
+          sources: [],
+        },
+      });
+    return r.fulfill({
+      json: { version: 1, enabled: false, policy: null, runtime: null },
+    });
+  });
+  await page.goto("/");
+  await openSettings(page);
+  await page.getByRole("tab", { name: "Configuration", exact: true }).click();
+  await page.getByRole("switch", { name: "Enable automatic capture" }).click();
+  await page
+    .getByRole("textbox", { name: "Codex CLI folders" })
+    .fill("/tmp/browser-capture/sessions");
+  await page.getByRole("spinbutton", { name: "Concurrent readers" }).fill("2");
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await page.getByRole("button", { name: "Refresh capture" }).click();
+  await page.getByRole("tab", { name: "Configuration", exact: true }).click();
+  await expect(
+    page.getByRole("textbox", { name: "Codex CLI folders" }),
+  ).toHaveValue("/tmp/browser-capture/sessions");
+  await expect(
+    page.getByRole("spinbutton", { name: "Concurrent readers" }),
+  ).toHaveValue("2");
+  await page
+    .getByRole("button", { name: "Save configuration", exact: true })
+    .click();
+  await expect(page.getByText("Disabled · Restart required")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Save configuration", exact: true }),
+  ).toBeDisabled();
+  expect(saves).toHaveLength(1);
+  await expect(
+    page.getByText("/Users/capture/.codex/sessions", { exact: true }),
+  ).toBeVisible();
+  const axe = await new AxeBuilder({ page })
+    .include('section[aria-labelledby="capture-configuration-title"]')
+    .analyze();
+  expect(axe.violations).toEqual([]);
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await expect(
+    page.getByRole("textbox", { name: "Codex CLI folders" }),
+  ).toBeVisible();
+});

@@ -9,9 +9,12 @@ use jj_store_service::capture_management::{
     CaptureSourceQuery,
 };
 mod imports;
+mod settings;
 
 macro_rules! endpoints {
     ($register:ident) => { $register! {
+        (get, "/local/capture/settings", settings::status, "local_capture_settings", routes::Empty, routes::Empty, capture::LocalCaptureSettings),
+        (post, "/local/capture/settings", settings::save, "local_capture_save_settings", routes::Empty, capture::SaveCaptureSettings, capture::LocalCaptureSettings),
         (get, "/local/capture", status, "local_capture_status", routes::Empty, routes::Empty, capture::CaptureStatus),
         (get, "/local/capture/sources", sources, "local_capture_sources", CaptureSourceQuery, routes::Empty, capture::CaptureSourcePage),
         (post, "/local/capture/control", control, "local_capture_control", routes::Empty, CaptureControlCommand, capture::CaptureControlOutcome),
@@ -23,10 +26,10 @@ macro_rules! endpoints {
 pub(crate) fn router() -> Router<Arc<State>> {
     macro_rules! register {
         ($(($method:ident,$path:literal,$handler:path,$id:literal,$query:ty,$body:ty,$response:ty)),*) => {
-            Router::new()$(.route($path,$method($handler)))*
+            Router::new()$(.route($path,$method($handler).layer(DefaultBodyLimit::max(if $path.ends_with("/settings") { 144 * 1024 } else { 4096 }))))*
         };
     }
-    endpoints!(register).layer(DefaultBodyLimit::max(4096))
+    endpoints!(register)
 }
 pub(crate) fn document(document: &mut crate::contract::Document) {
     macro_rules! register {

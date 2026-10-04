@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { constants } from "node:fs";
-import { access, readFile, writeFile } from "node:fs/promises";
+import { access, lstat, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { developmentLayout, loadFixture } from "./dev-demo-state.mjs";
@@ -47,7 +47,27 @@ export async function prepareUiDevelopment(
       `Missing backend executable ${executable}. Run pnpm dev:backend:build or pnpm dev:restart once.`,
     );
   }
-  let source = await readFile(layout.serverConfig, "utf8");
+  const previous = await readRuntime(layout);
+  const serverConfig = join(layout.runtimeRoot, "ui-server.toml");
+  const retained =
+    previous?.mode === "vite" &&
+    previous.workspaceRoot === repositoryRoot &&
+    previous.runtimeRoot === layout.runtimeRoot &&
+    previous.repositoryId === fixture.repositoryId &&
+    previous.serverConfig === serverConfig;
+  const sourcePath = retained ? serverConfig : layout.serverConfig;
+  const metadata = await lstat(sourcePath);
+  if (
+    !metadata.isFile() ||
+    metadata.isSymbolicLink() ||
+    metadata.size > 64 * 1024
+  )
+    throw new Error(
+      "UI development requires a bounded regular configuration file",
+    );
+  // Reuse app-saved settings when restarting this exact fixture. Port and binary
+  // overrides below remain explicit; a missing retained file never resets it.
+  let source = await readFile(sourcePath, "utf8");
   if (environment.JJ_STORE_DEV_RUSTFS_RUNTIME)
     source = source.replace(
       /^runtime_executable = .*$/mu,
@@ -70,9 +90,9 @@ export async function prepareUiDevelopment(
     layout,
     fixture,
     executable,
-    serverConfig: join(layout.runtimeRoot, "ui-server.toml"),
+    serverConfig,
     configuration: rewriteUiBackendConfiguration(source, settings),
-    previous: await readRuntime(layout),
+    previous,
   };
 }
 

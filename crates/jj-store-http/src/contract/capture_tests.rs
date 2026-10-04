@@ -31,6 +31,19 @@ fn capture_management_contract_is_installation_local_and_actor_free() {
     ] {
         assert!(required.contains(&json!(name)));
     }
+    let save = &paths["/v1/local/capture/settings"]["post"];
+    assert_eq!(save["security"], json!([{}]));
+    let body = &save["requestBody"]["content"]["application/json"]["schema"];
+    assert_eq!(body["additionalProperties"], false);
+    assert_eq!(
+        body["properties"]["expected_revision"]["pattern"],
+        "^[0-9a-f]{64}$"
+    );
+    assert!(body["properties"].get("actor").is_none());
+    assert_eq!(
+        schemas["CaptureConfiguration"]["properties"]["harnesses"]["maxItems"],
+        2
+    );
     let phases = &schemas["CaptureRuntimePhase"]["enum"];
     assert!(phases.as_array().unwrap().contains(&json!("draining")));
     let rescan = &paths["/v1/local/capture/rescan"]["post"];

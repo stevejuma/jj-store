@@ -134,3 +134,42 @@ test("an occupied backend port leaves the current service and runtime marker int
   assert.doesNotThrow(() => process.kill(running.pid, 0));
   assert.equal(await readFile(layout.runtimeFile, "utf8"), marker);
 });
+
+test("matching HMR backend restart retains app-saved configuration and refuses a missing retained file", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "jj-store-ui-settings-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const layout = developmentLayout(root, {});
+  await mkdir(layout.repository, { recursive: true });
+  await mkdir(layout.rustfsVolume, { recursive: true });
+  const base = `format = 2\nbind = "127.0.0.1:7460"\npublic_url = "http://127.0.0.1:7460/"\nruntime_executable = ${JSON.stringify(process.execPath)}\n[agent_capture]\nenabled = false\n`;
+  await writeFile(layout.serverConfig, base);
+  const fixture = { repositoryId: "11".repeat(16), firstStartupMillis: 0 };
+  await writeFixture(layout, fixture);
+  const initial = await prepareUiDevelopment(root, {
+    JJ_STORE_DEV_SERVER: process.execPath,
+  });
+  await writeFile(
+    initial.serverConfig,
+    initial.configuration.replace("enabled = false", "enabled = true"),
+  );
+  await writeFile(
+    layout.runtimeFile,
+    JSON.stringify({
+      mode: "vite",
+      workspaceRoot: root,
+      runtimeRoot: layout.runtimeRoot,
+      serverConfig: initial.serverConfig,
+      repositoryId: fixture.repositoryId,
+    }),
+  );
+  const saved = await prepareUiDevelopment(root, {
+    JJ_STORE_DEV_SERVER: process.execPath,
+  });
+  assert.match(saved.configuration, /enabled = true/u);
+  assert.match(await readFile(layout.serverConfig, "utf8"), /enabled = false/u);
+  await rm(initial.serverConfig);
+  await assert.rejects(
+    prepareUiDevelopment(root, { JJ_STORE_DEV_SERVER: process.execPath }),
+    { code: "ENOENT" },
+  );
+});

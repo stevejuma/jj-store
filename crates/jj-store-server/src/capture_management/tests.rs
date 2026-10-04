@@ -175,3 +175,27 @@ async fn policy_directory_rebinding_after_selection_withholds_application_until_
     assert_eq!(fs::read(control.join("state.json")).unwrap(), bytes);
     assert!(f.spool.pending().unwrap().is_empty());
 }
+
+#[tokio::test]
+async fn configuration_remains_editable_while_capture_inspection_holds_the_runtime_gate() {
+    let (_fixture, _, manager, actor, _, journal) = prepared().await;
+    let before = journal.current().unwrap();
+    let _inspection = manager.0.gate.lock().await;
+    let initial = manager.settings(actor).await.unwrap();
+    let mut desired = initial.desired;
+    desired.max_readers = 2;
+    let saved = manager
+        .save_settings(
+            actor,
+            SaveCaptureSettings {
+                version: 1,
+                expected_revision: initial.revision,
+                configuration: desired,
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(saved.desired.max_readers, 2);
+    assert!(saved.restart_required);
+    assert_eq!(journal.current().unwrap(), before);
+}

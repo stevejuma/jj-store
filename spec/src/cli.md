@@ -1448,10 +1448,11 @@ private capture state and unused loopback ports. It MUST document the browser
 URL, linked folder, exact harness version, configuration and stop command, while
 preserving main's running fixture and installed applications. Capture remains
 disabled by default. A one-time configuration/backend restart is sufficient;
-UI-based configuration and hook installation are deferred. The setup MUST reject
-unsupported versions and continue enforcing current repository/workspace
-admission. It MUST NOT import arbitrary personal history. Real trial sessions,
-controlled fixtures and the full multi-harness release are distinct evidence.
+Capture configuration can now be saved from Settings → Agents; hook installation
+remains deferred. The setup MUST reject unsupported versions and continue
+enforcing current repository/workspace admission. It MUST NOT import arbitrary
+personal history. Real trial sessions, controlled fixtures and the full
+multi-harness release are distinct evidence.
 
 ### Isolated Codex preview launcher
 
@@ -1474,3 +1475,19 @@ at startup. LocalTrusted Admin Settings → Agents displays those paths, includi
 Codex home defaults and explicit configured overrides; changing configuration
 requires backend restart. Count-only coverage is insufficient for directory
 configuration inspection.
+
+### App-managed capture configuration
+
+The local desktop and browser configuration editor saves only typed
+`agent_capture` settings in the selected external server configuration. It uses
+the existing bounds and qualified Codex versions, shows resolved defaults and
+requires the next backend startup to activate changes. Restart opens retained
+capture state without resetting policy, source generations or import receipts.
+The original preview's manual TOML setup is now optional for these settings.
+
+Matching HMR backend restarts reuse the exact fixture's saved `ui-server.toml`
+configuration, retaining app-edited capture and search settings. Only explicit
+loopback port, UI mode and development binary overrides are reapplied. A
+missing, linked or oversized retained configuration fails before stopping the
+backend; startup MUST NOT silently restore defaults. Switching to another
+configuration or fixture remains an explicit development mode selection.

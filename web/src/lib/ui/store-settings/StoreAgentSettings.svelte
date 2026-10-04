@@ -16,6 +16,7 @@
   section="agents"
   tabs={[
     { value: "capture", label: "Capture" },
+    { value: "configuration", label: "Configuration" },
     { value: "sources", label: "Sources" },
     { value: "imports", label: "Imports" },
     { value: "diagnostics", label: "Diagnostics" },

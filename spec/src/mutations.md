@@ -881,3 +881,11 @@ Capture management response metadata may include bounded configured harness
 directory roots under current installation-local Admin admission. These
 startup-resolved paths confer no repository Write permission or import authority
 and do not alter the command, receipt or publication contracts.
+
+Installation capture configuration saves are local Admin device-policy edits,
+independent of repository manifests and receipts. They carry the exact
+configuration-file revision and replace only validated agent_capture values
+under the shared settings-file lock. Stale saves are rejected, post-replacement
+failures are unknown outcomes, and clients retain the original draft until fresh
+saved configuration is observed. Saving never creates a repository publication
+or mutates a running capture journal.

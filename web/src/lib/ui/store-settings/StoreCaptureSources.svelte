@@ -21,7 +21,8 @@
   const state = $derived(management.state);
   const sources = $derived(state.sources);
   const allowed = $derived(
-    management.supported &&
+    !state.settings.value?.restart_required &&
+      management.supported &&
       !state.busy &&
       !state.pending &&
       state.status === "ready" &&

@@ -733,3 +733,10 @@ Capture coverage adds optional bounded configured directory metadata. Generated
 HTTP schemas and TypeScript must match the actual admitted response. Omission is
 reported as unavailable metadata; qualified new servers report startup-resolved
 roots. Transcript source files and native session keys remain absent.
+
+Local capture settings use strict additive version-1 typed HTTP configuration
+contracts. Configuration format 2 and AgentStore, source, spool, policy and
+import journal formats remain unchanged. Only qualified Codex profiles are
+editable. Existing configuration values outside agent_capture remain preserved
+by revision-conditional atomic replacement. Unsupported startup readers remain
+separately gated.

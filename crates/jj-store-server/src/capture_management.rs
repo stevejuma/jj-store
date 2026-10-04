@@ -19,6 +19,7 @@ mod import_settlement;
 mod imports;
 mod report;
 mod rescan;
+mod settings;
 mod sources;
 pub use import_dispatch::CaptureImportDispatch;
 pub use import_policy::CaptureImportPolicy;
@@ -59,6 +60,7 @@ impl CaptureImportManagement {
 }
 struct Inner {
     authority: authority::Authority,
+    settings: settings::SettingsFile,
     binding: Option<CaptureManagementBinding>,
     gate: Arc<tokio::sync::Mutex<()>>,
     #[cfg(test)]
@@ -76,6 +78,7 @@ impl Manager {
     ) -> Result<Self, Error> {
         Ok(Self(Arc::new(Inner {
             authority: authority::Authority::new(path, config, identity)?,
+            settings: settings::SettingsFile::new(path, &config.agent_capture)?,
             binding,
             gate: Arc::new(tokio::sync::Mutex::new(())),
             #[cfg(test)]
@@ -158,6 +161,16 @@ impl Manager {
 mod tests;
 #[async_trait::async_trait]
 impl CaptureManager for Manager {
+    async fn settings(&self, actor: PrincipalId) -> Result<LocalCaptureSettings, Error> {
+        self.read_settings(actor).await
+    }
+    async fn save_settings(
+        &self,
+        actor: PrincipalId,
+        request: SaveCaptureSettings,
+    ) -> Result<LocalCaptureSettings, Error> {
+        self.write_settings(actor, request).await
+    }
     async fn import(
         &self,
         actor: PrincipalId,

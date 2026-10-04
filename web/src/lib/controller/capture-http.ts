@@ -1,3 +1,4 @@
+import type { CaptureSaveSettings } from "./capture-configuration.js";
 import type { Model } from "../api/client.js";
 import { LocalClient } from "../api/local-client.js";
 import type {
@@ -17,6 +18,19 @@ export class HttpCaptureManagement implements CaptureTransport {
       "capture",
       undefined,
       signal,
+    );
+  }
+  settings(signal?: AbortSignal) {
+    return this.client.request<Model<"LocalCaptureSettings">>(
+      "capture/settings",
+      undefined,
+      signal,
+    );
+  }
+  saveSettings(command: CaptureSaveSettings) {
+    return this.client.request<Model<"LocalCaptureSettings">>(
+      "capture/settings",
+      command,
     );
   }
   sources(cursor?: string, signal?: AbortSignal) {

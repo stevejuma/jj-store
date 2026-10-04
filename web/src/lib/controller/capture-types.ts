@@ -1,5 +1,11 @@
 import type { Exact, Model } from "../api/client.js";
 import type { operations } from "../api/generated.js";
+import type {
+  CaptureSettingsState,
+  CaptureDraft,
+  CaptureSaveSettings,
+} from "./capture-configuration.js";
+import { emptyCaptureSettings } from "./capture-configuration.js";
 import type { StoreLoadStatus } from "./contracts.js";
 
 export type CaptureControl = Exact<
@@ -13,6 +19,7 @@ export type CaptureRescan = Exact<
   >["content"]["application/json"]
 >;
 export type CaptureImport = Model<"CaptureImportCommand">;
+export type CaptureSettings = Model<"LocalCaptureSettings">;
 export type CaptureStatus = Model<"CaptureStatus">;
 export type CaptureSourcePage = Model<"CaptureSourcePage">;
 export type CaptureImportOutcome = Model<"CaptureImportOutcome">;
@@ -20,6 +27,10 @@ export type CaptureIntent =
   | { kind: "control"; command: CaptureControl; uncertain: boolean }
   | { kind: "import"; command: CaptureImport; uncertain: boolean };
 export interface CaptureTransport {
+  settings?(signal?: AbortSignal): Promise<Model<"LocalCaptureSettings">>;
+  saveSettings?(
+    command: CaptureSaveSettings,
+  ): Promise<Model<"LocalCaptureSettings">>;
   status(signal?: AbortSignal): Promise<Model<"CaptureStatus">>;
   sources(
     cursor?: string,
@@ -35,11 +46,13 @@ export interface CaptureTransport {
   close(): void;
 }
 export interface CaptureManagementState {
+  settings: CaptureSettingsState;
   value: Model<"CaptureStatus"> | null;
   status: StoreLoadStatus;
   sources: Model<"CaptureSourcePage"> | null;
   sourceState: StoreLoadStatus;
   busy: boolean;
+  commandBusy: boolean;
   error: string;
   message: string;
   pending: CaptureIntent | null;
@@ -50,6 +63,9 @@ export interface CaptureManagementState {
 export interface CaptureManagement {
   readonly supported: boolean;
   readonly state: CaptureManagementState;
+  configure(patch: Partial<CaptureDraft>): void;
+  cancelConfiguration(): void;
+  saveConfiguration(): Promise<void>;
   refresh(): Promise<void>;
   setActive(active: boolean): void;
   moreSources(): Promise<void>;
@@ -68,11 +84,13 @@ export const captureProfiles = {
   "opencode-export-json-v1": "OpenCode export",
 } as const;
 export const emptyCaptureManagement = (): CaptureManagementState => ({
+  settings: emptyCaptureSettings(),
   value: null,
   status: "idle",
   sources: null,
   sourceState: "idle",
   busy: false,
+  commandBusy: false,
   error: "",
   message: "",
   pending: null,

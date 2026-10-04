@@ -14,6 +14,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import type { CaptureManagement } from "../../controller/capture-types.js";
+  import StoreCaptureConfiguration from "./StoreCaptureConfiguration.svelte";
   import StoreCaptureRoots from "./StoreCaptureRoots.svelte";
   import StoreCaptureDiagnostics from "./StoreCaptureDiagnostics.svelte";
   import StoreCaptureSources from "./StoreCaptureSources.svelte";
@@ -34,7 +35,9 @@
     return () => owner?.setActive(false);
   });
   const ready = $derived(
-    management?.supported &&
+    !state?.settings.saving &&
+      !state?.settings.value?.restart_required &&
+      management?.supported &&
       state?.status === "ready" &&
       state.value?.enabled &&
       state.value.policy &&
@@ -102,87 +105,96 @@
         </div>
       </div>
     {/if}
-    {#if state.status === "loading" || state.status === "refreshing"}
-      <StoreSettingsNotice>Loading capture status…</StoreSettingsNotice>
-    {/if}
-    {#if state.value?.enabled}
-      {#if section === "capture"}
-        <StoreSettingsNotice>{captureSummary(state.value)}</StoreSettingsNotice>
-        <StoreCaptureRoots value={state.value} />
-      {:else if section === "sources"}
-        <StoreCaptureSources
-          {management}
-          {repositoryName}
-          onImport={() => {
-            section = "imports";
-          }}
-        />
-      {:else if section === "diagnostics"}
-        <header><h2>Worker diagnostics</h2></header>
-        <StoreCaptureDiagnostics value={state.value} />
+    {#if section === "configuration"}<StoreCaptureConfiguration
+        {management}
+      />{:else}
+      {#if state.settings.value?.restart_required}<StoreSettingsNotice
+          >Saved capture settings require a local server restart. Runtime
+          controls are unavailable until restart.</StoreSettingsNotice
+        >{/if}
+      {#if state.status === "loading" || state.status === "refreshing"}
+        <StoreSettingsNotice>Loading capture status…</StoreSettingsNotice>
       {/if}
-    {:else if state.value}
-      <StoreSettingsNotice>
-        Transcript capture is disabled in server configuration.
-      </StoreSettingsNotice>
-      <dl class="store-settings__rows">
-        <div>
-          <dt>Enable transcript capture</dt>
-          <dd>
-            Enable selected Codex profiles in the server’s <code
-              >agent_capture</code
-            > configuration, then restart this local backend. Only active sessions
-            in linked repository folders are captured.
-          </dd>
-        </div>
-      </dl>
-    {:else}<StoreSettingsNotice>Loading service coverage…</StoreSettingsNotice
-      >{/if}
-    {#if state.pending?.uncertain}
-      <Alert.Root role="status"
-        ><InfoIcon aria-hidden="true" /><Alert.Title
-          >Capture outcome unknown</Alert.Title
-        ><Alert.Description
-          >Retain the original request. A missing receipt or refused retry does
-          not prove the original command failed.</Alert.Description
-        ></Alert.Root
-      >
-      <div class="store-settings__action-row">
-        <div>
-          <CopyableValue
-            label="Capture request ID"
-            value={state.pending.command.request_id}
-          />
-        </div>
-        <div class="store-settings__actions">
-          <Button
-            variant="outline"
-            disabled={state.busy}
-            onclick={() => management.retry()}
-            ><RotateCwIcon data-icon="inline-start" aria-hidden="true" />Retry
-            original capture request</Button
+      {#if state.value?.enabled}
+        {#if section === "capture"}
+          <StoreSettingsNotice
+            >{captureSummary(state.value)}</StoreSettingsNotice
           >
-          {#if state.pending.kind === "import"}<Button
+          <StoreCaptureRoots value={state.value} />
+        {:else if section === "sources"}
+          <StoreCaptureSources
+            {management}
+            {repositoryName}
+            onImport={() => {
+              section = "imports";
+            }}
+          />
+        {:else if section === "diagnostics"}
+          <header><h2>Worker diagnostics</h2></header>
+          <StoreCaptureDiagnostics value={state.value} />
+        {/if}
+      {:else if state.value}
+        <StoreSettingsNotice>
+          Transcript capture is disabled in server configuration.
+        </StoreSettingsNotice>
+        <dl class="store-settings__rows">
+          <div>
+            <dt>Enable transcript capture</dt>
+            <dd>
+              Choose harnesses and enable capture in the Configuration tab, then
+              restart this local backend. Only active sessions in linked
+              repository folders are captured.
+            </dd>
+          </div>
+        </dl>
+      {:else}<StoreSettingsNotice>Loading service coverage…</StoreSettingsNotice
+        >{/if}
+      {#if state.pending?.uncertain}
+        <Alert.Root role="status"
+          ><InfoIcon aria-hidden="true" /><Alert.Title
+            >Capture outcome unknown</Alert.Title
+          ><Alert.Description
+            >Retain the original request. A missing receipt or refused retry
+            does not prove the original command failed.</Alert.Description
+          ></Alert.Root
+        >
+        <div class="store-settings__action-row">
+          <div>
+            <CopyableValue
+              label="Capture request ID"
+              value={state.pending.command.request_id}
+            />
+          </div>
+          <div class="store-settings__actions">
+            <Button
               variant="outline"
-              disabled={state.busy}
-              onclick={() =>
-                management.inspectImport(state.pending!.command.request_id)}
-              ><SearchIcon data-icon="inline-start" aria-hidden="true" />Check
-              original import receipt</Button
-            >{/if}
+              disabled={state.busy || state.settings.value?.restart_required}
+              onclick={() => management.retry()}
+              ><RotateCwIcon data-icon="inline-start" aria-hidden="true" />Retry
+              original capture request</Button
+            >
+            {#if state.pending.kind === "import"}<Button
+                variant="outline"
+                disabled={state.busy}
+                onclick={() =>
+                  management.inspectImport(state.pending!.command.request_id)}
+                ><SearchIcon data-icon="inline-start" aria-hidden="true" />Check
+                original import receipt</Button
+              >{/if}
+          </div>
         </div>
-      </div>
+      {/if}
+      {#if section === "capture" && state.controlOutcome}<StoreSettingsNotice>
+          Original policy receipt: {state.controlOutcome.receipt.paused
+            ? "pause"
+            : "resume"} · {state.controlOutcome.replayed
+            ? "Replayed"
+            : "Accepted"} · {state.controlOutcome.runtime_requested
+            ? "Worker change requested"
+            : "No worker change requested"}
+        </StoreSettingsNotice>{/if}
+      {#if section === "imports"}<StoreCaptureImport {management} />{/if}
     {/if}
-    {#if section === "capture" && state.controlOutcome}<StoreSettingsNotice>
-        Original policy receipt: {state.controlOutcome.receipt.paused
-          ? "pause"
-          : "resume"} · {state.controlOutcome.replayed
-          ? "Replayed"
-          : "Accepted"} · {state.controlOutcome.runtime_requested
-          ? "Worker change requested"
-          : "No worker change requested"}
-      </StoreSettingsNotice>{/if}
-    {#if section === "imports"}<StoreCaptureImport {management} />{/if}
     <StoreNotice
       scope="installation-capture"
       noticeKey="capture-outcome"

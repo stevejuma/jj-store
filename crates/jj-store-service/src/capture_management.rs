@@ -2,6 +2,8 @@
 use jj_store_model::{PrincipalId, RequestId};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+mod settings;
+pub use settings::*;
 mod sources;
 pub use sources::*;
 mod imports;
@@ -190,6 +192,16 @@ pub enum Error {
 
 #[async_trait::async_trait]
 pub trait CaptureManager: Send + Sync {
+    async fn settings(&self, _actor: PrincipalId) -> Result<LocalCaptureSettings, Error> {
+        Err(Error::Unavailable)
+    }
+    async fn save_settings(
+        &self,
+        _actor: PrincipalId,
+        _request: SaveCaptureSettings,
+    ) -> Result<LocalCaptureSettings, Error> {
+        Err(Error::Unavailable)
+    }
     async fn import(
         &self,
         actor: PrincipalId,
