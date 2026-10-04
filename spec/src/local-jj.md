@@ -216,6 +216,25 @@ validation and retention qualify. GETs never initialize identity or actor state.
 | M13.5     | Bounded durable local/native conversion and identity mapping reports                                                 | Create an independent destination with a fresh operation log, selected code state/ancestry, complete collaboration history and exact evidence archives. Reject unsupported active representations in preflight, verify bounded closures, publish native manifests last, export only to a new folder and leave the source untouched. |
 | M13.6     | Cold full-flow qualification and retained native regressions                                                         | Exercise the completed local CLI, filesystem server/UI, recovery and conversion in fresh processes; retain native identity, publication, collaboration and browser regression evidence. Focused provider tests alone do not satisfy this gate.                                                                                      |
 
+## Independent conversion profile
+
+Conversion pins a committed source operation and companion or manifest selection
+without snapshotting working files or reconciling heads. The source archive is
+read-only and bounded to 100,000 objects, 16 MiB and dependency depth 512. The
+integration boundary translates code identities explicitly, preserving parents,
+predecessors, complete selected view references and the operation's optional
+predecessor map. A fresh destination operation has only the built-in root as its
+parent; the source operation graph remains provenance, never a replay recipe.
+File identities are verified independently of envelope checksums. Git SHA-1
+objects are verified against their raw bytes before translation. Source settings
+and hooks do not execute. Signing, code conflicts and non-placeholder copy IDs
+require separate qualified profiles and fail preflight. Collaboration conversion
+must audit every historical domain selection; unsupported exact evidence may
+prevent conversion but may never be silently omitted. Source grants,
+credentials, settings, device registrations and active execution journals are
+not destination authority. Existing project repository links keep their original
+identities.
+
 ## M15 additive collaboration publication
 
 Threads and Reactions use independently selected canonical roots and immutable

@@ -41,6 +41,25 @@ async fn capture_inner(
     if expected.git_dir().canonicalize()? != metadata.git_dir().canonicalize()? {
         return Err(Error::Invalid("capsule Git repository binding"));
     }
+    let capsule = inspect(settings, repo_path, repository, operation).await?;
+    let bytes = capsule.encode()?;
+    let id = m::CodeCapsuleId::new(Sha256::digest(&bytes).into());
+    let blob = metadata.stage_blob(&bytes)?;
+    let retained = capsule.retention(blob)?;
+    Ok(CapturedEvidence {
+        capsule: id,
+        blob,
+        retained,
+    })
+}
+
+/// Read-only bounded source capsule; no Git object, ref, operation or checkout write.
+pub async fn inspect(
+    settings: &UserSettings,
+    repo_path: &Path,
+    repository: m::RepositoryId,
+    operation: m::OperationId,
+) -> Result<GitEvidenceCapsuleV1> {
     let loader =
         RepoLoader::init_from_file_system(settings, repo_path, &default_backend_factories())
             .map_err(Error::other)?;
@@ -94,15 +113,8 @@ async fn capture_inner(
         pending.extend(wire.predecessors.iter().copied());
         capsule.commits.insert(id, wire);
     }
-    let bytes = capsule.encode()?;
-    let id = m::CodeCapsuleId::new(Sha256::digest(&bytes).into());
-    let blob = metadata.stage_blob(&bytes)?;
-    let retained = capsule.retention(blob)?;
-    Ok(CapturedEvidence {
-        capsule: id,
-        blob,
-        retained,
-    })
+    capsule.validate()?;
+    Ok(capsule)
 }
 
 impl GitEvidenceCapsuleV1 {

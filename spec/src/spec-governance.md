@@ -914,3 +914,11 @@ require the complete registered HTTP/SSE contract lane and generated-client
 checks. Server creation/reopen and production cold browser recovery/gating
 remain distinct evidence. Neither qualifies local/native conversion or a real
 RustFS migration.
+
+M13 independent conversion primitives remain governed by local-jj.md, with
+native JJ translation under jj-integration.md, typed collaboration references
+under collaboration.md, Work snapshots under projects.md and staging/closure
+audits under publication.md. Qualification must retain source operation/metadata
+pins, full history and exact evidence, explicit mapping reports and source-safe
+failure/recovery evidence. Primitive tests do not enable conversion capability
+or complete durable publication, browser or cold RustFS acceptance.

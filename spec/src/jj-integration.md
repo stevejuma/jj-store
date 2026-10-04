@@ -79,6 +79,12 @@ separate histories. Multiple operation heads are legal. CLI repository opening
 can use native reconciliation, but HTTP GET cannot. Backend copy lookup and
 submodule data need full coverage beyond the reference SimpleBackend.
 
+Independent conversion uses a read-only bounded source capsule and owned raw
+object archive. The integration boundary translates all selected code references
+and ancestry/evolution dependencies into fresh destination identities, retaining
+optional predecessor-map semantics. It never reconciles source heads or
+snapshots physical checkout files. Native codecs and envelopes remain unchanged.
+
 ## Requirements
 
 | ID         | Requirement                                                                                                                                                                          |

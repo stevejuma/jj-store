@@ -173,3 +173,55 @@ pub(super) fn work_model_error(error: jj_work::Error) -> Error {
         _ => Error::Corrupt("work model"),
     }
 }
+
+impl Coordinator {
+    /// Build a validated independent snapshot; staging publishes no repository state.
+    pub async fn stage_conversion_work(&self, state: &WorkStateV1) -> Result<RecordRef> {
+        state.validate().map_err(work_model_error)?;
+        let mut root = WorkRootV1::empty();
+        for (index, objects) in [
+            state
+                .projects
+                .values()
+                .cloned()
+                .map(WorkObjectV1::Project)
+                .collect::<Vec<_>>(),
+            state
+                .tasks
+                .values()
+                .cloned()
+                .map(WorkObjectV1::Task)
+                .collect(),
+            state
+                .comments
+                .values()
+                .cloned()
+                .map(WorkObjectV1::Comment)
+                .collect(),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let mut entries = BTreeMap::new();
+            for object in objects {
+                let key = object.key();
+                let reference = self
+                    .records
+                    .put(RecordKind::WorkObject, None, &object)
+                    .await?;
+                entries.insert(key, reference);
+            }
+            let selected = self.catalog.update(None, entries).await?;
+            match index {
+                0 => root.projects = selected,
+                1 => root.tasks = selected,
+                _ => root.comments = selected,
+            }
+        }
+        let reference = self.records.put(RecordKind::WorkRoot, None, &root).await?;
+        if self.work_store(reference).await?.state() != state {
+            return Err(Error::Corrupt("converted work snapshot"));
+        }
+        Ok(reference)
+    }
+}

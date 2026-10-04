@@ -80,6 +80,11 @@ returned external code and AgentStore dependency closure and retain
 authorization, receipt-first replay and manifest CAS around the shared
 projection.
 
+Independent conversion builds complete destination domain catalogs without
+publication capability. Rebuilt catalogs obey the same canonical radix rules and
+bounded closure audits as ordinary edits. Final selection still requires the
+existing manifest or companion ref CAS; archives and staging are invisible.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                              |

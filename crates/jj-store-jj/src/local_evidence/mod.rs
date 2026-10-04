@@ -5,7 +5,7 @@ mod operations;
 mod views;
 mod wire;
 use crate::local_metadata::{Error, Result};
-pub use capture::{CapturedEvidence, capture};
+pub use capture::{CapturedEvidence, capture, inspect};
 use jj_lib::{backend as b, merge::Merge, object_id::ObjectId as _, op_store as o};
 use jj_store_model as m;
 use serde::{Deserialize, Serialize};

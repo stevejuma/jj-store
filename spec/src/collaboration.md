@@ -113,6 +113,18 @@ Native links encode repository, Thread/project/task and code-operation
 identities. New Thread links use `thread=` on Threads; legacy `channel=` stays
 readable and Review routes retain their own `thread=` interpretation.
 
+Independent conversion translates repository-bound AgentStore and ReviewStore
+references through exhaustive typed fields, preserves sanitized payloads and
+stable logical identities, and rebuilds repository anchor relation catalogs.
+Staging returns independent roots without publication capability. Source
+receipts remain archived provenance; destination retries use their own retained
+identities. Code provenance and non-repository review evidence require qualified
+portable carriers and fail preflight while that qualification is absent. Thread
+and Reaction conversion preserves exact reply parents, observed additions and
+retractions, session/review links and raster bytes. Repository-bound slots and
+dependent references are explicitly rekeyed and their catalogs rebuilt. Source
+actor and origin attribution remain provenance without granting access.
+
 ## Requirements
 
 | ID             | Requirement                                                                                                                                                                                                                                                                                                                                                                    |

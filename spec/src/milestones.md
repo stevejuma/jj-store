@@ -115,7 +115,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                           | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050 |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                             | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034 |
 | M13.4 | In progress | M13.2 | JST-LOCAL-004,JST-LOCAL-005 | Filesystem-only server, local UI and recoverable code commands | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095 |
-| M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | - |
+| M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Complete destination publication, durable orchestration, UI and cold conversion gates          | E-M13-026 |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | - |
 | M14 | In progress | M4.18 | JST-UI-012,JST-UI-016 | Local settings, profile-aware device links and safe maintenance | Implement M14.3 agent setup and automatic recovery | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017 |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                                              | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049 |
@@ -71960,6 +71960,183 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Native creation slice only. Conversion remains separately gated by M13.5. Original task statuses and all historical evidence preserved. Root aggregates, full Rust/UI suites, visual baselines and real RustFS conversion are out of scope.",
   "next": "Commit qualified native creation, then implement M13.5 conversion separately with explicit preflight and retained histories."
+},
+{
+  "id": "E-M13-026",
+  "tasks": ["M13.5"],
+  "date": "2026-10-04",
+  "kind": "implementation",
+  "revision": "zzskmqvv",
+  "before": "Creation slice normzvzq/c21a0e4e committed. M13.5 has no independent code/history translation. Conversion API/UI capability remains disabled.",
+  "versions": "macOS ARM64; pinned JJ 0.45.1; SHA-1 Git profile; locked Cargo dependencies; own workspace target directory.",
+  "formats": "Owned bounded CodeArchiveV1, RepositoryArchiveV1 and explicit WorkSnapshotArchiveV1. Native/companion records retain existing codecs and identities. Archive is provenance; settings, credentials, grants and execution journals are excluded.",
+  "files": [
+    "crates/jj-store-jj/src/conversion.rs",
+    "crates/jj-store-jj/src/lib.rs",
+    "crates/jj-store-jj/src/local_evidence/capture.rs",
+    "crates/jj-store-jj/src/local_evidence/mod.rs",
+    "crates/jj-store-jj/tests/conversion.rs",
+    "crates/jj-store-service/src/conversion/agent.rs",
+    "crates/jj-store-service/src/conversion/collab.rs",
+    "crates/jj-store-service/src/conversion/history.rs",
+    "crates/jj-store-service/src/conversion/review.rs",
+    "crates/jj-store-service/src/conversion.rs",
+    "crates/jj-store-service/src/lib.rs",
+    "crates/jj-store-service/src/local_repository/conversion.rs",
+    "crates/jj-store-service/src/local_repository.rs",
+    "crates/jj-store-service/tests/conversion.rs",
+    "crates/jj-store-wal/src/publication/native_copy.rs",
+    "crates/jj-store-wal/src/publication/review_catalog_engine.rs",
+    "crates/jj-store-wal/src/publication/work.rs",
+    "crates/jj-store-wal/src/publication.rs",
+    "spec/src/collaboration.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/projects.md",
+    "spec/src/publication.md",
+    "spec/src/spec-governance.md",
+    "spec/src/milestones.md",
+    "spec/src/mutations.md"
+  ],
+  "tests": [
+    "crates/jj-store-jj/tests/conversion.rs#bidirectional_code_conversion_preserves_evolution_view_and_dirty_source",
+    "crates/jj-store-service/tests/conversion.rs#local_history_archive_retains_every_selected_work_version_and_exact_git_evidence",
+    "crates/jj-store-service/tests/conversion.rs#native_history_archive_contains_selected_evidence_and_excludes_configuration",
+    "crates/jj-store-jj/tests/local_evidence.rs#capsule_retains_full_source_context_after_op_store_loss_and_git_gc",
+    "crates/jj-store-wal/tests/native_copy.rs#native_copy_restores_code_agent_review_and_installs_manifest_last",
+    "crates/jj-store-wal/tests/work_store.rs#linked_tasks_comments_pins_and_native_copy",
+    "crates/jj-store-wal/tests/review_catalog.rs#review_root_rejects_snapshot_state_not_reconstructed_by_events"
+  ],
+  "runs": [
+    {
+      "command": "cargo check -p jj-store-jj --locked (code translator iterations)",
+      "result": "fail",
+      "failures": 4,
+      "note": "Initial pinned-API errors fixed; code-engine-check/test logs retain exact diagnostics."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test conversion --locked (initial destination)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Missing destination directory then Store Arc mismatch during checkout; repaired using the destination workspace loader."
+    },
+    {
+      "command": "cargo check -p jj-store-service --locked (graph iterations)",
+      "result": "fail",
+      "failures": 8,
+      "note": "Six ambiguous Result diagnostics then two missing facade exports; fixed explicit Result and publication facade export. graph-check*.log."
+    },
+    {
+      "command": "cargo check -p jj-store-service --locked (graph final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "graph-check3.log: compile passed; eight Option-loop readability warnings subsequently removed."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test conversion --locked (graphs)",
+      "result": "pass",
+      "failures": 0,
+      "note": "graph-tests.log: 3 graph translation cases pass."
+    },
+    {
+      "command": "cargo test -p jj-store-jj -p jj-store-service --test conversion --locked (archive initial)",
+      "result": "fail",
+      "failures": 4,
+      "note": "conversion-primitives-final.log: WorkStateV1 intentionally has no generic Serde persistence. Replaced attempted derivation with owned WorkSnapshotArchiveV1."
+    },
+    {
+      "command": "cargo test -p jj-store-jj -p jj-store-service --test conversion --locked (archive final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "conversion-primitives-final2.log and primitives-tests-final.log: 2 real GitBackend code cases and 5 service graph/history cases pass."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_evidence --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "local-evidence-regression.log: 6 retained-capsule cases pass, including reopen/GC, full fields and tampering."
+    },
+    {
+      "command": "cargo test -p jj-store-jj -p jj-store-service --test conversion --locked (root mapping final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "primitives-rootmap-final.log: 7 cases; builtin source commit identity is included in mapping report."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-wal --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "primitives-check-final.log: affected packages/direct consumers compile without diagnostics."
+    },
+    {
+      "command": "cargo clippy -p jj-store-jj -p jj-store-service -p jj-store-wal --lib --locked -- -D warnings",
+      "result": "fail",
+      "failures": 3,
+      "note": "primitives-lint-final.log: two new large enum diagnostics fixed using Box; one inherited query/language/identity.rs collapsible_if remains outside this conversion surface."
+    },
+    {
+      "command": "cargo test -p jj-store-wal --test native_copy --test work_store --test review_catalog --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "primitives-wal-regression.log: 1 native-copy, 5 review-catalog and 6 work-store cases pass."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/local-jj.md spec/src/jj-integration.md spec/src/projects.md spec/src/collaboration.md spec/src/publication.md spec/src/spec-governance.md; cargo fmt -p jj-store-jj -p jj-store-service -p jj-store-wal",
+      "result": "pass",
+      "failures": 0,
+      "note": "Owning prose and Rust formatted."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm check:boundaries; cargo fmt --all -- --check; prettier --check changed canonical chapters and appended evidence object",
+      "result": "pass",
+      "failures": 0,
+      "note": "primitives-governance logs; historical ledger evidence raw bytes preserved."
+    },
+    {
+      "command": "cargo test -p jj-store-jj -p jj-store-service --test conversion --locked (builtin mapping first)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Original test intentionally excluded builtin root; explicit root report added and assertion updated to account for all source capsule identities."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first (initial primitive evidence)",
+      "result": "fail",
+      "failures": 8,
+      "note": "Six test references needed named test selectors; pending evidence cannot be marked pass; mutations canonical mapping required. Corrected evidence and chapter."
+    },
+    {
+      "command": "cargo test -p jj-store-jj -p jj-store-service --test conversion --locked (repaired final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "primitives-tests-repaired.log: 2 JJ and 5 service cases pass without diagnostics, including explicit builtin-root mapping."
+    },
+    {
+      "command": "cargo clippy -p jj-store-jj -p jj-store-service -p jj-store-wal --lib --locked -- -D warnings (repaired)",
+      "result": "fail",
+      "failures": 1,
+      "note": "New conversion enum diagnostics resolved. Only inherited query/language/identity.rs:108 collapsible_if remains; no suppression or assertion changes."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm check:boundaries; prettier --check changed chapters and evidence object (repaired)",
+      "result": "pass",
+      "failures": 0,
+      "note": "136 tasks,18 protected files/eight chapters,22 chapters/167 requirements,17 package boundaries; formatting passes. primitives-*2.log."
+    },
+    {
+      "command": "cargo clippy -p jj-store-service -p jj-store-wal --lib --locked -- -D warnings",
+      "result": "fail",
+      "failures": 1,
+      "note": "primitives-service-lint.log: dependency lint also exposes the same inherited query/language/identity.rs:108 warning. No new conversion diagnostic."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Destination preparation/import, native manifest-last or local no-replace final publication, durable installation request/status/restart journal, Admin HTTP contracts and UI remain unimplemented.",
+    "Portable code/agent anchored collaboration and signed/conflicted/copy code profiles fail preflight. Cold browser and real RustFS conversion acceptance are pending; M13.5 stays In progress.",
+    "Strict combined library lint remains blocked by inherited query/language/identity.rs:108 collapsible_if outside this slice."
+  ],
+  "scope": "Rust conversion primitives only. Exact code/graph/history targets and direct capture/WAL regressions qualify additive staged interfaces. No conversion capability enabled. Root aggregate/full Rust workspace/UI/lifecycle/RustFS/visual lanes out of scope for this slice. Historical raw ledger entries preserved.",
+  "next": "Commit verified primitives, then implement destination imports and durable server orchestration plus format UI; complete both-direction source safety/recovery/cold and real RustFS gates before enabling conversion."
 }
 ]
 

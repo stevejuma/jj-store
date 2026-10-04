@@ -22,6 +22,12 @@ full main-page detail as the repository Reviews tab, with a fixed header and
 composer and scrolling content between them. Thread Focus/Split settings do not
 alter this top-level review navigation.
 
+Independent conversion stages complete validated WorkStore snapshots, retaining
+stable entities, actor attribution, versions, reply history and original project
+repository links. Staging cannot select a root; source receipts remain
+provenance and do not grant destination authority. Historical source snapshots
+must remain archived and map explicitly to independent destination selections.
+
 ## Requirements
 
 | ID           | Requirement                                                                                                                                                                                                                                                                 |
