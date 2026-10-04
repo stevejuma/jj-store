@@ -727,3 +727,10 @@ authorization and cancellation retain pinned JJ semantics. ID-prefix selectors
 retain their existing complete admission until the prepared operation lookup is
 qualified. Local reads must not repair or rewrite a damaged commit index as a
 side effect of reading operation metadata.
+
+Local historical point reads use a read-only edge proof rooted in the selected
+operation and its ancestor operation/view references. They stop at the selected
+commit and retain only bounded IDs during proof, without loading trees or a
+commit index. Commit and file values still cross the scoped backend admission
+and identity boundaries. This does not change graph evaluation or publication
+closure validation.

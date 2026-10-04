@@ -1616,3 +1616,9 @@ prove that the configured interactive capacity still serves files and operation
 metadata. A second preparation, including through another cache namespace, must
 return Busy until the first worker exits. Cancellation and service teardown must
 retain that shared preparation permit until exit and then release it.
+
+Local historical file acceptance MUST return a recently reachable ancestor's
+directory, commit summary and exact file with a corrupt source index and a small
+history budget. Reads preserve index files, reject commits introduced after the
+selected operation and retain abandoned/evolution-only membership through its
+operation ancestry. Budget exhaustion must remain explicit.

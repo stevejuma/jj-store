@@ -503,8 +503,9 @@ and tree entries reached from already-proven objects. Every backend read checks
 current registration authorization, cancellation, path depth, object kind and
 byte/work/deadline budgets before delegating. Commit visits are request-bounded;
 no backend write, copy discovery or collection is available through this
-capability. Historical commit lookup retains complete membership admission until
-its derived historical index is qualified.
+capability. Historical point lookup follows bounded retained operation/view and
+commit edges until the selected commit is proved. Deep lookup can still exhaust
+this proof budget until its derived historical index is qualified.
 
 Local `commit_summary` returns the exact selected commit object without graph
 decorations. Local `file_at` requires commit, canonical path and exact file ID;
@@ -529,3 +530,14 @@ authorization and cancellation retain pinned JJ semantics. ID-prefix selectors
 retain their existing complete admission until the prepared operation lookup is
 qualified. Local reads must not repair or rewrite a damaged commit index as a
 side effect of reading operation metadata.
+
+Selected historical commit summaries, directories and scoped file reads MUST
+prove only the requested commit's retained membership. Follow exact commit
+parent/predecessor links and the selected operation's retained ancestor views,
+stop once the target is proved, and then follow only its requested tree path.
+Membership proof retains IDs rather than commit bodies and MUST NOT load a
+source commit index or read unrelated trees. Current authorization, byte, work,
+visited-record and deadline limits apply throughout. Exhaustion remains an
+explicit error pending prepared historical lookup; it cannot imply absence or
+authorize a raw Git object. Later operations cannot grant access to commits when
+reading an earlier selected operation.

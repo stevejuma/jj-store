@@ -56,7 +56,7 @@ impl Guard {
         }
         Ok(())
     }
-    fn grant(&self, keys: impl IntoIterator<Item = ObjectKey>) -> Result<()> {
+    pub(super) fn grant(&self, keys: impl IntoIterator<Item = ObjectKey>) -> Result<()> {
         let mut allowed = self.allowed.lock().expect("scoped membership");
         for key in keys {
             self.budget.work(1)?;

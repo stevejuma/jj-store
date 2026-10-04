@@ -7,6 +7,7 @@ pub mod diff_summary;
 pub mod dto;
 mod graph_types;
 mod graphs;
+mod history;
 mod native;
 pub mod operation_changes;
 mod operation_store;
@@ -553,22 +554,12 @@ impl Context {
             // View references prove these targets without reading their ancestry.
             pin.inventory
                 .extend(commits.into_iter().map(ObjectKey::Commit));
-            if scoped_commit.is_some_and(|id| !pin.inventory.contains(&ObjectKey::Commit(id))) {
-                // Historical IDs still require the complete retained membership
-                // proof until a prepared historical index is available.
-                return Box::pin(Self::open(
-                    pin.binding,
-                    operation,
-                    budget,
-                    limits,
-                    false,
-                    None,
-                    false,
-                ))
-                .await;
-            }
             let scoped = scoped_commit
                 .map(|_| scoped::Guard::new(loader.store().clone(), &pin, budget.clone(), limits));
+            if let (Some(commit), Some(guard)) = (scoped_commit, &scoped) {
+                history::prove_commit(commit, &selected, &loader, &pin, guard, &budget, limits)
+                    .await?;
+            }
             let store = scoped
                 .as_ref()
                 .map_or_else(|| loader.store().clone(), |guard| guard.store());

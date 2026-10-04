@@ -3,6 +3,163 @@ use jj_store_jj::{local_browser as q, query::workers::Workers};
 use std::sync::Arc;
 
 #[tokio::test]
+async fn historical_file_reads_stop_after_proving_the_selected_commit() {
+    let temp = tempfile::tempdir().unwrap();
+    jj(temp.path(), &["git", "init", "--colocate"]);
+    std::fs::write(temp.path().join("selected.txt"), "historical content\n").unwrap();
+    jj(temp.path(), &["describe", "-m", "Historical"]);
+    let parent = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    jj(temp.path(), &["new", "-m", "Second"]);
+    jj(temp.path(), &["new", "-m", "Third"]);
+    jj(temp.path(), &["new", "-m", "Current"]);
+    let operation = jj(
+        temp.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let index_dir = temp.path().join(".jj/repo/index/segments");
+    let mut original = std::collections::BTreeMap::new();
+    for entry in std::fs::read_dir(&index_dir).unwrap() {
+        let path = entry.unwrap().path();
+        std::fs::write(&path, b"unavailable derived index").unwrap();
+        original.insert(path, b"unavailable derived index".to_vec());
+    }
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(temp.path().join(".jj/repo")));
+    let reader = q::Executor::with_workers(
+        Workers::new(1).unwrap(),
+        q::Limits {
+            max_history_visits: 4,
+            ..Default::default()
+        },
+    );
+    let q::Response::Paths(rows) = reader
+        .read(
+            access.clone(),
+            operation,
+            q::Request::Paths(q::paths::Request {
+                include_last_change: false,
+                commit: parent,
+                path: String::new(),
+                recursive: false,
+                limit: 10,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(rows.entries.len(), 1);
+    assert!(rows.stats.metadata_nodes <= 7, "{:?}", rows.stats);
+    let Some(q::dto::TreeValue::File { id: file, .. }) = rows.entries[0].terms[0] else {
+        panic!()
+    };
+    let q::Response::FileAt(contents) = reader
+        .read(
+            access.clone(),
+            operation,
+            q::Request::FileAt {
+                commit: parent,
+                path: "selected.txt".into(),
+                file,
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(contents.text.as_deref(), Some("historical content\n"));
+    let q::Response::CommitSummary(summary) = reader
+        .read(
+            access,
+            operation,
+            q::Request::CommitSummary { commit: parent },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    let q::ObjectData::Commit(commit) = summary.data else {
+        panic!()
+    };
+    assert_eq!(commit.description.trim(), "Historical");
+    let after: std::collections::BTreeMap<_, _> = std::fs::read_dir(index_dir)
+        .unwrap()
+        .map(|entry| {
+            let path = entry.unwrap().path();
+            let bytes = std::fs::read(&path).unwrap();
+            (path, bytes)
+        })
+        .collect();
+    assert_eq!(after, original);
+}
+
+#[tokio::test]
+async fn historical_point_membership_retains_abandoned_commits_and_excludes_later_operations() {
+    let temp = tempfile::tempdir().unwrap();
+    jj(temp.path(), &["git", "init", "--colocate"]);
+    jj(temp.path(), &["describe", "-m", "Retained abandoned"]);
+    let abandoned = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    jj(temp.path(), &["abandon", "@"]);
+    jj(temp.path(), &["new", "-m", "Selected"]);
+    let operation = jj(
+        temp.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    jj(temp.path(), &["new", "-m", "Future"]);
+    let future = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(temp.path().join(".jj/repo")));
+    let reader = q::Executor::new(1).unwrap();
+    let q::Response::CommitSummary(summary) = reader
+        .read(
+            access.clone(),
+            operation,
+            q::Request::CommitSummary { commit: abandoned },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    let q::ObjectData::Commit(commit) = summary.data else {
+        panic!()
+    };
+    assert_eq!(commit.description.trim(), "Retained abandoned");
+    assert!(matches!(
+        reader
+            .read(
+                access,
+                operation,
+                q::Request::CommitSummary { commit: future }
+            )
+            .await,
+        Err(q::Error::NotCommitted)
+    ));
+}
+
+#[tokio::test]
 async fn local_metadata_and_bookmark_pages_do_not_load_history_or_index() {
     let temp = tempfile::tempdir().unwrap();
     jj(temp.path(), &["git", "init", "--colocate"]);
@@ -139,7 +296,16 @@ async fn local_metadata_and_bookmark_pages_do_not_load_history_or_index() {
 async fn registered_large_repository_metadata_smoke() {
     let metadata = std::env::var_os("JJ_STORE_LARGE_REPO").expect("explicit metadata path");
     let access: Arc<dyn q::Access> = Arc::new(ReadBinding(metadata.into()));
-    let reader = q::Executor::new(1).unwrap();
+    // Point proof may inspect multiple reference roots; keep an explicit budget
+    // far below the repository's complete history, including for parent browsing.
+    let reader = q::Executor::with_workers(
+        Workers::new(1).unwrap(),
+        q::Limits {
+            max_history_visits: 1024,
+            max_work: 100_000,
+            ..Default::default()
+        },
+    );
     let heads = reader.heads(access.clone()).await.unwrap();
     let operation = heads.heads[0];
     let op_started = std::time::Instant::now();
@@ -232,19 +398,50 @@ async fn registered_large_repository_metadata_smoke() {
                 paths.stats,
                 paths.entries.len()
             );
-            assert!(matches!(
-                reader
+            let q::Response::CommitSummary(header) = reader
+                .read(
+                    access.clone(),
+                    operation,
+                    q::Request::CommitSummary {
+                        commit: target.commit,
+                    },
+                )
+                .await
+                .unwrap()
+            else {
+                panic!()
+            };
+            let q::ObjectData::Commit(header) = header.data else {
+                panic!()
+            };
+            if let Some(parent) = header.parents.first() {
+                let started = std::time::Instant::now();
+                let q::Response::Paths(history) = reader
                     .read(
                         access.clone(),
                         operation,
-                        q::Request::CommitSummary {
-                            commit: target.commit
-                        }
+                        q::Request::Paths(q::paths::Request {
+                            include_last_change: false,
+                            commit: *parent,
+                            path: String::new(),
+                            recursive: false,
+                            limit: 10,
+                            anchor: None,
+                            direction: Default::default(),
+                        }),
                     )
                     .await
-                    .unwrap(),
-                q::Response::CommitSummary(_)
-            ));
+                    .unwrap()
+                else {
+                    panic!()
+                };
+                eprintln!(
+                    "Linux historical directory: {:?}; {:?}; rows={}",
+                    started.elapsed(),
+                    history.stats,
+                    history.entries.len()
+                );
+            }
             if let Some(entry) = paths.entries.iter().find(|entry| {
                 matches!(
                     entry.terms.first(),

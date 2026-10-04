@@ -76067,6 +76067,93 @@ entries.
     "Linux/native2m/near-capacity/cold/real-RustFS qualification and E-READ-005 release/contract gaps remain pending. Running dev app unchanged. Unrelated root aggregate and unchanged UI/browser lanes out of scope."
   ],
   "next": "Commit reserved-worker slice after ledger checks, then continue historical reads and bounded preparation."
+},
+{
+  "id": "E-READ-008",
+  "tasks": [
+    "M13.4"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change nsrrnsrs",
+  "kind": "Bounded local historical point membership without source indexes or tree preflight",
+  "versions": "Rust 1.98.1; jj-lib 0.45.1; pnpm 10.32.1.",
+  "formats": "No public DTO or persisted format changes. Historical commit_summary, paths and file_at retain exact operation pins and scoped identity proof.",
+  "files": [
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs",
+    "crates/jj-store-jj/src/local_browser/history.rs",
+    "crates/jj-store-jj/src/local_browser/mod.rs",
+    "crates/jj-store-jj/src/local_browser/scoped.rs",
+    "spec/src/cli.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-004",
+    "JST-JJ-003",
+    "JST-JJ-005"
+  ],
+  "tests": [
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#historical_file_reads_stop_after_proving_the_selected_commit",
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#historical_point_membership_retains_abandoned_commits_and_excludes_later_operations",
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#registered_large_repository_metadata_smoke"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked historical_file_reads_stop_after_proving_the_selected_commit -- --nocapture",
+      "result": "fail",
+      "note": "Initial fixture accidentally selected an already-proven reference; failure was only an untrimmed description newline. Strengthened to a three-generation ancestor with four-commit visit budget and corrupt source indexes.",
+      "failures": 1
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked historical_file_reads_stop_after_proving_the_selected_commit -- --nocapture (parent Context::open restored temporarily by try/finally)",
+      "result": "fail",
+      "note": "Meaningful before state: Limit while opening historical directory. Parent module supplied from jj file show; current module restored byte-for-byte automatically after baseline.",
+      "failures": 1
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked -- --test-threads=2",
+      "result": "pass",
+      "note": "12 passed,1 opt-in ignored. Includes directory/file/header small-budget proof, unchanged corrupt index bytes, retained abandoned commit and later-operation exclusion, HTTP, working files, conflicts and history aliases.",
+      "failures": 0
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "note": "Affected package targets and direct consumers checked.",
+      "failures": 0
+    },
+    {
+      "command": "JJ_STORE_LARGE_REPO=/Users/stevejuma/code/linux/.jj/repo target/debug/deps/local_browser-893d8c4057fcb950 --exact bounded_reads::registered_large_repository_metadata_smoke --ignored --nocapture",
+      "result": "fail",
+      "note": "Historical directory returned successfully, but an unjustified <=10 metadata-record test assumption failed: 944 records due to many selected-view roots. Replaced that assumption with an explicit 1024-commit and100000-work request budget. Prepared lookup remains necessary for consistently cheap arbitrary historical IDs.",
+      "failures": 1
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked bounded_reads:: -- --test-threads=2",
+      "result": "pass",
+      "note": "Final focused5 passed,1 opt-in ignored after tightening Linux request budgets; production unchanged since full local binary pass.",
+      "failures": 0
+    },
+    {
+      "command": "JJ_STORE_LARGE_REPO=/Users/stevejuma/code/linux/.jj/repo target/debug/deps/local_browser-893d8c4057fcb950 --exact bounded_reads::registered_large_repository_metadata_smoke --ignored --nocapture",
+      "result": "pass",
+      "note": "Final Linux: historical directory10 rows in1.797s,944 metadata records,7,227,557 charged bytes,27,292work, within1024-commit/100000-work budget. Current directory10 rows:1.912s,3 records,72work. Op Log0.383s; scoped .clang-format24,291bytes; total9.97s. Concurrent-run observations, not isolated benchmarks.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm spec:first; pnpm exec prettier --check spec/src/cli.md spec/src/local-jj.md spec/src/jj-integration.md; cargo fmt --all",
+      "result": "pass",
+      "note": "Final check:progress, spec:first, spec:validate, cargo fmt --check and focused Prettier checks pass:136 tasks,4 protected files/4 chapters,167 requirements.",
+      "failures": 0
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Deep historical lookup can still exhaust bounded edge proof. Commit graph queries and ID-prefix operation selectors retain old preparation/admission. Prepared historical indexes, immutable cache segments/quotas, actual-work graph admission, operation/copy/search/RPC and collaboration projections remain pending.",
+    "Native2m, deep-page, near-capacity collaboration, cache-loss/corruption/revocation/races, cold and real-RustFS gates and E-READ-005 registry/full-capture gaps remain pending. Running dev app unchanged. Native-only and UI/browser suites out of scope for this local Rust point-read change."
+  ],
+  "next": "Validate ledger and commit historical point reads, then remove complete-inventory graph admission and implement bounded preparation."
 }
 ]
 ```
