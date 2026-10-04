@@ -1,124 +1,11 @@
-import {
-  ApiError,
-  decode,
-  fullId,
-  pretty,
-  type Exact,
-  type Model,
-} from "../api/client.js";
-import { LocalClient } from "../api/local-client.js";
-import { createStoreQueryClient } from "./store-query-client.js";
-import {
-  codeId,
-  validateLocalHead,
-  type LocalHead,
-  type LocalReadSnapshot,
-} from "./repository-profile.js";
+import { ApiError, fullId } from "../api/client.js";
+import { codeId } from "./repository-profile.js";
 import type { GraphQuery, PathQuery } from "./native-data-source.js";
-
-import type { operations } from "../api/generated.js";
-type Request = Exact<
-  operations["local_code_query"]["requestBody"]["content"]["application/json"]
->["request"];
-type Response = Model<"LocalCodeResponse">;
-type DataByKind = {
-  [K in Response["kind"]]: Extract<Response, { kind: K }>["data"];
-};
-export class HttpLocalCodeDataSource {
-  readonly profile = "git_sha1_jj045" as const;
-  protected readonly client: LocalClient;
-  readonly #reads = createStoreQueryClient();
-  protected head: LocalHead | null = null;
-  #capture = 0;
-  #accepted = 0;
-  #pending: Promise<LocalHead> | null = null;
-  constructor(
-    readonly repository: string,
-    fetcher?: typeof fetch,
-  ) {
-    this.client = new LocalClient(repository, fetcher);
-  }
-  protected read<T>(path: string, body?: unknown, signal?: AbortSignal) {
-    if (signal) return this.client.request<T>(path, body, signal);
-    const encoded = pretty(body);
-    const retained = body === undefined ? undefined : decode(encoded);
-    return this.#reads.fetchQuery<T>({
-      queryKey: ["local-read", this.repository, this.#capture, path, encoded],
-      queryFn: () => this.client.request<T>(path, retained, signal),
-      staleTime: 0,
-      gcTime: 0,
-      retry: (failures, error) =>
-        error instanceof ApiError && error.code === "busy" && failures < 2,
-    });
-  }
-  async snapshot(fresh = false): Promise<LocalHead> {
-    if (this.head && !fresh) return this.head;
-    if (this.#pending && !fresh) return this.#pending;
-    const ticket = ++this.#capture;
-    const pending: Promise<LocalHead> = this.read<
-      Model<"LocalRepositorySnapshot">
-    >("snapshot").then((result) => {
-      const value = validateLocalHead(result, this.repository);
-      if (ticket !== this.#capture) {
-        if (fresh && !this.client.closed.signal.aborted) {
-          if (this.#pending && this.#pending !== pending) return this.#pending;
-          if (this.#accepted === this.#capture && this.head) return this.head;
-        }
-        throw new DOMException("Snapshot superseded", "AbortError");
-      }
-      this.#accepted = ticket;
-      this.head = value;
-      return value;
-    });
-    this.#pending = pending;
-    try {
-      return await pending;
-    } finally {
-      if (this.#pending === pending) this.#pending = null;
-    }
-  }
-  protected async query<K extends Response["kind"]>(
-    operation: string,
-    request: Request & { kind: K },
-    cursor?: string,
-    signal?: AbortSignal,
-  ): Promise<{
-    snapshot: LocalReadSnapshot;
-    data: DataByKind[K];
-    next_cursor: string | null;
-    previous_cursor: string | null;
-  }> {
-    const head = await this.snapshot();
-    const response = await this.read<Model<"LocalCodeQueryResponse">>(
-      "query",
-      {
-        operation: fullId(operation),
-        request,
-        cursor: cursor ?? null,
-      },
-      signal,
-    );
-    if (
-      response.snapshot.profile !== this.profile ||
-      response.snapshot.repository !== this.repository ||
-      response.snapshot.operation !== operation ||
-      String(response.snapshot.generation) !== String(head.generation) ||
-      response.data.kind !== request.kind
-    )
-      throw new ApiError("snapshot_mismatch");
-    const snapshot: LocalReadSnapshot = {
-      ...response.snapshot,
-      profile: this.profile,
-      heads: [...head.heads],
-    };
-    const data: DataByKind[K] = response.data.data as DataByKind[K];
-    return {
-      snapshot,
-      data,
-      next_cursor: response.next_cursor,
-      previous_cursor: response.previous_cursor,
-    };
-  }
+import {
+  HttpLocalQuery,
+  type LocalCodeRequest as Request,
+} from "./http-local-query.js";
+export class HttpLocalCodeDataSource extends HttpLocalQuery {
   references(operation: string, cursor?: string) {
     return this.query<"references">(
       operation,
@@ -174,6 +61,14 @@ export class HttpLocalCodeDataSource {
       query: { commit: codeId(id, this.profile) },
     });
   }
+  commitSummary(id: string, operation: string, signal?: AbortSignal) {
+    return this.query<"commit_summary">(
+      operation,
+      { kind: "commit_summary", query: { commit: codeId(id, this.profile) } },
+      undefined,
+      signal,
+    );
+  }
   paths(commit: string, operation: string, input: PathQuery = {}) {
     return this.query<"paths">(
       operation,
@@ -183,19 +78,39 @@ export class HttpLocalCodeDataSource {
           commit: codeId(commit, this.profile),
           path: input.path ?? "",
           recursive: input.recursive ?? false,
+          include_last_change: input.includeLastChange ?? true,
           limit: input.limit ?? 50,
-          anchor: null,
+          anchor: input.anchor ?? null,
           direction: "forward",
         },
       },
       input.cursor,
+      input.signal,
     );
   }
-  async file(id: string, operation: string) {
-    const result = await this.query<"file">(operation, {
-      kind: "file",
-      query: { file: codeId(id, this.profile) },
-    });
+  async file(
+    id: string,
+    operation: string,
+    context?: { commit: string; path: string; signal?: AbortSignal },
+  ) {
+    const result = context
+      ? await this.query<"file_at">(
+          operation,
+          {
+            kind: "file_at",
+            query: {
+              commit: codeId(context.commit, this.profile),
+              path: context.path,
+              file: codeId(id, this.profile),
+            },
+          },
+          undefined,
+          context.signal,
+        )
+      : await this.query<"file">(operation, {
+          kind: "file",
+          query: { file: codeId(id, this.profile) },
+        });
     return {
       ...result.data,
       text: result.data.text ?? undefined,
@@ -268,11 +183,5 @@ export class HttpLocalCodeDataSource {
     const head = await this.snapshot();
     if (!head.metadata_commit) throw new ApiError("local_metadata_unavailable");
     return head.metadata_commit;
-  }
-  close() {
-    this.#capture++;
-    this.client.close();
-    this.#reads.clear();
-    this.head = null;
   }
 }

@@ -25,6 +25,7 @@ import type { StorePage } from "../ui/community-navigation/model.js";
 import type {
   RepositoryLogGraph,
   RepositoryLogRevision,
+  RepositoryCommitSummary,
   RepositoryWorkingCopy,
 } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
@@ -39,6 +40,7 @@ export interface RepositoryBlob {
   too_large?: boolean;
 }
 export interface RepositorySnapshot {
+  pathChanges?: Readonly<Record<string, RepositoryCommitSummary | undefined>>;
   id: string;
   files: readonly RepositoryBlob[];
   directories?: readonly { path: string }[];
@@ -142,7 +144,8 @@ export interface StoreControllerState {
   readonly evolution: StoreEvolutionState;
   readonly now: number;
   readonly detail: RevisionDetail | undefined;
-  readonly fileRevision: RepositoryLogRevision | undefined;
+  readonly fileRevision: RepositoryCommitSummary | undefined;
+  readonly fileRevisionStatus?: StoreLoadStatus;
   readonly bookmarks: readonly Bookmark[];
   readonly choices: readonly RepositoryChoice[];
   readonly workingCopies: readonly RepositoryWorkingCopy[];

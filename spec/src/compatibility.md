@@ -791,3 +791,12 @@ Native browser creation uses existing native object, manifest and WAL formats.
 Its private installation request journal is version 1 and retains generated
 repository/epoch identities before provisioning. It does not change the JJ
 0.45.1 SHA-1 companion profile or create a working copy.
+
+Path windows add optional `include_last_change`, defaulting to true for existing
+clients. Row-only responses use the additive `not_requested` attribution reason;
+cursor fingerprints include this mode. Local code queries add `commit_summary`
+and `file_at` variants; existing bare-ID and detailed-commit requests retain
+their contracts. Updated clients use the new variants only with this server
+version. Native/local persisted identities, companion framing and manifest/WAL
+formats remain unchanged. Generated contracts and exact cursor consumers qualify
+these additions independently of large-history preparation.

@@ -79,9 +79,7 @@
     ),
   );
   const latestCommit = $derived(view.fileRevision);
-  const pathCommits = $derived(
-    Object.fromEntries(entries.map((entry) => [entry.path, latestCommit])),
-  );
+  const pathCommits = $derived(view.snapshot?.pathChanges ?? {});
 
   const snapshotChoices = $derived(workspaceSnapshotChoices(view));
   const selectedSnapshot = $derived(selectedWorkspaceSnapshot(view));
@@ -264,6 +262,8 @@
           {entries}
           {latestCommit}
           {pathCommits}
+          canLoadPathCommit={true}
+          metadataStatus={view.fileRevisionStatus}
           {previewDocuments}
           {editUnavailable}
           branch={selectedSnapshot}

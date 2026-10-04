@@ -16,6 +16,7 @@ pub struct PathRequest {
     pub commit: m::CommitId,
     pub path: String,
     pub recursive: bool,
+    pub include_last_change: bool,
     pub limit: usize,
 }
 #[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
@@ -137,6 +138,7 @@ impl BrowserPager {
             .paths(
                 &self.reader,
                 paths::Request {
+                    include_last_change: request.include_last_change,
                     commit: request.commit,
                     path: request.path,
                     recursive: request.recursive,

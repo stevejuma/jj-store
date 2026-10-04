@@ -21,7 +21,7 @@
     RepositoryBlob as ProjectForgeBlobResponse,
     StoreController,
   } from "../../controller/contracts.js";
-  import type { RepositoryLogRevision as ProjectForgeCommit } from "../../projects/repository-log.js";
+  import type { RepositoryCommitSummary as ProjectForgeCommit } from "../../projects/repository-log.js";
   import CommunityProjectsMarkdownPreview from "./CommunityProjectsMarkdownPreview.svelte";
   import CommunityProjectsRepositoryFilePanelHeader from "./CommunityProjectsRepositoryFilePanelHeader.svelte";
   import { tokenizeRepositorySource } from "./repository-source-tokenizer.js";

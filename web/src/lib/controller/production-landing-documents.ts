@@ -10,14 +10,9 @@ const order = new Map([
   ["security", 4],
 ]);
 
-export async function readLandingDocuments(
-  source: StoreDataSource,
-  operation: string,
-  snapshot: RepositorySnapshot,
-  files: ReadonlyMap<string, string>,
-): Promise<RepositorySnapshot> {
+export function landingDocuments(files: ReadonlyMap<string, string>) {
   const selectedRanks = new Set<number>();
-  const documents = [...files]
+  return [...files]
     .map(([path, id]) => {
       const match =
         /^(readme|code_of_conduct|contributing|licen[cs]e|security)(?:\.[^/]*)?$/iu.exec(
@@ -40,11 +35,32 @@ export async function readLandingDocuments(
       return true;
     })
     .slice(0, 5);
+}
+
+export async function readLandingDocuments(
+  source: StoreDataSource,
+  operation: string,
+  snapshot: RepositorySnapshot,
+  files: ReadonlyMap<string, string>,
+  signal?: AbortSignal,
+): Promise<RepositorySnapshot> {
+  const documents = landingDocuments(files);
   const loaded: Array<
     readonly [string, Awaited<ReturnType<StoreDataSource["file"]>>]
   > = [];
   for (const { path, id } of documents)
-    loaded.push([path, await source.file(id, operation)]);
+    if (
+      !snapshot.files.some(
+        (file) =>
+          file.path === path && (file.contents !== undefined || file.binary),
+      )
+    ) {
+      signal?.throwIfAborted();
+      loaded.push([
+        path,
+        await source.file(id, operation, { commit: snapshot.id, path, signal }),
+      ]);
+    }
   const contents = new Map(loaded);
   return {
     ...snapshot,

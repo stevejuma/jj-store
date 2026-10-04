@@ -53,8 +53,11 @@ impl Context {
     pub(super) async fn file_content(&self, id: m::GitSha1Id) -> Result<FileContent> {
         self.member(ObjectKey::File(id)).await?;
         // GitBackend's file reader is an owned local byte stream. Never run a textconv or pager.
-        let backend = self
-            .store
+        let store = self
+            .scoped
+            .as_ref()
+            .map_or(&self.store, |guard| &guard.source);
+        let backend = store
             .backend()
             .downcast_ref::<jj_lib::git_backend::GitBackend>()
             .ok_or(Error::Unavailable)?;
@@ -73,8 +76,7 @@ impl Context {
                 too_large: true,
             });
         }
-        let reader = self
-            .store
+        let reader = store
             .backend()
             .read_file(
                 jj_lib::repo_path::RepoPath::root(),

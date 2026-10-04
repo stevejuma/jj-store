@@ -176,12 +176,25 @@ test("path reads preserve directory, recursive, and opaque cursor queries", asyn
   expect(
     requests.map((request) => Object.fromEntries(request.searchParams)),
   ).toEqual([
-    { at_op: operation, path: "", recursive: "false", limit: "50" },
-    { at_op: operation, path: "src", recursive: "false", limit: "50" },
+    {
+      at_op: operation,
+      path: "",
+      recursive: "false",
+      include_last_change: "true",
+      limit: "50",
+    },
+    {
+      at_op: operation,
+      path: "src",
+      recursive: "false",
+      include_last_change: "true",
+      limit: "50",
+    },
     {
       at_op: operation,
       path: "",
       recursive: "true",
+      include_last_change: "true",
       limit: "50",
       cursor: "opaque-cursor",
     },

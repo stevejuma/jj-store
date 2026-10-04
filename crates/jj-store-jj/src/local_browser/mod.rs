@@ -125,11 +125,25 @@ pub struct FileContent {
 pub enum Request {
     Graph(GraphRequest, GraphWindow),
     QueryInfo,
-    Commit { commit: m::GitSha1Id },
-    File { file: m::GitSha1Id },
+    Commit {
+        commit: m::GitSha1Id,
+    },
+    CommitSummary {
+        commit: m::GitSha1Id,
+    },
+    File {
+        file: m::GitSha1Id,
+    },
+    FileAt {
+        commit: m::GitSha1Id,
+        path: String,
+        file: m::GitSha1Id,
+    },
     Paths(paths::Request),
     References(references::Request),
-    Operation { operation: m::OperationId },
+    Operation {
+        operation: m::OperationId,
+    },
     OperationDiff(operations::Request),
     OperationChanges(operation_changes::Request),
     Diff(diff::Request),
@@ -143,7 +157,9 @@ pub enum Response {
     Graph(GraphPage),
     QueryInfo(crate::query::language::QueryInfo),
     Commit(Box<CommitDetail>),
+    CommitSummary(Object),
     File(FileContent),
+    FileAt(FileContent),
     Paths(paths::Page),
     References(references::Page),
     Operation(Box<OperationDetail>),
@@ -208,7 +224,7 @@ impl Executor {
                 let metadata_only = matches!(&request, Request::QueryInfo)
                     || matches!(&request, Request::References(r) if r.kind == references::Kind::Bookmarks && r.operation == operation)
                     || matches!(&request, Request::Operation { operation: selected } if *selected == operation);
-                let scoped_commit = match &request { Request::Paths(r) => Some(r.commit), _ => None };
+                let scoped_commit = match &request { Request::Paths(r) => Some(r.commit), Request::FileAt { commit, .. } | Request::CommitSummary { commit } => Some(*commit), _ => None };
                 let context = Context::open(access, operation, budget, limits, metadata_only, scoped_commit).await?;
                 let value = match request {
                     Request::QueryInfo => {
@@ -266,6 +282,19 @@ impl Executor {
                             object,
                             commit: card,
                         }))
+                    }
+                    Request::CommitSummary { commit } => {
+                        let data = context.commit_record(commit).await?;
+                        Response::CommitSummary(context.object(ObjectKey::Commit(commit), ObjectData::Commit(data)))
+                    }
+                    Request::FileAt { commit, path, file } => {
+                        let path = native::path(&path)?;
+                        let commit = context.commit(&context.store, commit).await?;
+                        let value = commit.tree().path_value(&path).await.map_err(native::map_backend)?;
+                        if !value.iter().flatten().any(|term| matches!(term, b::TreeValue::File { id, .. } if id.as_bytes() == file.as_bytes())) {
+                            return Err(Error::NotCommitted);
+                        }
+                        Response::FileAt(context.file_content(file).await?)
                     }
                     Request::File { file } => Response::File(context.file_content(file).await?),
                     Request::Paths(request) => {

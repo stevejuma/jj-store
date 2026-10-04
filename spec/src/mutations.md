@@ -943,3 +943,11 @@ entire repository. The explicit complete-inventory path remains bounded for
 mutation preparation and adapter consumers, with their existing Write and source
 authorization. This separation does not weaken mutation preconditions, complete
 publication closure audits or manifest CAS.
+
+File-row and metadata reads have separate cancellation scopes from mutation
+receipt identities. Navigation may cancel obsolete headers, attribution and
+content without modifying drafts, prepared writes or unknown outcomes. Scoped
+local `file_at` verifies the selected commit/path/file relationship before
+opening content; lightweight summaries and row-only requests grant no write or
+publication capability. Confirmed file saves continue through the existing
+receipt-backed refresh and pinned selection behavior.

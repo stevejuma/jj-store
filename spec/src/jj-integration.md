@@ -700,3 +700,10 @@ local nonrecursive path pages load only the selected directory's tree terms and
 include directory entries. They MUST NOT descend into unrelated child trees to
 construct a direct-child page. Conflict terms retain upstream trivial-resolution
 semantics; deeper content remains separately admitted.
+
+Optional path attribution is a separately budgeted request. Within a window the
+reader shares one parent-chain traversal and retains upstream path-value and
+merge semantics; exhaustion reports unavailable attribution without invented
+last-change commits. Lightweight local commit headers expose native commit data
+without requiring visible-change/evolution evaluation. Scoped file content
+requires exact commit/path/file agreement before opening a stream.

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { RepositoryBlob } from "../../controller/contracts.js";
-  import type { RepositoryLogRevision } from "../../projects/repository-log.js";
+  import type { RepositoryCommitSummary } from "../../projects/repository-log.js";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import CommunityProjectsGitAuthorAvatar from "./CommunityProjectsGitAuthorAvatar.svelte";
@@ -15,7 +15,7 @@
     onToggleFileTree,
   }: {
     blob: RepositoryBlob;
-    latestCommit?: RepositoryLogRevision;
+    latestCommit?: RepositoryCommitSummary;
     now?: number;
     fileTreeOpen: boolean;
     onToggleFileTree: () => void;

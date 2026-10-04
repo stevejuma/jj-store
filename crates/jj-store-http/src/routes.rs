@@ -128,6 +128,8 @@ struct Paths {
     path: String,
     #[serde(default = "yes")]
     recursive: bool,
+    #[serde(default = "yes")]
+    include_last_change: bool,
     #[serde(default = "limit")]
     limit: usize,
     anchor: Option<String>,
@@ -820,6 +822,7 @@ async fn paths(
             context.session,
             args.at_op,
             browsing::PathRequest {
+                include_last_change: args.include_last_change,
                 commit,
                 path: args.path,
                 recursive: args.recursive,

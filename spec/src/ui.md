@@ -1992,3 +1992,12 @@ a light/dark switch using the Original palette. Light/dark Mermaid images follow
 the resolved color mode. The navigation rails fill their allotted widths without
 fixed inner padding; groups initially collapse on the landing page and reveal
 the selected page's path after navigation.
+
+Repository Files render the selected row window before commit headers, per-path
+attribution and landing documents. Those independent reads retain the explicit
+repository/operation/commit selection, cancel obsolete work, and cannot replace
+newer rows or make a usable directory fail. Load at most two enrichment reads
+concurrently; only displayed windows request attribution, and repeated document
+IDs reuse already loaded content. Row metadata comes from its own attribution,
+never by copying the selected commit to every row. Loading, unavailable and
+failed optional metadata stay distinct from the file listing's status.

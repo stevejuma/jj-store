@@ -71,7 +71,8 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   blob: RepositoryBlob | undefined;
   detail: RevisionDetail | undefined;
   fileRevision:
-    import("../projects/repository-log.js").RepositoryLogRevision | undefined;
+    import("../projects/repository-log.js").RepositoryCommitSummary | undefined;
+  fileRevisionStatus: import("./contracts.js").StoreLoadStatus;
   comparisonParents: string[];
   conflictCount: number | null;
   conflicts: import("./repository-read-types.js").CodeConflict[];
@@ -175,6 +176,7 @@ export function createProductionStoreState(): ProductionStoreState {
     blob: undefined,
     detail: undefined,
     fileRevision: undefined,
+    fileRevisionStatus: "idle",
     comparisonParents: [],
     conflictCount: null,
     conflicts: [],
@@ -236,6 +238,7 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.blob = undefined;
   state.detail = undefined;
   state.fileRevision = undefined;
+  state.fileRevisionStatus = "idle";
   state.comparisonParents = [];
   state.conflictCount = null;
   state.conflicts = [];

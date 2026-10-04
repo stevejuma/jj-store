@@ -29,6 +29,19 @@ export type RepositoryLogRevision = {
   operationSnapshot?: boolean;
 };
 
+/** Immutable commit fields used without loading graph decorations. */
+export type RepositoryCommitSummary = Pick<
+  RepositoryLogRevision,
+  | "eventId"
+  | "commitId"
+  | "changeId"
+  | "message"
+  | "createdAt"
+  | "committedAtMs"
+  | "author"
+  | "authorEmail"
+>;
+
 export type RepositoryWorkingCopy = {
   workspace: string;
   commitId: string;

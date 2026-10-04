@@ -6,6 +6,7 @@ export interface StoredPathPage {
   path: string;
   recursive: boolean;
   entries: CodeEntry[];
+  unavailableChanges?: ReadonlySet<string>;
   cursor: string | null;
   snapshot: Snapshot;
 }
@@ -22,6 +23,7 @@ export function storePathPage(
   const previous = next.get(pathPageKey(page.path, page.recursive));
   next.set(pathPageKey(page.path, page.recursive), {
     ...page,
+    unavailableChanges: more ? previous?.unavailableChanges : undefined,
     entries:
       more && previous ? [...previous.entries, ...page.entries] : page.entries,
   });

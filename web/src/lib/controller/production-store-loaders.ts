@@ -3,7 +3,7 @@ import { fullId, type Model } from "../api/client.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
 import type { RepositoryWorkingCopy } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
-import type { RepositoryBlob, RepositoryChoice } from "./contracts.js";
+import type { RepositoryChoice } from "./contracts.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import {
   startOperationInspection,
@@ -18,6 +18,12 @@ import {
   presentReferences,
 } from "./native-presentation.js";
 export { readLandingDocuments } from "./production-landing-documents.js";
+
+export {
+  readFileRevision,
+  readPaths,
+  readBlob,
+} from "./production-file-loaders.js";
 
 export async function readRevision(
   source: StoreDataSource,
@@ -110,45 +116,6 @@ export async function readGraph(
     cursor: value.next_cursor,
     snapshot: value.snapshot,
   };
-}
-
-export async function readPaths(
-  source: StoreDataSource,
-  operation: string,
-  commit: string,
-  query: {
-    path: string;
-    recursive: boolean;
-    cursor?: string;
-    expected?: Snapshot;
-  },
-): Promise<{
-  entries: import("./repository-read-types.js").CodeEntry[];
-  path: string;
-  recursive: boolean;
-  cursor: string | null;
-  readSnapshot: Snapshot;
-}> {
-  const value = await source.paths(commit, operation, query);
-  assertPinned(value.snapshot, source, operation);
-  assertSameSnapshot(value.snapshot, query.expected);
-  return {
-    entries: value.data.entries,
-    path: value.data.path,
-    recursive: value.data.recursive,
-    cursor: value.next_cursor,
-    readSnapshot: value.snapshot,
-  };
-}
-
-export async function readBlob(
-  source: StoreDataSource,
-  operation: string,
-  path: string,
-  fileId: string,
-): Promise<RepositoryBlob> {
-  const value = await source.file(fileId, operation);
-  return { path, contents: value.text, binary: value.text === undefined };
 }
 
 export async function readCommitInspection(

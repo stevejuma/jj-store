@@ -573,3 +573,66 @@ test("new_file_selection_discards_an_older_inflight_preview", async ({
   finish();
   await expect(selected).toContainText("selected-file");
 });
+
+test("files remain usable while optional header and attribution are unavailable", async ({
+  page,
+}) => {
+  await api(page);
+  let releaseHeader!: () => void;
+  const header = new Promise<void>((resolve) => {
+    releaseHeader = resolve;
+  });
+  let headerStarted = false;
+  let rowRequests = 0;
+  let attributionRequests = 0;
+  await page.route("**/objects/commit/*?**", async (route) => {
+    headerStarted = true;
+    await header;
+    await route.fulfill({
+      status: 503,
+      json: { error: { code: "unavailable" } },
+    });
+  });
+  await page.route("**/commits/*/paths?**", async (route) => {
+    const metadata =
+      new URL(route.request().url()).searchParams.get("include_last_change") !==
+      "false";
+    if (metadata) {
+      attributionRequests++;
+      await route.fulfill({
+        status: 503,
+        json: { error: { code: "unavailable" } },
+      });
+      return;
+    }
+    rowRequests++;
+    const result = pathsPage();
+    for (const entry of result.data.entries)
+      entry.last_change = { status: "unavailable", reason: "not_requested" };
+    await route.fulfill({ json: result });
+  });
+  try {
+    await connect(page);
+    await page.getByRole("tab", { name: "Overview" }).click();
+    await expect(
+      page.getByRole("table", { name: "Repository files" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Open file bin" }),
+    ).toBeVisible();
+    await expect.poll(() => headerStarted).toBe(true);
+    expect(attributionRequests).toBe(0);
+    releaseHeader();
+    await expect.poll(() => attributionRequests).toBe(1);
+    await expect(
+      page.getByRole("table", { name: "Repository files" }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Open file bin" }).click();
+    await expect(
+      page.getByRole("region", { name: "Source preview for bin" }),
+    ).toBeVisible();
+    expect(rowRequests).toBe(1);
+  } finally {
+    releaseHeader();
+  }
+});

@@ -394,6 +394,7 @@ async fn local_code_reads_pin_operations_and_preserve_repository_state() {
             access.clone(),
             op,
             Request::Paths(jj_store_jj::local_browser::paths::Request {
+                include_last_change: true,
                 commit,
                 path: "".into(),
                 recursive: true,
@@ -629,6 +630,7 @@ async fn local_code_reads_cover_graphs_diffs_roots_conflicts_and_multiple_heads(
             access.clone(),
             op,
             Request::Paths(q::paths::Request {
+                include_last_change: true,
                 commit: merge,
                 path: "".into(),
                 recursive: true,
@@ -922,6 +924,35 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
             .len(),
         40
     );
+    let selected = &page["data"]["data"]["data"]["nodes"][0]["commit"]["id"];
+    let mut file_reads = vec![];
+    for request in [
+        json!({"kind":"commit_summary", "query":{"commit":selected}}),
+        json!({"kind":"paths", "query":{"commit":selected,"path":"","recursive":false,
+            "include_last_change":false,"limit":10,"anchor":null,"direction":"forward"}}),
+    ] {
+        let value: Value = post(
+            &format!("/local/repos/{id}/query"),
+            json!({"operation":operation,"request":request,"cursor":null}),
+        )
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+        file_reads.push(value);
+    }
+    let entry = &file_reads[1]["data"]["data"]["entries"][0];
+    assert_eq!(entry["last_change"]["reason"], "not_requested");
+    let value: Value = post(&format!("/local/repos/{id}/query"),
+        json!({"operation":operation,"request":{"kind":"file_at",
+            "query":{"commit":selected,"path":entry["path"],"file":entry["terms"][0]["id"]}},"cursor":null}))
+        .send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+    assert_eq!(value["data"]["data"]["text"], "filesystem browser\n");
+    file_reads.push(value);
     let cursor = page["next_cursor"].as_str().unwrap();
     let mut next = query.clone();
     next["cursor"] = json!(cursor);
@@ -1329,6 +1360,12 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     );
     drop(stream);
     let mut review_samples = working_copy_acceptance::qualify(&endpoint, id, &folder).await;
+    review_samples.extend(file_reads.into_iter().map(|data| {
+        json!({
+            "path":"/v1/local/repos/{repo}/query", "method":"post", "status":200,
+            "media":"application/json", "data":data
+        })
+    }));
     review_samples.extend(
         review_acceptance::qualify(
             &endpoint,

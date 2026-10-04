@@ -1,3 +1,4 @@
+import { HttpFileReads } from "./http-file-reads.js";
 import { createHttpQuery } from "./http-query.js";
 import { HttpRepositoryTransports } from "./http-repository-transports.js";
 import type { QueryClient } from "@tanstack/svelte-query";
@@ -31,6 +32,7 @@ export class HttpStoreDataSource
   readonly #client: Client;
   readonly #scope: StoreQueryScope;
   readonly #collaboration: HttpCollaborationDataSource;
+  readonly #files: HttpFileReads;
   readonly #writes: HttpStoreWriteDataSource;
   readonly work: HttpWorkDataSource;
   readonly threads: HttpThreadsDataSource;
@@ -50,6 +52,7 @@ export class HttpStoreDataSource
     this.#client = client;
     this.#scope = { repository, session, profile: this.profile };
     this.#query = createHttpQuery(queryClient, this.#scope, () => this.#active);
+    this.#files = new HttpFileReads(client, this.#query);
     this.threads = new HttpThreadsDataSource(
       client,
       queryClient,
@@ -123,6 +126,9 @@ export class HttpStoreDataSource
         }),
     );
   }
+  commitSummary(id: string, operation: string, signal?: AbortSignal) {
+    return this.#files.commitSummary(id, operation, signal);
+  }
   commit(id: string, operation: string) {
     const query = { at_op: fullId(operation) };
     return this.#query<Envelope<Model<"CommitDetail">>>(
@@ -133,27 +139,14 @@ export class HttpStoreDataSource
     );
   }
   paths(commit: string, operation: string, input: PathQuery = {}) {
-    const query = {
-      at_op: fullId(operation),
-      path: input.path ?? "",
-      recursive: input.recursive ?? false,
-      limit: input.limit ?? 50,
-      cursor: input.cursor,
-    };
-    return this.#query<Model<"Window3">>(
-      "paths",
-      operation,
-      { commit, ...query },
-      (signal) =>
-        this.#client.request(`commits/${fullId(commit)}/paths`, query, {
-          signal,
-        }),
-    );
+    return this.#files.paths(commit, operation, input);
   }
-  file(id: string, operation: string) {
-    return this.#query("file", operation, { id }, (signal) =>
-      this.#client.file(fullId(id), fullId(operation), signal),
-    );
+  file(
+    id: string,
+    operation: string,
+    context?: { commit: string; path: string; signal?: AbortSignal },
+  ) {
+    return this.#files.file(id, operation, context);
   }
   operation(id: string) {
     return this.#query<Envelope<Model<"OperationDetail">>>(

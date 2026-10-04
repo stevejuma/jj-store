@@ -183,6 +183,7 @@ async fn native_browser_windows_preserve_references_paths_groups_and_exact_diffs
         .paths(
             &reader,
             c::paths::Request {
+                include_last_change: true,
                 commit: f.head,
                 path: String::new(),
                 recursive: true,
@@ -366,6 +367,50 @@ async fn signed_browser_cursors_bind_queries_support_backward_windows_and_reset_
         Err(paging::Error::CursorReset)
     ));
 
+    let path_request = browse::PathRequest {
+        commit: f.head,
+        path: String::new(),
+        recursive: false,
+        include_last_change: false,
+        limit: 1,
+    };
+    let browse::Start::Window(rows) = browser
+        .paths(
+            f.f.session.clone(),
+            Some(f.operation),
+            path_request.clone(),
+            None,
+            None,
+            c::Direction::Forward,
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(matches!(
+        rows.data.entries[0].last_change,
+        c::paths::LastChange::Unavailable {
+            reason: c::paths::LastChangeUnavailable::NotRequested
+        }
+    ));
+    assert!(matches!(
+        browser
+            .paths(
+                f.f.session.clone(),
+                Some(f.operation),
+                browse::PathRequest {
+                    include_last_change: true,
+                    ..path_request
+                },
+                rows.next_cursor.as_deref(),
+                None,
+                c::Direction::Forward
+            )
+            .await,
+        Err(paging::Error::InvalidCursor)
+    ));
+
     let operations = operation_browse::OperationBrowserPager::with_cursors(reader, cursors);
     let browse::Start::Window(groups) = operations
         .groups(
@@ -396,6 +441,7 @@ async fn direct_directory_rows_include_directories_and_bookmark_pages_hydrate_on
         .paths(
             &reader(),
             c::paths::Request {
+                include_last_change: true,
                 commit: f.head,
                 path: String::new(),
                 recursive: false,

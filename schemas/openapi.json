@@ -19226,6 +19226,14 @@
             "explode": true
           },
           {
+            "name": "include_last_change",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": true },
+            "style": "form",
+            "explode": true
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -19378,6 +19386,7 @@
             "cursor": { "type": ["string", "null"] },
             "path": { "type": "string", "default": "" },
             "recursive": { "type": "boolean", "default": true },
+            "include_last_change": { "type": "boolean", "default": true },
             "limit": {
               "type": "integer",
               "format": "uint",
@@ -19442,6 +19451,14 @@
           },
           {
             "name": "recursive",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": true },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "include_last_change",
             "in": "query",
             "required": false,
             "schema": { "type": "boolean", "default": true },
@@ -19528,6 +19545,7 @@
             "cursor": { "type": ["string", "null"] },
             "path": { "type": "string", "default": "" },
             "recursive": { "type": "boolean", "default": true },
+            "include_last_change": { "type": "boolean", "default": true },
             "limit": {
               "type": "integer",
               "format": "uint",
@@ -24872,6 +24890,30 @@
                       {
                         "type": "object",
                         "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "commit_summary"
+                          },
+                          "query": {
+                            "type": "object",
+                            "properties": {
+                              "commit": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{40}$",
+                                "minLength": 40,
+                                "maxLength": 40
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["commit"]
+                          }
+                        },
+                        "required": ["kind", "query"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
                           "kind": { "type": "string", "const": "file" },
                           "query": {
                             "type": "object",
@@ -24893,6 +24935,34 @@
                       {
                         "type": "object",
                         "properties": {
+                          "kind": { "type": "string", "const": "file_at" },
+                          "query": {
+                            "type": "object",
+                            "properties": {
+                              "commit": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{40}$",
+                                "minLength": 40,
+                                "maxLength": 40
+                              },
+                              "path": { "type": "string" },
+                              "file": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{40}$",
+                                "minLength": 40,
+                                "maxLength": 40
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["commit", "path", "file"]
+                          }
+                        },
+                        "required": ["kind", "query"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
                           "kind": { "type": "string", "const": "paths" },
                           "query": {
                             "type": "object",
@@ -24905,6 +24975,10 @@
                               },
                               "path": { "type": "string" },
                               "recursive": { "type": "boolean" },
+                              "include_last_change": {
+                                "type": "boolean",
+                                "default": true
+                              },
                               "limit": {
                                 "type": "integer",
                                 "format": "uint",
@@ -38174,7 +38248,7 @@
       },
       "LastChangeUnavailable": {
         "type": "string",
-        "enum": ["merge", "budget"]
+        "enum": ["merge", "budget", "not_requested"]
       },
       "Envelope_ConflictResponse": {
         "type": "object",
@@ -39028,7 +39102,23 @@
           {
             "type": "object",
             "properties": {
+              "kind": { "type": "string", "const": "commit_summary" },
+              "data": { "$ref": "#/components/schemas/LocalCodeObject" }
+            },
+            "required": ["kind", "data"]
+          },
+          {
+            "type": "object",
+            "properties": {
               "kind": { "type": "string", "const": "file" },
+              "data": { "$ref": "#/components/schemas/LocalFileContent" }
+            },
+            "required": ["kind", "data"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": { "type": "string", "const": "file_at" },
               "data": { "$ref": "#/components/schemas/LocalFileContent" }
             },
             "required": ["kind", "data"]
@@ -39792,7 +39882,7 @@
       },
       "LocalPathsLastChangeUnavailable": {
         "type": "string",
-        "enum": ["merge", "budget"]
+        "enum": ["merge", "budget", "not_requested"]
       },
       "LocalReferencesPage": {
         "type": "object",

@@ -6,6 +6,9 @@ use serde::Deserialize;
 use std::collections::VecDeque;
 
 const LAST_CHANGE_VISITS: usize = 64;
+fn include_metadata() -> bool {
+    true
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -14,6 +17,8 @@ pub struct Request {
     pub commit: m::GitSha1Id,
     pub path: String,
     pub recursive: bool,
+    #[serde(default = "include_metadata")]
+    pub include_last_change: bool,
     pub limit: usize,
     pub anchor: Option<String>,
     pub direction: Direction,
@@ -39,6 +44,7 @@ pub enum LastChange {
 pub enum LastChangeUnavailable {
     Merge,
     Budget,
+    NotRequested,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[schemars(rename = "LocalPathsEntry")]
@@ -146,11 +152,18 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     }
     let previous = (has_previous && !found.is_empty()).then(|| found.front().unwrap().0.clone());
     let next = (has_next && !found.is_empty()).then(|| found.back().unwrap().0.clone());
+    let changes = if request.include_last_change {
+        context.last_changes(&store, request.commit, &found).await?
+    } else {
+        vec![
+            LastChange::Unavailable {
+                reason: LastChangeUnavailable::NotRequested
+            };
+            found.len()
+        ]
+    };
     let mut entries = vec![];
-    for (path, value) in found {
-        let last_change = context
-            .last_change(&store, request.commit, &path, value.clone())
-            .await?;
+    for ((path, value), last_change) in found.into_iter().zip(changes) {
         let entry = Entry {
             path,
             conflicted: !value.is_resolved(),
@@ -177,40 +190,68 @@ fn parent(path: &str) -> &str {
     path.rsplit_once('/').map_or("", |(parent, _)| parent)
 }
 impl Context {
-    async fn last_change(
+    async fn last_changes(
         &self,
         store: &std::sync::Arc<jj_lib::store::Store>,
         mut id: m::GitSha1Id,
-        path: &str,
-        mut value: jj_lib::backend::MergedTreeValue,
-    ) -> Result<LastChange> {
-        let path = native_path(path)?;
+        rows: &VecDeque<(String, jj_lib::backend::MergedTreeValue)>,
+    ) -> Result<Vec<LastChange>> {
+        let mut results = vec![
+            LastChange::Unavailable {
+                reason: LastChangeUnavailable::Budget
+            };
+            rows.len()
+        ];
+        let mut pending = rows
+            .iter()
+            .enumerate()
+            .map(|(index, (path, value))| Ok((index, native_path(path)?, value)))
+            .collect::<Result<Vec<_>>>()?;
+        // Traverse the shared first-parent chain once for the entire window.
+        // A merge terminates attribution explicitly; no row invents a result.
         for _ in 0..LAST_CHANGE_VISITS {
-            self.budget.authorize(self.access.as_ref()).await?;
-            self.budget.work(1)?;
+            if pending.is_empty() {
+                break;
+            }
             let commit = self.commit(store, id).await?;
             let parents = commit.parent_ids();
             if parents.is_empty() {
-                return self.last_change_available(id).await;
+                let value = self.last_change_available(id).await?;
+                for (index, _, _) in pending {
+                    results[index] = value.clone();
+                }
+                break;
             }
             if parents.len() != 1 {
-                return Ok(LastChange::Unavailable {
-                    reason: LastChangeUnavailable::Merge,
-                });
+                for (index, _, _) in pending {
+                    results[index] = LastChange::Unavailable {
+                        reason: LastChangeUnavailable::Merge,
+                    };
+                }
+                break;
             }
             let parent =
                 m::GitSha1Id::from_slice(parents[0].as_bytes()).map_err(|_| Error::Corrupt)?;
             let prior = self.commit(store, parent).await?;
-            let prior_value = prior.tree().path_value(&path).await.map_err(map_backend)?;
-            if prior_value != value {
-                return self.last_change_available(id).await;
+            let mut unchanged = Vec::new();
+            let mut changed = None;
+            for (index, path, value) in pending {
+                self.budget.authorize(self.access.as_ref()).await?;
+                self.budget.work(1)?;
+                let prior_value = prior.tree().path_value(&path).await.map_err(map_backend)?;
+                if prior_value == *value {
+                    unchanged.push((index, path, value));
+                } else {
+                    if changed.is_none() {
+                        changed = Some(self.last_change_available(id).await?);
+                    }
+                    results[index] = changed.as_ref().unwrap().clone();
+                }
             }
+            pending = unchanged;
             id = parent;
-            value = prior_value;
         }
-        Ok(LastChange::Unavailable {
-            reason: LastChangeUnavailable::Budget,
-        })
+        Ok(results)
     }
     async fn last_change_available(&self, id: m::GitSha1Id) -> Result<LastChange> {
         let commit = self.commit_dto(id).await?;

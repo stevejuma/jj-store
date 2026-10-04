@@ -6,7 +6,7 @@
   import FolderIcon from "@lucide/svelte/icons/folder";
   import { get } from "svelte/store";
   import { onDestroy, tick, untrack } from "svelte";
-  import type { RepositoryLogRevision } from "../../projects/repository-log.js";
+  import type { RepositoryCommitSummary } from "../../projects/repository-log.js";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { RepositoryBrowserEntry } from "./repository-browser.js";
   import { repositoryParentPath } from "./repository-browser.js";
@@ -29,7 +29,7 @@
   }: {
     currentPath: string;
     entries: readonly RepositoryBrowserEntry[];
-    pathCommits: Readonly<Record<string, RepositoryLogRevision | undefined>>;
+    pathCommits: Readonly<Record<string, RepositoryCommitSummary | undefined>>;
     canLoadPathCommit?: boolean;
     now: number;
     hasMore?: boolean;

@@ -7,7 +7,7 @@
     RepositoryBlob,
     RepositoryChoice,
   } from "../../controller/contracts.js";
-  import type { RepositoryLogRevision as ProjectForgeCommit } from "../../projects/repository-log.js";
+  import type { RepositoryCommitSummary as ProjectForgeCommit } from "../../projects/repository-log.js";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
@@ -26,6 +26,7 @@
     entries,
     pathCommits,
     latestCommit,
+    metadataStatus = "idle",
     latestCommitAuthor,
     previewDocuments = [],
     branch,
@@ -50,6 +51,7 @@
     entries: readonly RepositoryBrowserEntry[];
     pathCommits: Readonly<Record<string, ProjectForgeCommit | undefined>>;
     latestCommit?: ProjectForgeCommit | undefined;
+    metadataStatus?: import("../../controller/contracts.js").StoreLoadStatus;
     latestCommitAuthor?: CommunityMemberModel | undefined;
     previewDocuments?: readonly RepositoryBlob[] | undefined;
     branch: string;
@@ -128,7 +130,11 @@
           </Button>
         {:else}
           <span class="community-projects__file-browser-summary-message">
-            Select a repository snapshot
+            {metadataStatus === "loading"
+              ? "Loading commit metadata…"
+              : metadataStatus === "failed" || metadataStatus === "unavailable"
+                ? "Commit metadata unavailable"
+                : "Select a repository snapshot"}
           </span>
         {/if}
       </div>

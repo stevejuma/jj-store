@@ -1862,3 +1862,10 @@ Nonrecursive path pages include direct file, directory, symlink, submodule and
 unresolved structural-conflict entries. They load the selected directory terms
 without walking descendant directories. Unfiltered bookmark windows select rows
 before target hydration; each returned target retains exact pinned membership.
+
+Path windows accept `include_last_change` (default true for existing clients).
+False returns row identities and `not_requested` attribution without walking
+parents. Attribution traverses one shared bounded first-parent chain per window,
+with explicit merge/budget outcomes. Clients load rows before attribution, use
+independent cursor bindings for each query, and join metadata only to matching
+immutable commit/path/term identities. Metadata failure cannot discard rows.

@@ -34,6 +34,9 @@ export interface GraphQuery {
 }
 
 export interface PathQuery {
+  includeLastChange?: boolean;
+  anchor?: string;
+  signal?: AbortSignal;
   path?: string;
   recursive?: boolean;
   cursor?: string;
@@ -75,6 +78,16 @@ export interface StoreDataSource {
     kind: "log" | "operations" | "evolution",
     query: GraphQuery,
   ): Promise<Browse.CodeEnvelope<Browse.CodeGraph>>;
+  commitSummary?(
+    id: string,
+    operation: string,
+    signal?: AbortSignal,
+  ): Promise<
+    Browse.CodeEnvelope<
+      | import("../api/client.js").Model<"ContentObject">
+      | import("../api/client.js").Model<"LocalCodeObject">
+    >
+  >;
   commit(
     id: string,
     operation: string,
@@ -87,6 +100,7 @@ export interface StoreDataSource {
   file(
     id: string,
     operation: string,
+    context?: { commit: string; path: string; signal?: AbortSignal },
   ): Promise<{
     text?: string;
     bytes: number;

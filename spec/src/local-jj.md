@@ -505,3 +505,12 @@ byte/work/deadline budgets before delegating. Commit visits are request-bounded;
 no backend write, copy discovery or collection is available through this
 capability. Historical commit lookup retains complete membership admission until
 its derived historical index is qualified.
+
+Local `commit_summary` returns the exact selected commit object without graph
+decorations. Local `file_at` requires commit, canonical path and exact file ID;
+all must agree with a selected native tree term before content can be read.
+These queries reuse scoped read capabilities, preserve explicit conflict terms
+and do not admit unrelated Git objects. Legacy bare-ID reads retain their
+membership checks. `include_last_change=false` returns file rows independently
+of history; explicit attribution shares one bounded parent traversal across the
+page.

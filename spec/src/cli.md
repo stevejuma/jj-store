@@ -1593,3 +1593,8 @@ exclude full operation/commit preflight. Native browsing conformance verifies
 directory rows and a deep bookmark window with exactly the operation, view and
 selected target object reads. These focused tests retain existing exact diff,
 conflict and cursor coverage.
+
+Files-first conformance covers row-only reads under a one-commit budget, exact
+local commit/path/file membership, independent commit summaries and shared
+bounded attribution. Cold browser acceptance must keep rows usable while
+metadata is pending or fails and reject obsolete enrichment after navigation.

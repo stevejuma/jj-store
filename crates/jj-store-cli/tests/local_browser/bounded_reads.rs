@@ -139,9 +139,10 @@ async fn registered_large_repository_metadata_smoke() {
             let started = std::time::Instant::now();
             let q::Response::Paths(paths) = reader
                 .read(
-                    access,
+                    access.clone(),
                     operation,
                     q::Request::Paths(q::paths::Request {
+                        include_last_change: false,
                         commit: target.commit,
                         path: String::new(),
                         recursive: false,
@@ -161,6 +162,45 @@ async fn registered_large_repository_metadata_smoke() {
                 paths.stats,
                 paths.entries.len()
             );
+            assert!(matches!(
+                reader
+                    .read(
+                        access.clone(),
+                        operation,
+                        q::Request::CommitSummary {
+                            commit: target.commit
+                        }
+                    )
+                    .await
+                    .unwrap(),
+                q::Response::CommitSummary(_)
+            ));
+            if let Some(entry) = paths.entries.iter().find(|entry| {
+                matches!(
+                    entry.terms.first(),
+                    Some(Some(q::dto::TreeValue::File { .. }))
+                )
+            }) {
+                let Some(q::dto::TreeValue::File { id: file, .. }) = entry.terms[0] else {
+                    panic!()
+                };
+                let q::Response::FileAt(contents) = reader
+                    .read(
+                        access.clone(),
+                        operation,
+                        q::Request::FileAt {
+                            commit: target.commit,
+                            path: entry.path.clone(),
+                            file,
+                        },
+                    )
+                    .await
+                    .unwrap()
+                else {
+                    panic!()
+                };
+                eprintln!("Linux scoped file {}: {} bytes", entry.path, contents.bytes);
+            }
         }
     }
 }
@@ -202,6 +242,7 @@ async fn local_file_rows_read_only_the_selected_commit_and_traversed_trees() {
             access.clone(),
             operation,
             q::Request::Paths(q::paths::Request {
+                include_last_change: true,
                 commit,
                 path: String::new(),
                 recursive: false,
@@ -226,6 +267,7 @@ async fn local_file_rows_read_only_the_selected_commit_and_traversed_trees() {
             access.clone(),
             operation,
             q::Request::Paths(q::paths::Request {
+                include_last_change: true,
                 commit,
                 path: String::new(),
                 recursive: false,
@@ -244,11 +286,90 @@ async fn local_file_rows_read_only_the_selected_commit_and_traversed_trees() {
         second.entries[0].terms[0],
         Some(q::dto::TreeValue::Tree { .. })
     ));
+    let rows_only = q::Executor::with_workers(
+        Workers::new(1).unwrap(),
+        q::Limits {
+            max_history_visits: 1,
+            ..Default::default()
+        },
+    );
+    let q::Response::Paths(rows) = rows_only
+        .read(
+            access.clone(),
+            operation,
+            q::Request::Paths(q::paths::Request {
+                include_last_change: false,
+                commit,
+                path: String::new(),
+                recursive: false,
+                limit: 20,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(rows.entries.len(), 2);
+    assert!(rows.entries.iter().all(|row| matches!(
+        row.last_change,
+        q::paths::LastChange::Unavailable {
+            reason: q::paths::LastChangeUnavailable::NotRequested
+        }
+    )));
+    let q::Response::CommitSummary(summary) = rows_only
+        .read(
+            access.clone(),
+            operation,
+            q::Request::CommitSummary { commit },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(matches!(summary.data, q::ObjectData::Commit(_)));
+    let Some(q::dto::TreeValue::File { id: file, .. }) = rows.entries[0].terms[0] else {
+        panic!()
+    };
+    let q::Response::FileAt(contents) = rows_only
+        .read(
+            access.clone(),
+            operation,
+            q::Request::FileAt {
+                commit,
+                path: "a.txt".into(),
+                file,
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(contents.text.as_deref(), Some("selected\n"));
+    assert!(matches!(
+        rows_only
+            .read(
+                access.clone(),
+                operation,
+                q::Request::FileAt {
+                    commit,
+                    path: "nested/deep.txt".into(),
+                    file
+                }
+            )
+            .await,
+        Err(q::Error::NotCommitted)
+    ));
     let denied = reader
         .read(
             access,
             operation,
             q::Request::Paths(q::paths::Request {
+                include_last_change: true,
                 commit: jj_store_model::GitSha1Id::new([9; 20]),
                 path: String::new(),
                 recursive: false,

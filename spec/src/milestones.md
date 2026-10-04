@@ -75350,6 +75350,277 @@ entries.
       "Root aggregate, UI, visual and real-RustFS lanes are out of scope for this Rust capability/read algorithm slice; cold full-flow and scale qualification remain in the plan."
     ],
     "next": "Implement files-first UI loading, scoped file proofs, independent attribution and exact reference/workspace startup selection."
-  }
+  },
+{
+  "id": "E-READ-004",
+  "tasks": [
+    "M4.1",
+    "M13.4"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change rpzuyysk",
+  "kind": "Files-first bounded reads and independent metadata",
+  "versions": "Rust 1.98.1; jj-lib 0.45.1; Node 26.9.0; pnpm 10.32.1. Registry Design Core 0.2.0 baseline checked; inherited temporary Design Core source 0.1.2 used for focused UI validation.",
+  "formats": "Additive path include_last_change flag defaults true; false returns not_requested. Local commit_summary and commit/path/file-scoped file_at added. Signed cursors bind metadata mode. Persisted native, WAL, manifest, local companion and credential formats unchanged.",
+  "files": [
+    "catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs",
+    "crates/jj-store-cli/tests/local_browser.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/browsing.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/http_browsing.rs",
+    "crates/jj-store-http/src/routes.rs",
+    "crates/jj-store-jj/src/local_browser/mod.rs",
+    "crates/jj-store-jj/src/local_browser/native.rs",
+    "crates/jj-store-jj/src/local_browser/paths.rs",
+    "crates/jj-store-jj/src/query/content/paths.rs",
+    "crates/jj-store-service/src/pagination/browsing.rs",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/cli.md",
+    "spec/src/compatibility.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/mutations.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/contracts.ts",
+    "web/src/lib/controller/file-read-queue.ts",
+    "web/src/lib/controller/http-file-reads.ts",
+    "web/src/lib/controller/http-local-code-data-source.ts",
+    "web/src/lib/controller/http-local-query.ts",
+    "web/src/lib/controller/http-store-data-source.ts",
+    "web/src/lib/controller/native-data-source.ts",
+    "web/src/lib/controller/native-presentation.ts",
+    "web/src/lib/controller/production-file-loaders.ts",
+    "web/src/lib/controller/production-file-metadata.ts",
+    "web/src/lib/controller/production-file-pages.ts",
+    "web/src/lib/controller/production-file-reader.svelte.ts",
+    "web/src/lib/controller/production-landing-documents.ts",
+    "web/src/lib/controller/production-store-controller.svelte.ts",
+    "web/src/lib/controller/production-store-loaders.ts",
+    "web/src/lib/controller/production-store-reader.svelte.ts",
+    "web/src/lib/controller/production-store-state.svelte.ts",
+    "web/src/lib/controller/production-store-view.ts",
+    "web/src/lib/controller/read-scope.ts",
+    "web/src/lib/projects/repository-log.ts",
+    "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectory.svelte",
+    "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectoryRows.svelte",
+    "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
+    "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanelHeader.svelte",
+    "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+    "web/tests/browser/reads.spec.ts",
+    "web/tests/vite/file-read-queue.test.ts",
+    "web/tests/vite/production-file-reader.test.ts",
+    "web/tests/vite/production-store-data-source.test.ts"
+  ],
+  "requirements": [
+    "JST-LOCAL-004",
+    "JST-JJ-003",
+    "JST-API-001",
+    "JST-UI-005",
+    "JST-UI-006"
+  ],
+  "tests": [
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#local_file_rows_read_only_the_selected_commit_and_traversed_trees",
+    "web/tests/vite/production-file-reader.test.ts#file rows become ready before commit metadata and landing documents",
+    "web/tests/browser/reads.spec.ts#files remain usable while optional header and attribution are unavailable"
+  ],
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before files-first implementation: rows remained loading while metadata was unresolved. After initial implementation the existing synchronous-header assertion failed; changed it to await the independent header. Final four behavior regressions pass."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/file-read-queue.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "One active worker, 32 pending jobs, keyed coalescing and cancellation: 1 passed."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked -- --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "9 passed, 1 opt-in smoke ignored. Includes row-only one-commit admission, exact summary and file membership/wrong-path denial, 10k bookmarks, registration and pinned read consumers."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked browsing:: -- --test-threads=2",
+      "result": "fail",
+      "failures": 1,
+      "note": "Incorrect filter selected zero tests; not accepted as evidence. Corrected to compiled native test binary browser_ filter."
+    },
+    {
+      "command": "target/debug/deps/native_lifecycle-e6652c34f7ed2d93 browser_ --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "2 passed: native attribution regression and signed cursor metadata-flag mismatch."
+    },
+    {
+      "command": "target/debug/deps/native_lifecycle-e6652c34f7ed2d93 content_acceptance:: --test-threads=4",
+      "result": "pass",
+      "failures": 0,
+      "note": "95 direct native content consumers passed. Widened because public path/read interfaces affect multiple native query and HTTP consumers."
+    },
+    {
+      "command": "JJ_STORE_LARGE_REPO=/Users/stevejuma/code/linux/.jj/repo cargo test -p jj-store-cli --test local_browser --locked registered_large_repository_metadata_smoke -- --ignored --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "1 read-only Linux smoke passed: metadata plus bookmark 2.672s; 10 root rows 2.848s, 3 metadata records, 2938179 charged bytes, 72 work units; lightweight summary and scoped .clang-format file (24291 bytes) succeeded. Concurrent verification was running; no service restart or checkout writes."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "All affected Rust target checks pass."
+    },
+    {
+      "command": "pnpm contracts:generate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Regenerated OpenAPI and TypeScript for additive metadata flag, not_requested attribution, local commit_summary and file_at."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "fail",
+      "failures": 26,
+      "note": "Initial check found 3 new typing errors plus 23 dependency errors. Fixed the new inference and summary/detailed-revision contract errors. Final registry check has only the inherited 23 errors."
+    },
+    {
+      "command": "pnpm exec svelte-check --tsconfig .local/bounded-reads/baseline/web/tsconfig.json",
+      "result": "fail",
+      "failures": 23,
+      "note": "Parent revision with the same registry dependencies reproduces all 23 errors in 9 files; Design Core release lacks already-used source APIs."
+    },
+    {
+      "command": "pnpm install --offline --ignore-scripts --no-frozen-lockfile",
+      "result": "pass",
+      "failures": 0,
+      "note": "Explicit temporary source validation using existing repository Design Core hook; restored registry pnpm-lock.yaml byte-for-byte. Existing M4.31 release gate remains pending. No package published."
+    },
+    {
+      "command": "pnpm web:check (temporary source validation)",
+      "result": "pass",
+      "failures": 0,
+      "note": "0 errors, 0 warnings after lightweight file loader/transport extraction."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "fail",
+      "failures": 1,
+      "note": "Directory story still supplied graph-only fields to the new summary prop; updated fixture to the actual summary contract."
+    },
+    {
+      "command": "pnpm catalog:check (after story update)",
+      "result": "pass",
+      "failures": 0,
+      "note": "0 errors, 0 warnings; 182 catalog modules pass boundaries."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-store-events.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/local-browser-merge.test.ts web/tests/vite/native-activity.test.ts web/tests/vite/production-store-workspaces.test.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "Initial run 66 passed/1 failed: HTTP test expected old query shape. Added the metadata flag to exact wire expectation; focused data-source rerun 11 passed. Later concurrent run had 65 passed/2 bootstrap settle failures; isolated bootstrap rerun 3 passed."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit --maxWorkers=2 web/tests/vite/production-file-reader.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-store-events.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/local-browser-merge.test.ts web/tests/vite/native-activity.test.ts web/tests/vite/production-store-workspaces.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "67 passed across 8 direct consumer files without changing bootstrap assertions or production deadlines."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/production-store-loaders.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "10 loader tests passed."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/community-projects/RepositoryDocuments.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "4 tests across 3 affected stories passed from a fresh Vite process, including interaction/accessibility. Visual baselines remain pending."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 4,
+      "note": "Initial extraction needed in four controller/transport/loader modules; first extraction left controller 2 counted lines over budget. Extracted read scope as a complete version/cancellation helper."
+    },
+    {
+      "command": "pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "928 production modules pass architecture; UI ownership passes. No copied Community component source introduced."
+    },
+    {
+      "command": "pnpm web:build; node scripts/browser-fixtures.mjs; pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/reads.spec.ts web/tests/browser/file-editor-navigation.spec.ts",
+      "result": "fail",
+      "failures": 2,
+      "note": "First cold run: 12 passed/2 failed. Found duplicate simultaneous directory continuation requests after files-first publication; added single-flight/status guard while retaining failed cursor. New test incorrectly selected Source as a tab; corrected to actual source-preview region. Final cold rerun pending below."
+    },
+    {
+      "command": "pnpm spec:first; pnpm check:progress",
+      "result": "fail",
+      "failures": 4,
+      "note": "Initial bookkeeping missed compatibility/mutation chapters and exact names on two test references. Added mapped requirements and exact regression titles."
+    },
+    {
+      "command": "pnpm web:build; pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/reads.spec.ts web/tests/browser/file-editor-navigation.spec.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh final built UI and preview process: all 14 browser tests pass, including delayed/failed metadata, pagination mismatch without repeat fetching, file navigation, cancellation and accessibility."
+    },
+    {
+      "command": "pnpm contracts:check",
+      "result": "fail",
+      "failures": 1,
+      "note": "Full generated response lane failed in unchanged capture_management api_snapshot::api_snapshot_progress_is_native_receipt_backed_and_body_free at its 120-second publication deadline; process finished at 200.16s. Process sample shows cold Kingfisher/Hyperscan sanitizer compilation in the retained OpenCode worker during runtime shutdown. Existing original-workspace binary baseline run is still pending; no timeout or sanitizer rules changed."
+    },
+    {
+      "command": "pnpm test:contracts",
+      "result": "pass",
+      "failures": 0,
+      "note": "7 schema/strictness tests plus generated contract TypeScript check pass."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked filesystem_runtime_registers_and_reads_without_native_storage -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "Expanded real local HTTP fixture passes, including commit_summary, row-only paths and scoped file_at."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_browsing_acceptance::http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "Expanded actual native HTTP fixture passes, including row-only attribution mode."
+    },
+    {
+      "command": "JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/files-local-capture.json target/debug/deps/local_browser-893d8c4057fcb950 --exact filesystem_runtime_registers_and_reads_without_native_storage; JJ_STORE_BROWSING_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/files-native-capture.json target/debug/deps/native_lifecycle-e6652c34f7ed2d93 --exact http_browsing_acceptance::http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured; node --input-type=module (responseValidator on both captures)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both capture tests pass; all 37 actual affected native/local HTTP/SSE responses conform to generated schemas. This focused pass does not replace the failed full capture lane."
+    },
+    {
+      "command": "pnpm spec:first; pnpm check:progress; pnpm spec:validate; cargo fmt --all -- --check; pnpm exec prettier --check (changed TS/Svelte/canonical chapters, excluding inherited whole-ledger formatting)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Mapped spec-first gate, 136-task evidence ledger, 167 requirements and focused format checks pass. Historical ledger bytes were preserved."
+    },
+    {
+      "command": "jj --no-pager diff --check",
+      "result": "fail",
+      "failures": 1,
+      "note": "Installed Jujutsu does not support this option; no diff check ran. Focused Rust and Prettier formatting checks above are the actual formatting evidence."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Full contract lane remains unqualified due to the cold OpenCode sanitizer timeout; original-workspace baseline reproduction is running independently. No deadline weakened, milestone promoted or release claimed.",
+    "Startup workspace/reference drain, historical membership/index preparation, cache quotas, collaboration projections/cards, remaining endpoint audit fixes and large-scale/native/real-RustFS qualification remain later slices.",
+    "Existing Design Core registry release qualification and visual baseline approval remain pending. Full unrelated aggregate lanes are out of scope."
+  ],
+  "next": "Implement independent workspace paging and exact reference resolution; retain the contract/capture qualification gap and complete the remaining large-repository plan."
+}
 ]
 ```

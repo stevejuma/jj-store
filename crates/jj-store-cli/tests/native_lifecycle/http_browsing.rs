@@ -78,6 +78,13 @@ async fn http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_c
             ),
         ),
         (
+            "commits/{commit}/paths",
+            format!(
+                "commits/{}/paths?at_op={}&recursive=false&include_last_change=false&limit=2",
+                f.head, f.operation
+            ),
+        ),
+        (
             "operations/{operation}/changes",
             format!(
                 "operations/{}/changes?parent={}&limit=2",

@@ -27,6 +27,7 @@ interface ReaderContext {
   source(): StoreDataSource;
   operation(): string | null;
   version(): number;
+  signal?(): AbortSignal;
   current(ticket: number, source: StoreDataSource): boolean;
   report(cause: unknown): void;
 }

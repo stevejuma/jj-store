@@ -198,7 +198,42 @@ export function presentPaths(
     files.set(entry.path, file.id);
     return [{ path: entry.path }];
   });
-  return { snapshot: { id: commit, files: blobs, directories }, files };
+  const pathChanges: NonNullable<RepositorySnapshot["pathChanges"]> =
+    Object.fromEntries(
+      entries.flatMap<
+        [
+          string,
+          (
+            | import("../projects/repository-log.js").RepositoryCommitSummary
+            | undefined
+          ),
+        ]
+      >((entry) => {
+        const value = entry.last_change;
+        if (value.status === "unavailable")
+          return value.reason === "not_requested"
+            ? []
+            : [[entry.path, undefined]];
+        return [
+          [
+            entry.path,
+            {
+              eventId: value.commit,
+              commitId: value.commit,
+              changeId: value.change,
+              message: value.description || "No description",
+              createdAt: seconds(value.committer.timestamp.millis),
+              author: value.author.name || value.author.email,
+              authorEmail: value.author.email,
+            },
+          ],
+        ];
+      }),
+    );
+  return {
+    snapshot: { id: commit, files: blobs, directories, pathChanges },
+    files,
+  };
 }
 
 const lineCount = (value: string) =>

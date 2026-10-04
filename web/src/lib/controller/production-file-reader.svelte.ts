@@ -1,3 +1,4 @@
+import { createProductionFileMetadata } from "./production-file-metadata.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import { fullId } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
@@ -8,27 +9,55 @@ import {
   storePathPage,
   visiblePathEntries,
 } from "./production-file-pages.js";
-import {
-  readBlob,
-  readLandingDocuments,
-  readPaths,
-  readRevision,
-} from "./production-store-loaders.js";
+import { readBlob, readPaths } from "./production-store-loaders.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 
-interface FileReaderContext {
+export interface FileReaderContext {
   data: ProductionStoreState;
   history: ReturnType<typeof createStoreRouteHistory>;
   source(): StoreDataSource;
   operation(): string | null;
   version(): number;
+  signal?(): AbortSignal;
   current(ticket: number, source: StoreDataSource): boolean;
   report(cause: unknown): void;
 }
 
 export function createProductionFileReader(context: FileReaderContext) {
   const { data, history } = context;
+  const metadata = createProductionFileMetadata(context, publish);
+  function publish(commit: string) {
+    const presented = presentPaths(
+      commit,
+      visiblePathEntries(data.pathPages, data.fileViewMode),
+    );
+    const previous = new Map(
+      data.snapshot?.id === commit
+        ? data.snapshot.files.map((file) => [file.path, file])
+        : [],
+    );
+    data.snapshot = {
+      ...presented.snapshot,
+      pathChanges: {
+        ...presented.snapshot.pathChanges,
+        ...Object.fromEntries(
+          [...data.pathPages.values()].flatMap((page) =>
+            [...(page.unavailableChanges ?? [])].map((path) => [
+              path,
+              undefined,
+            ]),
+          ),
+        ),
+      },
+      files: presented.snapshot.files.map((file) =>
+        data.fileTerms.get(file.path) === presented.files.get(file.path)
+          ? (previous.get(file.path) ?? file)
+          : file,
+      ),
+    };
+    data.fileTerms = presented.files;
+  }
   async function loadFiles(
     commit: string,
     options: { path?: string; recursive?: boolean; more?: boolean } = {},
@@ -43,24 +72,23 @@ export function createProductionFileReader(context: FileReaderContext) {
       data.pathPages = new Map();
       data.knownDirectories = new Set();
       data.collapsedDirectoryPaths = new Set();
+      data.fileRevision = undefined;
+      data.fileRevisionStatus = "idle";
     }
     const previous = data.pathPages.get(pathPageKey(path, recursive));
     if (more && !previous?.cursor) return false;
     data.status.files = more ? "refreshing" : "loading";
+    const signal = metadata.bind(commit, operation);
     try {
-      const [value, revision] = await Promise.all([
-        readPaths(source, operation, commit, {
-          path,
-          recursive,
-          cursor: more ? (previous?.cursor ?? undefined) : undefined,
-          expected: more ? previous?.snapshot : undefined,
-        }),
-        !more && data.fileRevision?.eventId !== commit
-          ? readRevision(source, operation, commit)
-          : Promise.resolve(data.fileRevision),
-      ]);
-      if (!context.current(ticket, source)) return false;
-      if (revision) data.fileRevision = revision;
+      const value = await readPaths(source, operation, commit, {
+        path,
+        recursive,
+        includeLastChange: false,
+        signal,
+        cursor: more ? (previous?.cursor ?? undefined) : undefined,
+        expected: more ? previous?.snapshot : undefined,
+      });
+      if (!context.current(ticket, source) || signal.aborted) return false;
       data.pathPages = storePathPage(
         data.pathPages,
         {
@@ -72,26 +100,23 @@ export function createProductionFileReader(context: FileReaderContext) {
         },
         more,
       );
-      const presented = presentPaths(
-        commit,
-        visiblePathEntries(data.pathPages, data.fileViewMode),
-      );
-      if (!recursive) rememberDirectories(presented.snapshot.directories ?? []);
-      data.fileTerms = presented.files;
-      data.snapshot = await readLandingDocuments(
-        source,
-        operation,
-        presented.snapshot,
-        presented.files,
-      );
-      if (!context.current(ticket, source)) return false;
+      publish(commit);
+      if (!recursive) rememberDirectories(data.snapshot?.directories ?? []);
       data.status.files =
-        data.snapshot.files.length || data.snapshot.directories?.length
+        data.snapshot?.files.length || data.snapshot?.directories?.length
           ? "ready"
           : "empty";
+      metadata.load({
+        source,
+        operation,
+        commit,
+        ticket,
+        value,
+        anchor: more ? previous?.entries.at(-1)?.path : undefined,
+      });
       return true;
     } catch (cause) {
-      if (!context.current(ticket, source)) return false;
+      if (!context.current(ticket, source) || signal.aborted) return false;
       context.report(cause);
       data.status.files = "failed";
       return false;
@@ -115,7 +140,16 @@ export function createProductionFileReader(context: FileReaderContext) {
     if (!id || !operation) return;
     data.status.detail = "loading";
     try {
-      const value = await readBlob(source, operation, path, id);
+      const commit = data.snapshot?.id;
+      if (!commit) return;
+      const value = await readBlob(
+        source,
+        operation,
+        path,
+        id,
+        commit,
+        context.signal?.(),
+      );
       if (!context.current(ticket, source)) return;
       data.blob = value;
       data.status.detail = "ready";
@@ -156,6 +190,7 @@ export function createProductionFileReader(context: FileReaderContext) {
       await loadFiles(commit, { path: directory, recursive: false });
   }
   async function loadMoreFiles() {
+    if (["loading", "refreshing", "failed"].includes(data.status.files)) return;
     const page = nextPathPage(
       data.pathPages,
       data.fileViewMode,

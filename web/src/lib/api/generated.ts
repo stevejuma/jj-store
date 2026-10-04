@@ -4468,7 +4468,7 @@ export interface components {
           status: "unavailable";
         };
     /** @enum {string} */
-    LastChangeUnavailable: "merge" | "budget";
+    LastChangeUnavailable: "merge" | "budget" | "not_requested";
     Envelope_ConflictResponse: {
       snapshot: components["schemas"]["ReadSnapshot"];
       data: components["schemas"]["ConflictResponse"];
@@ -4891,7 +4891,17 @@ export interface components {
         }
       | {
           /** @constant */
+          kind: "commit_summary";
+          data: components["schemas"]["LocalCodeObject"];
+        }
+      | {
+          /** @constant */
           kind: "file";
+          data: components["schemas"]["LocalFileContent"];
+        }
+      | {
+          /** @constant */
+          kind: "file_at";
           data: components["schemas"]["LocalFileContent"];
         }
       | {
@@ -5222,7 +5232,7 @@ export interface components {
           status: "unavailable";
         };
     /** @enum {string} */
-    LocalPathsLastChangeUnavailable: "merge" | "budget";
+    LocalPathsLastChangeUnavailable: "merge" | "budget" | "not_requested";
     LocalReferencesPage: {
       /** Format: uint32 */
       version: number;
@@ -21527,6 +21537,7 @@ export interface operations {
         cursor?: string;
         path?: string;
         recursive?: boolean;
+        include_last_change?: boolean;
         limit?: number;
         anchor?: string;
         direction?: "forward" | "backward";
@@ -21666,6 +21677,7 @@ export interface operations {
         cursor?: string;
         path?: string;
         recursive?: boolean;
+        include_last_change?: boolean;
         limit?: number;
         anchor?: string;
         direction?: "forward" | "backward";
@@ -26263,8 +26275,24 @@ export interface operations {
               }
             | {
                 /** @constant */
+                kind: "commit_summary";
+                query: {
+                  commit: string;
+                };
+              }
+            | {
+                /** @constant */
                 kind: "file";
                 query: {
+                  file: string;
+                };
+              }
+            | {
+                /** @constant */
+                kind: "file_at";
+                query: {
+                  commit: string;
+                  path: string;
                   file: string;
                 };
               }
@@ -26275,6 +26303,8 @@ export interface operations {
                   commit: string;
                   path: string;
                   recursive: boolean;
+                  /** @default true */
+                  include_last_change?: boolean;
                   /** Format: uint */
                   limit: number;
                   anchor?: string | null;

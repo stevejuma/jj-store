@@ -1,3 +1,4 @@
+import { createReadScope } from "./read-scope.js";
 import { createProductionAutomaticRefresh } from "./production-automatic-refresh.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
 import { createEntitySearch } from "./production-entity-search.js";
@@ -45,24 +46,24 @@ export function createProductionStoreController(
     () => sessionToken,
     options.fetcher,
   );
-  let version = 0,
-    feed = new AbortController(),
+  let feed = new AbortController(),
     discovery = new AbortController(),
     lifecycle = new AbortController();
-  const invalidate = () => ++version;
+  const { invalidate, signal, version } = createReadScope();
   function follow(active: StoreDataSource) {
     feed = new AbortController();
     automatic.follow(active, feed.signal);
   }
   const activeSource = () => requireProductionSource(source);
   const current = (ticket: number, active: StoreDataSource) =>
-    ticket === version && active === source;
+    ticket === version() && active === source;
   const { reader, historyQuery } = createProductionStoreReaders({
     data,
     history,
     source: activeSource,
-    version: () => version,
-    begin: () => ++version,
+    version,
+    begin: invalidate,
+    signal,
     current,
     report: (cause) => reportProductionStoreError(data, cause),
   });
@@ -114,7 +115,7 @@ export function createProductionStoreController(
     data,
     source: activeSource,
     route: () => history.route,
-    version: () => version,
+    version,
     current,
     restore: reader.restorePage,
   });
@@ -132,7 +133,7 @@ export function createProductionStoreController(
   });
   function disconnect(message = "", denied = false, preserveSession = false) {
     const repositoryStatus = data.status.repositories;
-    version += 1;
+    invalidate();
     automatic.reset();
     feed.abort();
     stopProjectEvents();
@@ -171,8 +172,8 @@ export function createProductionStoreController(
         setSource: (value) => {
           source = value;
         },
-        nextVersion: () => ++version,
-        version: () => version,
+        nextVersion: invalidate,
+        version,
         nextSession: () => ++session,
         current,
         disconnect,
@@ -193,7 +194,7 @@ export function createProductionStoreController(
     projects,
     connectRepository,
     disconnect,
-    version: () => version,
+    version,
     discovery: (abort) => {
       discovery = abort;
     },

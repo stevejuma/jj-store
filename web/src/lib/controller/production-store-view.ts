@@ -50,9 +50,9 @@ export function productionStoreView(
     unavailableComparisonCount: data.unavailableComparisonCount,
     canLoadMoreBookmarks: data.refsCursor !== null,
     canLoadMoreGraph: data.graphCursor !== null,
-    canLoadMoreFiles: Boolean(
-      nextPathPage(data.pathPages, data.fileViewMode, route.directory),
-    ),
+    canLoadMoreFiles:
+      data.status.files !== "failed" &&
+      Boolean(nextPathPage(data.pathPages, data.fileViewMode, route.directory)),
     canLoadMoreDetail: data.inspectionContinuation !== null,
     canLoadMoreAgents: data.agentCursor !== null,
     canLoadMoreTranscript: data.transcriptCursor !== null,
@@ -64,6 +64,7 @@ export function productionStoreView(
     now: options.now,
     detail: data.detail,
     fileRevision: data.fileRevision,
+    fileRevisionStatus: data.fileRevisionStatus,
     bookmarks: data.bookmarks,
     choices: data.choices,
     workingCopies: data.workingCopies,
