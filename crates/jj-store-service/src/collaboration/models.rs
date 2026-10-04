@@ -115,6 +115,8 @@ pub enum AgentActivity {
         event_id: AgentEventId,
         turn_id: Option<TurnId>,
         message_id: MessageId,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        occurred_at_millis: Option<i64>,
         role: MessageRole,
         content: AgentContent,
     },
@@ -159,6 +161,8 @@ pub struct AgentTranscriptDescriptor {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
 pub struct AgentTranscriptChunk {
     pub sequence: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub occurred_at_millis: Option<i64>,
     pub media_type: SanitizedMediaType,
     pub content: String,
 }

@@ -11,7 +11,13 @@
     content = agentPromptMarkup,
     fallback = false,
     ordinary = false,
-  }: { content?: string; fallback?: boolean; ordinary?: boolean } = $props();
+    occurredAt = 1_704_164_702_456,
+  }: {
+    content?: string;
+    fallback?: boolean;
+    ordinary?: boolean;
+    occurredAt?: number | null;
+  } = $props();
   const base = createInMemoryStoreController("agents");
   const controller: StoreController = {
     ...base,
@@ -20,7 +26,12 @@
         ...base.state,
         agentSession: { ...agentDetail, activity: [] },
         agentTranscript: [
-          { sequence: 0, content, media_type: "text" as const },
+          {
+            sequence: 0,
+            content,
+            media_type: "text" as const,
+            occurred_at_millis: occurredAt ?? undefined,
+          },
         ],
       };
     },
@@ -29,6 +40,7 @@
     {
       ...agentDetail.activity[0]!,
       type: "message" as const,
+      occurred_at_millis: occurredAt ?? undefined,
       content: { media_type: "text" as const, content },
     },
   ] as typeof agentDetail.activity);

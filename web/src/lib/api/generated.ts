@@ -2464,6 +2464,8 @@ export interface components {
           event_id: components["schemas"]["AgentEventId"];
           turn_id: components["schemas"]["TurnId"] | null;
           message_id: components["schemas"]["MessageId"];
+          /** Format: int64 */
+          occurred_at_millis?: number | null;
           role: components["schemas"]["MessageRole"];
           content: components["schemas"]["AgentContent"];
           /** @constant */
@@ -2722,6 +2724,8 @@ export interface components {
     AgentTranscriptChunk: {
       /** Format: uint64 */
       sequence: number;
+      /** Format: int64 */
+      occurred_at_millis?: number | null;
       media_type: components["schemas"]["SanitizedMediaType"];
       content: string;
     };

@@ -5,7 +5,7 @@ use jj_store_wal::publication::{
     SanitizedObservationV1, SanitizedRepresentation, SourceKind, SourceTrust, normalized_event_id,
 };
 
-const MAX_TIMING_EVENTS: usize = 4_096;
+pub(super) const MAX_TIMING_EVENTS: usize = 4_096;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub(crate) struct SessionTiming {
@@ -41,16 +41,8 @@ pub(crate) async fn resolve(
             if inspected > MAX_TIMING_EVENTS {
                 return Ok(SessionTiming::default());
             }
-            let occurred_at_millis = evidence.observations.iter().find_map(|observation| {
-                (normalized_event_id(
-                    evidence.source_instance_id,
-                    evidence.integration,
-                    observation.source_sequence,
-                    kind,
-                ) == event_id)
-                    .then(|| observed_at_millis(&evidence, &batch.normalizer_version, observation))
-                    .flatten()
-            });
+            let occurred_at_millis =
+                event_at_millis(&evidence, &batch.normalizer_version, event_id, kind);
             if let Some(value) = occurred_at_millis {
                 timing.first_activity_at_millis = Some(
                     timing
@@ -66,6 +58,24 @@ pub(crate) async fn resolve(
         }
     }
     Ok(timing)
+}
+
+pub(super) fn event_at_millis(
+    evidence: &SanitizedObservationBatchV1,
+    normalizer: &str,
+    event_id: AgentEventId,
+    kind: &str,
+) -> Option<i64> {
+    evidence.observations.iter().find_map(|observation| {
+        (normalized_event_id(
+            evidence.source_instance_id,
+            evidence.integration,
+            observation.source_sequence,
+            kind,
+        ) == event_id)
+            .then(|| observed_at_millis(evidence, normalizer, observation))
+            .flatten()
+    })
 }
 
 // Earlier JSONL readers preserve the native timestamp in the immutable payload,

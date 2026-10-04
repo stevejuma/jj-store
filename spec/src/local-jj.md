@@ -340,6 +340,11 @@ queries are bounded projections of selected associations and report continuation
 when more qualified records exist. Reads cannot initialize metadata or record
 agents.
 
+Companion-pinned AgentStore message activity and transcript pages expose
+optional occurrence milliseconds from their exact selected evidence using the
+shared qualified timestamp projection. Historical pins retain original message
+times after later capture; reads do not publish or infer times from ingestion.
+
 Local freshness streams revalidate device bindings and perform bounded checks of
 operation heads and the selected companion ref. They announce current selections
 without reconciling heads or changing working files. The browser compares

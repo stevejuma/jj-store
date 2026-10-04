@@ -15,6 +15,7 @@ use jj_store_wal::publication::{
     SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
     SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust, ToolKind,
     ToolState, TranscriptChunkV1, TranscriptManifestV1, TranscriptStreamV1, TranscriptTailPageV2,
+    normalized_event_id,
 };
 use jj_store_wal::publication::{Limits, PublishOutcome};
 use std::{collections::BTreeMap, collections::BTreeSet, sync::Arc};
@@ -305,10 +306,25 @@ async fn session_detail_resolves_bounded_messages_and_final_tool_snapshots() {
         if let AgentActivity::Message {
             event_id,
             message_id,
+            occurred_at_millis,
             reaction_target,
             ..
         } = item
         {
+            let source = rich_cursor_batch();
+            let observation = source
+                .observations
+                .iter()
+                .find(|v| {
+                    normalized_event_id(
+                        source.source_instance_id,
+                        source.integration,
+                        v.source_sequence,
+                        "message",
+                    ) == *event_id
+                })
+                .unwrap();
+            assert_eq!(*occurred_at_millis, observation.occurred_at_millis);
             let Some(jj_collab::ReactionTargetV1::AgentMessage {
                 session_id,
                 event_id: target_event,
@@ -599,6 +615,7 @@ async fn transcript_pages_retain_exact_root_and_validate_stream_cursor() {
         .unwrap();
     assert_eq!(first.chunks[0].sequence, 10);
     assert_eq!(first.chunks[0].content, "first\n");
+    assert_eq!(first.chunks[0].occurred_at_millis, None);
     let cursor = first.next_cursor.clone().unwrap();
 
     publish(&fixture.session, 91, "later-session").await;

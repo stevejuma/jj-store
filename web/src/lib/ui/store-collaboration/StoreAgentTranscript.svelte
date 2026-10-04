@@ -9,6 +9,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
   import StoreAgentTools from "./StoreAgentTools.svelte";
+  import { agentMessageTimestamp } from "../../collaboration/presentation.js";
   import { agentTimeline } from "../../collaboration/agent-timeline.js";
   import StoreMessageActions from "./StoreMessageActions.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
@@ -58,7 +59,7 @@
       id: entry.message_id,
       authorId: author.id,
       content,
-      timestamp: `#${Number(entry.sequence) + 1}`,
+      ...agentMessageTimestamp(entry.occurred_at_millis),
       reactions: entry.reaction_target
         ? controller.threads?.reactionModels(entry.reaction_target)
         : [],

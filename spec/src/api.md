@@ -650,6 +650,16 @@ bound yields null timing fields. This read-only projection also recovers timing
 for previously published transcripts; it never rewrites evidence or requires
 reimport, and filesystem modification or ingestion times are not substitutes.
 
+Message activity and transcript chunks expose an additive optional
+`occurred_at_millis` field. It is the timestamp of the exact selected message
+observation, with the same qualified native timestamp recovery and explicit
+observation precedence as session timing. Missing, malformed or unmatched times
+are omitted. Transcript page timestamps additionally match the selected current
+source-generation-1 chunk's normalized message event and content; unsupported
+generations remain unknown. Recovery inspects at most 4,096 selected events and
+retains the original cursor/root pin across pages. Times never derive from
+sequence numbers, session start, filesystem metadata or ingestion.
+
 The detail route accepts one canonical full stable session ID. It resolves that
 key only through the current selected AgentStore session catalog and returns 404
 when no matching selection exists. Its response repeats the exact read snapshot

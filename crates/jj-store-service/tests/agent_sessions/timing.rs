@@ -78,3 +78,115 @@ fn transcript_batch(profile: &NormalizerProfileV1) -> SanitizedObservationBatchV
         }).collect(),
     }
 }
+
+#[tokio::test]
+async fn message_timing_matches_selected_evidence_in_activity_and_transcript_pages() {
+    for profile in [
+        NormalizerProfileV1::codex_0_156_1(),
+        NormalizerProfileV1::codex_desktop_0_159_2(),
+    ] {
+        let fixture = fixture().await;
+        let mut source = transcript_batch(&profile);
+        let template = source.observations[3].clone();
+        for (i, timestamp) in [
+            Some("2024-01-02T04:05:02.456+01:00"),
+            Some("bad date"),
+            None,
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let mut observation = template.clone();
+            observation.observation_id = ObservationId::new([90 + i as u8; 16]);
+            observation.source_sequence = 6 + i as u64;
+            let mut record = serde_json::json!({"type":"response_item", "payload":{"type":"message", "role":"assistant", "content":[{"type":"output_text", "text":format!("Response {i}")}]}});
+            if let Some(timestamp) = timestamp {
+                record["timestamp"] = timestamp.into();
+            }
+            observation.payload = SanitizedPayloadV1::new(
+                SanitizedMediaType::Json,
+                &serde_json::to_vec(&serde_json::json!({
+                    "capture_format":"codex-jsonl/v1", "product_version":profile.product_version,
+                    "session_id":"native-transcript-timing", "record":record,
+                }))
+                .unwrap(),
+            )
+            .unwrap();
+            source.observations.push(observation);
+        }
+        let request = fixture
+            .session
+            .prepare_agent_capture(
+                m::RequestId::new([85; 16]),
+                m::PublicationId::new([86; 16]),
+                &profile,
+                &source,
+                b"message timing".to_vec(),
+            )
+            .await
+            .unwrap();
+        fixture.session.publish_agent_delta(&request).await.unwrap();
+        let pager =
+            AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+        let page = pager.begin(fixture.session.clone(), 10).await.unwrap();
+        let detail = pager
+            .detail(fixture.session.clone(), page.sessions[0].session_id)
+            .await
+            .unwrap();
+        let messages = serde_json::to_value(&detail.activity)
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|v| v["type"] == "message")
+            .map(|v| v["occurred_at_millis"].as_i64())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            messages,
+            vec![Some(1_704_164_700_000), Some(1_704_164_702_456), None, None]
+        );
+        let stream = &detail.transcripts[0];
+        let query = AgentTranscriptRequest {
+            session_id: detail.session.session_id,
+            transcript_id: stream.transcript_id,
+            source_instance_id: stream.source_instance_id,
+            source_generation: stream.source_generation,
+            limit: 2,
+            max_bytes: 1024,
+        };
+        let first = pager
+            .begin_transcript(fixture.session.clone(), query)
+            .await
+            .unwrap();
+        let times = serde_json::to_value(&first.chunks)
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v["occurred_at_millis"].as_i64())
+            .collect::<Vec<_>>();
+        assert_eq!(times, messages[..2]);
+        let last = pager
+            .resume_transcript(
+                fixture.session.clone(),
+                first.next_cursor.as_ref().unwrap(),
+                query,
+            )
+            .await
+            .unwrap();
+        let times = serde_json::to_value(&last.chunks)
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v["occurred_at_millis"].as_i64())
+            .collect::<Vec<_>>();
+        assert_eq!(times, messages[2..]);
+        assert_eq!(first.snapshot, last.snapshot);
+        assert_eq!(detail.snapshot, page.snapshot);
+        assert_eq!(
+            pager.begin(fixture.session, 10).await.unwrap().snapshot,
+            page.snapshot
+        );
+    }
+}

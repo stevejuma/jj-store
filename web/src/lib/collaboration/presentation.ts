@@ -144,6 +144,25 @@ export function principalMember(principal: string): CommunityMemberModel {
   };
 }
 
+export function agentMessageTimestamp(
+  occurredAtMillis: number | bigint | null | undefined,
+): Pick<CommunityMessageModel, "timestamp" | "createdAt"> {
+  if (occurredAtMillis === null || occurredAtMillis === undefined)
+    return { timestamp: "Time unknown" };
+  const millis = Number(occurredAtMillis);
+  const date = new Date(millis);
+  if (!Number.isSafeInteger(millis) || !Number.isFinite(date.getTime()))
+    return { timestamp: "Time unknown" };
+  return {
+    timestamp: date.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }),
+    createdAt: date.toISOString(),
+  };
+}
+
 export function transcriptMessage(
   chunk: Model<"AgentTranscriptChunk">,
   summary: Model<"AgentSessionSummary">,
@@ -160,7 +179,7 @@ export function transcriptMessage(
     id: `${summary.session_id}:${chunk.sequence}`,
     authorId: summary.session_id,
     content,
-    timestamp: `#${chunk.sequence}`,
+    ...agentMessageTimestamp(chunk.occurred_at_millis),
   };
 }
 

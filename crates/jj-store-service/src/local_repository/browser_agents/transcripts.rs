@@ -31,18 +31,9 @@ impl LocalRepository {
                 request.max_bytes,
             )
             .await?;
-        let chunks = range
-            .chunks
-            .into_iter()
-            .map(|c| {
-                Ok(presentation::AgentTranscriptChunk {
-                    sequence: c.sequence,
-                    media_type: c.payload.media_type(),
-                    content: String::from_utf8(c.payload.bytes().to_vec())
-                        .map_err(|_| LocalError::Corrupt)?,
-                })
-            })
-            .collect::<LocalResult<_>>()?;
+        let chunks = presentation::present_chunks(&store, &session, range.chunks)
+            .await
+            .map_err(map)?;
         Ok(LocalBrowserTranscriptPage {
             version: 1,
             snapshot: store.snapshot,

@@ -2306,6 +2306,15 @@ This applies to both native and companion-pinned list/detail reads, including
 already published records, without changing immutable evidence, receipts,
 normalization or capture recovery identities. Duration remains the captured
 activity span, not elapsed time since ingestion or a guessed process lifetime.
+Message presentation retains each matched observation's optional occurrence time
+independently of the session activity span. Native and companion-pinned activity
+and transcript paging use the same qualified decoder. A transcript chunk's
+source identity/sequence, selected message event and exact content must match
+before returning its time; current generation 1 is supported. Unknown or
+over-bound evidence never borrows another message's timestamp. Read projection
+changes neither immutable content/evidence nor publication and recovery
+identity.
+
 Session detail also returns the exact immutable observation-batch, event-batch
 and tool-snapshot IDs selected by that session; tool links retain their full
 stable tool-call IDs. Selected transcript manifests expand only into stream

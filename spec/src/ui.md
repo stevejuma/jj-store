@@ -929,21 +929,27 @@ and comment rows use measured virtualization. Ready, loading, empty and failed
 states use the same production components in Storybook.
 
 Agent transcript chunks and review comments render through the owned Community
-message component. Adjacent recorded tool calls form a single expandable Design
-Core ToolCalls group, in native order. Messages, capture gaps and other recorded
-events separate groups. Each call retains its own details, native copy menu,
-review anchor, reply actions and draft. Tool groups start at the visible message
-edge, including its owned horizontal bleed. The heading icon and individual
-status icons share that edge. Closed calls retain compact, contiguous rows;
-expanded details occupy only their own call. Inline discussion contexts size to
-their content and do not create a scroll viewport around each call or clip its
-hover toolbar. The transcript owns scrolling, and the full toolbar remains
-pointer reachable across row boundaries. Failed calls show their error status
-without an extra resting “Tool failed” label; expanded details retain the actual
-error output. Open review threads compose the owned Community chat composer with
-exact optimistic-concurrency actions; resolved threads remove the composer and
-expose Reopen. The detail headers distinguish the selected native code snapshot
-from the independent AgentStore or ReviewStore root. An unknown review outcome
+message component. Captured message timestamps appear in each message's metadata
+in the device locale, with seconds and a semantic time element retaining the
+full ISO date/time and exact date tooltip. Missing evidence displays “Time
+unknown”; sequence identifiers remain available through the copy menu. Activity
+and recorded-chunk fallback presentation share this behavior without changing
+Markdown, prompt disclosures, reactions, message order or virtualization.
+Adjacent recorded tool calls form a single expandable Design Core ToolCalls
+group, in native order. Messages, capture gaps and other recorded events
+separate groups. Each call retains its own details, native copy menu, review
+anchor, reply actions and draft. Tool groups start at the visible message edge,
+including its owned horizontal bleed. The heading icon and individual status
+icons share that edge. Closed calls retain compact, contiguous rows; expanded
+details occupy only their own call. Inline discussion contexts size to their
+content and do not create a scroll viewport around each call or clip its hover
+toolbar. The transcript owns scrolling, and the full toolbar remains pointer
+reachable across row boundaries. Failed calls show their error status without an
+extra resting “Tool failed” label; expanded details retain the actual error
+output. Open review threads compose the owned Community chat composer with exact
+optimistic-concurrency actions; resolved threads remove the composer and expose
+Reopen. The detail headers distinguish the selected native code snapshot from
+the independent AgentStore or ReviewStore root. An unknown review outcome
 remains an explicit alert with a Check status action. Live events automatically
 reload collaboration records from committed roots, invalidate the session cache
 and retain the deep route and editor drafts. Unknown requests retain their exact

@@ -11,6 +11,12 @@
   });
   async function nested({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
+    const time = canvasElement.querySelector(
+      "time[datetime='2024-01-02T03:05:02.456Z']",
+    );
+    await expect(time).toBeVisible();
+    await expect(time?.getAttribute("title")).toMatch(/2024/);
+    await expect(time).toHaveTextContent(/\d{2}:\d{2}:\d{2}/);
     const context = await c.findByRole("button", {
       name: '<harness:context source="cli > desktop">',
     });
@@ -134,5 +140,17 @@
         ".community-markdown-content script, .community-markdown-content img, .community-markdown-content [onclick]",
       ),
     ).toHaveLength(0);
+  }}
+/>
+
+<Story
+  name="Messages without captured timestamps stay unknown"
+  args={{ occurredAt: null, content: "An untimed response" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      await c.findByText("Time unknown", { exact: true }),
+    ).toBeVisible();
+    await expect(canvasElement.querySelector("time")).toBeNull();
   }}
 />

@@ -6,6 +6,8 @@ import type { RepositoryLogRevision } from "../src/lib/projects/repository-log.j
 import { agentAvatarUrl } from "../src/lib/collaboration/agent-avatar.js";
 import {
   agentMember,
+  agentMessageTimestamp,
+  transcriptMessage,
   agentSessionTiming,
   anchorMatchesOperation,
   anchorMatchesPath,
@@ -238,4 +240,38 @@ test("operation collaboration includes explicit code comparison context", () => 
     members: [agentMember(summary(1, 2))],
     replyCount: 2,
   });
+});
+
+test("agent messages use captured times without inferring from sequence or session", () => {
+  const time = agentMessageTimestamp(1_704_164_702_456);
+  assert.equal(time.createdAt, "2024-01-02T03:05:02.456Z");
+  assert.equal(
+    time.timestamp,
+    new Date(1_704_164_702_456).toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }),
+  );
+  assert.deepEqual(agentMessageTimestamp(1_704_164_702_456n), time);
+  for (const unknown of [null, undefined, NaN, Infinity, 9e15]) {
+    assert.deepEqual(agentMessageTimestamp(unknown), {
+      timestamp: "Time unknown",
+    });
+  }
+  const chunk = {
+    sequence: 99,
+    media_type: "text" as const,
+    content: "**Recorded**",
+  };
+  assert.equal(
+    transcriptMessage(chunk, summary(1, 2)).timestamp,
+    "Time unknown",
+  );
+  const message = transcriptMessage(
+    { ...chunk, occurred_at_millis: 1_704_164_702_456 },
+    summary(1, 2),
+  );
+  assert.equal(message.createdAt, time.createdAt);
+  assert.equal(message.content, "**Recorded**");
 });

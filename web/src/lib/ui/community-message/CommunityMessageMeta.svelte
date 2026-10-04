@@ -41,6 +41,12 @@
       ((member: CommunityMemberModel) => void | Promise<void>) | undefined;
   } = $props();
 
+  const createdAt = $derived(
+    message.createdAt && Number.isFinite(Date.parse(message.createdAt))
+      ? message.createdAt
+      : undefined,
+  );
+
   const replyLabel = $derived.by(() => {
     const replyCount = message.replyCount ?? 0;
     return (
@@ -64,8 +70,18 @@
 <div class="community-message__metadata">
   {#if !isContinuation || message.edited}
     {#snippet edited()}<span>Edited</span>{/snippet}
+    {#snippet timestamp()}
+      {#if createdAt}
+        <time
+          datetime={createdAt}
+          title={new Date(createdAt).toLocaleString(undefined, {
+            timeZoneName: "short",
+          })}>{message.timestamp}</time
+        >
+      {:else}{message.timestamp}{/if}
+    {/snippet}
     <MessageMetadata
-      timestamp={isContinuation ? undefined : message.timestamp}
+      timestamp={isContinuation || !message.timestamp ? undefined : timestamp}
       footer={message.edited ? edited : undefined}
     />
   {/if}

@@ -138,12 +138,31 @@ pub(crate) async fn load_activity(
         else {
             return Err(Error::Corrupt);
         };
+        let AgentObjectV1::ObservationBatch(evidence) =
+            store.read_object(batch.evidence).await.map_err(map_wal)?
+        else {
+            return Err(Error::Corrupt);
+        };
+        if evidence.integration != session.integration {
+            return Err(Error::Corrupt);
+        }
         for event in batch.events {
             if events.len() == MAX_ACTIVITY {
                 truncated = true;
                 break;
             }
-            events.push((*reference, event));
+            let occurred_at_millis = match &event {
+                AgentEventV1::MessageCompleted { event_id, .. } => {
+                    super::agent_session_timing::event_at_millis(
+                        &evidence,
+                        &batch.normalizer_version,
+                        *event_id,
+                        "message",
+                    )
+                }
+                _ => None,
+            };
+            events.push((*reference, event, occurred_at_millis));
         }
         if truncated {
             break;
@@ -152,7 +171,7 @@ pub(crate) async fn load_activity(
 
     let observed_paths = events
         .iter()
-        .filter_map(|(_, event)| match event {
+        .filter_map(|(_, event, _)| match event {
             AgentEventV1::FileObserved { path, .. } => Some(path.clone()),
             _ => None,
         })
@@ -163,7 +182,7 @@ pub(crate) async fn load_activity(
     let mut output = Vec::new();
     let mut emitted_tools = BTreeSet::new();
     let mut edit_activity_indices = Vec::new();
-    for (index, (batch, event)) in events.into_iter().enumerate() {
+    for (index, (batch, event, occurred_at_millis)) in events.into_iter().enumerate() {
         let sequence = index as u64;
         let item = match event {
             AgentEventV1::SessionStateChanged {
@@ -209,6 +228,7 @@ pub(crate) async fn load_activity(
                     event_id,
                     turn_id,
                     message_id,
+                    occurred_at_millis,
                     role,
                     content,
                 }

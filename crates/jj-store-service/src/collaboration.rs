@@ -6,6 +6,8 @@ pub(crate) use agent_details::load_activity;
 mod agent_relations;
 mod agent_session_timing;
 pub(crate) use agent_session_timing::resolve as session_timing;
+mod agent_transcript_timing;
+pub(crate) use agent_transcript_timing::present_chunks;
 mod agent_transcripts;
 mod checkpoint_models;
 mod cursor_position;

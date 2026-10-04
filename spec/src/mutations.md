@@ -900,3 +900,8 @@ under the shared settings-file lock. Stale saves are rejected, post-replacement
 failures are unknown outcomes, and clients retain the original draft until fresh
 saved configuration is observed. Saving never creates a repository publication
 or mutates a running capture journal.
+
+Per-message AgentStore timestamps are bounded read projections over exact
+selected observations and message content. They retain native and companion pins
+and never rewrite immutable evidence, recovery identities, receipts or
+publication state.

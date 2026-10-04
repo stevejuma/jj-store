@@ -32678,6 +32678,10 @@
                 ]
               },
               "message_id": { "$ref": "#/components/schemas/MessageId" },
+              "occurred_at_millis": {
+                "type": ["integer", "null"],
+                "format": "int64"
+              },
               "role": { "$ref": "#/components/schemas/MessageRole" },
               "content": { "$ref": "#/components/schemas/AgentContent" },
               "type": { "type": "string", "const": "message" }
@@ -33238,6 +33242,10 @@
         "type": "object",
         "properties": {
           "sequence": { "type": "integer", "format": "uint64", "minimum": 0 },
+          "occurred_at_millis": {
+            "type": ["integer", "null"],
+            "format": "int64"
+          },
           "media_type": { "$ref": "#/components/schemas/SanitizedMediaType" },
           "content": { "type": "string" }
         },

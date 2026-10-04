@@ -1,5 +1,14 @@
 # Compatibility and release
 
+AgentStore message activity and recorded transcript read DTOs add optional
+`occurred_at_millis` fields while retaining response version 1 and the existing
+route inventory. Missing fields remain compatible and mean unknown time; current
+source-generation-1 chunk timing additionally requires its exact selected
+normalized message and content. Generated contracts and affected native/local
+HTTP responses MUST qualify both known and absent timestamps. This read-only
+projection does not change native/local object encodings, capture/recovery
+identities, source cursors, receipts or publication formats.
+
 Repository-review browser/CLI integration preserves native V1 anchor, record,
 receipt and manifest bytes and local companion request framing. Local read DTOs
 carry their actual Git metadata selection, never synthetic native epochs or WAL

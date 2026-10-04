@@ -27,7 +27,7 @@ impl AgentSessionPager {
         request: AgentTranscriptRequest,
     ) -> Result<AgentTranscriptPage> {
         let pin = self.pin(&session).await?;
-        let manifest = selected_transcript(&pin, &request).await?;
+        let (manifest, selected) = selected_transcript(&pin, &request).await?;
         let range = pin
             .store
             .transcript_range(
@@ -40,6 +40,7 @@ impl AgentSessionPager {
             )
             .await
             .map_err(map_wal)?;
+        let chunks = super::present_chunks(&pin.store, &selected, range.chunks).await?;
         authorize_epoch(&session, pin.snapshot.epoch).await?;
         let snapshot = pin.snapshot.clone();
         let next_cursor = range
@@ -49,7 +50,7 @@ impl AgentSessionPager {
                     .retain(pin, request.limit, request.position(after_sequence))
             })
             .transpose()?;
-        transcript_page(snapshot, request, range.chunks, next_cursor)
+        transcript_page(snapshot, request, chunks, next_cursor)
     }
 
     pub async fn resume_transcript(
@@ -99,7 +100,7 @@ impl AgentSessionPager {
             return Err(Error::InvalidCursor);
         }
         authorize_epoch(&session, entry.pin.snapshot.epoch).await?;
-        let manifest = selected_transcript(&entry.pin, &request).await?;
+        let (manifest, selected) = selected_transcript(&entry.pin, &request).await?;
         let range = entry
             .pin
             .store
@@ -113,6 +114,7 @@ impl AgentSessionPager {
             )
             .await
             .map_err(map_wal)?;
+        let chunks = super::present_chunks(&entry.pin.store, &selected, range.chunks).await?;
         authorize_epoch(&session, entry.pin.snapshot.epoch).await?;
         let next_cursor = self.cursors.next(
             &claims,
@@ -121,7 +123,7 @@ impl AgentSessionPager {
                 .next_after_sequence
                 .map(|sequence| request.position(sequence)),
         )?;
-        transcript_page(entry.pin.snapshot, request, range.chunks, next_cursor)
+        transcript_page(entry.pin.snapshot, request, chunks, next_cursor)
     }
 }
 
@@ -169,7 +171,10 @@ impl AgentTranscriptRequest {
 async fn selected_transcript(
     pin: &AgentPin,
     request: &AgentTranscriptRequest,
-) -> Result<AgentObjectRef> {
+) -> Result<(
+    AgentObjectRef,
+    jj_store_wal::publication::AgentSessionSnapshotV1,
+)> {
     let key = AgentCatalogKey::derive("session", request.session_id.as_bytes())
         .map_err(|_| Error::Corrupt)?;
     let session = pin
@@ -209,26 +214,15 @@ async fn selected_transcript(
     }) {
         return Err(Error::NotFound);
     }
-    Ok(transcript)
+    Ok((transcript, session))
 }
 
 fn transcript_page(
     snapshot: AgentReadSnapshot,
     request: AgentTranscriptRequest,
-    chunks: Vec<jj_store_wal::publication::TranscriptChunkV1>,
+    chunks: Vec<AgentTranscriptChunk>,
     next_cursor: Option<String>,
 ) -> Result<AgentTranscriptPage> {
-    let chunks = chunks
-        .into_iter()
-        .map(|chunk| {
-            Ok(AgentTranscriptChunk {
-                sequence: chunk.sequence,
-                media_type: chunk.payload.media_type(),
-                content: String::from_utf8(chunk.payload.bytes().to_vec())
-                    .map_err(|_| Error::Corrupt)?,
-            })
-        })
-        .collect::<Result<_>>()?;
     Ok(AgentTranscriptPage {
         version: 1,
         snapshot,
