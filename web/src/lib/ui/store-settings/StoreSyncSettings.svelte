@@ -23,6 +23,9 @@
     onWait,
     onStopWait,
     reconciliation,
+    configuration,
+    onRefreshConfiguration,
+    configurationBusy = false,
   }: {
     settings: SyncSettings;
     supported: boolean;
@@ -31,7 +34,11 @@
     onWait: (capture: boolean) => Promise<void>;
     onStopWait: () => void;
     reconciliation?: import("svelte").Snippet;
+    configuration?: import("svelte").Snippet;
+    onRefreshConfiguration?: () => Promise<void>;
+    configurationBusy?: boolean;
   } = $props();
+  let active = $state("overview");
   const worker = $derived(settings.value?.worker);
   const busy = $derived(
     settings.changing || ["loading", "refreshing"].includes(settings.state),
@@ -44,23 +51,35 @@
 
 <StoreSettingsPage
   section="sync"
-  onRefresh={supported ? onRefresh : undefined}
+  onRefresh={active === "configuration"
+    ? onRefreshConfiguration
+    : supported
+      ? onRefresh
+      : undefined}
   refreshLabel="Refresh sync"
-  refreshDisabled={busy}
-  value="overview"
-  tabs={supported
-    ? [
-        { value: "overview", label: "Overview" },
-        { value: "progress", label: "Progress", disabled: !worker },
-      ]
-    : []}
+  refreshDisabled={active === "configuration" ? configurationBusy : busy}
+  bind:value={active}
+  tabs={[
+    { value: "overview", label: "Overview" },
+    ...(supported
+      ? [{ value: "progress", label: "Progress", disabled: !worker }]
+      : []),
+    ...(configuration
+      ? [{ value: "configuration", label: "Configuration" }]
+      : []),
+  ]}
 >
+  {#if configuration}<Tabs.Content value="configuration"
+      >{@render configuration()}</Tabs.Content
+    >{/if}
   {#if !supported}
-    <StoreSettingsEmpty
-      Icon={CloudOffIcon}
-      title="Sync unavailable"
-      description="Sync management is not available for this connection."
-    />
+    <Tabs.Content value="overview"
+      ><StoreSettingsEmpty
+        Icon={CloudOffIcon}
+        title="Sync unavailable"
+        description="Sync management is not available for this connection."
+      /></Tabs.Content
+    >
   {:else}
     <Tabs.Content value="overview">
       <section class="store-settings__section" aria-labelledby="sync-overview">

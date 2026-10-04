@@ -21,12 +21,18 @@
     onRefresh,
     onStart,
     onRetry,
+    configuration,
+    onRefreshConfiguration,
+    configurationBusy = false,
   }: {
     settings: StorageSettings;
     supported: boolean;
     onRefresh: () => Promise<void>;
     onStart: (action: StorageAction) => Promise<void>;
     onRetry: () => Promise<void>;
+    configuration?: import("svelte").Snippet;
+    onRefreshConfiguration?: () => Promise<void>;
+    configurationBusy?: boolean;
   } = $props();
   let active = $state("overview");
   const report = $derived(settings.operation);
@@ -42,22 +48,34 @@
 <StoreSettingsPage
   section="storage"
   bind:value={active}
-  onRefresh={supported ? onRefresh : undefined}
+  onRefresh={active === "configuration"
+    ? onRefreshConfiguration
+    : supported
+      ? onRefresh
+      : undefined}
   refreshLabel={active === "maintenance" ? "Check status" : "Refresh storage"}
-  refreshDisabled={settings.changing}
-  tabs={supported
-    ? [
-        { value: "overview", label: "Overview" },
-        { value: "maintenance", label: "Maintenance" },
-      ]
-    : []}
+  refreshDisabled={active === "configuration"
+    ? configurationBusy
+    : settings.changing}
+  tabs={[
+    { value: "overview", label: "Overview" },
+    ...(supported ? [{ value: "maintenance", label: "Maintenance" }] : []),
+    ...(configuration
+      ? [{ value: "configuration", label: "Configuration" }]
+      : []),
+  ]}
 >
+  {#if configuration}<Tabs.Content value="configuration"
+      >{@render configuration()}</Tabs.Content
+    >{/if}
   {#if !supported}
-    <StoreSettingsEmpty
-      Icon={DatabaseIcon}
-      title="Storage unavailable"
-      description="Open a native repository on a local service with administrator access to use Storage maintenance."
-    />
+    <Tabs.Content value="overview"
+      ><StoreSettingsEmpty
+        Icon={DatabaseIcon}
+        title="Storage unavailable"
+        description="Open a native repository on a local service with administrator access to use Storage maintenance."
+      /></Tabs.Content
+    >
   {:else}
     <StoreNotice
       noticeKey="storage"

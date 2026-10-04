@@ -64,6 +64,12 @@ if (mode === "--check") {
       packageName = "jj-store-cli",
     ] of [
       [
+        "server_settings::http_settings_contracts_are_actor_free_conditional_and_local_admin_only",
+        "JJ_STORE_SETTINGS_CONTRACT_CAPTURE",
+        "capture_management",
+        "jj-store-server",
+      ],
+      [
         "imports::import_acceptance_progress_and_replay_are_actual_http_contracts",
         "JJ_STORE_CAPTURE_IMPORT_CONTRACT_CAPTURE",
         "capture_management",

@@ -1176,6 +1176,48 @@
                         "type": "integer",
                         "format": "uint64",
                         "minimum": 0
+                      },
+                      "poll_millis": {
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0,
+                        "default": 1000
+                      },
+                      "timeout_seconds": {
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0,
+                        "default": 60
+                      },
+                      "snapshot_every": {
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0,
+                        "default": 32
+                      },
+                      "max_text_bytes": {
+                        "type": "integer",
+                        "format": "uint",
+                        "minimum": 0,
+                        "default": 1048576
+                      },
+                      "max_files": {
+                        "type": "integer",
+                        "format": "uint",
+                        "minimum": 0,
+                        "default": 10000
+                      },
+                      "max_work": {
+                        "type": "integer",
+                        "format": "uint",
+                        "minimum": 0,
+                        "default": 1000000
+                      },
+                      "max_output_bytes": {
+                        "type": "integer",
+                        "format": "uint",
+                        "minimum": 0,
+                        "default": 67108864
                       }
                     },
                     "additionalProperties": false,
@@ -30645,6 +30687,496 @@
         },
         "security": [{}]
       }
+    },
+    "/v1/local/settings": {
+      "get": {
+        "operationId": "local_server_settings",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LocalServerSettings" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}]
+      },
+      "head": {
+        "operationId": "local_server_settings_head",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}]
+      },
+      "post": {
+        "operationId": "local_server_save_settings",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LocalServerSettings" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0
+                  },
+                  "expected_revision": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "update": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "section": { "type": "string", "const": "service" },
+                          "configuration": {
+                            "type": "object",
+                            "properties": {
+                              "concurrent_requests": {
+                                "type": "integer",
+                                "format": "uint",
+                                "minimum": 0
+                              },
+                              "request_seconds": {
+                                "type": "integer",
+                                "format": "uint64",
+                                "minimum": 0
+                              },
+                              "max_blob_bytes": {
+                                "type": "integer",
+                                "format": "uint64",
+                                "minimum": 0
+                              },
+                              "inventory_nodes": {
+                                "type": "integer",
+                                "format": "uint",
+                                "minimum": 0
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "concurrent_requests",
+                              "request_seconds",
+                              "max_blob_bytes",
+                              "inventory_nodes"
+                            ]
+                          }
+                        },
+                        "required": ["section", "configuration"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "section": {
+                            "type": "string",
+                            "const": "protection"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "properties": {
+                              "bookmarks": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": { "type": "string" }
+                              },
+                              "commits": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{128}$",
+                                  "minLength": 128,
+                                  "maxLength": 128
+                                }
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["bookmarks", "commits"]
+                          }
+                        },
+                        "required": ["section", "configuration"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "section": { "type": "string", "const": "sync" },
+                          "configuration": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "repository": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{32}$",
+                                  "minLength": 32,
+                                  "maxLength": 32
+                                },
+                                "upstream": { "type": "string" },
+                                "insecure_loopback": { "type": "boolean" },
+                                "token_environment": { "type": "string" },
+                                "ca_certificate": {
+                                  "type": ["string", "null"]
+                                },
+                                "limits": {
+                                  "type": "object",
+                                  "properties": {
+                                    "max_batch_origins": {
+                                      "type": "integer",
+                                      "format": "uint",
+                                      "minimum": 0
+                                    },
+                                    "max_closure_entries": {
+                                      "type": "integer",
+                                      "format": "uint",
+                                      "minimum": 0
+                                    },
+                                    "max_objects_per_step": {
+                                      "type": "integer",
+                                      "format": "uint",
+                                      "minimum": 0
+                                    },
+                                    "max_bytes_per_step": {
+                                      "type": "integer",
+                                      "format": "uint64",
+                                      "minimum": 0
+                                    },
+                                    "max_native_object_bytes": {
+                                      "type": "integer",
+                                      "format": "uint64",
+                                      "minimum": 0
+                                    },
+                                    "poll_millis": {
+                                      "type": "integer",
+                                      "format": "uint64",
+                                      "minimum": 0
+                                    },
+                                    "retry_initial_millis": {
+                                      "type": "integer",
+                                      "format": "uint64",
+                                      "minimum": 0
+                                    },
+                                    "retry_max_seconds": {
+                                      "type": "integer",
+                                      "format": "uint64",
+                                      "minimum": 0
+                                    },
+                                    "circuit_failures": {
+                                      "type": "integer",
+                                      "format": "uint",
+                                      "minimum": 0
+                                    },
+                                    "circuit_cooldown_seconds": {
+                                      "type": "integer",
+                                      "format": "uint64",
+                                      "minimum": 0
+                                    },
+                                    "timeout_seconds": {
+                                      "type": "integer",
+                                      "format": "uint64",
+                                      "minimum": 0
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "max_batch_origins",
+                                    "max_closure_entries",
+                                    "max_objects_per_step",
+                                    "max_bytes_per_step",
+                                    "max_native_object_bytes",
+                                    "poll_millis",
+                                    "retry_initial_millis",
+                                    "retry_max_seconds",
+                                    "circuit_failures",
+                                    "circuit_cooldown_seconds",
+                                    "timeout_seconds"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "repository",
+                                "upstream",
+                                "insecure_loopback",
+                                "token_environment",
+                                "limits"
+                              ]
+                            }
+                          }
+                        },
+                        "required": ["section", "configuration"],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "required": ["version", "expected_revision", "update"]
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -30877,6 +31409,7 @@
           "local_sync_management": { "type": ["boolean", "null"] },
           "local_storage_management": { "type": ["boolean", "null"] },
           "local_capture_management": { "type": ["boolean", "null"] },
+          "local_settings_management": { "type": ["boolean", "null"] },
           "typed_mutations": { "type": "array", "items": { "type": "string" } },
           "mutation_request_bytes": {
             "type": "integer",
@@ -31203,7 +31736,53 @@
             "uniqueItems": true,
             "items": { "type": "string" }
           },
-          "index_bytes": { "type": "integer", "format": "uint64", "minimum": 0 }
+          "index_bytes": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "poll_millis": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0,
+            "default": 1000
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0,
+            "default": 60
+          },
+          "snapshot_every": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0,
+            "default": 32
+          },
+          "max_text_bytes": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0,
+            "default": 1048576
+          },
+          "max_files": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0,
+            "default": 10000
+          },
+          "max_work": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0,
+            "default": 1000000
+          },
+          "max_output_bytes": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0,
+            "default": 67108864
+          }
         },
         "required": [
           "enabled",
@@ -31211,7 +31790,14 @@
           "scopes",
           "include_prefixes",
           "exclude_prefixes",
-          "index_bytes"
+          "index_bytes",
+          "poll_millis",
+          "timeout_seconds",
+          "snapshot_every",
+          "max_text_bytes",
+          "max_files",
+          "max_work",
+          "max_output_bytes"
         ]
       },
       "SearchScope": {
@@ -40291,6 +40877,201 @@
           "progress": { "$ref": "#/components/schemas/CaptureImportProgress" }
         },
         "required": ["version", "request_id", "receipt", "progress"]
+      },
+      "LocalServerSettings": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "revision": { "type": "string" },
+          "desired": { "$ref": "#/components/schemas/ServerConfiguration" },
+          "effective": { "$ref": "#/components/schemas/ServerConfiguration" },
+          "restart_required": { "type": "boolean" },
+          "sync_defaults": { "$ref": "#/components/schemas/SyncLimits" },
+          "inventory": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ConfiguredValue" }
+          }
+        },
+        "required": [
+          "version",
+          "revision",
+          "desired",
+          "effective",
+          "restart_required",
+          "sync_defaults",
+          "inventory"
+        ]
+      },
+      "ServerConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "service": { "$ref": "#/components/schemas/ServiceConfiguration" },
+          "protection": {
+            "$ref": "#/components/schemas/ProtectionConfiguration"
+          },
+          "sync": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SyncConfiguration" }
+          }
+        },
+        "required": ["service", "protection", "sync"]
+      },
+      "ServiceConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "concurrent_requests": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
+          "request_seconds": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "max_blob_bytes": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "inventory_nodes": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "concurrent_requests",
+          "request_seconds",
+          "max_blob_bytes",
+          "inventory_nodes"
+        ]
+      },
+      "ProtectionConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "bookmarks": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string" }
+          },
+          "commits": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/components/schemas/CommitId" }
+          }
+        },
+        "required": ["bookmarks", "commits"]
+      },
+      "SyncConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "repository": { "$ref": "#/components/schemas/RepositoryId" },
+          "upstream": { "type": "string" },
+          "insecure_loopback": { "type": "boolean" },
+          "token_environment": { "type": "string" },
+          "ca_certificate": { "type": ["string", "null"] },
+          "limits": { "$ref": "#/components/schemas/SyncLimits" }
+        },
+        "required": [
+          "repository",
+          "upstream",
+          "insecure_loopback",
+          "token_environment",
+          "ca_certificate",
+          "limits"
+        ]
+      },
+      "SyncLimits": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "max_batch_origins": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
+          "max_closure_entries": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
+          "max_objects_per_step": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
+          "max_bytes_per_step": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "max_native_object_bytes": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "poll_millis": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "retry_initial_millis": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "retry_max_seconds": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "circuit_failures": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
+          "circuit_cooldown_seconds": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "max_batch_origins",
+          "max_closure_entries",
+          "max_objects_per_step",
+          "max_bytes_per_step",
+          "max_native_object_bytes",
+          "poll_millis",
+          "retry_initial_millis",
+          "retry_max_seconds",
+          "circuit_failures",
+          "circuit_cooldown_seconds",
+          "timeout_seconds"
+        ]
+      },
+      "ConfiguredValue": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "section": { "type": "string" },
+          "name": { "type": "string" },
+          "saved": { "type": "string" },
+          "effective": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "required": ["section", "name", "saved", "effective", "reason"]
       }
     }
   }

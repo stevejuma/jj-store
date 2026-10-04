@@ -7,6 +7,7 @@
   import { emptyRoute } from "../../controller/global-search-presentation.js";
   import { settingsNavigationReason } from "./settings-navigation.js";
   import type { StoreController } from "../../controller/contracts.js";
+  import StoreConfigurationEditor from "./StoreConfigurationEditor.svelte";
   import StoreWorkspaceSettings from "./StoreWorkspaceSettings.svelte";
   import StoreGraphIndexSettings from "./StoreGraphIndexSettings.svelte";
   let {
@@ -72,19 +73,24 @@
 <StoreSettingsPage
   section="repository"
   bind:value={active}
-  onRefresh={active === "folders" &&
-  view.repository.profile !== "git_sha1_jj045" &&
-  capabilities?.local_workspace_links
-    ? controller.actions.refreshWorkspaceLinks
-    : undefined}
+  onRefresh={active === "protection"
+    ? controller.configuration?.observe
+    : active === "folders" &&
+        view.repository.profile !== "git_sha1_jj045" &&
+        capabilities?.local_workspace_links
+      ? controller.actions.refreshWorkspaceLinks
+      : undefined}
   refreshLabel="Refresh folders"
-  refreshDisabled={settings.workspaceLinking ||
-    settings.workspacePicking ||
-    ["loading", "refreshing"].includes(settings.workspaceLinksState)}
+  refreshDisabled={active === "protection"
+    ? (controller.configuration?.state.saving ?? false)
+    : settings.workspaceLinking ||
+      settings.workspacePicking ||
+      ["loading", "refreshing"].includes(settings.workspaceLinksState)}
   tabs={[
     { value: "general", label: "General" },
     { value: "folders", label: "Local folders" },
     { value: "advanced", label: "Advanced" },
+    { value: "protection", label: "Protection" },
   ]}
 >
   {#if navigationError}<Alert.Root variant="destructive"
@@ -271,4 +277,10 @@
         </section>{/if}
     {/if}
   </Tabs.Content>
+  <Tabs.Content value="protection"
+    ><StoreConfigurationEditor
+      management={controller.configuration}
+      section="protection"
+    /></Tabs.Content
+  >
 </StoreSettingsPage>

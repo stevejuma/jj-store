@@ -101,3 +101,22 @@
     await expect(c.queryByRole("button", { name: "Save settings" })).toBeNull();
   }}
 />
+
+<Story
+  name="Advanced worker limits"
+  args={{ section: "advanced" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const polling = c.getByRole("spinbutton", {
+      name: "Polling interval (ms)",
+    });
+    await userEvent.clear(polling);
+    await userEvent.type(polling, "2500");
+    await userEvent.click(c.getByRole("button", { name: "Save settings" }));
+    await expect(c.getByText(/Saved changes need applying/)).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: "Apply saved settings" }),
+    );
+    await expect(c.getByText(/Matches saved settings/)).toBeVisible();
+  }}
+/>

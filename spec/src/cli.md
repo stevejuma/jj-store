@@ -1476,6 +1476,18 @@ Codex home defaults and explicit configured overrides; changing configuration
 requires backend restart. Count-only coverage is insufficient for directory
 configuration inspection.
 
+### App-managed operational configuration
+
+JST-CLI-005 format-2 operational settings may be edited through the current
+LocalTrusted Admin Settings API: service limits, installation-wide protection
+and repository replication configuration, plus the existing Search and Agents
+editors. Shared-file conditional writes preserve unrelated values. Operational
+saves apply on next startup without storage migration, credential provisioning,
+peer contact, repository publication or implicit restart. Identity/access,
+listener/TLS, bundle paths and authority storage remain launch-managed read-only
+inventory; backup execution remains deferred. Search's advanced polling, timeout
+and snapshot interval participate in its explicit Apply lifecycle.
+
 ### App-managed capture configuration
 
 The local desktop and browser configuration editor saves only typed
@@ -1491,3 +1503,24 @@ loopback port, UI mode and development binary overrides are reapplied. A
 missing, linked or oversized retained configuration fails before stopping the
 backend; startup MUST NOT silently restore defaults. Switching to another
 configuration or fixture remains an explicit development mode selection.
+
+### Settings configuration coverage
+
+| Format-2 fields                                                                                                                                        | Settings location                                 | Editing policy                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `limits.*`                                                                                                                                             | Local service / Limits                            | Conditional save; next startup                                                |
+| `protection.bookmarks`, `protection.commits`                                                                                                           | Repository / Protection                           | Installation-wide; next startup                                               |
+| `replication[].repository`, `upstream`, `insecure_loopback`, `token_environment`, `ca_certificate`, `limits.*`                                         | Sync / Configuration                              | Selected native repository; credential name only; next startup                |
+| `search[].enabled`, `index_bytes`, `source.index_source`, `source.scopes`, `source.include_prefixes`, `source.exclude_prefixes`                        | Search / Configuration and File scopes            | Conditional save; explicit Apply                                              |
+| `search[].poll_millis`, `timeout_seconds`, `snapshot_every`, `source.max_text_bytes`, `source.max_files`, `source.max_work`, `source.max_output_bytes` | Search / Advanced                                 | Conditional save; explicit Apply                                              |
+| `search[].repository`, `token_environment`                                                                                                             | Settings repository picker / local access profile | Repository-bound; LocalTrusted forbids worker token references                |
+| `agent_capture.*`                                                                                                                                      | Agents / Configuration                            | Existing qualified editor; next startup                                       |
+| `format`, `state_dir`, `operator_policy`, `access.*`                                                                                                   | Local service / Launch                            | Read-only setup identity/access; no migration                                 |
+| `bind`, `public_url`, `insecure_loopback`, `tls.*`, `web_root`, `development_browser_annotations`                                                      | Local service / Launch                            | Read-only managed launch/lifecycle fields                                     |
+| `storage.*`                                                                                                                                            | Storage / Configuration                           | Read-only authority location and credential references; migration unqualified |
+| `backup[]`                                                                                                                                             | Storage / Configuration                           | Read-only; execution deferred                                                 |
+
+Credential environment/OS names and private-file paths in this inventory are
+references only. The Settings API neither reads their credential contents nor
+accepts literal secret values. Search source field omissions use established
+extraction defaults; current clients submit the complete typed configuration.

@@ -15,7 +15,7 @@
   }: {
     supported?: boolean;
     fail?: boolean;
-    section?: "configuration" | "scopes";
+    section?: "configuration" | "scopes" | "advanced";
   } = $props();
   let value = searchSettingsValue();
   let settings = $state<SearchSettings>({

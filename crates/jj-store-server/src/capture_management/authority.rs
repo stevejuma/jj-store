@@ -3,7 +3,7 @@ use crate::config::{Access, Config};
 use jj_store_service::auth::Permission;
 use std::path::{Path, PathBuf};
 
-pub(super) struct Authority {
+pub(crate) struct Authority {
     path: PathBuf,
     identity: crate::installation::Identity,
     actor: PrincipalId,
@@ -61,7 +61,7 @@ impl Authority {
             storage: serde_json::to_value(&config.storage).map_err(|_| Error::Unavailable)?,
         })
     }
-    pub(super) fn configuration(&self, actor: PrincipalId) -> Result<Config, Error> {
+    pub(crate) fn configuration(&self, actor: PrincipalId) -> Result<Config, Error> {
         if actor != self.actor {
             return Err(Error::Denied);
         }

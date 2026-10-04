@@ -1,3 +1,4 @@
+import { searchAdvancedDefaults } from "../../src/lib/controller/search-advanced.js";
 import { test, expect, vi } from "vitest";
 import { createProductionStoreState } from "../../src/lib/controller/production-store-state.svelte.js";
 import { createProductionSearchSettings } from "../../src/lib/controller/production-search-settings.js";
@@ -11,6 +12,7 @@ import {
 import { Client } from "../../src/lib/api/client.js";
 import type { StoreDataSource } from "../../src/lib/controller/native-data-source.js";
 const configuration: SearchConfiguration = {
+  ...searchAdvancedDefaults,
   enabled: true,
   index_source: false,
   scopes: { main: { kind: "bookmark", name: "main" } },
@@ -173,4 +175,38 @@ test("invalid search drafts stay inline across refresh and clear on cancellation
   expect(f.data.searchSettings.draft?.budget).toBe("2049");
   f.settings.cancelSearchDraft();
   expect(f.data.searchSettings.validation).toBe("");
+});
+
+test("advanced Search limits roundtrip and reject invalid worker bounds", () => {
+  const draft = searchDraft({
+    ...configuration,
+    poll_millis: 25,
+    timeout_seconds: 45,
+    snapshot_every: 0,
+    max_text_bytes: 1000,
+    max_files: 50,
+    max_work: 10000,
+    max_output_bytes: 1048576,
+  });
+  expect(searchConfiguration(draft)).toMatchObject({
+    poll_millis: 25,
+    timeout_seconds: 45,
+    snapshot_every: 0,
+    max_text_bytes: 1000,
+    max_files: 50,
+    max_work: 10000,
+    max_output_bytes: 1048576,
+  });
+  for (const patch of [
+    { poll_millis: "0" },
+    { timeout_seconds: "301" },
+    { snapshot_every: "-1" },
+    { max_text_bytes: "1048577" },
+    { max_files: "10001" },
+    { max_work: "1000001" },
+    { max_output_bytes: "0" },
+  ])
+    expect(() => searchConfiguration({ ...draft, ...patch })).toThrow(
+      /whole number/,
+    );
 });

@@ -29,13 +29,14 @@
   tabs={[
     { value: "configuration", label: "Configuration" },
     { value: "scopes", label: "File scopes" },
+    { value: "advanced", label: "Advanced" },
     { value: "health", label: "Health" },
   ]}
 >
-  {#each ["configuration", "scopes"] as section}
+  {#each ["configuration", "scopes", "advanced"] as section}
     <Tabs.Content value={section}
       >{#if active === section}<StoreSearchConfiguration
-          section={section as "configuration" | "scopes"}
+          section={section as "configuration" | "scopes" | "advanced"}
           settings={controller.state.settings.searchSettings}
           supported={controller.state.settings.capabilities
             ?.local_search_management === true}

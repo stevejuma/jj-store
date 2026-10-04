@@ -49,6 +49,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   storageReady: boolean;
   captureSupported: boolean;
+  settingsSupported: boolean;
   backups: Model<"BackupStatus">[];
   heads: string[];
   repositories: StoreRepositorySummary[];
@@ -150,6 +151,7 @@ export function createProductionStoreState(): ProductionStoreState {
     accessMode: "bootstrapping",
     storageReady: false,
     captureSupported: false,
+    settingsSupported: false,
     backups: [],
     heads: [],
     repositories: [],

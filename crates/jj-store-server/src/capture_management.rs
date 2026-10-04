@@ -9,7 +9,7 @@ use std::{
     path::Path,
     sync::{Arc, OnceLock},
 };
-mod authority;
+pub(crate) mod authority;
 mod import_dispatch;
 mod import_policy;
 mod import_progress;

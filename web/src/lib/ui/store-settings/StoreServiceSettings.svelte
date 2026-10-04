@@ -1,34 +1,66 @@
 <script lang="ts">
+  import * as Tabs from "@lapismd/design-core/shadcn/tabs";
+  import StoreSettingsPage from "./StoreSettingsPage.svelte";
+  import StoreConfigurationEditor from "./StoreConfigurationEditor.svelte";
+  import StoreDeploymentConfiguration from "./StoreDeploymentConfiguration.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreLocalFolders from "./StoreLocalFolders.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
-  const state = $derived(controller.state);
+  let active = $state("overview");
+  const view = $derived(controller.state);
 </script>
 
-<section class="store-settings__section" aria-labelledby="service-status">
-  <header><h2 id="service-status">Service status</h2></header>
-  <dl class="store-settings__rows">
-    <StoreReadOnlyRow
-      label="Access mode"
-      value={state.accessMode === "local_trusted"
-        ? "Local trusted"
-        : "Repository token"}
-    />
-    <StoreReadOnlyRow
-      label="Authoritative storage"
-      tone={state.storageReady ? "ready" : "error"}
-      value={state.storageReady ? "Ready" : "Unavailable"}
-    />
-    <StoreReadOnlyRow label="HTTP connection" value={state.status.connection} />
-    <StoreReadOnlyRow label="Live events" value={state.status.live} />
-    <StoreReadOnlyRow
-      label="Live updates"
-      value={state.status.refreshAvailable ? "Updating…" : "Current"}
-    />
-  </dl>
-</section>
+<StoreSettingsPage
+  section="service"
+  bind:value={active}
+  tabs={[
+    { value: "overview", label: "Overview" },
+    { value: "limits", label: "Limits" },
+    { value: "launch", label: "Launch" },
+  ]}
+  onRefresh={controller.configuration?.observe}
+>
+  <Tabs.Content value="overview">
+    <section class="store-settings__section" aria-labelledby="service-status">
+      <header><h2 id="service-status">Service status</h2></header>
+      <dl class="store-settings__rows">
+        <StoreReadOnlyRow
+          label="Access mode"
+          value={view.accessMode === "local_trusted"
+            ? "Local trusted"
+            : "Repository token"}
+        />
+        <StoreReadOnlyRow
+          label="Authoritative storage"
+          tone={view.storageReady ? "ready" : "error"}
+          value={view.storageReady ? "Ready" : "Unavailable"}
+        />
+        <StoreReadOnlyRow
+          label="HTTP connection"
+          value={view.status.connection}
+        />
+        <StoreReadOnlyRow label="Live events" value={view.status.live} />
+        <StoreReadOnlyRow
+          label="Live updates"
+          value={view.status.refreshAvailable ? "Updating…" : "Current"}
+        />
+      </dl>
+    </section>
 
-{#if state.accessMode === "local_trusted"}<StoreLocalFolders
-    {controller}
-  />{/if}
+    {#if view.accessMode === "local_trusted"}<StoreLocalFolders
+        {controller}
+      />{/if}
+  </Tabs.Content><Tabs.Content value="limits"
+    ><StoreConfigurationEditor
+      management={controller.configuration}
+      section="service"
+    /></Tabs.Content
+  >
+  <Tabs.Content value="launch"
+    ><StoreDeploymentConfiguration
+      management={controller.configuration}
+      section="service"
+    /></Tabs.Content
+  ></StoreSettingsPage
+>

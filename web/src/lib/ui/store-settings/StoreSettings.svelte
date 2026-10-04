@@ -11,6 +11,8 @@
   import StoreAgentSettings from "./StoreAgentSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
   import type { StoreSettingsSection } from "./model.js";
+  import StoreConfigurationEditor from "./StoreConfigurationEditor.svelte";
+  import StoreDeploymentConfiguration from "./StoreDeploymentConfiguration.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
 
   let {
@@ -23,7 +25,9 @@
     onClose?: () => void;
   } = $props();
   onMount(() => {
+    void controller.configuration?.observe();
     const timer = setInterval(() => {
+      if (!document.hidden) void controller.configuration?.observe();
       if (
         !document.hidden &&
         section !== "appearance" &&
@@ -43,9 +47,7 @@
         ><StoreAppearance /></StoreSettingsPage
       >
     {:else if section === "service"}
-      <StoreSettingsPage section="service"
-        ><StoreServiceSettings {controller} /></StoreSettingsPage
-      >
+      <StoreServiceSettings {controller} />
     {:else if section === "agents"}
       <StoreAgentSettings
         management={controller.capture}
@@ -65,8 +67,14 @@
         )}
         onRefresh={controller.actions.refreshStorage}
         onStart={controller.actions.startStorage}
+        onRefreshConfiguration={controller.configuration?.observe}
+        configurationBusy={controller.configuration?.state.saving ?? false}
         onRetry={controller.actions.retryStorage}
-      />
+        >{#snippet configuration()}<StoreDeploymentConfiguration
+            management={controller.configuration}
+            section="storage"
+          />{/snippet}</StoreStorageSettings
+      >
     {:else if section === "sync"}
       <StoreSyncSettings
         settings={controller.state.settings.syncSettings}
@@ -74,10 +82,20 @@
           controller.state.settings.capabilities?.local_sync_management,
         )}
         onRefresh={controller.actions.refreshSyncSettings}
+        onRefreshConfiguration={controller.configuration?.observe}
+        configurationBusy={controller.configuration?.state.saving ?? false}
         onControl={controller.actions.controlSync}
         onWait={controller.actions.waitForSync}
         onStopWait={controller.actions.stopSyncWait}
-        >{#snippet reconciliation()}<StoreSyncReconciliation
+        >{#snippet configuration()}<StoreConfigurationEditor
+            management={controller.configuration}
+            section="sync"
+            repository={controller.state.repository.profile === "git_sha1_jj045"
+              ? ""
+              : controller.state.repository.id}
+            repositoryName={controller.state.repository.name}
+          />{/snippet}
+        {#snippet reconciliation()}<StoreSyncReconciliation
             {controller}
           />{/snippet}</StoreSyncSettings
       >

@@ -32,6 +32,7 @@ mod registry_persistence;
 mod replication;
 pub mod search;
 mod search_config;
+pub mod server_settings;
 pub mod storage;
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

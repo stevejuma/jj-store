@@ -8,7 +8,7 @@ import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
 
 import { createProductionRepositoryThreadNavigation } from "./repository-thread-navigation.svelte.js";
-import { createProductionCaptureManagement } from "./production-capture-management.js";
+import { createLocalConfiguration } from "./production-local-configuration.js";
 import type { StoreController } from "./contracts.js";
 
 import type { StoreDataSource } from "./native-data-source.js";
@@ -36,7 +36,7 @@ export function createProductionStoreController(
 ): StoreController {
   const history = createStoreRouteHistory();
   const data = createProductionStoreState();
-  const capture = createProductionCaptureManagement(data, options.fetcher);
+  const local = createLocalConfiguration(data, options.fetcher);
   let source: StoreDataSource | null = null,
     sessionToken: string | null = null;
   let session = 0;
@@ -250,7 +250,7 @@ export function createProductionStoreController(
     connectRepository,
     disconnect: () => disconnect(),
     destroy: () => {
-      capture.destroy();
+      local.destroy();
       destroyProductionStoreLifecycle(lifecycle, disconnect, history);
     },
     refresh,
@@ -300,7 +300,7 @@ export function createProductionStoreController(
       now: options.now,
       globalSearch,
       referenceSearch,
-      capture,
+      ...local,
       actions: { ...actions, openThreads, openRoute },
     },
     automatic.pause,

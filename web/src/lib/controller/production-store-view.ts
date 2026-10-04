@@ -206,11 +206,13 @@ export function productionControllerSurface(
     referenceSearch?: StoreController["referenceSearch"];
     historyQuery?: StoreController["historyQuery"];
     capture?: StoreController["capture"];
+    configuration?: StoreController["configuration"];
   },
   pause?: StoreController["actions"]["setRefreshPaused"],
 ): StoreController {
   return {
     capture: options.capture,
+    configuration: options.configuration,
     get threads() {
       return options.threads.available() ? options.threads.threads : undefined;
     },

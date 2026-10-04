@@ -429,6 +429,7 @@ pub fn openapi() -> Value {
     routes::document(&mut document);
     crate::local_browser::document(&mut document);
     crate::capture_management::document(&mut document);
+    crate::server_settings::document(&mut document);
     document.finish()
 }
 

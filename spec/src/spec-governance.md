@@ -894,3 +894,15 @@ actual saved/effective backend restart in the preserved isolated preview. This
 proves saved settings are activated without replacing installation identity or
 resetting capture history; it does not qualify the unrelated full HMR release or
 native desktop lifecycle.
+
+## Complete supported Settings configuration
+
+Installation operational editing registers the exact server-package
+`server_settings::http_settings_contracts_are_actor_free_conditional_and_local_admin_only`
+response fixture through `JJ_STORE_SETTINGS_CONTRACT_CAPTURE`. The new route and
+Search schema fields share the registered inventory, so the complete HTTP/SSE
+capture lane and generated-client checks are required. Focused persistence,
+current authority, Search Apply/restart and Settings interaction/accessibility
+lanes remain separate from real-storage migration, native desktop packaging and
+full milestone qualification. No storage relocation, access transition, launch
+reconfiguration or backup execution is introduced by read-only inventory.

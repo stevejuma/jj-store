@@ -17,6 +17,7 @@ mod review_mutations;
 mod routes;
 mod search;
 mod search_management;
+mod server_settings;
 mod storage_management;
 mod sync_management;
 mod work;
@@ -104,6 +105,7 @@ pub struct Config {
     pub local_search: Option<Arc<dyn jj_store_service::search_management::SearchManager>>,
     pub local_storage: Option<Arc<dyn jj_store_service::storage_management::StorageManager>>,
     pub local_sync: Option<Arc<dyn jj_store_service::sync_management::SyncManager>>,
+    pub local_settings: Option<Arc<dyn jj_store_service::server_settings::ServerSettingsManager>>,
     pub local_capture: Option<Arc<dyn jj_store_service::capture_management::CaptureManager>>,
     pub local_workspaces: Option<Arc<dyn jj_store_service::local_management::WorkspaceManager>>,
     pub local_folder_picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
@@ -134,6 +136,7 @@ impl Default for Config {
             local_storage: None,
             local_sync: None,
             local_capture: None,
+            local_settings: None,
             local_search: None,
             local_folder_picker: None,
             storage_ready: true,
@@ -322,6 +325,7 @@ impl HttpApi {
             routes::router()
                 .merge(local_browser::router())
                 .merge(capture_management::router())
+                .merge(server_settings::router())
                 .with_state(self.0.clone())
                 .layer(middleware::from_fn_with_state(self.0.clone(), admit)),
         )

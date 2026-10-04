@@ -39,6 +39,12 @@ never installs another writer's manifest as local authority.
 
 ## Requirements
 
+LocalTrusted Admin Settings may conditionally persist explicit replication
+upstreams, credential environment names, CA paths and all validated worker
+budgets. These installation configuration changes apply only at the next server
+startup. Saving never contacts an upstream, reads a credential value, hydrates a
+repository, alters peer checkpoints or lifts the WorkStore origin freeze.
+
 | ID           | Requirement                                                                                                                                                                                                                                                                                               |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | JST-REPL-001 | After verified hydration, every ordinary code, agent and review read or mutation MUST use complete local durable storage and MUST perform no upstream network I/O; local success MUST NOT be described as remotely backed up before acknowledgement.                                                      |

@@ -11,6 +11,8 @@ mod http_admission;
 mod imports;
 #[path = "capture_management/rescan.rs"]
 mod rescan;
+#[path = "capture_management/server_settings.rs"]
+mod server_settings;
 #[path = "capture_management/settings.rs"]
 mod settings;
 #[path = "capture_source/fixture.rs"]

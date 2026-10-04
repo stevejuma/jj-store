@@ -171,6 +171,7 @@ export interface StoreControllerState {
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
   readonly historyQuery?: import("./history-query-types.js").HistoryQueryController;
+  readonly configuration?: import("./server-settings.svelte.js").ServerSettingsManagement;
   readonly capture?: import("./capture-types.js").CaptureManagement;
   readonly referenceSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly globalSearch?: import("./global-search-types.js").GlobalSearchController;

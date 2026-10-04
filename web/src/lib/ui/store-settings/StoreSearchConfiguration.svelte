@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSearchAdvanced from "./StoreSearchAdvanced.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import SearchXIcon from "@lucide/svelte/icons/search-x";
@@ -30,7 +31,7 @@
   }: {
     settings: SearchSettings;
     supported: boolean;
-    section?: "configuration" | "scopes";
+    section?: "configuration" | "scopes" | "advanced";
     onDraft: (patch: Partial<SearchDraft>) => void;
     onCancel: () => void;
     onSave: () => Promise<void>;
@@ -53,7 +54,9 @@
       <h2 id="search-configuration">
         {section === "configuration"
           ? "Text-search configuration"
-          : "File search scopes"}
+          : section === "scopes"
+            ? "File search scopes"
+            : "Search worker limits"}
       </h2>
       <p>Save your settings, then apply them to this repository.</p>
     </div>
@@ -119,7 +122,7 @@
                     onCheckedChange={(enabled) => onDraft({ enabled })}
                   />
                 </Field.Field>
-              {:else}
+              {:else if section === "scopes"}
                 <Field.Field
                   orientation="horizontal"
                   class="store-settings__option-row"
@@ -172,6 +175,12 @@
                   </Field.Field>
                 {/each}
               {/if}
+              {#if section === "advanced"}<StoreSearchAdvanced
+                  draft={settings.draft}
+                  effective={settings.value?.effective}
+                  disabled={busy}
+                  {onDraft}
+                />{/if}
               {#if section === "configuration"}
                 <Field.Field
                   orientation="responsive"

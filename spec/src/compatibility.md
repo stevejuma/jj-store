@@ -740,3 +740,14 @@ import journal formats remain unchanged. Only qualified Codex profiles are
 editable. Existing configuration values outside agent_capture remain preserved
 by revision-conditional atomic replacement. Unsupported startup readers remain
 separately gated.
+
+## Installation operational settings contracts
+
+Additive version-1 local settings DTOs and `local_settings_management` advertise
+conditional service/protection/replication edits independently of capture
+runtime health. Configuration format 2, native storage, manifest/WAL and
+credential formats remain unchanged. Search DTOs include all existing
+worker/extraction limits; old omitted fields use their established defaults.
+Generated contracts and actual LocalTrusted HTTP acceptance cover strict
+actor-free input, saved versus effective snapshots, conflicts and current
+authority rejection.

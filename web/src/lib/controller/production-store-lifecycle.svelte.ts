@@ -118,6 +118,8 @@ export async function initializeProductionStore(options: {
     if (options.signal.aborted) return;
     options.data.accessMode = bootstrap.access_mode;
     options.data.storageReady = bootstrap.storage.ready;
+    options.data.settingsSupported =
+      bootstrap.capabilities.local_settings_management === true;
     options.data.captureSupported =
       bootstrap.capabilities.local_capture_management === true;
     options.data.backups = [...bootstrap.backups];

@@ -1,11 +1,15 @@
 import { Client, pretty, type Model } from "../api/client.js";
 import type { operations } from "../api/generated.js";
+import {
+  searchAdvancedFields,
+  type SearchAdvancedKey,
+} from "./search-advanced.js";
 import type { StoreLoadStatus } from "./contracts.js";
 export type SearchConfiguration = Model<"SearchConfiguration">;
 export type SearchAction = NonNullable<
   operations["control_search"]["requestBody"]
 >["content"]["application/json"]["action"];
-export interface SearchDraft {
+export interface SearchDraft extends Record<SearchAdvancedKey, string> {
   enabled: boolean;
   indexSource: boolean;
   bookmarks: string;
@@ -38,6 +42,12 @@ export function searchDraft(config: SearchConfiguration): SearchDraft {
       .map(([id, s]) => `${id}=${s.name}`)
       .join("\n");
   return {
+    ...(Object.fromEntries(
+      searchAdvancedFields.map((f) => [
+        f.key,
+        String(config[f.key] ?? f.default),
+      ]),
+    ) as Record<SearchAdvancedKey, string>),
     enabled: config.enabled,
     indexSource: config.index_source,
     bookmarks: scopes("bookmark"),
@@ -75,7 +85,18 @@ export function searchConfiguration(draft: SearchDraft): SearchConfiguration {
     throw new Error(
       "Index budget must be greater than zero and at most 2048 MiB.",
     );
+  const advanced = Object.fromEntries(
+    searchAdvancedFields.map((field) => {
+      const n = Number(draft[field.key]);
+      if (!Number.isSafeInteger(n) || n < field.min || n > field.max)
+        throw new Error(
+          `${field.label} must be a whole number from ${field.min} to ${field.max}.`,
+        );
+      return [field.key, n];
+    }),
+  ) as Record<SearchAdvancedKey, number>;
   return {
+    ...advanced,
     enabled: draft.enabled,
     index_source: draft.indexSource,
     scopes,

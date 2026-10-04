@@ -232,6 +232,23 @@ pub(super) async fn prepare(
                 })
             })
             .flatten(),
+            local_settings: if matches!(
+                config.access,
+                Access::LocalTrusted {
+                    permission: jj_store_service::auth::Permission::Admin,
+                    ..
+                }
+            ) {
+                config_path
+                    .map(|path| crate::server_settings::Manager::new(path, config, &identity))
+                    .transpose()?
+                    .map(|m| {
+                        Arc::new(m)
+                            as Arc<dyn jj_store_service::server_settings::ServerSettingsManager>
+                    })
+            } else {
+                None
+            },
             local_capture,
             local_storage,
             local_folder_picker: picker,

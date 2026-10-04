@@ -44,6 +44,7 @@ pub mod storage_management;
 pub mod sync_management;
 
 pub mod search_management;
+pub mod server_settings;
 
 pub mod content_search;
 

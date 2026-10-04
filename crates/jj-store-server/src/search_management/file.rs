@@ -49,6 +49,13 @@ pub fn configuration(entry: &Repository) -> SearchConfiguration {
         include_prefixes: entry.source.include_prefixes.clone(),
         exclude_prefixes: entry.source.exclude_prefixes.clone(),
         index_bytes: entry.index_bytes,
+        poll_millis: entry.poll_millis,
+        timeout_seconds: entry.timeout_seconds,
+        snapshot_every: entry.snapshot_every,
+        max_text_bytes: entry.source.max_text_bytes,
+        max_files: entry.source.max_files,
+        max_work: entry.source.max_work,
+        max_output_bytes: entry.source.max_output_bytes,
     }
 }
 pub fn update(
@@ -68,6 +75,13 @@ pub fn update(
     });
     entry.enabled = desired.enabled;
     entry.index_bytes = desired.index_bytes;
+    entry.poll_millis = desired.poll_millis;
+    entry.timeout_seconds = desired.timeout_seconds;
+    entry.snapshot_every = desired.snapshot_every;
+    entry.source.max_text_bytes = desired.max_text_bytes;
+    entry.source.max_files = desired.max_files;
+    entry.source.max_work = desired.max_work;
+    entry.source.max_output_bytes = desired.max_output_bytes;
     entry.source.index_source = desired.index_source;
     entry.source.include_prefixes = desired.include_prefixes.clone();
     entry.source.exclude_prefixes = desired.exclude_prefixes.clone();

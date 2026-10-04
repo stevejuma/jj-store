@@ -1,5 +1,10 @@
 # Typed mutations
 
+LocalTrusted Admin configuration editing may persist installation-wide protected
+bookmark names and full commit identities. These rules apply to every native
+repository hosted by the installation after the next startup; they are not a
+repository-local settings mutation and never rewrite code or durable receipts.
+
 Local portable agent review source inspection consumes an explicit committed
 companion pin and exact canonical AgentStore records. It validates the shared
 portable session/tool/content identities and selected byte digest, then rechecks

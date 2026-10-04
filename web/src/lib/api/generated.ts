@@ -1833,6 +1833,25 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/settings": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    get: operations["local_server_settings"];
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_server_save_settings"];
+    delete?: never;
+    options?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    head: operations["local_server_settings_head"];
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1924,6 +1943,7 @@ export interface components {
       local_sync_management?: boolean | null;
       local_storage_management?: boolean | null;
       local_capture_management?: boolean | null;
+      local_settings_management?: boolean | null;
       typed_mutations: string[];
       /** Format: uint */
       mutation_request_bytes: number;
@@ -2065,6 +2085,41 @@ export interface components {
       exclude_prefixes: string[];
       /** Format: uint64 */
       index_bytes: number;
+      /**
+       * Format: uint64
+       * @default 1000
+       */
+      poll_millis: number;
+      /**
+       * Format: uint64
+       * @default 60
+       */
+      timeout_seconds: number;
+      /**
+       * Format: uint64
+       * @default 32
+       */
+      snapshot_every: number;
+      /**
+       * Format: uint
+       * @default 1048576
+       */
+      max_text_bytes: number;
+      /**
+       * Format: uint
+       * @default 10000
+       */
+      max_files: number;
+      /**
+       * Format: uint
+       * @default 1000000
+       */
+      max_work: number;
+      /**
+       * Format: uint
+       * @default 67108864
+       */
+      max_output_bytes: number;
     };
     SearchScope:
       | {
@@ -5799,6 +5854,74 @@ export interface components {
       receipt: components["schemas"]["CaptureImportAcceptance"] | null;
       progress: components["schemas"]["CaptureImportProgress"];
     };
+    LocalServerSettings: {
+      /** Format: uint32 */
+      version: number;
+      revision: string;
+      desired: components["schemas"]["ServerConfiguration"];
+      effective: components["schemas"]["ServerConfiguration"];
+      restart_required: boolean;
+      sync_defaults: components["schemas"]["SyncLimits"];
+      inventory: components["schemas"]["ConfiguredValue"][];
+    };
+    ServerConfiguration: {
+      service: components["schemas"]["ServiceConfiguration"];
+      protection: components["schemas"]["ProtectionConfiguration"];
+      sync: components["schemas"]["SyncConfiguration"][];
+    };
+    ServiceConfiguration: {
+      /** Format: uint */
+      concurrent_requests: number;
+      /** Format: uint64 */
+      request_seconds: number;
+      /** Format: uint64 */
+      max_blob_bytes: number;
+      /** Format: uint */
+      inventory_nodes: number;
+    };
+    ProtectionConfiguration: {
+      bookmarks: string[];
+      commits: components["schemas"]["CommitId"][];
+    };
+    SyncConfiguration: {
+      repository: components["schemas"]["RepositoryId"];
+      upstream: string;
+      insecure_loopback: boolean;
+      token_environment: string;
+      ca_certificate: string | null;
+      limits: components["schemas"]["SyncLimits"];
+    };
+    SyncLimits: {
+      /** Format: uint */
+      max_batch_origins: number;
+      /** Format: uint */
+      max_closure_entries: number;
+      /** Format: uint */
+      max_objects_per_step: number;
+      /** Format: uint64 */
+      max_bytes_per_step: number;
+      /** Format: uint64 */
+      max_native_object_bytes: number;
+      /** Format: uint64 */
+      poll_millis: number;
+      /** Format: uint64 */
+      retry_initial_millis: number;
+      /** Format: uint64 */
+      retry_max_seconds: number;
+      /** Format: uint */
+      circuit_failures: number;
+      /** Format: uint64 */
+      circuit_cooldown_seconds: number;
+      /** Format: uint64 */
+      timeout_seconds: number;
+    };
+    ConfiguredValue: {
+      section: string;
+      name: string;
+      saved: string;
+      effective: string;
+      reason: string;
+    };
   };
   responses: never;
   parameters: never;
@@ -7031,6 +7154,41 @@ export interface operations {
             exclude_prefixes: string[];
             /** Format: uint64 */
             index_bytes: number;
+            /**
+             * Format: uint64
+             * @default 1000
+             */
+            poll_millis?: number;
+            /**
+             * Format: uint64
+             * @default 60
+             */
+            timeout_seconds?: number;
+            /**
+             * Format: uint64
+             * @default 32
+             */
+            snapshot_every?: number;
+            /**
+             * Format: uint
+             * @default 1048576
+             */
+            max_text_bytes?: number;
+            /**
+             * Format: uint
+             * @default 10000
+             */
+            max_files?: number;
+            /**
+             * Format: uint
+             * @default 1000000
+             */
+            max_work?: number;
+            /**
+             * Format: uint
+             * @default 67108864
+             */
+            max_output_bytes?: number;
           };
         };
       };
@@ -30258,6 +30416,430 @@ export interface operations {
       query: {
         request_id: string;
       };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  local_server_settings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalServerSettings"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_server_save_settings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          expected_revision: string;
+          update:
+            | {
+                /** @constant */
+                section: "service";
+                configuration: {
+                  /** Format: uint */
+                  concurrent_requests: number;
+                  /** Format: uint64 */
+                  request_seconds: number;
+                  /** Format: uint64 */
+                  max_blob_bytes: number;
+                  /** Format: uint */
+                  inventory_nodes: number;
+                };
+              }
+            | {
+                /** @constant */
+                section: "protection";
+                configuration: {
+                  bookmarks: string[];
+                  commits: string[];
+                };
+              }
+            | {
+                /** @constant */
+                section: "sync";
+                configuration: {
+                  repository: string;
+                  upstream: string;
+                  insecure_loopback: boolean;
+                  token_environment: string;
+                  ca_certificate?: string | null;
+                  limits: {
+                    /** Format: uint */
+                    max_batch_origins: number;
+                    /** Format: uint */
+                    max_closure_entries: number;
+                    /** Format: uint */
+                    max_objects_per_step: number;
+                    /** Format: uint64 */
+                    max_bytes_per_step: number;
+                    /** Format: uint64 */
+                    max_native_object_bytes: number;
+                    /** Format: uint64 */
+                    poll_millis: number;
+                    /** Format: uint64 */
+                    retry_initial_millis: number;
+                    /** Format: uint64 */
+                    retry_max_seconds: number;
+                    /** Format: uint */
+                    circuit_failures: number;
+                    /** Format: uint64 */
+                    circuit_cooldown_seconds: number;
+                    /** Format: uint64 */
+                    timeout_seconds: number;
+                  };
+                }[];
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalServerSettings"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_server_settings_head: {
+    parameters: {
+      query?: never;
       header?: never;
       path?: never;
       cookie?: never;

@@ -109,10 +109,19 @@ async fn local_search_save_apply_rebuild_disable_and_restart_preserve_authority_
         assert_eq!(code,StatusCode::OK,"{pinned}");let cursor=pinned["next_cursor"].as_str().unwrap();
         let before=f.session.snapshot().await.unwrap().manifest().clone();
         let status=manager.status(REPO).await.unwrap();let mut desired=status.desired.clone();desired.exclude_prefixes.insert("code.rs".into());
+        desired.poll_millis=25;desired.timeout_seconds=45;desired.snapshot_every=64;
+        desired.max_text_bytes=524288;desired.max_files=500;desired.max_work=500000;desired.max_output_bytes=33554432;
         let save=SaveSearchSettings{version:1,expected_revision:status.revision.clone(),configuration:desired.clone()};
         let saved=manager.save(REPO,save.clone()).await.unwrap();assert_ne!(saved.desired,saved.effective);
         assert_eq!(manager.save(REPO,save).await.unwrap_err(),jj_store_service::search_management::Error::Conflict);
         let updated=serde_json::to_value(config::Config::load(&path).unwrap()).unwrap();
+        assert_eq!(updated["search"][0]["poll_millis"],json!(25));
+        assert_eq!(updated["search"][0]["timeout_seconds"],json!(45));
+        assert_eq!(updated["search"][0]["snapshot_every"],json!(64));
+        assert_eq!(updated["search"][0]["source"]["max_text_bytes"],json!(524288));
+        assert_eq!(updated["search"][0]["source"]["max_files"],json!(500));
+        assert_eq!(updated["search"][0]["source"]["max_work"],json!(500000));
+        assert_eq!(updated["search"][0]["source"]["max_output_bytes"],json!(33554432));
         for key in ["storage","access","limits","protection"] {assert_eq!(original[key],updated[key]);}
         let accepted=manager.control(REPO,SearchCommand{version:1,expected_revision:saved.revision.clone(),action:SearchAction::Apply}).await.unwrap();assert_eq!(accepted.operation,SearchOperation::Applying);
         let active=settle(&manager).await;assert_eq!(active.operation,SearchOperation::Idle,"{:?}",active.error);assert_eq!(active.desired,active.effective);
