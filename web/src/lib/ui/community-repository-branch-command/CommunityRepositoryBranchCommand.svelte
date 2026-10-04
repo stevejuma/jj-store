@@ -10,8 +10,10 @@
   import type { Bookmark } from "../../projects/presentation.js";
   import type { RepositoryWorkingCopy } from "../../projects/repository-log.js";
   import CommunityRepositoryBranchEmpty from "./CommunityRepositoryBranchEmpty.svelte";
+  import type { ScrollAreaStrategy } from "@lapismd/design-core/shadcn/scroll-area";
   let {
     bookmarks,
+    scrollStrategy = "auto",
     workingCopies = [],
     selected = "",
     selectedCommit = null,
@@ -24,6 +26,7 @@
     onLoadMore,
   }: {
     bookmarks: readonly Bookmark[];
+    scrollStrategy?: ScrollAreaStrategy;
     workingCopies?: readonly RepositoryWorkingCopy[];
     selected?: string;
     selectedCommit?: string | null;
@@ -132,7 +135,7 @@
     placeholder="Search branches"
     aria-label="Search branches"
   />
-  <CommandView.List>
+  <CommandView.List {scrollStrategy}>
     {#if visible.length === 0}
       <CommunityRepositoryBranchEmpty {filter} {query} />
     {:else}

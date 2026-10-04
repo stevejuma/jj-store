@@ -3,6 +3,10 @@
     AppShell,
     type AppShellController,
   } from "@lapismd/design-core/shell";
+  import StoreStackWorkspacePicker from "../store-stack-workspace/StoreStackWorkspacePicker.svelte";
+  import StoreStackWorkspace from "../store-stack-workspace/StoreStackWorkspace.svelte";
+  import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
+  import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { Snippet } from "svelte";
   import type {
     StoreController,
@@ -22,6 +26,7 @@
   import StoreApplicationPlaceholder from "./StoreApplicationPlaceholder.svelte";
   let {
     controller,
+    stackWorkspace,
     shell,
     current,
     settingsOpen,
@@ -39,6 +44,7 @@
     children,
   }: {
     controller: StoreController;
+    stackWorkspace?: StackWorkspaceController;
     shell: AppShellController;
     current: StoreRoute;
     settingsOpen: boolean;
@@ -61,7 +67,8 @@
   <StoreTerminalWorkspace
     repository={current.repository}
     profile={controller.state.repository.profile ?? "native"}
-    enabled={!settingsOpen &&
+    enabled={current.page !== "stacks" &&
+      !settingsOpen &&
       !conflictOpen &&
       !(
         current.page === "projects" &&
@@ -94,7 +101,9 @@
           <CommunityApplicationMobileNavigation
             model={{ canNavigateBack, canNavigateForward, navigate }}
           />
-          {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
+          {#if current.page === "stacks" && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
+              controller={stackWorkspace}
+            />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
               {controller}
             />{:else if current.page === "threads"}<StoreThreadsBreadcrumb
               {controller}
@@ -118,7 +127,7 @@
           : undefined}
       >
         <div class="store-application__body-frame">
-          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current)) && current.page !== "threads"}
+          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current)) && current.page !== "threads" && current.page !== "stacks"}
             {#if !(current.page === "reviews" && current.reviewThreadId)}<StoreRepositoryTabs
                 page={current.page}
                 local={controller.state.repository.profile === "git_sha1_jj045"}
@@ -131,7 +140,19 @@
             <StoreRepositoryNotices {controller} />{/if}
           <div class="store-application__body-regions" data-page={current.page}>
             {#key current.repository + current.page}
-              {#if children}{@render children(
+              {#if current.page === "stacks"}
+                {#if stackWorkspace?.snapshot?.repository === current.repository}
+                  <StoreStackWorkspace
+                    controller={stackWorkspace}
+                    showPicker={false}
+                  />
+                {:else}
+                  <CommunityProjectsColumnAlert
+                    title="Local stack workspace unavailable"
+                    description="Stacks require a linked local repository and a workspace controller."
+                  />
+                {/if}
+              {:else if children}{@render children(
                   current.page,
                   current.repository,
                 )}{:else}<StoreApplicationPlaceholder

@@ -1,0 +1,61 @@
+format = 2
+bind = "127.0.0.1:7443"
+public_url = "http://127.0.0.1:7443/"
+insecure_loopback = true
+state_dir = "./state"
+operator_policy = "./operators.json"
+# Optional browser bundle built with pnpm web:build:
+# web_root = "./web/dist"
+# Shared deployments require both files and an https public_url:
+# [tls]
+# certificate = "./server.crt"
+# private_key = "./server.key"
+
+[access]
+mode = "authenticated"
+installation = "./installation.json"
+catalog = "./repositories.json"
+
+[storage]
+mode = "external-s3"
+endpoint = "http://127.0.0.1:9000/"
+bucket = "jj-store"
+region = "us-east-1"
+insecure_loopback = true
+
+[storage.credentials]
+source = "environment"
+access_key = "JJ_STORE_S3_ACCESS_KEY"
+secret_key = "JJ_STORE_S3_SECRET_KEY"
+session_token = "JJ_STORE_S3_SESSION_TOKEN"
+
+[limits]
+concurrent_requests = 8
+request_seconds = 30
+max_blob_bytes = 33554432
+inventory_nodes = 100000
+
+[protection]
+bookmarks = []
+commits = []
+
+# One independently writable upstream can be configured for each local repository.
+# Credentials are resolved only from process memory and are never written here.
+# [[replication]]
+# repository = "00000000000000000000000000000000"
+# upstream = "https://jj.example.test/"
+# token_environment = "JJ_STORE_REPLICATION_TOKEN_MAIN"
+# ca_certificate = "./upstream-ca.pem"
+
+# Automatic native transcript capture is opt-in for writable LocalTrusted access.
+# Worker composition and reader qualification are tracked under M17.2.
+# [agent_capture]
+# enabled = false
+# max_readers = 4
+# rescan_seconds = 30
+# max_sources = 1024
+# max_pending_bytes = 67108864
+# [[agent_capture.harnesses]]
+# profile = "codex-cli-jsonl-v1"
+# product_version = "0.156.1"
+# roots = ["./approved-transcripts"]

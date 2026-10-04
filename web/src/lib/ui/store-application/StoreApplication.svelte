@@ -17,6 +17,7 @@
     selectStoreNavigation,
     activeStoreNavigation,
   } from "./store-navigation.js";
+  import StoreStackWorkspacePicker from "../store-stack-workspace/StoreStackWorkspacePicker.svelte";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
   import StoreThreadsBreadcrumb from "../store-threads/StoreThreadsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
@@ -50,6 +51,7 @@
   } from "../navigation-storage.js";
   let {
     controller,
+    stackWorkspace,
     initiallyCollapsed = true,
     displayMode = "auto",
     layoutStorage,
@@ -166,7 +168,9 @@
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
-  {#snippet headerCenter()}{#if settingsOpen}{@render settingsRepository()}{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
+  {#snippet headerCenter()}{#if settingsOpen}{@render settingsRepository()}{:else if current.page === "stacks" && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
+        controller={stackWorkspace}
+      />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
         {controller}
       />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
         {controller}
@@ -195,6 +199,7 @@
         onClose={closeSettings}
       />{:else}<StoreApplicationNavigation
         {controller}
+        {stackWorkspace}
         bind:sectionOpen={layout.sections}
         bind:itemOpen={layout.items}
         activeItemId={activeNavigationItem}
@@ -216,6 +221,7 @@
   </AppShell.Sidebar>
   <StoreApplicationMain
     {controller}
+    {stackWorkspace}
     {shell}
     {current}
     {settingsOpen}

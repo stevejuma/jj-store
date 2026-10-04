@@ -1,3 +1,4 @@
+import GitMergeIcon from "@lucide/svelte/icons/git-merge";
 import BriefcasePlusIcon from "@lucide/svelte/icons/briefcase-plus";
 import GitBranchPlusIcon from "@lucide/svelte/icons/git-branch-plus";
 import ServerIcon from "@lucide/svelte/icons/server";
@@ -25,6 +26,7 @@ export function navigationItemIcon(
     return MessagesSquareIcon;
   if (item.kind === "projects" || item.kind === "project")
     return FolderKanbanIcon;
+  if (item.kind === "stacks") return GitMergeIcon;
   if (item.kind === "branches") return GitBranchIcon;
   if (item.kind === "log") return GitCommitIcon;
   if (item.kind === "oplog") return HistoryIcon;

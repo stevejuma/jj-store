@@ -284,3 +284,18 @@ test("repository Projects reload retains its repository destination and code pin
   expect(history.canBack).toBe(false);
   history.destroy();
 });
+
+test("Stacks round-trips as a separate application route", () => {
+  const navigation = fakeBrowser(`#/repos/${repository}/branches`);
+  const history = createStoreRouteHistory(navigation.browser);
+  history.page("stacks");
+  expect(history.route.page).toBe("stacks");
+  expect(navigation.pushed).toEqual([`#/repos/${repository}/stacks`]);
+  expect(storeRouteFromHash(navigation.pushed[0]!)).toMatchObject({
+    kind: "route",
+    route: { repository, page: "stacks" },
+  });
+  navigation.visit(`#/repos/${repository}/branches`);
+  expect(history.route.page).toBe("branches");
+  history.destroy();
+});

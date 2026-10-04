@@ -1,0 +1,147 @@
+/** Frontend-only boundary. An adapter owns repository execution and durability. */
+export type WorkspaceHunk = { id: string; label: string; patch: string };
+export type WorkspaceFile = { path: string; hunks: WorkspaceHunk[] };
+export type StackCommit = {
+  id: string;
+  changeId: string;
+  message: string;
+  author: string;
+  createdAt: number;
+  email: string;
+  immutable: boolean;
+  files: WorkspaceFile[];
+};
+export type StackHead = { name: string; commit: string };
+export type WorkspaceStack = {
+  id: string;
+  name: string;
+  base: string;
+  heads: StackHead[];
+  /** Oldest to newest, as in the Changeyard stack model. */
+  commits: StackCommit[];
+  conflicts: boolean;
+};
+export type NamedWorkspace = {
+  id: string;
+  name: string;
+  applied: string[];
+  unassigned: WorkspaceFile[];
+};
+export type WorkspaceConflict = {
+  path: string;
+  left: string;
+  base: string;
+  right: string;
+};
+export type WorkspaceSnapshot = {
+  repository: string;
+  /** Physical folder on this device; null means no local checkout link. */
+  folder: string | null;
+  profile: "native" | "git_sha1_jj045";
+  availability: "ready" | "unlinked" | "unavailable";
+  revision: number;
+  base: string;
+  active: string;
+  workspaces: NamedWorkspace[];
+  stacks: WorkspaceStack[];
+  conflicts: WorkspaceConflict[];
+  capabilities: WorkspaceCommand["kind"][];
+  canUndo: boolean;
+};
+export type WorkspaceSelection = {
+  /** A commit identity, or the active combination's unassigned edits. */
+  source: string | "unassigned";
+  path: string;
+  /** Omitted means the complete file. */
+  hunks?: string[];
+};
+/** One independent file view per originating canvas column. */
+export type WorkspaceOpenDiff = WorkspaceSelection & { origin: string };
+export type WorkspaceCommand =
+  | {
+      kind: "apply_stack" | "unapply_stack" | "delete_stack" | "rebase";
+      stack: string;
+    }
+  | { kind: "create_stack"; name: string; parent?: string }
+  | { kind: "create_workspace"; name: string }
+  | {
+      kind: "create_branch";
+      stack: string;
+      commit: string;
+      placement: "above" | "below";
+      name: string;
+    }
+  | { kind: "rename_branch"; stack: string; branch: string; name: string }
+  | { kind: "delete_branch"; stack: string; name: string }
+  | { kind: "squash_branch"; stack: string; name: string }
+  | {
+      kind: "add_empty_commit";
+      commit: string;
+      placement: "above" | "below";
+      message: string;
+    }
+  | { kind: "delete_commit"; commit: string }
+  | {
+      kind: "edit_commit";
+      commit: string;
+      message: string;
+      selections?: WorkspaceSelection[];
+    }
+  | { kind: "rename_stack"; stack: string; name: string }
+  | { kind: "switch_workspace" | "delete_workspace"; workspace: string }
+  | {
+      kind: "create_commit";
+      stack: string;
+      message: string;
+      selection?: WorkspaceSelection;
+      selections?: WorkspaceSelection[];
+    }
+  | { kind: "reword"; commit: string; message: string }
+  | { kind: "move_commit"; commit: string; stack: string }
+  | { kind: "reorder_commit"; commit: string; direction: "up" | "down" }
+  | { kind: "squash"; commit: string; target: string }
+  | {
+      kind: "split";
+      commit: string;
+      message: string;
+      selection: WorkspaceSelection;
+    }
+  | {
+      kind: "transfer";
+      selection: WorkspaceSelection;
+      selections?: WorkspaceSelection[];
+      target: string;
+    }
+  | { kind: "uncommit"; commit: string }
+  | { kind: "resolve_conflict"; path: string; content: string }
+  | { kind: "undo" };
+export type WorkspaceRequest = {
+  id: string;
+  repository: string;
+  revision: number;
+  command: WorkspaceCommand;
+};
+export type WorkspacePreview = {
+  request: WorkspaceRequest;
+  title: string;
+  summary: string;
+  conflicts: string[];
+};
+export type WorkspaceOutcome =
+  { status: "committed"; snapshot: WorkspaceSnapshot } | { status: "unknown" };
+export interface StackWorkspaceAdapter {
+  read(): Promise<WorkspaceSnapshot>;
+  preview(request: WorkspaceRequest): Promise<WorkspacePreview>;
+  apply(request: WorkspaceRequest): Promise<WorkspaceOutcome>;
+  status(requestId: string): Promise<WorkspaceOutcome>;
+}
+export class WorkspaceCommandError extends Error {
+  constructor(
+    readonly code: "stale" | "invalid" | "failed",
+    message: string,
+  ) {
+    super(message);
+  }
+}
+export const cloneWorkspace = <T>(value: T): T =>
+  JSON.parse(JSON.stringify(value)) as T;

@@ -1,0 +1,44 @@
+[workspace]
+exclude = ["desktop"]
+members = ["crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.98.1"
+license = "Apache-2.0"
+authors = ["LapisMD contributors"]
+
+[workspace.dependencies]
+jj-store-capture = { path = "crates/jj-store-capture" }
+jj-collab = { path = "crates/jj-collab" }
+jj-work = { path = "crates/jj-work" }
+jj-agent = { path = "crates/jj-agent" }
+jj-review = { path = "crates/jj-review" }
+jj-store-tantivy = { path = "crates/jj-store-tantivy" }
+jj-store-adapters = { path = "crates/jj-store-adapters" }
+schemars = "1.2.1"
+jj-store-model = { path = "crates/jj-store-model" }
+jj-store-object = { path = "crates/jj-store-object" }
+jj-store-wal = { path = "crates/jj-store-wal" }
+jj-store-replication = { path = "crates/jj-store-replication" }
+jj-store-service = { path = "crates/jj-store-service" }
+jj-store-rpc = { path = "crates/jj-store-rpc" }
+jj-store-jj = { path = "crates/jj-store-jj" }
+jj-store-server = { path = "crates/jj-store-server" }
+jj-store-http = { path = "crates/jj-store-http" }
+jj-lib = "=0.45.1"
+jj-cli = "=0.45.1"
+
+[profile.dev]
+debug = 0
+
+[profile.test]
+debug = 0
+
+[patch.crates-io]
+# Kingfisher v2.7.0 uses these additions from its pinned vendored Vectorscan
+# fork. Cargo patches are not inherited by Git library consumers, so select
+# that exact source explicitly rather than the incompatible crates.io build.
+vectorscan-rs = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431" }

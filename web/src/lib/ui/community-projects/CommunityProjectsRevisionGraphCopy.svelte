@@ -12,6 +12,8 @@
   let {
     row,
     members = [],
+    avatarSize = "small",
+    selected = false,
     now,
     href,
     onSelect,
@@ -19,6 +21,8 @@
   }: {
     row: RepositoryLogGraphRow;
     members?: readonly CommunityMemberModel[];
+    avatarSize?: "small" | "xsmall";
+    selected?: boolean;
     now?: number;
     href?: string | undefined;
     onSelect?: (() => void) | undefined;
@@ -36,14 +40,19 @@
     {members}
     email={row.revision.authorEmail}
     name={row.revision.author}
-    size="small"
+    size={avatarSize}
   />
   <span class="community-revision-graph-copy__body">
-    <CommunityProjectsRevisionGraphMessage
-      message={row.revision.message}
-      {href}
-      {onSelect}
-    />
+    <span class="community-revision-graph-copy__message">
+      {#if selected}<CommunityChip size="compact" variant="muted"
+          >Selected</CommunityChip
+        >{/if}
+      <CommunityProjectsRevisionGraphMessage
+        message={row.revision.message}
+        {href}
+        {onSelect}
+      /></span
+    >
     <span class="community-revision-graph-copy__meta">
       <CommunityRelativeTime timestamp={row.revision.createdAt} {now} />
     </span>
@@ -107,6 +116,13 @@
     flex: 1 1 auto;
     align-items: center;
     gap: 0.55rem;
+  }
+
+  .community-revision-graph-copy__message {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 0.35rem;
   }
 
   .community-revision-graph-copy__body {

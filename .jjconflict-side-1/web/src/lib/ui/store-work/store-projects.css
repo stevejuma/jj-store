@@ -1,0 +1,106 @@
+.store-projects {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: var(--foreground);
+  min-width: 0;
+  max-width: 100%;
+  font-size: var(--community-text-body);
+}
+.store-projects__scroll {
+  height: 100%;
+  min-height: 0;
+}
+.store-projects__filters {
+  margin: 0;
+  min-width: 0;
+}
+.community-projects__repository-row
+  .community-projects__row-meta.store-projects__repository-actions {
+  display: flex;
+  width: auto;
+  flex: none;
+}
+.store-projects .community-projects__repository-target > span {
+  flex-wrap: wrap;
+  row-gap: 0.2rem;
+}
+.store-projects .community-projects__repository-target > span > strong {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.store-projects select,
+.store-projects__rail select,
+.store-work__form select,
+.store-work__picker select {
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--input);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  max-width: 100%;
+}
+.store-projects__home {
+  margin-block: 0.5rem;
+  min-width: 0;
+}
+.store-projects__loading {
+  box-sizing: border-box;
+  padding: 1rem 1.5rem;
+  min-width: 0;
+}
+.store-projects__activity-scope,
+.store-projects__activity-notice {
+  margin: 0;
+  padding: 0.5rem 1.5rem;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+}
+.community-projects__task-detail .community-projects__activity,
+.community-projects__task-detail .store-projects__activity-scope {
+  padding-inline: 0;
+}
+.store-projects__rail {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.75rem;
+}
+.store-projects__rail p {
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  margin: 0.75rem 0 0.2rem;
+}
+.store-projects__rail button {
+  justify-content: flex-start;
+}
+.store-work__picker {
+  display: grid;
+  gap: 0.5rem;
+}
+.store-work__notice {
+  border: 1px solid var(--border);
+  padding: 0.75rem;
+  margin-block: 0.75rem;
+}
+.store-projects__tab-root {
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+.store-projects[data-agents-view],
+.store-projects[data-agents-view] > .store-projects__tab-root,
+.store-projects[data-agents-view] [data-ui-part="tabs-content"] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.store-projects[data-agents-view] .community-projects__tabs,
+.store-projects[data-agents-view] .community-projects__surface-header {
+  flex-shrink: 0;
+}

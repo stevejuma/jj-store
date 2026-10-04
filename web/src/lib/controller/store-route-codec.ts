@@ -21,6 +21,7 @@ const objectId = /^[0-9a-f]{128}$/u;
 const changeId = /^[0-9a-f]{32}$/u;
 const stableId = /^[0-9a-f]{32}$/u;
 const pages = new Set<StorePage>([
+  "stacks",
   "branches",
   "log",
   "oplog",

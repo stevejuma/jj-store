@@ -35,6 +35,7 @@ export function selectStoreNavigation(
     void controller.projects.openHub();
   else if (
     [
+      "stacks",
       "branches",
       "log",
       "oplog",
@@ -48,6 +49,7 @@ export function selectStoreNavigation(
 }
 
 export function activeStoreNavigation(route: StoreRoute) {
+  if (route.page === "stacks") return "stacks";
   if (route.page === "threads")
     return route.threadId
       ? `thread:${route.repository}:${route.threadId}`

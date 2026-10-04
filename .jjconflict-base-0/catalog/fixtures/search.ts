@@ -1,0 +1,47 @@
+import type { StoreSearchResult } from "../../web/src/lib/controller/contracts.js";
+import { IDS, NOW } from "./repository.js";
+
+export const searchResults: readonly StoreSearchResult[] = [
+  {
+    id: `commit:${IDS.left}`,
+    kind: "commit",
+    title: "Stream immutable native objects",
+    description: "Maya Chen · abcdefghijkl",
+    author: "Maya Chen",
+    timestamp: NOW - 360,
+    operationId: IDS.opLeft,
+    commitId: IDS.left,
+    changeId: "ab".repeat(16),
+    scope: null,
+    path: null,
+    hasConflict: false,
+  },
+  {
+    id: `operation:${IDS.opLeft}`,
+    kind: "operation",
+    title: "describe: native object history",
+    description: "Maya Chen · operation",
+    author: "Maya Chen",
+    timestamp: NOW - 90,
+    operationId: IDS.opLeft,
+    commitId: null,
+    changeId: null,
+    scope: null,
+    path: null,
+    hasConflict: false,
+  },
+  {
+    id: "file:main:src/lib.rs",
+    kind: "file",
+    title: "src/lib.rs",
+    description: `main · commit ${IDS.current.slice(0, 12)}`,
+    author: "Maya Chen",
+    timestamp: NOW - 30,
+    operationId: IDS.opLeft,
+    commitId: IDS.current,
+    changeId: IDS.current.slice(0, 32),
+    scope: "main",
+    path: "src/lib.rs",
+    hasConflict: false,
+  },
+];
