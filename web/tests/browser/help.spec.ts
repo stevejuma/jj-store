@@ -56,7 +56,9 @@ test("bundled Help preserves a draft without a repository and works without exte
     .locator('.md-search-result__link[href*="technical/publication"]')
     .first()
     .click();
-  await expect(help.locator("h1")).toHaveText("Publication and recovery¶");
+  await expect(help.locator(".md-content h1")).toHaveText(
+    "Publication and recovery¶",
+  );
   await expect(help.locator(".architecture-diagram img")).toBeVisible();
   expect(
     await help

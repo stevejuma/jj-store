@@ -1920,4 +1920,7 @@ The same-origin frame observes only the host's appearance attributes and glass
 opacity, including previews and cross-tab/system updates. Theme changes preserve
 the current documentation page, scroll, search and the application's drafts.
 Embedded Help hides its independent palette selector; the standalone site keeps
-a light/dark switch. Light/dark Mermaid images follow the resolved color mode.
+a light/dark switch using the Original palette. Light/dark Mermaid images follow
+the resolved color mode. The navigation rails fill their allotted widths without
+fixed inner padding; groups initially collapse on the landing page and reveal
+the selected page's path after navigation.

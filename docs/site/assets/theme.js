@@ -47,7 +47,7 @@
       dark = host.classList.contains("dark");
     } else {
       dark = document.body.getAttribute("data-md-color-scheme") === "slate";
-      root.dataset.storeTheme = dark ? "buzz-dark" : "buzz";
+      root.dataset.storeTheme = dark ? "original-dark" : "original";
       root.dataset.storeFont = "default";
     }
     root.classList.toggle("dark", dark);

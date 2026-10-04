@@ -67,6 +67,13 @@ test("embedded Help follows live application appearance across pages and reopeni
     "font-size",
     "15px",
   );
+  await expect(
+    help.getByRole("link", { name: "Architecture", exact: true }),
+  ).toBeHidden();
+  await help
+    .locator(".md-nav--primary label.md-nav__link")
+    .filter({ hasText: "Technical details" })
+    .click();
   await help.getByRole("link", { name: "Architecture", exact: true }).click();
   await expect(help.locator("h1")).toHaveText("Architecture¶");
   await expect(help.locator(".architecture-diagram img")).toHaveAttribute(
@@ -149,20 +156,32 @@ test("standalone documentation retains themed search and responsive navigation",
   await page.goto("/help/");
   await expect(page.locator("html")).toHaveAttribute(
     "data-store-theme",
-    "buzz-dark",
+    "original-dark",
   );
   await expect(page.locator('[data-md-component="palette"]')).toBeVisible();
+  const install = page.getByRole("link", {
+    name: "Installation and setup",
+    exact: true,
+  });
+  await expect(install).toBeHidden();
+  const gettingStarted = page
+    .locator(".md-nav--primary label.md-nav__link")
+    .filter({ hasText: "Getting started" });
+  await gettingStarted.click();
+  await expect(install).toBeVisible();
+  await gettingStarted.click();
+  await expect(install).toBeHidden();
   const axe = await new AxeBuilder({ page }).analyze();
   expect(axe.violations).toEqual([]);
   await page.locator('.md-header label[title="Switch to light mode"]').click();
   await expect(page.locator("html")).toHaveAttribute(
     "data-store-theme",
-    "buzz",
+    "original",
   );
   await page.locator('.md-header label[title="Switch to dark mode"]').click();
   await expect(page.locator("html")).toHaveAttribute(
     "data-store-theme",
-    "buzz-dark",
+    "original-dark",
   );
   await page
     .getByRole("textbox", { name: "Search", exact: true })

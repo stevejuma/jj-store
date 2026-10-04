@@ -61,9 +61,9 @@ build bundles the application's existing palette sources and the released DM
 Sans/Source Code Pro fonts, including their licenses; keep these sources shared
 instead of maintaining a separate theme catalog. Embedded `theme.js` reads the
 same-origin host's presentation attributes and follows changes without writing
-preferences. Standalone mode follows Material's light/dark switch. Mermaid
-produces local light/dark image pairs; both variants must pass the generated
-asset and link checks.
+preferences. Standalone mode uses Original/Original Dark through Material's
+light/dark switch. Mermaid produces local light/dark image pairs; both variants
+must pass the generated asset and link checks.
 
 Record actual commands, failures and remaining qualification in the progress
 ledger with the implementation change. Do not publish the site or packages as a

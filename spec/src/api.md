@@ -1788,6 +1788,8 @@ Help reads same-origin presentation attributes to inherit live application
 appearance; it adds no API, mutation or credential transport. Generated fonts,
 palette CSS and diagram variants remain in the independent documentation asset
 manifest and use the existing CSP. Standalone docs do not read app preferences.
+The standalone Original palette and initial navigation collapse are local
+presentation defaults; they do not change host preferences or asset admission.
 
 Bundled Help is independently allowlisted under `/help/`, with a separate
 512-file, 8-MiB-per-file and 32-MiB-total bound. The existing browser bundle

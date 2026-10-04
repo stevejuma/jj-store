@@ -11,7 +11,6 @@ theme:
   features:
     - content.code.copy
     - navigation.top
-    - navigation.expand
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default

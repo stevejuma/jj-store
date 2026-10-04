@@ -30,14 +30,22 @@ Embedded Help MUST inherit the active application's resolved palette, typography
 and chrome preferences on open, page navigation and live appearance changes. Its
 Markdown site retains navigation, content and table-of-contents regions styled
 with the application tokens. Theme state is read-only and never creates another
-application preference record. Standalone documentation retains its own
-light/dark control. Theme CSS is bundled from the owning application sources;
-fonts and light/dark diagram variants remain local and manifest-validated.
+application preference record. Standalone documentation defaults to the Original
+palette, with its light/dark control selecting Original or Original Dark. Theme
+CSS is bundled from the owning application sources; fonts and light/dark diagram
+variants remain local and manifest-validated.
 
 The table-of-contents rail has no separating border. At desktop widths the idle
-search field aligns with the rail's content edge and uses the reading surface
-background; focused results retain room to expand and mobile search remains
-responsive.
+search field aligns with the rail's content edge and uses the app's muted
+background and placeholder styling; focused results retain room to expand and
+mobile search remains responsive.
+
+Both navigation rails use their full allotted width. The table-of-contents rail
+has no extra left inset. Navigation groups start collapsed on the landing page;
+readers can expand them, and deeper pages reveal their active navigation path.
+The left rail omits the duplicate site title and uses compact navigation rows.
+Navigation rows have visible hover and keyboard-focus feedback. TOC links retain
+a small text inset and a small gap between rows within the unpadded rail.
 
 Verification covers generators and negative drift fixtures, actual configuration
 parsing, built-site links/search, HTTP asset admission, iframe focus and
