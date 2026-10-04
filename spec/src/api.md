@@ -1901,3 +1901,14 @@ limit. Syntax work is independent of total retained repository size. This
 preserves query identities, native evaluation, signed continuations, current
 authorization and explicit resource errors; broader prepared-lookup and
 CPU/memory qualification remain separate gates.
+
+Local history preparation has a distinct process-local service task contract
+with local snapshot and statistics, never a fabricated native epoch or cache
+report. Its default construction deadline is one hour, completed retention is
+five minutes and retained task count is 32. Trusted composition may lower these
+limits. Current device binding authorizes every operation; running or usable
+ready tasks coalesce by repository, generation, metadata path and operation.
+Expired/restarted/evicted task IDs reset; they cannot become valid again on
+later completion. A cold prepared-log request reports rebuild-required for its
+exact operation. HTTP and browser delivery require their own contract and
+acceptance before this service capability is advertised.

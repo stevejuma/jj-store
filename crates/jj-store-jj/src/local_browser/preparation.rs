@@ -53,6 +53,7 @@ pub struct Prepared {
     snapshot: Snapshot,
     pub stats: Stats,
     resident: graph::Resident,
+    _reservation: Option<Arc<crate::query::cache::Reservation>>,
 }
 impl Prepared {
     pub fn snapshot(&self) -> &Snapshot {
@@ -199,14 +200,57 @@ impl Executor {
         limits: Limits,
         cancellation: Cancellation,
     ) -> Result<Prepared> {
+        self.prepare_inner(
+            access,
+            operation,
+            root,
+            reserved_bytes,
+            limits,
+            cancellation,
+            None,
+        )
+        .await
+    }
+    /// Keep shared disk admission with the actual worker and final prepared
+    /// reader, including when its requesting future is dropped.
+    pub async fn prepare_reserved(
+        &self,
+        access: Arc<dyn Access>,
+        operation: m::OperationId,
+        reservation: Arc<crate::query::cache::Reservation>,
+        limits: Limits,
+        cancellation: Cancellation,
+    ) -> Result<Prepared> {
+        self.prepare_inner(
+            access,
+            operation,
+            reservation.path().into(),
+            reservation.bytes(),
+            limits,
+            cancellation,
+            Some(reservation),
+        )
+        .await
+    }
+    #[allow(clippy::too_many_arguments)]
+    async fn prepare_inner(
+        &self,
+        access: Arc<dyn Access>,
+        operation: m::OperationId,
+        root: PathBuf,
+        reserved_bytes: u64,
+        limits: Limits,
+        cancellation: Cancellation,
+        reservation: Option<Arc<crate::query::cache::Reservation>>,
+    ) -> Result<Prepared> {
         limits.validate()?;
         if !root.is_absolute() || reserved_bytes == 0 || reserved_bytes > 2 * 1024 * 1024 * 1024 {
             return Err(Error::Limit);
         }
         let permit = self.workers.acquire_preparation()?;
-        access.authorize().await?;
         let budget = Arc::new(Budget::preparation(&limits, &cancellation));
         let cancel = cancellation.token().drop_guard();
+        budget.until(access.authorize()).await??;
         let capture_limits = self.limits;
         let memory = self.prepared_memory.clone();
         let runtime = tokio::runtime::Handle::current();
@@ -279,6 +323,7 @@ impl Executor {
                             },
                             stats: budget.stats(),
                             resident,
+                            _reservation: reservation,
                         })
                     }))
                     .await?

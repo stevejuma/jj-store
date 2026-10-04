@@ -1679,3 +1679,11 @@ remains charged after task ownership is released. A terminated owner's staged
 output must be reclaimed before another reservation is admitted; active
 generations must remain readable while the short namespace admission lock is
 available.
+
+Local index-task acceptance MUST exercise exact historical pages after newer
+operations, duplicate starts, completed-generation eviction, restart reset,
+current revocation and changed binding generation. Hold the first preparation
+authorization to prove cancellation and expiry release actual worker/quota
+ownership while interactive reads remain available. Completed expiry must free
+its reservation without status polling. These checks are separate from cold
+HTTP/browser delivery and million-commit qualification.

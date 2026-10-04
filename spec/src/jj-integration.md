@@ -849,3 +849,9 @@ LRU entries may be reclaimed to admit it. The final reader retains the charge.
 Interrupted reservations are discarded after their lifetime lock becomes free;
 no partial generation is adopted as repository authority. A report's accounted
 bytes include conservative live reservations, even before their files grow.
+
+Reserved local preparation MUST move the quota handle into the actual worker and
+then into the prepared result. Dropping a requesting future, task or cache entry
+cannot release disk admission while another worker/reader still owns the derived
+files. The preparation cancellation token covers initial authorization as well
+as blocking traversal, and remains effective while the worker owns its permit.

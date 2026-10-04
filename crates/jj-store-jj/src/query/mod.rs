@@ -246,6 +246,12 @@ impl Cancellation {
     pub(crate) fn token(&self) -> tokio_util::sync::CancellationToken {
         self.0.clone()
     }
+    pub async fn cancelled(&self) {
+        self.0.cancelled().await;
+    }
+    pub fn is_cancelled(&self) -> bool {
+        self.0.is_cancelled()
+    }
     pub fn cancel(&self) {
         self.0.cancel();
     }

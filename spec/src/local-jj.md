@@ -589,3 +589,16 @@ visited-record and deadline limits apply throughout. Exhaustion remains an
 explicit error pending prepared historical lookup; it cannot imply absence or
 authorize a raw Git object. Later operations cannot grant access to commits when
 reading an earlier selected operation.
+
+Local prepared-history tasks MAY retain credential-free library handles under
+shared native/local cache reservations. Bind the registered repository,
+generation, metadata path and explicit retained operation before starting.
+Duplicate live or retained-ready requests reuse their task; quota pressure may
+evict the least recently used completed local generation. Active readers retain
+its resident and full reservation until actual completion. Running and completed
+lifetimes are separately bounded; expiry and teardown cancel live work, and
+completed expiry releases capacity without a polling client. Preparation's first
+authorization wait obeys the same cancellation/deadline as its worker. A
+restarted service cannot revive an old task or silently select current heads.
+This service facade alone does not advertise HTTP or browser preparation
+capability.

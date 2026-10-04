@@ -961,3 +961,12 @@ Operation-only read capabilities permit proven operation parents and deny views,
 commit access, writes and collection. They do not reconcile heads, publish a
 manifest or rewrite a local derived commit index. Mutations retain their
 existing complete graph and publication-closure admission.
+
+Local history preparation is a non-publishing service task bound to an explicit
+retained operation and current device registration. Start, status, cancellation
+and prepared graph access reauthorize that registration; task identifiers confer
+no authority. Completed entries retain source pins and derived data without
+credentials. Cancellation retains worker and reservation ownership until actual
+exit, including an initial authorization wait. Eviction, expiry and restart may
+require preparation again but cannot alter native heads, companion state,
+working files, source indexes or retention refs.

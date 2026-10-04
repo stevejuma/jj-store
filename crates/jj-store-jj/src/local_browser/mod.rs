@@ -363,15 +363,15 @@ impl Executor {
         + 'static,
     ) -> Result<T> {
         let permit = self.workers.acquire()?;
-        access.authorize().await?;
         let budget = Arc::new(Budget::new(self.limits));
         let cancel = budget.cancellation.clone().drop_guard();
+        budget.until(access.authorize()).await??;
         let runtime = tokio::runtime::Handle::current();
         let result = tokio::task::spawn_blocking(move || {
             let _permit = permit;
             runtime.block_on(tokio::task::LocalSet::new().run_until(async {
                 let value = budget.until(run(access.clone(), budget.clone())).await??;
-                access.authorize().await?;
+                budget.until(access.authorize()).await??;
                 budget.complete_output(&value)?;
                 Ok(value)
             }))
