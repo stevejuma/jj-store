@@ -29,6 +29,7 @@
     delayedObservations = false,
     busyObservations = false,
     multipleHarnesses = false,
+    multipleRepositories = false,
   }: {
     supported?: boolean;
     enabled?: boolean;
@@ -40,6 +41,7 @@
     delayedObservations?: boolean;
     busyObservations?: boolean;
     multipleHarnesses?: boolean;
+    multipleRepositories?: boolean;
   } = $props();
   const notifications = ownNotifications();
   let failedObservations = false;
@@ -92,6 +94,12 @@
       return result;
     },
     async sources() {
+      if (enabled && multipleRepositories) {
+        const page = mixedCaptureSources();
+        page.sources[1].last_bound_repository = "de".repeat(16);
+        page.sources[2].last_bound_repository = null;
+        return page;
+      }
       return enabled
         ? multipleHarnesses
           ? mixedCaptureSources()
@@ -211,7 +219,8 @@
 {/if}
 {#if visible}<StoreAgentSettings
     {management}
-    repositoryName={() => "Capture repository"}
+    repositoryName={(id) =>
+      id === "de".repeat(16) ? "Other repository" : "Capture repository"}
     onRepository={(id) => (openedRepository = id)}
   />{/if}
 <StoreNotificationHost owner={notifications} />

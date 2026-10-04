@@ -1,11 +1,22 @@
 <script lang="ts">
   import * as Select from "@lapismd/design-core/shadcn/select";
-  import { captureSourceHarnesses } from "./capture-source-presentation.js";
+  import {
+    captureSourceHarnesses,
+    type CaptureSourceFilterOption,
+  } from "./capture-source-presentation.js";
   import StoreCaptureStatusFilter from "./StoreCaptureStatusFilter.svelte";
+  import StoreCaptureCommandFilter from "./StoreCaptureCommandFilter.svelte";
   let {
     harness = $bindable("all"),
     statuses = $bindable([]),
-  }: { harness?: string; statuses?: string[] } = $props();
+    repositories = $bindable([]),
+    repositoryOptions,
+  }: {
+    harness?: string;
+    statuses?: string[];
+    repositories?: string[];
+    repositoryOptions: CaptureSourceFilterOption[];
+  } = $props();
 </script>
 
 <div class="store-capture-sources__filters" aria-label="Source table filters">
@@ -24,6 +35,12 @@
       </Select.Group></Select.Content
     >
   </Select.Root>
+  <StoreCaptureCommandFilter
+    bind:value={repositories}
+    singular="repository"
+    plural="repositories"
+    options={repositoryOptions}
+  />
   <StoreCaptureStatusFilter bind:value={statuses} />
 </div>
 

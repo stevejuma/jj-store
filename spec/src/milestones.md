@@ -148,7 +148,7 @@ shared-package release qualification does not alter those original Git gates.
 | M18.5       | Deferred    | M18.4                   | JST-COLLAB-026                                                                                                                                                                                                    | Real harness edit, JJ evidence, shared UI and cold restart                                                                     | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.6       | Deferred    | M18.5                   | JST-COLLAB-027,JST-COLLAB-030                                                                                                                                                                                     | Exact inspection, collaboration search and immutable review feedback                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                      | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014 |
+| M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work        | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -71694,6 +71694,107 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Narrow Sources status-filter presentation only. Prior 411 evidence objects/raw prefix preserved; no milestone promotion or alteration of prior E-M18-013 broad diagnostic/deferred scope. Backend work, aggregate testing, additional harnesses and visual-baseline approval remain out of scope.",
   "next": "Use the searchable multi-select in the main/preview Agents Sources tab; retain normal capture/settings refresh and import behavior."
+},
+{
+  "id": "E-M18-015",
+  "tasks": [
+    "M18.8"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change rxzwlukn",
+  "kind": "Searchable multiple-repository source filter composed with status and harness",
+  "versions": "Svelte5.57.1; installed released Design Core0.1.2 CommandView/Popover/Button; Vitest4.1.11; Playwright1.63.0; existing isolated browser_preview executable.",
+  "formats": "UI-local repository selection arrays and shared owned command-filter composition only. Exact last-bound repository IDs, explicit unknown selection, unique options from all loaded rows. Native roots, source selectors/cursors, wire formats, imports, cached coverage counts and server policy unchanged.",
+  "files": [
+    "catalog/components/store-application/StoreCaptureSources.stories.svelte",
+    "catalog/components/store-application/capture-repository-command-play.ts",
+    "catalog/fixtures/CaptureSettingsFixture.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureCommandFilter.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSourceFilters.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureSources.svelte",
+    "web/src/lib/ui/store-settings/StoreCaptureStatusFilter.svelte",
+    "web/src/lib/ui/store-settings/capture-source-presentation.ts",
+    "web/tests/browser/local-capture-loading.spec.ts",
+    "spec/src/ui.md",
+    "spec/src/api.md",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "web/tests/browser/local-capture-loading.spec.ts#cold repository source filtering composes with status and harness filters",
+    "web/tests/browser/local-capture-loading.spec.ts#cold grouped Codex configuration and harness-filtered source table retain identities"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; read current Sources UI/API requirements and inspect CommunityProjectFilesRepositoryCommand followed by the released/owned command composition",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main clean after a7b9879b. Reused existing owned status control as a common CommandView composition, retaining the status component entrypoint. Repository names use the existing catalog resolver; options retain full cached IDs and display compact ID context. No Community runtime/source dependency."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte -t SourceRepositoryCommand (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "before.log: exact new repository regression fails because the repository filter is absent;22 unrelated existing scenarios skipped. New test later moved to its own Sources story file for the catalog line budget."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte (initial after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories.log:23 pass. New play exercises keyboard search, multiple repositories, unknown binding, toggling, status intersection, preserved counts/labels, empty combined results and All repositories reset."
+    },
+    {
+      "command": "pnpm check:architecture (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Capture Settings story module reached406 counted lines against400 maximum. Restored its prior unchanged content and placed the new repository scenario in StoreCaptureSources.stories.svelte; no budget or checker weakened."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCaptureSettings.stories.svelte catalog/components/store-application/StoreCaptureSources.stories.svelte (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories-final.log:23 pass across both direct story files with interaction/accessibility; existing status search/toggles/focus and source import/navigation guards still pass."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold (repository source filtering|grouped Codex configuration)\" (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "browser.log:1 pass/1 fail. New repository case interacted before first source coverage was accepted, during initial component handoff. Added explicit accepted3-row/current-coverage readiness assertions before querying and choosing repository options; original selection assertion retained."
+    },
+    {
+      "command": "pnpm web:build; pnpm exec playwright test --config .local/capture-source-table/playwright.config.ts local-capture-loading.spec.ts -g \"cold (repository source filtering|grouped Codex configuration)\" (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "build.log passes with existing chunk-size warning. browser-final.log:2 cold passes in newly launched isolated fixture. Repository selections use exact cached identities and intersect with harness/status; options remain available independently of other filters, search resets without retargeting, unknown binding/empty state/clear work. Desktop and390px open popup Axe and containment pass. Existing original-selector import and status keyboard behavior pass. Screenshots copied to .local/capture-repository-filter/after.png; fixture exited."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check (initial/final); pnpm check:architecture (after story extraction); pnpm check:ui-ownership; focused changed-file Prettier",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web/catalog errors/warnings;182-module catalog boundary;922-module web architecture; UI ownership and formatting pass. New shared control stays repository-owned and uses released Design Core. Root aggregates, Rust, full app/browser/catalog inventories and visual baselines are outside this UI-only slice."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Nine protected files/two owning chapters;22 chapters/167 requirements. UI/API chapters specify loaded-only repository filtering, full identity matching, unique options, unknown observation semantics and no access/query/paging authority change."
+    },
+    {
+      "command": "jj rebase -r uqwlnutu -d rxzwlukn; jj workspace update-stale; screenshot inspection",
+      "result": "pass",
+      "failures": 0,
+      "note": "Clean preview workspace follows main UI change through existing Vite HMR. No backend restart, real capture/import/config mutation, fixture reset, installation or publication."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; focused canonical formatting (final with ledger)",
+      "result": "pass",
+      "failures": 0,
+      "note": "136 tasks;9 protected files/3 canonical chapters;22 chapters/167 requirements validated. Existing412 evidence objects and raw JSON prefix preserved, with no milestone promotion."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Narrow Sources repository filter and direct shared status-command presentation only. All412 prior evidence objects/raw JSON prefix preserved; milestone statuses unchanged, prior E-M18-013 broad diagnostics/deferred work retained. No claim of a full repository, Rust or multi-harness release pass.",
+  "next": "Use repository/harness/status filters in main and preview Sources settings; filters describe loaded coverage and do not enroll or authorize sources."
 }
 ]
 

@@ -8,7 +8,10 @@
   import StoreCaptureSourceIdentity from "./StoreCaptureSourceIdentity.svelte";
   import StoreCaptureSourceFilters from "./StoreCaptureSourceFilters.svelte";
   import StoreCaptureSourceFooter from "./StoreCaptureSourceFooter.svelte";
-  import { captureSourceMatches } from "./capture-source-presentation.js";
+  import {
+    captureSourceMatches,
+    captureSourceRepositoryOptions,
+  } from "./capture-source-presentation.js";
   import {
     captureProfiles,
     captureHistorySupported,
@@ -31,13 +34,19 @@
   const sources = $derived(captureState.sources);
   let harness = $state("all");
   let statuses = $state<string[]>([]);
+  let repositories = $state<string[]>([]);
+  const repositoryOptions = $derived(
+    captureSourceRepositoryOptions(sources?.sources ?? [], repositoryName),
+  );
   const rows = $derived(
     (sources?.sources ?? [])
       .map((source, index) => ({
         source,
         label: `${captureProfiles[source.profile]} source ${index + 1}`,
       }))
-      .filter(({ source }) => captureSourceMatches(source, harness, statuses)),
+      .filter(({ source }) =>
+        captureSourceMatches(source, harness, statuses, repositories),
+      ),
   );
   const navigationReason = $derived(
     repositoryNavigationReason ||
@@ -75,7 +84,12 @@
       </p>
     </div>
   </header>
-  <StoreCaptureSourceFilters bind:harness bind:statuses />
+  <StoreCaptureSourceFilters
+    bind:harness
+    bind:statuses
+    bind:repositories
+    {repositoryOptions}
+  />
   {#if captureState.sourceState === "failed"}
     <StoreSettingsNotice
       >Refresh capture to select current source coverage.</StoreSettingsNotice
@@ -163,7 +177,7 @@
                   >
                   <p class="store-settings__row-description">
                     {sources.sources.length
-                      ? "Adjust the harness or status filter, or load more sources."
+                      ? "Adjust the harness, repository or status filters, or load more sources."
                       : "No sources are observed in this snapshot."}
                   </p>
                 </div>

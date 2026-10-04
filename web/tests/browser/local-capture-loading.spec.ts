@@ -315,6 +315,118 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   expect(imported!.selector).toBe(coverage.sources[2].selector);
 });
 
+test("cold repository source filtering composes with status and harness filters", async ({
+  page,
+}) => {
+  await bootstrap(page, true);
+  const coverage = mixedCaptureSources();
+  coverage.sources[0].last_bound_repository = repo;
+  coverage.sources[1].last_bound_repository = null;
+  coverage.sources[2].last_bound_repository = "de".repeat(16);
+  await page.route("**/v1/local/capture**", (r) => {
+    const path = new URL(r.request().url()).pathname;
+    const value = path.endsWith("/settings")
+      ? captureSettings()
+      : path.endsWith("/sources")
+        ? coverage
+        : captureStatus();
+    return r.fulfill({ contentType: "application/json", body: pretty(value) });
+  });
+  await page.goto("/");
+  await openAgents(page);
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  const table = page.getByRole("table", { name: "Capture sources" });
+  await expect(table.locator("tbody > tr")).toHaveCount(3);
+  await expect(
+    page.getByText("Coverage current", { exact: true }),
+  ).toBeVisible();
+  const repositoryFilter = page.getByRole("button", {
+    name: "Filter by source repository",
+  });
+  await repositoryFilter.click();
+  const search = page.getByRole("combobox", {
+    name: "Search source repositories",
+  });
+  await search.fill("Local acceptance");
+  await search.press("ArrowDown");
+  await search.press("Enter");
+  await expect(table.locator("tbody > tr")).toHaveCount(1);
+  await expect(
+    page.getByText("Codex CLI source 1", { exact: true }),
+  ).toBeVisible();
+  await search.fill("");
+  await page
+    .getByRole("option", { name: "Previously bound repository", exact: true })
+    .click();
+  await expect(repositoryFilter).toHaveText("2 repositories");
+  await expect(table.locator("tbody > tr")).toHaveCount(2);
+  await page
+    .getByRole("option", {
+      name: "No recorded repository binding",
+      exact: true,
+    })
+    .click();
+  await expect(table.locator("tbody > tr")).toHaveCount(3);
+  await expect(page.getByText("3 loaded", { exact: true })).toBeVisible();
+  await expect(page.getByText("5 observed", { exact: true })).toBeVisible();
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({
+    path: test.info().outputPath("source-repository-filter.png"),
+  });
+  await search.press("Escape");
+  await expect(repositoryFilter).toBeFocused();
+  await page.getByRole("button", { name: "Filter by harness" }).click();
+  await page.getByRole("option", { name: "Codex", exact: true }).click();
+  await page.getByRole("button", { name: "Filter by source status" }).click();
+  await page.getByRole("option", { name: "Degraded", exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "Search source statuses" })
+    .press("Escape");
+  await repositoryFilter.click();
+  await expect(search).toHaveValue("");
+  await expect(
+    page.getByRole("option", {
+      name: "No recorded repository binding",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page
+    .getByRole("option", { name: "Previously bound repository", exact: true })
+    .click();
+  await expect(
+    page.getByText("No sources match these filters", { exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("option", { name: "All repositories", exact: true })
+    .click();
+  await expect(
+    page.getByText("Codex Desktop source 3", { exact: true }),
+  ).toBeVisible();
+  await search.fill("no-matching-repository");
+  await expect(
+    page.getByText("No matching repositories", { exact: true }),
+  ).toBeVisible();
+  await search.press("Escape");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await repositoryFilter.click();
+  await expect(search).toHaveValue("");
+  const popup = await page
+    .getByRole("dialog", { name: "Source repository filter" })
+    .boundingBox();
+  expect(popup!.x).toBeGreaterThanOrEqual(0);
+  expect(popup!.x + popup!.width).toBeLessThanOrEqual(390);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({
+    path: test.info().outputPath("source-repository-filter-mobile.png"),
+  });
+  await search.press("Escape");
+});
+
 test("cold source refresh retains coverage and repository link opens its authorized page", async ({
   page,
 }) => {

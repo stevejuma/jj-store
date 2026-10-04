@@ -3,6 +3,38 @@ import { agentAvatarUrl } from "../../collaboration/agent-avatar.js";
 import type { CommunityMemberModel } from "../community-workspace/model.js";
 
 type Source = Model<"CaptureSourceCoverage">;
+export type CaptureSourceFilterOption = {
+  value: string;
+  label: string;
+  description?: string;
+};
+export function captureSourceRepositoryOptions(
+  sources: readonly Source[],
+  repositoryName: (id: string) => string,
+): CaptureSourceFilterOption[] {
+  const ids = new Set(
+    sources
+      .map((s) => s.last_bound_repository)
+      .filter((id): id is string => id !== null),
+  );
+  const repositories = [...ids]
+    .map((id) => ({
+      value: id,
+      label: repositoryName(id),
+      description: id.slice(0, 8),
+    }))
+    .sort(
+      (a, b) =>
+        a.label.localeCompare(b.label) || a.value.localeCompare(b.value),
+    );
+  return [
+    { value: "all", label: "All repositories" },
+    ...repositories,
+    ...(sources.some((s) => s.last_bound_repository === null)
+      ? [{ value: "unknown", label: "No recorded repository binding" }]
+      : []),
+  ];
+}
 export const captureSourceHarnesses = [
   { value: "all", label: "All harnesses" },
   { value: "codex", label: "Codex" },
@@ -35,8 +67,14 @@ export function captureSourceMatches(
   source: Source,
   harness: string,
   statuses: readonly string[],
+  repositories: readonly string[],
 ) {
   if (harness !== "all" && integrations[source.profile] !== harness)
+    return false;
+  if (
+    repositories.length &&
+    !repositories.includes(source.last_bound_repository ?? "unknown")
+  )
     return false;
   return (
     statuses.length === 0 ||
