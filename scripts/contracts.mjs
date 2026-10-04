@@ -64,6 +64,12 @@ if (mode === "--check") {
       packageName = "jj-store-cli",
     ] of [
       [
+        "native_creation_http_is_local_admin_only_and_captures_contracts",
+        "JJ_STORE_NATIVE_CREATION_CONTRACT_CAPTURE",
+        "native_creation",
+        "jj-store-server",
+      ],
+      [
         "server_settings::http_settings_contracts_are_actor_free_conditional_and_local_admin_only",
         "JJ_STORE_SETTINGS_CONTRACT_CAPTURE",
         "capture_management",

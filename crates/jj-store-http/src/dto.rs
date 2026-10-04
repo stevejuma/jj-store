@@ -24,6 +24,8 @@ pub(crate) struct Capabilities {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub local_repository_management: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub local_native_repository_creation: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub local_search_management: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub local_sync_management: Option<bool>,
@@ -199,6 +201,18 @@ impl From<&Config> for Capabilities {
                 ))
             .then_some(true),
             local_repository_management: (config.local_repositories.is_some()
+                && matches!(
+                    config.access,
+                    Access::LocalTrusted {
+                        permission: jj_store_service::auth::Permission::Admin,
+                        ..
+                    }
+                ))
+            .then_some(true),
+            local_native_repository_creation: (config
+                .local_repositories
+                .as_ref()
+                .is_some_and(|m| m.native_creation())
                 && matches!(
                     config.access,
                     Access::LocalTrusted {

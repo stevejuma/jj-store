@@ -117,9 +117,9 @@ shared-package release qualification does not alter those original Git gates.
 | M13.4 | In progress | M13.2 | JST-LOCAL-004,JST-LOCAL-005 | Filesystem-only server, local UI and recoverable code commands | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095 |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | - |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                     | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | - |
-| M14 | In progress | M4.18 | JST-UI-012,JST-UI-016 | Local settings, profile-aware device links and safe maintenance | Implement M14.3 agent setup and automatic recovery | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016 |
+| M14 | In progress | M4.18 | JST-UI-012,JST-UI-016 | Local settings, profile-aware device links and safe maintenance | Implement M14.3 agent setup and automatic recovery | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017 |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                                              | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049 |
-| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                                      | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-063 |
+| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                                      | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-063,E-M14-017 |
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                                | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation                       | E-M14-004,E-M14-005 |
 | M14.4       | Done        | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                                  | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild                               | E-M14-009,E-M14-010,E-M14-011,E-M14-012,E-M14-016 |
 | M14.5       | Done        | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                                      | Storage integrity and non-destructive checkpoints                                                                              | Retain bounded maintenance and cold restart coverage                                           | E-M14-014 |
@@ -71795,6 +71795,171 @@ Both parent evidence sequences are preserved, deduplicating only identical entri
   "remaining": [],
   "scope": "Narrow Sources repository filter and direct shared status-command presentation only. All412 prior evidence objects/raw JSON prefix preserved; milestone statuses unchanged, prior E-M18-013 broad diagnostics/deferred work retained. No claim of a full repository, Rust or multi-harness release pass.",
   "next": "Use repository/harness/status filters in main and preview Sources settings; filters describe loaded coverage and do not enroll or authorize sources."
+},
+{
+  "id": "E-M14-017",
+  "tasks": ["M14", "M14.2"],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change normzvzq",
+  "kind": "Native repository creation without a physical workspace",
+  "versions": "JJ 0.45.1; Rust 1.98.1; Svelte 5.57.1; Vitest 4.1.11; Playwright 1.63.0. Existing local Design Core validation setup; registry-only notification qualification remains separate.",
+  "formats": "Existing native formats unchanged; private installation creation journal version 1; additive LocalTrusted Admin HTTP create/status contracts; browser persists exact credential-free public request only.",
+  "files": [
+    "crates/jj-store-http/src/dto.rs",
+    "crates/jj-store-http/src/local_browser.rs",
+    "crates/jj-store-server/src/local_repositories/native_creation.rs",
+    "crates/jj-store-server/src/local_repositories.rs",
+    "crates/jj-store-server/src/process/preparation.rs",
+    "crates/jj-store-server/tests/native_creation.rs",
+    "crates/jj-store-service/src/local_browser.rs",
+    "schemas/openapi.json",
+    "scripts/contracts.mjs",
+    "spec/src/api.md",
+    "spec/src/cli.md",
+    "spec/src/compatibility.md",
+    "spec/src/mutations.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/contracts.ts",
+    "web/src/lib/controller/native-repository-manager.ts",
+    "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+    "web/src/lib/controller/production-store-state.svelte.ts",
+    "web/src/lib/controller/production-store-view.ts",
+    "web/src/lib/ui/store-application/StoreApplicationNavigation.svelte",
+    "web/src/lib/ui/store-settings/StoreNativeRepositoryCreate.svelte",
+    "web/src/lib/ui/store-work/StoreProjectsAddMenu.svelte",
+    "web/tests/browser/native-repository-creation.spec.ts",
+    "web/tests/native-repository-manager.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "crates/jj-store-server/tests/native_creation.rs#native_creation_recovers_unconfirmed_publication_with_retained_identity",
+    "crates/jj-store-server/tests/native_creation.rs#native_creation_replays_after_restart_without_a_physical_workspace",
+    "crates/jj-store-server/tests/native_creation.rs#native_creation_http_is_local_admin_only_and_captures_contracts",
+    "web/tests/browser/native-repository-creation.spec.ts#cold native creation recovers exact intent across entrypoints and reload",
+    "web/tests/browser/native-repository-creation.spec.ts#cold native creation keeps name rejection inline and permits a corrected request"
+  ],
+  "runs": [
+    {
+      "command": "jj workspace add ../jj-store-repository-conversion --name repository-conversion; jj --no-pager st; read parent and tracked guidance and owning API/UI/local-JJ/milestone chapters",
+      "result": "pass",
+      "failures": 0,
+      "note": "Original workspace clean; isolated workspace started at rxzwlukn/b11c0486; unrelated workspaces retained. Before: local folder Add only, no native create UI."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test native_creation --locked (initial)",
+      "result": "fail",
+      "failures": 3,
+      "note": "Test-only reqwest fixture assumed JSON feature; changed to explicit serialization/body bytes without enabling unrelated features."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test native_creation --locked (first HTTP run)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Lowercase custom HTTP method caused 405; actual request now uses uppercase while capture method remains canonical lowercase."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/native-repository-manager.test.ts (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Identity mismatch test expected internal code spelling instead of existing human Error message; corrected exact expected message."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/native-repository-manager.test.ts (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "4 tests; exact unknown/reload/retry, mismatched receipt, known name rejection, and two already-mounted entrypoints using one saved intent."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test native_creation --locked (isolated target)",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-creation-isolated.log:4 pass; unknown-before-write persists destination identity, restart status/replay, workspace-free pinned reads, name rejection, filesystem-only and LocalTrusted Admin admission."
+    },
+    {
+      "command": "cargo check -p jj-store-server -p jj-store-service -p jj-store-http --all-targets --locked (isolated target)",
+      "result": "pass",
+      "failures": 0,
+      "note": "rust-check-isolated.log passes. Shared-target contract/native test attempts were invalidated after cached service artifacts from another workspace caused 16 compile errors; isolated target rebuilt owning crates."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership; pnpm check:boundaries; pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero web/catalog diagnostics;924 module architecture;182 catalog modules;17 package boundaries. Production build passes with existing chunk-size warning. No baseline updates."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreLocalFolderDialog.stories.svelte (initial)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Shared node_modules symlink lay outside Vite filesystem allowance; neither test file imported. Offline fresh installation attempts rejected no-TTY removal then existing pnpmfile/lock mismatch; manifests/lockfile unchanged."
+    },
+    {
+      "command": "pnpm exec vitest run --config .local/repository-conversion/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreLocalFolderDialog.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "13 directly affected interaction/accessibility stories pass with isolated ignored config allowing existing sibling dependency path; local validation only, no upstream defect concealed or package publication."
+    },
+    {
+      "command": "pnpm spec:first (before mapped chapter additions)",
+      "result": "fail",
+      "failures": 4,
+      "note": "Added mapped CLI, compatibility, mutations and governance documentation for installation-native provisioning and transport qualification."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.config.ts native-repository-creation.spec.ts sidebar-repository-actions.spec.ts (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "2 pass/1 fail; Axe ran during the enabled-button opacity transition. Added explicit enabled/full-opacity readiness, retaining every accessibility rule."
+    },
+    {
+      "command": "pnpm exec playwright test --config web/playwright.config.ts native-repository-creation.spec.ts sidebar-repository-actions.spec.ts (next)",
+      "result": "fail",
+      "failures": 1,
+      "note": "2 pass/1 fail; close selector matched frame and footer Close controls. Disambiguated the footer action."
+    },
+    {
+      "command": "pnpm web:check; pnpm web:build; pnpm exec playwright test --config web/playwright.config.ts native-repository-creation.spec.ts sidebar-repository-actions.spec.ts (after inline validation); pnpm exec playwright test --config web/playwright.config.ts native-repository-creation.spec.ts (name rejection regression)",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-check-fields.log has zero errors/warnings; web-build-fields.log passes with existing chunk/plugin timing diagnostics. browser-fields.log:3 pass including unchanged sidebar keyboard/Axe; browser-name-validation.log:3 pass including exact retained recovery, absent-capability gating and inline name rejection/corrected new request. Cold fresh built browser services exited.4 unique affected browser scenarios qualified."
+    },
+    {
+      "command": "pnpm contracts:check (isolated target)",
+      "result": "pass",
+      "failures": 0,
+      "note": "contracts-check-isolated.log:complete registered HTTP/SSE capture inventory passes, including new actual native creation/status/auth fixture;7 contract-tool tests and generated TypeScript consumer compile pass. Required escalation: additive bootstrap and HTTP schemas share the global route inventory."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "136 tasks;20 protected files/7 canonical chapters;5 validators/22 chapters/167 requirements. No milestone promotion. Prior raw evidence JSON preserved."
+    },
+    {
+      "command": "pnpm exec prettier --check (initial final set included native_creation.rs)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Tooling selection mistake: Prettier has no Rust parser. Corrected supported-file set and separate Rust formatter."
+    },
+    {
+      "command": "cargo test -p jj-store-server --test native_creation --locked (alias regression)",
+      "result": "pass",
+      "failures": 0,
+      "note": "5 pass. Current bindings and pending local registrations reserve names; completed removed history does not. native-creation-alias.log."
+    },
+    {
+      "command": "pnpm exec prettier --check (supported changed files, ledger excluded); prettier --check evidence-creation.json; cargo fmt --all -- --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Full ledger formatting would rewrite historical evidence indentation and table alignment. Preserved raw evidence prefix; format/check appended object independently. Product/docs/generated supported-file and Rust checks pass."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "scope": "Native creation slice only. Conversion remains separately gated by M13.5. Original task statuses and all historical evidence preserved. Root aggregates, full Rust/UI suites, visual baselines and real RustFS conversion are out of scope.",
+  "next": "Commit qualified native creation, then implement M13.5 conversion separately with explicit preflight and retained histories."
 }
 ]
 

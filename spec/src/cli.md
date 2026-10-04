@@ -1530,3 +1530,8 @@ Credential environment/OS names and private-file paths in this inventory are
 references only. The Settings API neither reads their credential contents nor
 accepts literal secret values. Search source field omissions use established
 extraction defaults; current clients submit the complete typed configuration.
+
+The composed LocalTrusted browser installation can create a native repository
+through its installation-owned manager without invoking a CLI subprocess or
+creating a physical workspace. CLI provisioning contracts remain unchanged;
+filesystem-only installations do not advertise native creation.

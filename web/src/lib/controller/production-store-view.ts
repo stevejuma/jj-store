@@ -22,6 +22,7 @@ export function productionStoreView(
   const repository = options.repository;
   return {
     installationReady: options.installationReady ?? false,
+    nativeRepositoryCreation: data.nativeRepositoryCreation,
     accessMode: data.accessMode,
     storageReady: data.storageReady,
     backups: data.backups,

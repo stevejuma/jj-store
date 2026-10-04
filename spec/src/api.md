@@ -1367,6 +1367,17 @@ restore authorization, credentials, repository snapshots or capability claims.
 
 ## Filesystem local repository API
 
+LocalTrusted Admin installations with native authority advertise
+`local_native_repository_creation`. POST `/v1/local/repositories/native` accepts
+only V1 request identity and discovery name; GET
+`/v1/local/repositories/native/requests/{request_id}` resolves that exact
+installation-owned request. The server durably retains repository and epoch
+identities before name reservation and manifest publication, then registers the
+verified repository. Replays cannot allocate another repository, changed intent
+fails conflict, and unknown outcomes retain the original request. Creation does
+not require a physical workspace. Filesystem-only and authenticated deployments
+do not advertise or admit this capability.
+
 LocalTrusted administrative installation endpoints under
 `/v1/local/repositories` inspect, register, remove and recover device-local
 Git-backed JJ bindings. The OS picker is available before repository selection.

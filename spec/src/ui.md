@@ -1505,6 +1505,14 @@ flags only; unavailable or malformed storage falls back to normal navigation.
 
 ## Registered local JJ folders
 
+Native-capable LocalTrusted installations additionally offer Create server
+repository in repository add controls. The dialog requests a discovery name and
+retains its exact public request across reload, status and retry. Confirmed
+creation refreshes discovery and opens the native repository without requiring a
+working folder. Operational errors use application notifications; unresolved
+creation and recovery controls stay beside the retained name. Unsupported
+installations omit the action.
+
 The repository directory offers Add local repository with the existing joined
 path/Browse field and DialogFrame. Inspection is read-only; explicit Add may
 initialize missing companion metadata. Existing code, dirty files and project

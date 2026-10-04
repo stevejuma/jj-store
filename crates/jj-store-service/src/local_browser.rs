@@ -103,8 +103,44 @@ pub struct ReconnectFolder {
     pub path: String,
 }
 
+/// Installation-owned creation, independent of physical workspace attachment.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct CreateNativeRepository {
+    pub version: u32,
+    pub request_id: RequestId,
+    pub name: String,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "status", rename_all = "snake_case")]
+pub enum NativeCreationOutcome {
+    Committed {
+        request_id: RequestId,
+        repository: RepositoryId,
+        name: String,
+    },
+    OutcomeUnknown {
+        request_id: RequestId,
+    },
+    NotKnown {
+        request_id: RequestId,
+    },
+}
+
 #[async_trait::async_trait]
 pub trait LocalRepositories: Send + Sync {
+    fn native_creation(&self) -> bool {
+        false
+    }
+    async fn create_native(
+        &self,
+        _request: CreateNativeRepository,
+    ) -> Result<NativeCreationOutcome> {
+        Err(Error::Unsupported)
+    }
+    async fn native_creation_status(&self, _request: RequestId) -> Result<NativeCreationOutcome> {
+        Err(Error::Unsupported)
+    }
     fn inspect(&self, path: &str) -> Result<LocalFolder>;
     fn list(&self) -> Result<LocalBindings>;
     fn folder(&self, repository: RepositoryId) -> Result<(LocalFolder, u64)>;

@@ -906,3 +906,11 @@ current authority, Search Apply/restart and Settings interaction/accessibility
 lanes remain separate from real-storage migration, native desktop packaging and
 full milestone qualification. No storage relocation, access transition, launch
 reconfiguration or backup execution is introduced by read-only inventory.
+
+Native browser creation registers the server
+`native_creation_http_is_local_admin_only_and_captures_contracts` capture with
+`JJ_STORE_NATIVE_CREATION_CONTRACT_CAPTURE`. Its additive request/status routes
+require the complete registered HTTP/SSE contract lane and generated-client
+checks. Server creation/reopen and production cold browser recovery/gating
+remain distinct evidence. Neither qualifies local/native conversion or a real
+RustFS migration.

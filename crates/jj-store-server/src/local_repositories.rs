@@ -8,6 +8,7 @@ use jj_store_service::{
 };
 use serde::{Deserialize, Serialize};
 use std::{fs, io::Write as _, path::PathBuf, sync::Arc};
+mod native_creation;
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -40,6 +41,7 @@ pub struct DeviceRepositories {
     identity: Identity,
     provider: Arc<dyn FolderProvider>,
     native: Arc<dyn RepositoryRegistry>,
+    host: Option<jj_store_service::administration::RepositoryHost>,
 }
 impl DeviceRepositories {
     pub fn new(
@@ -57,6 +59,7 @@ impl DeviceRepositories {
             identity,
             provider,
             native,
+            host: None,
         })
     }
     async fn register_inner(&self, request: RegisterFolder) -> Result<RegistrationOutcome> {
@@ -91,10 +94,11 @@ impl DeviceRepositories {
             .snapshot(None)
             .await
             .map_err(|_| Error::Unavailable)?;
-        if native
-            .repositories
-            .iter()
-            .any(|r| r.name == request.name || Some(r.id) == folder.repository)
+        if self.creation_name_reserved(&request.name)?
+            || native
+                .repositories
+                .iter()
+                .any(|r| r.name == request.name || Some(r.id) == folder.repository)
             || registry.bindings.iter().any(|b| {
                 (b.name == request.name && b.folder.repository != folder.repository)
                     || (b.folder.repository == folder.repository
@@ -364,6 +368,26 @@ fn valid_path(path: &str) -> bool {
 
 #[async_trait::async_trait]
 impl LocalRepositories for DeviceRepositories {
+    fn native_creation(&self) -> bool {
+        self.host.is_some()
+    }
+    async fn create_native(
+        &self,
+        request: CreateNativeRepository,
+    ) -> Result<NativeCreationOutcome> {
+        let manager = self.clone();
+        let runtime = tokio::runtime::Handle::current();
+        tokio::task::spawn_blocking(move || runtime.block_on(manager.create_native_inner(request)))
+            .await
+            .map_err(|_| Error::Unavailable)?
+    }
+    async fn native_creation_status(&self, request: RequestId) -> Result<NativeCreationOutcome> {
+        let manager = self.clone();
+        let runtime = tokio::runtime::Handle::current();
+        tokio::task::spawn_blocking(move || runtime.block_on(manager.native_status_inner(request)))
+            .await
+            .map_err(|_| Error::Unavailable)?
+    }
     fn inspect(&self, path: &str) -> Result<LocalFolder> {
         self.provider.inspect(path)
     }

@@ -112,6 +112,7 @@ export interface StoreSettingsState extends WorkspaceLinkSettings {
 }
 export interface StoreControllerState {
   readonly installationReady?: boolean;
+  readonly nativeRepositoryCreation?: boolean;
   readonly accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   readonly storageReady: boolean;
   readonly backups: readonly Model<"BackupStatus">[];

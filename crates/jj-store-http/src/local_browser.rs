@@ -76,6 +76,8 @@ macro_rules! endpoints {
         (get, "/local/repositories", list, "local_repository_list", routes::Empty, management::LocalBindings),
         (post, "/local/repositories", register, "local_repository_register", management::RegisterFolder, management::RegistrationOutcome),
         (post, "/local/repositories/inspect", inspect, "local_repository_inspect", management::InspectFolder, management::LocalFolder),
+        (post, "/local/repositories/native", create_native, "local_native_repository_create", management::CreateNativeRepository, management::NativeCreationOutcome),
+        (get, "/local/repositories/native/requests/{request_id}", native_status, "local_native_repository_status", routes::Empty, management::NativeCreationOutcome),
         (post, "/local/repositories/pick", pick, "local_repository_pick", routes::Empty, jj_store_service::local_management::FolderSelection),
         (get, "/local/repositories/requests/{request_id}", status, "local_repository_status", routes::Empty, management::RegistrationOutcome),
         (post, "/local/repositories/{repo}/reconnect", reconnect, "local_repository_reconnect", management::ReconnectFolder, management::LocalBindings),
@@ -109,6 +111,21 @@ fn admit(state: &State) -> Result<()> {
         return Err(Error::denied());
     }
     Ok(())
+}
+async fn create_native(
+    ExtractState(state): ExtractState<Arc<State>>,
+    body: Body<management::CreateNativeRepository>,
+) -> Result<Response> {
+    let manager = manager(&state)?;
+    let request = decode_body(body)?;
+    state.json(&manager.create_native(request).await.map_err(map)?)
+}
+async fn native_status(
+    ExtractState(state): ExtractState<Arc<State>>,
+    Path(request): Path<m::RequestId>,
+) -> Result<Response> {
+    let manager = manager(&state)?;
+    state.json(&manager.native_creation_status(request).await.map_err(map)?)
 }
 fn manager(state: &State) -> Result<Arc<dyn management::LocalRepositories>> {
     admit(state)?;

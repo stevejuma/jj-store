@@ -765,3 +765,8 @@ worker/extraction limits; old omitted fields use their established defaults.
 Generated contracts and actual LocalTrusted HTTP acceptance cover strict
 actor-free input, saved versus effective snapshots, conflicts and current
 authority rejection.
+
+Native browser creation uses existing native object, manifest and WAL formats.
+Its private installation request journal is version 1 and retains generated
+repository/epoch identities before provisioning. It does not change the JJ
+0.45.1 SHA-1 companion profile or create a working copy.

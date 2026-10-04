@@ -5,6 +5,7 @@
   import ClipboardPlusIcon from "@lucide/svelte/icons/clipboard-plus";
   import GitBranchPlusIcon from "@lucide/svelte/icons/git-branch-plus";
   import StoreLocalFolders from "../store-settings/StoreLocalFolders.svelte";
+  import StoreNativeRepositoryCreate from "../store-settings/StoreNativeRepositoryCreate.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   let {
     controller,
@@ -26,7 +27,12 @@
   }
 </script>
 
-{#snippet menu(addRepository?: () => void, repositoryDisabled = false)}
+{#snippet menu(
+  addRepository?: () => void,
+  repositoryDisabled = false,
+  createRepository?: () => void,
+  creationDisabled = false,
+)}
   <DropdownMenu.Root
     onOpenChange={(open) => {
       if (open) openingDialog = false;
@@ -72,16 +78,30 @@
             <GitBranchPlusIcon data-icon="inline-start" aria-hidden="true" />Add
             local repository
           </DropdownMenu.Item>{/if}
+        {#if createRepository && controller.state.nativeRepositoryCreation}<DropdownMenu.Item
+            disabled={creationDisabled}
+            onSelect={() => select(createRepository)}
+            ><GitBranchPlusIcon
+              data-icon="inline-start"
+              aria-hidden="true"
+            />Create server repository</DropdownMenu.Item
+          >{/if}
       </DropdownMenu.Group>
     </DropdownMenu.Content>
   </DropdownMenu.Root>
 {/snippet}
 
 {#if includeRepository && controller.state.accessMode === "local_trusted"}
-  <StoreLocalFolders {controller} mode="add">
-    {#snippet trigger(add, unavailable)}{@render menu(
-        add,
-        unavailable,
-      )}{/snippet}
-  </StoreLocalFolders>
+  <StoreNativeRepositoryCreate {controller}>
+    {#snippet trigger(create, creationDisabled)}
+      <StoreLocalFolders {controller} mode="add">
+        {#snippet trigger(add, unavailable)}{@render menu(
+            add,
+            unavailable,
+            create,
+            creationDisabled,
+          )}{/snippet}
+      </StoreLocalFolders>
+    {/snippet}
+  </StoreNativeRepositoryCreate>
 {:else}{@render menu()}{/if}

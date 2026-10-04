@@ -906,3 +906,11 @@ Per-message AgentStore timestamps are bounded read projections over exact
 selected observations and message content. They retain native and companion pins
 and never rewrite immutable evidence, recovery identities, receipts or
 publication state.
+
+Installation-native creation is LocalTrusted Admin-only and publishes through
+existing native provisioning and manifest CAS. The exact versioned name/request
+binds durable generated repository and epoch identities before reservation.
+Status/retry recovers that same destination after unknown outcomes; changed
+intent conflicts. Discovery is finalized only after verifying the published
+repository identity. It does not mutate a source repository, project links or
+checkout files.
