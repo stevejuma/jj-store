@@ -43,6 +43,7 @@ fn selection(pin: &Pin, operation: m::OperationId, budget: &Budget) -> Result<[u
 }
 pub(super) struct Resident {
     operations: prepared::operations::Lookup,
+    filter: prepared::filters::Reader,
     commits: super::comparison::Graph,
     index: DefaultReadonlyIndex,
     visibility: Arc<super::visibility::Visibility>,
@@ -149,6 +150,20 @@ pub(super) async fn load(
         return Err(Error::IndexBudget);
     }
     Ok(Resident {
+        filter: prepared::filters::Reader::load(
+            directory.path(),
+            operation,
+            source
+                .limits
+                .max_commits
+                .checked_add(
+                    usize::try_from(source.limits.max_metadata_records)
+                        .map_err(|_| Error::Limit)?,
+                )
+                .ok_or(Error::Limit)?,
+            |amount| source.budget.work(amount),
+            |bytes| source.budget.read_bytes(bytes),
+        )?,
         commits: super::comparison::Graph::load(
             graph_bytes,
             graph_memory,
@@ -173,6 +188,9 @@ pub(super) async fn load(
 }
 
 impl Prepared {
+    pub(in super::super) fn reference_filter(&self) -> &prepared::filters::Reader {
+        &self.resident.filter
+    }
     pub(in super::super) fn operation_view_fingerprint(
         &self,
         id: m::OperationId,

@@ -853,3 +853,11 @@ only after exact-operation preparation; they never reinterpret it as a native
 epoch. Start/status/cancel responses use the local task DTO, and cancellation is
 bodyless. Generated contracts and actual HTTP responses qualify these additions;
 native routes, persisted identities and companion formats remain unchanged.
+
+Local prepared generations add the disposable `local-reference-filter` redb4.3.0
+file and its SHA-256 sidecar. Its `JSTLRF1` metadata binds the selected 64-byte
+operation and lexical row count. Text lengths, lowercase text and sparse/dense
+4096-row substring postings are derived only; they change no native, companion,
+WAL, receipt, cursor or public DTO format. Upstream JJ format6 index files
+remain byte-identical and independently verified. Cache loss uses existing
+preparation; this local artifact is never imported into source JJ metadata.

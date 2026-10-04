@@ -165,6 +165,20 @@ impl Disk {
             .map_err(db_error)?
             .map(|v| v.value().to_vec()))
     }
+    pub fn len(&self, table: Table, key: &[u8]) -> Result<Option<usize>> {
+        Ok(self
+            .table(table)?
+            .get(key)
+            .map_err(db_error)?
+            .map(|v| v.value().len()))
+    }
+    pub fn finish(&mut self) -> Result<()> {
+        let mut transaction = self.transaction.take().unwrap();
+        transaction
+            .set_durability(Durability::Immediate)
+            .map_err(db_error)?;
+        transaction.commit().map_err(db_error)
+    }
     pub fn put(&mut self, table: Table, key: &[u8], value: &[u8]) -> Result<()> {
         self.table(table)?.insert(key, value).map_err(db_error)?;
         self.wrote()
@@ -215,7 +229,7 @@ impl Disk {
     }
 }
 
-fn db_error(e: impl Into<redb::Error>) -> Error {
+pub(super) fn db_error(e: impl Into<redb::Error>) -> Error {
     match e.into() {
         redb::Error::Io(e) => io_error(e),
         redb::Error::ValueTooLarge(_) => Error::Limit,

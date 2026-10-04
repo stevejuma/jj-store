@@ -110,6 +110,9 @@ impl prepared::Source for LocalSource {
     fn operation_lookup(&self) -> bool {
         true
     }
+    fn reference_filter(&self) -> bool {
+        true
+    }
     fn operation_digest(&self, operation: &Operation) -> Result<[u8; 32]> {
         let value =
             dto::Operation::try_from(operation.store_operation()).map_err(|_| Error::Corrupt)?;
@@ -165,6 +168,7 @@ impl prepared::Source for LocalSource {
                 parents: vec![],
                 change: backend.root_change_id().clone(),
                 timestamp: 0,
+                description: Some(prepared::Description::from_bytes(&[])?),
             });
         }
         bounded_git_object(
@@ -208,6 +212,7 @@ impl prepared::Source for LocalSource {
             parents,
             change,
             timestamp,
+            description: Some(prepared::Description::from_bytes(commit.message)?),
         })
     }
 }

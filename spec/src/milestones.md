@@ -80501,6 +80501,242 @@ entries.
       "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs#query_workers_graph_and_content_cancel_release_shared_capacity",
       "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#disk_preparation_matches_pinned_upstream_index_bytes"
     ]
+  },
+  {
+    "id": "E-READ-045",
+    "tasks": ["M13.4"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change pwnussrp",
+    "kind": "Prepared local Unicode reference filtering through bounded disk substring postings and selected-only hydration",
+    "versions": "Rust1.98.1 (48a229cea 2026-09-01); jj-lib/jj-cli pinned0.45.1; redb4.3.0; macOS ARM64.",
+    "formats": "New disposable local-reference-filter redb file and SHA-256 sidecar; JSTLRF1 metadata binds selected64-byte operation and lexical row count. Whole-string lowercase text, per-commit text lengths, lexical reference ranks and one-/two-/three-byte gram postings use sparse16-bit offsets or4096-bit masks. No native/companion/WAL/receipt/index6, public DTO/schema, cursor or CLI format change. Native writer default does not produce this local artifact. Construction admits the8MiB database cache behind16MiB retention and a64MiB bounded posting-batch lease before allocation; max65536pending grams per4096-row block, with bounded per-text normalization/dedup leases. Disk growth, scratch, final files and sidecar share pre-growth quota. Reader retains bounded cache/data only; complete-file checksum/operation/row-count admission occurs during preparation. Requests charge candidate lookup/text work and bytes before exact text inspection, retain ordinary deadlines/cancellation/output/group limits and hydrate selected source targets through fresh scoped admission.",
+    "files": [
+      "crates/jj-store-jj/src/query/prepared/mod.rs",
+      "crates/jj-store-jj/src/query/prepared/disk.rs",
+      "crates/jj-store-jj/src/query/prepared/filters.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/preparation.rs",
+      "crates/jj-store-jj/src/local_browser/preparation/graph.rs",
+      "crates/jj-store-jj/src/local_browser/references.rs",
+      "crates/jj-store-jj/src/local_browser/references/prepared.rs",
+      "crates/jj-store-cli/tests/local_browser/prepared_references.rs",
+      "crates/jj-store-cli/tests/local_browser/preparation.rs",
+      "crates/jj-store-cli/tests/local_browser/prepared_points_http.rs",
+      "spec/src/local-jj.md",
+      "spec/src/jj-integration.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/compatibility.md",
+      "spec/src/cli.md",
+      "spec/src/milestones.md",
+      "docs/implementation-plan.md"
+    ],
+    "next": "Continue native indexed filtering and remaining operation/deep/difference/search/RPC performance delivery in this retained workspace; qualify the complete implementation separately.",
+    "scope": "Local prepared reference filters, construction/allocation and existing cold recovery. Focused prepared point/log/prefix/comparison and HTTP consumers run because their generation construction is shared; local task cache/cancellation/quota and upstream index byte-equivalence check that added derived files preserve existing ownership. Native writer checks cover the unchanged optional-projection default. No full workspace/UI/release or combined qualification.",
+    "requirements": [
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-LOCAL-004",
+      "JST-API-002",
+      "JST-API-004"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/prepared_references.rs#prepared_filter_windows_preserve_unicode_substrings_and_hydrate_only_selected_targets",
+      "crates/jj-store-cli/tests/local_browser/prepared_points_http.rs#local_point_http_uses_ready_membership_and_only_falls_back_when_cold",
+      "crates/jj-store-cli/tests/local_browser/preparation.rs#local_preparation_matches_upstream_without_trees_or_source_index_writes",
+      "crates/jj-store-jj/src/query/prepared/filters.rs#filter_seeks_compressed_windows_and_validates_selection_checksum_and_budgets",
+      "crates/jj-store-jj/src/query/prepared/filters.rs#filter_database_refuses_unreserved_growth",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#disk_preparation_matches_pinned_upstream_index_bytes"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_filter_windows_preserve_unicode_substrings_and_hydrate_only_selected_targets -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "0pass/1fail,11.14s tests: prepared nonempty reference filters return Invalid. local-filter-before-045.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj --locked (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "One compile diagnostic: redb readonly builder belongs to Database; corrected constructor. One unused variable/import warning removed before final checks. local-filter-check-first-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_filter_windows_preserve_unicode_substrings_and_hydrate_only_selected_targets -- --nocapture (first)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/11.34s tests;216 ordinary/prepared windows. local-filter-exact-first-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::prepared::filters::tests -- --nocapture (initial and batched)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass each; sparse/dense masks, quota refusal, selection/checksum/cancellation/work/byte admission. Batching avoids per-document database posting writes. local-filter-units-045.log and local-filter-units-batched-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_filter_windows_preserve_unicode_substrings_and_hydrate_only_selected_targets -- --nocapture (stronger fixture first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fixture used unsupported @~10 revision syntax; changed to JJ repeated-parent syntax without product/assertion changes. local-filter-exact-final-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_filter_windows_preserve_unicode_substrings_and_hydrate_only_selected_targets -- --nocapture (batched/final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final1pass/15.54s tests (66.54s with build);288 windows across12 filters,3kinds,2directions,4anchors. Whole-string contextual Unicode casing, short/sparse/name/description filters, hidden rewrites, divergence and removed bookmark terms match ordinary reader under4history visits. Later operation is excluded; source/prepared index segments are unavailable after admission; final selected divergent page works with an unrelated Git commit object missing. Final page5metadata records,6663charged bytes,709work. local-filter-exact-batched-045.log, local-filter-consumer-00-045.log and local-filter-final-00-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::prepared:: -- --nocapture (expanded cross-block fixture first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "8pass/1fail: expanded9000-row/three-block test charged228work, exceeding unchanged200bound because intersection still read a fully excluded anchor block. Fixed production masking before intersections; assertion retained. local-filter-consumer-01-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked filter_seeks_compressed_windows_and_validates_selection_checksum_and_budgets -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/2.93s;9000 lexical rows, sparse cross-block forward/backward seeks below the original200work assertion, dense/short and Unicode text matches, exact-candidate exclusion, quota/checksum/source-pin/work/byte/cancellation failures. local-filter-cross-block-final-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::prepared:: -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "9pass; filter, operation identity/fingerprint/prefix, compact table and pre-growth scratch consumers. local-filter-final-01-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_ -- --nocapture (first)",
+        "result": "fail",
+        "failures": 1,
+        "note": "9pass/1fail: new changed-query cursor test incorrectly expected409; existing HTTP digest rejection is400 invalid_request. Corrected only this new assertion after checking owning route/error contract. local-filter-final-02-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_point_http_uses_ready_membership_and_only_falls_back_when_cold -- --nocapture (fixed)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/8.26s tests. Actual cold filtered rebuild-required pin, preparation retry, signed forward/backward filtered windows and changed-query rejection, plus existing selected-point/prefix/comparison behavior. local-filter-http-final-045.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli; pnpm exec prettier --write spec/src/local-jj.md spec/src/jj-integration.md spec/src/api.md spec/src/architecture.md spec/src/compatibility.md spec/src/cli.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected source/doc formatting during implementation: local-filter-format[-final/-last/-batched/-expanded/-complete/-admission]-045.log and local-filter-doc-format-045.log. Final formatting/check recorded below."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "17package boundaries pass. local-filter-boundaries-045.log."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "1ownership validator passes. local-filter-ownership-045.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "12protected files/6canonical chapters pass before final ledger. local-filter-spec-first-045.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "5validators/23chapters/172requirements pass before final ledger. local-filter-spec-045.log."
+      },
+      {
+        "command": "rustc --version; target/debug/jj --version (initial probe)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Rust1.98.1 reported. Custom CLI rejects --version spelling with exit2; corrected subcommand succeeds but emits an empty version suffix, so this entry records the owning libraries' Cargo pin, not a runtime CLI version proof. No executable replacement."
+      },
+      {
+        "command": "target/debug/jj version",
+        "result": "pass",
+        "failures": 0,
+        "note": "Read-only corrected probe exits0; output jj with empty version suffix. local-filter-version-045.log. Exact jj-lib/jj-cli0.45.1 pins separately inspected in Cargo.toml."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/local-jj.md spec/src/jj-integration.md spec/src/api.md spec/src/architecture.md spec/src/compatibility.md spec/src/cli.md docs/implementation-plan.md (before final formatting)",
+        "result": "fail",
+        "failures": 1,
+        "note": "One jj-integration.md wrap needed formatting after posting-batch requirement update; formatted changed docs and ledger. local-filter-doc-check-045.log."
+      },
+      {
+        "command": "pnpm check:progress (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Ledger used gaps and omitted top-level result; corrected to canonical remaining and pending fields, preserving all gaps. local-filter-progress-045.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "10pass/23.04s tests; 39.09s command. local-filter-complete-00-045.log. Focused direct generation/transport/task/native-writer consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_preparation_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2pass/5.28s tests; 20.29s command. local-filter-complete-01-045.log. Focused direct generation/transport/task/native-writer consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_task -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "4pass/5.55s tests; 21.02s command. local-filter-complete-02-045.log. Focused direct generation/transport/task/native-writer consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_metadata_and_bookmark_pages_do_not_load_history_or_index -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/15.08s tests; 30.2s command. local-filter-complete-03-045.log. Focused direct generation/transport/task/native-writer consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked disk_preparation_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2pass/0.62s tests; 19.6s command. local-filter-complete-04-045.log. Focused direct generation/transport/task/native-writer consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_preparation_fits_small_cache_and_preserves_historical_scopes -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/1.17s tests; 22.75s command. local-filter-complete-05-045.log. Focused direct generation/transport/task/native-writer consumers; no full suite."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "15.93s command. local-filter-complete-06-045.log. Focused direct generation/transport/task/native-writer consumers; no full suite."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.15s command. local-filter-complete-07-045.log. Focused direct generation/transport/task/native-writer consumers; no full suite."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/local-jj.md spec/src/jj-integration.md spec/src/api.md spec/src/architecture.md spec/src/compatibility.md spec/src/cli.md spec/src/milestones.md docs/implementation-plan.md; pnpm exec prettier --write spec/src/milestones.md; pnpm exec prettier --check spec/src/local-jj.md spec/src/jj-integration.md spec/src/api.md spec/src/architecture.md spec/src/compatibility.md spec/src/cli.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-doc formatting and check pass. local-filter-doc-format-complete/ledger-format/doc-final-check-045.log."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "138tasks;12protected files/7canonical chapters;5validators/23chapters/172requirements pass. local-filter-progress-final/spec-first-final/spec-final-045.log. This remains pending overall and promotes no milestone."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "29 unique focused Rust tests and affected JJ/service/HTTP/CLI checks pass. Local indexed filtering is delivered with288 differential windows and selected-target hydration. Focused evidence does not complete M13 or combined bounded-read qualification.",
+      "Native description filtering, differently embedded operation reference lookup, indexed operation child neighbors, deep operation/predecessor/copy/search continuations, retained oversized operation differences/change grouping, paged native RPC contracts and remaining local application search/index delivery remain open.",
+      "Extreme false-positive or hidden-target candidate frontiers still consume ordinary work/byte/deadline bounds and fail explicitly; retained filtered-query continuation remains delivery work. This artifact stores normalized descriptions on disk; complete construction time, disk footprint and resident pressure remain unqualified.",
+      "Complete combined integration/contracts, Linux/native2million/near-capacity fixtures, measured RSS/release latency, full cold production browser, cancellation/fault/revocation/restart/publication/real-RustFS, registry/release and Help/source-review refresh remain deferred. No milestone promoted. UI/schema/contract generation and repository aggregates are out of scope for this Rust-only private delivery. Original main/Linux source and dev services unchanged; retained workspace remains open. Visual baselines remain unapproved. Inherited __eh_frame linker warning and earlier strict-lint gaps remain separately deferred."
+    ]
   }
 ]
 ```

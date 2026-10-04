@@ -97,7 +97,7 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     if request.kind == Kind::Bookmarks && request.query.is_empty() {
         return bookmark_window(&context, &view, &request).await;
     }
-    if request.query.is_empty() && context.access.prepared.is_some() {
+    if context.access.prepared.is_some() {
         return prepared::read(&context, &view, &request).await;
     }
     let mut entries = vec![];

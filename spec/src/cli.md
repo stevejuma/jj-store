@@ -1855,3 +1855,14 @@ Filesystem-browser preparation regressions cover retained operation-prefix
 selection, ambiguity, suffixes and small read budgets without source index
 repair. This adds no installed CLI command; complete scale/lifecycle and release
 qualification remains deferred.
+
+Local prepared-filter regression MUST compare Unicode whole-string substring
+matching, short and sparse filters, hidden rewrites, divergence, removed
+bookmark terms and forward/backward/deep windows with the ordinary reader under
+a smaller history-visit budget. Prove selected-only source hydration with an
+unrelated Git body unavailable and source/prepared index files unavailable after
+admission. Owned projection regressions additionally cover compressed block
+seeks, checksums, operation selection, growth admission and canceled/budgeted
+queries. Actual local HTTP evidence MUST retain cold exact-operation recovery,
+prepared retry and query-bound signed forward/backward cursors. Complete
+large-repository and production browser qualification remains deferred.

@@ -2036,13 +2036,17 @@ there is no fallback that admits unrelated or later Git objects. These readers
 change no HTTP request, response, schema or capability. Their comprehensive
 transport/browser qualification remains in the later bounded-read slice.
 
-Local unfiltered Changes/All reference queries whose embedded operation equals
-the outer operation use prepared ordered visibility. When cold they return the
-existing exact-operation rebuild-required response, allowing the existing
-recovery flow. Continuations preserve lexical order and hydrate only page
-targets. A different embedded operation or nonempty description search keeps its
-previous bounded dispatch until separately indexed. Reference DTOs, signed
-cursors and preparation task contracts are unchanged.
+Local Changes/All reference queries whose embedded operation equals the outer
+operation use prepared ordered visibility. When cold they return the existing
+exact-operation rebuild-required response, allowing the existing recovery flow.
+Continuations preserve lexical order and hydrate only page targets. Nonempty
+filters additionally use compact disk postings and exact description checks on
+pinned visible targets before page hydration. Filtered Bookmarks share this
+recovery and selection path; workspace queries and empty bookmark windows retain
+metadata-only cold reads. A different embedded operation remains separate
+indexed-delivery work. Reference DTOs, signed cursors and preparation task
+contracts are unchanged; a resumed cursor still rejects a different filter and
+retains its exact old operation after publication.
 
 Composed native Changes/All reference reads with an empty query and the exact
 outer operation MUST reuse prepared ordered visible change groups and select

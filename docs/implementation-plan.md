@@ -105,6 +105,15 @@ exact-snapshot preparation recovery, signed cursors and namespace release before
 hydration. Description-filter indexes and differently embedded operations remain
 separate delivery work, together with deep/difference/search/RPC continuations.
 
+E-READ-045 adds local JJ description/reference substring filtering through an
+operation-bound disk projection. It captures normalized descriptions during the
+existing preparation read, intersects compact lexical postings and checks only
+candidates against pinned visible targets. Source hydration follows selection;
+Unicode matching, divergence, removed bookmark terms and signed forward/backward
+windows remain exact. Native filtering, extreme candidate continuations and
+differently embedded operation lookup remain delivery work. Full construction
+scale, disk footprint, RSS and latency qualification remains deferred.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

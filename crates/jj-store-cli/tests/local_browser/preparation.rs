@@ -54,6 +54,13 @@ fn prepared_index_files(
     for pair in records.chunks_exact(128).collect::<Vec<_>>().windows(2) {
         assert!(pair[0][..64] < pair[1][..64]);
     }
+    let filter = files
+        .remove(Path::new("local-reference-filter"))
+        .expect("local preparation exports its disposable substring index");
+    let checksum = files
+        .remove(Path::new("local-reference-filter.sha256"))
+        .expect("the substring index has complete checksum admission");
+    assert_eq!(checksum, Sha256::digest(&filter).as_slice());
     // Every remaining file must be exactly the pinned upstream index output.
     files
 }

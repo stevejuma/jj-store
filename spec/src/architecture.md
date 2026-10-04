@@ -843,3 +843,12 @@ outside the namespace. Verification stamps reuse the admitted file identities;
 completion uses the same current-slot installation path as private construction.
 Neither disk recovery nor warm resident reads retain an earlier caller's access
 capability. Complete scale/lifecycle qualification remains deferred.
+
+Prepared local reference filtering retains a disposable operation-bound disk
+projection and bounded database cache. Construction shares existing admitted
+commit reads and the generation's pre-growth disk reservation; request work
+seeks compressed lexical candidate blocks, validates exact pinned descriptions
+and hydrates only selected rows. No complete matching set or source history is
+retained by a query. Native filtering and extreme candidate continuation remain
+separate delivery work; full memory, construction and latency qualification is
+still deferred.

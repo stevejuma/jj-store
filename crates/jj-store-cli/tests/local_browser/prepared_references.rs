@@ -3,6 +3,184 @@ use jj_store_jj::{local_browser as q, query::Cancellation};
 use std::{fs, sync::Arc};
 
 #[tokio::test]
+async fn prepared_filter_windows_preserve_unicode_substrings_and_hydrate_only_selected_targets() {
+    let source = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    jj(source.path(), &["git", "init", "--colocate"]);
+    for n in 0..18 {
+        jj(
+            source.path(),
+            &["new", "-m", &format!("Unrelated history {n}")],
+        );
+    }
+    let unrelated = jj(
+        source.path(),
+        &["log", "--no-graph", "-r", "@----------", "-T", "commit_id"],
+    );
+    jj(
+        source.path(),
+        &["describe", "-m", "ΟΣ İSTANBUL mixed Needle repeated needle"],
+    );
+    jj(source.path(), &["bookmark", "create", "conflicted"]);
+    let original = jj(
+        source.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    );
+    jj(source.path(), &["describe", "-m", "Left ΟΣ needle"]);
+    jj(
+        source.path(),
+        &["--at-op", &original, "describe", "-m", "Right İSTANBUL"],
+    );
+    jj(source.path(), &["log", "--no-graph", "-r", "all()"]);
+    for name in ["a", "NEEDLE-name", "z"] {
+        jj(source.path(), &["bookmark", "create", name]);
+    }
+    let operation = jj(
+        source.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(source.path().join(".jj/repo")));
+    let ordinary = q::Executor::new(1).unwrap();
+    let mut requests = vec![];
+    for kind in [
+        q::references::Kind::Changes,
+        q::references::Kind::All,
+        q::references::Kind::Bookmarks,
+    ] {
+        for query in [
+            "NEEDLE",
+            "Left",
+            "mixed Needle",
+            "repeated needle",
+            "ΟΣ",
+            "İSTANBUL",
+            "e",
+            "hi",
+            "change:",
+            "bookmark:",
+            "absent text",
+            "needle unrelated",
+        ] {
+            for direction in [q::Direction::Forward, q::Direction::Backward] {
+                for anchor in [
+                    None,
+                    Some("bookmark:NEEDLE-name".into()),
+                    Some("change:8".into()),
+                    Some("z".into()),
+                ] {
+                    requests.push(q::references::Request {
+                        operation,
+                        query: query.into(),
+                        kind,
+                        limit: 1,
+                        exact: None,
+                        anchor,
+                        direction,
+                    });
+                }
+            }
+        }
+    }
+    let mut expected = vec![];
+    for request in &requests {
+        let q::Response::References(page) = ordinary
+            .read(
+                access.clone(),
+                operation,
+                q::Request::References(request.clone()),
+            )
+            .await
+            .unwrap()
+        else {
+            panic!()
+        };
+        expected.push(page);
+    }
+    let prepared = Arc::new(
+        ordinary
+            .prepare_index(
+                access.clone(),
+                operation,
+                output.path().into(),
+                32 * 1024 * 1024,
+                q::preparation::Limits::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
+    let small = q::Executor::with_workers(
+        jj_store_jj::query::workers::Workers::new(1).unwrap(),
+        q::Limits {
+            max_history_visits: 4,
+            ..Default::default()
+        },
+    );
+    jj(source.path(), &["new", "-m", "Later excluded needle"]);
+    for entry in fs::read_dir(source.path().join(".jj/repo/index/segments")).unwrap() {
+        fs::write(entry.unwrap().path(), b"unavailable source index").unwrap();
+    }
+    fs::remove_dir_all(prepared.path().join("segments")).unwrap();
+    for (request, expected) in requests.into_iter().zip(expected) {
+        assert!(!request.query.is_empty());
+        let q::Response::References(actual) = small
+            .read_prepared(
+                access.clone(),
+                prepared.clone(),
+                q::Request::References(request),
+            )
+            .await
+            .unwrap()
+        else {
+            panic!()
+        };
+        assert_eq!(actual.references, expected.references);
+        assert_eq!(actual.previous, expected.previous);
+        assert_eq!(actual.next, expected.next);
+        assert!(actual.stats.metadata_nodes <= 6, "{:?}", actual.stats);
+    }
+    let unrelated = unrelated.trim();
+    fs::remove_file(
+        source
+            .path()
+            .join(".git/objects")
+            .join(&unrelated[..2])
+            .join(&unrelated[2..]),
+    )
+    .unwrap();
+    let q::Response::References(page) = small
+        .read_prepared(
+            access,
+            prepared,
+            q::Request::References(q::references::Request {
+                operation,
+                query: "NEEDLE".into(),
+                kind: q::references::Kind::Changes,
+                limit: 1,
+                anchor: None,
+                direction: q::Direction::Forward,
+                exact: None,
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(page.references.len(), 1);
+    assert!(matches!(
+        &page.references[0],
+        q::references::Reference::Change {
+            divergent: true,
+            ..
+        }
+    ));
+    eprintln!("filtered one-row prepared page: {:?}", page.stats);
+}
+
+#[tokio::test]
 async fn prepared_reference_windows_seek_visible_changes_before_hydrating_targets() {
     let source = tempfile::tempdir().unwrap();
     let output = tempfile::tempdir().unwrap();

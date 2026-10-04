@@ -167,6 +167,16 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     let cold_references: Value = cold_references.json().await.unwrap();
     assert_eq!(cold_references["code"], "index_rebuild_required");
     assert_eq!(cold_references["local_snapshot"]["operation"], operation);
+    let mut filtered_references = references.clone();
+    filtered_references["request"]["query"]["query"] = json!("Later");
+    let filtered_cold = post(&query_path, filtered_references.clone())
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(filtered_cold.status(), reqwest::StatusCode::CONFLICT);
+    let filtered_cold: Value = filtered_cold.json().await.unwrap();
+    assert_eq!(filtered_cold["code"], "index_rebuild_required");
+    assert_eq!(filtered_cold["local_snapshot"]["operation"], operation);
     let operation_prefix = json!({"operation":operation,"cursor":null,
         "request":{"kind":"graph","query":[{"graph":"operations_filtered",
             "query":format!("from:{}",&historical_operation[..9])},{"limit":1,"after":null}]}});
@@ -332,6 +342,49 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     assert_eq!(
         previous["data"]["data"]["references"],
         first["data"]["data"]["references"]
+    );
+    let filtered_first: Value = post(&query_path, filtered_references.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(filtered_first["snapshot"]["operation"], operation);
+    assert!(stats(&filtered_first) <= 3, "{filtered_first}");
+    assert!(filtered_first["next_cursor"].is_string());
+    let mut resumed = filtered_references.clone();
+    resumed["cursor"] = filtered_first["next_cursor"].clone();
+    let filtered_next: Value = post(&query_path, resumed.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(filtered_next["snapshot"], filtered_first["snapshot"]);
+    resumed["request"]["query"]["query"] = json!("Historical");
+    assert_eq!(
+        post(&query_path, resumed).send().await.unwrap().status(),
+        reqwest::StatusCode::BAD_REQUEST
+    );
+    filtered_references["cursor"] = filtered_next["previous_cursor"].clone();
+    let filtered_previous: Value = post(&query_path, filtered_references)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(
+        filtered_previous["data"]["data"]["references"],
+        filtered_first["data"]["data"]["references"]
     );
     // Even a valid replacement protobuf cannot trigger ordinary fallback from
     // a corrupt ready generation. SimpleOpStore does not hash filenames.

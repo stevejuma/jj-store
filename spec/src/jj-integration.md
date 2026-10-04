@@ -1005,8 +1005,28 @@ verified JJ index to construct ordered visible-reference identities. Reserve
 projection growth before traversal and retain it with the generation. Unfiltered
 change/all reference windows use a fresh scoped Store, seek before target
 hydration and need no graph RepoLoader. The wrapper rejects a different embedded
-operation. Preserve ordinary output/record/work limits and retain full search
-matching on the existing bounded path until indexed filtering is delivered.
+operation. Preserve ordinary output/record/work limits. Local nonempty filters
+use the disk projection governed below; native filtered delivery stays pending.
+
+Local preparation MAY add an owned `JSTLRF1` substring projection beside the
+byte-identical upstream JJ index. Its redb4.3.0 file binds the selected
+operation and lexical row count and has a complete SHA-256 admission sidecar.
+Keep an 8MiB database cache within an independently retained allocation lease,
+with no whole-description resident projection. Reuse the already admitted commit
+description during construction; record lengths admit exact candidate text
+before reads. One-, two- and three-byte grams follow whole-string lowercasing;
+postings use sparse 16-bit offsets or 4096-bit masks per lexical block.
+Candidate intersection is never authoritative: pinned visibility and exact
+substring checks decide matching, and selected bodies still cross the scoped
+Store. Checksum, selected operation, framing, work and byte admission precede
+retained reader use. Coalesce postings within one 4096-row block behind a
+pre-reserved 64MiB scratch lease, flushing before the 65,536-entry bound or next
+block. Grow neither resident state nor write batches with repository size.
+Reserve final database, scratch and sidecar growth through the same cache quota
+before writes. Ordinary reads do not reconstruct or hash this projection. Retain
+file and cache ownership with the prepared generation through active readers and
+cancellation cleanup. This disposable local format changes neither upstream JJ
+format6 bytes nor any native/companion/wire identity.
 
 Native graph generations MUST retain selected-view visibility and reverse
 bookmark/workspace annotations alongside their verified immutable JJ index.

@@ -777,7 +777,24 @@ including backward/deep anchors and exact change lookup. Preserve lexical keys,
 divergence, sorted target identities, explicit conflict terms, workspace labels
 and complete-result semantics; hydrate only the selected page's targets. Hidden
 rewrites and later commits cannot become visible changes. These queries require
-preparation when cold. Nonempty description search and an embedded reference
-operation different from the outer selection retain their existing separately
-bounded reader pending indexed filtering/operation lookup. No source or wire
-format changes; comprehensive large-scale qualification stays deferred.
+preparation when cold. A differently embedded reference operation remains
+separate indexed-delivery work. No source or wire format changes; comprehensive
+large-scale qualification stays deferred.
+
+Prepared local reference filters MUST preserve whole-string Unicode lowercase
+substring matching on the full reference key or any pinned target description.
+Capture descriptions with the existing bounded commit read during preparation,
+using the scoped decoder's lossy UTF-8 normalization. Store text and ordered
+candidate postings on disk, with byte/work/cancellation and pre-growth disk and
+resident admission. Intersect compact postings in lexical rank order, seek from
+the requested anchor and verify exact text only for candidates' selected-view
+targets. Historical hidden targets may narrow candidate lookup but MUST NOT
+produce visible changes or satisfy a visible change's filter. Preserve removed
+bookmark terms, divergence and forward/backward probes. Hydrate source metadata
+only for returned rows. Empty bookmark/workspace pages remain independently
+usable without preparation; filtered Bookmarks and Changes/All use existing
+exact-operation preparation recovery. No complete matching set or source history
+traversal is permitted on the prepared request path. Candidate work still
+observes ordinary limits and MUST fail explicitly rather than returning a
+partial result; retained continuation for extreme candidate frontiers remains
+separate delivery work.

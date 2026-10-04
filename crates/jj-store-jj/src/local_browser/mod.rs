@@ -171,8 +171,9 @@ impl Request {
                 | Self::Graph(GraphRequest::Log { .. } | GraphRequest::Evolution { .. }, _)
         ) || matches!(self, Self::Graph(GraphRequest::OperationsFiltered { query }, _)
             if crate::query::language::operations::Filter::parse(query).is_ok_and(|filter| filter.needs_prefix_lookup()))
-            || matches!(self, Self::References(r) if r.query.is_empty()
-            && matches!(r.kind, references::Kind::Changes | references::Kind::All))
+            || matches!(self, Self::References(r) if
+            matches!(r.kind, references::Kind::Changes | references::Kind::All)
+            || (r.kind == references::Kind::Bookmarks && !r.query.is_empty()))
     }
     /// Ordinary scoped reads can reuse ready point membership while retaining
     /// their bounded cold reader. Bare file IDs have no selected tree proof.
