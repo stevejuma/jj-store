@@ -763,6 +763,15 @@ pending transaction bookkeeping. Per-object metadata and parent limits remain
 enforced. Preparation charges traversal, ordering and serialization work and
 checks cancellation between records; it never loads trees for commit indexing.
 
+Native explicit preparation uses a separate trusted policy: at most four million
+commits, 500 million work units, 16 GiB cumulative object bytes, one billion
+metadata shape nodes and one hour. Per-object decoding and parent/merge limits
+remain enforced. Ordinary page work, bytes, metadata and deadlines remain
+unchanged; a loaded index may contain up to four million commits without
+charging every retained commit to a page. A stricter configured index ceiling
+still applies to preparation and warm reads. Requests cannot override these
+policies. These ceilings are admission bounds, not scale-qualification evidence.
+
 The derived segment writer MUST preserve JJ 0.45.1 format-6 bytes and the cold
 builder's reverse-topological timestamp/commit-ID ordering, including parent
 overflow and divergent-change lookup. It streams output under a shared

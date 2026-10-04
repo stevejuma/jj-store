@@ -1,4 +1,5 @@
 //! Manifest-pinned application reads. This capability exposes no publication API.
+mod preparation;
 use crate::native::NativeSession;
 // Only project-owned contracts cross this transport-facing service boundary.
 pub use jj_store_jj::{factories::PROFILE as NATIVE_PROFILE, query};
@@ -283,15 +284,19 @@ impl CommittedRead {
         executor: &jj_store_jj::query::GraphExecutor,
         cancellation: jj_store_jj::query::Cancellation,
     ) -> jj_store_jj::query::Result<jj_store_jj::query::IndexReport> {
-        self.authorize().await.map_err(query_error)?;
+        let access = tokio::select! {
+            biased;
+            _ = cancellation.cancelled() => return Err(query::Error::Canceled),
+            access = preparation::Access::capture(self) => access.map_err(query_error)?,
+        };
         let result = executor
             .prepare_index(
                 self.session.object_store.clone(),
-                self.clone(),
+                access.clone(),
                 cancellation,
             )
             .await?;
-        self.authorize().await.map_err(query_error)?;
+        query::ReadAccess::authorize(access.as_ref()).await?;
         Ok(result)
     }
     /// Execute through the owned JJ boundary; the caller supplies trusted cache

@@ -589,8 +589,9 @@ explicit rebuild-required result. Index preparation remains tied to the selected
 operation while repository heads advance. Clients retry that snapshot after a
 preparation task reports completion; evicted or lost caches can require another
 preparation. Completion never means repository history or local cache files are
-permanently pinned. Hard query budgets also apply to preparation and cannot be
-relaxed by a request parameter.
+permanently pinned. Preparation has a separately bounded trusted construction
+policy; ordinary page budgets remain unchanged. Neither policy can be relaxed by
+a request parameter.
 
 Index preparation tasks are process-local and require an explicit operation.
 Starting, inspecting and canceling a task require current repository read
@@ -601,6 +602,17 @@ retain no credentials or full inventories. Retention, snapshot capture,
 concurrent jobs and expiry are bounded; exhaustion returns Busy. Expiry or
 server restart returns task-reset rather than selecting current heads. A new
 start may prepare an evicted cache.
+
+The native running deadline defaults to one hour, independently of the five
+minute completed-report retention period, which starts at actual worker exit. An
+explicit preparation captures the already-checked catalog root and operation
+before its initiating page capability expires. Current repository read access
+and epoch are rechecked during construction, with ten-second bounds on each
+authorization or point-membership observation. The task retains at most 1,024
+positive membership cache entries; eviction repeats verified point membership at
+the same root. It MUST NOT retain an ever-growing page membership set or
+enumerate the catalog. Expiration or cancellation does not release the worker
+until it exits. The completed task retains no session credential.
 
 Task cancellation or service teardown signals the native budget, and Canceling
 becomes Canceled after worker exit. Expiry also signals cancellation without a

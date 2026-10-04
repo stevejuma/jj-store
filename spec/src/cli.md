@@ -1635,6 +1635,14 @@ equal/skewed timestamps, multi-parent merges and divergent change IDs. Space
 tests MUST prove refusal before scratch or streamed output exceeds the shared
 allowance; failure leaves no ready entry and permits a later authorized retry.
 
+Preparation-policy regression MUST prove that a small interactive work or
+membership limit does not become the explicit task's cumulative limit, while the
+original page retains its limit. Trusted preparation ceilings must reject
+oversized policy values and enforce stricter configured budgets. Lifecycle tests
+must hold a native storage read beyond completed-report retention, retain
+Running until explicit cancellation or the separate execution deadline, and
+prove cancellation/expiry release the body and worker before completed status.
+
 Warm resident-cache acceptance MUST retain same-size corruption detection even
 when a writer restores mtime, plus existing missing-file, receipt, symlink,
 repository/epoch, eviction and revocation checks. A low-work warm verification

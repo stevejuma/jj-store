@@ -37,6 +37,7 @@ pub struct Limits {
     pub running: usize,
     pub retained: usize,
     pub ttl: Duration,
+    pub preparation_timeout: Duration,
     pub read: ReadLimits,
 }
 impl Default for Limits {
@@ -45,6 +46,7 @@ impl Default for Limits {
             running: 2,
             retained: 32,
             ttl: Duration::from_secs(300),
+            preparation_timeout: Duration::from_secs(3600),
             read: ReadLimits::default(),
         }
     }
@@ -149,6 +151,8 @@ impl IndexTasks {
             || !(1..=1024).contains(&limits.retained)
             || limits.ttl.is_zero()
             || limits.ttl > Duration::from_secs(3600)
+            || limits.preparation_timeout.is_zero()
+            || limits.preparation_timeout > Duration::from_secs(3600)
             || limits.read.max_objects == 0
             || limits.read.max_objects > 2_000_000
             || limits.read.timeout.is_zero()
@@ -216,7 +220,7 @@ impl IndexTasks {
         let id = hex::encode(random);
         let cancellation = Cancellation::default();
         let expires = Instant::now()
-            .checked_add(self.limits.ttl)
+            .checked_add(self.limits.preparation_timeout)
             .ok_or(Error::Limit)?;
         let task = Task {
             version: 1,
@@ -249,6 +253,7 @@ impl IndexTasks {
         }
         let registry = self.registry.clone();
         let executor = self.executor.clone();
+        let completed_ttl = self.limits.ttl;
         tokio::spawn(async move {
             let signal = cancellation.clone();
             // Supervise even a panic so the registry cannot retain a phantom
@@ -267,12 +272,17 @@ impl IndexTasks {
             .unwrap_or(Err(q::Error::Unavailable));
             let mut registry = registry.lock().expect("index task registry");
             if let Some(entry) = registry.0.get_mut(&id) {
+                if Instant::now() >= entry.expires {
+                    registry.0.remove(&id);
+                    return;
+                }
                 entry.task.state = match outcome {
                     _ if matches!(entry.task.state, State::Canceling) => State::Canceled,
                     Ok(index) => State::Ready { index },
                     Err(q::Error::Canceled) => State::Canceled,
                     Err(error) => State::Failed { error },
                 };
+                entry.expires = Instant::now() + completed_ttl;
             }
             registry.prune();
         });

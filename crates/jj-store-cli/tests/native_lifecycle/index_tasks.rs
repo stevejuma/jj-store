@@ -400,6 +400,59 @@ async fn index_tasks_retention_expiry_and_failures_are_explicit() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn index_tasks_running_deadline_is_independent_of_completed_retention() {
+    let f = ContentFixture::new().await;
+    let root = tempfile::tempdir().unwrap();
+    let shared = shared(root.path());
+    let manager = tasks::IndexTasks::new(
+        shared.graph().clone(),
+        tasks::Limits {
+            ttl: Duration::from_millis(100),
+            preparation_timeout: Duration::from_secs(2),
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let gate = Arc::new(GatedStore {
+        inner: f.f.store.clone(),
+        target: f.commit.key().storage_path(REPO),
+        entered: Default::default(),
+        released: Default::default(),
+    });
+    let session = Arc::new(
+        NativeSession::new(
+            gate.clone(),
+            Arc::new(NativeObjects::new(gate.clone(), REPO, 4 * 1024 * 1024).unwrap()),
+            f.f.reader.clone(),
+            Arc::new(SystemClock),
+            Protection::default(),
+            SessionLimits::default(),
+        )
+        .unwrap(),
+    );
+    let operation = f.read.snapshot().await.unwrap().operation_id;
+    let task = manager.start(session.clone(), operation).await.unwrap();
+    tokio::time::timeout(Duration::from_secs(2), gate.entered.notified())
+        .await
+        .unwrap();
+    tokio::time::sleep(Duration::from_millis(150)).await;
+    let live = manager.status(session.clone(), &task.id).await;
+    let cancel = manager.cancel(session.clone(), &task.id).await;
+    assert!(matches!(live.unwrap().state, tasks::State::Running));
+    cancel.unwrap();
+    assert!(matches!(
+        terminal(&manager, session.clone(), &task.id).await.state,
+        tasks::State::Canceled
+    ));
+    assert!(gate.released.load(std::sync::atomic::Ordering::SeqCst));
+    tokio::time::sleep(Duration::from_millis(150)).await;
+    assert_eq!(
+        manager.status(session, &task.id).await.unwrap_err(),
+        tasks::Error::Reset
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn index_tasks_expiry_cancels_pending_storage_without_status_polling() {
     let f = ContentFixture::new().await;
     let root = tempfile::tempdir().unwrap();
@@ -407,7 +460,7 @@ async fn index_tasks_expiry_cancels_pending_storage_without_status_polling() {
     let manager = tasks::IndexTasks::new(
         shared.graph().clone(),
         tasks::Limits {
-            ttl: Duration::from_secs(1),
+            preparation_timeout: Duration::from_secs(1),
             ..tasks::Limits::default()
         },
     )

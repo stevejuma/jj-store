@@ -1,6 +1,100 @@
 use super::*;
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn preparation_retains_the_root_without_a_page_membership_limit() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, commit) = initial(&f, local.path(), work.path()).await;
+            let OpenRead::Pinned(read) = f
+                .session
+                .open_read(
+                    Some(oid(repo.op_id())),
+                    ReadLimits {
+                        max_objects: 1,
+                        ..Default::default()
+                    },
+                )
+                .await
+                .unwrap()
+            else {
+                panic!()
+            };
+            let read = Arc::new(read);
+            let exec = executor(root.path(), q::Limits::default());
+            read.prepare_index(&exec, q::Cancellation::default())
+                .await
+                .unwrap();
+            assert_eq!(
+                read.authorize_object(m::ObjectKey::Commit(cid(commit.id())))
+                    .await
+                    .unwrap_err(),
+                jj_store_service::reads::Error::Limit
+            );
+            let fresh = pin(&f, oid(repo.op_id())).await;
+            let graph = fresh.graph(&exec, log("all()"), page(1)).await.unwrap();
+            assert_eq!(commits(&graph)[0].commit.id, cid(commit.id()));
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn preparation_policy_enforces_its_own_limits() {
+    let f = Fixture::new().await;
+    let root = tempfile::tempdir().unwrap();
+    let read = pin(&f, roots::ROOT_OPERATION).await;
+    let exec = executor(root.path(), q::Limits::default())
+        .with_preparation_limits(q::preparation::Limits {
+            max_work: 1,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(
+        read.prepare_index(&exec, q::Cancellation::default())
+            .await
+            .unwrap_err(),
+        q::Error::Limit
+    );
+    assert!(
+        executor(root.path(), q::Limits::default())
+            .with_preparation_limits(q::preparation::Limits {
+                timeout: Duration::from_secs(3601),
+                ..Default::default()
+            })
+            .is_err()
+    );
+    assert!(
+        executor(root.path(), q::Limits::default())
+            .with_preparation_limits(q::preparation::Limits {
+                max_commits: 4_000_001,
+                ..Default::default()
+            })
+            .is_err()
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn explicit_preparation_has_its_own_work_budget() {
+    let f = Fixture::new().await;
+    let root = tempfile::tempdir().unwrap();
+    let read = pin(&f, roots::ROOT_OPERATION).await;
+    let exec = executor(
+        root.path(),
+        q::Limits {
+            max_work: 1,
+            ..Default::default()
+        },
+    );
+    let prepared = read.prepare_index(&exec, q::Cancellation::default()).await;
+    let interactive = read.graph(&exec, log("all()"), page(1)).await;
+    prepared.expect("preparation inherited the interactive work budget");
+    assert_eq!(interactive.unwrap_err(), q::Error::Limit);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn index_preparation_is_explicit_snapshot_bound_and_disposable() {
     tokio::task::LocalSet::new()
         .run_until(async {

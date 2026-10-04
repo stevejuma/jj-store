@@ -7,6 +7,7 @@ mod graphs;
 mod index;
 pub mod language;
 pub mod predicates;
+pub mod preparation;
 pub(crate) mod prepared;
 pub mod workers;
 use crate::{
@@ -92,7 +93,7 @@ impl Default for Limits {
             metadata: admission::Limits::default(),
             predicates: predicates::Limits::default(),
             max_page: 500,
-            max_index_commits: 50_000,
+            max_index_commits: 4_000_000,
             max_inline_rebuild_commits: 1_000,
             max_work: 1_000_000,
             max_object_bytes: 256 * 1024 * 1024,
@@ -279,6 +280,7 @@ enum Output {
 pub struct GraphExecutor {
     root: PathBuf,
     limits: Limits,
+    preparation: preparation::Limits,
     workers: Workers,
     cache_policy: cache::Policy,
     residents: Arc<cache::resident::Residents>,
@@ -309,6 +311,7 @@ impl GraphExecutor {
         Ok(Self {
             root,
             limits,
+            preparation: Default::default(),
             workers,
             cache_policy,
             residents: Arc::default(),
@@ -334,6 +337,11 @@ impl GraphExecutor {
             Output::Index(_) => Err(Error::Unavailable),
         }
     }
+    pub fn with_preparation_limits(mut self, limits: preparation::Limits) -> Result<Self> {
+        limits.validate()?;
+        self.preparation = limits;
+        Ok(self)
+    }
     pub async fn prepare_index(
         &self,
         store: Arc<dyn ObjectStore>,
@@ -355,7 +363,11 @@ impl GraphExecutor {
         work: Work,
         cancellation: Cancellation,
     ) -> Result<Output> {
-        let mut budget = Budget::new(self.limits)?;
+        let limits = match &work {
+            Work::Prepare => self.preparation.budget(self.limits),
+            Work::Graph(..) => self.limits,
+        };
+        let mut budget = Budget::new(limits)?;
         budget.cancellation = cancellation.0;
         let budget = Arc::new(budget);
         let permit = match &work {
@@ -623,6 +635,7 @@ impl Limits {
         if self.max_page == 0
             || self.max_page > 10_000
             || self.max_index_commits == 0
+            || self.max_index_commits > 4_000_000
             || self.max_work == 0
             || self.max_object_bytes == 0
             || self.max_output_bytes == 0

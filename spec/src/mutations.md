@@ -331,6 +331,13 @@ executor. It supplies the same current authorization and captured membership as
 graph reads, and checks authorization again before exposing the preparation
 report. Preparation has no repository publication capability.
 
+Explicit graph-index construction uses its own trusted resource and lifetime
+policy and a retained checked catalog root. This does not expand typed command
+budgets or authorize a mutation. The preparation membership cache is bounded;
+cache eviction rechecks the original root, never the latest inventory. Current
+access and epoch are checked before returning a report even when the initiating
+page session has expired.
+
 The index-task registry contains only exact read-snapshot metadata, initiating
 principal IDs, cancellation handles and owned outcomes. Full inventories and
 request credentials live only in bounded running jobs and are dropped before

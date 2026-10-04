@@ -639,3 +639,10 @@ all references in a view or descendants of a tree. An existing object-store key
 is never proof of committed membership. Complete closure audits remain required
 by publication, recovery and explicit integrity operations. Later publications
 cannot replace a retained reader's catalog root.
+
+Explicit derived-index tasks may retain this checked root beyond the initiating
+page deadline. Their execution is separately bounded and authorization remains
+current; they do not reuse the expired page capability. Positive membership
+memoization is a bounded optimization, not a growing authority inventory.
+Eviction requires a new verified lookup at the same root and cannot admit
+objects from later publications or staged storage.
