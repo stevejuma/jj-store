@@ -77412,6 +77412,126 @@ entries.
     "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte#Workspace chip sits at the title row edge"
   ],
   "source_acceptance": "Design Core dark count contrast corrected upstream and committed d7ebf3e1 after complete required nonvisual checks. Current ignored foundational validation setup hardlinks byte-identical source tokens; tracked package manifest and lockfile unchanged. Registry-resolved release qualification remains separately pending."
+},
+{
+  "id": "E-M20-003",
+  "tasks": [
+    "M20",
+    "M20.1",
+    "M20.2"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change xounzrpv",
+  "kind": "commit-row-resize-regression",
+  "versions": "JJ 0.45.1, Node 26.9.0, pnpm 10.32.1, Svelte 5.57.1, Storybook 10.5.7, Vitest 4.1.11",
+  "formats": "Presentation CSS only; no contract or persisted format change.",
+  "result": "pending",
+  "scope": "Fix the owned revision graph action-row copy flex basis so resizing across the 440px breakpoint does not turn a horizontal 12rem reserve into vertical height. Before: widening the stack grew a commit row from 88.109px to 240.578px. After: widening and restoring the column retains natural measured heights. The existing general repository graph layout retains its horizontal reserves. Preserve all 436 historical evidence objects byte-for-byte. Root aggregates, Rust and production bundle lanes are out of scope for this UI-only slice.",
+  "files": [
+    "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md",
+    "spec/src/api.md"
+  ],
+  "runs": [
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t ResizingStackColumnsKeepsNaturalCommitRowHeights --reporter=verbose",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/resize-before.log: One measured resize regression failed."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte -t ResizingStackColumnsKeepsNaturalCommitRowHeights --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-after.log: Exact regression passed; 10 skipped."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte --reporter=verbose",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-stories.log: 24/24 directly affected scenarios in 3 files passed interaction/accessibility."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-types.log: Zero errors/warnings."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-catalog.log: Zero errors/warnings; 214 catalog modules."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceRefinements.stories.svelte spec/src/ui.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-format.log: Formatted only named files."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-verification-format.log: Named verification map formatted."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-spec-validate.log: 5 validators, 23 chapters, 173 requirements passed."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/resize-spec-first.log: required API chapter missing from mapped protected graph change; repaired with explicit presentation-state boundary clarification."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-check-progress.log: 141 tasks; bookkeeping only."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-check-ui-ownership.log: Owned presentation boundary passed."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/api.md",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-api-format.log: API chapter formatted."
+    },
+    {
+      "command": "pnpm spec:first --base @-- --head @-",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/resize-spec-first-qualified.log: checker expects concrete Git commit IDs for explicit ranges, not JJ revsets."
+    },
+    {
+      "command": "pnpm spec:first --base 044165d6 --head 617f6bd6 (full IDs resolved by jj log)",
+      "result": "fail",
+      "failures": 1,
+      "note": ".local/stack-spacer-evidence/resize-spec-first-committed.log: explicit-range checker uses Git diff, which does not access this non-colocated JJ workspace; use the normal JJ-aware local gate in the owning change."
+    },
+    {
+      "command": "pnpm spec:first (in owning JJ change xounzrpv)",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/stack-spacer-evidence/resize-spec-first-local.log: 2 protected files and 3 canonical chapters passed on corrected full slice."
+    }
+  ],
+  "remaining": [
+    "Visual approval and registry-resolved foundations remain separate.",
+    "Phase 2 backend, checkout and persistence require explicit approval."
+  ],
+  "next": "Continue the requested trailing spacer UI in the next slice."
 }
 ]
 ```

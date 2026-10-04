@@ -266,6 +266,13 @@
     flex-direction: column;
     gap: 0.4rem;
   }
+  /* In action rows the copy is in a vertical flex container: its basis
+     must follow content, rather than the horizontal row's width reserve. */
+  .community-revision-graph__row--actions
+    .community-revision-graph__content
+    :global(.community-revision-graph-copy) {
+    flex-basis: auto;
+  }
   .community-revision-graph__actions {
     display: flex;
     align-items: center;

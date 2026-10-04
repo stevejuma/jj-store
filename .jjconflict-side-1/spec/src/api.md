@@ -1862,9 +1862,11 @@ with exact staged selection lists, multi-file transfers to mutable commits or
 back to Unstaged, preview requests, command outcomes and request-status
 contracts. An injected adapter supplies them to the production controller. They
 are frontend contracts, not new HTTP/RPC endpoints or generated Rust schemas.
-The fixture adapter performs isolated in-memory transitions only. Local backend
-eligibility, publication, physical checkout, durability and wire contracts
-remain deferred pending explicit approval of the UI slice.
+The fixture adapter performs isolated in-memory transitions only. Column
+resizing preserves these selections and natural commit content heights without
+changing snapshot, request or draft state. Local backend eligibility,
+publication, physical checkout, durability and wire contracts remain deferred
+pending explicit approval of the UI slice.
 
 The frontend command union also carries an optional parent stack for dependent
 creation, explicit above/below placement for empty commits and new branch heads,

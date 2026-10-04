@@ -373,9 +373,11 @@ survive preview cancellation and unknown outcomes, and clear only after
 confirmed commit success.
 
 Branch-header file lists reuse the commit-row file listing with an inset around
-the panel. Selected commit rows and branch headers retain their selection labels
-and show the Changeyard-style rounded left border marker without shifting the
-graph, avatars or row contents.
+the panel. Resizing action-bearing commit rows MUST retain their natural content
+height in both directions across width breakpoints; horizontal copy width
+reserves MUST NOT become vertical flex bases. Selected commit rows and branch
+headers retain their selection labels and show the Changeyard-style rounded left
+border marker without shifting the graph, avatars or row contents.
 
 Named combinations share this folder while retaining independent unassigned
 edits. Preview text identifies destinations and explains deletion of a stack or
