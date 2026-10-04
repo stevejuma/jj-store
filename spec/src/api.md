@@ -1857,3 +1857,8 @@ retains its own bounds. Application documents may frame same-origin content, but
 only documentation responses permit same-origin ancestors; API responses remain
 unframeable. New browser builds include Help; older valid bundles without a help
 directory remain loadable.
+
+Nonrecursive path pages include direct file, directory, symlink, submodule and
+unresolved structural-conflict entries. They load the selected directory terms
+without walking descendant directories. Unfiltered bookmark windows select rows
+before target hydration; each returned target retains exact pinned membership.

@@ -12,6 +12,7 @@ pub mod operation_changes;
 pub mod operations;
 pub mod paths;
 pub mod references;
+mod scoped;
 pub use crate::query::Error;
 pub use crate::query::content::{Direction, Limits};
 use budget::Budget;
@@ -207,7 +208,8 @@ impl Executor {
                 let metadata_only = matches!(&request, Request::QueryInfo)
                     || matches!(&request, Request::References(r) if r.kind == references::Kind::Bookmarks && r.operation == operation)
                     || matches!(&request, Request::Operation { operation: selected } if *selected == operation);
-                let context = Context::open(access, operation, budget, limits, metadata_only).await?;
+                let scoped_commit = match &request { Request::Paths(r) => Some(r.commit), _ => None };
+                let context = Context::open(access, operation, budget, limits, metadata_only, scoped_commit).await?;
                 let value = match request {
                     Request::QueryInfo => {
                         let mut info = crate::query::language::info(true);
@@ -381,6 +383,7 @@ impl Pin {
 struct Context {
     repo: Option<Arc<ReadonlyRepo>>,
     store: Arc<jj_lib::store::Store>,
+    scoped: Option<Arc<scoped::Guard>>,
     access: Arc<Pin>,
     budget: Arc<Budget>,
     limits: Limits,
@@ -392,7 +395,9 @@ impl Context {
         budget: Arc<Budget>,
         limits: Limits,
         metadata_only: bool,
+        scoped_commit: Option<m::GitSha1Id>,
     ) -> Result<Self> {
+        let metadata_only = metadata_only || scoped_commit.is_some();
         let loader = loader(binding.metadata_path())?;
         // Only operations in the current retained operation ancestry may be selected.
         let heads = loader
@@ -504,9 +509,28 @@ impl Context {
             // View references prove these targets without reading their ancestry.
             pin.inventory
                 .extend(commits.into_iter().map(ObjectKey::Commit));
+            if scoped_commit.is_some_and(|id| !pin.inventory.contains(&ObjectKey::Commit(id))) {
+                // Historical IDs still require the complete retained membership
+                // proof until a prepared historical index is available.
+                return Box::pin(Self::open(
+                    pin.binding,
+                    operation,
+                    budget,
+                    limits,
+                    false,
+                    None,
+                ))
+                .await;
+            }
+            let scoped = scoped_commit
+                .map(|_| scoped::Guard::new(loader.store().clone(), &pin, budget.clone(), limits));
+            let store = scoped
+                .as_ref()
+                .map_or_else(|| loader.store().clone(), |guard| guard.store());
             return Ok(Self {
                 repo: None,
-                store: loader.store().clone(),
+                store,
+                scoped,
                 access: Arc::new(pin),
                 budget,
                 limits,
@@ -578,6 +602,7 @@ impl Context {
         Ok(Self {
             repo: Some(repo),
             store: loader.store().clone(),
+            scoped: None,
             access: Arc::new(pin),
             budget,
             limits,
@@ -595,7 +620,12 @@ impl Context {
     }
     async fn member(&self, key: ObjectKey) -> Result<()> {
         self.budget.authorize(self.access.as_ref()).await?;
-        if self.access.inventory.contains(&key) {
+        if self.access.inventory.contains(&key)
+            || self
+                .scoped
+                .as_ref()
+                .is_some_and(|guard| guard.contains(key))
+        {
             return Ok(());
         }
         Err(Error::NotCommitted)
@@ -607,6 +637,15 @@ impl Context {
         self.member(ObjectKey::Commit(id)).await?;
         if let Some(data) = self.access.commits.get(&id) {
             return Ok(data.clone());
+        }
+        if self.scoped.is_some() {
+            let commit = self
+                .store
+                .get_commit_async(&b::CommitId::from_bytes(id.as_bytes()))
+                .await
+                .map_err(native::map_backend)?;
+            return dto::Commit::try_from(commit.store_commit().as_ref())
+                .map_err(|_| Error::Corrupt);
         }
         bounded_git_object(
             self.store.backend(),

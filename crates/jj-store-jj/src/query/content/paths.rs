@@ -1,7 +1,7 @@
 //! Cursor-ready recursive file rows with bounded last-change metadata.
 use super::native::{map_backend, path as native_path, terms};
 use super::*;
-use jj_lib::{matchers::PrefixMatcher, object_id::ObjectId as _};
+use jj_lib::{matchers::PrefixMatcher, object_id::ObjectId as _, tree::TreeMergeExt as _};
 use serde::Deserialize;
 use std::collections::VecDeque;
 
@@ -71,10 +71,37 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     let mut found = VecDeque::new();
     let mut has_previous = false;
     let mut has_next = false;
-    for (path, value) in commit.tree().entries_matching(&matcher) {
+    // Load only the selected directory terms for a direct-child page. The
+    // recursive iterator descends into every subtree and never emits directories.
+    let trees = if request.recursive {
+        None
+    } else {
+        commit
+            .tree()
+            .trees()
+            .await
+            .map_err(map_backend)?
+            .sub_tree_recursive(&prefix)
+            .await
+            .map_err(map_backend)?
+    };
+    let values: Box<dyn Iterator<Item = (_, _)>> = if request.recursive {
+        Box::new(commit.tree().entries_matching(&matcher))
+    } else if let Some(trees) = &trees {
+        Box::new(
+            jj_lib::merged_tree::all_merged_tree_entries(trees)
+                .map(|(name, _)| (prefix.join(name), Ok(trees.value(name).cloned()))),
+        )
+    } else {
+        Box::new(std::iter::empty())
+    };
+    for (path, value) in values {
         context.budget.authorize(context.access.as_ref()).await?;
         context.budget.work(1)?;
         let value = value.map_err(map_backend)?;
+        if value.as_resolved() == Some(&None) {
+            continue;
+        }
         let path = path.as_internal_file_string().to_owned();
         if !request.recursive && parent(&path) != request.path {
             continue;

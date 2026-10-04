@@ -55,7 +55,11 @@ async fn local_metadata_and_bookmark_pages_do_not_load_history_or_index() {
         direction: Default::default(),
     };
     let q::Response::References(page) = reader
-        .read(access, operation, q::Request::References(request))
+        .read(
+            access.clone(),
+            operation,
+            q::Request::References(request.clone()),
+        )
         .await
         .unwrap()
     else {
@@ -70,6 +74,23 @@ async fn local_metadata_and_bookmark_pages_do_not_load_history_or_index() {
     assert!(page.previous.is_some());
     assert!(page.next.is_some());
     assert!(page.stats.metadata_nodes <= 3, "{:?}", page.stats);
+    assert!(page.stats.work < 16, "{:?}", page.stats);
+    let q::Response::References(shared) = reader
+        .read(
+            access,
+            operation,
+            q::Request::References(q::references::Request {
+                limit: 50,
+                ..request
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(shared.references.len(), 50);
+    assert!(shared.stats.metadata_nodes <= 3, "{:?}", shared.stats);
 }
 
 /// Read-only smoke for an explicitly provided registered Git-backed JJ folder.
@@ -91,7 +112,7 @@ async fn registered_large_repository_metadata_smoke() {
     ));
     let q::Response::References(page) = reader
         .read(
-            access,
+            access.clone(),
             operation,
             q::Request::References(q::references::Request {
                 operation,
@@ -113,4 +134,129 @@ async fn registered_large_repository_metadata_smoke() {
         page.stats,
         page.references.len()
     );
+    if let Some(q::references::Reference::Bookmark { targets, .. }) = page.references.first() {
+        if let Some(target) = targets.first() {
+            let started = std::time::Instant::now();
+            let q::Response::Paths(paths) = reader
+                .read(
+                    access,
+                    operation,
+                    q::Request::Paths(q::paths::Request {
+                        commit: target.commit,
+                        path: String::new(),
+                        recursive: false,
+                        limit: 10,
+                        anchor: None,
+                        direction: Default::default(),
+                    }),
+                )
+                .await
+                .unwrap()
+            else {
+                panic!()
+            };
+            eprintln!(
+                "Linux directory: {:?}; {:?}; rows={}",
+                started.elapsed(),
+                paths.stats,
+                paths.entries.len()
+            );
+        }
+    }
+}
+
+#[tokio::test]
+async fn local_file_rows_read_only_the_selected_commit_and_traversed_trees() {
+    let temp = tempfile::tempdir().unwrap();
+    jj(temp.path(), &["git", "init", "--colocate"]);
+    std::fs::write(temp.path().join("a.txt"), "base\n").unwrap();
+    std::fs::create_dir(temp.path().join("nested")).unwrap();
+    std::fs::write(temp.path().join("nested/deep.txt"), "deep\n").unwrap();
+    jj(temp.path(), &["describe", "-m", "Base"]);
+    jj(temp.path(), &["new", "-m", "Selected"]);
+    std::fs::write(temp.path().join("a.txt"), "selected\n").unwrap();
+    std::fs::write(temp.path().join("nested/deep.txt"), "selected deep\n").unwrap();
+    jj(temp.path(), &["describe", "-m", "Selected"]);
+    let commit = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let operation = jj(
+        temp.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(temp.path().join(".jj/repo")));
+    let reader = q::Executor::with_workers(
+        Workers::new(1).unwrap(),
+        q::Limits {
+            max_history_visits: 2,
+            ..Default::default()
+        },
+    );
+    let q::Response::Paths(page) = reader
+        .read(
+            access.clone(),
+            operation,
+            q::Request::Paths(q::paths::Request {
+                commit,
+                path: String::new(),
+                recursive: false,
+                limit: 1,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(page.entries[0].path, "a.txt");
+    assert!(
+        matches!(page.entries[0].last_change, q::paths::LastChange::Available { commit: id, .. } if id == commit)
+    );
+    assert!(page.stats.metadata_nodes <= 5, "{:?}", page.stats);
+    assert!(page.next.is_some());
+    let q::Response::Paths(second) = reader
+        .read(
+            access.clone(),
+            operation,
+            q::Request::Paths(q::paths::Request {
+                commit,
+                path: String::new(),
+                recursive: false,
+                limit: 1,
+                anchor: page.next,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(second.entries[0].path, "nested");
+    assert!(matches!(
+        second.entries[0].terms[0],
+        Some(q::dto::TreeValue::Tree { .. })
+    ));
+    let denied = reader
+        .read(
+            access,
+            operation,
+            q::Request::Paths(q::paths::Request {
+                commit: jj_store_model::GitSha1Id::new([9; 20]),
+                path: String::new(),
+                recursive: false,
+                limit: 1,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await;
+    assert!(denied.is_err());
 }

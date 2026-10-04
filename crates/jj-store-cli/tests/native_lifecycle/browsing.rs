@@ -387,3 +387,53 @@ async fn signed_browser_cursors_bind_queries_support_backward_windows_and_reset_
     assert_eq!(groups.snapshot.operation_id, f.operation);
     assert_eq!(groups.data.groups.len(), 1);
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn direct_directory_rows_include_directories_and_bookmark_pages_hydrate_only_the_window() {
+    let f = BrowsingFixture::new().await;
+    let page = f
+        .read
+        .paths(
+            &reader(),
+            c::paths::Request {
+                commit: f.head,
+                path: String::new(),
+                recursive: false,
+                limit: 20,
+                anchor: None,
+                direction: Default::default(),
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        page.entries
+            .iter()
+            .map(|entry| entry.path.as_str())
+            .collect::<Vec<_>>(),
+        ["a.txt", "b.txt", "d.txt", "dir"]
+    );
+    assert!(matches!(
+        page.entries[3].terms[0],
+        Some(jj_store_jj::native_dto::TreeValue::Tree { .. })
+    ));
+    let page = f
+        .read
+        .references(
+            &reader(),
+            c::references::Request {
+                operation: f.operation,
+                query: String::new(),
+                kind: c::references::Kind::Bookmarks,
+                limit: 1,
+                anchor: Some("bookmark:conflicted".into()),
+                direction: Default::default(),
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(page.references.len(), 1);
+    // Metadata nodes count JSON values; object_reads measures the actual
+    // operation, view and selected target reads, excluding other bookmarks.
+    assert_eq!(page.stats.object_reads, 3, "{:?}", page.stats);
+}

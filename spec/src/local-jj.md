@@ -496,3 +496,12 @@ source cursors or receipt framing. Companion reopen and replay must preserve
 both the original metadata pin and the joined result; ambiguous aliases retain
 evidence and progress without an invented session. This shared projection
 qualification does not enable automatic discovery for filesystem-only serving.
+
+Directory reads of commits directly named by the selected view use a read-only
+Git backend capability. Reads grant only exact parents, predecessors, tree terms
+and tree entries reached from already-proven objects. Every backend read checks
+current registration authorization, cancellation, path depth, object kind and
+byte/work/deadline budgets before delegating. Commit visits are request-bounded;
+no backend write, copy discovery or collection is available through this
+capability. Historical commit lookup retains complete membership admission until
+its derived historical index is qualified.

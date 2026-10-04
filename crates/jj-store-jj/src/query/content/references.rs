@@ -73,6 +73,9 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     }
     let operation = context.operation(request.operation).await?;
     let view = context.view(operation.view_id).await?;
+    if request.kind == Kind::Bookmarks && request.query.is_empty() {
+        return bookmark_window(&context, &view, &request).await;
+    }
     let mut entries = vec![];
     if request.kind != Kind::Changes {
         for (name, target) in &view.local_bookmarks {
@@ -136,6 +139,80 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     context.budget.complete_output(&result)?;
     Ok(result)
 }
+async fn bookmark_window(context: &Context, view: &dto::View, request: &Request) -> Result<Page> {
+    use std::ops::Bound::{Excluded, Unbounded};
+    let anchor = request
+        .anchor
+        .as_deref()
+        .map(|value| value.strip_prefix("bookmark:").ok_or(Error::Invalid))
+        .transpose()?;
+    let mut selected: Vec<_> = match request.direction {
+        Direction::Forward => view
+            .local_bookmarks
+            .range::<str, _>((anchor.map_or(Unbounded, Excluded), Unbounded))
+            .take(request.limit)
+            .collect(),
+        Direction::Backward => view
+            .local_bookmarks
+            .range::<str, _>((Unbounded, anchor.map_or(Unbounded, Excluded)))
+            .rev()
+            .take(request.limit)
+            .collect(),
+    };
+    if matches!(request.direction, Direction::Backward) {
+        selected.reverse();
+    }
+    let previous = selected.first().and_then(|(name, _)| {
+        view.local_bookmarks
+            .first_key_value()
+            .filter(|(first, _)| first < name)
+            .map(|_| format!("bookmark:{name}"))
+    });
+    let next = selected.last().and_then(|(name, _)| {
+        view.local_bookmarks
+            .last_key_value()
+            .filter(|(last, _)| last > name)
+            .map(|_| format!("bookmark:{name}"))
+    });
+    let mut references = Vec::with_capacity(selected.len());
+    let mut hydrated = BTreeMap::new();
+    for (name, target) in selected {
+        context.budget.work(1)?;
+        let ids: BTreeSet<_> = target.0.iter().flatten().copied().collect();
+        let mut targets = Vec::with_capacity(ids.len());
+        for id in &ids {
+            if !hydrated.contains_key(id) {
+                let value = context
+                    .targets(view, std::iter::once(*id))
+                    .await?
+                    .pop()
+                    .ok_or(Error::Incomplete)?;
+                hydrated.insert(*id, value);
+            }
+            targets.push(hydrated[id].clone());
+        }
+        let value = Reference::Bookmark {
+            name: name.clone(),
+            terms: target.0.clone(),
+            conflicted: target.0.len() != 1,
+            workspaces: workspace_names(view, &ids),
+            targets,
+        };
+        context.budget.output(&value)?;
+        references.push(value);
+    }
+    let page = Page {
+        version: 1,
+        operation: request.operation,
+        references,
+        previous,
+        next,
+        stats: context.budget.stats(),
+    };
+    context.budget.complete_output(&page)?;
+    Ok(page)
+}
+
 fn window(
     entries: Vec<Entry>,
     request: &Request,

@@ -693,3 +693,10 @@ preflight. Bookmark-only unfiltered pages hydrate only the selected target
 window. Every hydrated object retains bounded bytes and proven reference
 membership under the explicit operation, with authorization checked before
 returning. Graph-dependent reads keep their own complete-result admission.
+
+Scoped local directory traversal MUST wrap upstream Store reads, rather than
+remove eager preflight while leaving unrestricted backend access. Native and
+local nonrecursive path pages load only the selected directory's tree terms and
+include directory entries. They MUST NOT descend into unrelated child trees to
+construct a direct-child page. Conflict terms retain upstream trivial-resolution
+semantics; deeper content remains separately admitted.

@@ -26,6 +26,10 @@ pub(super) fn terms(value: &b::MergedTreeValue) -> Result<Vec<Option<dto::TreeVa
 pub(super) fn map_backend(error: b::BackendError) -> Error {
     match error {
         b::BackendError::ObjectNotFound { .. } => Error::Incomplete,
+        b::BackendError::Other(source) => source
+            .downcast::<Error>()
+            .map(|error| *error)
+            .unwrap_or(Error::Unavailable),
         _ => Error::Unavailable,
     }
 }

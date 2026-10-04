@@ -1587,3 +1587,9 @@ deep bookmark page on a ten-thousand-bookmark fixture with corrupt disposable JJ
 index segments. Neither request may load that index or traverse commit history.
 The opt-in existing-repository smoke is read-only and requires an explicit
 metadata directory; ordinary tests never use a developer checkout.
+
+Scoped local file-read regression evidence uses a small history-visit budget to
+exclude full operation/commit preflight. Native browsing conformance verifies
+directory rows and a deep bookmark window with exactly the operation, view and
+selected target object reads. These focused tests retain existing exact diff,
+conflict and cursor coverage.
