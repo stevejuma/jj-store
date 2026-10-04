@@ -705,3 +705,11 @@ objects separately from explicit complete enumeration. Derived read/index
 preparation remains subordinate to these authorities. The staged
 large-repository read work is described in `docs/implementation-plan.md`; each
 delivered slice requires independent evidence in the milestone ledger.
+
+The JJ adapter pins redb 4.3.0 for disposable preparation scratch only. Its
+ordered tables hold compact graph fields and traversal state with a fixed page
+cache, bounded write batches and a file backend that admits growth before I/O.
+Streamed derived index output shares the scratch allowance. No redb dependency
+enters model, object storage, WAL or publication; scratch is never repository
+authority and is discarded after preparation or failure. The output remains the
+pinned upstream JJ index format rather than a new persisted repository format.

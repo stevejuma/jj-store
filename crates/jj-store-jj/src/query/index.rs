@@ -4,6 +4,7 @@ use jj_lib::{
     default_backend_factories::default_backend_factories,
     default_index::{DefaultIndexStore, DefaultReadonlyIndex},
     index::{IndexStore, IndexStoreError, IndexStoreResult, MutableIndex, ReadonlyIndex},
+    object_id::ObjectId as _,
     operation::Operation,
     repo::RepoLoader,
     store::Store,
@@ -42,6 +43,8 @@ impl Admission {
 struct GuardedIndexStore {
     inner: DefaultIndexStore,
     budget: Arc<Budget>,
+    path: PathBuf,
+    preparation_bytes: Option<u64>,
 }
 impl fmt::Debug for GuardedIndexStore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -61,6 +64,18 @@ impl IndexStore for GuardedIndexStore {
         self.budget
             .check()
             .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
+        if let Some(bytes) = self.preparation_bytes
+            && !self
+                .path
+                .join("op_links")
+                .join(operation.id().hex())
+                .try_exists()
+                .map_err(|e| IndexStoreError::Read(Box::new(e)))?
+        {
+            super::prepared::build(&self.path, operation, store, &self.budget, bytes)
+                .await
+                .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+        }
         let index = self.inner.get_index_at_op(operation, store).await?;
         // Warm indexes need the same hard bound, even when no commits are read.
         // Also applies to additional operations loaded by native predicates.
@@ -93,6 +108,7 @@ pub(super) fn loader(
     settings: &UserSettings,
     path: &Path,
     budget: Arc<Budget>,
+    preparation_bytes: Option<u64>,
 ) -> Result<RepoLoader> {
     stores
         .verify_cache_binding(path)
@@ -105,6 +121,8 @@ pub(super) fn loader(
             Ok(Box::new(GuardedIndexStore {
                 inner: DefaultIndexStore::load(path),
                 budget: budget.clone(),
+                path: path.to_owned(),
+                preparation_bytes,
             }))
         }),
     );

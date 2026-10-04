@@ -73,8 +73,152 @@ fn log(expression: &str) -> q::Request {
         at_time_millis: 1_790_000_000_000,
     }
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn disk_preparation_matches_pinned_upstream_index_bytes() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let cache = tempfile::tempdir().unwrap();
+            let expected = tempfile::tempdir().unwrap();
+            let (repo, base) = initial(&f, local.path(), work.path()).await;
+            let mut tx = repo.start_transaction();
+            let mut parents = Vec::new();
+            // Equal and skewed timestamps, three parents, and a divergent change.
+            for (index, timestamp) in [4, 4, -2].into_iter().enumerate() {
+                let mut signature = base.committer().clone();
+                signature.timestamp.timestamp.0 = timestamp;
+                let commit = tx
+                    .repo_mut()
+                    .new_commit(vec![base.id().clone()], base.tree())
+                    .set_description(format!("branch {index}"))
+                    .set_change_id(base.change_id().clone())
+                    .set_committer(signature)
+                    .write()
+                    .await
+                    .unwrap();
+                parents.push(commit.id().clone());
+            }
+            let merge = tx
+                .repo_mut()
+                .new_commit(parents, base.tree())
+                .set_description("merge")
+                .write()
+                .await
+                .unwrap();
+            tx.repo_mut()
+                .set_wc_commit("fixture".into(), merge.id().clone())
+                .unwrap();
+            let repo = tx.commit("ordering fixture").await.unwrap();
+            let upstream = jj_lib::default_index::DefaultIndexStore::init(expected.path()).unwrap();
+            upstream
+                .build_index_at_operation(repo.operation(), repo.store())
+                .await
+                .unwrap();
+            let expected_link =
+                std::fs::read(expected.path().join("op_links").join(repo.op_id().hex())).unwrap();
+            let expected_segment = std::fs::read_dir(expected.path().join("segments"))
+                .unwrap()
+                .next()
+                .unwrap()
+                .unwrap()
+                .path();
+            let read = pin(&f, oid(repo.op_id())).await;
+            let exec = executor(cache.path(), q::Limits::default());
+            exec.prepare_index(f.store.clone(), read.clone(), q::Cancellation::default())
+                .await
+                .unwrap();
+            fn find(path: &std::path::Path, name: &str) -> Option<std::path::PathBuf> {
+                for entry in std::fs::read_dir(path).unwrap() {
+                    let entry = entry.unwrap();
+                    if entry.file_name() == name {
+                        return Some(entry.path());
+                    }
+                    if entry.file_type().unwrap().is_dir()
+                        && let Some(path) = find(&entry.path(), name)
+                    {
+                        return Some(path);
+                    }
+                }
+                None
+            }
+            let link = find(cache.path(), &repo.op_id().hex()).unwrap();
+            assert_eq!(std::fs::read(link).unwrap(), expected_link);
+            let segment = find(
+                cache.path(),
+                expected_segment.file_name().unwrap().to_str().unwrap(),
+            )
+            .unwrap();
+            assert_eq!(
+                std::fs::read(segment).unwrap(),
+                std::fs::read(expected_segment).unwrap()
+            );
+            let result = read.graph(&exec, log("all()"), page(100)).await.unwrap();
+            assert_eq!(result.cache.state, q::cache::State::Reused);
+            assert_eq!(commits(&result)[0].commit.id, cid(merge.id()));
+            assert!(commits(&result).iter().any(|c| c.commit.divergent));
+        })
+        .await;
+}
 fn page(limit: usize) -> q::Page {
     q::Page { limit, after: None }
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn disk_preparation_quota_failure_discards_stage_and_allows_retry() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let cache = tempfile::tempdir().unwrap();
+            let (repo, _) = initial(&f, local.path(), work.path()).await;
+            let before = f.session.snapshot().await.unwrap().manifest().clone();
+            let read = pin(&f, oid(repo.op_id())).await;
+            let tiny = q::GraphExecutor::with_cache_policy(
+                cache.path().to_owned(),
+                q::Limits::default(),
+                1,
+                q::cache::Policy {
+                    max_entry_bytes: 1024 * 1024 + 4096,
+                    max_total_bytes: 2 * 1024 * 1024,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            assert_eq!(
+                read.prepare_index(&tiny, q::Cancellation::default())
+                    .await
+                    .unwrap_err(),
+                q::Error::Limit
+            );
+            fn assert_no_stage(path: &std::path::Path) {
+                for entry in std::fs::read_dir(path).unwrap() {
+                    let entry = entry.unwrap();
+                    assert!(
+                        !entry
+                            .file_name()
+                            .to_string_lossy()
+                            .starts_with(".building-")
+                    );
+                    assert_ne!(entry.file_name(), "query-cache.json");
+                    if entry.file_type().unwrap().is_dir() {
+                        assert_no_stage(&entry.path());
+                    }
+                }
+            }
+            assert_no_stage(cache.path());
+            read.prepare_index(
+                &executor(cache.path(), q::Limits::default()),
+                q::Cancellation::default(),
+            )
+            .await
+            .unwrap();
+            assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
+        })
+        .await;
 }
 async fn pin(f: &Fixture, id: m::OperationId) -> Arc<CommittedRead> {
     let OpenRead::Pinned(read) = f

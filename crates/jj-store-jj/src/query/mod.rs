@@ -7,6 +7,7 @@ mod graphs;
 mod index;
 pub mod language;
 pub mod predicates;
+mod prepared;
 pub mod workers;
 use crate::{
     backend::BackendLimits,
@@ -468,14 +469,27 @@ impl GraphExecutor {
         let settings = UserSettings::from_config(StackedConfig::with_defaults())
             .map_err(|_| Error::Unavailable)?;
         let entry = cache.prepare(access.as_ref(), &stores, &budget)?;
-        budget.start_index(entry.initialize && matches!(work, Work::Graph(..)))?;
+        if matches!(work, Work::Graph(..)) {
+            budget.start_index(entry.initialize)?;
+        }
         if entry.initialize {
             stores
                 .initialize_cache(&settings, &entry.path)
                 .await
                 .map_err(|_| Error::Unavailable)?;
         }
-        let loader = index::loader(&stores, &settings, &entry.path, budget.clone())?;
+        let preparation_bytes = if matches!(work, Work::Prepare) && entry.initialize {
+            Some(cache.remaining_bytes(&entry, &budget)?)
+        } else {
+            None
+        };
+        let loader = index::loader(
+            &stores,
+            &settings,
+            &entry.path,
+            budget.clone(),
+            preparation_bytes,
+        )?;
         let repo = stores
             .load_at(&loader, access.operation())
             .await

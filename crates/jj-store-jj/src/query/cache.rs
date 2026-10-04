@@ -368,6 +368,15 @@ impl Cache {
             retain: false,
         })
     }
+    pub fn remaining_bytes(&self, entry: &Entry, budget: &Budget) -> Result<u64> {
+        let (_, bytes) = inventory(&entry.path, self.policy, budget, false)?;
+        // Retained entries were reserved by prepare(); scratch and output share
+        // this allowance, including bytes buffered for a pending write.
+        self.policy
+            .max_entry_bytes
+            .checked_sub(bytes + RECEIPT_LIMIT)
+            .ok_or(Error::Limit)
+    }
     pub fn finish(
         &mut self,
         mut entry: Entry,

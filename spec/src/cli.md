@@ -1628,3 +1628,9 @@ membership but rejects complete inventory enumeration. Cold inline admission,
 explicit preparation and warm graph pages must work through that capability,
 while hard index/metadata/work/output limits and canceled-worker ownership
 remain covered independently.
+
+Native preparation acceptance MUST compare the resulting segment and operation
+link byte-for-byte with the pinned upstream cold builder. Fixtures include
+equal/skewed timestamps, multi-parent merges and divergent change IDs. Space
+tests MUST prove refusal before scratch or streamed output exceeds the shared
+allowance; failure leaves no ready entry and permits a later authorized retry.

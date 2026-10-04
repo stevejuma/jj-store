@@ -751,3 +751,24 @@ not qualify uninstrumented synchronous upstream CPU/memory work or remove the
 hard index-size limit. File-predicate preflight, copy lookup and
 operation-prefix lookup retain their separate complete-enumeration paths pending
 prepared lookup.
+
+Explicit native commit-index preparation MUST keep retained operation IDs,
+commit graph fields, visited sets, ordering queues and sorted lookup tables in
+disposable disk-backed scratch storage. It reads each distinct commit directly
+through the authorized backend without populating the upstream commit-body
+cache. Scratch uses an 8 MiB page cache and transactions of at most 512 table
+writes, with a durable scratch checkpoint at least every 16 batches to bound
+pending transaction bookkeeping. Per-object metadata and parent limits remain
+enforced. Preparation charges traversal, ordering and serialization work and
+checks cancellation between records; it never loads trees for commit indexing.
+
+The derived segment writer MUST preserve JJ 0.45.1 format-6 bytes and the cold
+builder's reverse-topological timestamp/commit-ID ordering, including parent
+overflow and divergent-change lookup. It streams output under a shared
+scratch/output allowance reserved from the cache entry before file growth,
+including buffered bytes. Complete segments are synced before their operation
+links become visible inside the unpublished cache entry. Failed scratch is
+discarded. Existing hard index limits, cache receipts and native persisted
+formats remain unchanged by this construction stage. Large resident indexes,
+immutable generation reuse, aggregate quotas and local-profile preparation
+require their separate qualification; this stage does not enable them.
