@@ -8,6 +8,7 @@
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { captureSummary } from "../../controller/capture-presentation.js";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -182,11 +183,20 @@
           : "No worker change requested"}
       </StoreSettingsNotice>{/if}
     {#if section === "imports"}<StoreCaptureImport {management} />{/if}
-    {#if state.message}<StoreSettingsNotice>{state.message}</StoreSettingsNotice
-      >{/if}
-    {#if state.error}<Alert.Root variant="destructive"
-        ><Alert.Title>Capture request unavailable</Alert.Title
-        ><Alert.Description>{state.error}</Alert.Description></Alert.Root
-      >{/if}
+    <StoreNotice
+      scope="installation-capture"
+      noticeKey="capture-outcome"
+      title="Agent capture"
+      message={state.message}
+      severity="info"
+      lifetime="timed"
+    />
+    <StoreNotice
+      scope="installation-capture"
+      noticeKey="capture-request"
+      title="Capture request unavailable"
+      message={state.pending?.uncertain ? undefined : state.error}
+      pending={state.busy || !!state.pending}
+    />
   {/if}
 </section>

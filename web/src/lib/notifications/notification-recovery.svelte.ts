@@ -7,6 +7,14 @@ export function observeNotificationRecovery(
   context: NotificationContext,
   controller: () => StoreController,
 ) {
+  $effect(() => {
+    const state = controller().capture?.state;
+    const pending = state?.busy || !!state?.pending;
+    if (!state?.error && !pending)
+      untrack(() =>
+        context.service.resolve("installation-capture", "capture-request"),
+      );
+  });
   const observed = new Map<string, Set<string>>();
   $effect(() => {
     const { settings, status } = controller().state;

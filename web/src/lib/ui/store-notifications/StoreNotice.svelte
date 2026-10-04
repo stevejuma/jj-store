@@ -14,6 +14,7 @@
     lifetime = "condition",
     pending = false,
     action,
+    scope,
   }: {
     noticeKey: string;
     title: string;
@@ -22,6 +23,7 @@
     lifetime?: NotificationLifetime;
     pending?: boolean;
     action?: NotificationInput["action"];
+    scope?: string;
   } = $props();
   const { context, owned } = ownNotifications();
   let last:
@@ -38,7 +40,7 @@
   });
   $effect(() => {
     const input = {
-      scope: context.scope,
+      scope: scope ?? context.scope,
       key: noticeKey,
       title,
       message: message ?? "",

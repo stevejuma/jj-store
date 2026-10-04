@@ -3151,3 +3151,8 @@ original import progress observations independently of stable command ownership.
 UI closure or visibility cannot cancel, replace or automatically resend a
 pending command. Background source discovery never retargets an accepted import.
 Only qualified Codex profiles expose history import in the initial preview.
+
+Installation capture feedback follows JST-UI-019: operational failures use
+installation-scoped notifications while exact unknown-command recovery remains
+beside the retained original request. Notification dismissal or navigation
+cannot release, retarget or retry the command.

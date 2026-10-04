@@ -92,6 +92,7 @@ export function createCaptureObservations(options: {
         if (result.receipt && pending?.kind === "import") state.error = "";
         if (pending?.kind === "import" && result.receipt) state.pending = null;
       }
+      if (state.sourceState === "ready" && !state.pending) state.error = "";
       return state.sourceState === "ready";
     } catch (cause) {
       if (!current(read)) return false;

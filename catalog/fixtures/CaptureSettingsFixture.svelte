@@ -3,6 +3,9 @@
   import { ApiError } from "../../web/src/lib/api/api-error.js";
   import { createCaptureManagement } from "../../web/src/lib/controller/capture-management.svelte.js";
   import StoreAgentSettings from "../../web/src/lib/ui/store-settings/StoreAgentSettings.svelte";
+  import { ownNotifications } from "../../web/src/lib/notifications/notification-context.svelte.js";
+  import StoreNotificationHost from "../../web/src/lib/ui/store-notifications/StoreNotificationHost.svelte";
+  import { Button } from "@lapismd/design-core/shadcn/button";
   import type {
     CaptureImport,
     CaptureTransport,
@@ -19,19 +22,25 @@
     unknown = false,
     importUnknown = false,
     degraded = false,
+    feedbackControls = false,
   }: {
     supported?: boolean;
     enabled?: boolean;
     unknown?: boolean;
     importUnknown?: boolean;
     degraded?: boolean;
+    feedbackControls?: boolean;
   } = $props();
+  const notifications = ownNotifications();
+  let failedObservations = false;
+  let visible = $state(true);
   let value = captureStatus();
   let accepted: CaptureImport | null = null;
   let controlAttempts = 0,
     importAttempts = 0;
   const transport: CaptureTransport = {
     async status() {
+      if (failedObservations) throw new ApiError("capture_control_busy");
       const result = structuredClone(value);
       if (!enabled)
         return { version: 1, enabled: false, policy: null, runtime: null };
@@ -118,4 +127,23 @@
   onDestroy(() => management.destroy());
 </script>
 
-<StoreAgentSettings {management} repositoryName={() => "Capture repository"} />
+{#if feedbackControls}
+  <Button
+    onclick={() => {
+      failedObservations = true;
+      void management.refresh();
+    }}>Fail capture observations</Button
+  >
+  <Button
+    onclick={() => {
+      failedObservations = false;
+      void management.refresh();
+    }}>Recover capture observations</Button
+  >
+  <Button onclick={() => (visible = !visible)}>Toggle capture page</Button>
+{/if}
+{#if visible}<StoreAgentSettings
+    {management}
+    repositoryName={() => "Capture repository"}
+  />{/if}
+<StoreNotificationHost owner={notifications} />

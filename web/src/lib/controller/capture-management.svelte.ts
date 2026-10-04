@@ -222,10 +222,7 @@ export function createCaptureManagement(options: {
     );
   }
   async function inspectImport(id: string) {
-    if (!captureId(id)) {
-      state.error = "Enter the original 32-character lowercase request ID.";
-      return;
-    }
+    if (!captureId(id)) return;
     await run(
       async () => {
         const result = await transport.inspect(id);
@@ -245,9 +242,6 @@ export function createCaptureManagement(options: {
           result.receipt
         )
           state.pending = null;
-        if (!result.receipt)
-          state.message =
-            "No receipt is available. This does not prove rejection or completion.";
       },
       (cause) => {
         state.error = `${captureError(cause)} Import receipt remains unconfirmed.`;

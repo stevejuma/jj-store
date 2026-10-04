@@ -269,6 +269,85 @@ test("cold capture capability gate withholds transport", async ({ page }) => {
   expect(requests).toEqual([]);
 });
 
+test("capture notifications retain dismissal and drafts until observed recovery", async ({
+  page,
+}) => {
+  await bootstrap(page);
+  let unavailable = false;
+  await page.route("**/v1/local/capture**", (route) => {
+    if (unavailable)
+      return route.fulfill({
+        status: 409,
+        json: { version: 1, code: "capture_control_busy" },
+      });
+    return route.fulfill({
+      contentType: "application/json",
+      body: pretty(
+        new URL(route.request().url()).pathname.endsWith("/sources")
+          ? captureSources()
+          : captureStatus(),
+      ),
+    });
+  });
+  await page.goto("/");
+  await expect(
+    page.getByRole("option", { name: "main", exact: true }),
+  ).toBeVisible();
+  await openSettings(page);
+  await expect(
+    page.getByText("/Users/capture/.codex/sessions", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Imports", exact: true }).click();
+  const draft = page.getByRole("textbox", {
+    name: "Previous import request ID",
+  });
+  await draft.fill("ef".repeat(16));
+  unavailable = true;
+  const refresh = page.getByRole("button", { name: "Refresh capture" });
+  const toast = page.locator(
+    '[data-notification-toasts] [data-severity="error"]',
+  );
+  await refresh.click();
+  await expect(toast).toHaveCount(1);
+  await expect(toast).toContainText("Capture request unavailable");
+  await expect(page.getByRole("alert")).toHaveCount(1);
+  const id = await toast.getAttribute("data-notification-id");
+  await refresh.click();
+  await expect(refresh).toBeEnabled();
+  await expect(toast).toHaveAttribute("data-notification-id", id!);
+  await page
+    .getByRole("button", { name: "Dismiss Capture request unavailable" })
+    .click();
+  await refresh.click();
+  await expect(refresh).toBeEnabled();
+  await expect(toast).toHaveCount(0);
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await page.getByRole("button", { name: "Back to jj-store" }).click();
+  await openSettings(page);
+  await expect(refresh).toBeEnabled();
+  await expect(toast).toHaveCount(0);
+  await page.getByRole("tab", { name: "Imports", exact: true }).click();
+  await expect(draft).toHaveValue("ef".repeat(16));
+  unavailable = false;
+  await refresh.click();
+  await expect(refresh).toBeEnabled();
+  unavailable = true;
+  await refresh.click();
+  await expect(toast).toHaveCount(1);
+  await page.setViewportSize({ width: 390, height: 844 });
+  const bounds = await toast.boundingBox();
+  expect(bounds!.x).toBeGreaterThanOrEqual(0);
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(390);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({
+    path: test.info().outputPath("capture-notification-mobile.png"),
+  });
+  unavailable = false;
+  await refresh.click();
+  await expect(toast).toHaveCount(0);
+  await expect(draft).toHaveValue("ef".repeat(16));
+});
+
 test("visible capture follows observations and stops when settings closes", async ({
   page,
 }) => {

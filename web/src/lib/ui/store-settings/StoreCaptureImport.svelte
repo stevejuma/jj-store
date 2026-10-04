@@ -32,7 +32,9 @@
               >Previous import request ID</Field.Label
             >
             <Field.Description id="capture-import-help"
-              >Inspect the original request without selecting a new source.</Field.Description
+              >{requestId && !captureId(requestId)
+                ? "Enter the original 32-character lowercase request ID."
+                : "Inspect the original request without selecting a new source."}</Field.Description
             >
           </Field.Content>
           <Input
@@ -137,9 +139,13 @@
       {/if}
     </dl>
     <StoreSettingsNotice>
-      History completion covers the accepted record boundary. Live-tail coverage
-      is reported separately. Published AgentStore data appears automatically in
-      Agents.
+      {#if !result.receipt}
+        No receipt is available. This does not prove rejection or completion.
+      {:else}
+        History completion covers the accepted record boundary. Live-tail
+        coverage is reported separately. Published AgentStore data appears
+        automatically in Agents.
+      {/if}
     </StoreSettingsNotice>
   {/if}
 </section>

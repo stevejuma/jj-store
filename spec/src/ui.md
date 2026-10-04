@@ -389,14 +389,13 @@ label and control columns on narrow screens. Standalone guidance, loading and
 status messages use public Design Core Alert composition with an information
 icon and polite status semantics; transient operational errors use the
 application notification service. Descriptions and status values already
-contained in rows remain within those rows. Capture
-policy, harness diagnostics, source coverage and import inspection use the same
-bordered, divided two-column Settings rows. Source descriptions and repository
-bindings sit left; coverage, inputs and vertically stacked equal-width actions
-sit right. Capture refresh occupies the far-right page header. Closing or
-leaving Agents stops visible capture polling while preserving pending commands
-and request-ID drafts. Agents is installation-scoped and has no repository
-picker.
+contained in rows remain within those rows. Capture policy, harness diagnostics,
+source coverage and import inspection use the same bordered, divided two-column
+Settings rows. Source descriptions and repository bindings sit left; coverage,
+inputs and vertically stacked equal-width actions sit right. Capture refresh
+occupies the far-right page header. Closing or leaving Agents stops visible
+capture polling while preserving pending commands and request-ID drafts. Agents
+is installation-scoped and has no repository picker.
 
 Unsupported capture, Search, Sync and local-folder management use the public
 shadcn Empty composition with a suitable icon, explicit availability text and no
@@ -1766,3 +1765,11 @@ Selecting an import explicitly opens Imports; background updates never change
 the tab. Unknown pending commands remain visible and retain exact retry/receipt
 actions on every tab. Tab selection is transient, and import drafts survive tab
 changes.
+
+Capture operational errors use the shared notification service under a stable
+installation scope, independent of the selected repository or Agents tab.
+Loading, retries and navigation preserve dismissal; complete successful
+observations clear a condition and allow a new episode. Ordinary accepted
+outcomes use timed information notices. Disabled/unavailable capture content,
+request-ID validation, exact pending requests and receipt/publication recovery
+remain contextual without duplicate toasts.

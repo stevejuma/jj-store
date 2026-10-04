@@ -1,4 +1,5 @@
 import { expect, test, vi } from "vitest";
+import { ApiError } from "../../src/lib/api/client.js";
 import { createCaptureManagement } from "../../src/lib/controller/capture-management.svelte.js";
 import {
   captureStatus,
@@ -40,6 +41,26 @@ function fixture() {
     }),
   };
 }
+test("capture conditions recover only after complete successful observations", async () => {
+  const f = fixture();
+  try {
+    vi.mocked(f.transport.status).mockRejectedValueOnce(
+      new ApiError("capture_control_busy"),
+    );
+    await f.management.refresh();
+    const error = f.management.state.error;
+    expect(error).not.toBe("");
+    vi.mocked(f.transport.sources).mockRejectedValueOnce(
+      new ApiError("capture_control_busy"),
+    );
+    await f.management.refresh();
+    expect(f.management.state.error).not.toBe("");
+    await f.management.refresh();
+    expect(f.management.state.error).toBe("");
+  } finally {
+    f.management.destroy();
+  }
+});
 test("visible capture loads polls coalesces and stops on closure", async () => {
   vi.useFakeTimers();
   const f = fixture();

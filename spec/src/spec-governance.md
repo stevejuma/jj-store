@@ -861,3 +861,13 @@ Cold import-inspection setup accepts an unknown foreground acknowledgement only
 by observing the original request and requiring its exact completed receipt
 before testing unavailable reader or publication evidence. It never substitutes
 a new command or treats a timeout as rejection.
+
+The subsequent preview rebase onto main's notification, copy-row and history
+changes preserves both evidence sequences verbatim and retains main's JST-UI-019
+guidance. Capture operational feedback adopts the existing notification service
+with an installation scope; contextual unknown-command recovery retains the
+original request. This follow-up changes only the UI and its controller
+recovery, with Rust sources, schemas and generated contracts identical to the
+previously qualified capture tip. Focused controller, shared notification,
+settings navigation, application and cold browser acceptance qualify this
+rebase; unrelated aggregate and Rust lanes remain out of scope.

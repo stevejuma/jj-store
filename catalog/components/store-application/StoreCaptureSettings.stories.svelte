@@ -10,6 +10,71 @@
 </script>
 
 <Story
+  name="Operational errors use dismissed scoped notifications"
+  args={{ feedbackControls: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await expect(
+      await c.findByText("/Users/capture/.codex/sessions"),
+    ).toBeVisible();
+    await userEvent.click(c.getByRole("tab", { name: "Imports" }));
+    await userEvent.type(
+      c.getByRole("textbox", { name: "Previous import request ID" }),
+      "ef".repeat(16),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Fail capture observations" }),
+    );
+    await expect(
+      await page.findByRole("button", {
+        name: "Dismiss Capture request unavailable",
+      }),
+    ).toBeVisible();
+    await expect(
+      canvasElement.querySelector("[data-notification-toasts]"),
+    ).toBeNull();
+    await expect(page.getAllByRole("alert")).toHaveLength(1);
+    await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
+    await expect(page.getAllByRole("alert")).toHaveLength(1);
+    await userEvent.click(
+      page.getByRole("button", { name: "Dismiss Capture request unavailable" }),
+    );
+    await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
+    await userEvent.click(c.getByRole("tab", { name: "Diagnostics" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Toggle capture page" }),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Toggle capture page" }),
+    );
+    await expect(page.queryByRole("alert")).toBeNull();
+    await userEvent.click(
+      c.getByRole("button", { name: "Recover capture observations" }),
+    );
+    await expect(
+      c.getByRole("button", { name: "Pause capture" }),
+    ).toBeEnabled();
+    await userEvent.click(
+      c.getByRole("button", { name: "Fail capture observations" }),
+    );
+    await expect(
+      await page.findByRole("button", {
+        name: "Dismiss Capture request unavailable",
+      }),
+    ).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: "Recover capture observations" }),
+    );
+    await expect(page.queryByRole("alert")).toBeNull();
+    await userEvent.click(c.getByRole("tab", { name: "Imports" }));
+    await expect(
+      c.getByRole("textbox", { name: "Previous import request ID" }),
+    ).toHaveValue("ef".repeat(16));
+  }}
+/>
+
+<Story
   name="Coverage pause resume rescan and import"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -25,7 +90,9 @@
     ).toBeDisabled();
     await userEvent.click(c.getByRole("button", { name: "Resume capture" }));
     await userEvent.click(c.getByRole("button", { name: "Rescan capture" }));
-    await expect(c.getByText(/Rescan requested/)).toBeVisible();
+    await expect(
+      within(canvasElement.ownerDocument.body).getByText(/Rescan requested/),
+    ).toBeVisible();
     await userEvent.click(c.getByRole("tab", { name: "Sources" }));
     await expect(
       c.getByRole("button", { name: /Import history for/ }),

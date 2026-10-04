@@ -1672,3 +1672,8 @@ metadata, without inspecting directories on GET. Source pages and import
 receipts remain free of transcript files and native session identities. A
 backend that omits the field has unavailable directory metadata, rather than an
 empty configured list.
+
+Capture notification dismissal changes presentation only. It neither clears an
+unknown command nor changes its original request identity, draft or receipt.
+Successful observations clear operational failure feedback only after status,
+source coverage and any selected import inspection are accepted.
