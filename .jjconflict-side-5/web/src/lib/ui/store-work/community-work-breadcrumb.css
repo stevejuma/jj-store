@@ -1,0 +1,104 @@
+/* CommunityApplication.svelte (Apache-2.0): centered breadcrumb. */
+.community-application__project-breadcrumb {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  overflow: hidden;
+  color: var(--muted-foreground);
+}
+
+:is(.community-application__project-breadcrumb [data-ui-part="breadcrumb"]),
+:is(
+  .community-application__project-breadcrumb [data-ui-part="breadcrumb-list"]
+) {
+  min-width: 0;
+}
+
+:is(.community-application__project-breadcrumb [data-ui-part="breadcrumb"]) {
+  width: 100%;
+}
+
+:is(
+  .community-application__project-breadcrumb [data-ui-part="breadcrumb-list"]
+) {
+  width: 100%;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+:is(
+  .community-application__project-breadcrumb [data-ui-part="breadcrumb-item"]
+) {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+:is(
+  .community-application__project-breadcrumb [data-ui-part="breadcrumb-link"]
+),
+:is(
+  .community-application__project-breadcrumb [data-ui-part="breadcrumb-page"]
+) {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.35rem;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:is(
+  .community-application__project-breadcrumb
+    [data-ui-part="breadcrumb-link"]
+    > span
+),
+:is(
+  .community-application__project-breadcrumb
+    [data-ui-part="breadcrumb-page"]
+    > span
+) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:is(
+  .community-application__project-breadcrumb
+    [data-ui-part="breadcrumb-link"]:hover
+) {
+  color: var(--foreground);
+}
+
+:is(
+  .community-application__project-breadcrumb
+    [data-ui-part="breadcrumb-link"]
+    svg
+),
+:is(
+  .community-application__project-breadcrumb
+    [data-ui-part="breadcrumb-page"]
+    svg
+) {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex: none;
+}
+
+:is(
+  .community-application__project-breadcrumb
+    [data-ui-part="breadcrumb-separator"]
+    svg
+) {
+  width: 0.7rem;
+  height: 0.7rem;
+}

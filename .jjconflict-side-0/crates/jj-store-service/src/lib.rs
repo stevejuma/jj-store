@@ -58,3 +58,5 @@ mod thread_directory;
 pub mod working_copy;
 
 pub mod conversion;
+
+pub mod stack_workspace;
