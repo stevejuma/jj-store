@@ -382,6 +382,62 @@ impl GraphExecutor {
         budget: Arc<Budget>,
     ) -> Result<Output> {
         budget.check()?;
+        if let Work::Graph(request, page) = &work {
+            let query = match request {
+                Request::Operations => Some(""),
+                Request::OperationsFiltered { query } => Some(query.as_str()),
+                _ => None,
+            };
+            if let Some(query) = query
+                && !language::operations::Filter::parse(query)?.needs_prefix_lookup()
+            {
+                graphs::validate(request, page, 0, &budget)?;
+                let objects = Arc::new(
+                    NativeObjects::new(
+                        Arc::new(ReadStore::new(store, access.clone(), budget.clone(), false)),
+                        access.repository(),
+                        self.limits.max_object_bytes,
+                    )
+                    .map_err(|_| Error::Limit)?,
+                );
+                let authority = Arc::new(ReadOnlyAuthority {
+                    access: access.clone(),
+                    budget: budget.clone(),
+                });
+                let operations: Arc<dyn jj_lib::op_store::OpStore> = Arc::new(
+                    crate::operation_stores::NativeOpStore::new(
+                        objects,
+                        authority,
+                        OperationLimits::default(),
+                    )
+                    .map_err(|_| Error::Unavailable)?,
+                );
+                let id = jj_lib::op_store::OperationId::from_bytes(access.operation().as_bytes());
+                let data = operations
+                    .read_operation(&id)
+                    .await
+                    .map_err(|_| Error::Unavailable)?;
+                let head = jj_lib::operation::Operation::new(operations, id, data);
+                let (data, next) =
+                    graphs::run_operations(&head, request.clone(), page.clone(), &access, &budget)
+                        .await?;
+                let result = Output::Graph(GraphPage {
+                    version: 1,
+                    operation: access.operation(),
+                    data,
+                    next,
+                    cache: cache::Report {
+                        state: cache::State::NotUsed,
+                        evicted: 0,
+                        retained_entries: 0,
+                        retained_bytes: 0,
+                    },
+                    stats: budget.stats(),
+                });
+                budget.complete_output(&result)?;
+                return Ok(result);
+            }
+        }
         let count = access
             .inventory()
             .await?

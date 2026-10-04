@@ -511,10 +511,7 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
         let exec = exec.clone();
         let access = paused.clone();
         let store = f.store.clone();
-        tokio::spawn(async move {
-            exec.execute(store, access, q::Request::Operations, page(100))
-                .await
-        })
+        tokio::spawn(async move { exec.execute(store, access, log("all()"), page(100)).await })
     };
     tokio::time::timeout(Duration::from_secs(3), paused.entered.notified())
         .await
@@ -522,14 +519,9 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
     task.abort();
     assert!(task.await.unwrap_err().is_cancelled());
     assert_eq!(
-        exec.execute(
-            f.store.clone(),
-            paused.clone(),
-            q::Request::Operations,
-            page(100)
-        )
-        .await
-        .unwrap_err(),
+        exec.execute(f.store.clone(), paused.clone(), log("all()"), page(100))
+            .await
+            .unwrap_err(),
         q::Error::Busy
     );
     assert_eq!(
@@ -550,12 +542,7 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
         q::GraphExecutor::new(graphs.path().to_owned(), q::Limits::default(), 1).unwrap();
     assert_eq!(
         independent
-            .execute(
-                f.store.clone(),
-                paused.clone(),
-                q::Request::Operations,
-                page(100)
-            )
+            .execute(f.store.clone(), paused.clone(), log("all()"), page(100))
             .await
             .unwrap_err(),
         q::Error::Busy,
@@ -565,12 +552,7 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
     let deadline = tokio::time::Instant::now() + Duration::from_secs(3);
     loop {
         match exec
-            .execute(
-                f.store.clone(),
-                paused.clone(),
-                q::Request::Operations,
-                page(100),
-            )
+            .execute(f.store.clone(), paused.clone(), log("all()"), page(100))
             .await
         {
             Err(q::Error::Busy) => {
@@ -593,7 +575,7 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
     };
     assert_eq!(
         executor(graphs.path(), limits)
-            .execute(f.store.clone(), paused, q::Request::Operations, page(10))
+            .execute(f.store.clone(), paused, log("all()"), page(10))
             .await
             .unwrap_err(),
         q::Error::Limit

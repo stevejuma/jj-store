@@ -805,3 +805,8 @@ Version-1 reference requests add optional `exact` and a `workspaces` kind with
 named workspace response rows. Existing bookmark/change forms retain their
 meaning. Updated browser startup requests bounded bookmark/workspace windows
 separately; it does not reinterpret an incomplete page as a complete inventory.
+
+Operation metadata pages may report graph-cache state `not_used`. Its zero cache
+counters mean no cache observation was needed, not that retained caches were
+removed. Graph node identities, selectors and paging fields are unchanged; no
+native, WAL or companion persistence format changes.

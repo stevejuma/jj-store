@@ -956,3 +956,8 @@ Reference picker pagination and exact-name resolution remain reads. They MUST
 NOT change mutation preconditions, pending request identities, selected
 operation checks or physical working-copy state. Resolving a missing
 bookmark/workspace must not silently select another target for a command.
+
+Operation-only read capabilities permit proven operation parents and deny views,
+commit access, writes and collection. They do not reconcile heads, publish a
+manifest or rewrite a local derived commit index. Mutations retain their
+existing complete graph and publication-closure admission.

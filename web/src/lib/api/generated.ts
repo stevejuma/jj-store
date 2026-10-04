@@ -4158,7 +4158,7 @@ export interface components {
       retained_bytes: number;
     };
     /** @enum {string} */
-    CacheState: "built" | "reused" | "rebuilt";
+    CacheState: "not_used" | "built" | "reused" | "rebuilt";
     GraphNodes:
       | {
           /** @constant */

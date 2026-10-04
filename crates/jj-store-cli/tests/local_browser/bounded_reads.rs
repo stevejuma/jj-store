@@ -142,6 +142,35 @@ async fn registered_large_repository_metadata_smoke() {
     let reader = q::Executor::new(1).unwrap();
     let heads = reader.heads(access.clone()).await.unwrap();
     let operation = heads.heads[0];
+    let op_started = std::time::Instant::now();
+    let q::Response::Graph(op_page) = reader
+        .read(
+            access.clone(),
+            operation,
+            q::Request::Graph(
+                q::GraphRequest::OperationsFiltered {
+                    query: "from:@".into(),
+                },
+                q::GraphWindow {
+                    limit: 10,
+                    after: None,
+                },
+            ),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    eprintln!(
+        "operation page: {:?}; {:?}",
+        op_started.elapsed(),
+        op_page.stats
+    );
+    let q::Nodes::Operations(nodes) = op_page.data else {
+        panic!()
+    };
+    assert!(!nodes.is_empty());
     let started = std::time::Instant::now();
     assert!(matches!(
         reader
@@ -421,4 +450,69 @@ async fn local_file_rows_read_only_the_selected_commit_and_traversed_trees() {
         )
         .await;
     assert!(denied.is_err());
+}
+
+#[tokio::test]
+async fn operation_pages_ignore_corrupt_commit_indexes() {
+    let temp = tempfile::tempdir().unwrap();
+    jj(temp.path(), &["git", "init", "--colocate"]);
+    jj(temp.path(), &["describe", "-m", "Selected operation"]);
+    let operation = jj(
+        temp.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let index_dir = temp.path().join(".jj/repo/index/segments");
+    let mut original = std::collections::BTreeMap::new();
+    for entry in std::fs::read_dir(temp.path().join(".jj/repo/index/segments")).unwrap() {
+        let path = entry.unwrap().path();
+        if path.is_file() {
+            std::fs::write(&path, b"corrupt derived index").unwrap();
+            original.insert(path, b"corrupt derived index".to_vec());
+        }
+    }
+    // Operation metadata is usable even when the selected view cannot be read.
+    for entry in std::fs::read_dir(temp.path().join(".jj/repo/op_store/views")).unwrap() {
+        let path = entry.unwrap().path();
+        if path.is_file() {
+            std::fs::write(path, b"unavailable view").unwrap();
+        }
+    }
+    let reader = q::Executor::with_workers(Workers::new(1).unwrap(), q::Limits::default());
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(temp.path().join(".jj/repo")));
+    let q::Response::Graph(page) = reader
+        .read(
+            access,
+            operation,
+            q::Request::Graph(
+                q::GraphRequest::Operations,
+                q::GraphWindow {
+                    limit: 1,
+                    after: None,
+                },
+            ),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    let q::Nodes::Operations(nodes) = page.data else {
+        panic!()
+    };
+    assert_eq!(nodes.len(), 1);
+    assert_eq!(nodes[0].id, operation);
+    let after: std::collections::BTreeMap<_, _> = std::fs::read_dir(index_dir)
+        .unwrap()
+        .map(|entry| {
+            let path = entry.unwrap().path();
+            let bytes = std::fs::read(&path).unwrap();
+            (path, bytes)
+        })
+        .collect();
+    assert_eq!(
+        after, original,
+        "operation browsing must not rebuild commit indexes"
+    );
 }

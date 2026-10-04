@@ -9,6 +9,7 @@ mod graph_types;
 mod graphs;
 mod native;
 pub mod operation_changes;
+mod operation_store;
 pub mod operations;
 pub mod paths;
 pub mod references;
@@ -221,11 +222,16 @@ impl Executor {
         let limits = self.limits;
         self.worker(access, move |access, budget| {
             Box::pin(async move {
-                let metadata_only = matches!(&request, Request::QueryInfo)
+                let operation_only = match &request {
+                    Request::Graph(GraphRequest::Operations, _) => true,
+                    Request::Graph(GraphRequest::OperationsFiltered {query}, _) => !crate::query::language::operations::Filter::parse(query)?.needs_prefix_lookup(),
+                    _ => false,
+                };
+                let metadata_only = operation_only || matches!(&request, Request::QueryInfo)
                     || matches!(&request, Request::References(r) if matches!(r.kind, references::Kind::Bookmarks | references::Kind::Workspaces) && r.operation == operation)
                     || matches!(&request, Request::Operation { operation: selected } if *selected == operation);
                 let scoped_commit = match &request { Request::Paths(r) => Some(r.commit), Request::FileAt { commit, .. } | Request::CommitSummary { commit } => Some(*commit), _ => None };
-                let context = Context::open(access, operation, budget, limits, metadata_only, scoped_commit).await?;
+                let context = Context::open(access, operation, budget, limits, metadata_only, scoped_commit, operation_only).await?;
                 let value = match request {
                     Request::QueryInfo => {
                         let mut info = crate::query::language::info(true);
@@ -248,14 +254,17 @@ impl Executor {
                             context.access.commits.len(),
                             &context.budget,
                         )?;
-                        let (data, next) = graphs::run(
+                        let (data, next) = if operation_only {
+                            let selected = operation_store::selected(&context, operation).await?;
+                            graphs::run_operations(&selected, request, page, &context.access, &context.budget).await?
+                        } else { graphs::run(
                             context.repo.as_deref().ok_or(Error::Unavailable)?,
                             request,
                             page,
                             &context.access,
                             &context.budget,
                         )
-                        .await?;
+                        .await? };
                         Response::Graph(GraphPage {
                             version: 1,
                             operation,
@@ -425,6 +434,7 @@ impl Context {
         limits: Limits,
         metadata_only: bool,
         scoped_commit: Option<m::GitSha1Id>,
+        operation_only: bool,
     ) -> Result<Self> {
         let metadata_only = metadata_only || scoped_commit.is_some();
         let loader = loader(binding.metadata_path())?;
@@ -490,6 +500,11 @@ impl Context {
                 continue;
             }
             let (op, data) = available.get(&id).ok_or(Error::Incomplete)?;
+            if operation_only {
+                pin.inventory.insert(ObjectKey::Operation(id));
+                pin.operations.insert(id, data.clone());
+                continue;
+            }
             bounded_op_file(
                 pin.binding.metadata_path(),
                 "views",
@@ -548,6 +563,7 @@ impl Context {
                     limits,
                     false,
                     None,
+                    false,
                 ))
                 .await;
             }

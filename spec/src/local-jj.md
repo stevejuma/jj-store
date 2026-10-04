@@ -520,3 +520,12 @@ selected operation/view and returned target records. Neither needs a JJ index or
 retained commit ancestry. Names are compared exactly, including case and
 slashes; missing selections remain absent and must never fall back to another
 target.
+
+Operation log windows without an ID-prefix selector MUST walk bounded operation
+metadata directly, without loading commits, trees, views or a commit index.
+Native responses report `not_used` for the graph cache. Operation ordering,
+parent/child selectors relative to `@`, filtering, pinned membership,
+authorization and cancellation retain pinned JJ semantics. ID-prefix selectors
+retain their existing complete admission until the prepared operation lookup is
+qualified. Local reads must not repair or rewrite a damaged commit index as a
+side effect of reading operation metadata.

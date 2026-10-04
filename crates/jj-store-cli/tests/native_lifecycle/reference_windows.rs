@@ -115,3 +115,37 @@ async fn workspace_windows_seek_filter_and_resolve_exact_names_without_history()
         Err(jj_store_jj::query::Error::Invalid)
     ));
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn operation_pages_do_not_admit_or_build_a_commit_index() {
+    let f = BrowsingFixture::new().await;
+    let cache = tempfile::tempdir().unwrap();
+    let executor = jj_store_jj::query::GraphExecutor::new(
+        cache.path().to_owned(),
+        jj_store_jj::query::Limits {
+            max_index_commits: 1,
+            max_inline_rebuild_commits: 0,
+            ..Default::default()
+        },
+        1,
+    )
+    .unwrap();
+    let page = f
+        .read
+        .graph(
+            &executor,
+            jj_store_jj::query::Request::Operations,
+            jj_store_jj::query::Page {
+                limit: 1,
+                after: None,
+            },
+        )
+        .await
+        .unwrap();
+    let jj_store_jj::query::Nodes::Operations(nodes) = page.data else {
+        panic!()
+    };
+    assert_eq!(nodes.len(), 1);
+    assert_eq!(nodes[0].id, f.operation);
+    assert_eq!(std::fs::read_dir(cache.path()).unwrap().count(), 0);
+}

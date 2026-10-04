@@ -191,23 +191,37 @@ impl Filter {
     pub async fn start(
         &self,
         repo: &ReadonlyRepo,
+        work: impl FnMut() -> Result<()>,
+    ) -> Result<Operation> {
+        self.start_at(repo.operation(), work).await
+    }
+    pub fn needs_prefix_lookup(&self) -> bool {
+        self.from
+            .as_ref()
+            .is_some_and(|value| !value.starts_with('@'))
+    }
+    pub async fn start_at(
+        &self,
+        head: &Operation,
         mut work: impl FnMut() -> Result<()>,
     ) -> Result<Operation> {
         let Some(selector) = &self.from else {
-            return Ok(repo.operation().clone());
+            return Ok(head.clone());
         };
-        let selected = jj_lib::op_walk::resolve_op_with_repo(repo, selector)
-            .await
-            .map_err(|_| {
-                invalid(
-                    "unresolved_symbol",
-                    "Operation selector is missing or ambiguous in this history.",
-                )
-            })?;
-        let heads = [repo.operation().clone()];
+        let selected =
+            jj_lib::op_walk::resolve_op_at(&head.op_store(), std::slice::from_ref(head), selector)
+                .await
+                .map_err(|error| match error {
+                    jj_lib::op_walk::OpsetEvaluationError::OpStore(error) => store_error(error),
+                    _ => invalid(
+                        "unresolved_symbol",
+                        "Operation selector is missing or ambiguous in this history.",
+                    ),
+                })?;
+        let heads = [head.clone()];
         let stream = jj_lib::op_walk::walk_ancestors(&heads);
         let mut stream = std::pin::pin!(stream);
-        while let Some(operation) = stream.try_next().await.map_err(|_| Error::Unavailable)? {
+        while let Some(operation) = stream.try_next().await.map_err(store_error)? {
             work()?;
             if operation.id() == selected.id() {
                 return Ok(selected);
@@ -217,6 +231,15 @@ impl Filter {
             "unresolved_symbol",
             "from: must select an ancestor of the displayed snapshot.",
         ))
+    }
+}
+pub(crate) fn store_error(error: jj_lib::op_store::OpStoreError) -> Error {
+    match error {
+        jj_lib::op_store::OpStoreError::Other(source) => source
+            .downcast::<Error>()
+            .map(|error| *error)
+            .unwrap_or(Error::Unavailable),
+        _ => Error::Unavailable,
     }
 }
 #[cfg(test)]

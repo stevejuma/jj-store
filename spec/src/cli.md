@@ -1604,3 +1604,9 @@ the first window, independent workspace reads with an unusable derived index,
 shared targets, missing selections and cursor input changes. Browser acceptance
 keeps explicit Files and collaboration routes usable during pending picker
 reads.
+
+Local and native operation metadata browsing without ID-prefix lookup bypasses
+commit-index admission and construction. Reads retain pinned operation ordering
+and bounded filtering and must not repair a local commit index. The existing
+complete-admission prefix path remains until prepared operation lookup is
+qualified.

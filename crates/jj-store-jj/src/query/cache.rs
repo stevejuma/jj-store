@@ -46,6 +46,7 @@ impl Policy {
 #[schemars(rename = "CacheState")]
 #[serde(rename_all = "snake_case")]
 pub enum State {
+    NotUsed,
     Built,
     Reused,
     Rebuilt,

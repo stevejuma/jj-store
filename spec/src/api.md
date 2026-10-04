@@ -1876,3 +1876,12 @@ and workspaces support an optional `exact` name; exact lookup uses the captured
 view's keyed map, returns no continuation, and rejects a simultaneous text query
 or page anchor. Workspace windows seek their own ordered names and hydrate only
 the requested window. Continuations bind kind, exact name, query and page size.
+
+Operation log windows without an ID-prefix selector MUST walk bounded operation
+metadata directly, without loading commits, trees, views or a commit index.
+Native responses report `not_used` for the graph cache. Operation ordering,
+parent/child selectors relative to `@`, filtering, pinned membership,
+authorization and cancellation retain pinned JJ semantics. ID-prefix selectors
+retain their existing complete admission until the prepared operation lookup is
+qualified. Local reads must not repair or rewrite a damaged commit index as a
+side effect of reading operation metadata.

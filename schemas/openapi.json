@@ -37511,7 +37511,7 @@
       },
       "CacheState": {
         "type": "string",
-        "enum": ["built", "reused", "rebuilt"]
+        "enum": ["not_used", "built", "reused", "rebuilt"]
       },
       "GraphNodes": {
         "oneOf": [

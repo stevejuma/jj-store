@@ -75840,6 +75840,149 @@ entries.
     "Large-scale Linux/native 2m/near-capacity/cold/cache-loss/real-RustFS gates and full contract capture remain pending; no milestone or full-plan completion claimed. Registry Design Core release qualification and visual approval remain pending. Unrelated root aggregates out of scope."
   ],
   "next": "Commit this verified reference/startup slice, then implement bounded on-demand history/index preparation and remaining audited reads."
+},
+{
+  "id": "E-READ-006",
+  "tasks": [
+    "M4.1",
+    "M13.4"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change zlozvqup",
+  "kind": "Operation metadata pages independent of commit indexes",
+  "versions": "Rust 1.98.1; jj-lib 0.45.1; Node 26.9.0; pnpm 10.32.1. Existing temporary Design Core source qualification; registry release gate remains pending.",
+  "formats": "Additive graph cache state not_used. Zero counters indicate no cache observation. Native identities, manifest, WAL and companion formats unchanged.",
+  "files": [
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/index_tasks.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/reference_windows.rs",
+    "crates/jj-store-jj/src/local_browser/graphs.rs",
+    "crates/jj-store-jj/src/local_browser/mod.rs",
+    "crates/jj-store-jj/src/local_browser/operation_store.rs",
+    "crates/jj-store-jj/src/query/cache.rs",
+    "crates/jj-store-jj/src/query/graphs.rs",
+    "crates/jj-store-jj/src/query/language/operations.rs",
+    "crates/jj-store-jj/src/query/mod.rs",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/cli.md",
+    "spec/src/compatibility.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/mutations.md",
+    "web/src/lib/api/generated.ts"
+  ],
+  "requirements": [
+    "JST-LOCAL-004",
+    "JST-JJ-003",
+    "JST-JJ-005",
+    "JST-API-001"
+  ],
+  "tests": [
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#operation_pages_ignore_corrupt_commit_indexes",
+    "crates/jj-store-cli/tests/native_lifecycle/reference_windows.rs#operation_pages_do_not_admit_or_build_a_commit_index",
+    "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#registered_large_repository_metadata_smoke"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked operation_pages_do_not_admit_or_build_a_commit_index -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before: small Op Log page rejected by IndexBudget despite needing no commits."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked operation_pages_ignore_corrupt_commit_indexes -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before: operation read silently repaired source index. Strengthened byte-identical index assertion exposed this; initial GraphNodes test typo corrected before meaningful baseline."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked operation_pages_do_not_admit_or_build_a_commit_index -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "1 passed; max_index_commits=1 and max_inline=0, cache directory remains empty."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser --locked -- --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "10 passed, 1 opt-in ignored. Final regression corrupts all views and index files; Op Log succeeds without repairing them."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance:: -- --test-threads=2",
+      "result": "fail",
+      "failures": 1,
+      "note": "Initial run 17 passed/1 failed: old cache-lock test assumed Op Log used index. Changed request to actual indexed all() query and retained lock/cancellation assertions."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance:: -- --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final 18 graph tests passed."
+    },
+    {
+      "command": "target/debug/deps/native_lifecycle-e6652c34f7ed2d93 content_acceptance::index_task_acceptance:: --test-threads=2",
+      "result": "fail",
+      "failures": 1,
+      "note": "Initial 3 passed/1 failed: old preparation test expected Op Log Reused cache. Changed to indexed all() and retained cache reuse assertion."
+    },
+    {
+      "command": "target/debug/deps/native_lifecycle-e6652c34f7ed2d93 content_acceptance::index_task_acceptance:: --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final 4 passed."
+    },
+    {
+      "command": "target/debug/deps/native_lifecycle-e6652c34f7ed2d93 content_acceptance::worker_acceptance:: --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "3 passed."
+    },
+    {
+      "command": "target/debug/deps/native_lifecycle-e6652c34f7ed2d93 pagination_acceptance:: --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "4 passed."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "All affected Rust targets passed. Removed unused import warning."
+    },
+    {
+      "command": "pnpm contracts:generate; pnpm test:contracts; pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Generated additive enum; 7 contract tests plus generated TS; web 0 errors/warnings."
+    },
+    {
+      "command": "JJ_STORE_LARGE_REPO=/Users/stevejuma/code/linux/.jj/repo target/debug/deps/local_browser-893d8c4057fcb950 --exact bounded_reads::registered_large_repository_metadata_smoke --ignored --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final Linux: Op Log 1.296s, 9 metadata records, 5,238,753 charged bytes, 33 work. One bookmark and ten root rows also pass; scoped .clang-format 24,291 bytes. Whole probe 17.78s under concurrent checks; timings are observations, not isolated benchmarks. Earlier Op Log probe 0.421s included unnecessary view read, subsequently removed."
+    },
+    {
+      "command": "JJ_STORE_BROWSING_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/operations-native-capture.json target/debug/deps/native_lifecycle-e6652c34f7ed2d93 --exact http_browsing_acceptance::http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured; JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE=$PWD/.local/bounded-reads/operations-local-capture.json target/debug/deps/local_browser-893d8c4057fcb950 --exact filesystem_runtime_registers_and_reads_without_native_storage; node --input-type=module (responseValidator on both captures)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Both real fixture captures pass; all 43 HTTP/SSE responses validated against current schemas."
+    },
+    {
+      "command": "pnpm spec:first; cargo fmt --all -- --check; pnpm exec prettier --check (changed canonical chapters excluding milestones)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Spec-first 13 protected files/6 chapters; Rust and focused document formatting pass. Final pnpm check:progress, pnpm spec:first and pnpm spec:validate also pass: 136 tasks, 13 protected files/7 chapters, 167 requirements."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "ID-prefix operation selectors retain complete admission. Historical commit/file lookup, commit graphs, bounded preparation, cache quotas, copies/search/RPC and collaboration projections remain unfinished.",
+    "Full contract capture baseline timeout, registry-only Design Core gate, large-scale native 2m, deep-page/cache-loss/corruption/cold/real-RustFS gates remain pending. Running app unchanged; no milestone or full-plan completion claimed. Unrelated root aggregates and unchanged UI browser tests out of scope."
+  ],
+  "next": "Validate ledger and commit operation-only reads, then continue bounded history preparation and remaining audited endpoints."
 }
 ]
 ```

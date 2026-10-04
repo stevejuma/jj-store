@@ -57,7 +57,12 @@ async fn index_tasks_report_pinned_completion_restart_and_current_revocation() {
         .read
         .graph(
             shared.graph(),
-            q::Request::Operations,
+            q::Request::Log {
+                revset: "all()".into(),
+                workspace: None,
+                user_email: String::new(),
+                at_time_millis: 0,
+            },
             q::Page {
                 limit: 10,
                 after: None,

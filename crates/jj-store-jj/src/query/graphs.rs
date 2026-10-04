@@ -212,7 +212,7 @@ pub(super) async fn run(
     access: &Arc<dyn ReadAccess>,
     budget: &Budget,
 ) -> Result<(Nodes, Option<m::ObjectKey>)> {
-    let mut position = Position::new(page);
+    let mut position = Position::new(page.clone());
     let nodes = match request {
         Request::Log {
             revset: expression,
@@ -306,54 +306,7 @@ pub(super) async fn run(
             Nodes::Log(nodes)
         }
         Request::Operations | Request::OperationsFiltered { .. } => {
-            let filter = crate::query::language::operations::Filter::parse(match &request {
-                Request::OperationsFiltered { query } => query,
-                _ => "",
-            })?;
-            let heads = [filter.start(repo, || budget.work(1)).await?];
-            let stream = jj_lib::op_walk::walk_ancestors(&heads);
-            let mut stream = std::pin::pin!(stream);
-            let mut nodes = vec![];
-            while let Some(operation) = stream.try_next().await.map_err(|_| Error::Unavailable)? {
-                budget.authorize(access.as_ref()).await?;
-                budget.work(1)?;
-                if !filter.matches(&operation) {
-                    continue;
-                }
-                let id = oid(operation.id())?;
-                match position.visit(m::ObjectKey::Operation(id)) {
-                    Action::Skip => continue,
-                    Action::Stop => break,
-                    Action::Emit => {}
-                }
-                let data = operation.store_operation();
-                let node = OperationNode {
-                    id,
-                    parents: operation
-                        .parent_ids()
-                        .iter()
-                        .map(oid)
-                        .collect::<Result<_>>()?,
-                    view: m::ViewId::from_slice(data.view_id.as_bytes())
-                        .map_err(|_| Error::Unavailable)?,
-                    description: data.metadata.description.clone(),
-                    user: data.metadata.username.clone(),
-                    host: data.metadata.hostname.clone(),
-                    start: timestamp(&data.metadata.time.start),
-                    end: timestamp(&data.metadata.time.end),
-                    is_snapshot: data.metadata.is_snapshot,
-                    workspace: data
-                        .metadata
-                        .workspace_name
-                        .as_ref()
-                        .map(|name| name.as_str().to_owned()),
-                    attributes: data.metadata.attributes.clone(),
-                    predecessor_data_present: data.commit_predecessors.is_some(),
-                };
-                budget.output(&node)?;
-                nodes.push(node);
-            }
-            Nodes::Operations(nodes)
+            return run_operations(repo.operation(), request, page, access, budget).await;
         }
         Request::Evolution { commit } => {
             if !budget
@@ -401,4 +354,65 @@ pub(super) async fn run(
         }
     };
     Ok((nodes, position.finish()?))
+}
+
+pub(super) async fn run_operations(
+    head: &jj_lib::operation::Operation,
+    request: Request,
+    page: Page,
+    access: &Arc<dyn ReadAccess>,
+    budget: &Budget,
+) -> Result<(Nodes, Option<m::ObjectKey>)> {
+    let mut position = Position::new(page.clone());
+    let filter = crate::query::language::operations::Filter::parse(match &request {
+        Request::OperationsFiltered { query } => query,
+        _ => "",
+    })?;
+    let heads = [filter.start_at(head, || budget.work(1)).await?];
+    let stream = jj_lib::op_walk::walk_ancestors(&heads);
+    let mut stream = std::pin::pin!(stream);
+    let mut nodes = vec![];
+    while let Some(operation) = stream
+        .try_next()
+        .await
+        .map_err(crate::query::language::operations::store_error)?
+    {
+        budget.authorize(access.as_ref()).await?;
+        budget.work(1)?;
+        if !filter.matches(&operation) {
+            continue;
+        }
+        let id = oid(operation.id())?;
+        match position.visit(m::ObjectKey::Operation(id)) {
+            Action::Skip => continue,
+            Action::Stop => break,
+            Action::Emit => {}
+        }
+        let data = operation.store_operation();
+        let node = OperationNode {
+            id,
+            parents: operation
+                .parent_ids()
+                .iter()
+                .map(oid)
+                .collect::<Result<_>>()?,
+            view: m::ViewId::from_slice(data.view_id.as_bytes()).map_err(|_| Error::Unavailable)?,
+            description: data.metadata.description.clone(),
+            user: data.metadata.username.clone(),
+            host: data.metadata.hostname.clone(),
+            start: timestamp(&data.metadata.time.start),
+            end: timestamp(&data.metadata.time.end),
+            is_snapshot: data.metadata.is_snapshot,
+            workspace: data
+                .metadata
+                .workspace_name
+                .as_ref()
+                .map(|name| name.as_str().to_owned()),
+            attributes: data.metadata.attributes.clone(),
+            predecessor_data_present: data.commit_predecessors.is_some(),
+        };
+        budget.output(&node)?;
+        nodes.push(node);
+    }
+    Ok((Nodes::Operations(nodes), position.finish()?))
 }
