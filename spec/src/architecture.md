@@ -739,3 +739,12 @@ Local browse hydrates only its selected window with the same projector; shared
 local reconstruction and application search indexes remain separate delivery
 work. No domain format, storage authority or upstream JJ import moves into the
 service.
+
+Native application content search retains service-owned immutable field indexes
+under repository/epoch/domain-root keys. It admits normalized body growth before
+cloning fields, derives recent/search orders once and retains compact query keys
+for continuation. Snippets are generated only for returned hits. The cache holds
+data only, with separate bounded root and cursor retention; each request
+captures its manifest envelope and rechecks viewer, inventory limits and
+authorization. No search cache or field index becomes domain authority or a
+persisted format.

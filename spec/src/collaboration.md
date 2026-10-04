@@ -34,6 +34,15 @@ expiry/eviction/restart rematerialize and validate from selected immutable
 records. Signed cursor pins preserve their original complete snapshots
 independently of cache eviction.
 
+Application content search retains a separate bounded immutable field index for
+each selected Thread/Work root. It indexes only current message/comment bodies
+and excludes tombstoned Threads with their messages. Recent Thread previews
+retain the existing accepted-event comparison, while nonempty queries preserve
+title/body matching and archived-Thread behavior. Sorted query keys and Unicode
+snippets are disposable service projections, with fresh viewer and source limits
+on every page. Search field retention is separate from conversation pins and
+cannot make historical bodies current or establish visibility for a new root.
+
 Human messages optionally retain an exact same-Thread parent revision for
 replies. The parent is an immutable closure dependency; self-links, foreign
 Thread parents and changing reply identity during edits are rejected. An absent

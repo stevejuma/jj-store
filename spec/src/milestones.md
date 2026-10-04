@@ -131,7 +131,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                                                    | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                                                    | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                                             | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-M15-032,E-UI-063,E-UI-064,E-UI-069,E-UI-081,E-UI-089,E-UI-094,E-UI-095,E-UI-098                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                                           | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                                           | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-READ-031                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                                                        | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                                            | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005,JST-DESK-006                                                                                                                                                  | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002,E-DESK-003,E-DESK-004,E-DESK-005,E-DESK-006,E-DESK-007,E-DESK-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -78602,6 +78602,99 @@ entries.
     "crates/jj-store-service/tests/work_store.rs#work_browse_filters_complete_roots_and_pins_summary_counts",
     "crates/jj-store-service/tests/local_work.rs#local_browser_browse_uses_complete_root_and_explicit_committed_pin",
     "crates/jj-store-service/tests/native_collab.rs#native_work_comment_reactions_pin_versions_authorize_and_survive_cold_sessions"
+  ]
+},
+{
+  "id": "E-READ-031",
+  "tasks": [
+    "M15.6"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change tkqyuwkq",
+  "kind": "Root-bound current-content search fields/order with retained matching keys and selected-hit Unicode snippets",
+  "versions": "Rust1.98.1; jj-lib0.45.1; macOS ARM64. Domain capacities and wire cursor contract unchanged.",
+  "formats": "No authoritative/storage/HTTP schema changes. Derived Thread/Work field indexes retain current body/normalized text and separate recent/query order, keyed by repository/epoch/immutable root. Opaque cursor pins retain matching source keys and share root bytes. Captured manifest envelope, viewer and inventory admission remain fresh.",
+  "files": [
+    "crates/jj-store-service/src/content_search/cursors.rs",
+    "crates/jj-store-service/src/content_search/extract.rs",
+    "crates/jj-store-service/src/content_search/index.rs",
+    "crates/jj-store-service/src/content_search/index_tests.rs",
+    "crates/jj-store-service/src/content_search/materialization.rs",
+    "crates/jj-store-service/src/content_search.rs",
+    "crates/jj-store-service/tests/content_search/cache.rs",
+    "crates/jj-store-service/tests/content_search.rs",
+    "docs/implementation-plan.md",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/collaboration.md",
+    "spec/src/mutations.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-API-009",
+    "JST-COLLAB-007",
+    "JST-MUT-001"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-service --test content_search --locked content_search_reuses_unchanged_roots_across_filters_and_rechecks_limits -- --nocapture (before)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Changing the query from needle to other reconstructs unchanged WorkStore data with4object reads instead of0. content-index-before.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test content_search --locked content_search_reuses_unchanged_roots_across_filters_and_rechecks_limits -- --nocapture (after)",
+      "result": "pass",
+      "failures": 0,
+      "note": "1pass/0.19s. New filters perform0domain reads; fresh lower inventory admission rejects warm and continued pages; changed root reloads, historical keys/snapshot remain pinned. content-index-after.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --test content_search --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "7pass/0.77s. Complete direct content search test binary: current edits/tombstones/scopes, recent archived/entity rules, exact filters/page identity, viewer revocation and source limits. content-consumers-031.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --lib --locked content_search:: -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial2unit targets pass; content-units-031.log."
+    },
+    {
+      "command": "cargo test -p jj-store-service --lib --locked content_search:: -- --nocapture (final deep-window/before-growth regressions)",
+      "result": "pass",
+      "failures": 0,
+      "note": "4pass. Deep offset49window materializes exactly2hits, stable domain/ID ties and recent exclusion preserved; field growth rejected before any document is retained, plus Unicode expansion and64cursor/expiry/restart guards. content-units-031-final.log."
+    },
+    {
+      "command": "cargo check -p jj-store-service -p jj-store-http --lib --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected service and direct HTTP boundary pass/27.73s. No schema/client generation required because contracts are unchanged. content-packages-031.log."
+    },
+    {
+      "command": "cargo fmt -p jj-store-service -- --check; pnpm exec prettier --write spec/src/api.md spec/src/collaboration.md spec/src/mutations.md spec/src/architecture.md docs/implementation-plan.md; pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Focused formatting passes;9protected files/5chapters,5validators/23chapters/172requirements and138task bookkeeping pass. Logs content-rust-format-031.log/content-doc-format-031.log/content-spec-first-031.log/content-spec-031.log/content-progress-031.log. Clarified request-principal exclusion separately from stored actor attribution, final doc formatter content-doc-format-031-final.log. Complete qualification not run."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Lightweight repository summaries, cross-request local WorkStore reconstruction, native immutable additional-operation construction, prepared local operation/prefix/comparison and deep/predecessor/copy/native RPC delivery remain implementation work.",
+    "Field index estimates are capped at64MiB per constructed root and64MiB total cache retention; existing64MiB/64token cursor capacity and2search permits remain. Roots held by cursor pins are charged separately from cache retention; tests do not constitute isolated RSS or near-capacity/concurrent-root qualification.",
+    "Complete combined integration/contracts, cold production browser, Linux/native large fixtures, release/RSS/pressure/restart/revocation/publication/fault/real-RustFS, registry-only and Help/source-review qualification remain deferred to the separate later slice. Main/original dev services/Linux source/visual baselines unchanged; no milestone promotion."
+  ],
+  "next": "Continue performance delivery with lightweight repository summaries and remaining native/local index/generation features in the retained temporary workspace; do comprehensive qualification later.",
+  "scope": "Reuse full-domain validated current-content fields across first queries and avoid all-match snippet construction/repeated normalization/sorting during browse and deep continuations.",
+  "tests": [
+    "crates/jj-store-service/tests/content_search/cache.rs#content_search_reuses_unchanged_roots_across_filters_and_rechecks_limits",
+    "crates/jj-store-service/tests/content_search.rs#current_full_bodies_edits_tombstones_and_scopes_are_manifest_selected",
+    "crates/jj-store-service/tests/content_search.rs#fresh_and_resumed_content_never_disclose_after_token_revocation",
+    "crates/jj-store-service/src/content_search/index_tests.rs#search_merges_root_orders_and_hydrates_only_the_selected_deep_window",
+    "crates/jj-store-service/src/content_search/index_tests.rs#search_projection_refuses_body_growth_before_retaining_fields",
+    "crates/jj-store-service/src/content_search/extract.rs#excerpt_keeps_unicode_expansion_match_in_original_text",
+    "crates/jj-store-service/src/content_search/cursors.rs#capacity_restart_and_query_deadline_fail_closed_without_eviction"
   ]
 }
 ]

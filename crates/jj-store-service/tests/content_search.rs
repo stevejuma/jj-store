@@ -1,4 +1,6 @@
 use jj_collab::*;
+#[path = "content_search/cache.rs"]
+mod cache;
 use jj_store_jj::{objects::NativeObjects, policy::Protection};
 use jj_store_model as m;
 use jj_store_object::memory::MemoryStore;

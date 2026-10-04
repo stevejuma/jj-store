@@ -222,6 +222,19 @@ Command View retains repository access and selection.
 
 ## Captured application content search
 
+Native application content search retains bounded data-only indexes keyed by
+repository, epoch and immutable Thread/Work roots. Validate complete selected
+domains once per retained generation, admit normalized body growth before
+allocation, and retain separately ordered recent and text-search keys. First
+queries filter these compact fields and merge existing orders; continuations
+retain matching keys. Hydrate excerpts only for returned hits, with bounded
+Unicode-safe snippet scanning. Unchanged roots survive new filters and fresh
+manifest envelopes; changed roots rebuild independently. Current tombstones,
+archived Thread rules, task states, scoped matching and stable ordering remain
+unchanged. Warm and continued pages recheck viewer, inventory admission, epoch
+and current Read permission. Root indexes and query keys have separate bounded
+retention charges; neither search cache nor cursor becomes repository authority.
+
 Profile-aware connection and route restoration remain shared by repository
 navigation, Threads and entity search. Global native search skips local
 Git-backed profiles without issuing native API requests and reports their

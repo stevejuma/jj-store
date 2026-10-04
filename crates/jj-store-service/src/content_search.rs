@@ -1,6 +1,8 @@
 //! Bounded current application content, independently pinned from code search.
 mod cursors;
 mod extract;
+mod index;
+mod materialization;
 mod models;
 use crate::work::{Error, Result};
 use crate::{
@@ -14,11 +16,13 @@ use tokio::sync::Semaphore;
 pub struct ContentPager {
     registry: cursors::Registry,
     permits: Semaphore,
+    cache: materialization::Cache,
 }
 impl ContentPager {
     pub fn new(clock: Arc<dyn Clock>) -> Self {
         Self {
-            registry: cursors::Registry::new(clock),
+            registry: cursors::Registry::new(clock.clone()),
+            cache: materialization::Cache::new(clock),
             permits: Semaphore::new(2),
         }
     }
@@ -48,20 +52,15 @@ impl ContentPager {
             self.registry.lookup(session.repository, &query)?
         } else {
             (
-                extract::capture(&session, &query, self.registry.deadline()?).await?,
+                extract::capture(&session, &query, self.registry.deadline()?, &self.cache).await?,
                 0,
             )
         };
         authorize(&session, &pin).await?;
-        let results: Vec<_> = pin
-            .results
-            .iter()
-            .skip(offset)
-            .take(query.limit)
-            .cloned()
-            .collect();
+        let filter = query.q.trim().to_lowercase();
+        let results = pin.selection.page(&filter, offset, query.limit);
         let next = offset.checked_add(results.len()).ok_or(Error::Limit)?;
-        let next_cursor = if next < pin.results.len() {
+        let next_cursor = if next < pin.selection.keys.len() {
             Some(self.registry.retain(pin.clone(), query, next)?)
         } else {
             None
@@ -80,6 +79,9 @@ async fn authorize(session: &NativeSession, pin: &cursors::Pin) -> Result<()> {
         || session.principal(Permission::Read).await?.id() != pin.viewer
     {
         return Err(Error::Denied);
+    }
+    if pin.selection.objects > session.limits.inventory_nodes {
+        return Err(Error::Limit);
     }
     if session.snapshot().await?.manifest().epoch != pin.snapshot.epoch {
         return Err(Error::CursorReset);

@@ -11,17 +11,9 @@ pub(super) struct Pin {
     pub expires: u64,
     pub snapshot: ContentSnapshot,
     pub viewer: jj_store_model::PrincipalId,
-    pub results: Vec<ContentHit>,
+    pub selection: index::Selection,
 }
 
-impl Pin {
-    fn bytes(&self) -> usize {
-        self.results
-            .iter()
-            .map(|r| r.title.len() + r.excerpt.len() + r.revision.len() + 512)
-            .sum()
-    }
-}
 struct Entry<Q> {
     pin: Arc<Pin>,
     query: Q,
@@ -90,6 +82,7 @@ impl<Q: CursorQuery> Registry<Q> {
         let mut entries = self.entries.lock().map_err(|_| Error::Unavailable)?;
         entries.retain(|_, entry| now < entry.expires);
         let mut seen = BTreeSet::new();
+        let mut roots = BTreeSet::new();
         let mut bytes = 0usize;
         for retained in entries
             .values()
@@ -97,7 +90,14 @@ impl<Q: CursorQuery> Registry<Q> {
             .chain(std::iter::once(&pin))
         {
             if seen.insert(Arc::as_ptr(retained) as usize) {
-                bytes = bytes.checked_add(retained.bytes()).ok_or(Error::Limit)?;
+                bytes = bytes
+                    .checked_add(retained.selection.keys.len() * 16 + 1024)
+                    .ok_or(Error::Limit)?;
+            }
+            for source in &retained.selection.sources {
+                if roots.insert(Arc::as_ptr(source) as usize) {
+                    bytes = bytes.checked_add(source.bytes).ok_or(Error::Limit)?;
+                }
             }
         }
         if entries.len() >= 64 || bytes > 64 * 1024 * 1024 {
@@ -137,7 +137,11 @@ mod tests {
         Arc::new(Pin {
             expires: 400,
             viewer: jj_store_model::PrincipalId::new([3; 16]),
-            results: Vec::new(),
+            selection: index::Selection {
+                sources: vec![],
+                keys: vec![],
+                objects: 0,
+            },
             snapshot: ContentSnapshot {
                 repo_id: jj_store_model::RepositoryId::new([1; 16]),
                 epoch: jj_store_model::EpochId::new([2; 16]),

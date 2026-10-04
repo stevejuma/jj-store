@@ -62,9 +62,17 @@ state.
 WorkStore browse and detail pins share immutable root data and derived ordered
 keys, counts and searchable fields. Query continuations retain keys rather than
 prehydrated rows; fresh request authorization, inventory admission and epoch
-checks still apply. These read-only projections never retain actors, guards,
-credentials or accepted command state, and do not change publication, durable
-receipts or domain capacities.
+checks still apply. These read-only projections never retain request principals,
+guards, credentials or accepted command state, and do not change publication,
+durable receipts or domain capacities.
+
+Application content search caches only validated immutable Thread/Work fields
+and ordered document keys. Returned snippets, viewer authorization and captured
+manifest envelopes stay request-bound. New roots, edits and tombstones cannot
+reuse another root's current-body projection; resumed historical pages remain
+bound to their original accepted selection. Search normalization and bounded
+snippet construction stage or publish nothing and retain no command receipts or
+credentials.
 
 Native/local resident LRU eviction releases only disposable prepared read
 handles. It cannot cancel accepted commands, discard durable receipts, change
