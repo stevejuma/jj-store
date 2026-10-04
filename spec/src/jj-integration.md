@@ -686,3 +686,10 @@ preparation and legacy complete enumeration request their own bounded inventory.
 A request-local membership cache is bounded and never retained in read cursors.
 Every path rechecks current authorization and preserves the captured catalog
 root and native operation. This changes no persisted JJ or WAL encoding.
+
+Local Git-backed metadata reads select the retained operation and view directly.
+They MUST NOT require upstream index construction or complete commit/tree
+preflight. Bookmark-only unfiltered pages hydrate only the selected target
+window. Every hydrated object retains bounded bytes and proven reference
+membership under the explicit operation, with authorization checked before
+returning. Graph-dependent reads keep their own complete-result admission.

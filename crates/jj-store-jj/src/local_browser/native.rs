@@ -50,8 +50,7 @@ impl Context {
         self.member(ObjectKey::File(id)).await?;
         // GitBackend's file reader is an owned local byte stream. Never run a textconv or pager.
         let backend = self
-            .repo
-            .store()
+            .store
             .backend()
             .downcast_ref::<jj_lib::git_backend::GitBackend>()
             .ok_or(Error::Unavailable)?;
@@ -71,8 +70,7 @@ impl Context {
             });
         }
         let reader = self
-            .repo
-            .store()
+            .store
             .backend()
             .read_file(
                 jj_lib::repo_path::RepoPath::root(),

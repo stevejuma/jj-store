@@ -22,7 +22,7 @@ use jj_lib::{
     default_backend_factories::default_backend_factories,
     object_id::ObjectId as _,
     op_store as o,
-    repo::{ReadonlyRepo, Repo as _, RepoLoader},
+    repo::{ReadonlyRepo, RepoLoader},
     settings::UserSettings,
 };
 use jj_store_model as m;
@@ -204,13 +204,15 @@ impl Executor {
         let limits = self.limits;
         self.worker(access, move |access, budget| {
             Box::pin(async move {
-                let context = Context::open(access, operation, budget, limits).await?;
+                let metadata_only = matches!(&request, Request::QueryInfo)
+                    || matches!(&request, Request::References(r) if r.kind == references::Kind::Bookmarks && r.operation == operation)
+                    || matches!(&request, Request::Operation { operation: selected } if *selected == operation);
+                let context = Context::open(access, operation, budget, limits, metadata_only).await?;
                 let value = match request {
                     Request::QueryInfo => {
                         let mut info = crate::query::language::info(true);
                         let git = context
-                            .repo
-                            .store()
+                            .store
                             .backend()
                             .downcast_ref::<jj_lib::git_backend::GitBackend>()
                             .ok_or(Error::Unavailable)?
@@ -229,7 +231,7 @@ impl Executor {
                             &context.budget,
                         )?;
                         let (data, next) = graphs::run(
-                            &context.repo,
+                            context.repo.as_deref().ok_or(Error::Unavailable)?,
                             request,
                             page,
                             &context.access,
@@ -247,10 +249,10 @@ impl Executor {
                     Request::Commit { commit } => {
                         let source = context.commit_record(commit).await?;
                         let native = context
-                            .commit(&context.repo.store().clone(), commit)
+                            .commit(&context.store, commit)
                             .await?;
                         let card = graphs::describe(
-                            &context.repo,
+                            context.repo.as_deref().ok_or(Error::Unavailable)?,
                             &native,
                             &context.access,
                             &context.budget,
@@ -377,7 +379,8 @@ impl Pin {
     }
 }
 struct Context {
-    repo: Arc<ReadonlyRepo>,
+    repo: Option<Arc<ReadonlyRepo>>,
+    store: Arc<jj_lib::store::Store>,
     access: Arc<Pin>,
     budget: Arc<Budget>,
     limits: Limits,
@@ -388,6 +391,7 @@ impl Context {
         operation: m::OperationId,
         budget: Arc<Budget>,
         limits: Limits,
+        metadata_only: bool,
     ) -> Result<Self> {
         let loader = loader(binding.metadata_path())?;
         // Only operations in the current retained operation ancestry may be selected.
@@ -401,7 +405,11 @@ impl Context {
         }
         let mut pending: BTreeSet<_> = heads.iter().map(operation_id).collect::<Result<_>>()?;
         let mut available = BTreeMap::new();
-        while let Some(id) = pending.pop_first() {
+        while let Some(id) = if metadata_only && pending.remove(&operation) {
+            Some(operation)
+        } else {
+            pending.pop_first()
+        } {
             budget.work(1)?;
             if available.contains_key(&id) {
                 continue;
@@ -424,6 +432,9 @@ impl Context {
             budget.metadata(&data)?;
             pending.extend(data.parents.iter().copied());
             available.insert(id, (op, data));
+            if metadata_only && id == operation {
+                break;
+            }
         }
         let selected = available
             .get(&operation)
@@ -481,11 +492,25 @@ impl Context {
                     commits.extend(prior.iter().copied());
                 }
             }
-            pending.extend(data.parents.iter().copied());
+            if !metadata_only {
+                pending.extend(data.parents.iter().copied());
+            }
             pin.inventory.insert(ObjectKey::Operation(id));
             pin.inventory.insert(ObjectKey::View(data.view_id));
             pin.views.insert(data.view_id, view);
             pin.operations.insert(id, data.clone());
+        }
+        if metadata_only {
+            // View references prove these targets without reading their ancestry.
+            pin.inventory
+                .extend(commits.into_iter().map(ObjectKey::Commit));
+            return Ok(Self {
+                repo: None,
+                store: loader.store().clone(),
+                access: Arc::new(pin),
+                budget,
+                limits,
+            });
         }
         // Preflight closure before any graph/index query. Virtual root remains upstream-owned.
         let backend = loader.store().backend();
@@ -551,7 +576,8 @@ impl Context {
             .await
             .map_err(|_| Error::Unavailable)?;
         Ok(Self {
-            repo,
+            repo: Some(repo),
+            store: loader.store().clone(),
             access: Arc::new(pin),
             budget,
             limits,
@@ -575,15 +601,28 @@ impl Context {
         Err(Error::NotCommitted)
     }
     fn code_store(&self) -> Result<Arc<jj_lib::store::Store>> {
-        Ok(self.repo.store().clone())
+        Ok(self.store.clone())
     }
     async fn commit_record(&self, id: m::GitSha1Id) -> Result<dto::Commit> {
         self.member(ObjectKey::Commit(id)).await?;
-        self.access
-            .commits
-            .get(&id)
-            .cloned()
-            .ok_or(Error::NotCommitted)
+        if let Some(data) = self.access.commits.get(&id) {
+            return Ok(data.clone());
+        }
+        bounded_git_object(
+            self.store.backend(),
+            id,
+            gix::object::Kind::Commit,
+            &self.budget,
+        )?;
+        let data = self
+            .store
+            .backend()
+            .read_commit(&b::CommitId::from_bytes(id.as_bytes()))
+            .await
+            .map_err(native::map_backend)?;
+        let data = dto::Commit::try_from(&data).map_err(|_| Error::Corrupt)?;
+        self.budget.metadata(&data)?;
+        Ok(data)
     }
     async fn operation(&self, id: m::OperationId) -> Result<dto::Operation> {
         self.member(ObjectKey::Operation(id)).await?;

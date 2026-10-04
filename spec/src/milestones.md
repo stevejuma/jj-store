@@ -114,7 +114,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                                                       | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                                                     | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                                                       | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002 |
 | M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                           | Independent local/native conversion with complete collaboration history                                                        | Retain eligible conversions; qualify portable anchored profiles and remaining prerequisite gates          | E-M13-026,E-M13-027,E-M13-028,E-M13-029 |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                                               | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | M14 | In progress | M4.18 | JST-UI-012,JST-UI-016 | Local settings, profile-aware device links and safe maintenance | Implement M14.3 agent setup and automatic recovery | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017,E-M13-028 |
@@ -74995,7 +74995,7 @@ entries.
   "scope": "Documentation workspace retirement only. Product checks are recorded in E-DOC-006 and are not repeated for ledger-only cleanup. M19 remains Partial with foundational registry-only and packaged native-host release gates unchanged. Retained fixture files are archival evidence, not a running relocated installation.",
   "next": "Continue documentation and Help development in the main jj-store workspace; retired preview URLs are stopped."
 },
-  {
+{
     "id": "E-READ-001",
     "tasks": [
       "M4.1"
@@ -75157,7 +75157,86 @@ entries.
       "UI and root aggregate lanes are out of scope for this native read-capability slice; visual baselines remain unapproved."
     ],
     "next": "Implement query-specific local JJ access, then remaining bounded-read slices and large-scale qualification."
+  },
+{
+    "id": "E-READ-002",
+    "tasks": [
+      "M13.4"
+    ],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change mulxnmqr",
+    "kind": "Local operation metadata and page-only bookmark target hydration",
+    "versions": "Rust 1.98.1; jj-lib 0.45.1; Node 26.9.0; pnpm 10.32.1.",
+    "formats": "No wire or persisted format changes. Metadata-only queries bypass graph/index construction while retaining exact operation and reference membership.",
+    "files": [
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-cli/tests/local_browser/bounded_reads.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/native.rs",
+      "crates/jj-store-jj/src/local_browser/references.rs",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md"
+    ],
+    "requirements": [
+      "JST-LOCAL-004",
+      "JST-JJ-003",
+      "JST-API-001"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#local_metadata_and_bookmark_pages_do_not_load_history_or_index",
+      "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#registered_large_repository_metadata_smoke"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_metadata_and_bookmark_pages_do_not_load_history_or_index -- --exact bounded_reads::local_metadata_and_bookmark_pages_do_not_load_history_or_index",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: QueryInfo failed Limit under max_history_visits=1 with 1000 bookmarks and a two-commit chain."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_metadata_and_bookmark_pages_do_not_load_history_or_index -- --exact bounded_reads::local_metadata_and_bookmark_pages_do_not_load_history_or_index",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial post-change 1000-bookmark regression passed. Fixture then expanded to 10000 bookmarks and corrupt nested index segments."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked -- --test-threads=2",
+        "result": "pass",
+        "failures": 0,
+        "note": "Escalated to all direct local browser consumers after changing shared Context setup: 8 passed, 1 opt-in smoke ignored, 36.39s. Includes 10000 bookmarks and corrupt JJ segment files, exact pins, history aliases, conflicts, registration, filesystem runtime and untouched dirty files/heads."
+      },
+      {
+        "command": "JJ_STORE_LARGE_REPO=/Users/stevejuma/code/linux/.jj/repo target/debug/deps/local_browser-893d8c4057fcb950 --ignored --exact bounded_reads::registered_large_repository_metadata_smoke --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Linux read-only QueryInfo + first bookmark succeeds in 1.7358s; bookmark stats: 3 metadata nodes, 2936748 charged bytes, 6 work units. No checkout/metadata publication or service restart."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected package all-target checks pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial evidence missed CLI ownership chapter; added local browser conformance requirements without changing governance."
+      },
+      {
+        "command": "pnpm spec:first; pnpm check:progress; pnpm spec:validate; cargo fmt --all -- --check; pnpm exec prettier --check spec/src/local-jj.md spec/src/jj-integration.md spec/src/cli.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Mapped canonical chapters, 136-task ledger, 167 requirements and focused formatting pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Scoped file/commit reads, graph preparation, native reference paging and UI/collaboration changes remain subsequent slices. UI and full aggregate lanes out of scope for this metadata-only Rust slice."
+    ],
+    "next": "Implement scoped file reads, direct directory windows and independent metadata loading; complete remaining large-repository plan."
   }
 ]
-
 ```

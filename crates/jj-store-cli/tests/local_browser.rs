@@ -1,3 +1,5 @@
+#[path = "local_browser/bounded_reads.rs"]
+mod bounded_reads;
 #[path = "local_browser/reviews.rs"]
 mod review_acceptance;
 #[path = "local_browser/working_copy.rs"]

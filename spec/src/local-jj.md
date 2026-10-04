@@ -415,6 +415,22 @@ Arbitrary external filesystem writers do not participate in a filesystem CAS;
 final fingerprint checking detects prior changes but cannot guarantee exclusion
 of a writer racing the atomic rename.
 
+## Bounded local code reads
+
+Operation/view-only requests MUST prove the selected operation is retained and
+stop ancestry discovery once that proof is available. Query information,
+operation detail and bookmark-only pages MUST NOT load a commit graph, build a
+JJ index, or traverse historical trees. Historical selections remain bound to
+current retained operation ancestry; raw Git object existence is insufficient
+for membership.
+
+Bookmark pages without a search predicate MUST select their ordered window
+before reading target commits. Hydration reads only targets referenced by the
+selected view, remains within the request byte/work/deadline limits, and reports
+exact conflict terms and workspace links. Description search retains complete
+matching semantics; bounded preparation for wider queries is a separate stage.
+Existing local publication, identity and persisted formats remain unchanged.
+
 ## Rich history query delivery
 
 The registered-folder `query_info` request MUST share the existing local

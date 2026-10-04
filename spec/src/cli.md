@@ -1581,3 +1581,9 @@ Application read regression coverage includes manifest-root point membership
 under a one-object request budget. The complete inventory remains explicitly
 bounded for callers that request enumeration; opening an application content
 read no longer enumerates all stored objects.
+
+Local browser metadata conformance includes a retained-operation query and a
+deep bookmark page on a ten-thousand-bookmark fixture with corrupt disposable JJ
+index segments. Neither request may load that index or traverse commit history.
+The opt-in existing-repository smoke is read-only and requires an explicit
+metadata directory; ordinary tests never use a developer checkout.

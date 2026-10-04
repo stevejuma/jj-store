@@ -83,7 +83,11 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
         for (name, target) in &view.local_bookmarks {
             context.budget.work(1)?;
             let ids: BTreeSet<_> = target.0.iter().flatten().copied().collect();
-            let targets = context.targets(&view, ids.iter().copied()).await?;
+            let targets = if request.query.is_empty() {
+                vec![]
+            } else {
+                context.targets(&view, ids.iter().copied()).await?
+            };
             let workspaces = workspace_names(&view, &ids);
             entries.push(Entry {
                 key: format!("bookmark:{name}"),
@@ -129,7 +133,15 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
             }
     });
     entries.sort_by(|a, b| a.key.cmp(&b.key));
-    let (values, previous, next) = window(entries, &request)?;
+    let (mut values, previous, next) = window(entries, &request)?;
+    if request.query.is_empty() {
+        for value in &mut values {
+            if let Reference::Bookmark { terms, targets, .. } = value {
+                let ids: BTreeSet<_> = terms.iter().flatten().copied().collect();
+                *targets = context.targets(&view, ids.into_iter()).await?;
+            }
+        }
+    }
     let result = Page {
         version: 1,
         operation: request.operation,
