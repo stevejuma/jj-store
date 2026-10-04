@@ -63,3 +63,30 @@ test("historical_mapping_rejects_missing_destination_and_ambiguity", () => {
     /mapping/,
   );
 });
+
+test("historical_stacks_mapping_does_not_qualify_freshness", () => {
+  const stacks = { ...entry, id: "E-M20-001", tasks: ["M20", "M20.1"] };
+  const freshness = { ...entry, id: "E-FRESH-001", tasks: ["M20"] };
+  const tasks = `| M20 | In progress | - | JST-GOV-004 | freshness | next | E-FRESH-001 |
+| M21 | In progress | - | JST-GOV-004 | stacks | next | E-M20-001 |
+| M21.1 | Done | - | JST-GOV-004 | UI | next | E-M20-001 |`;
+  const mapping = `| E-M20-* | M20 | M21 |
+| E-M20-* | M20.1 | M21.1 |`;
+  assert.deepEqual(
+    validateLedger(fixture(mapping, [stacks, freshness], tasks)),
+    [],
+  );
+  assert.match(
+    validateLedger(
+      fixture(
+        mapping,
+        [stacks, freshness],
+        tasks.replace(
+          "freshness | next | E-FRESH-001",
+          "freshness | next | E-M20-001",
+        ),
+      ),
+    ).join(),
+    /M20: missing evidence/,
+  );
+});

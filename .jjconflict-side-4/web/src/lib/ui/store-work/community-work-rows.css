@@ -1,0 +1,277 @@
+/* Adapted from Lapis Community CommunityProjects.css (Apache-2.0).
+ * Native fields and actions retain Community presentation. */
+.community-projects__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  padding: 0.45rem 1rem 1.5rem;
+}
+
+.community-projects__grid[data-layout="grid"] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
+  column-gap: 0.5rem;
+}
+
+.community-projects__list[data-layout="grid"],
+.community-projects__task-list[data-layout="grid"] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  column-gap: 0.5rem;
+}
+
+.community-projects__list[data-layout="grid"],
+.community-projects__task-list[data-layout="grid"] {
+  gap: 0.5rem;
+}
+
+.community-projects__list[data-layout="grid"]
+  > .community-projects__list-group-heading,
+.community-projects__task-list[data-layout="grid"]
+  > .community-projects__list-group-heading {
+  grid-column: 1 / -1;
+  margin-block-end: -0.25rem;
+}
+
+.community-projects__card,
+.community-projects__row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.75rem;
+  border: 0;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+}
+
+.community-projects__card {
+  position: relative;
+  min-height: 2.75rem;
+  align-items: center;
+  flex-direction: row;
+  cursor: pointer;
+}
+
+.community-projects__card:hover,
+.community-projects__row:hover,
+.community-projects__row--button:hover {
+  background: color-mix(in srgb, var(--muted) 32%, transparent);
+}
+
+.community-projects__card:has(.community-projects__card-target:focus-visible) {
+  background: color-mix(in srgb, var(--muted) 32%, transparent);
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.community-projects__card-icon,
+.community-projects__row-icon {
+  display: flex;
+  width: 1rem;
+  height: 1rem;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.community-projects__card-icon svg,
+.community-projects__row-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.community-projects__repository-provider-link {
+  border-radius: 0.25rem;
+  color: var(--foreground);
+}
+
+.community-projects__repository-provider-link:hover {
+  color: var(--primary);
+}
+
+.community-projects__repository-provider-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.community-projects__card-copy,
+.community-projects__row-main {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.community-projects__repository-target {
+  appearance: none;
+  width: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.community-projects__repository-target:hover strong {
+  color: var(--primary);
+}
+
+.community-projects__repository-target:focus-visible {
+  border-radius: 0.25rem;
+  outline: 2px solid var(--ring);
+  outline-offset: 0.2rem;
+}
+
+.community-projects__card-copy > span,
+.community-projects__row-main > span {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 1.25rem;
+}
+
+.community-projects__card-copy > span > strong,
+.community-projects__row-main > span > strong {
+  flex: none;
+  color: var(--foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+}
+
+.community-projects__card-copy span,
+.community-projects__row-main span,
+.community-projects__person-copy > span {
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-projects__card-meta,
+.community-projects__row-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.community-projects__repository-row .community-projects__row-meta {
+  display: grid;
+  width: clamp(15rem, 30vw, 22rem);
+  grid-template-columns: 2rem minmax(5rem, 1fr) 6.5rem 1.5rem;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+
+.community-projects__repository-row
+  .community-projects__row-meta
+  > .community-member-hover-card__trigger {
+  justify-self: center;
+}
+
+.community-projects__repository-row .community-projects__row-meta > time {
+  text-align: right;
+}
+
+.community-projects__repository-row .community-projects__row-meta > a {
+  display: flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.35rem;
+}
+
+.community-projects__repository-row .community-projects__row-meta > a:hover {
+  background: var(--muted);
+}
+
+.community-projects__card-meta {
+  margin-inline-start: auto;
+}
+
+.community-projects__project-list {
+  container: project-list / inline-size;
+}
+.community-projects__project-row .community-projects__card-meta {
+  display: grid;
+  grid-template-columns: 2rem 8.5rem 1.5rem 6.5rem;
+  flex: none;
+}
+.community-projects__project-row .community-projects__card-copy > span {
+  display: grid;
+  grid-template-columns: minmax(0, 35%) minmax(0, 1fr);
+  gap: 1rem;
+}
+.community-projects__project-row .community-projects__card-copy strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.community-projects__project-repositories {
+  grid-column: 1;
+}
+.community-projects__project-counts {
+  grid-column: 2;
+}
+.community-projects__project-row .community-member-hover-card__trigger {
+  grid-column: 3;
+  justify-self: center;
+}
+.community-projects__project-row .community-projects__card-meta > time {
+  display: inline-flex;
+  grid-column: 4;
+  justify-self: end;
+}
+@container project-list (max-width: 36rem) {
+  .community-projects__project-row {
+    flex-wrap: wrap;
+  }
+  .community-projects__project-row .community-projects__card-copy {
+    flex-basis: calc(100% - 2rem);
+  }
+  .community-projects__project-row .community-projects__card-meta {
+    grid-template-columns: 2rem 8.5rem 1.5rem;
+  }
+  .community-projects__project-row .community-projects__card-meta > time {
+    display: none;
+  }
+}
+
+.community-projects__card-meta > .community-member-hover-card__trigger {
+  position: relative;
+  z-index: 2;
+}
+
+.community-projects__card-meta > time,
+.community-projects__row-meta > time {
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  white-space: nowrap;
+}
+
+.community-projects__row-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  white-space: nowrap;
+}
+
+.community-projects__row-count svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.community-projects__list {
+  display: grid;
+  gap: 0;
+  padding: 0.45rem 1rem 1.5rem;
+}

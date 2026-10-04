@@ -1,0 +1,31 @@
+.store-mutation-preview {
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) minmax(0, 1fr);
+  gap: 0.375rem 1rem;
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 0.375rem);
+  background: var(--muted);
+  font-size: var(--community-text-body);
+}
+
+.store-mutation-preview dt {
+  color: var(--muted-foreground);
+}
+
+.store-mutation-preview dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.store-mutation-error {
+  color: var(--destructive);
+  font-size: var(--community-text-caption);
+}
+
+.store-mutation-confirm-copy {
+  display: grid;
+  gap: 0.25rem;
+}
