@@ -1640,3 +1640,12 @@ when a writer restores mtime, plus existing missing-file, receipt, symlink,
 repository/epoch, eviction and revocation checks. A low-work warm verification
 fixture MUST distinguish metadata checks from full-file hashing. New executors
 and process restarts still verify complete disk content.
+
+Cache concurrency acceptance MUST hold a warm `all()` page at an authorized
+commit read, prepare a newer operation using the same namespace and a one-slot
+cache, then release the old read. Preparation must complete and evict the old
+disk slot while the original page still returns its exact captured data. The
+inverse order MUST also pass: hold preparation after it has evicted the disk
+slot, start an ordinary page from the earlier verified resident, and return the
+original pinned data before releasing preparation. Reads retain fresh
+authorization and no cache-file or native publication side effects.

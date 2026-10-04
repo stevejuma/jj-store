@@ -447,27 +447,37 @@ impl Cache {
             fs::rename(&entry.path, &path).map_err(|_| Error::Unavailable)?;
             entry.path = path;
         }
-        residents.remember(
-            index,
-            entry.path.clone(),
-            access,
-            receipt.files.clone(),
-            size,
-            self.policy,
-            budget,
-        )?;
+        let report = Report {
+            state: entry.state,
+            evicted: self.evicted,
+            retained_entries: self.slots.len() + 1,
+            retained_bytes: self.bytes() + size,
+        };
+        if entry
+            .resident
+            .as_ref()
+            .is_none_or(|saved| saved.verification.files != receipt.files)
+        {
+            residents.remember(
+                index,
+                entry.path.clone(),
+                access,
+                receipt.files.clone(),
+                size,
+                self.policy,
+                budget,
+                report.clone(),
+            )?;
+        } else if let Some(saved) = &entry.resident {
+            saved.update_report(report.clone());
+        }
         self.slots.push(Slot {
             id: entry.slot,
             receipt,
             bytes: size,
         });
         entry.retain = true;
-        Ok(Report {
-            state: entry.state,
-            evicted: self.evicted,
-            retained_entries: self.slots.len(),
-            retained_bytes: self.bytes(),
-        })
+        Ok(report)
     }
 }
 

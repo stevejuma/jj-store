@@ -1,5 +1,172 @@
 use super::*;
 
+struct HeldCommitRead {
+    inner: Arc<dyn jj_store_object::ObjectStore>,
+    target: String,
+    entered: tokio::sync::Notify,
+    release: tokio::sync::Notify,
+}
+#[async_trait::async_trait]
+impl jj_store_object::ObjectStore for HeldCommitRead {
+    async fn head(
+        &self,
+        key: &jj_store_object::Key,
+    ) -> jj_store_object::Result<jj_store_object::Metadata> {
+        self.inner.head(key).await
+    }
+    async fn get(
+        &self,
+        key: &jj_store_object::Key,
+        range: Option<jj_store_object::ByteRange>,
+    ) -> jj_store_object::Result<jj_store_object::Download> {
+        if key.as_str() == self.target {
+            self.entered.notify_one();
+            self.release.notified().await;
+        }
+        self.inner.get(key, range).await
+    }
+    async fn put(
+        &self,
+        _: &jj_store_object::Key,
+        _: jj_store_object::Condition,
+        _: &jj_store_object::StagedUpload,
+    ) -> jj_store_object::Result<jj_store_object::WriteOutcome> {
+        panic!("query wrote native state")
+    }
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn warm_graph_survives_concurrent_preparation_and_cache_eviction() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let old = pin(&f, oid(repo.op_id())).await;
+            let (later, _) = child(&repo, &a, "later").await;
+            let newer = pin(&f, oid(later.op_id())).await;
+            let exec = q::GraphExecutor::with_cache_policy(
+                root.path().to_owned(),
+                q::Limits::default(),
+                2,
+                q::cache::Policy {
+                    max_entries: 1,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            let expected = old.graph(&exec, log("all()"), page(100)).await.unwrap();
+            let gate = Arc::new(HeldCommitRead {
+                inner: f.store.clone(),
+                target: m::ObjectKey::Commit(cid(a.id())).storage_path(REPO),
+                entered: Default::default(),
+                release: Default::default(),
+            });
+            let pending = {
+                let graph = exec.clone();
+                let gate = gate.clone();
+                let old = old.clone();
+                tokio::spawn(async move { graph.execute(gate, old, log("all()"), page(100)).await })
+            };
+            tokio::time::timeout(Duration::from_secs(2), gate.entered.notified())
+                .await
+                .unwrap();
+            let prepared = newer.prepare_index(&exec, q::Cancellation::default()).await;
+            gate.release.notify_one();
+            let result = pending.await.unwrap().unwrap();
+            let prepared = prepared.expect("warm graph held the preparation namespace lock");
+            assert_eq!(prepared.cache.evicted, 1);
+            assert_eq!(result.operation, expected.operation);
+            assert_eq!(result.data, expected.data);
+            assert_eq!(
+                newer
+                    .graph(&exec, log("all()"), page(100))
+                    .await
+                    .unwrap()
+                    .operation,
+                oid(later.op_id())
+            );
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn warm_graph_starts_while_another_operation_is_preparing() {
+    use jj_store_service::administration::{TokenChange, TokenRequest};
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let old = pin(&f, oid(repo.op_id())).await;
+            let (later, b) = child(&repo, &a, "later").await;
+            let newer = pin(&f, oid(later.op_id())).await;
+            let exec = q::GraphExecutor::with_cache_policy(
+                root.path().to_owned(),
+                q::Limits::default(),
+                2,
+                q::cache::Policy {
+                    max_entries: 1,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            let expected = old.graph(&exec, log("all()"), page(100)).await.unwrap();
+            let gate = Arc::new(HeldCommitRead {
+                inner: f.store.clone(),
+                target: m::ObjectKey::Commit(cid(b.id())).storage_path(REPO),
+                entered: Default::default(),
+                release: Default::default(),
+            });
+            let pending = {
+                let graph = exec.clone();
+                let gate = gate.clone();
+                let newer = newer.clone();
+                tokio::spawn(async move {
+                    graph
+                        .prepare_index(gate, newer, q::Cancellation::default())
+                        .await
+                })
+            };
+            tokio::time::timeout(Duration::from_secs(2), gate.entered.notified())
+                .await
+                .unwrap();
+            let reader_session = f.session(f.reader.clone(), Protection::default());
+            let OpenRead::Pinned(reader) = reader_session
+                .open_read(Some(oid(repo.op_id())), ReadLimits::default())
+                .await
+                .unwrap()
+            else {
+                panic!("pinned reader")
+            };
+            let reader = Arc::new(reader);
+            let result = reader.graph(&exec, log("all()"), page(100)).await;
+            let revoked = f
+                .session
+                .change_token(&TokenRequest {
+                    request_id: m::RequestId::new([210; 16]),
+                    expected: f.session.snapshot().await.unwrap().manifest().snapshot(),
+                    change: TokenChange::Revoke {
+                        token: f.reader.id(),
+                    },
+                })
+                .await;
+            let denied = reader.graph(&exec, log("all()"), page(100)).await;
+            gate.release.notify_one();
+            pending.await.unwrap().unwrap();
+            revoked.unwrap();
+            assert_eq!(denied.unwrap_err(), q::Error::Denied);
+            let result = result.expect("preparation blocked an already verified history page");
+            assert_eq!(result.operation, expected.operation);
+            assert_eq!(result.data, expected.data);
+        })
+        .await;
+}
+
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn graph_cache_corrupt_operation_link_rebuilds_without_publication() {
     tokio::task::LocalSet::new()

@@ -76452,6 +76452,100 @@ entries.
     "Running application unchanged. No public contract or persisted format change; root aggregates, unchanged UI/browser and full contracts lanes out of scope. E-READ-005 registry/full-capture and real-RustFS/scale gates remain open."
   ],
   "next": "Commit resident reuse after ledger checks; continue immutable generations and cache admission, then local prepared history and remaining audited endpoints."
+},
+{
+  "id": "E-READ-012",
+  "tasks": [
+    "M4.1"
+  ],
+  "date": "2026-10-04",
+  "revision": "enclosing Jujutsu change tlsrvwxp",
+  "kind": "Warm native graph pages remain available during cache preparation",
+  "versions": "Rust1.98.1; jj-lib0.45.1; pnpm10.32.1; macOS ARM64.",
+  "formats": "Public DTOs, native persistence and derived cache formats unchanged. Memory-only readers retain exact operation pins and fresh request authorization.",
+  "files": [
+    "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs",
+    "crates/jj-store-jj/src/factories.rs",
+    "crates/jj-store-jj/src/query/cache/resident.rs",
+    "crates/jj-store-jj/src/query/cache.rs",
+    "crates/jj-store-jj/src/query/index.rs",
+    "crates/jj-store-jj/src/query/mod.rs",
+    "spec/src/cli.md",
+    "spec/src/jj-integration.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-JJ-003",
+    "JST-JJ-005",
+    "JST-API-001"
+  ],
+  "tests": [
+    "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#warm_graph_survives_concurrent_preparation_and_cache_eviction",
+    "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#warm_graph_starts_while_another_operation_is_preparing"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked warm_graph_survives_concurrent_preparation_and_cache_eviction -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before: same-namespace preparation returned Busy while warm page held the namespace lease. Final regression passed."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked warm_graph_starts_while_another_operation_is_preparing -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before: warm page returned Busy after preparation evicted its old disk slot. Final memory-only loader passes with a different reader principal and current revocation."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance:: -- --test-threads=2",
+      "result": "fail",
+      "failures": 1,
+      "note": "Strengthened reader fixture initially passed CommittedRead instead of Arc<CommittedRead>; corrected compile failure without changing production admission."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance:: -- --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final24passed. Both concurrency orders, exact pinned data after disk eviction, reader revocation, corruption, cache separation, cancellation and native graph semantics. Existing linker unwind-size advisory remains."
+    },
+    {
+      "command": "target/debug/deps/native_lifecycle-d9faf2e6f13fc0f1 content_acceptance::index_task_acceptance:: --test-threads=2",
+      "result": "pass",
+      "failures": 0,
+      "note": "5passed, including reserved interactive capacity, cancellation, expiry, restart and revocation."
+    },
+    {
+      "command": "target/debug/deps/jj_store_jj-830d932ccb18ef00 query::cache:: --nocapture; cargo test -p jj-store-jj --lib --locked query::cache:: -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "1passed in each run; rebuilt current unit binary confirms warm verification and same-size corruption detection."
+    },
+    {
+      "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-cli --all-targets --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Affected package and direct consumer targets pass."
+    },
+    {
+      "command": "pnpm spec:first; pnpm check:progress; pnpm spec:validate; pnpm exec prettier --check spec/src/jj-integration.md spec/src/cli.md; cargo fmt --all -- --check",
+      "result": "fail",
+      "failures": 1,
+      "note": "Progress checker rejected pending as a run status; corrected evidence schema before rerunning all document consumers."
+    },
+    {
+      "command": "pnpm spec:first; pnpm check:progress; pnpm spec:validate; pnpm exec prettier --check spec/src/jj-integration.md spec/src/cli.md; cargo fmt --all -- --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "6protected files/3chapters,136ledger tasks,167requirements and affected format checks pass. Ledger was appended without whole-file formatting."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Only exact warm all() pages release the namespace lease or use the memory-only fallback. Other expressions retain existing exclusive admission. Retained memory charges survive eviction until executing owners release their copies.",
+    "Immutable disk generations, process-wide quota admission,4GiB/repository and16GiB aggregate staging quotas, larger native/local preparation and remaining endpoint/card/collaboration work are still pending.",
+    "Running app unchanged; no public contract/persistence change. Unchanged UI/browser, full contracts and root aggregate lanes out of scope. E-READ-005 registry/full-capture and large-scale/real-RustFS gates remain open."
+  ],
+  "next": "Commit this verified concurrency slice, then continue staging-inclusive cache quotas and local prepared history."
 }
 ]
 ```

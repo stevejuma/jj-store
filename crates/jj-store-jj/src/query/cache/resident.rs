@@ -1,7 +1,10 @@
 //! Reuse verified immutable in-memory indexes, never unchecked on-disk bytes.
 use super::*;
 use jj_lib::default_index::DefaultReadonlyIndex;
-use std::sync::Mutex;
+use std::sync::{
+    Mutex,
+    atomic::{AtomicU64, Ordering},
+};
 
 #[derive(Clone, PartialEq, Eq)]
 struct Stamp {
@@ -78,8 +81,25 @@ pub(in super::super) struct Saved {
     pub(super) verification: Verification,
     weight: u64,
     policy: Policy,
+    retained: Arc<AtomicU64>,
+    report: Mutex<Report>,
+}
+impl Drop for Saved {
+    fn drop(&mut self) {
+        self.retained.fetch_sub(self.weight, Ordering::AcqRel);
+    }
 }
 impl Saved {
+    pub fn report(&self) -> Report {
+        Report {
+            state: State::Reused,
+            evicted: 0,
+            ..self.report.lock().unwrap().clone()
+        }
+    }
+    pub(super) fn update_report(&self, report: Report) {
+        *self.report.lock().unwrap() = report;
+    }
     /// Additional native operation loaders read disk, so they must reverify it.
     pub fn verify_disk(&self, budget: &Budget) -> Result<()> {
         let (files, _) = inventory(&self.path, self.policy, budget, true)?;
@@ -90,8 +110,22 @@ impl Saved {
     }
 }
 #[derive(Default)]
-pub(in super::super) struct Residents(Mutex<Vec<Arc<Saved>>>);
+pub(in super::super) struct Residents {
+    entries: Mutex<Vec<Arc<Saved>>>,
+    retained: Arc<AtomicU64>,
+}
 impl Residents {
+    pub(in super::super) fn get_memory(&self, access: &dyn ReadAccess) -> Option<Arc<Saved>> {
+        let mut entries = self.entries.lock().unwrap();
+        let index = entries.iter().position(|e| {
+            e.repository == access.repository()
+                && e.epoch == access.epoch()
+                && e.operation == access.operation()
+        })?;
+        let saved = entries.remove(index);
+        entries.push(saved.clone());
+        Some(saved)
+    }
     pub(super) fn get(
         &self,
         access: &dyn ReadAccess,
@@ -101,7 +135,7 @@ impl Residents {
         budget: &Budget,
     ) -> Result<Option<Arc<Saved>>> {
         let saved = {
-            let mut entries = self.0.lock().unwrap();
+            let mut entries = self.entries.lock().unwrap();
             let Some(index) = entries.iter().position(|e| {
                 e.path == path
                     && e.repository == access.repository()
@@ -129,6 +163,7 @@ impl Residents {
         bytes: u64,
         policy: Policy,
         budget: &Budget,
+        report: Report,
     ) -> Result<()> {
         // Account Vec capacity slack, per-file/index metadata, names and hashes.
         let weight = bytes
@@ -146,15 +181,19 @@ impl Residents {
                 return Ok(());
             }
         };
-        let mut entries = self.0.lock().unwrap();
+        let mut entries = self.entries.lock().unwrap();
         entries.retain(|entry| entry.path != path);
-        // The namespace lease covers evaluation; no other job on this executor
-        // can retain an evicted resident while entering the same namespace.
-        while entries.len() >= policy.max_entries
-            || entries.iter().map(|e| e.weight).sum::<u64>() + weight > ceiling
+        // Eviction does not free a resident still held by an executing query.
+        while !entries.is_empty()
+            && (entries.len() >= policy.max_entries
+                || self.retained.load(Ordering::Acquire) + weight > ceiling)
         {
             entries.remove(0);
         }
+        if self.retained.load(Ordering::Acquire) + weight > ceiling {
+            return Ok(());
+        }
+        self.retained.fetch_add(weight, Ordering::AcqRel);
         entries.push(Arc::new(Saved {
             index,
             path,
@@ -164,6 +203,8 @@ impl Residents {
             verification,
             weight,
             policy,
+            retained: self.retained.clone(),
+            report: Mutex::new(report),
         }));
         Ok(())
     }

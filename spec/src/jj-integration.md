@@ -787,3 +787,24 @@ eviction and loss of the resident require full checksums before loading. Current
 authorization and loaded-index hard limits still apply. Disk-generation
 immutability, shorter namespace locking and larger aggregate quotas remain
 separate work.
+
+An ordinary warm `all()` page MAY release the cache namespace lease after
+loading and validating its exact operation, view and resident index and
+finishing cache bookkeeping. Evaluation then uses the retained immutable memory
+copy and authorized native object reads. Another job may evict or replace its
+disk slot without changing the in-flight page's source. Cache diagnostics in
+that response describe the admission-time observation. Resident byte accounting
+MUST retain charges until the last executing owner releases an evicted copy.
+Queries that can load additional operation indexes retain their exclusive
+namespace lease; this optimization does not authorize concurrent disk writers.
+
+When preparation already holds that lease, a new ordinary `all()` page MAY use
+an existing resident matching repository, epoch and operation without opening
+any cache metadata or index files. Construct fresh request-scoped native backend
+and operation capabilities; never retain or reuse an earlier caller's
+authorization. The memory-only index store admits exactly the captured
+operation, enforces the current hard limit and denies writes. Cold or
+graph-dependent reads without a matching resident retain Busy/preparation
+admission. Cache retained counts on this path describe the most recent completed
+cache observation for that resident; the request performs no eviction.
+Revocation, epoch changes, cancellation and final output checks remain current.

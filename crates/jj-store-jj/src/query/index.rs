@@ -154,3 +154,58 @@ pub(super) fn loader(
     );
     RepoLoader::init_from_file_system(settings, path, &factories).map_err(|_| Error::Unavailable)
 }
+
+struct ResidentIndexStore {
+    saved: Arc<cache::resident::Saved>,
+    budget: Arc<Budget>,
+}
+impl fmt::Debug for ResidentIndexStore {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("ResidentQueryIndex")
+    }
+}
+#[async_trait::async_trait(?Send)]
+impl IndexStore for ResidentIndexStore {
+    fn name(&self) -> &str {
+        "default"
+    }
+    async fn get_index_at_op(
+        &self,
+        operation: &Operation,
+        _: &Arc<Store>,
+    ) -> IndexStoreResult<Box<dyn ReadonlyIndex>> {
+        self.budget
+            .check()
+            .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
+        let failure = if operation.id().as_bytes() != self.saved.operation.as_bytes() {
+            Some(Error::NotCommitted)
+        } else if self.saved.index.num_commits() as usize > self.budget.limits.max_index_commits {
+            Some(Error::IndexBudget)
+        } else {
+            None
+        };
+        if let Some(error) = failure {
+            return Err(IndexStoreError::Read(Box::new(self.budget.fail(error))));
+        }
+        Ok(Box::new(self.saved.index.clone()))
+    }
+    fn write_index(
+        &self,
+        _: Box<dyn MutableIndex>,
+        _: &Operation,
+    ) -> IndexStoreResult<Box<dyn ReadonlyIndex>> {
+        Err(IndexStoreError::Write(Box::new(
+            self.budget.fail(Error::Denied),
+        )))
+    }
+}
+pub(super) fn resident_loader(
+    stores: &NativeStores,
+    settings: &UserSettings,
+    saved: Arc<cache::resident::Saved>,
+    budget: Arc<Budget>,
+) -> Result<RepoLoader> {
+    stores
+        .resident_loader(settings, Arc::new(ResidentIndexStore { saved, budget }))
+        .map_err(|_| Error::Unavailable)
+}

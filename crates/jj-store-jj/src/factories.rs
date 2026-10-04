@@ -175,6 +175,36 @@ impl NativeStores {
             settings, path, &factories,
         )?)
     }
+
+    /// Query-only construction with an already verified resident index. No
+    /// disposable cache path is opened, and the supplied authority still owns
+    /// every backend/operation read and denies writes.
+    pub(crate) fn resident_loader(
+        &self,
+        settings: &UserSettings,
+        index: Arc<dyn jj_lib::index::IndexStore>,
+    ) -> AuthorityResult<RepoLoader> {
+        #[derive(Debug)]
+        struct QuerySubmodules;
+        impl jj_lib::submodule_store::SubmoduleStore for QuerySubmodules {
+            fn name(&self) -> &str {
+                "query-read-only"
+            }
+        }
+        let store = jj_lib::store::Store::new(
+            Box::new(self.backend()?),
+            jj_lib::signing::Signer::from_settings(settings)?,
+            jj_lib::tree_merge::MergeOptions::from_settings(settings)?,
+        );
+        Ok(RepoLoader::new(
+            settings.clone(),
+            store,
+            Arc::new(self.operations()?),
+            Arc::new(self.heads()?),
+            index,
+            Arc::new(QuerySubmodules),
+        ))
+    }
     pub(crate) fn verify_cache_binding(&self, path: &Path) -> AuthorityResult<()> {
         // Verify even when a modified type file would otherwise select a different backend.
         for component in ["store", "op_store", "op_heads"] {
