@@ -852,3 +852,13 @@ and hydrates only selected rows. No complete matching set or source history is
 retained by a query. Native filtering and extreme candidate continuation remain
 separate delivery work; full memory, construction and latency qualification is
 still deferred.
+
+Native resident visibility and ordered reference groups use flat full-ID arrays
+and compact group boundaries. Their conservative per-indexed-commit admission is
+192 bytes, including bounded traversal/prefix scratch, instead of 512 bytes for
+trees, formatted keys and per-group allocations. Native format-6 decoding
+retains its separate reservation. In-place construction sorting charges work and
+checks cancellation in finite batches; lexical pages allocate only selected keys
+and targets. The two-million-row admission regression checks room for further
+admitted state within the unchanged 1GiB process pool. It does not prove RSS,
+elapsed time, complex-frontier peak usage or complete large-scale serving.

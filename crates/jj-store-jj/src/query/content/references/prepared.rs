@@ -8,13 +8,13 @@ use std::ops::Bound::{Excluded, Unbounded};
 
 enum Selection<'a> {
     Bookmark(&'a RefNameBuf, &'a o::RefTarget),
-    Change(&'a String, m::ChangeId, &'a [m::CommitId]),
+    Change(crate::query::projection::references::Group<'a>),
 }
 impl Selection<'_> {
     fn key(&self) -> String {
         match self {
             Self::Bookmark(name, _) => format!("bookmark:{}", name.as_str()),
-            Self::Change(key, ..) => (*key).clone(),
+            Self::Change(group) => group.key(),
         }
     }
 }
@@ -68,25 +68,15 @@ pub(in crate::query) async fn read(
     let changes = prepared.reference_changes();
     let mut selected = if let Some(exact) = &request.exact {
         changes
-            .get_key_value(&format!("change:{exact}"))
-            .map(|(key, targets)| Selection::Change(key, targets.change, &targets.commits))
+            .get(&format!("change:{exact}"))
+            .map(Selection::Change)
             .into_iter()
             .collect::<Vec<_>>()
     } else {
-        let bounds = match request.direction {
-            Direction::Forward => (
-                request.anchor.as_deref().map_or(Unbounded, Excluded),
-                Unbounded,
-            ),
-            Direction::Backward => (
-                Unbounded,
-                request.anchor.as_deref().map_or(Unbounded, Excluded),
-            ),
-        };
         let rows = bookmarks(view, &request).chain(
             changes
-                .range::<str, _>(bounds)
-                .map(|(key, targets)| Selection::Change(key, targets.change, &targets.commits)),
+                .window(request.anchor.as_deref(), request.direction)
+                .map(Selection::Change),
         );
         match request.direction {
             Direction::Forward => rows.take(request.limit).collect(),
@@ -103,19 +93,16 @@ pub(in crate::query) async fn read(
     } else {
         None
     }
-    .or_else(|| changes.first_key_value().map(|(key, _)| key.clone()));
-    let last = changes
-        .last_key_value()
-        .map(|(key, _)| key.clone())
-        .or_else(|| {
-            (request.kind == Kind::All)
-                .then(|| {
-                    view.local_bookmarks
-                        .last_key_value()
-                        .map(|(name, _)| format!("bookmark:{}", name.as_str()))
-                })
-                .flatten()
-        });
+    .or_else(|| changes.first().map(|group| group.key()));
+    let last = changes.last().map(|group| group.key()).or_else(|| {
+        (request.kind == Kind::All)
+            .then(|| {
+                view.local_bookmarks
+                    .last_key_value()
+                    .map(|(name, _)| format!("bookmark:{}", name.as_str()))
+            })
+            .flatten()
+    });
     let previous = selected
         .first()
         .filter(|_| request.exact.is_none())
@@ -130,17 +117,17 @@ pub(in crate::query) async fn read(
     let mut hydrated = BTreeMap::new();
     for row in selected {
         context.budget.work(1)?;
-        if let Selection::Change(_, _, ids) = &row {
+        if let Selection::Change(group) = &row {
             // A divergent group may be large even for a one-row page. Admit
             // distinct targets before copying their identities or bodies.
-            if ids.len() > context.limits.max_history_visits {
+            if group.targets.len() > context.limits.max_history_visits {
                 return Err(Error::Limit);
             }
-            context.budget.work(ids.len())?;
+            context.budget.work(group.targets.len())?;
         }
         let count = match &row {
             Selection::Bookmark(_, target) => target.as_merge().iter().count(),
-            Selection::Change(_, _, ids) => ids.len(),
+            Selection::Change(group) => group.targets.len(),
         };
         memory.push(crate::query::memory::Lease::reserve(
             512 + count as u64 * 256,
@@ -154,7 +141,7 @@ pub(in crate::query) async fn read(
                 .collect::<Result<BTreeSet<_>>>()?
                 .into_iter()
                 .collect(),
-            Selection::Change(_, _, ids) => ids.to_vec(),
+            Selection::Change(group) => group.targets.iter().map(|row| row.commit).collect(),
         };
         let mut targets = Vec::with_capacity(ids.len());
         for id in ids {
@@ -191,9 +178,9 @@ pub(in crate::query) async fn read(
                     .collect(),
                 targets,
             },
-            Selection::Change(_, change, ids) => Reference::Change {
-                change,
-                divergent: ids.len() > 1,
+            Selection::Change(group) => Reference::Change {
+                change: group.change,
+                divergent: group.targets.len() > 1,
                 targets,
             },
         };

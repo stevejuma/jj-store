@@ -15,6 +15,10 @@ use jj_lib::{
     view::View,
 };
 use std::collections::BTreeMap;
+pub(in crate::query) mod references;
+use references::{References, commit_weight, id};
+mod changes;
+use changes::Changes;
 
 #[derive(Clone)]
 pub(super) struct Prepared {
@@ -55,20 +59,13 @@ impl Prepared {
 }
 struct Decorations {
     heads: BTreeSet<b::CommitId>,
-    visible: BTreeSet<m::CommitId>,
+    visible: Vec<m::CommitId>,
     changes: Box<dyn ChangeIdIndex>,
-    references: BTreeMap<String, VisibleChange>,
+    references: References,
     bookmarks: BTreeMap<m::CommitId, Vec<Bookmark>>,
     workspaces: BTreeMap<m::CommitId, Vec<String>>,
     weight: u64,
     _memory: memory::Lease,
-}
-pub(super) struct VisibleChange {
-    pub change: m::ChangeId,
-    pub commits: Vec<m::CommitId>,
-}
-fn id(id: &b::CommitId) -> Result<m::CommitId> {
-    m::CommitId::from_slice(id.as_bytes()).map_err(|_| Error::Corrupt)
 }
 impl Decorations {
     async fn build(
@@ -79,7 +76,7 @@ impl Decorations {
         budget: &Budget,
     ) -> Result<Self> {
         let mut weight =
-            u64::from(index.num_commits()) * 512 + view.heads().len() as u64 * 256 + 1024 * 1024;
+            commit_weight(index.num_commits()) + view.heads().len() as u64 * 256 + 1024 * 1024;
         for (name, target) in view.local_bookmarks() {
             weight += label_weight(name.as_str(), None, target, budget)?;
         }
@@ -113,8 +110,9 @@ impl Decorations {
                 store,
             )
             .map_err(|_| Error::Unavailable)?;
-        let mut visible = BTreeSet::new();
-        let mut references = BTreeMap::new();
+        let capacity = index.num_commits() as usize;
+        let mut visible = Vec::with_capacity(capacity);
+        let mut references = References::with_capacity(capacity);
         let mut stream = set.commit_change_ids();
         while let Some((commit, change)) =
             stream.try_next().await.map_err(|_| Error::Unavailable)?
@@ -128,20 +126,19 @@ impl Decorations {
             }
             let commit = id(&commit)?;
             let change = m::ChangeId::from_slice(change.as_bytes()).map_err(|_| Error::Corrupt)?;
-            visible.insert(commit);
-            references
-                .entry(format!("change:{change}"))
-                .or_insert_with(|| VisibleChange {
-                    change,
-                    commits: vec![],
-                })
-                .commits
-                .push(commit);
+            visible.push(commit);
+            references.push(change, commit)?;
         }
-        for group in references.values_mut() {
-            budget.work(group.commits.len() * 32)?;
-            group.commits.sort_unstable();
+        references::sort(&mut visible, budget)?;
+        for pair in visible.windows(2) {
+            budget.work(1)?;
+            if pair[0] == pair[1] {
+                return Err(budget.fail(Error::Corrupt));
+            }
         }
+        references.finish(budget)?;
+        drop(stream);
+        drop(set);
         // Upstream retains prefix ambiguity and hidden offsets. Empty heads
         // avoid a second ancestor traversal; this generation overlays visibility.
         let changes = index.change_id_index(&mut std::iter::empty());
@@ -241,6 +238,9 @@ impl Decorations {
         Ok((labels.to_vec(), names.to_vec()))
     }
 }
+#[cfg(test)]
+mod tests;
+
 fn label_weight(
     name: &str,
     remote: Option<&str>,
@@ -264,7 +264,7 @@ impl Reader {
     pub fn annotations(&self, id: m::CommitId) -> Result<(Vec<Bookmark>, Vec<String>)> {
         self.prepared.decorations.annotations(id, &self.budget)
     }
-    pub fn reference_changes(&self) -> &BTreeMap<String, VisibleChange> {
+    pub fn reference_changes(&self) -> &References {
         &self.prepared.decorations.references
     }
     pub fn workspace_names(&self, id: m::CommitId) -> Result<Vec<String>> {
@@ -295,60 +295,5 @@ impl ReadonlyIndex for Reader {
     }
     fn start_modification(&self) -> Box<dyn MutableIndex> {
         ReadonlyIndex::start_modification(&self.prepared.raw)
-    }
-}
-struct Changes {
-    decorations: Arc<Decorations>,
-    budget: Arc<Budget>,
-    matches: bool,
-}
-impl Changes {
-    fn check(&self) -> IndexResult<()> {
-        self.budget
-            .work(1)
-            .map_err(|e| IndexError::Other(Box::new(e)))?;
-        if !self.matches {
-            return Err(IndexError::Other(Box::new(
-                self.budget.fail(Error::NotCommitted),
-            )));
-        }
-        Ok(())
-    }
-}
-#[async_trait::async_trait]
-impl ChangeIdIndex for Changes {
-    async fn resolve_prefix(
-        &self,
-        prefix: &HexPrefix,
-    ) -> IndexResult<PrefixResolution<ResolvedChangeTargets>> {
-        self.check()?;
-        let mut result = self.decorations.changes.resolve_prefix(prefix).await?;
-        if let PrefixResolution::SingleMatch(targets) = &mut result {
-            for (commit, state) in &mut targets.targets {
-                self.budget
-                    .work(32)
-                    .map_err(|e| IndexError::Other(Box::new(e)))?;
-                *state = if self
-                    .decorations
-                    .visible
-                    .contains(&id(commit).map_err(|e| IndexError::Other(Box::new(e)))?)
-                {
-                    ResolvedChangeState::Visible
-                } else {
-                    ResolvedChangeState::Hidden
-                };
-            }
-        }
-        self.budget
-            .check()
-            .map_err(|e| IndexError::Other(Box::new(e)))?;
-        Ok(result)
-    }
-    async fn shortest_unique_prefix_len(&self, id: &b::ChangeId) -> IndexResult<usize> {
-        self.check()?;
-        self.decorations
-            .changes
-            .shortest_unique_prefix_len(id)
-            .await
     }
 }

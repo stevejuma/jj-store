@@ -80737,6 +80737,192 @@ entries.
       "Extreme false-positive or hidden-target candidate frontiers still consume ordinary work/byte/deadline bounds and fail explicitly; retained filtered-query continuation remains delivery work. This artifact stores normalized descriptions on disk; complete construction time, disk footprint and resident pressure remain unqualified.",
       "Complete combined integration/contracts, Linux/native2million/near-capacity fixtures, measured RSS/release latency, full cold production browser, cancellation/fault/revocation/restart/publication/real-RustFS, registry/release and Help/source-review refresh remain deferred. No milestone promoted. UI/schema/contract generation and repository aggregates are out of scope for this Rust-only private delivery. Original main/Linux source and dev services unchanged; retained workspace remains open. Visual baselines remain unapproved. Inherited __eh_frame linker warning and earlier strict-lint gaps remain separately deferred."
     ]
+  },
+  {
+    "id": "E-READ-046",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "enclosing Jujutsu change ypqxwvkt",
+    "kind": "Compact native prepared visible identities and lexical reference groups under unchanged resident admission",
+    "versions": "Rust1.98.1; jj-lib/jj-cli source pinned0.45.1; macOS ARM64.",
+    "formats": "No persisted native/index6/receipt/companion/WAL, public DTO/schema, RPC or cursor format changes. Native selected visibility uses a sorted Vec of full64-byte commit IDs; ordered reference groups use sorted80-byte native change/commit pairs and4-byte group offsets. Conservative identity reservation is192bytes/indexed commit, down from512; the44byte difference beyond148byte array capacities covers bounded upstream prefix/traversal scratch, with heads/reverse labels/fixed overhead admitted separately. Construction reserves maximum capacities before growth, rejects duplicate visibility, and uses in-place heapsort with ordinary cancellation/deadline/work checks at most every1024comparisons. Arbitrary lexical anchors compare39-byte stack keys without heap formatting; selected groups alone allocate source IDs/metadata. Upstream prefix ambiguity/hidden offsets and fresh native access remain unchanged. Full resource and frontier qualification stays deferred.",
+    "files": [
+      "crates/jj-store-jj/src/query/projection.rs",
+      "crates/jj-store-jj/src/query/projection/changes.rs",
+      "crates/jj-store-jj/src/query/projection/references.rs",
+      "crates/jj-store-jj/src/query/projection/references/tests.rs",
+      "crates/jj-store-jj/src/query/projection/tests.rs",
+      "crates/jj-store-jj/src/query/content/references/prepared.rs",
+      "spec/src/jj-integration.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md",
+      "docs/implementation-plan.md"
+    ],
+    "next": "Continue native indexed filters with retained quota-accounted filter-file lifetime, then different-operation/deep/comparison/search/RPC delivery. Keep complete combined qualification separate.",
+    "scope": "Private native prepared visibility/reference representation and construction admission. Exact resource/lexical/sort regressions plus focused native graph, reference, prefix/history, shared worker, cache/recovery, upstream-byte and signed HTTP consumers. JJ/service/HTTP/RPC/CLI checks cover direct callers. No full repository/UI/contract/release or combined qualification.",
+    "requirements": ["JST-JJ-003", "JST-JJ-005"],
+    "tests": [
+      "crates/jj-store-jj/src/query/projection/tests.rs#native_projection_admits_two_million_identities_with_index_headroom",
+      "crates/jj-store-jj/src/query/projection/references/tests.rs#flat_native_groups_preserve_lexical_windows_and_divergent_target_order",
+      "crates/jj-store-jj/src/query/projection/references/tests.rs#native_projection_sort_is_exact_and_stops_at_work_cancellation_and_deadline_bounds",
+      "crates/jj-store-cli/tests/native_lifecycle/reference_windows.rs#native_prepared_references_select_visible_windows_before_target_reads",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_three_histories_filtered_edges_and_snapshot_pagination",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_divergent_operations_bookmarks_and_explicit_workspace",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#historical_predicates_reuse_separately_prepared_residents_without_slot_growth",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#resident_indexes_preserve_multiple_historical_operation_scopes"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked native_projection_admits_two_million_identities_with_index_headroom -- --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "1failed/0passed as intended: raw417048576+projection1025048576 bytes exceed the unchanged1GiB pool.6.39s build. native-projection-before-046.log. Admission arithmetic only; no actual two-million-commit fixture or measured RSS."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked native_projection_admits_two_million_identities_with_index_headroom -- --nocapture (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0failed,12.02s build. native-projection-after-046.log. Fixed conservative reservation; exact regression retained."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::projection:: -- --nocapture (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass/0.03s tests,9.79s build. native-projection-unit-046.log.6144identities use909312array-capacity bytes and66differential arbitrary-anchor/direction/limit windows match a tree-based oracle, with2048exact divergent group checks. Sort matches standard ordering and rejects work/cancellation/deadline exhaustion."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_references_select_visible_windows_before_target_reads -- --nocapture (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/63.70s test,75s build. native-projection-references-046.log. Complete selected-target equivalence, hidden predecessor/divergence and exact requests; ready virtual-root page has2object reads,38021charged bytes,143work. Metadata admission828 reflects fresh operation/view validation with256bookmarks, not source commit hydration."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj; pnpm exec prettier --write spec/src/jj-integration.md spec/src/architecture.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed Rust/docs formatted; native-projection-doc-format-046.log. Focused final formatter checks recorded below."
+      },
+      {
+        "command": "pnpm check:progress (first); pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Spec-first passed7protected files/3chapters. Progress rejected the initial ledger run combining an intended failure with a passing result. Split before-fail and after-pass records; no product regression or assertion change. native-projection-progress-first/spec-first-046.log. Final governance commands recorded below."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::projection:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass/0failed/0.04s tests. 5.59s command. native-projection-final-00-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_prepared_references_select_visible_windows_before_target_reads -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0failed/49.56s tests. 88.92s command. native-projection-final-01-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_query_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "5pass/0failed/1.33s tests. 16.92s command. native-projection-final-02-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_cache_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "6pass/0failed/1.64s tests. 13.06s command. native-projection-final-03-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked warm_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "4pass/0failed/1.37s tests. 13.41s command. native-projection-final-04-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_preparation_fits_small_cache_and_preserves_historical_scopes -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0failed/1.06s tests. 13.82s command. native-projection-final-05-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked historical_predicates_reuse_separately_prepared_residents_without_slot_growth -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0failed/1.23s tests. 14.15s command. native-projection-final-06-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked resident_indexes_preserve_multiple_historical_operation_scopes -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0failed/1.09s tests. 13.97s command. native-projection-final-07-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked query_workers_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "3pass/0failed/0.36s tests. 22.1s command. native-projection-final-08-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0failed/0.48s tests. 19.26s command. native-projection-final-09-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked disk_preparation_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2pass/0failed/0.63s tests. 16.39s command. native-projection-final-10-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked native_graph_pages_and_preparation_do_not_enumerate_inventory -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1pass/0failed/0.47s tests. 15.75s command. native-projection-final-11-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "29.73s command. native-projection-final-12-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.5s command. native-projection-final-13-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.32s command. native-projection-final-14-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.48s command. native-projection-final-15-046.log. Focused direct consumers; no full suite."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm exec prettier --check spec/src/jj-integration.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-ledger formatting and changed-doc check pass. native-projection-ledger-format-complete/doc-check-complete-046.log."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate (complete)",
+        "result": "pass",
+        "failures": 0,
+        "note": "138tasks;7protected files/3canonical chapters;5validators/23chapters/172requirements pass. native-projection-progress-complete/spec-first-complete/spec-complete-046.log. Pending overall; no milestone promotion."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "29unique focused Rust tests and direct JJ/service/HTTP/RPC/CLI checks pass. Native compact identity delivery is focused regression evidence, not full two-million-commit serving or measured RSS proof. Original source repositories, dev services and main workspace remain unchanged; retained temporary workspace stays open.",
+      "Native description filtering still needs correct disk-handle/cache-generation lifetime and quota ownership, recovery and selected-page semantics. Different embedded operation references, indexed child neighbors, deep operation/predecessor/copy/search continuations, retained oversized comparisons/change grouping and filtered candidate continuation, paged RPCs and remaining local application search/index features remain delivery work.",
+      "Full combined integration/contracts, Linux/native large/near-capacity fixtures, construction footprint, complex-frontier peak pressure, isolated RSS/release latency, cold built browser, faults/cancellation/revocation/restart/publication/real RustFS, registry/release and Help/source-review refresh remain deferred. No milestone promotion. Unrelated root aggregate/UI/contract-generation lanes are out of scope. Visual baselines remain unapproved. Inherited __eh_frame linker warning and prior strict-lint gaps remain deferred."
+    ]
   }
 ]
 ```

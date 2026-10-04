@@ -1057,6 +1057,20 @@ namespace leases end before selected-target reads. Standalone metadata readers
 and filtered or different-operation queries retain their previous bounds until
 indexed delivery.
 
+Native retained visibility and reference identities MUST use pre-admitted flat
+arrays rather than one tree node, formatted key and target allocation per
+commit. Keep sorted full commit IDs for exact visible membership, sorted native
+change/commit pairs for lexical reference groups, and compact group boundaries.
+Seek arbitrary lexical anchors without formatting or copying unselected keys.
+The construction reservation covers maximum array capacities, upstream prefix
+bitsets and bounded traversal scratch before growth. Sort in place with charged,
+cancellable comparison batches, rejecting duplicate visible identities. Prefix
+ambiguity and hidden target offsets remain delegated to the pinned upstream
+index. This changes no persisted index, cache receipt or public contract.
+Admission arithmetic for a two-million-row format-6 index must leave room inside
+the unchanged process pool for further admitted work; that arithmetic is not
+measured RSS, construction or large-fixture qualification.
+
 A verified disk index without its resident selected-view projection follows the
 same inline construction threshold as a missing index. Large generations return
 explicit rebuild-required recovery; preparation rebuilds the projection with its

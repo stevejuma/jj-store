@@ -114,6 +114,18 @@ windows remain exact. Native filtering, extreme candidate continuations and
 differently embedded operation lookup remain delivery work. Full construction
 scale, disk footprint, RSS and latency qualification remains deferred.
 
+E-READ-046 compacts native prepared visibility/reference identities from
+tree-based membership, formatted keys and per-group target vectors to sorted
+flat arrays and compact group boundaries. Construction sorting is in place,
+work-charged and cancellable. The conservative identity reservation drops from
+512 to192 bytes per indexed commit; the two-million-row admission regression
+leaves headroom with unchanged JJ decode accounting and the unchanged1GiB pool.
+Exact lexical windows, arbitrary anchors, divergence, hidden prefix offsets and
+selected-only hydration remain governed by focused differential/native tests.
+This is a prerequisite for native filtered delivery; filter-file lifetime/quota
+ownership and the remaining deep/search/comparison/RPC continuations are still
+open. Full large-fixture resource and lifecycle qualification stays deferred.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project
