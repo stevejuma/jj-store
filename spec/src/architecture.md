@@ -698,6 +698,12 @@ not become repository authority.
 
 ## Bounded application read ownership
 
+The main workspace includes the qualified M20 application freshness stack and
+its bounded-read prerequisites. E-FRESH-006 records integration and retirement
+of the temporary `event-freshness` workspace, preserving the qualified
+production tree and existing main ancestry. This local integration changes no
+authority or acceptance requirement; M20 retains its open M15.5 dependency.
+
 Application sessions retain checked immutable catalog roots. The WAL layer owns
 verified catalog point membership; the service owns request authorization,
 limits and credential-free source pins; the JJ boundary requests individual

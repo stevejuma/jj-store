@@ -13,7 +13,7 @@ shared-package release qualification does not alter those original Git gates.
 
 | ID          | Status      | Depends                 | Requirements                                                                                                                                                                                                      | Gate                                                                                                                           | Next                                                                                             | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | ----------- | ----------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M20         | In progress | M4.18,M15.5             | JST-API-003,JST-UI-012                                                                                                                                                                                            | Event-driven freshness implementation and scoped cold idle/recovery qualification complete                                     | Retain event regressions; await M15.5 full-flow qualification                                    | E-FRESH-001,E-FRESH-002,E-FRESH-003,E-FRESH-004,E-FRESH-005                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M20         | In progress | M4.18,M15.5             | JST-API-003,JST-UI-012                                                                                                                                                                                            | Event-driven freshness implementation and scoped cold idle/recovery qualification complete                                     | Retain event regressions; await M15.5 full-flow qualification                                    | E-FRESH-001,E-FRESH-002,E-FRESH-003,E-FRESH-004,E-FRESH-005,E-FRESH-006                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | Bootstrap   | Done        | -                       | JST-GOV-001,JST-GOV-002,JST-GOV-003,JST-GOV-004,JST-GOV-005,JST-GOV-006,JST-GOV-007                                                                                                                               | Spec, ledger, skeleton, gates and independent commit                                                                           | Maintain governance each slice                                                                   | E-BOOT-001,E-BOOT-002,E-GOV-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | Bootstrap.1 | Done        | -                       | JST-GOV-001,JST-GOV-004,JST-GOV-006                                                                                                                                                                               | Reference checksum, requirements, progress checker negative tests                                                              | Governance maintained each slice                                                                 | E-BOOT-001,E-BOOT-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | M0          | Done        | Bootstrap               | JST-COMPAT-001,JST-COMPAT-002                                                                                                                                                                                     | Compiled extension and exact RustFS contract qualified                                                                         | Maintain pinned compatibility probes                                                             | E-M0-001,E-M0-002                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -79247,6 +79247,80 @@ entries.
       "web/tests/vite/index-freshness.test.ts",
       "web/tests/vite/projects-freshness.test.ts",
       "web/tests/vite/settings-freshness.test.ts"
+    ]
+  },
+  {
+    "id": "E-FRESH-006",
+    "kind": "Qualified event stack integration into main and temporary workspace retirement",
+    "versions": "JJ 0.45.1; macOS ARM64; verified event tip f86c7f923f243413af5bf4b74940d0f200899968.",
+    "formats": "No production, API, event cursor, repository or companion format change during integration.",
+    "runs": [
+      {
+        "command": "jj --no-pager st (main and event-freshness); jj --no-pager workspace list; inspect ancestry, ignored artifacts and active processes",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both working copies clean. Original main f5cd62d4 is already an ancestor of event tip f86c7f92; no main-only changes or merge conflicts. Isolated test services stopped; main development service PIDs76009/76010/76011 retained."
+      },
+      {
+        "command": "Copy .local/event-freshness and web/test-results-real into main; SHA-256 compare all source evidence files",
+        "result": "pass",
+        "failures": 0,
+        "note": "176 verification files preserved byte-for-byte, plus browser results. source-evidence-sha256.json retained under main .local/event-freshness/integration."
+      },
+      {
+        "command": "jj rebase -r qkqknzqv -o zrmqwtuq; jj --no-pager st; jj --no-pager diff --from zrmqwtuq --to @ --summary",
+        "result": "pass",
+        "failures": 0,
+        "note": "Advanced only the empty main working-copy change onto the qualified stack. Original main history retained; 52 added and146 modified paths, no removals. Production tree identical to event tip, confirmed before integration documentation."
+      },
+      {
+        "command": "python3 .local/event-freshness/integration/audit.py (initial comparison)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Markdown task rows differed only in formatter padding after adding E-FRESH-006. The audit was corrected to compare every trimmed table cell; no task, dependency, gate or prior evidence changed. preservation-before-normalization.log."
+      },
+      {
+        "command": "python3 .local/event-freshness/integration/audit.py (normalized table cells)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Qualified production tree and original main ancestry preserved. All470 prior evidence objects and139 task states unchanged;176 saved verification files match their original SHA-256 values. preservation.log."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress; pnpm spec:first; pnpm exec prettier --check docs/implementation-plan.md spec/src/architecture.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "5validators/23chapters/172requirements;139task ledger;1protected file/2canonical chapters; all changed documents formatted. specification.log, progress.log, spec-first.log, format.log."
+      },
+      {
+        "command": "pnpm spec:first --base f5cd62d433aa5d525b41bb5066ef733b52a83f9d --head e985b6f07233317e31a3af82d0e04ffc6b5bf1d6",
+        "result": "pass",
+        "failures": 0,
+        "note": "Complete landed stack passes183protected files/15canonical chapters. Explicit original-main/current-head commit range; spec-first-landed-stack.log."
+      },
+      {
+        "command": "jj workspace forget event-freshness; trash -v /Users/stevejuma/code/lapismd/jj-store-event-freshness; verify workspace list, directory absence and main process PIDs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only event-freshness retired. Directory moved recoverably to macOS Trash; other workspaces preserved and main PIDs76009/76010/76011 unchanged. retirement.json."
+      },
+      {
+        "command": "pnpm docs:check (main workspace)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Built current source-derived references and manual:9Mermaid diagrams in light/dark;139files/13,696,662bytes; links and anchors valid. documents.log. This rebuilt the documentation helper only; no development services restarted."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "Main contains the qualified event stack and bounded-read prerequisites; temporary event workspace retired and its evidence retained under main .local/event-freshness. M20 remains In progress while existing M15.5 full-flow qualification is open. E-FRESH-005 focused/cold evidence applies to the unchanged production tree. Development services remain running on their prior backend until an explicit rebuild/restart. Remote publication, root aggregate suites, visual baselines and wider capacity/release qualification are outside this documentation-only integration slice.",
+    "tests": [],
+    "tasks": ["M20"],
+    "date": "2026-10-04",
+    "revision": "enclosing Jujutsu change qkqknzqv",
+    "files": [
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md"
     ]
   }
 ]

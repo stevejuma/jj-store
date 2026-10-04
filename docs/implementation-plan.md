@@ -565,9 +565,11 @@ available. Production UI scope stays deferred.
 
 ## M20 event-driven freshness
 
-Implementation runs in the independent JJ workspace `event-freshness` at
-`../jj-store-event-freshness`, retaining the original checkout and integrating
-committed bounded-read follow-ups before qualification. Buzz desktop at
+Implementation was qualified in the independent JJ workspace `event-freshness`
+at `../jj-store-event-freshness`, including committed bounded-read follow-ups.
+The verified stack is integrated into the main workspace; the temporary
+workspace is retired, with verification logs retained under
+`.local/event-freshness` in main. Buzz desktop at
 `ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be` informed shared cache ownership,
 narrow invalidation, subscribe/read race closure and generation guards; its
 local sync polling is not the healthy browser refresh model.
@@ -580,15 +582,19 @@ for idle silence, unchanged five-minute renewal, external changes, replay/reset,
 outage, wake and authorization. The canonical M20 ledger records actual gates
 and gaps.
 
-M20 is delivered in this workspace through JJ changes `prpswkts`, `uvknxprm` and
-`zrmqwtuq`. E-FRESH-001 through E-FRESH-005 record focused contracts, shared
-query leases and cold built native/real-RustFS plus filesystem evidence. The
-idle capture makes zero data requests through real five-minute renewal; external
-changes, replay/reset, hidden wake, exact preparation and retained
-drafts/version guards are qualified. Broader capacity, release and visual
-qualification remain with their owning milestones.
+M20 is delivered through JJ changes `prpswkts`, `uvknxprm` and `zrmqwtuq`.
+E-FRESH-001 through E-FRESH-005 record focused contracts, shared query leases
+and cold built native/real-RustFS plus filesystem evidence. The idle capture
+makes zero data requests through real five-minute renewal; external changes,
+replay/reset, hidden wake, exact preparation and retained drafts/version guards
+are qualified. Broader capacity, release and visual qualification remain with
+their owning milestones.
 
 The requested implementation and scoped cold gates are complete. The M20
 aggregate remains In progress because its existing M15.5 dependency still
 requires Threads full-flow qualification; this work does not promote that
 separate milestone.
+
+E-FRESH-006 records local main integration and temporary workspace retirement.
+Integration preserves the qualified production tree and original main ancestry;
+it does not restart development services or publish repository history.
