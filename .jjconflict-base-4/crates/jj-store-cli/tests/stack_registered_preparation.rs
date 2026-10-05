@@ -7,6 +7,8 @@ mod fixture;
 mod policy;
 #[path = "stack_registered_preparation/recovery.rs"]
 mod recovery;
+#[path = "stack_registered_preparation/setup.rs"]
+mod setup;
 use fixture::*;
 use jj_store_cli::local_browser::LocalFolders;
 use jj_store_http::Access;

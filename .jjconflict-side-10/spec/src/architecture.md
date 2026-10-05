@@ -1033,3 +1033,14 @@ sealed native completion as pending, selects and syncs that combination, and
 acknowledges the command last. Journal-then-combination lock order avoids
 inverse nesting. Neither a saved digest nor a metadata fixture grants execution;
 provider verification and the owning command engine remain required.
+
+## Initial setup ownership
+
+Explicit local stack setup uses the JJ provider to generate and retain an
+unpublished target/merge/WIP archive. The registered server authority supplies
+folder access and complete physical selection without inventing an active
+combination. The server derives initial installation state from acknowledged
+provider retention, binds it to the original journal before publication, and
+selects it after native checkout but before final acknowledgement. Browsing
+never creates this state. HTTP command transport, writable controller wiring,
+membership/switching and dirty-work capture remain separate qualification gates.

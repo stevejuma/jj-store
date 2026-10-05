@@ -149,7 +149,7 @@ continuations and annotations.
 | 1. Integrate UI and define contracts | Versioned service intent/selection/preparation/receipt types and read-adapter boundary delivered                                                               | Executable wire contracts accompany the recoverable executor                                                      |
 | 2. Real browsing                     | Production browsing, private physical observations and exact WC/ignore comparison delivered                                                                    | Active-combination assignment and complete cold workflow acceptance                                               |
 | 3. Recoverable execution             | Private retained reword execution, exact head recovery, unchanged-tree receipts and recoverable physical/native tree checkout delivered; mutations unavailable | Actual combination engines/after-state, production command transport/status and complete execution fault recovery |
-| 4. Named combinations and membership | Planned; Workspace remains empty without qualified durable state                                                                                               | Explicit setup, merge/WIP retention, apply/unapply, switching and restart                                         |
+| 4. Named combinations and membership | Private initial setup from a retained real JJ merge/WIP candidate; production workspace discovery remains unavailable                                          | Production discovery, dirty-work capture, apply/unapply, switching and restart                                    |
 | 5. Staging and inline commits        | Reviewed UI and draft controller delivered                                                                                                                     | Exact whole-file engine, then server-issued hunk selections and transfers                                         |
 | 6. Graph actions and recovery        | Reviewed menus and preview/recovery UI delivered                                                                                                               | Qualified rewrite actions, deletion policy and guarded undo                                                       |
 | 7. Linked-native lifecycle           | Planned; linked-native commands remain unavailable                                                                                                             | Manifest/checkout recovery, complete cold flows and real-storage evidence                                         |
@@ -1626,3 +1626,14 @@ separate milestone.
 E-FRESH-006 records local main integration and temporary workspace retirement.
 Integration preserves the qualified production tree and original main ancestry;
 it does not restart development services or publish repository history.
+
+E-M21-035 delivers explicit initial setup through actual registered-folder
+preparation, exact retained candidate publication, unchanged-tree native pointer
+completion and durable combination selection. The server assigns the initial
+combination identity once and reconstructs its merge/WIP/target solely from the
+saved provider archive. Unsnapshotted edits remain unchanged on disk; setup does
+not snapshot them or claim that they already live in the WIP tree. Interrupted
+retention, publication and checkout resume the original candidate and identity.
+This begins Stage 4; membership/switching and dirty-work capture still require
+separate engines. Command transport, writable production UI and the remaining
+approved stages remain incomplete. No setup is triggered by browsing.

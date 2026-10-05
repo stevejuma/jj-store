@@ -1428,3 +1428,38 @@ merge/WIP generation, membership commands or writable transport. Production
 Stacks remains read-only until those owning engines and cold command/UI flows
 qualify. Test-generated candidates and combination snapshots are explicitly
 coordination fixtures, not a complete combination engine.
+
+## Explicit initial stack workspace setup
+
+Only an explicitly prepared Setup command may create the first combination. The
+provider MUST resolve the exact selected local or already-known remote bookmark
+in the pinned source view; missing, moved or conflicted targets cannot be
+substituted with a guessed branch or fetched state. The initial profile requires
+resolved source and target trees. Under the existing foreground lease and
+complete fresh physical guard, create an unpublished internal merge commit whose
+sole parent is the target and whose tree equals that target, then a new WIP
+child whose exact tree equals the current named workspace commit. Preserve all
+original operation/history/code records, bookmark/tag/Git/remote facts and other
+workspace selections. Both new commits have distinct stable identities; setup
+rewrites or abandons no original commit.
+
+Physical tracked edits, deletions, untracked/ignored obstacles, symlinks and
+empty directories remain unchanged. Setup preserves unsnapshotted edits in
+place; it does not claim they are already stored in the WIP tree. Membership and
+switching MUST capture and preserve that complete unfinished work before moving
+away. Preview and retention select no operation head or checkout state. Actual
+publication uses the retained original journal, foreground lock and typed native
+proof; unchanged-tree checkout may then update only the operation pointer.
+
+Server preparation MUST derive the first after-state from that exact retained
+provider archive, never from client snapshots. It assigns one server-owned
+combination identity at generation 1, validates the named WIP/merge/target
+closure, stages its bound after-state before publication and acknowledges the
+command only after native checkout and combination selection. Interrupted
+preparation resumes its saved candidate/identity without generating
+replacements. Current registration, complete source/code/physical selection and
+absence of a selected combination guard unpublished apply. Already published or
+terminal outcomes use only original recovery, never reannounce lost selection or
+recreate missing staged state. Setup adds no automatic initialization on a read
+and does not qualify membership/switching, content transfer, graph actions or
+transport.

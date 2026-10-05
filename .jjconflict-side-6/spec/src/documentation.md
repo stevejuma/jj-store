@@ -290,3 +290,13 @@ original-only retry, native evidence remaining pending, combination sync before
 journal success and journal-then-combination lock order. Distinguish real native
 proof tests from metadata fault fixtures and unqualified command engines. The
 manual cannot present private coordination as an enabled production workflow.
+
+## Initial stack setup documentation boundary
+
+The local technical guide records initial merge/WIP preparation and original
+registered execution separately from dirty-work capture, membership/switching,
+command transport and writable UI. Setup preserves unsnapshotted bytes in place;
+its WIP tree retains the previous native checkout baseline. The implementation
+plan and progress evidence keep the seven approved backend stages in progress.
+No documentation review may imply automatic initialization on reads or enable an
+unqualified command capability.

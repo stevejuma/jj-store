@@ -165,6 +165,22 @@ impl CombinationStore {
         let gate = self.root.gate()?;
         Ok(self.read(&gate)?.0.selected)
     }
+    pub(crate) fn require_uninitialized(
+        &self,
+        scope: &j::Scope,
+        principal: m::PrincipalId,
+    ) -> Result<()> {
+        self.check_scope(scope, principal)?;
+        let gate = self.root.gate()?;
+        let (catalog, _) = self.read(&gate)?;
+        if catalog.records.iter().any(|r| r.phase == Phase::Pending) {
+            return Err(Error::Pending);
+        }
+        if catalog.selected != Snapshot::empty() {
+            return Err(Error::Stale);
+        }
+        Ok(())
+    }
     /// Only trusted provider composition may propose these complete effects.
     /// An inbound client can never supply this state or retention evidence.
     pub fn stage(

@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Compose durable execution and combination engines | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Compose durable execution and combination engines | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -91766,6 +91766,362 @@ entries.
   ],
   "next": "Implement actual provider-derived setup/merge/WIP and original registered execution composition through the bound acknowledgement protocol, then command transport/UI wiring and remaining approved stages.",
   "summary": "114 unique focused Rust parents pass across affected CLI plans, server protocols/runtime and registered execution. Strict owner/direct-consumer type/lint, boundaries, architecture, governance, format and docs pass; specification and progress checks pass. All 515 preceding raw evidence bodies remain unchanged. Complete backend/UI integration is not yet achieved."
+},
+{
+  "id": "E-M21-035",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "lvuxnmqs",
+  "kind": "Explicit real initial merge/WIP setup with registered original execution and bound combination selection",
+  "versions": "Rust 1.98.1; JJ 0.45.1/Git SHA-1; macOS ARM64; CARGO_INCREMENTAL=0. Disposable real colocated JJ folders, actual registry/physical scanner, stock-JJ readers and reserved archive retention.",
+  "formats": "No public wire, native, companion, WAL or private catalog format changes. Journal versions 1–6, execution version 1, combination snapshot/catalog version 1 and retained operation archive version 1 keep their interpretations. Existing sticky/fixed UI and package manifests are untouched.",
+  "files": [
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup/recovery.rs",
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup.rs",
+    "crates/jj-store-cli/tests/stack_registered_preparation.rs",
+    "crates/jj-store-jj/src/local_evidence/operation_archive.rs",
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-jj/src/local_execution/reword.rs",
+    "crates/jj-store-jj/src/local_execution/setup/report.rs",
+    "crates/jj-store-jj/src/local_execution/setup.rs",
+    "crates/jj-store-jj/tests/stack_setup_preparation/lifecycle.rs",
+    "crates/jj-store-jj/tests/stack_setup_preparation/policy.rs",
+    "crates/jj-store-jj/tests/stack_setup_preparation.rs",
+    "crates/jj-store-server/src/stack_combinations.rs",
+    "crates/jj-store-server/src/stack_command_journal/checkout.rs",
+    "crates/jj-store-server/src/stack_command_journal/transition.rs",
+    "crates/jj-store-server/src/stack_preparation/registered.rs",
+    "crates/jj-store-server/src/stack_preparation/setup/apply.rs",
+    "crates/jj-store-server/src/stack_preparation/setup/report.rs",
+    "crates/jj-store-server/src/stack_preparation/setup.rs",
+    "crates/jj-store-server/src/stack_preparation.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-JJ-002",
+    "JST-JJ-004",
+    "JST-GOV-002",
+    "JST-GOV-003"
+  ],
+  "before": "Real reword preparation baseline passed, while first-use setup had no provider-derived generation or registered coordinated execution. Initial new provider tests exposed a stale fixture pointer and incorrect resolved-label predicate; provider visibility, fixture scope and two transient existing journal errors are explicitly recorded.",
+  "scope": "Explicit first-use Setup only. Exact existing local/known-remote target, unchanged native baseline, unpublished merge/WIP generation, original history/refs/other workspace preservation, complete physical guards, once-assigned server combination identity, journal-before-retention recovery, provider-derived after-state, bound publication admission and unchanged native checkout before combination sync/final acknowledgement. Original replay never prepares a replacement, rewinds current state or recreates missing staged metadata.",
+  "tests": [
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup.rs#registered_setup_creates_real_merge_wip_and_selects_combination_only_after_native_checkout",
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup.rs#registered_setup_does_not_recreate_missing_staged_state",
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup.rs#registered_setup_rejects_stale_physical_selection_without_publication",
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup/recovery.rs#setup_original_apply_recovers_retained_source_after_metadata_loss_and_git_gc",
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup/recovery.rs#setup_original_retention_retry_keeps_saved_candidate_and_combination_identity",
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup/recovery.rs#setup_replays_original_head_receipt_and_pointer_interruptions_without_repreparing",
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup/recovery.rs#setup_revoked_registration_prevents_original_preparation_and_apply_recovery",
+    "crates/jj-store-jj/tests/stack_setup_preparation.rs#actual_setup_retains_original_history_refs_and_dirty_bytes_with_unpublished_merge_wip",
+    "crates/jj-store-jj/tests/stack_setup_preparation.rs#setup_requires_exact_existing_target_and_complete_physical_guard",
+    "crates/jj-store-jj/tests/stack_setup_preparation/lifecycle.rs#authorization_loss_after_candidate_write_exposes_no_preparation_or_publication",
+    "crates/jj-store-jj/tests/stack_setup_preparation/lifecycle.rs#cancellation_after_candidate_write_releases_lease_only_when_worker_exits",
+    "crates/jj-store-jj/tests/stack_setup_preparation/policy.rs#distinct_target_tree_and_other_workspace_selection_survive_setup",
+    "crates/jj-store-jj/tests/stack_setup_preparation/policy.rs#setup_resolves_only_an_exact_already_known_remote_bookmark"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_reword_preparation real_reword_preparation_is_unpublished -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-before.log: Initial inherited filter selected zero cases; no acceptance count or proof is claimed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_reword_preparation exact_reword_preparation_retains_change_tree_and_dirty_checkout_without_publication -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-before-exact.log: Correct narrow existing before target: one actual reword case passed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-provider-check.log: Initial provider type check passed; subsequent retained reconstruction changes are covered by final all-target lint."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_setup_preparation actual_setup_retains_original_history_refs_and_dirty_bytes_with_unpublished_merge_wip -- --exact",
+      "result": "fail",
+      "failures": 1,
+      "note": "setup-provider-exact.log: One red regression: fixture used a read-ignore bookmark mutation that left checkout behind the new operation. Corrected fixture initialization, restoring dirty bytes afterward."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_setup_preparation",
+      "result": "fail",
+      "failures": 2,
+      "note": "setup-provider-repaired.log: Two cases exposed an incorrect resolved-label check. JJ represents resolved trees with one empty label; provider predicate corrected without changing the resolved-tree requirement."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_setup_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-provider-final.log: Initial exact generation and physical/target guards pass after the resolved-label correction."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-server",
+      "result": "fail",
+      "failures": 5,
+      "note": "setup-server-check.log: Five private-field diagnostics in the first recovery helper. Moved its implementation into the owning recovery module, retaining field privacy."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation setup::registered_setup_creates_real_merge_wip_and_selects_combination_only_after_native_checkout -- --exact",
+      "result": "fail",
+      "failures": 5,
+      "note": "setup-registered-exact.log: Same five provider visibility diagnostics; owning-module repair follows."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation setup::registered_setup_creates_real_merge_wip_and_selects_combination_only_after_native_checkout -- --exact",
+      "result": "fail",
+      "failures": 1,
+      "note": "setup-registered-repaired.log: One test tried to read a crate-private journal scope. Reused the established test scope helper rather than widening production visibility."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation setup::registered_setup_creates_real_merge_wip_and_selects_combination_only_after_native_checkout -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-registered-scope-repaired.log: First actual registered/scanner/native/selected-combination setup target passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_setup_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-provider-policy.log: Four generation/target/other-workspace parents passed before adding two lifecycle parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-registered-final.log: 18 affected cases passed before the additional source-loss/GC setup parent."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal --test stack_combinations --test stack_local_preparation --test stack_local_execution",
+      "result": "fail",
+      "failures": 1,
+      "note": "setup-server-regressions.log: One existing admission transition returned Unavailable. No guard was loosened; exact compiled regression and complete family are rerun."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation",
+      "result": "fail",
+      "failures": 1,
+      "note": "setup-registered-complete.log: One existing already-published retry returned Journal(Unavailable); exact compiled regression and complete family are rerun unchanged."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal --test stack_combinations --test stack_local_preparation --test stack_local_execution",
+      "result": "fail",
+      "failures": 1,
+      "note": "setup-server-final.log: A different existing pending-discovery case returned Unavailable during the repeated parallel run. Its exact compiled target and the complete family under serial harness scheduling are rerun; source and assertions stay unchanged."
+    },
+    {
+      "command": "target/debug/deps/stack_local_preparation-6f9fd1e099e4f734 --exact admission::authorization_stale_physical_selection_and_conflicting_identity_do_not_prepare",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-server-policy-exact-retry.log: Exact newly failing existing admission parent passes unchanged; no scope or assertion is weakened."
+    },
+    {
+      "command": "target/debug/deps/stack_local_preparation-6f9fd1e099e4f734 --exact admission::local_execution_is_immutable_legacy_cannot_be_upgraded_and_terminal_replay_stays_terminal",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-server-admission-exact-retry.log: Exact previously failing server admission parent passed unchanged."
+    },
+    {
+      "command": "target/debug/deps/stack_registered_preparation-9418350f0da02d0a --exact policy::already_published_original_retry_completes_checkout_after_live_policy_changes",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-registered-policy-exact-retry.log: Exact previously failing registered policy parent passed unchanged."
+    },
+    {
+      "command": "target/debug/deps/stack_setup_preparation-2ac29e3a079557b3 --exact actual_setup_retains_original_history_refs_and_dirty_bytes_with_unpublished_merge_wip",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-provider-exact-final.log: Final exact real setup generation/retention target passes against current compiled source."
+    },
+    {
+      "command": "target/debug/deps/stack_registered_preparation-9418350f0da02d0a --exact setup::registered_setup_creates_real_merge_wip_and_selects_combination_only_after_native_checkout",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-registered-exact-final.log: Final exact registered setup/publication/pointer/selection target passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_setup_preparation --test stack_operation_archive --test stack_reword_preparation --test stack_source_recovery --test stack_unchanged_checkout --test stack_head_publication --test stack_preparation_retention --test stack_tree_checkout --test stack_foreground",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-provider-regressions.log: 113 passing parents. Owning setup, archive, retention, source recovery, publication, foreground and unchanged/tree-checkout consumers. Isolated helpers are invoked by passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal --test stack_combinations --test stack_local_preparation --test stack_local_execution -- --test-threads=1",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-server-isolated-final.log: 38 passing parents. Complete affected private metadata/preparation/execution family passes with serial harness scheduling; tests retain their own concurrency, cancellation and abrupt process-loss scenarios. This does not claim a default-parallel pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-registered-final-retry.log: 19 passing parents. Complete actual registered preparation/execution family, including seven setup parents; no fixture combination is consulted for setup."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-metadata-unit.log: 16 passing parents. Private metadata fault, bound completion and retained-plan unit parents. Synthetic metadata evidence stays separate from actual setup execution."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-plan-regressions.log: 48 passing parents. Direct journal/checkout-proof consumers, real native completion and original combination coordination; isolated process-loss helpers run through their parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-lint.log: Final owning provider/server and direct CLI-consumer all-target strict type/lint passes."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "tool formatting outputs: Rust changes formatted after source/test edits."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-rust-format.log: Pinned Rust format lane passes."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-boundaries.log: 17-package ownership/upstream boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-architecture.log: Application architecture passes."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-governance.log: 50 governance cases pass."
+    },
+    {
+      "command": "pnpm docs:review configuration 'Reviewed actual explicit setup from exact retained target/merge/WIP archives, registered authorization and complete physical guards. Initial combination binding precedes publication, native pointer completion precedes selected state and final acknowledgement; original interruption replay keeps its candidate and identity. Unsnapshotted edits remain on disk, while dirty capture, membership, transport and writable UI remain unqualified.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-docs-review.log: Server private protocol reviewed against the final source."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed explicit retained initial merge/WIP generation, exact source and known bookmark resolution, preservation of original refs/workspaces, and registered bound completion. The WIP retains the prior baseline tree while unsnapshotted edits remain guarded in place; setup does not qualify dirty capture, membership/switching, command transport or writable UI.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-local-docs-review.log: Provider and local guide reviewed against final source."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md docs/site/technical/local.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/cli.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-docs-format.log: Changed-document formatting; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/architecture.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-docs-format-final.log: Updated implementation table and architecture formatted."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-documentation-format.log: Owning documentation requirements formatted."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-coverage-format.log: Review output formatted; historical ledger untouched."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/local-jj.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-limit-format.log: Initial selected-source bounds documented and formatted."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-spec-first.log: Protected changes have owning canonical chapters."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md spec/src/documentation.md spec/src/verification.md",
+      "result": "fail",
+      "failures": 1,
+      "note": "setup-format-check.log: One style failure in review-generated coverage JSON; formatted without changing the review or source checks."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-docs-check.log: Final documentation closure: 139 files, 13,863,894 bytes; valid links/anchors and nine offline Mermaid diagrams in both themes."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md spec/src/documentation.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-format-final.log: Final changed-document format passes; milestones excluded."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/setup-ledger.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-ledger.log: Appended only E-M21-035 and current M21/M21.2 evidence references."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/setup-ledger-audit.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-ledger-audit.log: 517 objects; all 516 prior raw evidence bodies remain byte-identical."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-progress.log: 142 task bookkeeping checks pass; M21.2 remains In progress."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "setup-spec-validation.log: Five validators, 23 chapters and 173 requirements pass."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Unsnapshotted edits remain guarded in place. They are not yet captured in the WIP tree. Membership/switching must implement complete dirty-work preservation before moving away. Setup accepts resolved source/target trees and at most 4,094 selected source commits/1,024 local bookmarks; broader profiles remain unqualified.",
+    "Real provider lifecycle/process-loss regressions and controlled registered retention/head/receipt/pointer interruptions remain distinct from synthetic metadata selection/sync faults. Full linked-native real-storage and complete cold production flows are not qualified.",
+    "Prepare/apply/status/pending transport, production workspace discovery and writable controller wiring, complete named combinations/apply/unapply/switching, whole-file/server-issued hunk transfers, graph/deletion/scoped undo and all remaining seven-stage acceptance stay approved and incomplete. Production Stacks remains read-only; M21.2 remains In progress.",
+    "Three transient existing journal failures were recorded and their exact targets passed unchanged; full registered default-parallel and full server serial-harness acceptance pass. Default-parallel server fixture qualification remains a limitation; no runtime guard or assertion was loosened.",
+    "Root aggregate/UI/Storybook/RustFS lanes, publication, installed-binary/service replacement, existing repository reset/migration, screenshots and visual baselines are out of scope. Port 6057 is unchanged. Existing __eh_frame debug-linker warning remains unsuppressed."
+  ],
+  "next": "Wire qualified original setup execution to owned bounded command/status/discovery transport and production UI; continue dirty-work capture, membership/switching and every remaining approved stage.",
+  "summary": "234 unique focused Rust parents pass across owning providers, private server protocols, actual registered execution and checkout/coordination consumers. Strict all-target type/lint, ownership, architecture and governance pass; documentation, format, owning specification and progress checks pass. All 516 preceding raw ledger bodies are preserved. Complete backend/UI integration remains unfinished."
 }
 ]
 ```

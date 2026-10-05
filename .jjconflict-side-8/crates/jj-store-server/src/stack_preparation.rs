@@ -2,6 +2,7 @@
 mod apply;
 mod registered;
 mod report;
+mod setup;
 use crate::stack_command_journal::{self as j, LocalExecutionV1, StackCommandJournal};
 pub use apply::apply_reword;
 use jj_store_jj::{
@@ -12,6 +13,7 @@ use jj_store_jj::{
 use jj_store_model as m;
 use jj_store_service::stack_workspace as s;
 pub use registered::{ActiveCombination, CombinationAuthority, RegisteredAuthority};
+pub use setup::{apply_setup, prepare_setup};
 use std::{path::PathBuf, sync::Arc};
 
 #[derive(Debug, thiserror::Error)]
@@ -30,6 +32,8 @@ pub enum Error {
     Journal(#[from] j::Error),
     #[error(transparent)]
     Provider(#[from] q::Error),
+    #[error(transparent)]
+    Combination(#[from] crate::stack_combinations::Error),
 }
 pub type Result<T> = std::result::Result<T, Error>;
 pub struct Context {
@@ -44,6 +48,12 @@ pub struct RecoveryContext {
     pub access: Arc<dyn Access>,
     pub root: PathBuf,
 }
+pub struct SetupContext {
+    pub access: Arc<dyn Access>,
+    pub root: PathBuf,
+    pub current: CurrentState,
+    pub working_tree: m::RecordDigest,
+}
 /// Owning installation composition supplies current command authorization,
 /// verified registration and actual combination/physical selection. No paths
 /// or authority are inferred from incoming command fields. Production wiring
@@ -57,6 +67,13 @@ pub trait Authority: Send + Sync {
         principal: m::PrincipalId,
         request: &s::PrepareRequest,
     ) -> Result<Context>;
+    async fn setup_context(
+        &self,
+        _principal: m::PrincipalId,
+        _request: &s::PrepareRequest,
+    ) -> Result<SetupContext> {
+        Err(Error::Unsupported)
+    }
     async fn recovery(
         &self,
         _principal: m::PrincipalId,

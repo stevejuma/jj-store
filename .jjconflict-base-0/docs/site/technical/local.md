@@ -534,3 +534,19 @@ acknowledgement; they do not qualify a setup or merge/WIP engine. Production
 command transport, provider-derived membership/switching state and cold UI write
 flows remain required. These private methods do not expose a new CLI command or
 make the application writable.
+
+### Explicit initial stack setup
+
+The private stack executor can prepare a first named workspace from an exact
+existing local or already-known remote bookmark. It retains an unpublished merge
+commit at that target and a WIP child with the original checkout baseline tree.
+Preview leaves physical files, operation heads and checkout unchanged.
+Unsnapshotted edits remain on disk and are guarded throughout apply; membership
+and switching still need their own complete dirty-work preservation engine.
+
+Registered LocalTrusted Admin authority, the original request journal and its
+bound private combination state coordinate publication and native pointer
+completion. The first workspace becomes selected before the command is
+acknowledged. Interrupted original requests retain the same preview and
+workspace identity. This private setup proof enables no HTTP command route or
+writable UI capability and does not initialize a workspace during reads.

@@ -287,3 +287,27 @@ fn evidence_error(error: crate::local_metadata::Error) -> Error {
         _ => Error::Incomplete,
     }
 }
+
+impl RecoveredHistory {
+    /// Reconstruct initial after-state only from the exact recovered archive.
+    /// This grants no publication or checkout permission and accepts no client state.
+    pub fn retained_setup(
+        &self,
+        target: super::setup::SetupBookmark,
+    ) -> Result<(
+        super::setup::PreparedSetup,
+        crate::local_metadata::StackRetention,
+    )> {
+        let prepared =
+            super::setup::report::recover(self.archive.clone(), target, &self.witness.binding())?;
+        Ok((
+            prepared.clone(),
+            crate::local_metadata::StackRetention {
+                key: self.key.clone(),
+                commit: self.retained.commit,
+                capsule: prepared.capsule,
+                history: Some(self.archive.clone()),
+            },
+        ))
+    }
+}

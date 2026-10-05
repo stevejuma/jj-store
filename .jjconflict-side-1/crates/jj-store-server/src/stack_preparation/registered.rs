@@ -64,7 +64,7 @@ impl RegisteredAuthority {
             (&request.selection.code, &request.command),
             (
                 s::CodeSelection::GitSha1Jj045 { .. },
-                s::Command::Reword { .. }
+                s::Command::Reword { .. } | s::Command::Setup { .. }
             )
         ) {
             return Err(Error::Unsupported);
@@ -202,5 +202,43 @@ impl Authority for RegisteredAuthority {
         let root = PathBuf::from(&access.folder.path);
         access.authorize().await?;
         Ok(RecoveryContext { access, root })
+    }
+    async fn setup_context(
+        &self,
+        principal: m::PrincipalId,
+        request: &s::PrepareRequest,
+    ) -> Result<SetupContext> {
+        if !matches!(request.command, s::Command::Setup { .. })
+            || request.selection.combination.is_some()
+        {
+            return Err(Error::Unsupported);
+        }
+        let access = self.binding(principal, request).await?;
+        let root = PathBuf::from(&access.folder.path);
+        let s::CodeSelection::GitSha1Jj045 { operation, .. } = request.selection.code else {
+            return Err(Error::Unsupported);
+        };
+        let observation = self
+            .observer
+            .observe(access.clone(), root.clone(), operation)
+            .await
+            .map_err(|error| match error {
+                working_tree::Error::Denied => Error::Forbidden,
+                working_tree::Error::Stale => Error::Stale,
+                working_tree::Error::Unsupported | working_tree::Error::Invalid => {
+                    Error::Unsupported
+                }
+                working_tree::Error::Busy => Error::Provider(q::Error::Busy),
+                working_tree::Error::Cancelled => Error::Provider(q::Error::Canceled),
+                working_tree::Error::Limit => Error::Provider(q::Error::Limit),
+                working_tree::Error::Unavailable => Error::Provider(q::Error::Unavailable),
+            })?;
+        access.authorize().await?;
+        Ok(SetupContext {
+            access,
+            root,
+            current: observation.current,
+            working_tree: observation.projection.physical.fingerprint,
+        })
     }
 }

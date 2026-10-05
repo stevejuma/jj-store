@@ -7,6 +7,7 @@ pub use physical_inventory::{
 };
 mod recovery;
 mod reword;
+mod setup;
 use crate::{
     local_browser::{self, Access, Error, Result, working_tree::CurrentState},
     query::{content::Limits, workers::Workers},
@@ -17,6 +18,7 @@ pub use recovery::{
     VerifiedUnchangedCheckout,
 };
 pub use reword::{BookmarkEffect, PreparedCode, Reword, Rewrite};
+pub use setup::{PreparedSetup, Setup, SetupBookmark};
 use std::{path::PathBuf, sync::Arc};
 use tokio::sync::OwnedSemaphorePermit;
 

@@ -86,7 +86,7 @@ impl Foreground {
         result
     }
 }
-fn settings(principal: m::PrincipalId) -> Result<UserSettings> {
+pub(super) fn settings(principal: m::PrincipalId) -> Result<UserSettings> {
     let mut config = StackedConfig::with_defaults();
     let mut layer = ConfigLayer::empty(ConfigSource::CommandArg);
     for (key, value) in [
@@ -215,13 +215,13 @@ async fn prepare(lease: &Foreground, request: Reword) -> Result<PreparedCode> {
         &affected,
     )
 }
-fn archive_error(error: crate::local_metadata::Error) -> Error {
+pub(super) fn archive_error(error: crate::local_metadata::Error) -> Error {
     match error {
         crate::local_metadata::Error::Limit => Error::Limit,
         _ => Error::Incomplete,
     }
 }
-fn visible(source: &GitEvidenceCapsuleV1) -> Result<BTreeSet<m::GitSha1Id>> {
+pub(super) fn visible(source: &GitEvidenceCapsuleV1) -> Result<BTreeSet<m::GitSha1Id>> {
     let mut pending: BTreeSet<_> = source.view.head_ids.iter().copied().collect();
     let mut visible = BTreeSet::new();
     while let Some(id) = pending.pop_first() {

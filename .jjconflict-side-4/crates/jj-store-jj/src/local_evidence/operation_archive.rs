@@ -139,9 +139,15 @@ impl OperationArchiveV1 {
         Ok(commits)
     }
     pub fn capsule(&self) -> Result<GitEvidenceCapsuleV1> {
+        self.capsule_at(self.operation)
+    }
+    pub(crate) fn capsule_at(&self, operation: m::OperationId) -> Result<GitEvidenceCapsuleV1> {
         self.validate()?;
-        let op = &self.operations[&self.operation];
-        let mut capsule = self.context(self.operation, op, &self.views[&op.view_id]);
+        let op = self
+            .operations
+            .get(&operation)
+            .ok_or(Error::Invalid("missing selected operation"))?;
+        let mut capsule = self.context(operation, op, &self.views[&op.view_id]);
         capsule.commits = self.closure(capsule.direct_commits()?)?;
         capsule.validate()?;
         Ok(capsule)

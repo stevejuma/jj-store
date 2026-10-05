@@ -1976,3 +1976,13 @@ Matching combination selection and sync precede final journal acknowledgement;
 original retry cannot reselect older state. Journal version 6 is installation
 private, with legacy absent fields retained. Actual setup and merge/WIP command
 engines, public command transport and production writes remain unqualified.
+
+## Explicit private setup composition
+
+Initial Setup preparation resolves the registered folder and exact source
+selection, verifies no active combination, and derives its after-state from the
+actual provider archive. It retains the original preview before code retention,
+binds the combination before publication, and finishes native pointer and
+combination selection before success. Recovery uses only the saved candidate; no
+CLI syntax, installed binary replacement or writable production route is implied
+by private library qualification.

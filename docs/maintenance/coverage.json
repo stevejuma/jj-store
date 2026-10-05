@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed provider-owned version-1 native completion frames linked to retained plan/inventory, staged native inode identities, exact prefix recovery, tree-state-before-checkout replacement with prior frame acknowledgement, native path ordering and signed mtime, unchanged file states, cleared Watchman clock, complete physical/backup guards and cancellation admission. Sealed native completion remains separate from command receipts, combination selection and writable transport.",
-      "fingerprint": "20fcfac0f3b33acd99faa5488e571dc5b4a8f0ab896449bce745369c80d09814"
+      "reason": "Reviewed explicit retained initial merge/WIP generation, exact source and known bookmark resolution, preservation of original refs/workspaces, and registered bound completion. The WIP retains the prior baseline tree while unsnapshotted edits remain guarded in place; setup does not qualify dirty capture, membership/switching, command transport or writable UI.",
+      "fingerprint": "5517b752ef54fe6032eb515e9489745042365f5e589526dd58704198bd8f1073"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed final original combination binding and provider-proof acknowledgement code, shared unit fixtures and exact private-state loss boundaries. Documented journal version 6, unchanged historical formats, pending native evidence, journal-first locking, final combination sync before success, and the separate setup/merge/WIP and production transport gates.",
-      "fingerprint": "ec37a1b2437b3dd6f01e61f968bc6aee9f33a49014cb82abf6f6e8bcfa5ddf93"
+      "reason": "Reviewed actual explicit setup from exact retained target/merge/WIP archives, registered authorization and complete physical guards. Initial combination binding precedes publication, native pointer completion precedes selected state and final acknowledgement; original interruption replay keeps its candidate and identity. Unsnapshotted edits remain on disk, while dirty capture, membership, transport and writable UI remain unqualified.",
+      "fingerprint": "8762cb8757dc574125cca279add64d282c9887bd6ff5c66fdb7423628847f198"
     }
   },
   {

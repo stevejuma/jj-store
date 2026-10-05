@@ -24,7 +24,17 @@ impl SavedCheckoutV1 {
             || self.witness.physical() != preview.plan.request.selection.working_tree
             || preview.plan.checkout.before != preview.plan.checkout.after
             || !preview.plan.checkout.paths.is_empty()
-            || !matches!(preview.plan.request.command, s::Command::Reword { .. })
+            || !matches!(
+                preview.plan.request.command,
+                s::Command::Reword { .. } | s::Command::Setup { .. }
+            )
+            || matches!(preview.plan.request.command, s::Command::Setup { .. })
+                && (execution.combination.is_none()
+                    || preview.plan.request.selection.combination.is_some()
+                    || preview.plan.combination.generation != 1
+                    || !preview.plan.rewrites.is_empty()
+                    || !preview.plan.bookmarks.is_empty()
+                    || !preview.plan.conflicts.is_empty())
         {
             return Err(Error::IntentMismatch);
         }
