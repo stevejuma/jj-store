@@ -89301,6 +89301,157 @@ entries.
     ],
     "next": "Land this focused monitor slice, replace only preview backend, then verify stable Linux browsing and index reuse.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-083",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "xzwnoxru",
+    "kind": "Original Linux cold acceptance and main landing",
+    "versions": [
+      "JJ/jj-lib 0.45.1",
+      "Rust 1.98.1",
+      "Node 26.9.0",
+      "pnpm 10.32.1",
+      "Svelte 5.57.1",
+      "macOS ARM64"
+    ],
+    "formats": [
+      "Standard JJ default index format 6; managed reservation version 2",
+      "Original Linux local registration generation 2; no source or authority format changes"
+    ],
+    "scope": "Integrated acceptance of the approved three-stage simplification. Accumulated E077-E082 landed in main; preserved preview fixture/registration serves current source at 7470 with only preview 7472 backend replaced. Temporary bounded-reads workspace stays open. Documentation-only closure carries actual cold UI/API/restart/source-byte evidence; wider unchanged lanes are E080-E082.",
+    "requirements": [
+      "JST-API-001",
+      "JST-JJ-005",
+      "JST-LOCAL-004",
+      "JST-UI-005",
+      "JST-GOV-002"
+    ],
+    "files": [
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/vite/managed-code-index.test.ts#managed history recovery preserves the exact selection and does not prepare advanced inventories",
+      "crates/jj-store-http/src/application_events/monitors.rs#observation_pressure_does_not_invent_repository_changes"
+    ],
+    "runs": [
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/main-backend-build.log: initial main backend success in 2m01s."
+      },
+      {
+        "command": "pnpm install --frozen-lockfile",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/preview-dependencies.log: inherited pnpmfileChecksum mismatch."
+      },
+      {
+        "command": "pnpm install --force --no-frozen-lockfile --offline",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/preview-dependencies-offline.log; jj restore -- pnpm-lock.yaml retains tracked bytes."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store pnpm dev:ui",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/preview-cold-start.log, preview-cold-start-corrected.log and preview-cold-navigation-start.log: preserved fixture, fresh Vite/backend; initial stale dependency lacked panel-toggle.tokens.css until repaired."
+      },
+      {
+        "command": "python3 .local/bounded-reads/managed/linux-app-proof.py",
+        "result": "fail",
+        "failures": 2,
+        "note": ".local/bounded-reads/managed/linux-app-proof-header-before.log and linux-app-proof-shape-before.log: harness header and flattened snapshot assumption errors."
+      },
+      {
+        "command": "python3 .local/bounded-reads/managed/linux-app-proof.py",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/linux-app-proof.log: eleven 200 responses; 150 distinct history rows with bounded metadata."
+      },
+      {
+        "command": "python3 .local/bounded-reads/managed/linux-final-proof.py",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/linux-final-startup-busy.log: Busy during concurrent cold browser startup. Bounded admission; settled probes retried."
+      },
+      {
+        "command": "python3 .local/bounded-reads/managed/linux-final-proof.py",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/linux-final-native-method-before.log: native GET reference route sent POST; corrected."
+      },
+      {
+        "command": "python3 .local/bounded-reads/managed/linux-final-proof.py",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/linux-final-source-scan-before.log: all 7 HTTP calls pass; source hash scan omitted store/extra/heads directory. Corrected byte proof succeeds."
+      },
+      {
+        "command": "python3 .local/bounded-reads/managed/linux-final-bytes.py",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/linux-final-bytes.log: 18 unchanged source files, 89,135,722 bytes, 2 reused segments."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/monitor-backend-build.log: final landed-equivalent source from bounded workspace, success in 1m54s."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/preview-final-backend-restart.log: only 7472 backend replaced; Vite 7470 and unrelated listeners preserved."
+      },
+      {
+        "command": "python3 .local/bounded-reads/managed/linux-final-proof.py",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/linux-final-corrected-proof.log: final seven 200 responses and complete source/restart byte assertions."
+      },
+      {
+        "command": "cua_repl: cold Linux Commits/diff rendering and 15-second settled network observation",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/linux-cold-final-dom.txt, linux-cold-final.png, linux-idle-network.json: rendered selected text diff, no rebuild/loading condition, no further data requests."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/landing-docs-before.log: owning architecture chapter edit did not apply because the match crossed formatted lines; added the acceptance boundary explicitly."
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/architecture.md spec/src/milestones.md && pnpm spec:validate && pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/landing-final-docs.log: targeted documentation/governance checks."
+      }
+    ],
+    "notes": [
+      "Original Linux registration 0204aecea848ac87410ad8a606239422 remains generation 2 and operation c29523a65dc707ab052cd66095169427e17ca54eebefc2ee497fb2fe6d78d5772a91ae9f071aa78e0565b585f2ab8b9dff734e3d47e93899683ee7070f66283e. Source /Users/stevejuma/code/linux/.jj/repo is read-only. Local master remains 062871f1371b2e02a272ff5279c6479aff0a37ef; all() correctly includes newer remote-origin commits in this captured operation.",
+      "Actual browser loaded root and lib file lists with independent initially Loading row metadata, then 50-row Commits. Selected a74306e2e676f9775457366fc047a660fbf02f26 exposes two changed files and the drivers/clk/ti/composite.c text diff. Final cold DOM has text hunks, no rebuild notice and no Loading selected comparison; screenshot linux-cold-final.png. A 15-second settled Network.requestWillBeSent observation has no /v1 data requests (linux-idle-network.json); this is not the five-minute renewal/release gate.",
+      "Initial Linux API proof: eleven 200 responses, pinned root/lib/content/metadata/bookmarks/commit/diff reads and three 50-row history pages with 150 distinct commits and 54 metadata nodes each. Debug timings roughly 1-1.3s point reads and 2-2.6s history pages. Final seven post-restart probes all pass: readiness 0.310s, 50-row log 1.970s, selected text diff 1.149s; native two-row bookmark window 0.229s and exact conflict/demo lookup 0.285s. These are observations, not a latency/RSS benchmark.",
+      "Two retained Linux standard-index segments keep identical checksums, lengths and mtimes across both restarts. All 18 source index/op-head/extra-head files and 89,135,722 bytes remain checksum-identical. Private warm reuse is proven; native Linux-sized cold construction is still not qualified and may hit owned builder allocation admission.",
+      "Actual cold acceptance exposed two product defects now fixed in E081/E082: redundant exact change lookup blocked selected graph navigation; background Busy invented unavailable repository witnesses and a read/refresh feedback loop. Failed UI/monitor regressions and before-live traces are preserved. Direct startup probes also saw bounded Busy while the browser was loading; final settled corrected probes all succeed.",
+      "Preview prerequisite repair retained lockfile bytes and tracked clean status: refreshed stale node_modules through existing source-validation hooks after frozen pnpmfileChecksum mismatch, then restored pnpm-lock.yaml. Help assets were copied from main; accidentally snapshotted ignored docs/build files were untracked after advancing source. No registry-only consumer qualification is claimed.",
+      "Initial API harness errors are retained separately: bodyless GET Content-Type rejected, flattened snapshot shape misread, native references accidentally sent as POST (405), and source scan initially omitted store/extra/heads. Corrected harness verifies the actual contract; no admission or assertions were weakened.",
+      "Evidence copied into main byte-identically: landing-evidence-copy.json retains 1612 source artifacts; final-source-evidence-copy.json retains 28 correction artifacts. Existing differing files were preserved in retained-source-evidence. Earlier 523 ledger entries remain unchanged. Inherited macOS linker unwind-table warning remains.",
+      "No Linux source write/repair, fixture reset/migration, installed CLI replacement, package publication, push, unrelated service restart or visual-baseline change. Independent 7460/7462 listener PIDs 53716/36259 remain unchanged. Current preview remains LocalTrusted HMR; production built-bundle and released-registry acceptance stay separate."
+    ],
+    "remaining": [
+      "Advanced search/evolution/copy/deep-query optimization and authenticated automatic maintenance remain deferred.",
+      "Full construction scale/RSS/latency/fault/RustFS/release/visual qualification remains deferred. Native Linux-sized cold construction and other platforms are not qualified. M13 milestone status is unchanged."
+    ],
+    "next": "Narrow core-browsing plan accepted and landed; keep the clean temporary workspace available for separately scoped follow-up.",
+    "result": "pending"
   }
 ]
 ```

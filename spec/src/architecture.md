@@ -11,6 +11,11 @@ repository witness and retry through the existing monitor. It MUST NOT announce
 a repository as unavailable or trigger a read/refresh feedback loop. Confirmed
 access or source failures retain their unavailable/invalidation path.
 
+Integrated cold acceptance retains registration generation and exact operation
+selections, compares source metadata bytes, verifies derived segment reuse
+across restart and observes idle data requests separately from construction
+scale, built-bundle release and fault qualification.
+
 The browser's shared preparation owner composes graph and native kind tasks
 through their typed data sources. Only the native profile supports kind starts;
 local graph preparation remains unchanged. One active task retains original

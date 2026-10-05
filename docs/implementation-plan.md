@@ -27,8 +27,13 @@ writer. No source-index repair, repository migration or installed binary change.
 E-READ-079 proves standard-index Linux reuse and native incremental
 construction. E-READ-080 adds persistent cache admission, event-driven
 maintenance, restart activation and automatic exact-selection UI recovery.
-Advanced preparation remains explicit. Landing and the original 7470 Linux app's
-cold verification are the remaining acceptance step for this narrowed plan.
+Advanced preparation remains explicit. E-READ-081 removes the unused change
+lookup from ordinary graph selection and includes Commits in core recovery.
+E-READ-082 retains freshness witnesses during background admission pressure.
+E-READ-083 records landing, the preserved 7470 Linux app's cold files/history/
+selected-diff acceptance, restart segment reuse and unchanged source bytes. The
+narrowed core-browsing acceptance is complete; the deferred qualification and
+advanced-feature work above remain separate.
 
 E-READ-078 connects native operation/copy preparation tasks to the browser's
 shared task owner, typed HTTP data source and repository index settings. Retain
