@@ -1,24 +1,20 @@
+import { updateWorkspaceControllerSnapshot } from "./controller-snapshot.js";
 import {
   selectWorkspaceFile,
   closeWorkspaceDiff,
   activateWorkspaceDiff,
 } from "./diff-selection.js";
 import { WorkspaceDragSession } from "./drag-session.svelte.js";
+import { workspaceControllerFiles } from "./controller-files.js";
+import { WorkspaceBranches } from "./branches.svelte.js";
 import { WorkspaceReadSession } from "./read-session.js";
 import { WorkspaceTargetHistory } from "./target-history.svelte.js";
+import { WorkspaceStackHistory } from "./stack-history.svelte.js";
 import { WorkspaceCommitDrafts } from "./commit-drafts.svelte.js";
 import { WorkspaceLazyDetails } from "./lazy-details.svelte.js";
 import { workspaceCommandEligibility } from "./eligibility.js";
-import {
-  retainedWorkspaceDiffs,
-  reconcileSourceDiffs,
-} from "./retained-diffs.js";
-import {
-  workspaceSourceFiles,
-  workspaceBranchSource,
-  workspaceAggregateSource,
-  retainedStackSelections,
-} from "./files.js";
+import { reconcileSourceDiffs } from "./retained-diffs.js";
+import { workspaceBranchSource, workspaceAggregateSource } from "./files.js";
 import { retainedWorkspaceSelection } from "./presentation.js";
 import {
   cloneWorkspace,
@@ -61,9 +57,29 @@ export class StackWorkspaceController {
   #command = 0;
   readonly targetHistory: WorkspaceTargetHistory;
   readonly details: WorkspaceLazyDetails;
-  constructor(readonly adapter: StackWorkspaceAdapter) {
-    this.reads = new WorkspaceReadSession(this, (snapshot) =>
-      this.updateSnapshot(snapshot),
+  readonly histories: WorkspaceStackHistory;
+  readonly branches: WorkspaceBranches;
+  constructor(
+    readonly adapter: StackWorkspaceAdapter,
+    options: {
+      initial?: WorkspaceSnapshot;
+      report?: (cause: unknown) => boolean;
+    } = {},
+  ) {
+    this.branches = new WorkspaceBranches(
+      adapter,
+      (snapshot) => updateWorkspaceControllerSnapshot(this, snapshot),
+      options.report,
+    );
+    this.histories = new WorkspaceStackHistory(
+      adapter,
+      (snapshot) => updateWorkspaceControllerSnapshot(this, snapshot),
+      options.report,
+    );
+    this.reads = new WorkspaceReadSession(
+      this,
+      (snapshot) => updateWorkspaceControllerSnapshot(this, snapshot),
+      options.report,
     );
     this.details = new WorkspaceLazyDetails(
       adapter,
@@ -83,16 +99,23 @@ export class StackWorkspaceController {
         );
         if (active) activateWorkspaceDiff(this, active);
       },
+      options.report,
     );
-    this.targetHistory = new WorkspaceTargetHistory(adapter, {
-      files: (source) => this.filesFor(source),
-      selectCommit: (source) => {
-        void this.details.loadFiles(source);
+    this.targetHistory = new WorkspaceTargetHistory(
+      adapter,
+      {
+        files: (source) => this.filesFor(source),
+        selectCommit: (source) => {
+          void this.details.loadFiles(source);
+        },
+        selectFile: (source, path) => {
+          void this.details.loadDiff(source, path);
+        },
       },
-      selectFile: (source, path) => {
-        void this.details.loadDiff(source, path);
-      },
-    });
+      options.report,
+    );
+    if (options.initial)
+      updateWorkspaceControllerSnapshot(this, options.initial);
   }
   eligibility(kind: WorkspaceCommand["kind"]) {
     return workspaceCommandEligibility(this.snapshot, kind);
@@ -101,12 +124,7 @@ export class StackWorkspaceController {
     return !this.locked && this.eligibility(kind).allowed;
   }
   filesFor(source: string) {
-    if (this.details.lazy) return this.details.files[source] ?? [];
-    return (
-      this.targetHistory.commits.find((commit) => commit.id === source)
-        ?.files ??
-      (this.snapshot ? workspaceSourceFiles(this.snapshot, source) : [])
-    );
+    return workspaceControllerFiles(this, source);
   }
   async selectTargetBranch() {
     if (this.locked || !this.snapshot?.target || this.#closed) return;
@@ -118,14 +136,7 @@ export class StackWorkspaceController {
     const snapshot = this.snapshot;
     if (!snapshot || this.locked || !this.adapter.chooseTarget || this.#closed)
       return;
-    await this.reads.run(() =>
-      this.adapter.chooseTarget!({
-        repository: snapshot.repository,
-        revision: snapshot.revision,
-        ...(snapshot.readKey ? { readKey: snapshot.readKey } : {}),
-        target: { name: target.name, commit: target.commit },
-      }),
-    );
+    await this.reads.choose(this.adapter, snapshot, target);
   }
   async refresh() {
     if (this.#closed || this.pending || this.preview || this.busy) return;
@@ -143,6 +154,7 @@ export class StackWorkspaceController {
     this.selectedCommit = null;
     this.selectedPath = null;
     this.selection = null;
+    void this.histories.load(id);
   }
   selectedCommitFor(stack: string) {
     const selection = this.stackSelections[stack];
@@ -177,32 +189,6 @@ export class StackWorkspaceController {
   }
   closeDiff(origin: string) {
     closeWorkspaceDiff(this, origin);
-  }
-  private updateSnapshot(snapshot: WorkspaceSnapshot) {
-    this.details.sync(snapshot);
-    const diffs = retainedWorkspaceDiffs(
-      snapshot,
-      this.snapshot?.active,
-      this.diffs,
-      this.details.lazy
-        ? (source) => this.details.files[source] ?? []
-        : undefined,
-    );
-    this.stackSelections = retainedStackSelections(
-      snapshot,
-      this.stackSelections,
-    );
-    this.snapshot = snapshot;
-    this.targetHistory.sync(snapshot);
-    this.diffs = diffs;
-    const active = this.diffs.find(
-      (diff) => diff.source === this.source && diff.path === this.selectedPath,
-    );
-    if (active) activateWorkspaceDiff(this, active);
-    else {
-      this.selectedPath = null;
-      this.selection = null;
-    }
   }
   async prepare(command: WorkspaceCommand) {
     const snapshot = this.snapshot;
@@ -274,7 +260,7 @@ export class StackWorkspaceController {
     }
     if (this.snapshot)
       this.commitDrafts.committed(this.snapshot, request.command);
-    this.updateSnapshot(result.snapshot);
+    updateWorkspaceControllerSnapshot(this, result.snapshot);
     const created = this.commitDrafts.created(result.snapshot, request.command);
     if (created) {
       this.selectedStack = created.id;
@@ -295,6 +281,9 @@ export class StackWorkspaceController {
     this.drag.clear();
     this.targetHistory.close();
     this.details.close();
+    this.histories.close();
+    this.branches.close();
+    this.adapter.close?.();
     this.#closed = true;
     this.reads.close();
     this.#command++;

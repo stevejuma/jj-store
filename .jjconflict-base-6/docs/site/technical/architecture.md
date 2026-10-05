@@ -105,10 +105,19 @@ inline file list and adjacent diff owns its loading, retry and continuation
 state. Read-scope changes cancel stale reads and preserve other open diff
 origins. Unstaged uses the same authoritative source reads; unavailable text
 patches remain explicit. Command controls check individual provider
-capabilities, while browsing and Copy remain available without an executor.
-These paths are covered by controller regressions and isolated app-shell
-stories. Production adapter injection, real-folder lifecycle acceptance and the
-recoverable command executor remain separate integration work.
+capabilities, while browsing and Copy remain available without an executor. The
+production App explicitly injects a repository-scoped Stacks owner for
+LocalTrusted registered Git-backed JJ folders with a matching binding generation
+and code-read capability. Bookmark pickers and histories load bounded pages;
+conflicted/deleted targets retain an unavailable reason. Stacks route
+restoration does not load the ordinary Log graph, and graph preparation uses the
+existing application notice and explicit action. Failed refresh retains the
+previous complete read owner; valid loaded history and adjacent diffs are
+revalidated without retaining obsolete cursors. Teardown cancels discovery and
+Stacks-owned reads without closing the shared transport. Controller,
+production-bootstrap Storybook and cold real-folder tests cover this boundary.
+Physical scans and the recoverable command executor remain separate
+implementation work.
 
 A checkout without explicit setup retains an absent target and combination. The
 Settings-style target picker selects only an exact advertised bookmark/head in

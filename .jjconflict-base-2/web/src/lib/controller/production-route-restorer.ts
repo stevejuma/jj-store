@@ -3,6 +3,7 @@ import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 
 interface RouteReads {
+  restoreStacks?(): Promise<void>;
   prepareReferences?(route: StoreRoute): Promise<boolean>;
   loadReferencePickers?(): Promise<void>;
   loadReferences(): Promise<void>;
@@ -121,6 +122,12 @@ export async function restoreProductionStoreRoute(
 ) {
   data.status.error = "";
   data.status.navigation = "loading";
+  if (desired.page === "stacks") {
+    await reads.restoreStacks?.();
+    if (history.route === desired)
+      data.status.navigation = data.status.error ? "failed" : "ready";
+    return;
+  }
   const referencesReady = reads.prepareReferences
     ? await reads.prepareReferences(desired)
     : await reads

@@ -38,6 +38,7 @@ export class WorkspaceLazyDetails {
       files: WorkspaceFile[],
       complete: boolean,
     ) => void,
+    readonly report?: (cause: unknown) => boolean,
   ) {}
   get lazy() {
     return Boolean(this.adapter.readSourceFiles);
@@ -134,7 +135,11 @@ export class WorkspaceLazyDetails {
           [source]: {
             ...state,
             loading: false,
-            error: error instanceof Error ? error.message : String(error),
+            error: this.report?.(error)
+              ? ""
+              : error instanceof Error
+                ? error.message
+                : String(error),
           },
         };
     } finally {
@@ -189,7 +194,11 @@ export class WorkspaceLazyDetails {
           [id]: {
             ...state,
             loading: false,
-            error: error instanceof Error ? error.message : String(error),
+            error: this.report?.(error)
+              ? ""
+              : error instanceof Error
+                ? error.message
+                : String(error),
           },
         };
     } finally {

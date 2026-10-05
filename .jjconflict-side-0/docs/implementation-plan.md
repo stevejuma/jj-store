@@ -91,6 +91,9 @@ capability only when its backend behavior is qualified.
 
 ### Gaps that must be resolved before enabling writes
 
+This list records the original review before implementation. The delivery status
+below identifies which gaps the subsequent verified slices have addressed.
+
 1. **No production adapter exists.** `web/src/App.svelte` supplies only the
    repository controller. The Stacks injection exists in the application shell,
    but its controller is instantiated by catalog fixtures and tests.
@@ -128,6 +131,34 @@ Its local capabilities still report `code_mutations: false` and
 write, not a JJ snapshot or recoverable multi-file checkout transaction. M13.4's
 JST-LOCAL-005 command-publication prerequisite remains necessary; unrelated
 search and conversion completion should not block this feature.
+
+### Current delivery status — 5 October 2026
+
+The production application now owns and explicitly injects a read-only Stacks
+controller for registered LocalTrusted Git-backed JJ folders. Bounded bookmark
+continuations, stack and target history, exact boundary-to-head file lists and
+independent adjacent diffs use the existing operation-pinned code API. Graph
+index preparation uses the existing application notice and explicit action.
+Connection teardown and repository/binding changes dispose only Stacks-owned
+reads; a failed refresh does not promote a partially refreshed read scope. Valid
+loaded ranges and historical diff selections survive refresh with fresh
+continuations and annotations.
+
+| Delivery stage                       | Current state                                                                                                       | Remaining acceptance                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 1. Integrate UI and define contracts | Versioned service intent/selection/preparation/receipt types and read-adapter boundary delivered                    | Executable wire contracts accompany the recoverable executor                                  |
+| 2. Real browsing                     | Production App injection, registered-folder eligibility, bounded references/history and exact files/diffs delivered | Bounded physical dirty-file scan and checkout fingerprints                                    |
+| 3. Recoverable execution             | Planned; mutations remain unavailable                                                                               | Journal, prepared operation, publication, guarded checkout, durable status and fault recovery |
+| 4. Named combinations and membership | Planned; Workspace remains empty without qualified durable state                                                    | Explicit setup, merge/WIP retention, apply/unapply, switching and restart                     |
+| 5. Staging and inline commits        | Reviewed UI and draft controller delivered                                                                          | Exact whole-file engine, then server-issued hunk selections and transfers                     |
+| 6. Graph actions and recovery        | Reviewed menus and preview/recovery UI delivered                                                                    | Qualified rewrite actions, deletion policy and guarded undo                                   |
+| 7. Linked-native lifecycle           | Planned; linked-native commands remain unavailable                                                                  | Manifest/checkout recovery, complete cold flows and real-storage evidence                     |
+
+E-M21-006 records focused controller, production Storybook and cold real-folder
+browsing evidence. This is an intermediate read delivery, not completion of
+M21.2. It does not fabricate combinations, expose a command executor, scan or
+snapshot physical edits, or replace the ordinary repository Log/Branches views.
+The seven-stage order below remains the approved implementation plan.
 
 ### Recommended scope and model
 

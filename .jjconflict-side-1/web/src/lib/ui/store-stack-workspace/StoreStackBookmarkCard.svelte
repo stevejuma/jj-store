@@ -234,6 +234,9 @@
       avatarSize="xsmall"
       {graphInset}
       continuous
+      hasMore={controller.histories.state(stack.id).hasMore}
+      loading={controller.histories.state(stack.id).loading}
+      onLoadMore={() => void controller.histories.load(stack.id, true)}
       rowDropState={(revision) =>
         controller.drag.state({ kind: "commit", id: revision.eventId })}
       rowDropPlacement={(revision) =>

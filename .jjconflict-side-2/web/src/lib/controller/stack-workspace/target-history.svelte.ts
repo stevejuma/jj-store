@@ -37,6 +37,7 @@ export class WorkspaceTargetHistory {
       selectCommit(source: string): void;
       selectFile(source: string, path: string): void;
     },
+    readonly report?: (cause: unknown) => boolean,
   ) {}
 
   sync(snapshot: WorkspaceSnapshot) {
@@ -59,6 +60,7 @@ export class WorkspaceTargetHistory {
     const next: WorkspaceHistoryRequest = {
       repository: snapshot.repository,
       revision: snapshot.revision,
+      ...(snapshot.readKey ? { readKey: snapshot.readKey } : {}),
       branch: snapshot.target.name,
       head: snapshot.target.commit,
       limit: TARGET_HISTORY_PAGE_SIZE,
@@ -68,21 +70,31 @@ export class WorkspaceTargetHistory {
       snapshot.readKey === this.#readKey
     )
       return;
+    const loaded = snapshot.loadedTargetHistory;
+    const selected =
+      this.#request?.head === next.head &&
+      this.#request.repository === next.repository &&
+      loaded?.commits.some((commit) => commit.id === this.selectedId)
+        ? this.selectedId
+        : null;
+    const retainedDiff =
+      selected && this.diff?.source === selected ? this.diff : null;
     this.#readKey = snapshot.readKey;
     this.#epoch++;
     this.#abort.abort();
     this.#abort = new AbortController();
     this.#request = next;
     this.branch = cloneWorkspace(snapshot.target);
-    this.commits = [];
-    this.selectedId = this.diff = null;
-    this.#cursor = undefined;
+    this.commits = cloneWorkspace(loaded?.commits ?? []);
+    this.selectedId = selected;
+    this.diff = retainedDiff;
+    this.#cursor = loaded?.nextCursor;
     this.#cursors.clear();
     this.loading = false;
     this.error = "";
-    this.hasMore = true;
-    this.total = undefined;
-    if (this.active) void this.loadMore();
+    this.hasMore = loaded ? Boolean(loaded.nextCursor) : true;
+    this.total = loaded?.total;
+    if (this.active && !loaded) void this.loadMore();
   }
   async select() {
     if (this.#closed) return;
@@ -141,7 +153,11 @@ export class WorkspaceTargetHistory {
       this.total = page.total;
     } catch (error) {
       if (!this.#closed && epoch === this.#epoch)
-        this.error = error instanceof Error ? error.message : String(error);
+        this.error = this.report?.(error)
+          ? ""
+          : error instanceof Error
+            ? error.message
+            : String(error);
     } finally {
       if (!this.#closed && epoch === this.#epoch) this.loading = false;
     }

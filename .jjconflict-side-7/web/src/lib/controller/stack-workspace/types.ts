@@ -40,6 +40,7 @@ export type StackHead = { name: string; commit: string };
 export type WorkspaceTargetBranch = StackHead &
   Pick<StackCommit, "message" | "author" | "email" | "createdAt">;
 export type WorkspaceHistoryRequest = {
+  readKey?: string;
   repository: string;
   revision: number;
   branch: string;
@@ -53,6 +54,11 @@ export type WorkspaceHistoryPage = {
   nextCursor?: string;
   total?: number;
 };
+export type WorkspaceStackHistoryRequest = WorkspaceHistoryRequest & {
+  readKey?: string;
+  stack: string;
+  base: string;
+};
 export type WorkspaceStack = {
   id: string;
   name: string;
@@ -61,6 +67,13 @@ export type WorkspaceStack = {
   /** Oldest to newest, as in the Changeyard stack model. */
   commits: StackCommit[];
   conflicts: boolean;
+  /** Explicit provider segments; their displayed rows are newest first. */
+  segments?: {
+    head: StackHead;
+    baseCommit: string;
+    commits: StackCommit[];
+    nextCursor?: string;
+  }[];
 };
 export type NamedWorkspace = {
   id: string;
@@ -88,6 +101,11 @@ export type WorkspaceSnapshot = {
   target: WorkspaceTargetBranch | null;
   /** Exact, unambiguous heads available within this read scope. */
   targetOptions?: WorkspaceTargetBranch[];
+  loadedTargetHistory?: WorkspaceHistoryPage;
+  /** Provider reference metadata retains conflicted/deleted choices for browsing. */
+  bookmarks?: import("../../projects/presentation.js").Bookmark[];
+  branchesNextCursor?: string;
+  branchUnavailableReasons?: Record<string, string>;
   workspaces: NamedWorkspace[];
   stacks: WorkspaceStack[];
   conflicts: WorkspaceConflict[];
@@ -204,7 +222,15 @@ export type WorkspaceSourceRequest = {
 };
 export type WorkspaceFilePage = { files: WorkspaceFile[]; nextCursor?: string };
 export interface StackWorkspaceAdapter {
+  close?(): void;
   read(): Promise<WorkspaceSnapshot>;
+  readBranches?(request: {
+    repository: string;
+    revision: number;
+    readKey?: string;
+    cursor: string;
+    signal?: AbortSignal;
+  }): Promise<WorkspaceSnapshot>;
   chooseTarget?(request: {
     repository: string;
     revision: number;
@@ -216,6 +242,10 @@ export interface StackWorkspaceAdapter {
     signal?: AbortSignal,
   ): Promise<WorkspaceHistoryPage>;
   readSourceFiles?(request: WorkspaceSourceRequest): Promise<WorkspaceFilePage>;
+  readStackHistory?(
+    request: WorkspaceStackHistoryRequest,
+    signal?: AbortSignal,
+  ): Promise<WorkspaceHistoryPage>;
   readFileDiff?(
     request: WorkspaceSourceRequest & { path: string },
   ): Promise<WorkspaceFile>;

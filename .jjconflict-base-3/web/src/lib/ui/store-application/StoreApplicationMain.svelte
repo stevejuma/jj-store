@@ -138,6 +138,9 @@
                 disabled={workspaceBlocked}
               />{/if}
             <StoreRepositoryNotices {controller} />{/if}
+          {#if current.page === "stacks"}<StoreRepositoryNotices
+              {controller}
+            />{/if}
           <div class="store-application__body-regions" data-page={current.page}>
             {#key current.repository + current.page}
               {#if current.page === "stacks"}

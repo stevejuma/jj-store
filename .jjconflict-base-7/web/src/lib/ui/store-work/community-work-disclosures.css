@@ -1,0 +1,38 @@
+/* CommunityProjects.css review-section disclosures (Apache-2.0).
+ * Task sections use the same plain heading and adjacent chevron treatment. */
+.community-projects__task-detail .community-projects__task-description,
+.community-projects__task-detail .community-projects__task-activity {
+  margin-top: 0.1rem;
+}
+
+.community-projects__task-section-trigger {
+  display: flex;
+  width: 100%;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  border-radius: 0;
+  padding: 0.5rem 0;
+  color: var(--foreground);
+  background: transparent;
+  font: inherit;
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.community-projects__task-section-trigger:hover {
+  background: color-mix(in srgb, var(--muted) 18%, transparent);
+}
+
+.community-projects__task-detail .community-projects__task-section-chevron {
+  margin-inline-start: 0;
+}
+
+.community-projects__task-section-trigger svg {
+  width: 0.88rem;
+  height: 0.88rem;
+  color: var(--muted-foreground);
+}

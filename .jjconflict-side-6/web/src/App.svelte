@@ -16,7 +16,10 @@
 </script>
 
 {#if controller.state.authenticated || controller.state.installationReady}
-  <StoreRepositoryApplication {controller} />
+  <StoreRepositoryApplication
+    {controller}
+    stackWorkspace={controller.stackWorkspace}
+  />
 {:else}
   <StoreConnection
     status={controller.state.status}

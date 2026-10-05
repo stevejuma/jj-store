@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed nullable workspace setup, Settings-style exact target choice, empty workspace, membership eligibility, guarded drafts and shared read-session invalidation. Target-history reset clears bounded continuation state. Production binding adapter and durable execution remain incomplete.",
-      "fingerprint": "e8017bb34d2da7e75681b2505b706faee8dd35619ff196028f4db8b6bf04f947"
+      "reason": "Production Stacks now uses an explicitly injected registered-folder read owner, bounded operation-pinned histories and exact diffs; physical scans and durable execution remain future stages.",
+      "fingerprint": "52891ddd8210cda3b33c5c19fab8abc9ba90ab624e6c727ae583fc245bcd1d10"
     }
   },
   {

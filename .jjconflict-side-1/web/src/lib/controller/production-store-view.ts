@@ -201,6 +201,7 @@ export function productionControllerSurface(
   source: () => Parameters<typeof productionControllerView>[2],
   token: () => string | null,
   options: {
+    stacks?: { readonly controller: StoreController["stackWorkspace"] };
     threads: Pick<
       ReturnType<
         typeof import("./production-threads-integration.js").createThreadsIntegration
@@ -221,6 +222,9 @@ export function productionControllerSurface(
   pause?: StoreController["actions"]["setRefreshPaused"],
 ): StoreController {
   return {
+    get stackWorkspace() {
+      return options.stacks?.controller;
+    },
     capture: options.capture,
     configuration: options.configuration,
     freshness: options.freshness,

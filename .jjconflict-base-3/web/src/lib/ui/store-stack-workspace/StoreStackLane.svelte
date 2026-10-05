@@ -5,6 +5,7 @@
   import * as Card from "@lapismd/design-core/shadcn/card";
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
   import StoreStackCommitComposer from "./StoreStackCommitComposer.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import GitBranch from "@lucide/svelte/icons/git-branch";
   import Pencil from "@lucide/svelte/icons/pencil";
   import Trash from "@lucide/svelte/icons/trash-2";
@@ -151,6 +152,21 @@
     <StoreStackDropGuide
       feedback={controller.drag.for({ kind: "stack", id: stack.id })}
     />
+    <StoreNotice
+      noticeKey={`stack-history-${stack.id}`}
+      title="Stack history unavailable"
+      message={controller.histories.state(stack.id).error}
+      lifetime="condition"
+    />
+    {#if controller.histories.state(stack.id).error}<Button
+        variant="outline"
+        size="sm"
+        onclick={() =>
+          void controller.histories.load(
+            stack.id,
+            Boolean(controller.histories.state(stack.id).cursor),
+          )}>Retry stack history</Button
+      >{/if}
     {#if controller.page === "branches"}
       <Card.Root class="stack-workspace__stage-card">
         <Card.Content class="stack-workspace__branch-actions">

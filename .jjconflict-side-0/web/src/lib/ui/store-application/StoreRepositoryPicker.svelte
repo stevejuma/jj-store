@@ -22,6 +22,9 @@
     emptyResult = "No matching repositories.",
     controlled = false,
     scrollStrategy = "auto",
+    hasMore = false,
+    loading = false,
+    onLoadMore,
     onChange,
   }: {
     id?: string;
@@ -42,6 +45,9 @@
     emptyResult?: string;
     controlled?: boolean;
     scrollStrategy?: ScrollAreaStrategy;
+    hasMore?: boolean;
+    loading?: boolean;
+    onLoadMore?: () => void;
     onChange?: (value: string) => void;
   } = $props();
   let open = $state(false),
@@ -160,6 +166,18 @@
             </CommandView.Item>
           {/each}
         </CommandView.Group>
+        {#if hasMore}<CommandView.Group heading="More branches"
+            ><CommandView.Item
+              value="__load_more__"
+              disabled={loading}
+              onSelect={() => onLoadMore?.()}
+              ><CommandView.ItemLabel
+                >{loading
+                  ? "Loading branches…"
+                  : "Load more branches"}</CommandView.ItemLabel
+              ></CommandView.Item
+            ></CommandView.Group
+          >{/if}
       </CommandView.List>
     </CommandView.Root>
   </Popover.Content>

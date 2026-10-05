@@ -1,3 +1,6 @@
+import { repositoryReaders } from "./repository-sources.js";
+import { ApplicationFreshness } from "./application-freshness.js";
+import { createLocalConfiguration } from "./production-local-configuration.js";
 import { createProductionBranchActions } from "./production-branch-actions.js";
 import { isRepositoryProjects } from "./projects-view-cache.js";
 import {
@@ -245,5 +248,27 @@ export function controllerAbortScopes() {
     feed: new AbortController(),
     discovery: new AbortController(),
     lifecycle: new AbortController(),
+  };
+}
+
+/** Repository access, invalidation and device-local services share one session owner. */
+export function createProductionConnectionScope(
+  data: ProductionStoreState,
+  fetcher: typeof fetch | undefined,
+  token: () => string | null,
+  denied: () => void,
+) {
+  const freshness = new ApplicationFreshness(fetcher, denied);
+  const local = createLocalConfiguration(data, fetcher, freshness);
+  const scopes = controllerAbortScopes();
+  return {
+    ...repositoryReaders(() => data.repositories, token, fetcher, denied),
+    freshness,
+    local,
+    ...scopes,
+    destroy(disconnect: () => void, history: History) {
+      local.destroy();
+      destroyProductionStoreLifecycle(scopes.lifecycle, disconnect, history);
+    },
   };
 }

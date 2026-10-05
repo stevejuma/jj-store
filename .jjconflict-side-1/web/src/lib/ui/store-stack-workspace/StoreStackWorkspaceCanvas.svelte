@@ -162,6 +162,9 @@
       >
         <ColumnCanvas.Body scrollStrategy="styled">
           <CommunityRepositoryBranchCommand
+            hasMore={Boolean(snapshot.branchesNextCursor)}
+            loading={controller.branches.loading}
+            onLoadMore={() => void controller.branches.load()}
             groupWorkspaceBookmarks
             scrollStrategy="styled"
             targetBookmark={snapshot.target
@@ -187,6 +190,10 @@
                 item.heads.some((head) => head.name === name),
               );
               if (stack) controller.selectStack(stack.id, name);
+              else
+                controller.validation =
+                  snapshot.branchUnavailableReasons?.[name] ??
+                  "This branch is unavailable.";
             }}
           />
         </ColumnCanvas.Body>

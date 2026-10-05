@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
@@ -25,6 +26,9 @@
       groupLabel="Branches"
       emptyResult="No unambiguous target branches available."
       scrollStrategy="styled"
+      hasMore={Boolean(controller.snapshot?.branchesNextCursor)}
+      loading={controller.branches.loading}
+      onLoadMore={() => void controller.branches.load()}
       controlled
       disabled={controller.locked || !controller.adapter.chooseTarget}
       onChange={(value) => {
@@ -36,3 +40,14 @@
     />
   </StoreWorkField>
 </Field.Group>
+
+<StoreNotice
+  noticeKey="stack-branch-page"
+  title="Branch list unavailable"
+  message={controller.branches.error}
+  action={{
+    id: "retry",
+    label: "Retry branches",
+    run: () => void controller.branches.load(),
+  }}
+/>

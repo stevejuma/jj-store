@@ -26,6 +26,11 @@ export function appliedStacks(snapshot: WorkspaceSnapshot) {
 }
 /** Group each bookmark's own commits, newest first, without duplicating lower segments. */
 export function stackGroups(stack: WorkspaceStack) {
+  if (stack.segments)
+    return stack.segments.map((segment) => ({
+      head: segment.head,
+      commits: segment.commits,
+    }));
   return stack.heads.map((head, index) => {
     const tip = stack.commits.findIndex((commit) => commit.id === head.commit);
     const lower = stack.heads[index + 1];
@@ -48,6 +53,15 @@ export function stackGroups(stack: WorkspaceStack) {
 }
 /** Feed the existing repository branch picker; bookmark target conflicts remain distinct from workspace conflicts. */
 export function stackBookmarks(snapshot: WorkspaceSnapshot): Bookmark[] {
+  if (snapshot.bookmarks)
+    return snapshot.bookmarks.map((bookmark) => ({
+      ...bookmark,
+      workspace: snapshot.stacks.some(
+        (stack) =>
+          stack.heads.some((head) => head.name === bookmark.name) &&
+          Boolean(selectedWorkspace(snapshot)?.applied.includes(stack.id)),
+      ),
+    }));
   return snapshot.stacks.flatMap((stack) =>
     stack.heads.map((head) => {
       const tip = stack.commits.find((commit) => commit.id === head.commit);

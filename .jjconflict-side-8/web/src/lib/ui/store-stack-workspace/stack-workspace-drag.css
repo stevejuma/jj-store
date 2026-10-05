@@ -1,0 +1,56 @@
+/* Changeyard's target ring and inset dashed guide, adapted to owned semantic tokens. */
+.stack-workspace__drop-target {
+  position: relative;
+}
+.stack-workspace__drop-target[data-drop-target-state="valid"],
+.stack-workspace__drop-target[data-drop-target-state="invalid"] {
+  --stack-drop-color: var(--primary);
+  outline: 2px solid
+    color-mix(in srgb, var(--stack-drop-color) 70%, transparent);
+  outline-offset: -2px;
+}
+.stack-workspace__drop-target[data-drop-target-state="invalid"] {
+  --stack-drop-color: var(--destructive);
+  cursor: not-allowed;
+}
+.stack-workspace__drop-target[data-drop-target-state="valid"]::after,
+.stack-workspace__drop-target[data-drop-target-state="invalid"]::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  inset: 0.25rem;
+  border: 2px dashed
+    color-mix(in srgb, var(--stack-drop-color) 80%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--stack-drop-color) 10%, transparent);
+}
+.stack-workspace__drop-guide {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  inset-inline: 0.75rem;
+  top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  color: var(--foreground);
+  background: var(--background);
+  font-size: var(--community-text-secondary);
+}
+/* Sorting edges use inset borders, leaving row size and graph geometry intact. */
+.stack-workspace__drop-target[data-drop-placement]::after {
+  inset: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.stack-workspace__drop-target[data-drop-placement="above"]::after {
+  border-top: 2px solid var(--primary);
+}
+.stack-workspace__drop-target[data-drop-placement="below"]::after {
+  border-bottom: 2px solid var(--primary);
+}
