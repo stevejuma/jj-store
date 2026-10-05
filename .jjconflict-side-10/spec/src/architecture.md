@@ -110,6 +110,16 @@ Cancellation, process loss, replacement and authorization loss retain exact
 retry input. No implicit import, head publication, derived index or checkout
 state is involved; those Stage 3 gates remain separate.
 
+Explicit retained-index recovery reuses the existing bounded disk-backed builder
+through an archive-only Source. Original and candidate indexes are built
+separately and verified through bounded framing and upstream native decoding.
+Denied fallback operation/view traversal prevents backend import. Complete
+commit/change identities and parent edges are compared to the acknowledged
+archive; valid existing CLI index bytes remain intact and original selections
+cannot gain future candidate visibility. Synced create-only segments precede
+associations, with exact retry after process loss. Head publication and guarded
+checkout remain separate Stage 3 boundaries.
+
 The server now joins actual unpublished reword effects with exact private
 preview/journal selection, saved recovery witness and reserved retention. The
 full candidate archive is durable before retention; acknowledgement replaces

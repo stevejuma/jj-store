@@ -193,6 +193,25 @@ repair never imports Git refs, synthesizes change identities, creates a derived
 index, publishes an operation or writes physical checkout state. It does not
 enable application mutations.
 
+Explicit index restoration uses the same saved archive, independently of
+extra-metadata repair. The existing bounded disk-backed builder supplies
+separate indexes for the original and candidate operations. It never reads
+source commits, imports missing extras or rebuilds source indexes through a
+latest operation. Private framing/hash checks precede native decoding with
+fallback operation/view traversal denied. Complete indexed change IDs and parent
+edges are checked against the archive; the original operation cannot acquire
+future candidate visibility. Valid existing CLI indexes retain their bytes even
+when their segment layout differs from reconstruction.
+
+Source writes create missing immutable segments before selecting their operation
+associations. Cancellation or process loss after one association reuses the
+original request and completes the other without replacement. Unsafe links,
+unsupported or conflicting mappings, authorization loss and directory
+replacement stop selection. The bound is 128 commit segments, 4096 associations,
+4 MiB per segment, 16 MiB aggregate and 128 MiB private scratch under the
+30-second worker deadline. This does not publish an operation head or write
+companion/checkout state; application mutations remain unavailable.
+
 Private server preparation now saves the exact real reword preview, original
 request identity, recovery witness and full candidate archive before reserved
 retention. A retry resumes that saved archive instead of preparing a replacement

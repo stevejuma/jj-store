@@ -154,7 +154,7 @@ shared-package release qualification does not alter those original Git gates.
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -88237,6 +88237,225 @@ entries.
   "next": "Finish derived-index recovery and safe original operation publication, then guarded checkout and production command composition; continue every remaining approved engine and UI stage.",
   "out_of_scope": "No production UI/startup or generated transport changes, fresh visual review, screenshots/baselines, publication, installed executable/service replacement, existing repository reset/migration, reserved-ref cleanup, linked-native/real-RustFS command execution or unrelated root aggregate lanes.",
   "summary": "58 unique direct cases pass: 18 source recovery (nine new), eight foreground, eight reword, seven archive, six retention, eight actual preparation and three registered consumers. Ignored subprocess helpers execute through passing parents. Original exact extras target passes after all changes. Owning all-target check/strict no-deps lint, formatting, boundaries, architecture, documentation and mapped specification/progress checks pass. All 502 preceding evidence bodies remain byte-identical. Source index, safe operation publication, guarded checkout, runtime commands and Stages 4-7 remain incomplete; production mutations remain unavailable."
+},
+{
+  "id": "E-M21-022",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "kpomxqxv",
+  "kind": "Archive-only source/candidate index restoration with preserved graph visibility",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git 2.55.0; macOS ARM64 real disposable stock-JJ folders. Installed services/executables unchanged; CARGO_INCREMENTAL=0.",
+  "formats": "Existing pinned default commit-index format 6 and SegmentControl association protobuf. Journal V1/V2, combination V1, recovery witness V1, operation archive V1, reserved ref V2, companion/native/WAL/manifest formats unchanged. No public HTTP/schema/client change.",
+  "files": [
+    "crates/jj-store-jj/src/local_execution/recovery/indexes/archive.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/indexes/destination.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/indexes/materialize.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/indexes/verify.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/indexes.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes_adversarial.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes_lifecycle.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "before": "Initial exact two-case target failed with six diagnostics: three absent restore_indexes API uses, a wrong fixture StoreFactories constructor and two fixture ReadonlyIndex method receivers; one unused fixture import. Implementation runs exposed three missing ObjectId imports, three native Operation conversion inference diagnostics, two absent optional hex-crate references (replaced with bounded local encoding without dependency changes), and one macOS /var no-follow private-path failure (canonicalized only private scratch). Native semantic validation then used the expression builder API instead of the resolved enum, producing one diagnostic in each of two runs before repair. No assertions were weakened.",
+  "scope": "One explicit private saved-history commit-index recovery step. Reuse the existing bounded disk-backed builder with an archive-only Source; private native decoding denies fallback traversal. Separate original/candidate association graphs, complete indexed change/parent identity verification, bounded no-follow original-byte capture, create-only segment-before-association selection and exact interrupted retry.",
+  "tests": [
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes.rs#saved_original_and_candidate_indexes_restore_without_future_visibility_or_source_import",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes.rs#conflicting_existing_index_association_fails_before_missing_segments_are_selected",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes.rs#valid_existing_cli_index_bytes_are_preserved_while_missing_candidate_is_added",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes.rs#valid_candidate_index_cannot_substitute_for_the_original_operation_graph",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes_lifecycle.rs#cancellation_after_one_index_association_retains_admission_and_exact_retry",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes_lifecycle.rs#process_loss_after_one_index_association_reopens_saved_request_and_preserves_segments",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes_adversarial.rs#index_directory_replacement_and_authorization_loss_stop_before_association_selection",
+    "crates/jj-store-jj/tests/stack_source_recovery/indexes_adversarial.rs#unsafe_index_directories_files_and_oversized_segments_fail_without_touching_targets"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes::",
+      "result": "fail",
+      "failures": 6,
+      "note": "stack-source-indexes-before.log: Missing explicit API and fixture API diagnostics."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes::",
+      "result": "fail",
+      "failures": 3,
+      "note": "stack-source-indexes-after.log: ObjectId trait import missing in archive Source; repaired."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes::",
+      "result": "fail",
+      "failures": 3,
+      "note": "stack-source-indexes-after2.log: Generic native Operation conversion inference needed explicit owning type."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes::",
+      "result": "fail",
+      "failures": 2,
+      "note": "stack-source-indexes-after3.log: No hex crate in owning dependencies; replaced with local bounded digest rendering."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes::",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-indexes-after4.log: One case passes; no-follow private scratch under macOS /var symlink failed; canonicalized the private directory."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes::",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-after5.log: Original two exact cases pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes::",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-indexes-semantic.log: Used user-expression helper instead of resolved enum; fixed to exact typed ancestry expression."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes::",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-indexes-existing.log: Same expression diagnostic repeated before correction."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes::",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-semantic-after.log: Four exact integrations pass, including valid existing CLI mapping preservation and substituted future graph rejection."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-lifecycle.log: Six pass; isolated helper executed by parent."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery indexes",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-adversarial.log: Eight new cases pass; added unsafe/replaced/oversized input and authorization loss."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery --test stack_foreground --test stack_operation_archive",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-direct.log: 41 direct cases pass: 26 source recovery, eight foreground and seven archive; four subprocess helpers execute through passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-check.log: All owning package targets pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-lint.log: Strict owning lint passes without suppressions."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-boundaries.log: 17 package boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-architecture.log: 1090 presentation modules pass; no UI implementation change."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-rust-format.log: Owning/runtime Rust formatting passes."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-format.log: Changed documents formatted; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-coverage-format.log: Local source-review acknowledgement formatted."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-doc-format-check.log: Changed canonical/manual documents pass."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed explicit archive-only index reconstruction with the existing bounded builder, private native decoding under denied fallback, complete indexed change and parent identities, original graph visibility and preserved valid CLI bytes. Manual separates interrupted exact association retry from head publication, guarded checkout and unavailable writable capabilities.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-docs-review.log: Manual reviewed; source fingerprint refreshed."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-source.log: Formatted new provider/test modules."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-docs-check.log: 139-file closure, links/anchors and nine diagrams in both themes pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-spec-first.log: 13 protected files/five canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-spec-validation.log: Five validators/23 chapters/173 requirements pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-indexes-progress.log: New parent E021 aggregate result was marked pass despite explicit remaining gates. Corrected only that newly written field to pending in its own Jujutsu change; all 502 preceding bodies and passing run records unchanged. Checker and completion rules retained."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-indexes-progress-after.log: 142 tasks pass after same-slice E021 bookkeeping correction; M21.2 remains In progress."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Index restoration is explicit private provider behavior; it neither imports source extras nor selects operation heads, changes companion state, writes checkout files or advertises writable Stacks capabilities.",
+    "Stage 3 still requires exact operation-head publication preserving concurrent siblings, guarded physical checkout/durable fault recovery and prepare/apply/status/discovery production composition.",
+    "Stages 4-7 remain approved and required: actual setup/merge/WIP/membership/switching, exact file and issued-hunk transfers/commit, graph actions/deletion policy/guarded undo, linked-native real-storage recovery and full cold production UI flows.",
+    "Two inherited service strict-lint diagnostics remain unresolved/unwaived. Owning no-deps lint is not aggregate dependency qualification."
+  ],
+  "next": "Implement safe original operation publication, then guarded checkout and runtime command composition; continue every remaining approved stage.",
+  "out_of_scope": "No production UI/startup/generated transport changes or new browser/visual review, screenshot/baseline updates, publication, installed executable/service replacement, existing repository reset/migration, reserved-ref cleanup, linked-native/real-RustFS commands or unrelated root aggregate lanes.",
+  "summary": "41 unique direct cases pass: 26 source recovery (eight new index cases), eight foreground and seven archive. Four ignored process helpers run through passing parents. Missing indexes restore without source extras/import; native change/parent graphs preserve original versus future visibility and valid CLI index bytes. Owning package check/strict no-deps lint, boundaries/architecture, formatting, documentation and mapped specification/progress checks pass. All 503 parent evidence bodies remain byte-identical after the documented same-slice E021 aggregate-status correction. Safe publication, guarded checkout, runtime commands and Stages 4-7 remain incomplete; no writable capability is advertised."
 }
 ]
 ```

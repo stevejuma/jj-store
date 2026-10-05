@@ -1073,3 +1073,11 @@ lock shares the existing nonblocking descriptor-relative Unix protocol, with
 replacement checks and worker lifetime retained through cancellation.
 Publication, index reconstruction and checkout remain independent qualification
 boundaries.
+
+Explicit retained-index restoration reuses the bounded disk-backed index builder
+with an archive-only Source. It supplies exact native operation/view metadata
+and compact commit fields from the acknowledged archive; no source backend read
+or synthetic identity participates in construction. Private format/framing
+admission precedes upstream decoding under denied fallback operation/view
+access. Exact create-only source commit segments and operation associations are
+independent of extra restoration, operation-head publication and checkout.

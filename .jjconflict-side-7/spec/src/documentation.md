@@ -193,3 +193,8 @@ segment/head restoration from operation publication, derived-index recovery and
 checkout. Document bounded complete preflight, original lock coordination,
 partial selection and exact saved-request retry without suggesting implicit Git
 import or a writable application capability.
+
+The retained-index recovery manual distinguishes archive-only construction and
+private native decoding from source index rebuild or operation publication.
+Document preservation of valid CLI mappings, exact graph visibility and
+interrupted association retry; no command or checkout capability is implied.

@@ -315,6 +315,16 @@ indexes, write checkout state or enable mutations. Derived-index recovery, safe
 publication, guarded checkout and runtime command composition still gate Stage
 3; all later approved stages remain required.
 
+E-M21-022 qualifies separate original/candidate derived-index restoration from
+the same saved archive through the existing bounded builder. Native private
+decoding verifies indexed commit/change identities and parent edges; existing
+CLI mappings preserve their bytes and the original operation cannot acquire
+future candidate visibility. Cancellation/process loss after one association,
+directory replacement, authorization loss and unsafe/oversized input retain
+exact retry. This closes the private missing-index primitive, with safe
+operation publication, guarded checkout and command transport still required
+before Stage 3 writable acceptance. Stages 4-7 remain approved and incomplete.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

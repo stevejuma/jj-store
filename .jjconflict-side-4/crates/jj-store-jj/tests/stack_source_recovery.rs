@@ -8,6 +8,12 @@ mod extras_lifecycle;
 mod extras_limits;
 #[path = "stack_foreground/fixture.rs"]
 mod fixture;
+#[path = "stack_source_recovery/indexes.rs"]
+mod indexes;
+#[path = "stack_source_recovery/indexes_adversarial.rs"]
+mod indexes_adversarial;
+#[path = "stack_source_recovery/indexes_lifecycle.rs"]
+mod indexes_lifecycle;
 #[path = "stack_source_recovery/lifecycle.rs"]
 mod lifecycle;
 use fixture::*;

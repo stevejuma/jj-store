@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed explicit saved-archive GitBackend extra recovery, complete native-record preflight, bounded private serialization, create-only original-byte preservation and nonblocking lock lifetime. Manual separates cancellation/process-loss retry from derived index, operation publication, checkout and unavailable writable capabilities.",
-      "fingerprint": "5eb0aebed663653bd299c60efec8d262ab77970c9f29caea8f65405ee2b06c3e"
+      "reason": "Reviewed explicit archive-only index reconstruction with the existing bounded builder, private native decoding under denied fallback, complete indexed change and parent identities, original graph visibility and preserved valid CLI bytes. Manual separates interrupted exact association retry from head publication, guarded checkout and unavailable writable capabilities.",
+      "fingerprint": "5f32d625b1bf7f76e74da831cb606c3ba944763bc74f49fdb32cc77ce2e054bf"
     }
   },
   {
