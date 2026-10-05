@@ -8,31 +8,15 @@ pub struct Preview {
 }
 /// Advisory read. Does not acquire/create settings storage, snapshot or publish.
 pub async fn preview(access: Arc<dyn Access>, root: PathBuf, request: Request) -> Result<Preview> {
-    if request.version != 1 || request.binding_generation != access.generation() {
-        return Err(Error::Stale);
-    }
-    access.authorize().await.map_err(|_| Error::Denied)?;
-    let settings = settings::load(&root)?;
-    let workspace = Workspace::load(
-        &settings,
+    let (workspace, repo, config, settings) = load(
+        &access,
         &root,
-        &default_backend_factories(),
-        &default_working_copy_factories(),
+        request.version,
+        request.binding_generation,
+        request.operation,
+        request.revision,
     )
-    .map_err(jj)?;
-    if workspace.workspace_root() != root
-        || workspace.repo_path().canonicalize().map_err(jj)?
-            != access.metadata_path().canonicalize().map_err(jj)?
-    {
-        return Err(Error::Denied);
-    }
-    let repo = workspace.repo_loader().load_at_head().await.map_err(jj)?;
-    let config = config::Storage::read_only(&root)?;
-    if request.operation.as_ref().map(|v| v.to_string()) != Some(repo.op_id().hex())
-        || request.revision != Some(config.revision)
-    {
-        return Err(Error::Stale);
-    }
+    .await?;
     let wc = repo
         .store()
         .get_commit(
@@ -68,8 +52,63 @@ pub async fn preview(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                 paths: selections.into_iter().map(|s| s.path).collect(),
             }
         }
+        ref command @ (Command::CreateStack { .. }
+        | Command::CreateBranch { .. }
+        | Command::RenameBranch { .. }
+        | Command::Reword { .. }
+        | Command::Empty { .. }) => {
+            basic::validate(
+                &repo,
+                workspace.workspace_name(),
+                &settings,
+                &config,
+                command,
+            )
+            .await?
+        }
         _ => return Err(Error::Invalid),
     };
     access.authorize().await.map_err(|_| Error::Denied)?;
     Ok(result)
+}
+
+pub(super) async fn load(
+    access: &Arc<dyn Access>,
+    root: &PathBuf,
+    version: u32,
+    generation: u64,
+    operation: Option<jj_store_model::OperationId>,
+    revision: Option<u64>,
+) -> Result<(
+    Workspace,
+    Arc<ReadonlyRepo>,
+    Config,
+    jj_lib::settings::UserSettings,
+)> {
+    if version != 1 || generation != access.generation() {
+        return Err(Error::Stale);
+    }
+    access.authorize().await.map_err(|_| Error::Denied)?;
+    let settings = settings::load(root)?;
+    let workspace = Workspace::load(
+        &settings,
+        root,
+        &default_backend_factories(),
+        &default_working_copy_factories(),
+    )
+    .map_err(jj)?;
+    if workspace.workspace_root() != root.as_path()
+        || workspace.repo_path().canonicalize().map_err(jj)?
+            != access.metadata_path().canonicalize().map_err(jj)?
+    {
+        return Err(Error::Denied);
+    }
+    let repo = workspace.repo_loader().load_at_head().await.map_err(jj)?;
+    let config = config::Storage::read_only(root)?;
+    if operation.as_ref().map(|v| v.to_string()) != Some(repo.op_id().hex())
+        || revision != Some(config.revision)
+    {
+        return Err(Error::Stale);
+    }
+    Ok((workspace, repo, config, settings))
 }

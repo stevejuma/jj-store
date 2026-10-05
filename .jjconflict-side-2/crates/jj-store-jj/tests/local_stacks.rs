@@ -946,3 +946,279 @@ async fn selected_file_commands_reject_invalid_stale_and_immutable_sources() {
         "selected\n"
     );
 }
+
+#[tokio::test]
+async fn local_bookmark_and_basic_commit_actions_use_native_rewrites() {
+    use local_stacks::Placement;
+    let temp = fixture();
+    let root = temp.path();
+    let state = refresh(root).await;
+    let _state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Work".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    fs::write(root.join("draft.txt"), "unfinished\n").unwrap();
+    let state = refresh(root).await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::CreateStack {
+            name: "independent".into(),
+            parent: None,
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "independent", "-T", "commit_id"]
+        ),
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "main", "-T", "commit_id"]
+        )
+    );
+    let state = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-one".into(),
+        },
+    )
+    .await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::CreateStack {
+            name: "dependent".into(),
+            parent: Some("topic-one".into()),
+        },
+    )
+    .await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::RenameBranch {
+            branch: "dependent".into(),
+            name: "renamed".into(),
+        },
+    )
+    .await;
+    assert!(state.workspaces[0].applied.contains(&"renamed".into()));
+    assert!(!state.workspaces[0].applied.contains(&"dependent".into()));
+    let tip = stock(
+        root,
+        &["log", "--no-graph", "-r", "topic-one", "-T", "commit_id"],
+    );
+    let merge = stock(root, &["log", "--no-graph", "-r", "@-", "-T", "change_id"]);
+    let wip = stock(root, &["log", "--no-graph", "-r", "@", "-T", "change_id"]);
+    let inspected = local_stacks::inspect(
+        Arc::new(Access(root.join(".jj/repo"))),
+        root.canonicalize().unwrap(),
+        local_stacks::InspectionRequest {
+            version: 1,
+            binding_generation: 1,
+            operation: state.operation,
+            revision: state.revision,
+            commits: vec![tip.clone(), state.workspaces[0].target_commit.clone()],
+        },
+    )
+    .await
+    .unwrap();
+    assert!(inspected.commits[0].mutable);
+    assert!(!inspected.commits[1].mutable);
+    let state = run(
+        root,
+        Some(&state),
+        Command::CreateBranch {
+            commit: tip.clone(),
+            name: "above".into(),
+            placement: Placement::Above,
+        },
+    )
+    .await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::CreateBranch {
+            commit: tip.clone(),
+            name: "below".into(),
+            placement: Placement::Below,
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "below", "-T", "commit_id"]
+        ),
+        state.workspaces[0].target_commit
+    );
+    let state = run(
+        root,
+        Some(&state),
+        Command::Reword {
+            commit: tip,
+            message: "Updated description".into(),
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "topic-one", "-T", "description"]
+        ),
+        "Updated description"
+    );
+    let tip = stock(
+        root,
+        &["log", "--no-graph", "-r", "topic-one", "-T", "commit_id"],
+    );
+    let state = run(
+        root,
+        Some(&state),
+        Command::Empty {
+            commit: tip,
+            placement: Placement::Below,
+            message: "Below".into(),
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "topic-one-", "-T", "description"]
+        ),
+        "Below"
+    );
+    let tip = stock(
+        root,
+        &["log", "--no-graph", "-r", "topic-one", "-T", "commit_id"],
+    );
+    let _state = run(
+        root,
+        Some(&state),
+        Command::Empty {
+            commit: tip,
+            placement: Placement::Above,
+            message: "Above".into(),
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "topic-one", "-T", "description"]
+        ),
+        "Above"
+    );
+    assert_eq!(
+        stock(root, &["log", "--no-graph", "-r", "@-", "-T", "change_id"]),
+        merge
+    );
+    assert_eq!(
+        stock(root, &["log", "--no-graph", "-r", "@", "-T", "change_id"]),
+        wip
+    );
+    assert_eq!(
+        fs::read_to_string(root.join("draft.txt")).unwrap(),
+        "unfinished\n"
+    );
+}
+
+#[tokio::test]
+async fn first_commit_on_empty_stack_forks_target_without_rewriting_other_branches() {
+    let temp = fixture();
+    let root = temp.path();
+    let main = stock(
+        root,
+        &["log", "--no-graph", "-r", "main", "-T", "commit_id"],
+    );
+    let unrelated = stock(
+        root,
+        &["log", "--no-graph", "-r", "topic-one", "-T", "commit_id"],
+    );
+    let state = refresh(root).await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Work".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    let _ = run(
+        root,
+        Some(&state),
+        Command::CreateStack {
+            name: "new-stack".into(),
+            parent: None,
+        },
+    )
+    .await;
+    fs::write(root.join("first.txt"), "first\n").unwrap();
+    let state = refresh(root).await;
+    let merge = stock(root, &["log", "--no-graph", "-r", "@-", "-T", "change_id"]);
+    let wip = stock(root, &["log", "--no-graph", "-r", "@", "-T", "change_id"]);
+    let state = run(
+        root,
+        Some(&state),
+        Command::Commit {
+            branch: "new-stack".into(),
+            message: "First".into(),
+            selections: vec![local_stacks::Selection {
+                source: state.workspaces[0].wip_commit.clone(),
+                path: "first.txt".into(),
+            }],
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "main", "-T", "commit_id"]
+        ),
+        main
+    );
+    assert_eq!(
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "topic-one", "-T", "commit_id"]
+        ),
+        unrelated
+    );
+    assert_eq!(stock(root, &["diff", "-r", "@", "--name-only"]), "");
+    let refreshed = refresh(root).await;
+    assert_eq!(state.operation, refreshed.operation);
+    assert_eq!(
+        stock(root, &["log", "--no-graph", "-r", "@-", "-T", "change_id"]),
+        merge
+    );
+    assert_eq!(
+        stock(root, &["log", "--no-graph", "-r", "@", "-T", "change_id"]),
+        wip
+    );
+    let _ = run(
+        root,
+        Some(&refreshed),
+        Command::Commit {
+            branch: "new-stack".into(),
+            message: "Empty".into(),
+            selections: vec![],
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "new-stack", "-T", "empty"]
+        ),
+        "true"
+    );
+}

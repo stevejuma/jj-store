@@ -2057,6 +2057,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/repos/{repo}/stacks/inspect": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_stacks_inspect"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repos/{repo}/stacks": {
     parameters: {
       query?: never;
@@ -6376,6 +6393,14 @@ export interface components {
           /** @constant */
           type: "symlink";
         };
+    LocalStacksInspection: {
+      commits: components["schemas"]["LocalStacksCommitEligibility"][];
+    };
+    LocalStacksCommitEligibility: {
+      commit: string;
+      mutable: boolean;
+      reason: string | null;
+    };
     LocalStacksState: {
       /** Format: uint32 */
       version: number;
@@ -33453,6 +33478,149 @@ export interface operations {
       };
     };
   };
+  local_stacks_inspect: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation: string;
+          /** Format: uint64 */
+          revision: number;
+          commits: string[];
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalStacksInspection"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
   local_stacks_execute: {
     parameters: {
       query?: never;
@@ -33519,6 +33687,40 @@ export interface operations {
                 workspace: string;
                 /** @constant */
                 kind: "delete";
+              }
+            | {
+                name: string;
+                parent?: string | null;
+                /** @constant */
+                kind: "create_stack";
+              }
+            | {
+                commit: string;
+                name: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                /** @constant */
+                kind: "create_branch";
+              }
+            | {
+                branch: string;
+                name: string;
+                /** @constant */
+                kind: "rename_branch";
+              }
+            | {
+                commit: string;
+                message: string;
+                /** @constant */
+                kind: "reword";
+              }
+            | {
+                commit: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                message: string;
+                /** @constant */
+                kind: "empty";
               }
             | {
                 branch: string;
@@ -33719,6 +33921,40 @@ export interface operations {
                 workspace: string;
                 /** @constant */
                 kind: "delete";
+              }
+            | {
+                name: string;
+                parent?: string | null;
+                /** @constant */
+                kind: "create_stack";
+              }
+            | {
+                commit: string;
+                name: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                /** @constant */
+                kind: "create_branch";
+              }
+            | {
+                branch: string;
+                name: string;
+                /** @constant */
+                kind: "rename_branch";
+              }
+            | {
+                commit: string;
+                message: string;
+                /** @constant */
+                kind: "reword";
+              }
+            | {
+                commit: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                message: string;
+                /** @constant */
+                kind: "empty";
               }
             | {
                 branch: string;

@@ -2224,3 +2224,9 @@ Exact operation and commit/operation selections keep their existing read
 contracts. Focused history reuses repository-wide reads, while the local Stacks
 owner survives tab changes and is disposed on repository/binding/access changes.
 No HTTP endpoint, generated DTO, local command or TOML format changes.
+
+Local Stacks adds advisory POST `/v1/local/repos/{repo}/stacks/inspect` with
+exact operation/configuration revision and up to 500 visible commit IDs. It
+returns mutable flags and protection reasons without initializing or
+snapshotting. CreateStack/CreateBranch/RenameBranch/Reword/Empty variants use
+the same guarded preview and apply boundary.

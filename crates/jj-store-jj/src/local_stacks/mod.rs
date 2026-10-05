@@ -1,11 +1,14 @@
 //! Ordinary local JJ megamerges. App settings are local; JJ owns code and checkout.
+mod basic;
 mod config;
+mod inspection;
 mod mutations;
 mod policy;
 mod preview;
 mod settings;
 use self::config::{Config, SavedWorkspace};
 use crate::local_browser::Access;
+pub use inspection::{CommitEligibility, Inspection, InspectionRequest, inspect};
 use jj_lib::{
     commit::Commit,
     default_backend_factories::{default_backend_factories, default_working_copy_factories},
@@ -72,11 +75,40 @@ pub enum Command {
     Delete {
         workspace: String,
     },
+    CreateStack {
+        name: String,
+        parent: Option<String>,
+    },
+    CreateBranch {
+        commit: String,
+        name: String,
+        placement: Placement,
+    },
+    RenameBranch {
+        branch: String,
+        name: String,
+    },
+    Reword {
+        commit: String,
+        message: String,
+    },
+    Empty {
+        commit: String,
+        placement: Placement,
+        message: String,
+    },
     Commit {
         branch: String,
         message: String,
         selections: Vec<Selection>,
     },
+}
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[schemars(rename = "LocalStacksPlacement")]
+pub enum Placement {
+    Above,
+    Below,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -170,7 +202,7 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
     let mut detached = false;
     // An external edit/undo must not silently attach a named workspace to another change.
     if let Some(active) = config.active()
-        && resolve_any(&repo, &active.wip_ref)?.change_id() != wc.change_id()
+        && resolve_any(repo.as_ref(), &active.wip_ref)?.change_id() != wc.change_id()
     {
         if !refresh {
             return Err(Error::Stale);
@@ -227,7 +259,7 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
     let rebuild = refresh
         && config
             .active()
-            .map(|saved| needs_rebuild(&repo, saved))
+            .map(|saved| needs_rebuild(repo.as_ref(), saved))
             .transpose()?
             .unwrap_or(false);
     if !refresh || rebuild {
@@ -271,8 +303,8 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                         .iter()
                         .find(|w| &w.id == workspace)
                         .ok_or(Error::Invalid)?;
-                    let target = resolve_any(&repo, &saved.wip_ref)?;
-                    let target = if needs_rebuild(&repo, saved)? {
+                    let target = resolve_any(repo.as_ref(), &saved.wip_ref)?;
+                    let target = if needs_rebuild(repo.as_ref(), saved)? {
                         build(tx.repo_mut(), &repo, saved, Some(&target), false).await?
                     } else {
                         target
@@ -283,7 +315,7 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                     config.active = Some(saved.id.clone());
                 }
                 Command::Apply { ref branch } | Command::Unapply { ref branch } => {
-                    resolve(&repo, branch)?;
+                    resolve(repo.as_ref(), branch)?;
                     let saved = config.active_mut().ok_or(Error::Invalid)?;
                     if matches!(request.command, Command::Apply { .. }) {
                         if !saved.applied.iter().any(|b| b == branch) {
@@ -298,7 +330,7 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                         .map_err(jj)?;
                 }
                 Command::SetTarget { ref branch } => {
-                    resolve(&repo, branch)?;
+                    resolve(repo.as_ref(), branch)?;
                     let saved = config.active_mut().ok_or(Error::Invalid)?;
                     saved.target = branch.clone();
                     let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
@@ -315,7 +347,7 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                         return Err(Error::Invalid);
                     }
                     config.validate_name(new_name, Some(workspace))?;
-                    resolve(&repo, target)?;
+                    resolve(repo.as_ref(), target)?;
                     let saved = config.active_mut().ok_or(Error::Invalid)?;
                     saved.name = new_name.trim().into();
                     if saved.target != *target {
@@ -351,6 +383,22 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                         branch,
                         message,
                         selections,
+                    )
+                    .await?;
+                }
+                Command::CreateStack { .. }
+                | Command::CreateBranch { .. }
+                | Command::RenameBranch { .. }
+                | Command::Reword { .. }
+                | Command::Empty { .. } => {
+                    basic::execute(
+                        tx.repo_mut(),
+                        &repo,
+                        &name,
+                        &settings,
+                        &mut config,
+                        &wc,
+                        &request.command,
                     )
                     .await?;
                 }
@@ -408,13 +456,13 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
     state(&repo, &config, warning)
 }
 
-fn resolve(repo: &ReadonlyRepo, reference: &str) -> Result<Commit> {
+fn resolve(repo: &dyn jj_lib::repo::Repo, reference: &str) -> Result<Commit> {
     if reference.starts_with(config::INTERNAL_PREFIX) {
         return Err(Error::Invalid);
     }
     resolve_any(repo, reference)
 }
-fn resolve_any(repo: &ReadonlyRepo, reference: &str) -> Result<Commit> {
+fn resolve_any(repo: &dyn jj_lib::repo::Repo, reference: &str) -> Result<Commit> {
     let target = if let Some((branch, remote)) = reference.rsplit_once('@') {
         &repo
             .view()
@@ -430,7 +478,7 @@ fn resolve_any(repo: &ReadonlyRepo, reference: &str) -> Result<Commit> {
         .get_commit(target.as_normal().ok_or(Error::Invalid)?)
         .map_err(jj)
 }
-fn parents(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> Result<Vec<Commit>> {
+fn parents(repo: &dyn jj_lib::repo::Repo, saved: &SavedWorkspace) -> Result<Vec<Commit>> {
     let references = if saved.applied.is_empty() {
         vec![saved.target.clone()]
     } else {
@@ -445,7 +493,7 @@ fn parents(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> Result<Vec<Commit>> {
     }
     Ok(parents)
 }
-fn needs_rebuild(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> Result<bool> {
+fn needs_rebuild(repo: &dyn jj_lib::repo::Repo, saved: &SavedWorkspace) -> Result<bool> {
     let merge = resolve_any(repo, &saved.merge_ref)?;
     Ok(merge.parent_ids()
         != parents(repo, saved)?
@@ -455,13 +503,13 @@ fn needs_rebuild(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> Result<bool> {
 }
 async fn build(
     mut_repo: &mut jj_lib::repo::MutableRepo,
-    repo: &ReadonlyRepo,
+    _repo: &ReadonlyRepo,
     saved: &SavedWorkspace,
     old_wip: Option<&Commit>,
     first: bool,
 ) -> Result<Commit> {
-    let parents = parents(repo, saved)?;
-    let tree = rewrite::merge_commit_trees(repo, &parents)
+    let parents = parents(mut_repo, saved)?;
+    let tree = rewrite::merge_commit_trees(mut_repo, &parents)
         .await
         .map_err(jj)?;
     let merge = mut_repo

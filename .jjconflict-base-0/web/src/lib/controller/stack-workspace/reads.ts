@@ -13,7 +13,11 @@ import {
   type CodeSnapshot,
 } from "../repository-profile.js";
 import { presentStackCommit, presentStackFile } from "./read-presentation.js";
-import type { WorkspaceFile, WorkspaceHistoryPage } from "./types.js";
+import type {
+  StackCommit,
+  WorkspaceFile,
+  WorkspaceHistoryPage,
+} from "./types.js";
 
 export type StackTreeRange = { from: string; to: string };
 export type StackFilePage = { files: WorkspaceFile[]; nextCursor?: string };
@@ -26,6 +30,7 @@ export class StackWorkspaceReads {
   constructor(
     readonly source: StoreDataSource,
     snapshot: CodeSnapshot,
+    readonly inspect?: (commits: StackCommit[]) => Promise<void>,
   ) {
     if (
       snapshotRepository(snapshot) !== source.repository ||
@@ -98,8 +103,11 @@ export class StackWorkspaceReads {
         page.commits.length
     )
       throw new ApiError("invalid_stack_page");
+    const commits = page.commits.map(presentStackCommit);
+    await this.inspect?.(commits);
+    signal.throwIfAborted();
     return {
-      commits: page.commits.map(presentStackCommit),
+      commits,
       ...(result.next_cursor ? { nextCursor: result.next_cursor } : {}),
     };
   }

@@ -1219,3 +1219,14 @@ Selections bind exact source commit IDs and canonical paths. The merge and WIP
 retain their change identities through native rewriting; preview validation does
 not publish or snapshot. Target ancestry and configured immutable descendants
 remain protected.
+
+Basic local Stacks actions use native bookmark targets, commit descriptions and
+new --insert-after/--insert-before equivalent rebases. Above/below bookmarks
+change references only. Point inspection admits at most 500 exact visible IDs;
+configured immutable descendants and workspace target ancestry protect rewrites.
+
+The first commit on a bookmark still pointing at the workspace target MUST fork
+from that target without rewriting unrelated target children. Explicitly
+retarget only the retained merges applying that bookmark; later commits use
+normal insertion and descendant propagation. Empty Commit selections create an
+empty commit. Refresh must not reconstruct these already-correct parent sets.

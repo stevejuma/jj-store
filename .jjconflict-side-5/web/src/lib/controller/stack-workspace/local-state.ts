@@ -1,3 +1,4 @@
+import { localMutationCommand, localMutationKinds } from "./local-mutations.js";
 import type { LocalStacksCommand } from "./local-transport.js";
 import type { Model } from "../../api/client.js";
 import {
@@ -42,7 +43,7 @@ export function projectLocalStacks(
             "delete_workspace",
             "apply_stack",
             "unapply_stack",
-            "create_commit",
+            ...localMutationKinds,
           ]
         : [
             "create_workspace",
@@ -74,6 +75,8 @@ export function localStacksCommand(
   snapshot: WorkspaceSnapshot,
   command: WorkspaceCommand,
 ): LocalStacksCommand {
+  const mutation = localMutationCommand(snapshot, command);
+  if (mutation) return mutation;
   if (command.kind === "create_workspace") {
     if (!snapshot.target)
       throw new WorkspaceCommandError(
@@ -92,7 +95,6 @@ export function localStacksCommand(
     if (
       !workspace?.wipCommit ||
       !stack ||
-      !selections.length ||
       selections.some((s) => s.source !== "unassigned" || s.hunks)
     )
       throw new WorkspaceCommandError(

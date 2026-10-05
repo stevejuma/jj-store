@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -94254,6 +94254,142 @@ entries.
   "remaining": [
     "Continue approved branch/basic commit actions, transfers/splits, hunks, graph operations, deletion/conflict editing and native Undo/Redo; production capabilities stay disabled until accepted.",
     "Cold real-server integrated mutation acceptance remains required after backend build/restart. Package publication and screenshot baselines excluded."
+  ]
+},
+{
+  "id": "E-M21-046",
+  "kind": "Ordinary local bookmark/basic commit actions and bounded policy inspection",
+  "versions": "JJ/jj-lib 0.45.1; Node 26.9.0; pnpm 10.32.1; Vitest 4.1.11; package ranges unchanged.",
+  "formats": "Additive LocalStacks CreateStack/CreateBranch/RenameBranch/Reword/Empty commands and inspection endpoint. TOML v1/native JJ storage unchanged.",
+  "tests": [
+    "crates/jj-store-jj/tests/local_stacks.rs#local_bookmark_and_basic_commit_actions_use_native_rewrites",
+    "crates/jj-store-jj/tests/local_stacks.rs#first_commit_on_empty_stack_forks_target_without_rewriting_other_branches",
+    "web/tests/vite/production-stack-adapter.test.ts#local basic mutations use server previews and inspect only displayed commits"
+  ],
+  "runs": [
+    {
+      "command": "cargo check -p jj-store-jj --locked (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Compile rejected nonexistent bookmark removal helper and Arc coercion after shared resolver extension. Replaced removal with native absent target and explicit repo references."
+    },
+    {
+      "command": "cargo check -p jj-store-jj --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Owning native package check passes."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks local_bookmark_and_basic_commit_actions_use_native_rewrites --locked (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Test expected a trailing newline from a description set without one. Corrected expectation to the exact message supplied; native data unchanged."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks local_bookmark_and_basic_commit_actions_use_native_rewrites --locked; cargo test -p jj-store-jj --test local_stacks --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact regression and all 13 local core/mutation tests pass; new empty-stack fork case preserves unrelated branch/target commits and merge/WIP change IDs, with no refresh rebuild."
+    },
+    {
+      "command": "cargo test -p jj-store-http --lib local_browser::stacks::tests --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Two admission tests pass; inspection shares registered-folder/same-origin admission."
+    },
+    {
+      "command": "pnpm contracts:generate; pnpm test:contracts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Source-derived contracts regenerated; seven public contract tests pass."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Early check ran before contract generation settled. Final two diagnostics identified request bodies are inline operation types, not response Model components. Used generated operation body Exact type and preserved bigint generation."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero errors/warnings in both type checks; 232 catalog modules meet ownership boundary."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-stack-adapter.test.ts web/tests/vite/stack-workspace-lazy-controller.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "26 direct adapter/controller tests pass, including native command mappings, preview-only behavior, displayed-point inspection and no eager history."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceCommands.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceMenus.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceForms.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "13 cold interaction/accessibility stories pass across affected action forms and menus."
+    },
+    {
+      "command": "pnpm check:ui-ownership; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Source ownership passes; 1107 modules meet architecture limits."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceProduction.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Five cold production-read/lazy-file stories pass; operation pins, preparation and read-only fixtures retained."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "20 protected files/six canonical chapters, five validators/173 requirements and 142 ledger tasks pass. Historical ledger raw prefix retained."
+    },
+    {
+      "command": "pnpm exec prettier --check affected TypeScript/spec files; rustfmt --edition 2024 --check affected Rust files",
+      "result": "pass",
+      "failures": 0,
+      "note": "Scoped formatting checks pass; no generated type or visual baseline hand edits."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Continue approved transfers/splits/inline edit, hunk selections, graph operations, deletion/conflict editing and native Undo/Redo.",
+    "Cold real-server integrated acceptance and local backend refresh remain required; wider aggregate lanes and screenshots/publication excluded."
+  ],
+  "date": "2026-10-05",
+  "revision": "xlyqslwylzvynstsnoktkpwumwrywwqs",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "files": [
+    "crates/jj-store-http/src/local_browser/stacks.rs",
+    "crates/jj-store-http/src/local_browser/stacks/tests.rs",
+    "crates/jj-store-jj/src/local_stacks/basic.rs",
+    "crates/jj-store-jj/src/local_stacks/inspection.rs",
+    "crates/jj-store-jj/src/local_stacks/mod.rs",
+    "crates/jj-store-jj/src/local_stacks/mutations.rs",
+    "crates/jj-store-jj/src/local_stacks/policy.rs",
+    "crates/jj-store-jj/src/local_stacks/preview.rs",
+    "crates/jj-store-jj/tests/local_stacks.rs",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/compatibility.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/stack-workspace/local-inspection.ts",
+    "web/src/lib/controller/stack-workspace/local-mutations.ts",
+    "web/src/lib/controller/stack-workspace/local-session.ts",
+    "web/src/lib/controller/stack-workspace/local-state.ts",
+    "web/src/lib/controller/stack-workspace/local-transport.ts",
+    "web/src/lib/controller/stack-workspace/production-adapter.ts",
+    "web/src/lib/controller/stack-workspace/reads.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/tests/vite/production-stack-adapter.test.ts"
   ]
 }
 ]

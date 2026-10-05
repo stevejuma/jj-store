@@ -822,3 +822,127 @@ test("local selected-file previews bind WIP and do not execute before apply", as
   ).rejects.toThrow("whole files");
   adapter.close();
 });
+
+test("local basic mutations use server previews and inspect only displayed commits", async () => {
+  const { source, binding, calls } = fixture();
+  const previews: unknown[] = [],
+    inspections: unknown[] = [];
+  source.stacks = {
+    execute: async () => ({
+      version: 1,
+      operation,
+      revision: 1,
+      active: "work",
+      warning: null,
+      workspaces: [
+        {
+          id: "work",
+          name: "Work",
+          target: "main",
+          target_commit: base,
+          applied: ["topic"],
+          merge_commit: parent,
+          wip_commit: tip,
+          conflicted: false,
+        },
+      ],
+    }),
+    preview: async (request) => {
+      previews.push(request.command);
+      return { title: "Native preview", summary: "JJ mutation", paths: [] };
+    },
+    inspect: async (request) => {
+      inspections.push(request);
+      return {
+        commits: request.commits.map((commit) => ({
+          commit,
+          mutable: commit === tip,
+          reason: commit === tip ? null : "Protected target",
+        })),
+      };
+    },
+  };
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  const snapshot = await adapter.read(),
+    stack = snapshot.stacks[0]!;
+  expect(stack.commits[0]!.immutable).toBe(false);
+  expect(snapshot.capabilities).toContain("reword");
+  expect(
+    calls.some((call) => Array.isArray(call) && call[0] === "history"),
+  ).toBe(false);
+  const request = {
+    id: "basic",
+    repository,
+    revision: snapshot.revision,
+    readKey: snapshot.readKey,
+  };
+  await adapter.preview({
+    ...request,
+    command: { kind: "create_stack", name: "dependent", parent: stack.id },
+  });
+  await adapter.preview({
+    ...request,
+    command: {
+      kind: "create_branch",
+      stack: stack.id,
+      commit: tip,
+      name: "lower",
+      placement: "below",
+    },
+  });
+  await adapter.preview({
+    ...request,
+    command: {
+      kind: "rename_branch",
+      stack: stack.id,
+      branch: "topic",
+      name: "renamed",
+    },
+  });
+  await adapter.preview({
+    ...request,
+    command: { kind: "reword", commit: tip, message: "Changed" },
+  });
+  await adapter.preview({
+    ...request,
+    command: {
+      kind: "add_empty_commit",
+      commit: tip,
+      message: "",
+      placement: "above",
+    },
+  });
+  expect(previews).toEqual([
+    { kind: "create_stack", name: "dependent", parent: "topic" },
+    { kind: "create_branch", commit: tip, name: "lower", placement: "below" },
+    { kind: "rename_branch", branch: "topic", name: "renamed" },
+    { kind: "reword", commit: tip, message: "Changed" },
+    { kind: "empty", commit: tip, message: "", placement: "above" },
+  ]);
+  const page = await adapter.readStackHistory({
+    ...request,
+    stack: stack.id,
+    branch: "topic",
+    head: tip,
+    base,
+    limit: 40,
+  });
+  expect(page.commits[0]!.immutable).toBe(false);
+  expect(inspections).toHaveLength(2);
+  expect(inspections[0]).toMatchObject({
+    operation,
+    revision: 1,
+    commits: [tip],
+  });
+  await expect(
+    adapter.preview({
+      ...request,
+      command: { kind: "reword", commit: "9".repeat(40), message: "Unknown" },
+    }),
+  ).rejects.toThrow("outside the displayed");
+  adapter.close();
+});

@@ -104,7 +104,9 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
     const previous = this.#snapshot;
     const target = this.#local.targetFor(projection.targets, previous?.target);
     if (!this.#pin || !sameCodeSnapshot(this.#pin, pin)) {
-      const reads = new StackWorkspaceReads(this.source, pin);
+      const reads = new StackWorkspaceReads(this.source, pin, (commits) =>
+        this.#local.inspect(commits),
+      );
       try {
         await this.ranges.refresh(
           reads,
@@ -145,7 +147,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       this.ranges.restore(stack, target?.commit),
     );
     this.#snapshot.loadedTargetHistory = this.ranges.target(target?.commit);
-    this.#local.project(this.#snapshot);
+    await this.#local.project(this.#snapshot);
     return cloneWorkspace(this.#snapshot);
   }
   #context(request: {
@@ -174,7 +176,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       snapshot.revision + 1,
       snapshot.branchesNextCursor,
     );
-    this.#local.project(this.#snapshot);
+    await this.#local.project(this.#snapshot);
     return cloneWorkspace(this.#snapshot);
   }
   async readBranches(request: {
@@ -229,7 +231,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
     this.#snapshot.loadedTargetHistory = this.ranges.target(
       snapshot.target?.commit,
     );
-    this.#local.project(this.#snapshot);
+    await this.#local.project(this.#snapshot);
     return cloneWorkspace(this.#snapshot);
   }
   readTargetHistory(

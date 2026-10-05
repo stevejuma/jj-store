@@ -1,11 +1,9 @@
 //! Native insertion and squash; merge/WIP propagate through the JJ rewrite graph.
 use super::*;
-use futures::TryStreamExt as _;
 use jj_lib::{
     merged_tree_builder::MergedTreeBuilder,
     repo::{MutableRepo, Repo},
     repo_path::RepoPathBuf,
-    revset::RevsetExpression,
 };
 
 pub(super) fn message(value: &str) -> Result<()> {
@@ -77,16 +75,22 @@ pub(super) async fn validate(
     {
         return Err(Error::Invalid);
     }
-    let children = RevsetExpression::commits(vec![head.id().clone()])
-        .children()
-        .evaluate(repo)
-        .map_err(jj)?
-        .stream()
-        .try_collect::<Vec<_>>()
-        .await
-        .map_err(jj)?;
-    policy::rewritable(repo, workspace_name, settings, config, children)?;
-    selected(repo, wc, selections).await?;
+    let target = resolve(repo, &saved.target)?;
+    let affected = if head.id() == target.id() {
+        // An empty bookmark at the target starts a fork, not an insertion into every target child.
+        config
+            .workspaces
+            .iter()
+            .filter(|saved| saved.applied.iter().any(|name| name == branch))
+            .map(|saved| resolve_any(repo, &saved.merge_ref).map(|merge| merge.id().clone()))
+            .collect::<Result<Vec<_>>>()?
+    } else {
+        basic::children(repo, &head).await?
+    };
+    policy::rewritable(repo, workspace_name, settings, config, affected)?;
+    if !selections.is_empty() {
+        selected(repo, wc, selections).await?;
+    }
     Ok(head)
 }
 #[allow(clippy::too_many_arguments)]
@@ -118,24 +122,37 @@ pub(super) async fn commit(
         .write()
         .await
         .map_err(jj)?;
-    let children = RevsetExpression::commits(vec![head.id().clone()])
-        .children()
-        .evaluate(repo)
-        .map_err(jj)?
-        .stream()
-        .try_collect::<Vec<_>>()
-        .await
-        .map_err(jj)?;
-    mut_repo
-        .transform_descendants(children, async |mut rewriter| {
-            if rewriter.old_commit().id() != head.id() {
+    mut_repo.set_local_bookmark_target(branch.as_ref(), RefTarget::normal(new.id().clone()));
+    let target = resolve(repo, &config.active().ok_or(Error::Invalid)?.target)?;
+    if head.id() == target.id() {
+        for saved in config
+            .workspaces
+            .iter()
+            .filter(|saved| saved.applied.iter().any(|name| name == branch))
+        {
+            let merge = resolve_any(repo, &saved.merge_ref)?;
+            let parents = parents(mut_repo, saved)?
+                .iter()
+                .map(|commit| commit.id().clone())
+                .collect();
+            rewrite::rebase_commit(mut_repo, merge, parents)
+                .await
+                .map_err(jj)?;
+        }
+    } else {
+        mut_repo
+            .transform_descendants(basic::children(repo, &head).await?, async |mut rewriter| {
                 rewriter.replace_parent(head.id(), [new.id()]);
-            }
-            rewriter.rebase().await?.write().await?;
-            Ok(())
-        })
-        .await
-        .map_err(jj)?;
+                rewriter.rebase().await?.write().await?;
+                Ok(())
+            })
+            .await
+            .map_err(jj)?;
+    }
+    if selections.is_empty() {
+        mut_repo.set_local_bookmark_target(branch.as_ref(), RefTarget::normal(new.id().clone()));
+        return Ok(());
+    }
     mut_repo.rebase_descendants().await.map_err(jj)?;
     let current_wc = mut_repo
         .store()

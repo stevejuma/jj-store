@@ -27,6 +27,7 @@ export type StackCommit = {
   createdAt: number;
   email: string;
   immutable: boolean;
+  immutableReason?: string;
   /** Provider graph metadata; absence is reserved for the linear mock. */
   graph?: Pick<
     import("../../projects/repository-log.js").RepositoryLogRevision,

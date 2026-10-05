@@ -1571,3 +1571,18 @@ terminal outcomes use only original recovery, never reannounce lost selection or
 recreate missing staged state. Setup adds no automatic initialization on a read
 and does not qualify membership/switching, content transfer, graph actions or
 transport.
+
+Stack creation makes an independent bookmark at the target or a dependent
+bookmark at a selected applied head, then applies it. Positional branch creation
+labels the selected commit or its single parent without rewriting content.
+Renaming updates applied bookmark names in all saved configurations. Rewording
+and empty-commit insertion use native rewrite/rebase and preserve merge/WIP
+change identities. Target bookmark names and reserved retention refs remain
+protected. Bounded point inspection of displayed commits reports configured JJ
+immutable/target protection; hidden objects cannot be mutation sources.
+
+The first commit on a bookmark still pointing at the workspace target MUST fork
+from that target without rewriting unrelated target children. Explicitly
+retarget only the retained merges applying that bookmark; later commits use
+normal insertion and descendant propagation. Empty Commit selections create an
+empty commit. Refresh must not reconstruct these already-correct parent sets.

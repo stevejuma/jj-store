@@ -116,3 +116,21 @@ pub(super) fn rewritable(
     }
     Ok(())
 }
+
+/// Object presence alone never authorizes an arbitrary historical rewrite.
+pub(super) fn commit(repo: &ReadonlyRepo, id: &str) -> Result<Commit> {
+    let id = jj_lib::backend::CommitId::try_from_hex(id).ok_or(Error::Invalid)?;
+    if id.as_bytes().len() != repo.store().commit_id_length() {
+        return Err(Error::Invalid);
+    }
+    if RevsetExpression::all()
+        .intersection(&RevsetExpression::commits(vec![id.clone()]))
+        .evaluate(repo)
+        .map_err(jj)?
+        .is_empty()
+        .map_err(jj)?
+    {
+        return Err(Error::Invalid);
+    }
+    repo.store().get_commit(&id).map_err(jj)
+}

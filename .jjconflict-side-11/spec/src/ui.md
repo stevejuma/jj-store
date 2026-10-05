@@ -2475,3 +2475,7 @@ destructive confirmation explaining that only saved workspace configuration is
 removed: branches and unfinished native JJ work are retained. Successful
 deletion closes Settings and updates workspace selection; no generic
 commit/file/hunk command is enabled.
+
+Local stack/basic commit actions consume native previews and point inspection
+for displayed commits. UI commit mutability never comes from graph position or
+mock fixtures. Missing inspection support leaves those actions unavailable.

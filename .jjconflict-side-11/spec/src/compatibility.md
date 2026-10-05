@@ -864,3 +864,7 @@ LocalStacksPreview endpoint. Source-derived OpenAPI and TypeScript capture both
 shapes. Real JJ 0.45.1 fixtures verify selected/unselected content and retained
 merge/WIP change identities; TOML version 1 and native storage formats stay
 unchanged. Hunk and later graph capabilities require their own acceptance.
+
+LocalStacksCommand v1 adds CreateStack, CreateBranch, RenameBranch, Reword and
+Empty; LocalStacksInspection v1 is an additive bounded advisory read. Native JJ
+0.45.1 and configuration TOML v1 remain unchanged.

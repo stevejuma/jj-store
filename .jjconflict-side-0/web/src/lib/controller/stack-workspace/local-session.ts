@@ -1,3 +1,6 @@
+import { inspectLocalCommits } from "./local-inspection.js";
+import { localMutationKinds } from "./local-mutations.js";
+import type { StackCommit } from "./types.js";
 import { ApiError, fullId, type Model } from "../../api/client.js";
 import type { StoreDataSource } from "../native-data-source.js";
 import { isLocal, type LocalReadSnapshot } from "../repository-profile.js";
@@ -62,14 +65,31 @@ export class LocalStacksSession {
       ) ?? null
     );
   }
-  project(snapshot: WorkspaceSnapshot) {
+  async inspect(commits: StackCommit[]) {
+    await inspectLocalCommits(
+      this.source.stacks,
+      this.state,
+      this.binding.generation,
+      commits,
+      this.signal,
+    );
+  }
+  async project(snapshot: WorkspaceSnapshot) {
     const result = this.state
       ? projectLocalStacks(snapshot, this.state)
       : snapshot;
     if (!this.source.stacks?.preview)
       result.capabilities = result.capabilities.filter(
-        (kind) => kind !== "create_commit",
+        (kind) => !localMutationKinds.some((mutation) => mutation === kind),
       );
+    if (!this.source.stacks?.inspect)
+      result.capabilities = result.capabilities.filter(
+        (kind) =>
+          !localMutationKinds.some(
+            (mutation) => mutation !== "create_commit" && mutation === kind,
+          ),
+      );
+    await this.inspect(result.stacks.flatMap((stack) => stack.commits));
     return result;
   }
   async references(
@@ -119,7 +139,7 @@ export class LocalStacksSession {
     const snapshot = stackReadContext(this.current(), request, this.signal);
     const command = request.command;
     const local = localStacksCommand(snapshot, command);
-    if (local.kind === "commit") {
+    if (localMutationKinds.some((kind) => kind === command.kind)) {
       if (!this.source.stacks.preview) return unavailableStackCommand();
       const preview = await this.source.stacks.preview({
         version: 1,
