@@ -48,8 +48,11 @@
     </div>
     <section class="lc-channel-settings__details">
       <h2>Details</h2>
-      <div class="lc-channel-settings__details-card">
-        {#if details}{@render details()}{:else}
+      {#if details}
+        {@render details()}
+        {#if children}{@render children()}{/if}
+      {:else}
+        <div class="lc-channel-settings__details-card">
           {#if onRename}<Button
               variant="ghost"
               class="lc-channel-settings__row"
@@ -81,9 +84,9 @@
             onOpen={onClose}
             openLabel="Open thread conversation"
           />
-        {/if}
-        {#if children}{@render children()}{/if}
-      </div>
+          {#if children}{@render children()}{/if}
+        </div>
+      {/if}
     </section>
     {#if actions}{@render actions()}{/if}
   </div></AppShell.Sidebar.Body

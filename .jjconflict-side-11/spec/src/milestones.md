@@ -152,8 +152,8 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042 |
-| M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043 |
+| M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043 |
 | M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042 |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -93688,6 +93688,124 @@ entries.
     "web/tests/real/stacks-browser.spec.ts#cold_local_megamerges_apply_unapply_and_named_wip_survive_reload"
   ],
   "out_of_scope": "Root aggregate check/test/build/spec:check, full Rust workspace and unrelated UI suites, full registered capture inventory, RustFS qualification, registry publication, visual comparisons/baselines and unqualified graph/file/hunk commands. No milestone promotion."
+},
+{
+  "id": "E-M21-043",
+  "tasks": [
+    "M21",
+    "M21.1"
+  ],
+  "date": "2026-10-05",
+  "revision": "sqztzrsrmmltlmtqqrmkpyxxrtwyzxpw",
+  "kind": "Workspace Settings single Details frame, matching row padding and inline actions",
+  "versions": "Existing JJ/jj-lib 0.45.1 and foundational package ranges unchanged; Vitest 4.1.11, Node 26.9.0, pnpm 10.32.1.",
+  "formats": "Presentation only. Local TOML/command version 1, native state, OpenAPI/generated types and layout formats unchanged.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/settings.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/community-channel-settings/CommunityChannelSettings.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSettings.svelte",
+    "web/tests/real/stacks-browser.spec.ts"
+  ],
+  "requirements": [
+    "JST-UI-020",
+    "JST-DOC-002",
+    "JST-GOV-002",
+    "JST-GOV-003"
+  ],
+  "before": "Workspace Settings nested a bordered field group and action row inside the Threads Details frame. Workspace ID followed the form, Save settings/Cancel stacked beside explanatory text. Its 8.8px/8px padding differed from editable rows' 12px/16px.",
+  "scope": "Reuse existing owned Threads Settings composition, read-only copy row, Settings field group, Button, Separator and Lucide icons. A custom details snippet supplies one rounded frame, while the default Threads frame stays unchanged. Workspace ID is first with scoped matching 12px block/16px inline padding. Name, target and the icon Cancel/Save action row remain inside one frame with an internal separator and no action explanation. Draft/validation/preview/confirmation behavior stays unchanged. The existing cold browser locator is renamed to Save.",
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte",
+      "result": "fail",
+      "failures": 4,
+      "note": "before.log: all four Settings stories reject missing first Workspace ID row."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories.log: initial seven pass; subsequent user correction keeps buttons inside the shared frame and requests equal ID padding."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte -t EditWorkspaceSettingsWithRetainedDraft",
+      "result": "fail",
+      "failures": 1,
+      "note": "before-contained-actions.log: one expected contained-action failure, three skipped."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+      "result": "fail",
+      "failures": 4,
+      "note": "contained-stories.log: four Settings failures measure 8.8px versus 12px ID block padding; three Threads pass. Svelte removed the selector because the wrapper is a child component. Changed to a global selector scoped by the workspace-specific class."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "fail",
+      "failures": 1,
+      "note": "web-check-final.log: zero errors, one unused CSS selector warning. catalog-check-final.log rejects that warning. Corrected scoped descendant selector without weakening geometry assertions."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "verified-stories.log: final seven stories pass. Retained edit/preview/cancel/readonly/Delete behavior and unchanged Threads interaction/accessibility included."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial web/catalog/ownership/architecture logs pass; final web-check-verified.log/catalog-check-verified.log have zero errors/warnings and 229 catalog boundaries. Architecture 1096 modules, ownership 23 chapters/173 requirements pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": "spec-first.log: docs guide and coverage update lacked mapped documentation.md. Added the governing Settings documentation requirement."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-validate.log: five validators, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "pnpm exec prettier --write (changed supported source/spec/guide and coverage files); pnpm exec prettier --check (same paths, historical ledger excluded)",
+      "result": "pass",
+      "failures": 0,
+      "note": "format.log, docs-format.log, documentation-format.log, contained-format.log, css-format.log, coverage-format.log, final-coverage-format.log, verified-coverage-format.log, format-check.log and format-verified.log."
+    },
+    {
+      "command": "pnpm docs:review application (specific Details ordering/actions review); pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "docs-review.log/docs-review-final.log/docs-review-verified.log acknowledge only application source changes after reviewing the Settings guide. docs-check.log/docs-check-final.log: nine diagrams, 139 files / 13,952,428 bytes, valid links/anchors. No UI/Rust build required."
+    },
+    {
+      "command": "CUA read-only live demo Settings review at http://127.0.0.1:7476/",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial view confirmed single frame/row order/icons; final geometry confirms 1px frame, no outer nested frame, Save/Cancel both inside, and ID/name paddings of 12px 16px 12px 16px. Live saved workspace values untouched; no baseline update."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final verified logs: 142 tasks, six protected files/four canonical chapters, five validators/23 chapters/173 requirements, 1096 architecture modules and ownership pass. Historical 524 evidence objects and raw JSON prefix preserved."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "tests": [],
+  "next": "Commit this verified UI refinement and preserve live Vite 7476/backend 7478.",
+  "summary": "Seven directly affected Settings/Threads interaction/accessibility stories pass, with first-row, one-frame, equal four-sided padding, contained actions, separator, icons and aligned button geometry assertions. Type/ownership/architecture/docs checks and live HMR measurements pass. No milestone promotion.",
+  "out_of_scope": "UI-only targeted policy: Rust builds/tests, root aggregates, unrelated stories and full suites, new cold built-bundle acceptance, package publication and screenshot comparisons/baselines. No startup/lifecycle/generated runtime asset behavior changed; existing real-folder test only follows the renamed button."
 }
 ]
 ```

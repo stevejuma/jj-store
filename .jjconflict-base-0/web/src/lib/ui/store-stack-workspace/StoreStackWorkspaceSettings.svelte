@@ -2,8 +2,11 @@
   import { untrack } from "svelte";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import { Separator } from "@lapismd/design-core/shadcn/separator";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import FolderKanban from "@lucide/svelte/icons/folder-kanban";
+  import Save from "@lucide/svelte/icons/save";
+  import X from "@lucide/svelte/icons/x";
   import Trash from "@lucide/svelte/icons/trash-2";
   import CommunityChannelSettings from "../community-channel-settings/CommunityChannelSettings.svelte";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
@@ -72,6 +75,7 @@
     {#snippet identity()}<FolderKanban data-workspace-icon />{/snippet}
     {#snippet details()}
       <form
+        class="store-work__form-sections"
         aria-label="Workspace settings"
         onsubmit={(event) => {
           event.preventDefault();
@@ -84,7 +88,16 @@
             });
         }}
       >
-        <Field.Group class="community-settings__option-group">
+        <Field.Group
+          class="stack-workspace-settings__details community-settings__option-group lc-channel-settings__details-card"
+        >
+          <StoreReadOnlyRow
+            label="Workspace ID"
+            value={workspace.id}
+            standalone
+            stacked
+            copyable
+          />
           <StoreWorkField
             label="Workspace name"
             id="stack-workspace-name"
@@ -120,32 +133,24 @@
               onLoadMore={() => void controller.branches.load()}
             />
           </StoreWorkField>
-        </Field.Group>
-        {#if dirty && problem}<p role="alert">{problem}</p>{/if}
-        <div class="store-settings__action-row">
-          <span>Applied branches and unfinished work are retained.</span>
-          <div class="store-settings__actions">
+          {#if dirty && problem}<p role="alert">{problem}</p>{/if}
+          <Separator />
+          <div class="flex justify-end gap-2 px-4 py-3">
             <Button
               variant="outline"
               type="button"
               disabled={disabled || !dirty}
-              onclick={reset}>Cancel</Button
+              onclick={reset}
+              ><X data-icon="inline-start" aria-hidden="true" />Cancel</Button
             >
             <Button
               type="submit"
               disabled={disabled || !dirty || Boolean(problem)}
-              >Save settings</Button
+              ><Save data-icon="inline-start" aria-hidden="true" />Save</Button
             >
           </div>
-        </div>
+        </Field.Group>
       </form>
-      <StoreReadOnlyRow
-        label="Workspace ID"
-        value={workspace.id}
-        standalone
-        stacked
-        copyable
-      />
     {/snippet}
     {#snippet actions()}
       <section
@@ -170,3 +175,9 @@
     {/snippet}
   </CommunityChannelSettings>
 {/if}
+
+<style>
+  :global(.stack-workspace-settings__details .store-readonly-row) {
+    padding: 0.75rem 1rem;
+  }
+</style>

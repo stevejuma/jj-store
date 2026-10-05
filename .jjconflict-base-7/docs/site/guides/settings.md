@@ -66,9 +66,10 @@ resolve a reported maintenance condition.
 ## Local Stacks workspace settings
 
 For a registered ordinary JJ repository, open **Stacks → Workspace actions →
-Settings**. The inline sidebar edits the active workspace name and target
-branch. The branch picker searches available unambiguous heads. Save reviews the
-exact change; Cancel leaves the saved configuration unchanged.
+Settings**. The Details table starts with the copyable Workspace ID, followed by
+the active workspace name and target branch. The branch picker searches
+available unambiguous heads. Save reviews the exact change; Cancel leaves the
+saved configuration unchanged.
 
 Deleting a workspace requires confirmation. It removes the saved workspace
 configuration, preserving the checkout, branches, commits and unfinished native

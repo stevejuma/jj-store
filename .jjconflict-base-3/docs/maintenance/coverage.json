@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Workspace actions now open Threads-style Settings for local name and target edits, retaining drafts through previews and preserving native JJ work on confirmed configuration removal.",
-      "fingerprint": "552733d28cabdfc5131b24c413acaa5cd61e588dc2a4a127e1f783676f90e37d"
+      "reason": "Reviewed final workspace Details frame containing ID/name/target, matching row padding, and separated inline icon Cancel/Save actions; native command semantics and Threads default framing stay unchanged.",
+      "fingerprint": "ab22899684a15695f36d4c565a631752dbd95625e2ed7bce1cdedb647e934f4c"
     }
   },
   {

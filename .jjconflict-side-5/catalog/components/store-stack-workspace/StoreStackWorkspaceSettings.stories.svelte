@@ -17,7 +17,52 @@
     await userEvent.click(
       await portal.findByRole("menuitem", { name: "Settings" }),
     );
-    return c.findByRole("complementary", { name: "Workspace settings" });
+    const panel = await c.findByRole("complementary", {
+      name: "Workspace settings",
+    });
+    const form = within(panel).getByRole("form", {
+      name: "Workspace settings",
+    });
+    const group = form.querySelector(".community-settings__option-group")!;
+    expect(group.firstElementChild).toHaveClass("store-readonly-row");
+    expect(group.firstElementChild).toHaveTextContent("Workspace ID");
+    expect(
+      group.parentElement?.closest(".lc-channel-settings__details-card"),
+    ).toBeNull();
+    expect(
+      within(form).queryByText(
+        "Applied branches and unfinished work are retained.",
+      ),
+    ).toBeNull();
+    expect(
+      form.querySelector('[data-ui-component="separator"]'),
+    ).not.toBeNull();
+    const save = within(form).getByRole("button", { name: "Save" });
+    const cancel = within(form).getByRole("button", { name: "Cancel" });
+    for (const button of [save, cancel]) expect(group).toContainElement(button);
+    const idPadding = getComputedStyle(group.firstElementChild!);
+    const namePadding = getComputedStyle(
+      within(form)
+        .getByLabelText("Workspace name")
+        .closest(".community-settings__option-row")!,
+    );
+    for (const side of [
+      "paddingTop",
+      "paddingRight",
+      "paddingBottom",
+      "paddingLeft",
+    ] as const)
+      expect(idPadding[side]).toBe(namePadding[side]);
+    for (const button of [save, cancel])
+      expect(
+        button.querySelector('svg[data-icon="inline-start"]'),
+      ).not.toBeNull();
+    expect(
+      Math.abs(
+        save.getBoundingClientRect().top - cancel.getBoundingClientRect().top,
+      ),
+    ).toBeLessThanOrEqual(1);
+    return panel;
   }
 </script>
 
@@ -42,17 +87,13 @@
     await userEvent.click(
       await portal.findByRole("option", { name: /feature\/api/ }),
     );
-    await userEvent.click(
-      settings.getByRole("button", { name: "Save settings" }),
-    );
+    await userEvent.click(settings.getByRole("button", { name: "Save" }));
     expect(await portal.findByText(/Focused work.*feature\/api/)).toBeVisible();
     await userEvent.click(
       portal.getByRole("button", { name: "Cancel preview" }),
     );
     expect(name).toHaveValue("Focused work");
-    await userEvent.click(
-      settings.getByRole("button", { name: "Save settings" }),
-    );
+    await userEvent.click(settings.getByRole("button", { name: "Save" }));
     await userEvent.click(
       await portal.findByRole("button", { name: "Apply command" }),
     );
@@ -130,18 +171,14 @@
     const settings = within(await openSettings(canvasElement));
     const name = settings.getByLabelText("Workspace name");
     await userEvent.clear(name);
-    expect(
-      settings.getByRole("button", { name: "Save settings" }),
-    ).toBeDisabled();
+    expect(settings.getByRole("button", { name: "Save" })).toBeDisabled();
     expect(settings.getByRole("alert")).toHaveTextContent(
       "Enter a workspace name",
     );
     await userEvent.type(name, "Discard this draft");
     await userEvent.click(settings.getByRole("button", { name: "Cancel" }));
     expect(name).toHaveValue("Daily work");
-    expect(
-      settings.getByRole("button", { name: "Save settings" }),
-    ).toBeDisabled();
+    expect(settings.getByRole("button", { name: "Save" })).toBeDisabled();
   }}
 />
 <Story

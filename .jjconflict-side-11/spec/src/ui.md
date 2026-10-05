@@ -2426,10 +2426,14 @@ change latency and recovery require cold built-bundle qualification.
 JST-UI-020's workspace actions menu opens active named workspace Settings in the
 standard right application sidebar, reusing Threads settings identity, detail
 and destructive-action presentation. Settings use existing bordered Settings
-field rows for name and a Command View target-branch picker. Drafts survive
-preview cancellation and stale-command errors; unavailable local capabilities
-disable edits. Save reviews the exact name/target command before execution.
-Delete workspace requires a destructive confirmation explaining that only saved
-workspace configuration is removed: branches and unfinished native JJ work are
-retained. Successful deletion closes Settings and updates workspace selection;
-no generic commit/file/hunk command is enabled.
+field rows for name and a Command View target-branch picker. One bordered group
+starts with Workspace ID, followed by name and target, without nested frames. A
+separator precedes one horizontal row of Cancel and Save buttons with icons
+inside that same rounded frame; the row has no explanatory label. Workspace ID
+padding matches the editable rows. Drafts survive preview cancellation and
+stale-command errors; unavailable local capabilities disable edits. Save reviews
+the exact name/target command before execution. Delete workspace requires a
+destructive confirmation explaining that only saved workspace configuration is
+removed: branches and unfinished native JJ work are retained. Successful
+deletion closes Settings and updates workspace selection; no generic
+commit/file/hunk command is enabled.

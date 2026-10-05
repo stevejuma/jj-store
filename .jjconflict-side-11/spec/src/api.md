@@ -2206,4 +2206,6 @@ has no prepared operation, archive, durable receipt or automatic replay
 contract.
 
 Stacks canvas spacing and fixed columns are client presentation governed by
-JST-UI-020; they do not alter local Stacks transport or configuration.
+JST-UI-020; they do not alter local Stacks transport or configuration. Workspace
+Settings row ordering, borders and Save/Cancel presentation also remain
+client-only; Update/Delete request contracts are unchanged.

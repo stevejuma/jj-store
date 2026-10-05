@@ -332,4 +332,6 @@ ledger entries and previous qualified provider evidence remain preserved.
 Local Stacks documentation includes active workspace Settings and confirmed
 configuration-only deletion. Generated API references reflect the additive
 Update/Delete variants. Source review keeps the ordinary jj-lib/TOML profile
-separate from historical retained-executor qualification.
+separate from historical retained-executor qualification. The Settings guide
+identifies the first copyable Workspace ID row and the Save/Cancel controls
+without implying any change to command semantics.

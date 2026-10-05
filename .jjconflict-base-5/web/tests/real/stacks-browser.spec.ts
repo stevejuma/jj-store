@@ -163,9 +163,7 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
     .getByRole("combobox", { name: "Workspace target branch", exact: true })
     .click();
   await page.getByRole("option", { name: /^docs/ }).click();
-  await settings
-    .getByRole("button", { name: "Save settings", exact: true })
-    .click();
+  await settings.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("dialog")).toContainText("Second renamed");
   await confirm();
   await expect(picker).toContainText("Second renamed");
