@@ -368,11 +368,33 @@ pub(super) async fn run_operations(
         Request::OperationsFiltered { query } => query,
         _ => "",
     })?;
-    let heads = [if let Some(lookup) = lookup {
+    let heads = [if let Some(lookup) = lookup.clone() {
         operation_neighbors::start(head, &filter, lookup, access.clone(), budget.clone()).await?
     } else {
         filter.start_at(head, || budget.work(1)).await?
     }];
+    if let Some(graph) = lookup.as_ref().and_then(|lookup| lookup.history.clone()) {
+        let after = match page.after {
+            Some(m::ObjectKey::Operation(id)) => Some(id),
+            None => None,
+            _ => return Err(Error::Invalid),
+        };
+        let (nodes, next) = crate::query::prepared::operations::history::read(
+            &heads[0],
+            graph,
+            &filter,
+            after,
+            page.limit,
+            |amount| budget.work(amount),
+            |operation| {
+                let node = operation_node(operation)?;
+                budget.output(&node)?;
+                Ok(node)
+            },
+        )
+        .await?;
+        return Ok((Nodes::Operations(nodes), next.map(m::ObjectKey::Operation)));
+    }
     let stream = jj_lib::op_walk::walk_ancestors(&heads);
     let mut stream = std::pin::pin!(stream);
     let mut nodes = vec![];
@@ -392,31 +414,36 @@ pub(super) async fn run_operations(
             Action::Stop => break,
             Action::Emit => {}
         }
-        let data = operation.store_operation();
-        let node = OperationNode {
-            id,
-            parents: operation
-                .parent_ids()
-                .iter()
-                .map(oid)
-                .collect::<Result<_>>()?,
-            view: m::ViewId::from_slice(data.view_id.as_bytes()).map_err(|_| Error::Unavailable)?,
-            description: data.metadata.description.clone(),
-            user: data.metadata.username.clone(),
-            host: data.metadata.hostname.clone(),
-            start: timestamp(&data.metadata.time.start),
-            end: timestamp(&data.metadata.time.end),
-            is_snapshot: data.metadata.is_snapshot,
-            workspace: data
-                .metadata
-                .workspace_name
-                .as_ref()
-                .map(|name| name.as_str().to_owned()),
-            attributes: data.metadata.attributes.clone(),
-            predecessor_data_present: data.commit_predecessors.is_some(),
-        };
+        let node = operation_node(&operation)?;
         budget.output(&node)?;
         nodes.push(node);
     }
     Ok((Nodes::Operations(nodes), position.finish()?))
+}
+
+fn operation_node(operation: &jj_lib::operation::Operation) -> Result<OperationNode> {
+    let id = oid(operation.id())?;
+    let data = operation.store_operation();
+    Ok(OperationNode {
+        id,
+        parents: operation
+            .parent_ids()
+            .iter()
+            .map(oid)
+            .collect::<Result<_>>()?,
+        view: m::ViewId::from_slice(data.view_id.as_bytes()).map_err(|_| Error::Unavailable)?,
+        description: data.metadata.description.clone(),
+        user: data.metadata.username.clone(),
+        host: data.metadata.hostname.clone(),
+        start: timestamp(&data.metadata.time.start),
+        end: timestamp(&data.metadata.time.end),
+        is_snapshot: data.metadata.is_snapshot,
+        workspace: data
+            .metadata
+            .workspace_name
+            .as_ref()
+            .map(|name| name.as_str().to_owned()),
+        attributes: data.metadata.attributes.clone(),
+        predecessor_data_present: data.commit_predecessors.is_some(),
+    })
 }

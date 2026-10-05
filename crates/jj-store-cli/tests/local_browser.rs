@@ -12,6 +12,8 @@ mod prepared_comparisons;
 mod prepared_details;
 #[path = "local_browser/prepared_operation_admission.rs"]
 mod prepared_operation_admission;
+#[path = "local_browser/prepared_operation_history.rs"]
+mod prepared_operation_history;
 #[path = "local_browser/prepared_operations.rs"]
 mod prepared_operations;
 #[path = "local_browser/prepared_points.rs"]

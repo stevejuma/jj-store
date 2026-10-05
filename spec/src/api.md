@@ -1,5 +1,13 @@
 # Read APIs and browser
 
+Prepared native/local operation pages may traverse compact captured topology
+before hydrating source metadata. Deep anchors and merge lookahead must not read
+prior operation bodies, views or commits. The anchor must occur in the selected
+start's exact JJ order and match the requested metadata filter. Response rows,
+probe semantics, operation pins and signed cursors remain unchanged. Compact
+edge replay observes ordinary work limits until retained continuations are
+qualified; oversized candidate windows cannot be reported as complete.
+
 Local operation graph requests may reuse an existing prepared generation even
 without a historical prefix or child selector. Their fresh selection seal uses
 only operation metadata, and each selected row retains its canonical fingerprint

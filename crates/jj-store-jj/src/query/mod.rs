@@ -512,7 +512,6 @@ impl GraphExecutor {
             let filter = query.map(language::operations::Filter::parse).transpose()?;
             let saved = filter
                 .as_ref()
-                .filter(|filter| filter.needs_index_lookup())
                 .and_then(|_| self.residents.get_memory(access.as_ref()))
                 .filter(|saved| saved.index.operations.is_some());
             if filter

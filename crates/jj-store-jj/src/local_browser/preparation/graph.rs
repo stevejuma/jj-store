@@ -188,6 +188,11 @@ pub(super) async fn load(
 }
 
 impl Prepared {
+    pub(in super::super) fn operation_history(
+        &self,
+    ) -> Option<Arc<prepared::operations::history::Graph>> {
+        self.resident.operations.history.clone()
+    }
     pub(in super::super) fn reference_filter(&self) -> &prepared::filters::Reader {
         &self.resident.filter
     }

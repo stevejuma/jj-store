@@ -1,5 +1,16 @@
 # Native JJ integration
 
+Prepared operation history may retain a disposable compact DAG containing exact
+operation identities, ordered parent identities and end timestamps, including
+timezone offsets. Capture it during the existing bounded operation pass. Verify
+selection, checksum, sorted identities, complete lookup membership and acyclic
+parent edges under disk/work and resident admission. The pinned JJ topology
+walker orders these compact nodes; no heuristic order may replace it. Ready
+operation pages skip prior bodies before hydrating the anchor and predicate/page
+window. Fresh source admission and canonical fingerprints remain mandatory for
+hydrated metadata. Invalid or nonmatching anchors fail explicitly. Traversal
+work remains bounded; retained traversal checkpoints are separate delivery work.
+
 Prepared local operation graph admission compares fresh selected operation
 metadata with the retained canonical fingerprint, without reading its view or
 creating a scoped commit backend. Unfiltered and metadata-filtered pages reuse

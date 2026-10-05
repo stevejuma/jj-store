@@ -41,17 +41,26 @@ fn verify_files(
         (Some(data), Some(sum)) if data.bytes > 0 && sum.bytes == 32 => {}
         _ => return Err(Error::Unavailable),
     }
-    match (
+    let operations_present = match (
         files.remove(super::super::prepared::operations::NAME),
         files.remove(super::super::prepared::operations::CHILDREN_NAME),
     ) {
-        (None, None) => {}
+        (None, None) => false,
         (Some(ids), Some(edges))
             if ids.bytes >= 232
                 && (ids.bytes - 104).is_multiple_of(128)
                 && edges.bytes >= 104
-                && (edges.bytes - 104).is_multiple_of(128) => {}
+                && (edges.bytes - 104).is_multiple_of(128) =>
+        {
+            true
+        }
         _ => return Err(Error::Unavailable),
+    };
+    if files
+        .remove(super::super::prepared::operations::HISTORY_NAME)
+        .is_some_and(|file| !operations_present || file.bytes < 192)
+    {
+        return Err(Error::Unavailable);
     }
     if files.len() != 2 {
         return Err(Error::Unavailable);

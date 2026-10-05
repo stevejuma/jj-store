@@ -200,9 +200,6 @@ impl Filter {
             .as_ref()
             .is_some_and(|value| !value.starts_with('@'))
     }
-    pub(crate) fn needs_index_lookup(&self) -> bool {
-        self.needs_prefix_lookup() || self.from.as_ref().is_some_and(|value| value.contains('+'))
-    }
     /// The callback seeks only children in the exact retained operation closure.
     pub(crate) async fn start_at_indexed(
         &self,

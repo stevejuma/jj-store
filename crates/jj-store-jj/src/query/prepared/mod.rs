@@ -17,6 +17,7 @@ use tables::Tables;
 
 const OPS: Table = TableDefinition::new("pending_ops");
 const OP_CHILDREN: Table = TableDefinition::new("local_operation_children");
+const OP_GRAPH: Table = TableDefinition::new("operation_graph");
 const SEEN_OPS: Table = TableDefinition::new("seen_ops");
 const PENDING: Table = TableDefinition::new("pending_commits");
 const NODES: Table = TableDefinition::new("nodes");
@@ -317,6 +318,9 @@ async fn build_with_tables(
         }
         let id = jj_lib::op_store::OperationId::from_bytes(&id);
         let op = budget.operation(&id).await?;
+        if budget.operation_lookup() {
+            operations::history::capture(&mut disk, &op, budget)?;
+        }
         for parent in op.parent_ids() {
             disk.put(OPS, parent.as_bytes(), &[])?;
             if budget.operation_lookup() {

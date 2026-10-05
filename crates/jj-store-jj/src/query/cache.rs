@@ -474,6 +474,7 @@ impl Cache {
                         super::prepared::filters::NAME,
                         super::prepared::operations::NAME,
                         super::prepared::operations::CHILDREN_NAME,
+                        super::prepared::operations::HISTORY_NAME,
                     ]
                     .iter()
                     .any(|required| {

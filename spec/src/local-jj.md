@@ -1,5 +1,16 @@
 # Local Git-backed JJ collaboration
 
+Ready local operation graph pages may use the shared checksum-verified compact
+operation DAG to order candidate identities and skip history before the anchor.
+They hydrate only the anchor, subsequent predicate candidates and the bounded
+page/probe window, without source views, Git objects or commit indexes. Preserve
+the exact pinned JJ order for merges, skewed/equal timestamps and historical
+starts. Current authorization and fresh operation fingerprints still apply to
+every hydrated row; a missing, out-of-scope or nonmatching anchor is invalid.
+Older derived generations retain their bounded reader until explicit upgrade.
+Compact traversal still charges ordinary work/cancellation; retaining its state
+to avoid replaying prior compact edges remains separate work.
+
 Prepared local operation comparisons MUST admit each requested operation from
 the retained identity lookup and verify fresh operation and view metadata
 against captured canonical fingerprints. They use the already verified immutable

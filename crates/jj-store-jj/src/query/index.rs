@@ -116,6 +116,7 @@ impl IndexStore for GuardedIndexStore {
         let missing_operations = [
             super::prepared::operations::NAME,
             super::prepared::operations::CHILDREN_NAME,
+            super::prepared::operations::HISTORY_NAME,
         ]
         .iter()
         .try_fold(false, |missing, name| {
@@ -155,6 +156,7 @@ impl IndexStore for GuardedIndexStore {
                 for name in [
                     super::prepared::operations::NAME,
                     super::prepared::operations::CHILDREN_NAME,
+                    super::prepared::operations::HISTORY_NAME,
                 ] {
                     self.budget
                         .work(1)

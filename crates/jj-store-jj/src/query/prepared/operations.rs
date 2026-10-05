@@ -1,5 +1,6 @@
 //! Disposable fixed-width retained-operation identities, never source authority.
 mod children;
+pub(crate) mod history;
 use super::*;
 use crate::query::memory::Lease;
 use jj_lib::object_id::{HexPrefix, PrefixResolution};
@@ -9,6 +10,7 @@ use std::io::{BufReader, BufWriter, Read as _, Write as _};
 
 pub(crate) const NAME: &str = "local-operations";
 pub(crate) const CHILDREN_NAME: &str = "local-operation-children";
+pub(crate) const HISTORY_NAME: &str = "operation-history";
 
 const MAGIC: &[u8; 8] = b"JSTLOP2\0";
 const FRAMING: u64 = 8 + 64 + 32;
@@ -21,6 +23,7 @@ struct Record {
 pub(crate) struct Lookup {
     ids: Vec<Record>,
     children: Option<children::Lookup>,
+    pub(crate) history: Option<Arc<history::Graph>>,
     _memory: Lease,
 }
 
@@ -63,7 +66,8 @@ pub(super) fn write(
     file.write_all(&digest.finalize()).map_err(io_error)?;
     file.flush().map_err(io_error)?;
     file.get_ref().sync_all().map_err(io_error)?;
-    children::write(path, selected, disk, source, space)?;
+    children::write(path, selected, disk, source, space.clone())?;
+    history::write(path, selected, disk, source, space)?;
     Ok(())
 }
 impl Lookup {
@@ -71,6 +75,7 @@ impl Lookup {
         self.ids.capacity() as u64 * 256
             + 64 * 1024
             + self.children.as_ref().map_or(0, |lookup| lookup.weight())
+            + self.history.as_ref().map_or(0, |graph| graph.weight())
     }
 
     pub(crate) fn load(
@@ -144,9 +149,18 @@ impl Lookup {
             &mut work,
             &mut read_bytes,
         )?;
+        let history = history::Graph::load(
+            path.parent().ok_or(Error::Corrupt)?,
+            selected,
+            &ids,
+            &mut work,
+            &mut read_bytes,
+        )?
+        .map(Arc::new);
         Ok(Self {
             ids,
             children,
+            history,
             _memory: memory,
         })
     }

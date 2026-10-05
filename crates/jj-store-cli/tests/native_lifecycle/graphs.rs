@@ -898,6 +898,8 @@ mod projection_acceptance;
 
 #[path = "graph_disk_recovery.rs"]
 mod disk_recovery_acceptance;
+#[path = "operation_history_pages.rs"]
+mod operation_history_acceptance;
 
 struct OperationReadsOnly(Arc<CommittedRead>);
 #[async_trait::async_trait]

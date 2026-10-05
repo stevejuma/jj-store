@@ -243,6 +243,12 @@ rebase its clean continuation onto this landing, then deliver indexed deep
 operation-history pages. This landing does not complete scale, Help or release
 qualification.
 
+E-READ-057 adds compact prepared operation topology for native/local candidate
+paging. Keep exact JJ merge/timestamp ordering and source admission while
+skipping operation bodies before deep anchors. The projection is disposable;
+retained traversal checkpoints still need delivery to avoid replaying compact
+edges. This follow-up remains in bounded-reads on the E-READ-056 main landing.
+
 ### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:

@@ -1,5 +1,12 @@
 # CLI and server commands
 
+Prepared operation-history fixtures compare deep filtered, unfiltered and
+historical-start pages with ordinary pinned JJ results under independent small
+body-read limits. Compact DAG tests cover exact merge/equal/skewed-timestamp
+ordering, framing, selection, checksum, membership, cycle and quota rejection.
+This delivery does not qualify retained traversal checkpoints, combined scale or
+installed CLI/runtime changes.
+
 The isolated local prepared-operation regression withholds every source view,
 Git object and source/prepared commit-index file. It compares unfiltered,
 metadata-filtered and historical/child-selector pages with ordinary results,

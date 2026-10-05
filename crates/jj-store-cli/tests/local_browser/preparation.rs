@@ -77,6 +77,33 @@ fn prepared_index_files(
     for pair in edges.chunks_exact(128).collect::<Vec<_>>().windows(2) {
         assert!(pair[0] < pair[1]);
     }
+    let history = files
+        .remove(Path::new("operation-history"))
+        .expect("local preparation exports exact compact operation topology");
+    assert!(history.len() >= 192);
+    assert_eq!(&history[..8], b"JSTOPG1\0");
+    assert_eq!(&history[8..72], selected.as_bytes());
+    assert_eq!(
+        u64::from_be_bytes(history[72..80].try_into().unwrap()),
+        identities.len() as u64
+    );
+    let checksum_at = history.len() - 32;
+    assert_eq!(
+        &history[checksum_at..],
+        Sha256::digest(&history[..checksum_at]).as_slice()
+    );
+    let mut at = 80;
+    for expected in records.chunks_exact(128) {
+        assert_eq!(&history[at..at + 64], &expected[..64]);
+        let parents = u32::from_be_bytes(history[at + 76..at + 80].try_into().unwrap()) as usize;
+        assert!(parents <= 1024);
+        at += 80;
+        for parent in history[at..at + parents * 64].chunks_exact(64) {
+            assert!(identities.contains(parent));
+        }
+        at += parents * 64;
+    }
+    assert_eq!(at, checksum_at);
     let filter = files
         .remove(Path::new("local-reference-filter"))
         .expect("local preparation exports its disposable substring index");
