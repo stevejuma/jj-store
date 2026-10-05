@@ -162,13 +162,17 @@ private archive bodies or source credentials.
 
 Thread directory and selected conversation reads start concurrently through the
 repository/session/profile query cache. Navigation cancels obsolete reads;
-confirmed reactions invalidate and reload only their exact target, retaining
-other reactions, messages, reply context, emoji definitions and raster URLs.
-Unknown outcomes keep the original intent and receipt identity. Explicit refresh
-invalidates displayed collections; SSE queues automatic active-view refresh.
-Reaction reads are deduplicated across main/reply views and limited to four
-concurrent requests. Reply counts and descendants use indexed passes without
-changing loaded-history, exact revision, draft or scroll semantics. Unneeded JJ
+caller cancellation releases read ownership synchronously, so an immediate
+identical retry cannot inherit its obsolete transport. Shared transport remains
+active until the final observer releases it. Exact-target invalidation matches
+the query arguments independently of the trailing epoch key. Confirmed reactions
+invalidate and reload only their exact target, retaining other reactions,
+messages, reply context, emoji definitions and raster URLs. Unknown outcomes
+keep the original intent and receipt identity. Explicit refresh invalidates
+displayed collections; SSE queues automatic active-view refresh. Reaction reads
+are deduplicated across main/reply views and limited to four concurrent
+requests. Reply counts and descendants use indexed passes without changing
+loaded-history, exact revision, draft or scroll semantics. Unneeded JJ
 log/reference reads do not run when restoring Threads. Cached reads retain
 current repository-session isolation and cursor-reset behavior; no batch API or
 durable read index is added.
@@ -1675,6 +1679,27 @@ selections use `stale_working_file`; invalid, unsupported, unavailable and
 oversized files retain separate responses. Physical Save has no native operation
 or companion selection in its result and requires no RustFS runtime.
 
+Local POST `/v1/local/repos/{repo}/working-tree/observe` is a bounded,
+non-publishing physical observation. Version-1 input binds the expected device
+binding generation and exact operation; it accepts no folder path, workspace
+name, replacement contents or command intent. Composition resolves the current
+registered folder and proves current WC metadata, sparse scope and actual ignore
+policy around a two-pass scan. The complete response retains operation/view,
+physical workspace identity, exact WC/tree identities and metadata/physical
+fingerprints, changed-path summaries and the obstacle count. It never exposes
+global policy paths/bytes, file contents or executable selection tokens.
+Oversize observations have no partial response. Stale, unavailable, unsupported,
+denied and busy reads remain distinguishable. This endpoint does not assign
+changes to a named combination, snapshot code or advertise writes.
+
+The owned client MUST validate complete observation records against the exact
+requested repository, binding generation and operation. Identity widths, safe
+ordered paths, tree/label terms, numeric and aggregate bounds, and coherent
+added/modified/deleted states are checked before acceptance. Native integers
+remain lossless; malformed and partial records cannot be promoted. Physical
+reads bypass historical query caching and automatic retries. Caller cancellation
+and transport disposal reject late completion, including response-body reads.
+
 Buzz shell gradient continuity and compact navigation picker surfaces are owned
 CSS presentation. The picker retains native repository/thread selection and
 keyboard navigation, with app-background surface tokens and spacing independent
@@ -2248,3 +2273,225 @@ retained ancestor projection and keep the outer operation/query cursor binding.
 A warm lookup never grants access or establishes committed membership. Missing
 artifacts retain bounded fallback or explicit preparation; no GET publishes or
 reconstructs an unbounded graph.
+
+## Local stack workspace frontend boundary
+
+The JST-UI-020 catalog owns TypeScript workspace snapshots, capability gates,
+file/hunk selections, exact loaded directory selections, per-stack inline drafts
+with exact staged selection lists, multi-file transfers to mutable commits or
+back to Unstaged, preview requests, command outcomes and request-status
+contracts. An injected adapter supplies them to the production controller. They
+are frontend contracts, not new HTTP/RPC endpoints or generated Rust schemas.
+The fixture adapter performs isolated in-memory transitions only. Column
+resizing preserves these selections and natural commit content heights without
+changing snapshot, request or draft state. Backend implementation was approved
+on 5 October 2026. Production eligibility, publication, physical checkout and
+durability MUST be qualified independently of the catalog. Versioned wire
+contracts MUST bind an authorized device binding, explicit code operation/view,
+named combination generation, exact content selection and original request
+identity. Numeric frontend revisions remain presentation state and MUST NOT
+substitute for those preconditions.
+
+The snapshot also identifies the workspace target branch and its exact head,
+with author/message metadata for its bookmark card. A separate injected history
+read accepts repository, snapshot revision, branch name, head, bounded limit and
+opaque continuation cursor, and returns newest-first commits plus the next
+cursor. The controller permits one page request at a time, deduplicates commit
+identities, stops at exhaustion and rejects non-advancing cursors. Refreshing to
+a different revision/head invalidates prior pages and late responses; teardown
+also discards late responses. History and its file diff remain read-only and
+separate from applied stacks, draft state and command inputs. The isolated mock
+and production operation-pinned adapter implement this frontend read contract;
+the contract itself grants no mutation or persistence authority.
+
+Production stack browsing reuses the existing LocalTrusted registry and code
+query endpoints. Optional branch continuations and stack histories remain
+bounded and bind repository, revision, opaque read key and exact head/base. The
+presentation revision is not a code authority. All production source reads
+validate the captured operation and binding generation; source IDs not issued
+within that scope cannot broaden a comparison. Preview/apply/status remain
+unavailable until a qualified durable command provider exists.
+
+The production App explicitly injects its repository/binding-scoped Stacks
+owner. Reference continuations retain exact operation context and unavailable
+bookmark targets. Loaded source ranges survive refresh only after validation of
+their exact head/base; new operations receive new cursors and annotations.
+Asynchronous reads check scope before issuing work and before caching results.
+Only a completely read candidate scope replaces the visible owner. Discovery or
+binding mismatch cannot grant access through a route or presentation identity.
+
+The frontend command union also carries optional exact selections to stage after
+confirmed branch creation, an optional parent stack for dependent creation,
+explicit above/below placement for empty commits and new branch heads,
+branch-specific rename/delete/squash, commit deletion and draft-based commit
+editing with exact additional selections. Immutable history cannot be rewritten;
+copying identifiers/messages and placing branch heads are read-only or bookmark
+operations. These contracts are UI adapter inputs only and introduce no service,
+RPC, CLI or persistence endpoints.
+
+Branch aggregate selections retain both the stack identity and the exact branch
+name. Their file list and diff include only that branch segment's commits;
+refresh preserves the same source while it exists. Hunk transfers resolve the
+aggregate to one mutable owning commit before staging or previewing a command.
+Ambiguous ownership remains read-only. Selecting a branch never replaces another
+column's open diff.
+
+Commit movement may carry an exact destination branch name with its stack
+identity. A header drop inserts the commit at that segment's head. Row sorting
+carries an exact target commit and above/below placement; existing directional
+reorder commands remain supported. Header feedback is scoped by stack and
+branch. Feedback and preview validation reject missing targets, self or
+redundant positions and moves that rewrite immutable history. These remain
+frontend mock inputs with no transport or persistence change.
+
+Compact column panel toggles and independent accessible column titles are
+presentation-only under JST-UI-020. The source-controlled icon and its
+hover/focus preview add no request, command, persistence or transport fields.
+
+Unstaged pinning uses Design Core's public `fixed` presentation property. Its
+expanded/collapsed position and temporary capacity fallback introduce no new
+workspace adapter, command, transport or persisted layout fields; file/hunk drag
+semantics and adjacent diff origins retain the existing frontend contract.
+
+## Versioned stacks execution inputs
+
+The service-owned stacks protocol under JST-LOCAL-005 defines exact physical,
+code and combination selection, typed prepare intent and opaque preparation
+identity for apply. Numeric frontend revision and client patch text are absent.
+Unknown fields and mixed native/Git identity profiles are rejected. Status
+separates code publication from checkout completion and never returns a historic
+receipt as the current workspace snapshot. This first contract slice provides
+validated owned records only; no new HTTP route or mutation capability is
+advertised until its provider and recovery evidence pass. Transport generation
+will follow the executable route inventory when those routes are introduced.
+
+The LocalTrusted operation-pinned query inventory adds `stack_history` with an
+exact Git SHA-1 head, optional base and bounded limit. Internal anchors are
+server-owned; HTTP callers supply only the opaque original-query cursor. The
+response carries the selected operation, head/base and graph commit nodes with a
+continuation, preserving explicit parents and graph annotations. Cold reads use
+the existing index-task condition and do not mutate source state. Strict
+request/schema generation and actual response capture cover this additive read
+variant. It grants no stack command or physical checkout capability.
+
+The local stack-history client revalidates the nested operation/head/base and
+version against its exact request, rejects oversized/non-advancing pages and
+invalid page limits before transport, and preserves the original opaque cursor.
+The envelope pin remains independently checked by the shared local query owner.
+
+The stack read projection independently checks the selected repository/profile,
+operation and binding generation, nested tree boundaries, page size and cursor
+progress before exposing provider data. File summary and selected patch reads
+accept caller cancellation in both native and local transports. Releasing one
+caller does not cancel another active observer's shared transport. Closing a
+stack read owner cancels only its reads, rejects late completion and leaves the
+repository transport owned by the application. Graph annotations and ordered
+file/mode/source metadata survive projection; presentation hunk IDs are never
+issued selection tokens or executable patch input.
+
+Optional controller read adapters retain an opaque presentation read key in
+addition to their exact provider operation/binding pin. Frontend numeric
+revisions are presentation counters, never command publication identities.
+Source summaries and selected patches carry independent cancellation and reject
+responses after owner invalidation. The adapter must not fall back to fixture
+files when a provider has not loaded that source. Capability reasons explain
+unavailable actions before preview; backend authorization and preparation remain
+independent mandatory checks.
+
+An optional presentation target-selection adapter names the current repository,
+opaque read key and UI revision plus an exact bookmark name/head from the
+displayed read scope. It is a read-context change, not workspace initialization
+or command preparation. Absent target and active combination are nullable
+presentation state; provider authorization and operation/binding validation
+remain mandatory.
+
+## Ordinary local Stacks transport
+
+JST-API-001 and JST-API-002 include `POST /v1/local/repos/{repo}/stacks`.
+Version-1 commands are Refresh, Setup, Create, Switch, Apply, Unapply,
+SetTarget, Update and Delete. Update carries workspace identity, name and target
+bookmark, changes the active named workspace atomically, and preserves its WIP.
+Delete carries a named workspace identity and removes only its local
+configuration, retaining checkout, branch references and native unfinished work.
+Commit creates a commit after an applied local bookmark and squashes exact
+selected WIP files into it while retaining the WIP child. Its selections
+identify source commit and repository-relative path. Advisory previews use
+`POST /v1/local/repos/{repo}/stacks/preview` with the same pinned request and
+return a bounded summary without snapshotting, creating configuration or
+publishing JJ state. Unsupported hunk selections remain rejected until
+qualified. Admission resolves the registered folder, validates binding
+generation and LocalTrusted Admin/same-origin access; client filesystem paths
+are forbidden. Commands validate the current operation and TOML revision.
+Refresh is explicitly a snapshotting mutation; operation-pinned query reads
+remain immutable. The response contains the selected JJ operation, local
+settings revision and named merge/WIP references, plus any post-publication
+checkout/settings warning. It has no prepared operation, archive, durable
+receipt or automatic replay contract.
+
+Stacks canvas spacing and fixed columns are client presentation governed by
+JST-UI-020; they do not alter local Stacks transport or configuration. Workspace
+Settings row ordering, borders and Save/Cancel presentation also remain
+client-only; Update/Delete request contracts are unchanged.
+
+Focused Stacks repository navigation adds only browser presentation fields:
+`context=stacks` is valid on existing Log/Op Log routes, and
+`stack_tab=branches|workspace` is valid on Stacks routes. Duplicate or
+incompatible fields are invalid; legacy Stacks routes default to Workspace.
+Exact operation and commit/operation selections keep their existing read
+contracts. Focused history reuses repository-wide reads, while the local Stacks
+owner survives tab changes and is disposed on repository/binding/access changes.
+No HTTP endpoint, generated DTO, local command or TOML format changes.
+
+Local Stacks adds advisory POST `/v1/local/repos/{repo}/stacks/inspect` with
+exact operation/configuration revision and up to 500 visible commit IDs. It
+returns mutable flags and protection reasons without initializing or
+snapshotting. CreateStack/CreateBranch/RenameBranch/Reword/Empty variants use
+the same guarded preview and apply boundary.
+
+LocalStacksCommand adds Transfer (exact target and source files), Split and
+Edit. Advisory preview validates the same source/target policy as execution; all
+source operations/configuration revisions remain exact. Whole-file inputs do not
+grant display-only hunk authority.
+
+Native local Stacks hunk selections are issued by the guarded read-only POST
+`/v1/local/repos/{repo}/stacks/hunks`. Tokens bind native source change
+identity, canonical path and complete before/after bytes; apply rederives them
+at the exact operation/configuration pin. Client patches and display-only IDs
+are rejected. Partial text deltas use native squash with emptied sources
+retained, without reconstructing the megamerge. Binary, conflict, mode/type and
+bounded-diff limits remain whole-file-only. Net branch comparisons remain
+presentation-only.
+
+Local graph commands use native `move_commits` insertion/reordering and full
+`squash_commits` for squash/uncommit. WIP is retained as a native child; graph
+rewrites do not reconstruct the merge. Branch squash/rebase discovers at most
+500 commits in its segment and stops at the next user bookmark boundary. Visible
+source identity, configured immutability and workspace-target protection are
+validated at preview and apply; retention commits are not graph sources.
+
+The ordinary local Stacks mutation profile now includes native bookmark deletion
+(top bookmark only; lower bookmarks and commits retained), abandonment, selected
+whole-file/native-hunk WIP discard, and complete native text-conflict
+resolution. Conflict terms are read lazily through guarded POST
+`stacks/conflict`; ordered three-term text conflicts use the existing Merge
+Editor. Multi-sided, structural, mode-conflicted and oversized conflicts retain
+native values and report that JJ resolution is required. Conflict paths are
+bounded to 50 per current read.
+
+Undo/Redo restores the native repository operation stack, including CLI work,
+with native descriptions and remote tracking semantics. Current Git bookkeeping
+is retained, as in JJ. TOML is not an Undo journal. Missing or restored
+references remain visible as unavailable choices/reasons; Refresh and Switch
+never rebuild membership automatically. Explicit Reapply saved branches
+reconciles membership and preserves WIP. Operation/config/source guards and
+unknown-outcome inspection remain required. Production file dragging uses exact
+loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
+branch comparisons remain read-only. Undo/Redo remains available without a
+selected named workspace.
+
+Dependent Stacks presentation continues to issue the existing bounded history
+query for its advertised top bookmark and target at one operation. Loaded native
+parent/bookmark facts establish segment boundaries; net file comparisons use the
+established lower boundary and head. This introduces no extra eager history
+query or backend segment authority. Unknown paginated boundaries cannot issue a
+misleading branch comparison.

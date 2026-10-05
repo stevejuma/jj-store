@@ -151,6 +151,79 @@ directory read routes add no CLI command, source mutation, installed executable
 change or real-RustFS qualification. Complete performance qualification remains
 the separate deferred slice.
 
+Local browser contract acceptance also exercises ordinary Stacks commands
+through the registered HTTP service, using explicit development executables and
+a disposable filesystem fixture. It does not replace installed JJ or qualify
+linked-native publication. Command-state responses include named merge/WIP
+identities and native conflict status.
+
+The installation combination owner exposes a bounded public selected-catalog
+projection with stable scope/principal admission and pending-coordination state.
+It returns no proposed after-state or private retention evidence. Current
+workspace discovery DTOs require registered operation/binding input; actual
+registered runtime composition, HTTP commands and writable UI remain separate.
+
+The private stack journal exposes validated service-owned command status and
+pending projections. Exact lookup authenticates the original actor, stable
+physical/profile scope, request and intent before projection; it does not accept
+a current code or combination generation. Pending discovery is actor scoped,
+bounded and excludes terminal receipts. Public results strip private execution
+archives, retention and physical evidence. These methods open only existing
+private state and add no route, CLI command or writable UI capability. Runtime
+registration admission and coordinated cancellation remain separate work.
+
+The existing cold filesystem-server registration fixture now qualifies the
+registered working-tree observation route alongside physical-file Save. It
+builds only development/test outputs, registers an isolated real Git-backed JJ
+folder, observes dirty bytes without publication, and captures generated
+response contracts. This acceptance adds no installed CLI command, implicit
+snapshot, code execution or companion format change; recoverable local stack
+commands remain a separate stage.
+
+The server-owned stack command journal retains validated exact preparations and
+monotonic historical receipts in bounded installation-private state outside
+checkouts. It binds the authenticated principal and physical/profile scope,
+rejects conflicting request reuse, and recovers exact status after reopen
+without current-state validation or reexecution. Missing state is unavailable;
+only explicit creation initializes it. Synced atomic selection preserves unknown
+replacement outcomes, and exact replay confirms selected durability. One
+unresolved publication/checkout blocks another publication in that scope;
+completed, rejected and retired receipts cannot reset to executable preparation.
+This primitive adds no route, installed CLI command, provider object retention,
+upstream head publication or physical checkout capability. Those remain the next
+recoverable execution gates under JST-LOCAL-005.
+
+The server's private preparation composition now joins real unpublished reword
+effects with the original principal/request/intent, exact preview, saved
+recovery witness and reserved retention. Complete pending archives are durably
+selected before retention and count toward the bounded journal. Exact retry
+resumes saved evidence after cancellation, process loss or source metadata loss;
+legacy records are never reinterpreted. Acknowledgement records only the
+matching retention commit/archive digest, and pending retention blocks
+publication. This data-only composition adds no route or installed CLI command.
+Real registration and combination authority, publication and guarded checkout
+remain required under JST-LOCAL-005 before writable controls.
+
+Registered command-context acceptance uses the real device registry and CLI
+folder provider, configured LocalTrusted Admin principal and bounded physical
+observation. Removed bindings, unauthorized caller modes, stale physical
+selections and missing active combinations cannot prepare new commands. Exact
+historical replay remains separate from live validation. Saved pending archives
+can resume after source operation/index loss and GC through current
+registration, without scanning or restoring that source. Combination ownership
+is still fixture-supplied for this adapter acceptance; no production command
+route or installed executable capability is added. Publication and guarded
+checkout remain unfinished.
+
+Private combination-state acceptance qualifies bounded installation/physical
+scope, principal ownership, immutable target boundaries, selected merge/WIP
+references and original pending-update recovery. Explicit creation starts empty;
+reads never initialize setup. Retained archive membership and the exact matching
+journal checkout receipt precede device selection. Metadata fixture receipts are
+not actual command publication or checkout evidence. No executable route,
+installed command, merge/WIP engine or writable capability is added by this
+state-owner slice.
+
 LocalTrusted installations with native storage own an independent conversion
 journal beside device registration. Preview captures a committed source
 operation, start retains the exact bounded archive before staging, and status
@@ -2064,3 +2137,151 @@ Native prepared child-selector regressions MUST work under a small metadata
 budget with complete inventory enumeration disabled. Cover mixed suffixes,
 branch ambiguity, later-head exclusion, selected-only operation reads, cold
 bounded behavior and current revocation; native index bytes remain unchanged.
+
+The local browser stack-history regression uses only disposable Git-backed JJ
+fixtures and the workspace-built development executable. It verifies bounded
+head/base pages, rejected foreign anchors and byte-identical source metadata and
+unsnapshotted physical files. Existing LocalTrusted HTTP query/cursor admission
+and explicit cold-index preparation are reused; no installed service or user
+repository is initialized, modified or converted by this acceptance lane.
+
+## Exact retained unchanged-tree execution composition
+
+The private server composition MAY join an original retained reword to exact
+head publication and unchanged-tree pointer completion. It MUST authenticate and
+look up original request/intent/prepared identity before live execution. Legacy,
+rejected, retired and completed records cannot create new operations. Before
+first publication, current registered physical/combination policy and the full
+physical guard MUST match the original selection. PublicationUnknown MUST be
+durable before provider selection; exact publication evidence selects the
+original Published/Required receipt.
+
+A checkout witness MUST be canonical, privately saved and linked to the original
+retained key/recovery digest, candidate operation/view and physical fingerprint
+before pointer completion. Saving or retrying it cannot replace another witness
+or reset a terminal receipt. The journal MUST reserve bounded witness growth
+before publication, reject legacy execution promotion and validate saved linkage
+on reopen. Checkout acknowledgement requires the owning provider proof against
+that saved witness; the physical fingerprint is historical original guard state,
+not a fresh snapshot. Incomplete or blocked checkout remains discoverable with
+the original request. Retries resume exact saved execution and never prepare
+another operation. This composition does not imply selected combination updates,
+tree-changing checkout, production routes or writable UI capabilities; those
+retain their own qualification gates.
+
+New local execution admission reserves 32 KiB per request for receipt and saved
+checkout growth; legacy metadata-only admission retains its 16-KiB reservation.
+An existing local record must pass the current growth reservation before
+entering PublicationUnknown. Saved unchanged-tree witnesses admit at most 8 KiB.
+Records with a saved checkout use private catalog version 3; versions 1 and 2
+remain readable with absent new fields omitted, never upgraded by a status read.
+
+Historical version-2 completed receipts without a checkout witness remain
+readable as frozen outcomes. They cannot create a new current execution proof.
+Metadata-owner tests may explicitly load those legacy receipt fixtures, but
+current local publication/checkout transitions require typed provider proofs.
+Fixture receipts do not qualify a Setup, combination or undo engine.
+
+Before publication or pointer completion, recovered provider selection MUST
+match the journal's original retention commit, archive digest and prepared
+operation/view. A key alone is insufficient. Identity mismatch may restore
+immutable archived source records but MUST NOT select a head or complete a
+checkout, and must retain the original pending receipt without re-preparation.
+
+First apply of a retained Prepared request MUST resolve authorized registration
+and restore its exact archived operation, extras and indexes before obtaining
+source-backed current context. Restoration uses the original foreground lease;
+it cannot prepare another candidate or select a head. After restoration, current
+physical/code/combination selection and the complete physical guard MUST still
+match the original request before PublicationUnknown or publication. Missing or
+changed combination state and new editor bytes retain Prepared without checkout
+or head selection. Revoked registration MUST fail before restoration. Terminal
+historical retry MUST NOT restore lost source state.
+
+For an unpublished retained reword, runtime MUST revalidate current
+combination/code/physical selection and immutable parent ancestry before
+publication, including original PublicationUnknown retry. Exact source policy
+comes from trusted current combination state, not client heads. Already-selected
+publication MUST use an acknowledgement-only provider path if live policy is
+skipped; loss of the selected original candidate cannot trigger reannouncement.
+Completed/retired/rejected outcomes remain historical and unchanged.
+
+A typed Published receipt MUST use acknowledgement-only recovery even when no
+checkout witness was yet saved. Lost head selection cannot turn a known
+publication back into new execution; retain its original Published receipt and
+fail recovery without recreating the candidate.
+
+## Durable tree-changing plan linkage
+
+The installation-private plan owner MUST use an explicitly created, separately
+locked catalog outside checkouts, scoped to the command journal's installation,
+repository, physical workspace, JJ workspace and profile. It retains at most 128
+canonical plans, 32 MiB each and 64 MiB aggregate, without eviction. Reads never
+initialize missing state. Exact replay syncs selected bytes and conflicting
+request reuse fails. Unknown replacement or sync acknowledgements remain
+unknown.
+
+Journal composition MUST authenticate and find the original request before
+touching plan storage. With lock order journal then plan store, validate the
+original prepared key, recovery, retained commit/archive, native candidate,
+physical selection, source/candidate trees and ordered affected paths. Persist
+and sync the plan before selecting only its digest and encoded length in a
+version-4 journal. Preserve version-1/2/3 bytes when no plan reference exists.
+Tree-plan references and unchanged-tree checkout witnesses are mutually
+exclusive; new references require retained Prepared state. Terminal retries may
+read an existing reference but cannot attach a new one or reset an outcome.
+
+Tree-changing local publication requires the saved reference. Loading MUST
+resolve and validate the exact original plan before provider revalidation; no
+replacement may be generated for missing or inconsistent state. These private
+inputs do not attest publication, physical installation, selected combination
+after-state or command success, and add no route or writable capability.
+
+The private CLI composition fixtures additionally qualify complete original
+physical inventory selected alongside the exact saved plan. Journal version 5
+references inventory digest, encoded length and plan digest after catalog
+version-2 body sync. Original binding/authentication precedes catalog access;
+new changed-tree publication requires both references. Legacy inventory-free
+records retain bytes and read behavior, with no terminal upgrade or missing-body
+repair. These library paths add no CLI syntax, installed binary replacement or
+production mutation capability.
+
+## Private tree-file installation qualification
+
+The development test binary qualifies actual retained physical file effects and
+process loss before/after every no-replace move. It uses disposable real JJ
+folders and leaves native checkout/tree-state bytes original. No installed CLI
+command, server command route or writable production capability follows from
+this proof.
+
+## Private native tree completion qualification
+
+The existing isolated test binary also qualifies native tree-state then checkout
+selection and exact original-input replay after process loss at both boundaries.
+Provider completion retains installed file inodes and original backups, native
+path ordering and unchanged file states. It adds no installed CLI command,
+application receipt, combination selection or production capability.
+
+## Original combination acknowledgement ordering
+
+Private library composition binds a staged provider after-state before
+publication and retains native completion without acknowledging success.
+Matching combination selection and sync precede final journal acknowledgement;
+original retry cannot reselect older state. Journal version 6 is installation
+private, with legacy absent fields retained. Actual setup and merge/WIP command
+engines, public command transport and production writes remain unqualified.
+
+## Explicit private setup composition
+
+Initial Setup preparation resolves the registered folder and exact source
+selection, verifies no active combination, and derives its after-state from the
+actual provider archive. It retains the original preview before code retention,
+binds the combination before publication, and finishes native pointer and
+combination selection before success. Recovery uses only the saved candidate; no
+CLI syntax, installed binary replacement or writable production route is implied
+by private library qualification.
+
+Ordinary local Stacks Settings and removal remain application HTTP commands
+through the registered filesystem runtime. They use jj-lib directly; no new CLI
+syntax, installed executable or service is introduced. Focused registered
+local-browser responses cover Update and Delete alongside the core commands.

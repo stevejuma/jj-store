@@ -670,17 +670,18 @@ impl Cache {
                 budget.index_memory.include(saved.memory.clone());
             }
             residents.remember(
-                index,
-                entry.path.clone(),
+                resident::Insertion {
+                    index,
+                    path: entry.path.clone(),
+                    files: receipt.files.clone(),
+                    index_bytes: budget.index_memory.directory_bytes().saturating_add(
+                        entry.resident.as_ref().map_or(0, |saved| saved.index_bytes),
+                    ),
+                    report: report.clone(),
+                },
                 access,
-                receipt.files.clone(),
-                budget
-                    .index_memory
-                    .directory_bytes()
-                    .saturating_add(entry.resident.as_ref().map_or(0, |saved| saved.index_bytes)),
                 self.policy,
                 budget,
-                report.clone(),
             )?;
         } else if let Some(saved) = &entry.resident {
             saved.update_report(report.clone());

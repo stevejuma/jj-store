@@ -231,7 +231,7 @@
       within(diffColumn).getByText("Binary diff unavailable"),
     ).toBeVisible();
     await expect(within(diffColumn).getByRole("status")).toHaveTextContent(
-      "Binary or unavailable text diff for assets/logo.bin.",
+      "This file contains binary or invalid UTF-8 data.",
     );
     await userEvent.click(
       within(files).getByRole("button", { name: "src/lib.rs" }),

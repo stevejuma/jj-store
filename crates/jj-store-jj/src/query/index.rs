@@ -264,19 +264,32 @@ impl IndexStore for GuardedIndexStore {
         )))
     }
 }
+pub(super) struct LoaderSelection {
+    pub budget: Arc<Budget>,
+    pub root: PathBuf,
+    pub cache_policy: cache::Policy,
+    pub residents: Arc<cache::resident::Residents>,
+    pub required_filter: bool,
+    pub resident: Option<Arc<cache::resident::Saved>>,
+    pub access: Arc<dyn ReadAccess>,
+    pub preparing: bool,
+}
 pub(super) fn loader(
     stores: &NativeStores,
     settings: &UserSettings,
     path: &Path,
-    root: PathBuf,
-    budget: Arc<Budget>,
-    cache_policy: cache::Policy,
-    resident: Option<Arc<cache::resident::Saved>>,
-    residents: Arc<cache::resident::Residents>,
-    access: Arc<dyn ReadAccess>,
-    preparing: bool,
-    required_filter: bool,
+    selection: LoaderSelection,
 ) -> Result<RepoLoader> {
+    let LoaderSelection {
+        budget,
+        root,
+        cache_policy,
+        residents,
+        required_filter,
+        resident,
+        access,
+        preparing,
+    } = selection;
     stores
         .verify_cache_binding(path)
         .map_err(|_| Error::Unavailable)?;

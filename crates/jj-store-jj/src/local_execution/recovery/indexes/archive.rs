@@ -86,6 +86,8 @@ impl Source for Archive<'_> {
             parents: native.parents,
             change: native.change_id,
             timestamp: native.committer.timestamp.timestamp.0,
+            // Recovery builds topology; text filters are prepared separately.
+            description: None,
         })
     }
 }

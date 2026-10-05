@@ -12,6 +12,7 @@
     RepositoryWorkingCopy,
   } from "../../projects/repository-log.js";
   import type { Bookmark } from "../../projects/presentation.js";
+  import type { DiffUnavailableReason } from "../../projects/repository-diff.js";
   import type { StorePage } from "../community-navigation/model.js";
   import type { StoreController } from "../../controller/contracts.js";
   import { createRepositoryLogCanvas } from "../../projects/repository-log-canvas.js";
@@ -37,6 +38,7 @@
     selectedPath = null,
     files = [],
     patch,
+    unavailableReason,
     hasMoreBookmarks = false,
     hasMoreGraph = false,
     hasMoreFiles = false,
@@ -66,6 +68,7 @@
     selectedPath?: string | null;
     files?: FileListingFile[];
     patch?: string;
+    unavailableReason?: DiffUnavailableReason;
     hasMoreBookmarks?: boolean;
     hasMoreGraph?: boolean;
     hasMoreFiles?: boolean;
@@ -252,7 +255,8 @@
         (!!selectedPath &&
           controller?.state.detail?.pendingPatch === selectedPath)}
       unavailableReason={selectedPath
-        ? controller?.state.detail?.patchUnavailableReasons?.[selectedPath]
+        ? (controller?.state.detail?.patchUnavailableReasons?.[selectedPath] ??
+          unavailableReason)
         : undefined}
       {now}
       onSelectOperation={onSelectRevision}

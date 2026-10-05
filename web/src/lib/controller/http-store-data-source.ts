@@ -21,7 +21,6 @@ import type {
 import type { StoreMutationRequest } from "./store-mutation-types.js";
 import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
 import { HttpCollaborationDataSource } from "./http-collaboration-data-source.js";
-import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 
 import { HttpThreadsDataSource } from "./http-threads-data-source.js";
 import {
@@ -38,7 +37,6 @@ export class HttpStoreDataSource
   readonly #scope: StoreQueryScope;
   readonly #collaboration: HttpCollaborationDataSource;
   readonly #files: HttpFileReads;
-  readonly #writes: HttpStoreWriteDataSource;
   readonly work: HttpWorkDataSource;
   readonly threads: HttpThreadsDataSource;
   #active = true;
@@ -72,7 +70,6 @@ export class HttpStoreDataSource
       queryClient,
       this.#scope,
     );
-    this.#writes = new HttpStoreWriteDataSource(this.#client);
     this.#collaboration = new HttpCollaborationDataSource(
       this.#client,
       queryClient,
@@ -218,7 +215,7 @@ export class HttpStoreDataSource
     fingerprint: string,
     bytes: Uint8Array,
   ) {
-    return this.#writes.uploadConflict(head, commit, path, fingerprint, bytes);
+    return this.writes.uploadConflict(head, commit, path, fingerprint, bytes);
   }
   search(input: SearchQuery) {
     const query = {
@@ -269,38 +266,13 @@ export class HttpStoreDataSource
     return this.#collaboration.reviewCommandStatus(id);
   }
   previewMutation(request: StoreMutationRequest) {
-    return this.#writes.previewMutation(request);
+    return this.writes.previewMutation(request);
   }
   applyMutation(request: StoreMutationRequest) {
-    return this.#writes.applyMutation(request);
+    return this.writes.applyMutation(request);
   }
   mutationStatus(requestId: string) {
-    return this.#writes.mutationStatus(requestId);
-  }
-  prepareKindIndex(
-    operation: string,
-    kind: Model<"KindPreparationKind">,
-    signal?: AbortSignal,
-  ) {
-    return this.#writes.prepareKindIndex(operation, kind, signal);
-  }
-  kindIndexTask(id: string, signal?: AbortSignal) {
-    return this.#writes.kindIndexTask(id, signal);
-  }
-  cancelKindIndexTask(id: string, signal?: AbortSignal) {
-    return this.#writes.cancelKindIndexTask(id, signal);
-  }
-  prepareCodeIndex(operation: string, signal?: AbortSignal) {
-    return this.#writes.prepareCodeIndex(operation, signal);
-  }
-  prepareIndex(operation: string, signal?: AbortSignal) {
-    return this.#writes.prepareIndex(operation, signal);
-  }
-  cancelIndexTask(id: string, signal?: AbortSignal) {
-    return this.#writes.cancelIndexTask(id, signal);
-  }
-  indexTask(id: string, signal?: AbortSignal) {
-    return this.#writes.indexTask(id, signal);
+    return this.writes.mutationStatus(requestId);
   }
   close() {
     this.#active = false;

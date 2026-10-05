@@ -75,6 +75,29 @@ graph preparation, source index repair or publication. Native manifest
 membership and local scoped pointer proof retain fresh authorization and exact
 pins.
 
+The local stacks recovery boundary uses the owning provider's stable physical
+workspace identity independently of current code. Identity admission reuses the
+current working-tree observer's digest and bounded worker lifetime, checks
+registered root/`.jj` directory identity across authorization, and never loads
+operation stores, checkout/tree-state, ignore policy or working files. It cannot
+initialize or repair state, establish original request ownership or enable a
+command. The registered runtime must still enforce those separate authorities.
+
+The private local working-tree baseline reader selects the named workspace's
+commit from an exact authorized operation/view through the existing scoped Git
+reader. It never loads latest state, repairs the source index, snapshots the
+working copy or publishes heads. Complete bounded raw file/link digests and
+modes are provider inputs, not a wire capability or evidence of current physical
+checkout. JJ's ignore matcher consumes captured bytes; no upstream ignore or
+working-copy type crosses into service policy. The current provider reads
+bounded existing checkout/tree-state protobuf through descriptor-relative file
+handles; it does not call the upstream working-copy loader or initialize absent
+state. It proves exact operation/workspace/tree terms and labels, retains sparse
+prefixes, and captures actual configured/default global and Git repository
+exclude bytes. Metadata/policy/head repetition detects races; repository and
+working-copy directory identity contribute to the private witness. Service code
+uses owned sparse/ignore interfaces, never upstream protobuf or matcher types.
+
 Read-only local identity hints continue to require an exact secure-config
 metadata binding before selecting a repository email. They never migrate
 configuration or introduce aliases into query evaluation. Multi-harness capture
@@ -164,6 +187,87 @@ merge terms and extra metadata, and stages immutable blobs without publishing JJ
 heads or editing a checkout. Selected capsule reads reconstruct and verify
 source operation/view identities without requiring the source operation store or
 derived index. Capsule selection remains a domain publication concern.
+
+The local stack preparation retainer additionally selects exact archived
+operation/view and code closures through create-only reserved refs under
+`refs/lapis/stacks/prepared/v1`. Physical/request scope and original principal,
+intent and preparation identity bind each immutable slot. Complete Git ancestry,
+evolution and nonstandard tree dependencies use real retention edges before ref
+selection; source operation heads, checkout and companion selection remain
+unchanged. Read-only lookup never initializes a missing slot, and exact replay
+validates the original archive and syncs either loose or packed selected refs.
+Unknown selection is not rejection. This owns archival retention only, separate
+from unpublished command generation, operation-ancestry recovery, head
+publication and foreground checkout qualification.
+
+The local execution coordinator uses a bounded, nonblocking foreground lease
+compatible with pinned JJ's local working-copy lock. Descriptor-relative
+no-follow opens, regular single-link identity checks and replacement-safe
+release preserve the upstream Unix locking protocol without its indefinite
+blocking acquisition. Only owned checkout witnesses and authorization interfaces
+cross the boundary. Admission is retained while leased; post-lock and explicit
+later metadata checks repeat the exact witness, operation heads and
+directory/lock identities. There is no snapshot, reconciliation, code
+publication or working-copy bookkeeping update. External editor bytes are
+separately guarded by composition.
+
+Local reword preparation consumes the foreground lease on an isolated blocking
+worker and uses the pinned ordinary GitBackend transaction at its exact source
+operation. No latest load, import or reconciliation is permitted. Before any
+candidate write it checks the complete bounded source archive, visible parent
+membership, supported unsigned tree records and command bounds. It completes
+descendant rewrites and verifies the exact source/prepared archive, rewrite map,
+local bookmark terms and unchanged checkout tree. Candidate writes remain
+unpublished. Cancellation retains admission and the lock until the worker exits;
+no upstream transaction or repository object crosses the owned result boundary.
+
+Reword input additionally accepts trusted immutable heads from composition. The
+bounded exact source-parent closure excludes each protected head and every
+ancestor before any candidate writes. Heads require visible membership;
+duplicate or excessive policy input fails without a transaction. Request patch
+or commit claims do not establish the immutable policy. This strengthens
+preparation only, without enabling publication or checkout.
+
+The bounded Stacks operation archive walks the explicit candidate's full source
+operation DAG and all referenced views through descriptor-relative no-follow
+reads. Bounded raw operation/view files are decoded by the pinned upstream
+SimpleOpStore in an owned temporary cache, avoiding source index creation and
+unbounded source protobuf reads. Owned records verify all native identities and
+complete ancestry/code closure. The owned bounded Git reader avoids upstream
+extra import, reconciliation and no-GC ref writes during historical code reads.
+Private materialization uses upstream writes and reads to prove exact IDs and
+fields. Version-2 reserved retention links complete historical code closure
+while legacy version-1 slots retain their original immutable format. This is
+retained recovery input, not source repair or head publication; provider/runtime
+orchestration remains required.
+
+The real reword provider now captures this strict source history before loading
+the mutation transaction and returns complete candidate history. It verifies
+that all original operations, views and code records remain unchanged in that
+history. Missing original extras cannot reach upstream implicit import, and the
+returned archive can feed version-2 retention directly under the same lease.
+
+The explicit source-history recovery provider reads a saved bounded private
+witness and original reserved retention key while holding the actual foreground
+working-copy lock. Its witness checks no-follow checkout, Git binding, policy
+and head-marker observations without requiring an operation or index loader.
+Private upstream materialization supplies exact native bytes; existing records
+are decoded in an isolated cache and compared before any source writes. Synced
+no-replace rename creates only missing operation/view records and the original
+operation-store profile marker. Exact replay verifies and syncs selected
+records. No heads, index, extras, companion or checkout files are selected or
+repaired. Source restoration remains separate from runtime journal policy,
+publication and guarded checkout composition.
+
+Saved-history retention MAY resume the exact server-selected candidate archive
+through the original recovery witness without opening a latest operation or
+source index. The coordinator acquires the same nonblocking foreground lock,
+revalidates saved binding/checkout/policy/heads and links real code before
+reserved selection. The existing lease supports the same retention boundary
+without releasing coordination. Both retain admission and lock until canceled
+work exits. No source metadata restoration, head selection or physical checkout
+occurs. Server journal selection precedes retention and acknowledgement follows
+it; command authority and publication/checkout remain composition gates.
 
 Capsule retention derives every non-root physical commit and backend tree from
 the exact archive. Selected reads require those entries in the selected metadata
@@ -1464,3 +1568,218 @@ view or commit reads, preserve ambiguity and exclude later and sibling
 operations outside the prepared ancestor closure. Shared resident admission
 covers retained lookup allocations; ordinary cold and small-cache paths remain
 bounded.
+
+Local stack history uses the existing operation-pinned prepared graph engine
+through typed head/base inputs, under JST-LOCAL-004. The provider constructs
+only the exact ancestry/range expression from canonical identities; it never
+reads a repository alias or executable configuration. Page bounds, authorized
+membership, explicit graph edges and private disposable index ownership remain
+unchanged. All stack command preparation and publication stay outside this read
+path.
+
+Retained extra recovery uses the owned archived commit fields and pinned
+upstream protobuf/table serialization in a private materialization. Existing
+source extra records are read through bounded no-follow capture and compared as
+complete native commit metadata before any missing segment is selected. Explicit
+repair adds canonical missing records while preserving original segment/head
+bytes and never calling GitBackend implicit import. The upstream extra-table
+lock shares the existing nonblocking descriptor-relative Unix protocol, with
+replacement checks and worker lifetime retained through cancellation.
+Publication, index reconstruction and checkout remain independent qualification
+boundaries.
+
+Explicit retained-index restoration reuses the bounded disk-backed index builder
+with an archive-only Source. It supplies exact native operation/view metadata
+and compact commit fields from the acknowledged archive; no source backend read
+or synthetic identity participates in construction. Private format/framing
+admission precedes upstream decoding under denied fallback operation/view
+access. Exact create-only source commit segments and operation associations are
+independent of extra restoration, operation-head publication and checkout.
+
+Retained head publication consumes only the original private witness and exact
+reserved preparation. Descriptor-relative native operation reads and private
+upstream decoding verify bounded current ancestry without graph-index loading,
+reconciliation or extra import. The original working-copy lock and pinned
+upstream head-store lock remain owned throughout synced candidate-before-old
+marker selection. Head-only publication proof does not qualify physical checkout
+or installation combination updates.
+
+Unchanged-tree checkout uses the pinned native checkout protobuf under the same
+foreground lease, without invoking a second blocking upstream working-copy lock,
+snapshotting files or rewriting tree state. A saved private canonical witness
+permits normalization of only the intended operation-pointer file stamp; all
+other original metadata/policy/binding fingerprints stay exact. Deterministic
+per-witness staging admits only an exact output prefix and completes interrupted
+writes before synced atomic pointer replacement. An owned service guard uses the
+existing complete physical scanner through data-only provider interfaces.
+Provider proof does not select the runtime journal, combination state or a
+tree-changing checkout.
+
+The separate tree-changing plan provider reads only the original retained
+archive and its real reachable Git objects. It verifies bounded raw object
+identities before deriving the exact named-workspace tree effects; it neither
+loads latest history nor writes a transaction or checkout. Descriptor-relative
+physical reads capture per-path fingerprints and parent directory identities,
+including planned missing parents, between complete trusted physical guards and
+original metadata/policy validation. Resolved regular/executable files and full
+sparse coverage are the initial qualified preparation profile; unsupported
+shapes, aliases and obstacles fail closed. Canonical plan decoding remains data
+validation. Matching bytes do not normalize a replaced file/directory identity.
+The original worker/foreground lease remains alive until cancellation exits.
+Per-path durable installation and native tree-state completion remain separate
+execution qualification; no completion proof or writable capability follows from
+capturing/reopening a plan.
+
+Checkout witness linkage accessors expose only owned original key, recovery
+digest, candidate operation/view and physical selection. They MUST preserve
+canonical validation and cannot construct a provider proof. Runtime composition
+uses those identities to durably bind the private witness before calling pointer
+completion; historical receipt state never grants fresh provider execution.
+
+A recovered lease exposes data-only retained commit/archive and candidate
+operation/view identity from the checked archive under its existing worker
+budget. Runtime compares that selection to the original journal before provider
+publication or pointer completion; the informative identity is not itself a
+publication proof and cannot authorize a different retained archive.
+
+Retained reword policy validation uses the original archived view's visible
+parent closure, excluding hidden evolution-only records. Trusted immutable heads
+must be unique, bounded and visible; protected ancestry cannot be rewritten.
+Validation runs under the existing original lease with authorization, bounded
+work and cancellation retained through worker exit. It writes no code or source
+metadata. Informative publication status does not grant selection authority; an
+acknowledgement-only provider path refuses to create a candidate head when the
+original operation is no longer selected through current head ancestry.
+
+Tree-plan linkage accessors expose retained commit/archive, source/candidate
+commit and tree identities and decoded workspace name as owned data. They cannot
+create a publication or checkout proof. The server saves canonical plan data
+separately from its command journal and validates the original request before
+storage access. Provider revalidation remains mandatory before any future
+physical installation, even after successful plan/reference reopen.
+
+The owned PhysicalInventoryV1 interface carries complete original scanner file
+fingerprints and directory stamps for future interrupted-checkout guards. It
+reproduces the existing scope-bound physical hash, validates canonical framing,
+path namespace and bounds, and exposes no native write capability. The optional
+PhysicalGuard capture method defaults to unavailable; trusted service capture
+must use its qualified scanner. Merely decoding inventory data cannot normalize
+changed files, attest installation or create a provider completion proof.
+
+Runtime inventory linkage MUST validate the complete original recovery binding
+and exact tree-plan physical digest before selecting a private inventory body.
+Canonical identity and byte length are informative input references only; even
+after immutable reopen/replay they cannot grant a provider progress or checkout
+completion proof. No native write interface is added by this server composition.
+
+## Retained tree-file progress
+
+Physical installation uses exact retained Git blobs and provider-owned canonical
+progress under the existing foreground lease. Prepared file/directory
+identities, synced prior intent and no-replace moves preserve originals as
+backups. Retry compares the entire namespace and admits only restricted known
+transitions. No upstream working-copy loader is invoked and native metadata
+stays original.
+
+Native tree completion separately stages the pinned upstream protobufs and
+retains a provider-owned plan/inventory-bound completion frame before selecting
+tree-state and then checkout. Native RepoPath ordering and signed millisecond
+timestamps match JJ; unaffected file states stay exact and Watchman clock is
+cleared for the next scan. Exact prepared inode identities limit normalization
+during interrupted recovery; complete physical namespace and backup proofs
+remain required. This provider completion does not select combination metadata
+or acknowledge an application command.
+
+## Initial combination setup candidate
+
+The local provider constructs actual unpublished merge and WIP commits from an
+exact source operation and resolved selected bookmark. It preserves the current
+checkout tree, source archive, all named refs and unrelated workspaces; a fresh
+complete physical guard brackets candidate generation. No source snapshot,
+operation-head selection or physical file write accompanies preparation.
+Cancellation retains foreground/admission until worker exit. Runtime retention,
+native pointer completion and installation state remain separate owned joins.
+
+## Ordinary local Stacks engine
+
+JST-JJ-003's mutation boundary for local Stacks uses pinned jj-lib Workspace,
+normal settings/ignore rules, native working-copy mutation locks, snapshot,
+transactions, merge_commit_trees, rebase_commit, descendant rewrites and native
+checkout. `.jj/jj-store/stacks.toml` retains only local
+presentation/configuration and bookmark names. Stable WIP change identities
+follow normal JJ rewrites. This path does not use retained operation archives or
+custom op-head/tree-state publication. A different external working change
+detaches active selection and retains the old named WIP; later selection
+restores it. Concurrent edits cause stale command rejection. Native conflicts
+remain native conflict trees.
+
+Active workspace settings use the existing native build/rebase path only when
+the target changes; renaming preserves JJ identities. Deletion removes local
+configuration and retains the native WIP, checkout and retention bookmarks. Both
+commands validate the shown operation/configuration revision under the existing
+settings and working-copy locks.
+
+Selected-file commit creation inserts after an applied head, rebases
+descendants, then squashes from the current rewritten WIP with `keep_emptied`.
+Selections bind exact source commit IDs and canonical paths. The merge and WIP
+retain their change identities through native rewriting; preview validation does
+not publish or snapshot. Target ancestry and configured immutable descendants
+remain protected.
+
+Basic local Stacks actions use native bookmark targets, commit descriptions and
+new --insert-after/--insert-before equivalent rebases. Above/below bookmarks
+change references only. Point inspection admits at most 500 exact visible IDs;
+configured immutable descendants and workspace target ancestry protect rewrites.
+
+The first commit on a bookmark still pointing at the workspace target MUST fork
+from that target without rewriting unrelated target children. Explicitly
+retarget only the retained merges applying that bookmark; later commits use
+normal insertion and descendant propagation. Empty Commit selections create an
+empty commit. Refresh must not reconstruct these already-correct parent sets.
+
+Local selected-file Transfer, Split and Edit use CommitWithSelection and
+squash_commits with native descendant rebasing. Insertion resolves current
+visible source change identities before squash, so rewritten source IDs cannot
+accidentally select another commit. Empty WIP and source changes remain
+retained.
+
+Native local Stacks hunk selections are issued by the guarded read-only POST
+`/v1/local/repos/{repo}/stacks/hunks`. Tokens bind native source change
+identity, canonical path and complete before/after bytes; apply rederives them
+at the exact operation/configuration pin. Client patches and display-only IDs
+are rejected. Partial text deltas use native squash with emptied sources
+retained, without reconstructing the megamerge. Binary, conflict, mode/type and
+bounded-diff limits remain whole-file-only. Net branch comparisons remain
+presentation-only.
+
+Local graph commands use native `move_commits` insertion/reordering and full
+`squash_commits` for squash/uncommit. WIP is retained as a native child; graph
+rewrites do not reconstruct the merge. Branch squash/rebase discovers at most
+500 commits in its segment and stops at the next user bookmark boundary. Visible
+source identity, configured immutability and workspace-target protection are
+validated at preview and apply; retention commits are not graph sources.
+
+Branch rebases move the segment root with descendants. Single-revision moves
+detach ordinary children as JJ does; if this detaches a saved applied edge,
+native rebase restores that edge on the existing retained merge change. This
+preserves its identity and WIP delta without constructing a replacement merge.
+
+The ordinary local Stacks mutation profile now includes native bookmark deletion
+(top bookmark only; lower bookmarks and commits retained), abandonment, selected
+whole-file/native-hunk WIP discard, and complete native text-conflict
+resolution. Conflict terms are read lazily through guarded POST
+`stacks/conflict`; ordered three-term text conflicts use the existing Merge
+Editor. Multi-sided, structural, mode-conflicted and oversized conflicts retain
+native values and report that JJ resolution is required. Conflict paths are
+bounded to 50 per current read.
+
+Undo/Redo restores the native repository operation stack, including CLI work,
+with native descriptions and remote tracking semantics. Current Git bookkeeping
+is retained, as in JJ. TOML is not an Undo journal. Missing or restored
+references remain visible as unavailable choices/reasons; Refresh and Switch
+never rebuild membership automatically. Explicit Reapply saved branches
+reconciles membership and preserves WIP. Operation/config/source guards and
+unknown-outcome inspection remain required. Production file dragging uses exact
+loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
+branch comparisons remain read-only. Undo/Redo remains available without a
+selected named workspace.

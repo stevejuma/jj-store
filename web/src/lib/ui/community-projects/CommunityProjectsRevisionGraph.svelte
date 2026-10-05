@@ -1,9 +1,10 @@
 <script lang="ts">
   import "./repository-row-tokens.css";
+  import { observeRevisionRow } from "../../projects/observe-revision-row.js";
   import type { Snippet } from "svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   import type { StoreControllerState } from "../../controller/contracts.js";
-
+  import CommunityProjectsRevisionGraphSvg from "./CommunityProjectsRevisionGraphSvg.svelte";
   import CommunityProjectsRevisionGraphCopy from "./CommunityProjectsRevisionGraphCopy.svelte";
   import CommunityProjectsRevisionGraphIds from "./CommunityProjectsRevisionGraphIds.svelte";
   import CommunityProjectsVirtualRows from "./CommunityProjectsVirtualRows.svelte";
@@ -13,20 +14,12 @@
     RepositoryLogRevision,
   } from "../../projects/repository-log.js";
   import {
-    REPOSITORY_LOG_NODE_RADIUS,
     REPOSITORY_LOG_ROW_HEIGHT,
-    REPOSITORY_LOG_STROKE_WIDTH,
     buildRepositoryLogGraph,
     repositoryLogContentLeft,
-    repositoryLogConvergePath,
-    repositoryLogLaneStem,
-    repositoryLogLaneX,
-    repositoryLogMergePath,
-    repositoryLogSplitPath,
     repositoryLogSvgWidth,
     type RepositoryLogGraphRow,
   } from "../../projects/repository-log-graph.js";
-
   let {
     revisions,
     members = [],
@@ -37,6 +30,15 @@
     commitLabel = "commit ID",
     onSelect,
     selectedFiles,
+    rowActions,
+    rowDropState,
+    rowDropPlacement,
+    avatarSize = "small",
+    showSelectedChip = false,
+    graphInset = 0,
+    continuous = false,
+    endBorder = true,
+    draggable,
     revisionHref,
     hasMore = false,
     loading = false,
@@ -52,6 +54,19 @@
     commitLabel?: string | undefined;
     onSelect?: ((revision: RepositoryLogRevision) => void) | undefined;
     selectedFiles?: Snippet | undefined;
+    rowActions?: Snippet<[RepositoryLogRevision]>;
+    rowDropState?: (
+      revision: RepositoryLogRevision,
+    ) => "idle" | "valid" | "invalid";
+    rowDropPlacement?: (
+      revision: RepositoryLogRevision,
+    ) => "above" | "below" | undefined;
+    avatarSize?: "small" | "xsmall";
+    showSelectedChip?: boolean;
+    graphInset?: number;
+    continuous?: boolean;
+    endBorder?: boolean;
+    draggable?: (revision: RepositoryLogRevision) => boolean;
     revisionHref?:
       ((revision: RepositoryLogRevision) => string | undefined) | undefined;
     hasMore?: boolean | undefined;
@@ -59,23 +74,18 @@
     onLoadMore?: (() => void) | undefined;
     collaborationContext?: StoreControllerState | undefined;
   } = $props();
-
   const rows = $derived(buildRepositoryLogGraph(revisions, devices));
-  const svgWidth = $derived(repositoryLogSvgWidth(rows));
+  const svgWidth = $derived(Math.max(graphInset, repositoryLogSvgWidth(rows)));
+  let itemHeights = $state<Record<string, number>>({});
   let rowHeights = $state<Record<string, number>>({});
-  const radius = REPOSITORY_LOG_NODE_RADIUS;
-
   // Native bookmark names can wrap beyond Community's fixed device-label row.
   // Keep its graph paths, using the measured content height for their endpoints.
   function measureBookmarkRow(node: HTMLDivElement, id: string) {
-    const observer = new ResizeObserver(() => {
-      const height = node.getBoundingClientRect().height;
+    return observeRevisionRow(node, (height, itemHeight) => {
       if (rowHeights[id] !== height) rowHeights[id] = height;
+      if (itemHeights[id] !== itemHeight) itemHeights[id] = itemHeight;
     });
-    observer.observe(node);
-    return { destroy: () => observer.disconnect() };
   }
-
   function revisionEstimate(row: RepositoryLogGraphRow | undefined): number {
     return estimateCommunityProjectRow(
       row
@@ -88,10 +98,6 @@
         : undefined,
     );
   }
-
-  function laneColor(row: RepositoryLogGraphRow, lane: number): string {
-    return row.lanes[lane]?.color ?? "var(--primary)";
-  }
 </script>
 
 <div
@@ -103,11 +109,14 @@
   {#snippet revisionRow(row: RepositoryLogGraphRow)}
     {@const rowHeight =
       rowHeights[row.revision.eventId] ?? REPOSITORY_LOG_ROW_HEIGHT}
-    {@const commitX = repositoryLogLaneX(row.commitLane)}
-    {@const centerY = rowHeight / 2}
+    {@const graphHeight = continuous
+      ? (itemHeights[row.revision.eventId] ?? rowHeight)
+      : rowHeight}
     <div
       role="listitem"
       class="community-revision-graph__item"
+      class:community-revision-graph__item--continuous={continuous}
+      style:--community-revision-graph-inset={`${svgWidth}px`}
       class:community-revision-graph__item--selected={selectedId ===
         row.revision.eventId}
       aria-current={selectedId === row.revision.eventId ? "true" : undefined}
@@ -116,92 +125,57 @@
       <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div
         class="community-revision-graph__row"
+        class:community-revision-graph__row--actions={Boolean(rowActions)}
         class:community-revision-graph__row--tip={row.isTip}
-        style:padding-left="{repositoryLogContentLeft(row)}px"
+        class:community-revision-graph__row--borderless={!endBorder &&
+          row.revision.eventId === rows.at(-1)?.revision.eventId}
+        style:padding-left="{Math.max(
+          graphInset,
+          repositoryLogContentLeft(row),
+        )}px"
         style:min-height="{REPOSITORY_LOG_ROW_HEIGHT}px"
         style:--community-revision-graph-row-height="{rowHeight}px"
         data-revision-id={row.revision.eventId}
+        data-drop-target-state={rowDropState?.(row.revision)}
+        data-drop-placement={rowDropPlacement?.(row.revision)}
+        class:stack-workspace__drop-target={Boolean(rowDropState)}
+        draggable={draggable?.(row.revision)}
         use:measureBookmarkRow={row.revision.eventId}
         onclick={() => onSelect?.(row.revision)}
       >
-        <svg
-          class="community-revision-graph__svg"
-          width={svgWidth}
-          height={rowHeight}
-          aria-hidden="true"
-        >
-          {#each row.lanes as lane, index (index)}
-            {@const x = repositoryLogLaneX(index)}
-            {@const stem = repositoryLogLaneStem(row, index, rowHeight)}
-            {#if stem.y1 !== stem.y2}
-              <line
-                x1={x}
-                y1={stem.y1}
-                x2={x}
-                y2={stem.y2}
-                stroke={lane.color}
-                stroke-width={REPOSITORY_LOG_STROKE_WIDTH}
-              />
-            {/if}
-          {/each}
-          {#if row.splitFromLane != null}
-            <path
-              class="community-revision-graph__edge"
-              d={repositoryLogSplitPath(
-                repositoryLogLaneX(row.splitFromLane),
-                commitX,
-                rowHeight,
-              )}
-              stroke={laneColor(row, row.splitFromLane)}
-              stroke-width={REPOSITORY_LOG_STROKE_WIDTH}
-            />
-          {/if}
-          {#each row.mergeFromLanes as mergeLane (mergeLane)}
-            <path
-              class="community-revision-graph__edge"
-              d={repositoryLogMergePath(
-                commitX,
-                repositoryLogLaneX(mergeLane),
-                rowHeight,
-              )}
-              stroke={laneColor(row, mergeLane)}
-              stroke-width={REPOSITORY_LOG_STROKE_WIDTH}
-            />
-          {/each}
-          {#each row.convergingLanes as convergeLane (convergeLane)}
-            <path
-              class="community-revision-graph__edge"
-              d={repositoryLogConvergePath(
-                repositoryLogLaneX(convergeLane),
-                commitX,
-                rowHeight,
-              )}
-              stroke={laneColor(row, convergeLane)}
-              stroke-width={REPOSITORY_LOG_STROKE_WIDTH}
-            />
-          {/each}
-          <circle
-            class="community-revision-graph__node"
-            cx={commitX}
-            cy={centerY}
-            r={row.isTip ? radius + 1 : radius}
-            fill={laneColor(row, row.commitLane)}
-          />
-        </svg>
-        <CommunityProjectsRevisionGraphCopy
+        <CommunityProjectsRevisionGraphSvg
           {row}
-          {members}
-          {now}
-          href={revisionHref?.(row.revision)}
-          onSelect={onSelect ? () => onSelect?.(row.revision) : undefined}
-          {collaborationContext}
+          width={svgWidth}
+          {rowHeight}
+          {graphHeight}
+          {continuous}
         />
-        <CommunityProjectsRevisionGraphIds
-          changeId={row.changeIdEncoded}
-          commitId={row.revision.eventId}
-          {commitLabel}
-          placement="inline"
-        />
+        {#snippet revisionContent()}
+          <CommunityProjectsRevisionGraphCopy
+            {row}
+            {members}
+            {avatarSize}
+            selected={showSelectedChip && selectedId === row.revision.eventId}
+            {now}
+            href={revisionHref?.(row.revision)}
+            onSelect={onSelect ? () => onSelect?.(row.revision) : undefined}
+            {collaborationContext}
+          />
+          <CommunityProjectsRevisionGraphIds
+            changeId={row.changeIdEncoded}
+            commitId={row.revision.eventId}
+            {commitLabel}
+            placement="inline"
+          />
+        {/snippet}
+        {#if rowActions}
+          <div class="community-revision-graph__content">
+            {@render revisionContent()}
+          </div>
+        {:else}{@render revisionContent()}{/if}
+        {#if rowActions}<div class="community-revision-graph__actions">
+            {@render rowActions(row.revision)}
+          </div>{/if}
       </div>
       {#if selectedId === row.revision.eventId && selectedFiles}
         <div class="community-revision-graph__files">
@@ -272,6 +246,32 @@
     flex-basis: 12rem;
   }
 
+  .community-revision-graph__row--borderless {
+    border-bottom: 0;
+  }
+
+  .community-revision-graph__row--actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .community-revision-graph__content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  /* In action rows the copy is in a vertical flex container: its basis
+     must follow content, rather than the horizontal row's width reserve. */
+  .community-revision-graph__row--actions
+    .community-revision-graph__content
+    :global(.community-revision-graph-copy) {
+    flex-basis: auto;
+  }
+  .community-revision-graph__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
   .community-revision-graph__row:hover,
   .community-revision-graph__row:focus-visible {
     background: var(--jj-store-repository-row-hover-background);
@@ -283,23 +283,14 @@
     font-weight: 600;
   }
 
-  .community-revision-graph__svg {
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    left: 0;
-    overflow: visible;
-    pointer-events: none;
-  }
-
   .community-revision-graph__files {
     position: relative;
     z-index: 1;
     padding: 0 0.5rem 0.5rem;
   }
 
-  .community-revision-graph__edge {
-    fill: none;
+  .community-revision-graph__item--continuous .community-revision-graph__files {
+    padding-left: var(--community-revision-graph-inset);
   }
 
   @container (max-width: 440px) {

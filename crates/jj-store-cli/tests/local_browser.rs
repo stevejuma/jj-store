@@ -10,6 +10,8 @@ mod managed_code;
 mod managed_http;
 #[path = "local_browser/managed_lifecycle.rs"]
 mod managed_lifecycle;
+#[path = "local_browser/ordinary_stacks.rs"]
+mod ordinary_stacks;
 #[path = "local_browser/preparation.rs"]
 mod preparation_acceptance;
 #[path = "local_browser/prepared_comparisons.rs"]
@@ -1727,6 +1729,7 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     .await
     .unwrap();
     assert_eq!(query_info["data"]["data"]["jj_version"], "0.45.1");
+    review_samples.extend(ordinary_stacks::qualify(&endpoint, id, &folder).await);
     let filtered_operations: Value = post(&format!("/local/repos/{id}/query"), json!({"operation":operation,"request":{"kind":"graph","query":[{"graph":"operations_filtered","query":"from:@ snapshot:false"},{"limit":1,"after":null}]},"cursor":null})).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
     assert_eq!(filtered_operations["data"]["kind"], "graph");
     if let Ok(path) = std::env::var("JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE") {

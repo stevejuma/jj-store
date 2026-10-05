@@ -782,14 +782,16 @@ impl GraphExecutor {
             &stores,
             &settings,
             &entry.path,
-            self.root.clone(),
-            budget.clone(),
-            self.cache_policy,
-            entry.resident.clone(),
-            self.residents.clone(),
-            access.clone(),
-            matches!(work, Work::Prepare),
-            required_filter,
+            index::LoaderSelection {
+                budget: budget.clone(),
+                root: self.root.clone(),
+                cache_policy: self.cache_policy,
+                residents: self.residents.clone(),
+                required_filter,
+                resident: entry.resident.clone(),
+                access: access.clone(),
+                preparing: matches!(work, Work::Prepare),
+            },
         )?;
         let repo = stores
             .load_at(&loader, access.operation())

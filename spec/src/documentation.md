@@ -1,5 +1,11 @@
 # Application documentation
 
+Main/Stacks workspace integration regenerates the combined API references and
+reviews the source ownership changes without altering historical qualification.
+Topology-only recovery remains separate from text-filter preparation. The manual
+retains native local megamerge/WIP and TOML semantics, bounded browsing,
+contextual diff reasons and the existing deferred release/visual gates.
+
 The local manual MUST distinguish exact tree-changing checkout preparation from
 durable installation and completion. It documents the initial resolved-file,
 full-sparse profile, rejected obstacles/aliases and unchanged physical state.

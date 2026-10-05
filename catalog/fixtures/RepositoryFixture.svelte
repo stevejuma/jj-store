@@ -57,6 +57,7 @@
     ? []
     : sampleDetail.files}
   patch={selectedPath ? sampleDetail.patches[selectedPath] : undefined}
+  unavailableReason={selectedPath === "assets/logo.bin" ? "binary" : undefined}
   now={NOW}
   {layoutStorage}
   loading={fixtureState === "loading" || fixtureState === "refreshing"}

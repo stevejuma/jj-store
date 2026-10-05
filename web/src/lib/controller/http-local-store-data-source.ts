@@ -7,7 +7,6 @@ import {
 import { assertLocalReviewSnapshot } from "./local-review-snapshot.js";
 import { HttpLocalIndexDataSource } from "./http-local-index-data-source.js";
 import { HttpLocalWorkDataSource } from "./http-local-work-data-source.js";
-import { HttpWorkingTree } from "./http-working-tree.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import {
   unavailableNativeManagement,
@@ -18,7 +17,6 @@ export class HttpLocalStoreDataSource
   extends HttpLocalIndexDataSource
   implements StoreDataSource
 {
-  readonly workingTree = new HttpWorkingTree(this.client);
   readonly workingCopy: import("./working-copy-types.js").WorkingCopyTransport =
     {
       read: async (path) =>

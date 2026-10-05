@@ -1,3 +1,5 @@
+import { HttpWorkingTree } from "./http-working-tree.js";
+import { HttpLocalStacksTransport } from "./stack-workspace/local-transport.js";
 import { ApiError, fullId } from "../api/client.js";
 import { codeId } from "./repository-profile.js";
 import type {
@@ -21,6 +23,8 @@ export class HttpLocalCodeDataSource extends HttpLocalQuery {
     signal?.throwIfAborted();
     return summary;
   }
+  readonly stacks = new HttpLocalStacksTransport(this.client);
+  readonly workingTree = new HttpWorkingTree(this.client);
   references(operation: string, cursor?: string, input: ReferenceQuery = {}) {
     return this.query<"references">(
       operation,

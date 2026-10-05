@@ -1,3 +1,4 @@
+import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 import { HttpSearchSettings } from "./search-settings.js";
 import {
   fullId,
@@ -15,11 +16,38 @@ export class HttpRepositoryTransports {
   readonly storage: HttpStorageSettings;
   readonly sync: HttpSyncSettings;
   readonly localWorkspaces: HttpWorkspaceLinks;
+  protected readonly writes: HttpStoreWriteDataSource;
   constructor(private client: Client) {
     this.searchSettings = new HttpSearchSettings(client);
     this.storage = new HttpStorageSettings(client);
     this.sync = new HttpSyncSettings(client);
     this.localWorkspaces = new HttpWorkspaceLinks(client);
+    this.writes = new HttpStoreWriteDataSource(client);
+  }
+  prepareKindIndex(
+    operation: string,
+    kind: Model<"KindPreparationKind">,
+    signal?: AbortSignal,
+  ) {
+    return this.writes.prepareKindIndex(operation, kind, signal);
+  }
+  kindIndexTask(id: string, signal?: AbortSignal) {
+    return this.writes.kindIndexTask(id, signal);
+  }
+  cancelKindIndexTask(id: string, signal?: AbortSignal) {
+    return this.writes.cancelKindIndexTask(id, signal);
+  }
+  prepareCodeIndex(operation: string, signal?: AbortSignal) {
+    return this.writes.prepareCodeIndex(operation, signal);
+  }
+  prepareIndex(operation: string, signal?: AbortSignal) {
+    return this.writes.prepareIndex(operation, signal);
+  }
+  cancelIndexTask(id: string, signal?: AbortSignal) {
+    return this.writes.cancelIndexTask(id, signal);
+  }
+  indexTask(id: string, signal?: AbortSignal) {
+    return this.writes.indexTask(id, signal);
   }
   async queryInfo(operation: string) {
     const value = await this.client.request<

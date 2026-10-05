@@ -199,15 +199,18 @@ impl Residents {
     }
     pub(super) fn remember(
         &self,
-        index: projection::Prepared,
-        path: PathBuf,
+        input: Insertion,
         access: &dyn ReadAccess,
-        files: BTreeMap<String, File>,
-        index_bytes: u64,
         policy: Policy,
         budget: &Budget,
-        report: Report,
     ) -> Result<()> {
+        let Insertion {
+            index,
+            path,
+            files,
+            index_bytes,
+            report,
+        } = input;
         // Account Vec capacity slack, per-file/index metadata, names and hashes.
         let weight = resident_weight(index_bytes, index.weight(), &files);
         let ceiling = policy.max_total_bytes.min(super::super::memory::LIMIT);
@@ -296,4 +299,12 @@ mod tests {
             "disk growth is covered by slot quota, not additional resident RAM"
         );
     }
+}
+
+pub(super) struct Insertion {
+    pub index: projection::Prepared,
+    pub path: PathBuf,
+    pub files: BTreeMap<String, File>,
+    pub index_bytes: u64,
+    pub report: Report,
 }

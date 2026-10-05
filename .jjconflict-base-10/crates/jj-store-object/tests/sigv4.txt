@@ -1,1 +1,0 @@
-AWS4-HMAC-SHA256 Credential=jj-store-disposable-test/20260926/us-east-1/s3/aws4_request, SignedHeaders=host;if-match;x-amz-content-sha256;x-amz-date, Signature=d1c3331a0720a28b665d472f600880e6d89edbd45cd7c80e4ebc53d004d83c2f

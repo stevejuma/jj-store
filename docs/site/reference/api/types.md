@@ -441,6 +441,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "index_tasks": {
       "type": "boolean"
     },
+    "automatic_code_index": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
     "events": {
       "type": "boolean"
     },
@@ -5574,6 +5580,63 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## ReviewActivitySummary
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "snapshot": {
+      "$ref": "#/components/schemas/ReviewReadSnapshot"
+    },
+    "activity": {
+      "$ref": "#/components/schemas/ReviewActivity"
+    }
+  },
+  "required": [
+    "version",
+    "snapshot",
+    "activity"
+  ]
+}
+```
+
+## ReviewActivity
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "threads": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "threads_partial": {
+      "type": "boolean"
+    },
+    "updated_at_millis": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "int64"
+    }
+  },
+  "required": [
+    "threads",
+    "threads_partial",
+    "updated_at_millis"
+  ],
+  "description": "Facts about a bounded first catalog window, never an inferred complete count."
+}
+```
+
 ## ReviewThreadDetail
 
 ```text
@@ -8541,6 +8604,87 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## WorkActivityPage
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "snapshot": {
+      "$ref": "#/components/schemas/WorkReadSnapshot"
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkActivityGroup"
+      },
+      "maxItems": 256
+    },
+    "total_groups": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "next_cursor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "snapshot",
+    "groups",
+    "total_groups",
+    "next_cursor"
+  ]
+}
+```
+
+## WorkActivityGroup
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "repository": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/RepositoryId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "project": {
+      "$ref": "#/components/schemas/ProjectId"
+    },
+    "tasks": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "updated_at_millis": {
+      "type": "integer",
+      "format": "int64"
+    }
+  },
+  "required": [
+    "repository",
+    "project",
+    "tasks",
+    "updated_at_millis"
+  ]
+}
+```
+
 ## WorkPage
 
 ```text
@@ -10464,6 +10608,104 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## Envelope_NativeCodeSummary
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "snapshot": {
+      "$ref": "#/components/schemas/ReadSnapshot"
+    },
+    "data": {
+      "$ref": "#/components/schemas/NativeCodeSummary"
+    },
+    "next_cursor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "snapshot",
+    "data",
+    "next_cursor"
+  ]
+}
+```
+
+## NativeCodeSummary
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "commits": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "commits_partial": {
+      "type": "boolean"
+    },
+    "latest": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/NativeCodeSummaryLatest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stats": {
+      "$ref": "#/components/schemas/GraphStats"
+    }
+  },
+  "required": [
+    "version",
+    "commits",
+    "commits_partial",
+    "latest",
+    "stats"
+  ]
+}
+```
+
+## NativeCodeSummaryLatest
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/CommitId"
+    },
+    "description": {
+      "type": "string"
+    },
+    "author": {
+      "$ref": "#/components/schemas/NativeSignature"
+    },
+    "committer": {
+      "$ref": "#/components/schemas/NativeSignature"
+    }
+  },
+  "required": [
+    "id",
+    "description",
+    "author",
+    "committer"
+  ]
+}
+```
+
 ## Window
 
 ```text
@@ -12264,6 +12506,228 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## KindPreparationTask
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "id": {
+      "type": "string"
+    },
+    "snapshot": {
+      "$ref": "#/components/schemas/ReadSnapshot"
+    },
+    "kind": {
+      "$ref": "#/components/schemas/KindPreparationKind"
+    },
+    "progress": {
+      "$ref": "#/components/schemas/KindPreparationProgress"
+    }
+  },
+  "required": [
+    "version",
+    "id",
+    "snapshot",
+    "kind",
+    "progress"
+  ],
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "running"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "canceling"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "ready"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "error": {
+          "$ref": "#/components/schemas/GraphError"
+        },
+        "status": {
+          "type": "string",
+          "const": "failed"
+        }
+      },
+      "required": [
+        "status",
+        "error"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "canceled"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    }
+  ]
+}
+```
+
+## KindPreparationKind
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "operations",
+    "copies"
+  ]
+}
+```
+
+## KindPreparationProgress
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "complete": {
+      "type": "boolean"
+    },
+    "matching_ids": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "stats": {
+      "$ref": "#/components/schemas/KindPreparationStats"
+    }
+  },
+  "required": [
+    "complete",
+    "matching_ids",
+    "stats"
+  ]
+}
+```
+
+## KindPreparationStats
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "windows": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "scanned": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "descriptor_work": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0,
+      "description": "Successful descriptors plus conservative full-window charges after an\nunknown/failed/canceled read; retrying cannot hide that spent work."
+    },
+    "record_reads": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "record_bytes": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "windows",
+    "scanned",
+    "descriptor_work",
+    "record_reads",
+    "record_bytes"
+  ]
+}
+```
+
+## GraphError
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "string",
+      "enum": [
+        "canceled",
+        "denied",
+        "not_committed",
+        "epoch_changed",
+        "limit",
+        "busy",
+        "index_budget",
+        "index_rebuild_required",
+        "invalid",
+        "unavailable",
+        "corrupt",
+        "incomplete",
+        "not_found",
+        "not_directory",
+        "range"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "invalid_query": {
+          "$ref": "#/components/schemas/Diagnostic"
+        }
+      },
+      "required": [
+        "invalid_query"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
+```
+
 ## IndexTask
 
 ```text
@@ -12386,47 +12850,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "operation",
     "cache",
     "stats"
-  ]
-}
-```
-
-## GraphError
-
-```text
-{
-  "oneOf": [
-    {
-      "type": "string",
-      "enum": [
-        "canceled",
-        "denied",
-        "not_committed",
-        "epoch_changed",
-        "limit",
-        "busy",
-        "index_budget",
-        "index_rebuild_required",
-        "invalid",
-        "unavailable",
-        "corrupt",
-        "incomplete",
-        "not_found",
-        "not_directory",
-        "range"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "invalid_query": {
-          "$ref": "#/components/schemas/Diagnostic"
-        }
-      },
-      "required": [
-        "invalid_query"
-      ],
-      "additionalProperties": false
-    }
   ]
 }
 ```
@@ -13427,6 +13850,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "index_tasks": {
       "type": "boolean"
     },
+    "automatic_code_index": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
     "collaboration": {
       "type": "boolean"
     },
@@ -13466,6 +13895,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "profile",
     "code_browse",
     "index_tasks",
+    "automatic_code_index",
     "collaboration",
     "agents",
     "reviews",
@@ -13593,6 +14023,22 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "data": {
           "$ref": "#/components/schemas/LocalCodeObject"
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "code_summary"
+        },
+        "data": {
+          "$ref": "#/components/schemas/LocalCodeSummary"
         }
       },
       "required": [
@@ -14789,6 +15235,77 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "required": [
     "target",
     "state"
+  ]
+}
+```
+
+## LocalCodeSummary
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "commits": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "commits_partial": {
+      "type": "boolean"
+    },
+    "latest": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/LocalCodeSummaryLatest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stats": {
+      "$ref": "#/components/schemas/LocalGraphStats"
+    }
+  },
+  "required": [
+    "version",
+    "commits",
+    "commits_partial",
+    "latest",
+    "stats"
+  ]
+}
+```
+
+## LocalCodeSummaryLatest
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/GitSha1Id"
+    },
+    "description": {
+      "type": "string"
+    },
+    "author": {
+      "$ref": "#/components/schemas/NativeSignature"
+    },
+    "committer": {
+      "$ref": "#/components/schemas/NativeSignature"
+    }
+  },
+  "required": [
+    "id",
+    "description",
+    "author",
+    "committer"
   ]
 }
 ```
@@ -16592,6 +17109,49 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## LocalWorkActivityPage
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "snapshot": {
+      "$ref": "#/components/schemas/LocalWorkSnapshot"
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkActivityGroup"
+      },
+      "maxItems": 256
+    },
+    "total_groups": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "next_cursor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "snapshot",
+    "groups",
+    "total_groups",
+    "next_cursor"
+  ]
+}
+```
+
 ## LocalWorkOutcome
 
 ```text
@@ -17352,6 +17912,32 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "pattern": "^[0-9a-f]{64}$",
   "minLength": 64,
   "maxLength": 64
+}
+```
+
+## LocalReviewActivitySummary
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "snapshot": {
+      "$ref": "#/components/schemas/LocalReviewSnapshot"
+    },
+    "activity": {
+      "$ref": "#/components/schemas/ReviewActivity"
+    }
+  },
+  "required": [
+    "version",
+    "snapshot",
+    "activity"
+  ]
 }
 ```
 

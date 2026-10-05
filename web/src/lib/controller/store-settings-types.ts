@@ -23,4 +23,5 @@ export interface StoreSettingsState extends WorkspaceLinkSettings {
   readonly indexPreparationError: string;
   readonly indexTaskStatus: Task["status"] | null;
   readonly indexOperation: string | null;
+  readonly indexRequired?: boolean;
 }

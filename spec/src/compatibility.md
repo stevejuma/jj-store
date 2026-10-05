@@ -57,6 +57,22 @@ local and 80 other paths). Summary DTOs carry no persisted-format change.
 Focused delivery evidence does not qualify the complete combined route/browser
 inventory or promote a release milestone.
 
+The ordinary local Stacks POST command/state schema is generated alongside the
+existing operation-pinned read contracts. Config version 1 uses local TOML;
+native JJ operation, commit and tree formats remain unchanged. Executable route
+admission and cold filesystem/browser responses qualify this core separately
+from manifest-backed publication and the historical retained executor.
+
+The local working-tree observation endpoint is an additive version-1 HTTP
+contract for registered Git SHA-1/JJ 0.45.1 folders. Inputs retain exact
+operation and binding generation; complete outputs retain operation/view/WC/tree
+and physical/metadata witnesses. Existing route/DTO framing, native codecs,
+companion records and private persisted formats remain unchanged. Generated
+client/OpenAPI comparison and actual registered-server response validation
+qualify the addition. Observation fingerprints issue no command or content
+tokens. Linked-native, complete Unstaged assignment and writable stack lifecycle
+qualification remain separate; this slice performs no package publication.
+
 The independent conversion profile is bounded to eligible JJ 0.45.1 Git SHA-1
 and current native repositories on macOS ARM64. Admin HTTP preview/start/status
 contracts and their generated browser client share registered response captures.
@@ -900,3 +916,60 @@ explicit; operation/binding pins and opaque cursor admission are unchanged.
 Offline OpenAPI and client generation plus actual local HTTP response capture
 cover this shape. Native object codecs, companion metadata, WAL and checkout
 formats do not change.
+
+LocalStacksCommand version 1 adds Update and Delete variants for active
+workspace settings and local configuration removal. Generated OpenAPI/TypeScript
+remain source-derived; existing configuration version 1 TOML and native JJ
+0.45.1 identities are unchanged. Focused real registered-folder captures and
+cold browser acceptance qualify these additive variants, independently of
+storage publication or package release qualification.
+
+LocalStacksCommand version 1 also adds selected-file Commit and an advisory
+LocalStacksPreview endpoint. Source-derived OpenAPI and TypeScript capture both
+shapes. Real JJ 0.45.1 fixtures verify selected/unselected content and retained
+merge/WIP change identities; TOML version 1 and native storage formats stay
+unchanged. Hunk and later graph capabilities require their own acceptance.
+
+LocalStacksCommand v1 adds CreateStack, CreateBranch, RenameBranch, Reword and
+Empty; LocalStacksInspection v1 is an additive bounded advisory read. Native JJ
+0.45.1 and configuration TOML v1 remain unchanged.
+
+Additive version-1 Transfer/Split/Edit local command variants preserve TOML v1
+and native JJ 0.45.1 formats. Selected tree deltas retain file type/executable
+metadata through native tree values; no generic patch persistence is introduced.
+
+Native local Stacks hunk selections are issued by the guarded read-only POST
+`/v1/local/repos/{repo}/stacks/hunks`. Tokens bind native source change
+identity, canonical path and complete before/after bytes; apply rederives them
+at the exact operation/configuration pin. Client patches and display-only IDs
+are rejected. Partial text deltas use native squash with emptied sources
+retained, without reconstructing the megamerge. Binary, conflict, mode/type and
+bounded-diff limits remain whole-file-only. Net branch comparisons remain
+presentation-only.
+
+Local graph commands use native `move_commits` insertion/reordering and full
+`squash_commits` for squash/uncommit. WIP is retained as a native child; graph
+rewrites do not reconstruct the merge. Branch squash/rebase discovers at most
+500 commits in its segment and stops at the next user bookmark boundary. Visible
+source identity, configured immutability and workspace-target protection are
+validated at preview and apply; retention commits are not graph sources.
+
+The ordinary local Stacks mutation profile now includes native bookmark deletion
+(top bookmark only; lower bookmarks and commits retained), abandonment, selected
+whole-file/native-hunk WIP discard, and complete native text-conflict
+resolution. Conflict terms are read lazily through guarded POST
+`stacks/conflict`; ordered three-term text conflicts use the existing Merge
+Editor. Multi-sided, structural, mode-conflicted and oversized conflicts retain
+native values and report that JJ resolution is required. Conflict paths are
+bounded to 50 per current read.
+
+Undo/Redo restores the native repository operation stack, including CLI work,
+with native descriptions and remote tracking semantics. Current Git bookkeeping
+is retained, as in JJ. TOML is not an Undo journal. Missing or restored
+references remain visible as unavailable choices/reasons; Refresh and Switch
+never rebuild membership automatically. Explicit Reapply saved branches
+reconciles membership and preserves WIP. Operation/config/source guards and
+unknown-outcome inspection remain required. Production file dragging uses exact
+loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
+branch comparisons remain read-only. Undo/Redo remains available without a
+selected named workspace.

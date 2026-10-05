@@ -11,6 +11,7 @@ import type {
 } from "@lapismd/design-core/diff";
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type { ReviewDetail } from "./repository-read-types.js";
+import type { Model } from "../api/client.js";
 export type StoreControllerActions = {
   connect(connection: StoreConnection): Promise<void>;
   disconnect(): void;
@@ -26,6 +27,7 @@ export type StoreControllerActions = {
   setWorkspacePath(path: string): void;
   linkWorkspace(): Promise<void>;
   pickWorkspaceFolder(): Promise<void>;
+  prepareKindIndex?(kind: Model<"KindPreparationKind">): Promise<void>;
   prepareIndex(): Promise<void>;
   cancelIndex(): Promise<void>;
   setSearchDraft(

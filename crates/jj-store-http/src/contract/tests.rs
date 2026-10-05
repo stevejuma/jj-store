@@ -263,6 +263,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         "/v1/local/capture/sources",
         "/v1/local/capture/control",
         "/v1/local/capture/rescan",
+        "/v1/local/repos/{repo}/working-tree/observe",
         "/v1/repos/{repo}/local/workspaces",
         "/v1/repos/{repo}/local/workspaces/link",
         "/v1/repos/{repo}/local/workspaces/pick",
@@ -281,13 +282,13 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 122);
+    assert_eq!(paths.len(), 123);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        42
+        43
     );
     assert_eq!(
         paths
@@ -724,4 +725,49 @@ fn kind_preparation_contract_is_strict_actor_free_and_metadata_only() {
     let task = &doc["components"]["schemas"]["KindPreparationTask"];
     assert!(task["properties"].get("progress").is_some());
     assert!(task["properties"].get("ids").is_none());
+}
+
+#[test]
+fn working_tree_observation_contract_is_registered_pinned_and_path_free() {
+    let document = openapi();
+    let operation = &document["paths"]["/v1/local/repos/{repo}/working-tree/observe"]["post"];
+    assert_eq!(operation["operationId"], "local_working_tree_observe");
+    assert_eq!(operation["security"], json!([{}]));
+    let request = &operation["requestBody"]["content"]["application/json"]["schema"];
+    assert_eq!(request["additionalProperties"], false);
+    let required = request["required"].as_array().unwrap();
+    for key in ["version", "binding_generation", "operation"] {
+        assert!(required.contains(&json!(key)));
+    }
+    assert!(request["properties"].get("path").is_none());
+    let schemas = &document["components"]["schemas"];
+    let snapshot = &schemas["WorkingTreeSnapshot"]["properties"];
+    for key in [
+        "repository",
+        "binding_generation",
+        "operation",
+        "view",
+        "workspace",
+        "working_copy",
+        "trees",
+        "tree_labels",
+        "physical_workspace",
+        "metadata_fingerprint",
+        "physical_fingerprint",
+    ] {
+        assert!(snapshot.get(key).is_some(), "{key}");
+    }
+    let response = &schemas["ObservedWorkingTree"]["properties"];
+    assert_eq!(response["changes"]["maxItems"], 4096);
+    for key in [
+        "root",
+        "path",
+        "base_ignores",
+        "global_ignore",
+        "contents",
+        "prepared",
+        "selection_token",
+    ] {
+        assert!(response.get(key).is_none(), "{key}");
+    }
 }
