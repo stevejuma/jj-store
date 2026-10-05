@@ -7,9 +7,11 @@ use jj_store_service::stack_workspace as s;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 mod catalog;
+mod checkout;
 mod execution;
 mod transition;
 use catalog::Catalog;
+pub use checkout::SavedCheckoutV1;
 pub use execution::{LocalExecutionV1, preparation_key};
 
 pub const MAX_RECORDS: usize = 128;
@@ -111,6 +113,25 @@ impl Record {
         }
         if let Some(execution) = &self.execution {
             execution.validate(self.principal, &self.preview)?;
+            if execution.checkout.is_some()
+                && !matches!(
+                    self.receipt.state,
+                    s::ReceiptState::Published { .. } | s::ReceiptState::Retired { .. }
+                )
+            {
+                return Err(Error::Invalid);
+            }
+            if let s::ReceiptState::Published {
+                checkout: s::CheckoutState::Verified { fingerprint },
+                ..
+            } = &self.receipt.state
+                && execution
+                    .checkout
+                    .as_ref()
+                    .is_some_and(|saved| saved.witness.physical() != *fingerprint)
+            {
+                return Err(Error::Invalid);
+            }
         }
         self.receipt
             .validate_prepared(&self.preview)

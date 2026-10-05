@@ -40,6 +40,16 @@ impl StackCommandJournal {
         expected: &s::ReceiptState,
         next: &s::ReceiptState,
     ) -> Result<Selection> {
+        self.select_transition(principal, apply, expected, next, false)
+    }
+    pub(super) fn select_transition(
+        &self,
+        principal: m::PrincipalId,
+        apply: &s::ApplyRequest,
+        expected: &s::ReceiptState,
+        next: &s::ReceiptState,
+        provider_proof: bool,
+    ) -> Result<Selection> {
         let gate = self.root.gate()?;
         let (mut catalog, stamp) = self.read(&gate)?;
         let record = catalog
@@ -48,6 +58,15 @@ impl StackCommandJournal {
         apply
             .validate(&record.preview.plan.request, record.preview.prepared)
             .map_err(|_| Error::IntentMismatch)?;
+        if record.execution.is_some()
+            && matches!(next, s::ReceiptState::Published { .. })
+            && !provider_proof
+        {
+            return Err(Error::InvalidTransition);
+        }
+        if record.execution.is_some() && *next == s::ReceiptState::PublicationUnknown {
+            catalog.encode_for_admission()?;
+        }
         if record
             .execution
             .as_ref()

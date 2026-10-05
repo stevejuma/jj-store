@@ -155,6 +155,67 @@ impl Installed {
         .unwrap()
     }
 }
+
+#[tokio::test]
+async fn registered_authority_executes_retained_reword_with_real_physical_guard_and_historical_retry()
+ {
+    let f = Installed::new().await;
+    let journal = f.journal();
+    let coordinator = Coordinator::new(1).unwrap();
+    let saved = p::prepare_reword(
+        &journal,
+        &coordinator,
+        &f.authority,
+        f.actor,
+        f.request.clone(),
+    )
+    .await
+    .unwrap();
+    let apply = s::ApplyRequest {
+        version: 1,
+        request_id: f.request.request_id,
+        intent_digest: f.request.intent_digest,
+        prepared: saved.preview.prepared,
+        selection: f.request.selection.clone(),
+    };
+    let before = f.folder.state();
+    let observer = Observer::new(q::Executor::new(1).unwrap(), 1).unwrap();
+    let done = p::apply_reword(
+        &journal,
+        &coordinator,
+        &observer,
+        &f.authority,
+        f.actor,
+        apply.clone(),
+    )
+    .await
+    .unwrap();
+    assert!(done.receipt.completed());
+    assert_eq!(&f.folder.state()[..2], &before[..2]);
+    assert_eq!(f.folder.state()[3], before[3]);
+    assert_ne!(f.folder.state()[2], before[2]);
+    // The active combination remains an explicit isolated fixture. This proves
+    // installed registration/physical policy and execution, not its selection.
+    std::fs::write(
+        f.folder.root().join("file.txt"),
+        "new editor bytes after receipt\n",
+    )
+    .unwrap();
+    let edited = f.folder.state();
+    let replay = p::apply_reword(
+        &journal,
+        &coordinator,
+        &observer,
+        &f.authority,
+        f.actor,
+        apply,
+    )
+    .await
+    .unwrap();
+    assert!(replay.replayed);
+    assert_eq!(replay.receipt, done.receipt);
+    assert_eq!(f.folder.state(), edited);
+}
 #[tokio::test]
 async fn registered_folder_and_real_observation_gate_preparation_and_original_replay() {
     let f = Installed::new().await;

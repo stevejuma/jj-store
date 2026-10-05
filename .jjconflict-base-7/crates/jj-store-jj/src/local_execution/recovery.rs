@@ -10,7 +10,7 @@ use super::*;
 use crate::{
     local_browser::budget::Budget,
     local_evidence::OperationArchiveV1,
-    local_metadata::{MetadataStore, StackPreparationKey},
+    local_metadata::{GitOid, MetadataStore, StackPreparationKey},
 };
 pub use checkout::{CheckoutWitnessV1, PhysicalGuard, VerifiedUnchangedCheckout};
 use jj_store_model as m;
@@ -25,9 +25,18 @@ pub struct RecoveredHistory {
     witness: RecoveryWitnessV1,
     key: StackPreparationKey,
     archive: OperationArchiveV1,
+    retained: RetainedIdentity,
     publication: bool,
     checkout: Option<CheckoutWitnessV1>,
     _permit: OwnedSemaphorePermit,
+}
+/// Checked retained selection information, not a publication capability.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct RetainedIdentity {
+    pub commit: GitOid,
+    pub archive: m::RecordDigest,
+    pub operation: m::OperationId,
+    pub view: m::ViewId,
 }
 impl Foreground {
     pub async fn recovery_witness(self) -> Result<(Self, RecoveryWitnessV1)> {
@@ -121,6 +130,13 @@ impl Coordinator {
                     .ok_or(Error::NotFound)?;
                 let archive = retained.history.as_ref().ok_or(Error::Incomplete)?.clone();
                 witness.check_archive(&archive)?;
+                let identity = RetainedIdentity {
+                    commit: retained.commit,
+                    archive: archive.id().map_err(evidence_error)?,
+                    operation: archive.operation,
+                    view: archive.operations[&archive.operation].view_id,
+                };
+                budget.check()?;
                 let recovery = RecoveredHistory {
                     guard,
                     access,
@@ -128,6 +144,7 @@ impl Coordinator {
                     witness,
                     key,
                     archive,
+                    retained: identity,
                     publication,
                     checkout,
                     _permit,
@@ -152,6 +169,9 @@ impl Coordinator {
     }
 }
 impl RecoveredHistory {
+    pub fn retained_identity(&self) -> RetainedIdentity {
+        self.retained
+    }
     /// Explicit archive-only original/candidate index repair; no publication.
     pub async fn restore_indexes(self) -> Result<Self> {
         let cancellation = tokio_util::sync::CancellationToken::new();

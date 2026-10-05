@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -88939,6 +88939,291 @@ entries.
   ],
   "next": "Durably save and discover exact checkout witnesses in the original command journal, compose retained publication/pointer receipts, then continue tree-changing checkout and all remaining approved engines/UI stages.",
   "summary": "110 unique provider/service/read-consumer cases pass. Exact unchanged-tree pointer completion, full physical guards and process-loss retry are qualified privately. Both inherited service lint diagnostics repaired. M21.2 remains In progress; production write controls remain unavailable."
+},
+{
+  "id": "E-M21-025",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "tlykvpus",
+  "kind": "Original-request retained reword publication and durable unchanged-tree checkout receipt join",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git SHA-1/JJ 0.45.1 profile; macOS ARM64 disposable stock-JJ folders. CARGO_INCREMENTAL=0; installed services/executables unchanged.",
+  "formats": "Private journal catalog V3 only when saved checkout exists; V1/V2 absent-field bytes stay readable and status does not upgrade. SavedCheckoutV1 links canonical CheckoutWitnessV1. 8-KiB saved witness bound; 32-KiB new local execution/16-KiB metadata growth reservation. Native pointer only; tree_state, companion, manifest/WAL, public contracts and combination formats unchanged.",
+  "files": [
+    "crates/jj-store-cli/tests/stack_registered_preparation.rs",
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/checkout/witness.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-server/src/stack_command_journal/catalog.rs",
+    "crates/jj-store-server/src/stack_command_journal/checkout.rs",
+    "crates/jj-store-server/src/stack_command_journal/execution.rs",
+    "crates/jj-store-server/src/stack_command_journal/transition.rs",
+    "crates/jj-store-server/src/stack_command_journal.rs",
+    "crates/jj-store-server/src/stack_preparation/apply.rs",
+    "crates/jj-store-server/src/stack_preparation.rs",
+    "crates/jj-store-server/tests/stack_combinations/support.rs",
+    "crates/jj-store-server/tests/stack_local_execution/lifecycle.rs",
+    "crates/jj-store-server/tests/stack_local_execution.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/reference/configuration.md",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "before": "The initial execution/journal target failed with three missing API/field diagnostics. A stricter actual-proof gate then exposed two metadata fixture failures and lint one collapsible conditional; owner/fixture corrections are recorded without weakening current proof requirements.",
+  "scope": "One installation-private retained reword code/checkout pipeline. Current registered/combination/physical first-apply guards; original identity lookup and terminal history; Unknown before head selection, exact retained commit/archive/candidate match, typed publication receipt, canonical witness selection before pointer completion, typed verification and pending discovery. Real physical/registered and killed-process evidence stays distinct from isolated combination authority and simulated historical retirement/metadata fixtures. No transport or writable UI capability.",
+  "tests": [
+    "crates/jj-store-server/tests/stack_local_execution.rs#real_retained_reword_execution_saves_checkout_witness_and_replays_receipt_without_writes",
+    "crates/jj-store-server/tests/stack_local_execution.rs#interrupted_durable_boundaries_reopen_and_finish_the_same_original_candidate",
+    "crates/jj-store-server/tests/stack_local_execution.rs#physical_edits_reject_prepublication_and_keep_saved_checkout_pending_after_publication",
+    "crates/jj-store-server/tests/stack_local_execution.rs#foreign_apply_identities_and_unproved_execution_receipts_cannot_publish",
+    "crates/jj-store-server/tests/stack_local_execution.rs#retired_receipt_and_saved_witness_are_historical_after_later_real_cli_work",
+    "crates/jj-store-server/tests/stack_local_execution.rs#saved_checkout_is_immutable_and_malformed_linkage_cannot_reopen",
+    "crates/jj-store-server/tests/stack_local_execution.rs#saved_pending_checkout_repairs_lost_source_dependencies_without_repreparing",
+    "crates/jj-store-server/tests/stack_local_execution.rs#journal_retention_mismatch_is_rejected_before_publication",
+    "crates/jj-store-server/tests/stack_local_execution/lifecycle.rs#process_loss_at_publication_and_checkout_boundaries_resumes_saved_journal",
+    "crates/jj-store-cli/tests/stack_registered_preparation.rs#registered_authority_executes_retained_reword_with_real_physical_guard_and_historical_retry"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution",
+      "result": "fail",
+      "failures": 3,
+      "note": "stack-local-execution-before.log: two missing apply_reword calls and one absent saved checkout field. Establishes the missing runtime/journal join."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-first.log: one actual retained execution/reopen case passes. Expanded log: three cases pass. Lifecycle log: six pass including four killed-process boundaries. Final log: seven pass with immutable/corrupt saved-witness cases. Binding log: nine pass after source/index repair and exact retained commit/archive/candidate comparison."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal --test stack_local_preparation --test stack_combinations",
+      "result": "fail",
+      "failures": 2,
+      "note": "stack-local-execution-direct.log: two combination metadata fixture failures at proof-free execution transitions. Production proof gate retained; fixtures now explicitly load historical V2 outcome state, preserving the existing metadata-owner assertions without claiming Setup/checkout execution."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-server -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-local-execution-lint.log: one unique collapsible_if diagnostic in saved checkout receipt validation. Collapsed the guard, retained legacy frozen completed receipts and added exact malformed/immutable witness coverage; no suppression."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-server -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-lint-after.log: owning strict lint passes after validation repair; final larger owning lane includes final identity guard and CLI consumer."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution --test stack_command_journal --test stack_local_preparation --test stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-direct-after.log: 30 pass (5 execution/13 journal/8 preparation/4 combinations), helper through parent. Complete log: 33 pass after process-loss and source-loss additions. Final server lane recorded separately after exact retention guard."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution saved_pending_checkout_repairs_lost_source_dependencies_without_repreparing -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-source-loss.log: saved canonical witness and original preview persist through real op_store/index removal, explicit reconstruction and pointer completion without re-preparation."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution journal_retention_mismatch_is_rejected_before_publication -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-retention.log: altered journal retention commit or archive digest rejects before head/pointer publication and retains Prepared. Added following source review of the key-only provider/journal linkage; no earlier behavioral failure result claimed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-units.log: nine complete direct journal/combination units pass; two ignored process helpers execute through parents. Existing linker __eh_frame warning unsuppressed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_unchanged_checkout",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-provider.log: 10 provider cases pass after witness linkage accessors; final broader recovery family reruns after retained identity capture."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-registered.log and registered-final.log: four actual registered-folder cases pass. New retained execution uses real device registration, CLI folder provider, Admin policy and full physical guard; combination authority remains an isolated fixture. Current/terminal retry preserves later editor bytes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-server -p jj-store-jj -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-lint-final.log: all three owning package strict all-target lints pass before final retained identity capture; final source rerun remains to record."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-server -p jj-store-jj -p jj-store-cli --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-check.log: all three owning package all-target checks pass before final retained identity capture; final source rerun remains to record."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-boundaries.log: 17 packages pass"
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-architecture.log: 1090 modules pass"
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-spec-first.log: 16 protected files/five chapters pass before final identity fields and append"
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-spec-validation.log: five validators/23 chapters/173 requirements pass"
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-rust-format.log: owning/runtime formatting pass"
+    },
+    {
+      "command": "node --test scripts/governance.test.mjs scripts/progress-mapping.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-governance.log: 33 governance and historical evidence cases pass"
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "Source and direct test families formatted after each edit; unrelated files unchanged."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/architecture.md spec/src/documentation.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/site/reference/configuration.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-doc-format.log and doc-format-final.log: changed canonical/manual documents and reviewed source fingerprints formatted; ledger excluded."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed exact saved checkout linkage and checked retained commit/archive/candidate identity. Runtime compares original journal selection before head/pointer mutation; source/index repair and killed-process recovery remain separate from production routes, selected combinations and general checkout.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-docs-review-local-final.log: final source fingerprint review, following initial local review of saved witness accessors."
+    },
+    {
+      "command": "pnpm docs:review configuration 'Reviewed original-request publication/checkout composition with exact retained commit/archive/candidate comparison before mutation, version-3 saved witness durability, bounded reserved growth and typed provider receipts. Killed-process and real registered physical guards are separate from legacy metadata fixtures; selected combinations, general checkout and production routes remain required.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-docs-review-server-final.log: final server source review, following initial journal/apply review."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-docs-check.log: initial 139-file closure, links/anchors and nine offline diagrams pass. Final source review/identity run is pending below until completion."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_unchanged_checkout --test stack_head_publication --test stack_source_recovery --test stack_foreground --test stack_operation_archive --test stack_reword_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-provider-final.log: all 78 provider cases pass after final retained identity capture under worker budget; six process helpers through parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution --test stack_command_journal --test stack_local_preparation --test stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-server-final.log: 34 pass, including nine execution cases, 13 journal, eight preparation and four combination metadata cases. Four killed checkpoints resume exact candidate/witness; source/index loss, immutable/corrupt witnesses, identity/proof/retention guards and terminal history pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-server -p jj-store-jj -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-lint-complete.log: final three owning package strict all-target no-deps lint passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-server -p jj-store-jj -p jj-store-cli --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-check-complete.log: final three owning all-target source checks pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-docs-check-final.log: final 139-file closure, links/anchors and nine offline diagrams in both themes pass after final source identity and review updates."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/architecture.md spec/src/documentation.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/site/reference/configuration.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-doc-format-check.log: final changed documents pass; ledger excluded."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-rust-format-final.log: final owning/runtime formatting passes."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-spec-first-final.log: final 18 protected files/six canonical chapters pass after identity fields and evidence append."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-progress.log: all 142 task/evidence checks pass; aggregate remains pending."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-units-final.log: final nine journal/combination units pass after retained identity capture; two subprocess helpers execute through passing parents. Existing linker warning remains unsuppressed."
+    },
+    {
+      "command": "python3 raw JSON body SHA-256 audit against stack-local-execution-ledger-before.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-ledger-audit.log: exactly 507 evidence objects; all 506 preceding raw bodies, including E-M21-024, remain byte-identical."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-progress-final.log: all 142 task/evidence checks pass after final units/raw-body audit."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-execution-spec-first-commit.log: final 18 protected files/six canonical chapters pass."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Private reword code/checkout execution is not complete Stage 3 production delivery: registered first apply still requires readable current context before original provider recovery; broader prepared-state source-loss policy, precise blocked/recovery transport, pending discovery endpoints, dropped HTTP response/cold browser flows and general tree-changing checkout remain required.",
+    "Combination authority/after-state and retirement are isolated fixtures. Actual selected combination updates, first-use setup, merge/WIP preservation, membership/switching, exact file/issued-hunk staging and commits, graph/deletion/undo engines, linked-native real-storage and all remaining approved stages remain incomplete. Production mutations stay unavailable.",
+    "Unrelated Rust/RustFS/UI/Storybook/root aggregate lanes are out of scope. No installed executable/service replacement, existing-repository reset/migration, package publication, screenshot comparison or baseline update. Existing linker __eh_frame warning remains unsuppressed."
+  ],
+  "next": "Finish original-request registered execution policy and general guarded checkout, then actual setup/combination selection and command transport/UI wiring; continue every approved stage.",
+  "summary": "125 unique direct cases pass: 78 JJ providers, 34 server integrations, nine journal/combination units and four actual registered consumers. Private exact reword code/checkout execution, version-3 saved witnesses/typed receipts, immutable terminal history, original retained selection guard, source/index repair and killed-process recovery are qualified. Old metadata fixture receipts stay explicitly simulated. General checkout, selected combination engine and production transport/UI gates remain incomplete; M21.2 and all seven-stage delivery remain In progress."
 }
 ]
 ```

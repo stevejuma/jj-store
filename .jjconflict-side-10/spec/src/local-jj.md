@@ -1195,3 +1195,12 @@ replaced binding or unrelated metadata fails explicitly. The resulting owned
 proof binds original preparation, witness and physical selection, and attests
 only this unchanged-tree provider boundary. Durable runtime journal composition,
 tree-changing checkout and complete command transport remain separate gates.
+
+Runtime unchanged-tree execution stores the exact private checkout witness in
+the original request journal before completion. Read-only witness linkage
+accessors carry key/recovery/candidate/physical identity without granting
+execution. Provider-only publication and checkout proofs must match those
+identities before runtime receipt acknowledgement. Historical completed/retired
+retry never opens a provider, rescans physical files or reexecutes the
+candidate. Tree-changing checkout and combination selection still require their
+owning engines.

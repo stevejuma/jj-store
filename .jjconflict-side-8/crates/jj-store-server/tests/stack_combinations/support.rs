@@ -168,28 +168,10 @@ impl Prepared {
         }
     }
     pub fn mark_completed(&self) {
-        let apply = self.apply();
-        self.journal
-            .transition(
-                self.actor,
-                &apply,
-                &s::ReceiptState::Prepared,
-                &s::ReceiptState::PublicationUnknown,
-            )
-            .unwrap();
-        let required = s::ReceiptState::Published {
-            operation: self.preview.plan.operation,
-            view: self.preview.plan.view,
-            checkout: s::CheckoutState::Required,
-        };
-        self.journal
-            .transition(
-                self.actor,
-                &apply,
-                &s::ReceiptState::PublicationUnknown,
-                &required,
-            )
-            .unwrap();
+        // This metadata-owner fixture loads an explicit historical version-2
+        // outcome. It has never qualified Setup execution or checkout. Current
+        // local execution receipts require actual provider proofs, so they must
+        // not be fabricated through the runtime transition API.
         let done = s::ReceiptState::Published {
             operation: self.preview.plan.operation,
             view: self.preview.plan.view,
@@ -197,8 +179,11 @@ impl Prepared {
                 fingerprint: m::RecordDigest::new([90; 32]),
             },
         };
-        self.journal
-            .transition(self.actor, &apply, &required, &done)
-            .unwrap();
+        let path = self.private.path().join("journal/state.json");
+        let mut saved: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+        assert_eq!(saved["version"], 2);
+        saved["records"][0]["receipt"]["state"] = serde_json::to_value(done).unwrap();
+        std::fs::write(path, serde_json::to_vec(&saved).unwrap()).unwrap();
     }
 }

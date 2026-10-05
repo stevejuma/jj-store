@@ -17,6 +17,8 @@ pub struct LocalExecutionV1 {
     pub archive: m::RecordDigest,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub history: Option<OperationArchiveV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub checkout: Option<super::checkout::SavedCheckoutV1>,
 }
 pub fn preparation_key(principal: m::PrincipalId, preview: &s::Preview) -> StackPreparationKey {
     let request = &preview.plan.request;
@@ -51,6 +53,7 @@ impl LocalExecutionV1 {
             retention: None,
             archive: history.id().map_err(|_| Error::Invalid)?,
             history: Some(history),
+            checkout: None,
         };
         value.validate(principal, preview)?;
         Ok(value)
@@ -78,11 +81,15 @@ impl LocalExecutionV1 {
             retention: Some(retained.commit),
             archive: history.id().map_err(|_| Error::Invalid)?,
             history: None,
+            checkout: None,
         };
         value.validate(principal, preview)?;
         Ok(value)
     }
     pub(super) fn validate(&self, principal: m::PrincipalId, preview: &s::Preview) -> Result<()> {
+        if let Some(checkout) = &self.checkout {
+            checkout.validate(self, preview)?;
+        }
         match (&self.history, self.retention) {
             (Some(history), None) if history.id().map_err(|_| Error::Invalid)? == self.archive => {
                 let capsule = history.capsule().map_err(|_| Error::Invalid)?;

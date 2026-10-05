@@ -146,3 +146,10 @@ Apply/restart indication. Read-only inventory does not enable storage
 relocation, access-mode transitions, backup execution or launch reconfiguration.
 Retained `[[backup]]` schema is not a qualified backup/restore workflow. Use the
 [capability reference](capabilities.md) before configuring a deployment profile.
+
+The private retained Stacks reword executor now joins journal, publication and
+unchanged-tree pointer proofs. Witness-bearing request catalogs use version 3,
+retain exact recovery inputs and reserve bounded receipt/checkout growth.
+Earlier catalogs remain readable and are not upgraded by status reads. This is
+an internal installed-policy boundary; no new configuration option, command
+route, general checkout or writable UI capability is exposed.

@@ -1100,3 +1100,15 @@ writes before synced atomic pointer replacement. An owned service guard uses the
 existing complete physical scanner through data-only provider interfaces.
 Provider proof does not select the runtime journal, combination state or a
 tree-changing checkout.
+
+Checkout witness linkage accessors expose only owned original key, recovery
+digest, candidate operation/view and physical selection. They MUST preserve
+canonical validation and cannot construct a provider proof. Runtime composition
+uses those identities to durably bind the private witness before calling pointer
+completion; historical receipt state never grants fresh provider execution.
+
+A recovered lease exposes data-only retained commit/archive and candidate
+operation/view identity from the checked archive under its existing worker
+budget. Runtime compares that selection to the original journal before provider
+publication or pointer completion; the informative identity is not itself a
+publication proof and cannot authorize a different retained archive.

@@ -215,3 +215,12 @@ The retained-index recovery manual distinguishes archive-only construction and
 private native decoding from source index rebuild or operation publication.
 Document preservation of valid CLI mappings, exact graph visibility and
 interrupted association retry; no command or checkout capability is implied.
+
+The private unchanged-tree execution manual MUST describe original identity
+lookup, registered first-apply policy, PublicationUnknown before head selection,
+canonical checkout witness durability and typed publication/checkout receipts.
+Distinguish actual registered-folder/physical guards and killed-process recovery
+from fixture combination state and historical simulated outcomes. Document
+versions 1/2 read compatibility, version-3 saved witnesses, 8-KiB witness bounds
+and reserved growth; no production command or general checkout capability is
+implied. Source reviews cover the JJ linkage and server journal/apply owners.

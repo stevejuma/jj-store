@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed unchanged-tree native pointer completion and exact saved witness recovery, deterministic interrupted staging, complete physical guards and original-request retry. Provider retains file/tree-state bytes; general checkout, runtime journal receipts and command transport remain required.",
-      "fingerprint": "542284c59706ce56eb334676f768875b3c2bab4c01ede8fb49d82989b334c4ed"
+      "reason": "Reviewed exact saved checkout linkage and checked retained commit/archive/candidate identity. Runtime compares original journal selection before head/pointer mutation; source/index repair and killed-process recovery remain separate from production routes, selected combinations and general checkout.",
+      "fingerprint": "3cf9b850912ccace72ae980df0447c30c6ea99955df30f4052995be559f44f36"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed the private combination metadata owner after final lint repairs. Scope, pending/selected separation, exact retained merge/WIP anchors, journal checkout proof, historical retry and actual registered operation/WIP staleness remain documented. Metadata fixture publication/checkout phases do not qualify setup, merge generation, membership, runtime transport or guarded checkout.",
-      "fingerprint": "596360bc0c255bfa68aa9e4293a101e822c667c21a86b60dbdda0b836df05c2e"
+      "reason": "Reviewed original-request publication/checkout composition with exact retained commit/archive/candidate comparison before mutation, version-3 saved witness durability, bounded reserved growth and typed provider receipts. Killed-process and real registered physical guards are separate from legacy metadata fixtures; selected combinations, general checkout and production routes remain required.",
+      "fingerprint": "c2cda4c01f13a0bd9c66bb36e4097beb076a6d3c760cdc5bbfcb0631145ea763"
     }
   },
   {

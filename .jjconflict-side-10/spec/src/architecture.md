@@ -939,3 +939,16 @@ adapter for hint-only local repository monitoring. Native storage, manifest
 publication, captured JJ reads and authorization retain their owned boundaries.
 A notification never selects authority; missed notifications fall back to shared
 bounded witness checks rather than per-browser history scans.
+
+Private server execution now joins original retained reword preparation to
+actual head publication, saved unchanged-tree checkout witness and typed
+provider acknowledgements. Authentication and original identity lookup precede
+execution; first apply verifies current registered combination and physical
+inputs, while pending retry resumes original recovery. Journal
+PublicationUnknown is durable before head selection; saved checkout input
+precedes pointer completion. Legacy completed receipts stay historical, current
+proof-free execution transitions are rejected, and exact completed/retired
+replay never scans or opens a provider. Witness-bearing catalogs use private
+version 3 with bounded reserved growth; ordinary reads never upgrade older
+catalogs. This code/checkout join still needs combination selection, general
+checkout, production transport and UI capability qualification.

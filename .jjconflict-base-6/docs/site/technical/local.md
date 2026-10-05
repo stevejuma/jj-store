@@ -331,3 +331,35 @@ retain their original anchors. Actual command generation and checkout remain
 separate prerequisites. External code operations that no longer match the stored
 combination selection require explicit recovery or repair rather than silently
 adopting the new physical state.
+
+## Private unchanged-tree execution join
+
+The server can now execute an original retained reword through the private
+code/checkout composition. First apply checks the authorized registered context,
+original combination selection and complete physical inventory. It durably saves
+PublicationUnknown before selecting the original candidate head, then stores the
+matching publication receipt and canonical checkout witness before completing
+only the operation pointer. The recovered retention commit, archive digest and
+candidate operation/view must match the original journal before publication or
+pointer completion. A retained key alone cannot select a different archive.
+Provider proofs bind each acknowledgement to the original request and saved
+witness. Exact pending retries restore saved source, extra and index
+dependencies rather than preparing another command.
+
+The private journal reserves 32 KiB of receipt/checkout growth per new local
+execution and admits checkout witnesses up to 8 KiB. Witness-bearing catalogs
+use version 3. Earlier catalogs remain readable; historical completed/retired
+receipts return unchanged before opening a provider or observing new physical
+state. Current local publication and verification require typed provider proofs;
+metadata test fixtures load historical outcomes explicitly. External edits keep
+unfinished checkout discoverable and preserve new bytes. Process-loss tests kill
+workers after publication, receipt selection, witness selection and pointer
+completion; retry uses the same preview/candidate and saved witness.
+
+Registered-folder execution uses the actual device registry, CLI folder provider
+and complete scanner guard. Active combination selection remains
+fixture-supplied in these execution tests. A simulated retirement outcome is not
+proof of an undo engine. This join does not select real combination updates or
+qualify first-use setup, tree-changing checkout, command transport/status
+endpoints or writable UI controls. These remain required in the approved
+delivery plan.

@@ -1,7 +1,9 @@
 //! Exact unpublished local preparation composition; no publication/checkout route.
+mod apply;
 mod registered;
 mod report;
 use crate::stack_command_journal::{self as j, LocalExecutionV1, StackCommandJournal};
+pub use apply::apply_reword;
 use jj_store_jj::{
     local_browser::{self as q, Access, working_tree::CurrentState},
     local_execution::{Coordinator, Reword},

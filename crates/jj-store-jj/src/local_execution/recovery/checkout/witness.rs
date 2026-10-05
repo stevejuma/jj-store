@@ -19,6 +19,16 @@ pub struct CheckoutWitnessV1 {
     after: Vec<u8>,
 }
 impl CheckoutWitnessV1 {
+    /// Owned linkage for the installation journal; never an execution proof.
+    pub fn preparation(&self) -> &StackPreparationKey {
+        &self.key
+    }
+    pub fn recovery(&self) -> m::RecordDigest {
+        self.recovery
+    }
+    pub fn candidate(&self) -> (m::OperationId, m::ViewId) {
+        (self.operation, self.view)
+    }
     pub fn encode(&self) -> Result<Vec<u8>> {
         self.native()?;
         let bytes = serde_json::to_vec(self).map_err(|_| Error::Invalid)?;
@@ -137,7 +147,7 @@ impl CheckoutWitnessV1 {
     pub(super) fn after(&self) -> &[u8] {
         &self.after
     }
-    pub(super) fn physical(&self) -> m::RecordDigest {
+    pub fn physical(&self) -> m::RecordDigest {
         self.physical
     }
 }

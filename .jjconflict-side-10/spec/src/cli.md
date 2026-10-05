@@ -1850,3 +1850,46 @@ head/base pages, rejected foreign anchors and byte-identical source metadata and
 unsnapshotted physical files. Existing LocalTrusted HTTP query/cursor admission
 and explicit cold-index preparation are reused; no installed service or user
 repository is initialized, modified or converted by this acceptance lane.
+
+## Exact retained unchanged-tree execution composition
+
+The private server composition MAY join an original retained reword to exact
+head publication and unchanged-tree pointer completion. It MUST authenticate and
+look up original request/intent/prepared identity before live execution. Legacy,
+rejected, retired and completed records cannot create new operations. Before
+first publication, current registered physical/combination policy and the full
+physical guard MUST match the original selection. PublicationUnknown MUST be
+durable before provider selection; exact publication evidence selects the
+original Published/Required receipt.
+
+A checkout witness MUST be canonical, privately saved and linked to the original
+retained key/recovery digest, candidate operation/view and physical fingerprint
+before pointer completion. Saving or retrying it cannot replace another witness
+or reset a terminal receipt. The journal MUST reserve bounded witness growth
+before publication, reject legacy execution promotion and validate saved linkage
+on reopen. Checkout acknowledgement requires the owning provider proof against
+that saved witness; the physical fingerprint is historical original guard state,
+not a fresh snapshot. Incomplete or blocked checkout remains discoverable with
+the original request. Retries resume exact saved execution and never prepare
+another operation. This composition does not imply selected combination updates,
+tree-changing checkout, production routes or writable UI capabilities; those
+retain their own qualification gates.
+
+New local execution admission reserves 32 KiB per request for receipt and saved
+checkout growth; legacy metadata-only admission retains its 16-KiB reservation.
+An existing local record must pass the current growth reservation before
+entering PublicationUnknown. Saved unchanged-tree witnesses admit at most 8 KiB.
+Records with a saved checkout use private catalog version 3; versions 1 and 2
+remain readable with absent new fields omitted, never upgraded by a status read.
+
+Historical version-2 completed receipts without a checkout witness remain
+readable as frozen outcomes. They cannot create a new current execution proof.
+Metadata-owner tests may explicitly load those legacy receipt fixtures, but
+current local publication/checkout transitions require typed provider proofs.
+Fixture receipts do not qualify a Setup, combination or undo engine.
+
+Before publication or pointer completion, recovered provider selection MUST
+match the journal's original retention commit, archive digest and prepared
+operation/view. A key alone is insufficient. Identity mismatch may restore
+immutable archived source records but MUST NOT select a head or complete a
+checkout, and must retain the original pending receipt without re-preparation.

@@ -26,7 +26,20 @@ impl Catalog {
     fn validate(&self) -> Result<()> {
         self.scope.validate()?;
         let has_execution = self.records.iter().any(|r| r.execution.is_some());
-        if self.version != if has_execution { 2 } else { 1 } || self.records.len() > MAX_RECORDS {
+        let has_checkout = self
+            .records
+            .iter()
+            .any(|r| r.execution.as_ref().is_some_and(|e| e.checkout.is_some()));
+        if self.version
+            != if has_checkout {
+                3
+            } else if has_execution {
+                2
+            } else {
+                1
+            }
+            || self.records.len() > MAX_RECORDS
+        {
             return Err(Error::Invalid);
         }
         let mut requests = BTreeSet::new();
@@ -46,7 +59,13 @@ impl Catalog {
         Ok(())
     }
     pub fn include_execution(&mut self) {
-        if self.records.iter().any(|r| r.execution.is_some()) {
+        if self
+            .records
+            .iter()
+            .any(|r| r.execution.as_ref().is_some_and(|e| e.checkout.is_some()))
+        {
+            self.version = 3;
+        } else if self.records.iter().any(|r| r.execution.is_some()) {
             self.version = 2;
         }
     }
@@ -82,7 +101,18 @@ impl Catalog {
         // which JSON can at most double. IDs and tags add less than 1 KiB.
         // Reserve 16 KiB per record for every later receipt state so capacity
         // pressure cannot prevent publication/checkout recovery or retirement.
-        if bytes.len() + self.records.len() * 16 * 1024 > MAX_BYTES {
+        let reserved: usize = self
+            .records
+            .iter()
+            .map(|record| {
+                if record.execution.is_some() {
+                    32 * 1024
+                } else {
+                    16 * 1024
+                }
+            })
+            .sum();
+        if bytes.len() + reserved > MAX_BYTES {
             return Err(Error::Capacity);
         }
         Ok(bytes)
