@@ -1,5 +1,17 @@
 # Local Git-backed JJ collaboration
 
+Local code admission separates authoritative boundary validation from repeated
+inner-loop checks. The server may share at most 256 process-local validated
+folder bindings, retaining no credentials. A cached check binds the canonical
+folder, repository and registration generation and expires after one second.
+Successful registration persistence and physical watcher hints invalidate it;
+invalidation racing validation cannot publish a fresh cache entry. Start and
+completion of bounded reads still perform physical validation, including when
+watcher events are absent. Long-running reads renew expired checks. Failures are
+never cached as successful admission. Operation/object membership, cancellation,
+byte/work/deadline checks and source read-only behavior remain mandatory. This
+cache does not authorize native shared deployments.
+
 Local selected-file text comparisons use the shared native JJ line-diff
 admission policy in api.md. Exact common lines may partition longer files before
 bounded comparison of the remaining spans, without building or reading a new

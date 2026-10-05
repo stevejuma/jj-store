@@ -9,16 +9,19 @@ async fn server(
     tokio::sync::oneshot::Sender<()>,
     tokio::task::JoinHandle<()>,
 ) {
-    let prepared = PreparedServer::prepare_with_browser(
-        config,
-        true,
-        None,
-        None,
-        None,
-        Some(Arc::new(jj_store_cli::local_browser::LocalFolders)),
-    )
-    .await
-    .unwrap();
+    server_with_provider(config, Arc::new(jj_store_cli::local_browser::LocalFolders)).await
+}
+pub(super) async fn server_with_provider(
+    config: &Config,
+    provider: Arc<dyn jj_store_service::local_browser::FolderProvider>,
+) -> (
+    tokio::sync::oneshot::Sender<()>,
+    tokio::task::JoinHandle<()>,
+) {
+    let prepared =
+        PreparedServer::prepare_with_browser(config, true, None, None, None, Some(provider))
+            .await
+            .unwrap();
     let (stop, stopped) = tokio::sync::oneshot::channel();
     let running = tokio::spawn(async move {
         prepared
@@ -30,7 +33,7 @@ async fn server(
     });
     (stop, running)
 }
-async fn request(
+pub(super) async fn request(
     client: &reqwest::Client,
     address: std::net::SocketAddr,
     suffix: &str,

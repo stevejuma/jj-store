@@ -50,6 +50,11 @@ pub trait Access: Send + Sync {
     fn generation(&self) -> u64;
     fn metadata_path(&self) -> &Path;
     async fn authorize(&self) -> Result<()>;
+    /// Repeated read checks may reuse a short-lived validated physical binding.
+    /// Full authorization is still required at entry and before returning data.
+    async fn check(&self) -> Result<()> {
+        self.authorize().await
+    }
 }
 #[derive(
     Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, schemars::JsonSchema,

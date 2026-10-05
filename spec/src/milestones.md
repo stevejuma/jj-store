@@ -91357,6 +91357,142 @@ entries.
       "Reader-cache redesign, broader indexing, release/scale/RustFS and visual baselines are out of scope. Root aggregate checks/tests/builds and unrelated full suites are out of scope under targeted verification policy. Existing Darwin unwind-table linker warning remains; no installed CLI replacement or source-repository mutation."
     ],
     "next": "Land this verified slice in main while retaining bounded-reads and codex-preview workspaces. Any reader-cache or larger performance redesign requires a separate agreed slice; five-second target remains open."
+  },
+  {
+    "id": "E-READ-089",
+    "date": "2026-10-06",
+    "tasks": ["M4.6", "M13.4"],
+    "requirements": [
+      "JST-LOCAL-004",
+      "JST-JJ-003",
+      "JST-API-005",
+      "JST-GOV-007"
+    ],
+    "kind": "Bounded local physical admission cache with fresh read boundaries",
+    "revision": "enclosing Jujutsu change wmpqkuqp",
+    "before": "Exact real HTTP fixture: 40 files across three unrelated edits caused 238 physical registration/folder inspections. Assertion <=20 failed. Same-profile Linux quick metadata root12.475s,arch9.336s,block22.591s; names1.241-1.474s.",
+    "scope": "Share up to256 process-local validated folder entries for inner checks, max age1s; preserve full request/preparation boundary validation and independent object membership. Registration persistence invalidates before and after replacement; existing physical watcher hints invalidate entries. Expiry and mandatory boundary validation cover lost events. Shared refresh suppresses concurrent duplicate inspection; no native permission, wire, source-state or UI change. Exact tests precede complete direct local_browser binary and affected five-package all-target checks; root aggregates, UI, native and RustFS suites out of scope.",
+    "versions": "macOS ARM64; Rust1.98.1; JJ/jj-lib0.45.1; existing pinned dependencies; unoptimized test/development profile.",
+    "formats": "Additive internal Access.check with full-authorize default and owned service FolderAdmission cache. Existing HTTP DTOs/cursors, source JJ/Git metadata, manifests, WAL, registry persistence and credentials unchanged.",
+    "files": [
+      "crates/jj-store-cli/tests/local_browser/admission_cache.rs",
+      "crates/jj-store-cli/tests/local_browser/managed_http.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-http/src/local_browser/binding.rs",
+      "crates/jj-store-http/src/local_browser.rs",
+      "crates/jj-store-jj/src/local_browser/budget.rs",
+      "crates/jj-store-jj/src/local_browser/code_index.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/preparation.rs",
+      "crates/jj-store-jj/src/local_browser/scoped.rs",
+      "crates/jj-store-server/src/local_repositories/watcher.rs",
+      "crates/jj-store-server/src/local_repositories.rs",
+      "crates/jj-store-service/src/local_browser/admission/tests.rs",
+      "crates/jj-store-service/src/local_browser/admission.rs",
+      "crates/jj-store-service/src/local_browser.rs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/mutations.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/admission_cache.rs#local_metadata_reads_bound_registration_inspections",
+      "crates/jj-store-cli/tests/local_browser/admission_cache.rs#cached_inner_checks_cannot_bypass_final_physical_validation",
+      "crates/jj-store-cli/tests/local_browser/admission_cache.rs#registration_persistence_invalidates_shared_admission_synchronously",
+      "crates/jj-store-service/src/local_browser/admission/tests.rs#invalidation_during_validation_does_not_publish_a_stale_entry"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_metadata_reads_bound_registration_inspections -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/binding-cache/regression-before.log: 238 inspections versus at most 20."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_metadata_reads_bound_registration_inspections -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "regression-after.log: trait import missing in extracted binding; corrected. Initial cargo fmt also reported not-yet-created tests module; created and formatted."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked local_browser::admission",
+        "result": "fail",
+        "failures": 3,
+        "note": "cache-unit.log: test constructor used from_bytes instead of owned RepositoryId::new; corrected."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked local_metadata_reads_bound_registration_inspections -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "regression-after-2.log: test diagnostic required Debug on Response; removed diagnostic formatting, preserved assertion."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/api.md spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/mutations.md",
+        "result": "fail",
+        "failures": 4,
+        "note": "spec-format.log: four edited chapters need formatting; corrected by same files with --write."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked admission_cache:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "admission-tests.log; 35.15s. Exact admission tests pass: 10 physical inspections versus 238 before; fresh boundary and synchronous invalidation tests pass."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked local_browser::admission",
+        "result": "pass",
+        "failures": 0,
+        "note": "cache-unit-final.log; 23.98s. Exact admission tests pass: 10 physical inspections versus 238 before; fresh boundary and synchronous invalidation tests pass."
+      },
+      {
+        "command": "cargo test -p jj-store-server --lib --locked local_repositories::watcher::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/binding-cache/watcher.log; 196.42s."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/binding-cache/local-browser.log; 165.72s."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-server -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/binding-cache/packages.log; 136.09s."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/binding-cache/backend-build.log; 39.63s."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Backend replaced; fixture and Vite preserved."
+      },
+      {
+        "command": "python3 -u .local/binding-cache/benchmark.py after",
+        "result": "pass",
+        "failures": 0,
+        "note": "18 admitted HTTP requests, three rounds, same unoptimized profile, OS caches retained. / names: before 1.474s, after median 1.159s (1.140–1.195s). / metadata: before 12.475s, after median 1.310s (1.161–1.448s). arch names: before 1.241s, after median 1.212s (1.119–1.326s). arch metadata: before 9.336s, after median 1.171s (1.155–1.355s). block names: before 1.373s, after median 1.185s (1.092–1.210s). block metadata: before 22.591s, after median 1.280s (1.198–1.540s). Attribution unchanged: root 19/22 path_change/snapshot, arch 5/18, block 0/50. Warm quick metadata meets five-second target. Not a browser or OS-cold benchmark."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Ledger rejected pass with explicit deferred gaps, and then unsupported partial status; retained pending for overall responsiveness work, with slice verification recorded separately."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "No release, optimized-build, OS-cold, RustFS or visual qualification claimed. Broader unrelated suites out of scope. Names-only setup still about 1.2s; directory response reuse and listing setup are the next measured slice. Reader reuse, completed server path-result cache and soft attribution allowance remain conditional on measurements."
+    ],
+    "next": "Admission-cache slice verified: commit and land it; retain temporary workspace. Continue directory UI response reuse and listing setup investigation. Remaining items describe separate qualification and conditional optimizations, not failures in this slice."
   }
 ]
 ```

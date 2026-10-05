@@ -1,5 +1,12 @@
 # Native JJ integration
 
+The local read capability keeps authoritative `authorize` at request and task
+boundaries. Its default inner-loop `check` also authorizes; server composition
+may implement it using a one-second validated binding cache with synchronous
+registration invalidation. Scoped object membership is checked independently for
+each read. The worker validates again before exposing its result; cached checks
+cannot bypass cancellation or resource budgets.
+
 Selected native and local text comparisons share service admission around the
 pinned JJ default line-diff implementation. Exact common boundaries and ordered
 unique common lines may split larger inputs into bounded native comparisons; the

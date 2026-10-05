@@ -260,7 +260,7 @@ impl Executor {
                         } else {
                             index
                         };
-                        budget.authorize(&context.access).await?;
+                        budget.until(context.access.binding.authorize()).await??;
                         if let Some(namespace) = &namespace {
                             namespace.finish()?;
                         }

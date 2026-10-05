@@ -40,6 +40,7 @@ struct Registry {
 #[derive(Clone)]
 pub struct DeviceRepositories {
     changes: jj_store_service::freshness::Signals,
+    admissions: Arc<admission::FolderAdmissions>,
     path: PathBuf,
     identity: Identity,
     provider: Arc<dyn FolderProvider>,
@@ -59,6 +60,7 @@ impl DeviceRepositories {
         }
         Ok(Self {
             changes: Default::default(),
+            admissions: Default::default(),
             path: state.join("local-repositories.json"),
             identity,
             provider,
@@ -237,6 +239,15 @@ impl DeviceRepositories {
         Ok(value)
     }
     fn persist(&self, registry: &Registry) -> Result<()> {
+        // Invalidate on both sides of replacement, including unknown/error outcomes.
+        struct Invalidate<'a>(&'a admission::FolderAdmissions);
+        impl Drop for Invalidate<'_> {
+            fn drop(&mut self) {
+                self.0.invalidate();
+            }
+        }
+        self.admissions.invalidate();
+        let _invalidate = Invalidate(&self.admissions);
         let bytes = serde_json::to_vec(registry).map_err(|_| Error::Unavailable)?;
         if bytes.len() > 4 * 1024 * 1024 {
             return Err(Error::Limit);
@@ -378,9 +389,12 @@ fn valid_path(path: &str) -> bool {
 
 #[async_trait::async_trait]
 impl LocalRepositories for DeviceRepositories {
+    fn read_admission(&self, repository: RepositoryId) -> Option<Arc<admission::FolderAdmission>> {
+        self.admissions.get(repository)
+    }
     fn watch(&self, repository: RepositoryId) -> Result<Option<HintWatch>> {
         let (folder, _) = self.folder(repository)?;
-        watcher::watch(&folder).map(Some)
+        watcher::watch(&folder, self.admissions.get(repository)).map(Some)
     }
     fn freshness(
         &self,

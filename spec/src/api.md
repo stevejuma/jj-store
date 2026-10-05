@@ -1,5 +1,11 @@
 # Read APIs and browser
 
+Local code requests may reuse server-owned folder validation during bounded
+traversal. Full registration and physical identity checks remain at read entry
+and completion, with short-lived checks renewed during long work. Cache hits
+never grant object membership or turn failed admission into snapshot metadata.
+Wire responses, operation pins and cursor claims are unchanged.
+
 LocalTrusted native/local capabilities MAY advertise `automatic_code_index`;
 absence or false retains explicit preparation. Additive native and local
 `code-index/tasks` start/status/cancel routes use existing versioned index-task

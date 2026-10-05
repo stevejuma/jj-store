@@ -1,5 +1,11 @@
 # CLI and server commands
 
+The development server shares bounded local-folder admission entries across code
+requests. Registration persistence synchronously invalidates them; existing
+physical watcher hints also invalidate them. Missed events remain covered by
+one-second renewal and mandatory full read-boundary validation. Source JJ/Git
+metadata is never written by admission or its cache.
+
 Directory row metadata acceptance covers native service and real local JJ merge
 fixtures. A single shared first-parent scan accepts integration commits and
 finishes after at most 64 steps. Older unresolved rows return the selected

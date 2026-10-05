@@ -1706,3 +1706,6 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
 
 #[path = "local_browser/history_query.rs"]
 mod history_query_acceptance;
+
+#[path = "local_browser/admission_cache.rs"]
+mod admission_cache;

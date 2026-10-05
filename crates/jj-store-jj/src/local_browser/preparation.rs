@@ -338,10 +338,10 @@ impl Executor {
                             reserved_bytes,
                         ))
                         .await?;
-                        budget.authorize(&context.access).await?;
+                        budget.until(context.access.binding.authorize()).await??;
                         let resident =
                             Box::pin(graph::load(&directory, &source, operation)).await?;
-                        budget.authorize(&context.access).await?;
+                        budget.until(context.access.binding.authorize()).await??;
                         Ok(Prepared {
                             directory,
                             snapshot: Snapshot {

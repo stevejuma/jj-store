@@ -1,4 +1,5 @@
 //! Owned device registration contracts. Physical JJ discovery belongs to composition.
+pub mod admission;
 use crate::local_repository::LocalRepository;
 pub use jj_store_jj::local_browser as code;
 use jj_store_model::{RepositoryId, RequestId};
@@ -133,6 +134,12 @@ pub struct HintWatch {
 }
 #[async_trait::async_trait]
 pub trait LocalRepositories: Send + Sync {
+    fn read_admission(
+        &self,
+        _repository: RepositoryId,
+    ) -> Option<std::sync::Arc<admission::FolderAdmission>> {
+        None
+    }
     fn watch(&self, _repository: RepositoryId) -> Result<Option<HintWatch>> {
         Ok(None)
     }

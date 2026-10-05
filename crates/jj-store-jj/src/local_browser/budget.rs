@@ -108,7 +108,7 @@ impl Budget {
     }
     pub async fn authorize(&self, pin: &Pin) -> Result<()> {
         self.work(1)?;
-        self.until(pin.binding.authorize()).await?
+        self.until(pin.binding.check()).await?
     }
     pub fn stats(&self) -> Stats {
         Stats {

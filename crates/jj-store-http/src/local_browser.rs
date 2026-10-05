@@ -1,6 +1,8 @@
 //! LocalTrusted installation management and strictly typed operation-pinned reads.
 use crate::*;
 mod agents;
+mod binding;
+pub(crate) use binding::binding;
 mod conversion;
 mod events;
 mod index_tasks;
@@ -285,48 +287,6 @@ async fn pick(
         }
     })?;
     state.json(&result)
-}
-pub(crate) struct Binding {
-    manager: Arc<dyn management::LocalRepositories>,
-    folder: management::LocalFolder,
-    generation: u64,
-}
-#[async_trait::async_trait]
-impl local::Access for Binding {
-    fn repository(&self) -> m::RepositoryId {
-        self.folder.repository.expect("registered identity")
-    }
-    fn generation(&self) -> u64 {
-        self.generation
-    }
-    fn metadata_path(&self) -> &std::path::Path {
-        std::path::Path::new(&self.folder.metadata)
-    }
-    async fn authorize(&self) -> local::Result<()> {
-        let manager = self.manager.clone();
-        let repo = self.repository();
-        let (folder, generation) = tokio::task::spawn_blocking(move || manager.folder(repo))
-            .await
-            .map_err(|_| local::Error::Unavailable)?
-            .map_err(|_| local::Error::Denied)?;
-        if folder != self.folder || generation != self.generation {
-            return Err(local::Error::Denied);
-        }
-        Ok(())
-    }
-}
-pub(crate) async fn binding(
-    state: &State,
-    repo: m::RepositoryId,
-) -> Result<Arc<dyn local::Access>> {
-    let manager = manager(state)?;
-    let check = manager.clone();
-    let (folder, generation) = blocking(state, move || check.folder(repo).map_err(map)).await?;
-    Ok(Arc::new(Binding {
-        manager,
-        folder,
-        generation,
-    }))
 }
 async fn snapshot(
     ExtractState(state): ExtractState<Arc<State>>,

@@ -2,7 +2,10 @@
 use super::*;
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
 use std::path::Path;
-pub(super) fn watch(folder: &LocalFolder) -> Result<HintWatch> {
+pub(super) fn watch(
+    folder: &LocalFolder,
+    admission: Option<Arc<admission::FolderAdmission>>,
+) -> Result<HintWatch> {
     let (send, receiver) = tokio::sync::mpsc::channel(1);
     let mut watcher: RecommendedWatcher =
         notify::recommended_watcher(move |event: notify::Result<notify::Event>| {
@@ -11,6 +14,9 @@ pub(super) fn watch(folder: &LocalFolder) -> Result<HintWatch> {
                 .is_ok_and(|e| matches!(e.kind, notify::EventKind::Access(_)))
             {
                 return;
+            }
+            if let Some(admission) = &admission {
+                admission.invalidate();
             }
             let _ = send.try_send(());
         })
@@ -66,12 +72,17 @@ mod tests {
             metadata: metadata.to_str().unwrap().into(),
             repository: None,
         };
-        let mut watched = watch(&folder).unwrap();
+        let admission = Arc::new(admission::FolderAdmission::default());
+        admission
+            .validate(&folder, 1, true, || Ok((folder.clone(), 1)))
+            .unwrap();
+        let mut watched = watch(&folder, Some(admission.clone())).unwrap();
         std::fs::write(metadata.join("op_heads/head"), b"operation").unwrap();
         tokio::time::timeout(std::time::Duration::from_secs(3), watched.receiver.recv())
             .await
             .unwrap()
             .unwrap();
+        assert!(!admission.cached(&folder, 1));
         while watched.receiver.try_recv().is_ok() {}
         std::fs::write(git.join("packed-refs.new"), b"committed-ref").unwrap();
         std::fs::rename(git.join("packed-refs.new"), git.join("packed-refs")).unwrap();

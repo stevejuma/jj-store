@@ -72,7 +72,7 @@ impl Guard {
     }
     async fn admit(&self, key: ObjectKey, path: Option<&RepoPath>) -> Result<()> {
         self.budget.work(1)?;
-        self.budget.until(self.binding.authorize()).await??;
+        self.budget.until(self.binding.check()).await??;
         if let Some(path) = path {
             native::path(path.as_internal_file_string())?;
         }
@@ -224,7 +224,7 @@ impl b::Backend for Scoped {
         {
             self.0
                 .budget
-                .until(self.0.binding.authorize())
+                .until(self.0.binding.check())
                 .await
                 .map_err(error)?
                 .map_err(error)?;
@@ -281,7 +281,7 @@ impl b::Backend for Scoped {
         native::path(path.as_internal_file_string()).map_err(error)?;
         self.0
             .budget
-            .until(self.0.binding.authorize())
+            .until(self.0.binding.check())
             .await
             .map_err(error)?
             .map_err(error)?;

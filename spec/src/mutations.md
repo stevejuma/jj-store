@@ -1,5 +1,12 @@
 # Typed mutations
 
+Local folder admission caching is an owned service primitive, independent of JJ
+and HTTP. Entries are bounded, generation-bound and invalidatable; concurrent
+refreshes may share a validation completed after their request began. Registry
+persistence invalidates entries before and after replacement, including error
+paths. This optimization changes no mutation authorization, receipts or
+publication semantics.
+
 Files metadata uses the existing read authority for a bounded first-parent pass.
 It returns path-change or selected-snapshot provenance without scheduling
 changed-path maintenance. Ready graph handles may prove membership; absence of
