@@ -68,12 +68,17 @@ gates.
 ### Review of the current UI
 
 The original split still holds: production-owned presentation and controller
-code are exercised through an isolated stateful catalog adapter; real checkout
-execution has not been enabled. The latest reviewed UI parent is `687f056b`.
-Live inspection covered Workspace, applied/local branch groups, selecting an
-unapplied stack, its conflict preview and cancellation, and the target history
-column. This review did not repeat the prior interaction or accessibility
-suites.
+code are exercised through an isolated stateful catalog adapter; production
+checkout commands have not been enabled. The initial UI review used `687f056b`;
+the follow-up review uses the current workspace parent `83844c5e`, which
+includes real read wiring and private backend preparation/recovery. Fresh
+inspection of the existing Storybook on port 6057 covered Workspace,
+applied/local branch groups, the body Apply action and inline branch files.
+Source review additionally covered production discovery, command eligibility,
+preparation, cancellation, status and receipt handling. The original review
+covered conflict preview, cancellation and target history. Neither review
+substitutes for interaction, accessibility, geometry or cold production command
+acceptance.
 
 | Original intent                                     | Current result                                                                               | Integration implication                                                                 |
 | --------------------------------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
@@ -458,6 +463,103 @@ metadata acknowledgement faults exercise this coordination. Provider-generated
 setup/merge/WIP engines and registered runtime composition remain unqualified;
 fixture snapshots do not establish them. Production Stacks stays read-only and
 all seven approved stages remain required.
+
+E-M21-035 delivers real first-use setup through the registered authority. An
+exact existing local or already-known remote target produces an unpublished
+merge commit and WIP child, preserving original history, refs, other workspace
+selections and physical files. The WIP initially retains the existing named WC
+baseline tree. Dirty unsnapshotted edits remain guarded on disk; they are not
+yet captured in that WIP. Retention, publication, native pointer completion and
+combination selection use the original journal identity and ordered completion
+join. This qualifies private setup, not production workspace discovery,
+membership/switching, complete Unstaged reads or writable UI.
+
+### Next implementation checkpoint: command transport and initial setup
+
+The seven stages below remain the approved scope. Continue Stage 3 and the
+initial-setup portion of Stage 4 as a small production vertical slice before
+implementing further command families. Reuse the existing Stacks presentation;
+extend its adapter/controller models where real outcomes cannot fit. Keep each
+mutation capability disabled until its executor, transport and production UI
+flow have passed their acceptance checks.
+
+1. **Define owned public discovery and lifecycle contracts.** Add bounded
+   workspace state, pending-request discovery and public command-result types
+   under `crates/jj-store-service/src/stack_workspace/`, plus an owned runtime
+   interface implemented by the server. Reuse the existing versioned
+   selection/intent/prepared/receipt contracts. Public results project preview,
+   historical receipt and replay information; never serialize the journal's
+   private execution record, archive bytes, native paths or retention keys.
+   Discovery distinguishes absent configuration from unreadable, stale or
+   pending state. Reads cannot create a journal, combination store or code ref.
+   Current selected combinations and their generations are separate from any
+   command's historical outcome. Keep workspace lists and pending discovery
+   bounded by explicit service limits; the current private catalogs cap them at
+   64 combinations and 128 request records respectively.
+2. **Compose the registered runtime.** Resolve repository, physical workspace,
+   JJ workspace, installation and authenticated principal through existing
+   registration and private execution state. Reuse registered authority,
+   foreground coordination, physical observation and combination/journal owners.
+   Initialize missing private state only while preparing an explicitly
+   authorized setup. Status and exact recovery authenticate the original request
+   before current code/combination checks; changed heads or active combinations
+   cannot hide a recoverable historical request. Registration and physical
+   authorization still apply. Candidate, intent and assigned combination ID
+   survive response loss and process restart unchanged.
+3. **Expose local-only HTTP operations.** Add workspace-state, prepare, apply,
+   exact status, pending discovery and unpublished cancellation under the
+   existing `/local/repos/{repo}` route family. Final route names and schemas
+   belong in the API chapter with implementation. Use the service runtime
+   interface so HTTP does not depend on the server crate. Resolve folder access
+   on the server, retain LocalTrusted Admin and same-origin admission, register
+   contracts in the route inventory, then regenerate OpenAPI and client types.
+   Apply supplies the original prepared identity, not replacement command input.
+   Cancellation binds that same identity and can reject only an unpublished
+   preparation; it cannot discard unknown publication or incomplete checkout.
+   Preserve the historical terminal result and retained code evidence.
+4. **Wire the existing production adapter and controller.** Project durable
+   named combinations into the centered picker and membership into the branch
+   groups/Workspace lanes. Map the existing `create_workspace` action to Setup
+   only when discovery proves no combination exists; subsequent creation maps to
+   the separately qualified CreateCombination engine. Keep target selection an
+   operation-scoped read until the user previews setup. Numeric UI revision is
+   not execution authority: retain the full service selection, intent digest,
+   request ID and prepared ID in a separate command envelope. Extend outcomes to
+   retain prepared, rejected/stale, publication unknown, published with
+   required/blocked checkout, completed and retired states. Show exact preview
+   effects through the existing dialog; model unavailable Unstaged explicitly
+   rather than rendering an unqualified empty file list as proof of no edits.
+5. **Complete pending restoration and refresh.** Restore original prepared or
+   unresolved requests through bounded discovery on connect/reconnect and
+   browser/server restart. Prepare response loss must retain the request ID and
+   exact intent for lookup; the current prepare catch path drops that evidence.
+   Status must carry the intent digest as well as the ID. Cancel preview must
+   await backend cancellation rather than merely clearing frontend state. A
+   completed receipt triggers a separate read of current state; it never
+   installs its old snapshot or retries a finished command as a new request.
+   Report a failed refresh separately from the confirmed command result. Retain
+   drafts, independent diffs and valid historical selections through existing
+   scoped lifecycle ownership and rewrite mappings.
+
+Acceptance for this checkpoint is a cold real-app first-use flow against a
+disposable registered Git-backed JJ folder: choose an exact target, preview,
+cancel or apply, reopen the browser/server, discover the original request and
+show the selected combination only after verified completion. Include lost
+prepare/apply responses, stale physical selection, revoked/replaced binding,
+cross-principal lookup, missing private state and published-but-blocked
+checkout. Prove historical status does not rewind current state and ordinary
+browsing does not initialize private state. Verify public results exclude
+private execution data, and verify every unsupported command stays unavailable.
+This checkpoint does not advertise complete Unstaged, apply/unapply, switching
+or content-transfer capabilities.
+
+Afterward continue Stage 4 with complete dirty-work capture, real merge/WIP
+rebuild, apply/unapply and named-combination switching. Then deliver exact
+whole-file commits before server-issued hunk transfers in Stage 5, remaining
+graph/deletion/scoped-undo commands in Stage 6, and linked-native plus complete
+cold production lifecycle qualification in Stage 7. Preserve unsnapshotted edits
+before leaving a combination; the initial setup's guarded disk preservation is
+not a substitute for that capture engine.
 
 ### Recommended scope and model
 

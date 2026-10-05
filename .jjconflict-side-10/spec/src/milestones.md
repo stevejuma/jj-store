@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Compose durable execution and combination engines | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Wire original setup, command discovery/status and production lifecycle | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -92122,6 +92122,102 @@ entries.
   ],
   "next": "Wire qualified original setup execution to owned bounded command/status/discovery transport and production UI; continue dirty-work capture, membership/switching and every remaining approved stage.",
   "summary": "234 unique focused Rust parents pass across owning providers, private server protocols, actual registered execution and checkout/coordination consumers. Strict all-target type/lint, ownership, architecture and governance pass; documentation, format, owning specification and progress checks pass. All 516 preceding raw ledger bodies are preserved. Complete backend/UI integration remains unfinished."
+},
+{
+  "id": "E-M21-036",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "zuzwxwrw",
+  "kind": "Follow-up UI alignment review and concrete initial-setup production wiring checkpoint",
+  "versions": "Documentation-only review at parent 83844c5e; existing live Storybook 6057 reloaded without service restart. JJ 0.45.1/Git SHA-1 qualification remains inherited evidence, not rerun acceptance.",
+  "formats": "No public wire, private state, native, companion, WAL, package or controller format changes. Route schemas and runtime contracts remain prospective.",
+  "files": [
+    "docs/implementation-plan.md",
+    "spec/src/architecture.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-UI-020",
+    "JST-LOCAL-005",
+    "JST-GOV-002",
+    "JST-GOV-003"
+  ],
+  "before": "Current plan and progress check pass. Seven approved stages already exist; private initial setup is implemented, while production commands and combination discovery remain unavailable. Original review text predates read wiring and setup; next transport/runtime/controller checkpoint lacked concrete ownership and acceptance.",
+  "scope": "Fresh live Workspace/Branches/body Apply/inline branch-files review and source inspection of production read ownership, service requests/receipts, private catalog bounds and controller command lifecycle. Retain the existing UI and seven stages; update setup status and specify bounded discovery/public results, server composition, local HTTP/generated contracts, setup mapping, lost-prepare identity retention, exact status, unpublished cancellation and current-state refresh. Planning only; no runtime or capability enabled.",
+  "tests": [],
+  "runs": [
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "Before state: plan formatting passes."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Before state: 142 task bookkeeping checks pass."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/architecture.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "wiring-review-format.log: changed documentation formatted; ledger excluded."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "wiring-review-docs.log: Documentation build, source review and closure pass: 139 files and valid links/anchors."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "wiring-review-spec-first.log: One protected file and two canonical chapters pass the mapped gate."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "wiring-review-spec-validate.log: Five validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/architecture.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "wiring-review-format-check.log: Changed-document formatting passes; ledger excluded."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "wiring-review-progress.log: 142 task bookkeeping checks pass; no milestone marked complete."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/wiring-review-ledger.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "Appended only E-M21-036 and current M21/M21.2 evidence references; ledger never formatted."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/wiring-review-ledger-audit.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "518 evidence objects; all 517 preceding raw bodies byte-identical. Audit is repeated after final evidence update."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Owned bounded runtime/discovery/status/cancellation contracts and routes, actual production setup/recovery wiring and its cold acceptance remain incomplete. This review is not runtime qualification.",
+    "Complete dirty-work capture, membership/switching, whole-file and server-issued hunk execution, graph/deletion/scoped undo, linked-native and every remaining approved acceptance stage remain required. M21.2 stays In progress.",
+    "Rust/UI/Storybook interaction and accessibility suites, transport generation and cold product qualification are out of scope for documentation-only planning. No screenshot comparisons/baselines, package publication or backend changes."
+  ],
+  "next": "Implement the owned bounded discovery/command-result interface and registered runtime, then local HTTP and initial-setup controller lifecycle. Continue all remaining approved stages.",
+  "summary": "Fresh live review confirms the retained composition still aligns. Documentation formatting, source-review/build/link closure, mapped spec-first, specification and 142 task progress checks pass. All 517 historical raw evidence bodies remain byte-identical. No backend/UI source or capability changes; production writes and remaining seven-stage acceptance stay incomplete."
 }
 ]
 ```
