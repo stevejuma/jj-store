@@ -959,3 +959,15 @@ reads and checks current combination/code/physical policy before publication.
 This ordering supports operation/index loss without weakening stale-selection or
 editor guards. Terminal replay bypasses recovery; revoked bindings cannot
 restore any source state.
+
+Unpublished retained reword execution, including original Unknown retry, checks
+current trusted immutable ancestry over the retained source before selecting a
+head. Already-selected original publication uses an acknowledgement-only path
+when current mutation policy is skipped. Informative status cannot reauthorize
+publication; if that selected candidate disappears, acknowledgement fails
+without reannouncement. Policy/status work retains foreground and worker
+ownership, supports cancellation and never mutates code or source metadata.
+
+Known Published receipts also require acknowledgement-only recovery before
+checkout witness persistence. Losing current head selection cannot authorize the
+already-published candidate again; keep the original receipt pending.

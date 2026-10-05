@@ -16,6 +16,10 @@ mod indexes_adversarial;
 mod indexes_lifecycle;
 #[path = "stack_source_recovery/lifecycle.rs"]
 mod lifecycle;
+#[path = "stack_source_recovery/policy.rs"]
+mod policy;
+#[path = "stack_source_recovery/policy_lifecycle.rs"]
+mod policy_lifecycle;
 use fixture::*;
 use jj_lib::{op_store::OpStore as _, simple_op_store::SimpleOpStore};
 use jj_store_jj::{

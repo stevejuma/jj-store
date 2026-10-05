@@ -368,6 +368,17 @@ terminal replay never repairs lost state. This remains private reword execution;
 general checkout, actual combination selection and production transport/UI
 qualification remain required.
 
+E-M21-027 revalidates trusted immutable ancestry before unpublished retained
+reword publication, including Unknown retry. Already-selected original code uses
+acknowledgement-only recovery after policy changes, with no reannouncement if
+the original candidate disappears. Bounded archived graph checks,
+authorization/cancellation lifetime and real registered policy transitions are
+qualified separately from actual combination state. General checkout, real
+combination engines, production command transport and UI wiring remain required.
+
+Known Published receipts also use acknowledgement-only recovery before witness
+persistence, so later selected-head loss never repeats that publication.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

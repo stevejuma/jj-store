@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -89421,6 +89421,336 @@ entries.
   ],
   "next": "Continue general guarded checkout and original-request execution policy, then actual setup/combination selection and prepare/apply/status/discovery transport with UI wiring; all seven approved stages remain required.",
   "summary": "51 unique direct cases pass: eight actual registered CLI consumers, 34 server integration cases and nine journal/combination units. Exact Prepared source-loss/GC recovery, immutable preview/candidate replay, current combination/code/editor rejection, revoked-registration no-repair and terminal historical no-repair are qualified privately. The physical guard stays exact even after file bytes are reverted. Production writes remain unavailable; M21.2 and full delivery remain In progress."
+},
+{
+  "id": "E-M21-027",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "mrpxsmqs",
+  "kind": "Current retained reword policy and acknowledgement-only historical publication recovery",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git 2.55.0; macOS ARM64 disposable stock-JJ registered folders; CARGO_INCREMENTAL=0. Installed services and executables unchanged.",
+  "formats": "No serialized/public wire or persisted format change. Owned provider methods add bounded archived policy validation, informative publication selection and acknowledgement-only proofs. Original journal V1/V2/V3, archive, receipt/witness, combination, companion, native manifest and WAL formats unchanged.",
+  "files": [
+    "crates/jj-store-cli/tests/stack_registered_preparation/apply.rs",
+    "crates/jj-store-cli/tests/stack_registered_preparation/policy.rs",
+    "crates/jj-store-cli/tests/stack_registered_preparation.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/policy.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/publication.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/policy.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/policy_lifecycle.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery.rs",
+    "crates/jj-store-server/src/stack_preparation/apply.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/reference/configuration.md",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-JJ-002",
+    "JST-CLI-001",
+    "JST-UI-020",
+    "JST-GOV-003"
+  ],
+  "before": "New registered immutable-policy regression failed once because current protection was not enforced at apply. Added lifecycle fixture initially failed compilation on an unnecessary RecoveredHistory Debug bound; changed only the cancellation assertion to pattern matching. Later source review exposed another recovery edge: a typed Published receipt before witness save reannounced a removed candidate after source-head restoration and returned Verified. Its exact negative failed once, then passed with mandatory acknowledgement-only recovery.",
+  "scope": "One original-request private reword policy/recovery boundary. Unpublished Prepared and Unknown requests revalidate current registered combination/code/physical policy and trusted immutable visible-parent ancestry over the retained source. Current selection or a typed Published receipt requires acknowledgement-only provider recovery; disappeared selection cannot create/reannounce a candidate. Bounded work/parent-edge charging, original lease/admission, authorization/cancellation and historical terminal semantics remain exact. No production transport or capability enabled.",
+  "tests": [
+    "crates/jj-store-jj/tests/stack_source_recovery/policy.rs#retained_source_policy_rejects_protected_hidden_duplicate_and_oversized_inputs_without_writes",
+    "crates/jj-store-jj/tests/stack_source_recovery/policy.rs#current_protected_descendant_blocks_rewriting_its_retained_ancestor",
+    "crates/jj-store-jj/tests/stack_source_recovery/policy.rs#acknowledgement_only_rechecks_publication_and_cannot_reannounce_a_lost_candidate",
+    "crates/jj-store-jj/tests/stack_source_recovery/policy_lifecycle.rs#current_policy_authorization_loss_releases_original_admission_without_writes",
+    "crates/jj-store-jj/tests/stack_source_recovery/policy_lifecycle.rs#canceled_policy_worker_retains_original_lock_and_admission_until_exit",
+    "crates/jj-store-cli/tests/stack_registered_preparation/apply.rs#newly_immutable_commit_rejects_original_prepared_apply_without_publication",
+    "crates/jj-store-cli/tests/stack_registered_preparation/policy.rs#unpublished_unknown_retry_revalidates_current_immutable_policy_before_head_selection",
+    "crates/jj-store-cli/tests/stack_registered_preparation/policy.rs#already_published_original_retry_completes_checkout_after_live_policy_changes",
+    "crates/jj-store-cli/tests/stack_registered_preparation/policy.rs#typed_published_receipt_cannot_reannounce_lost_selection_before_witness_save",
+    "crates/jj-store-server/tests/stack_local_execution/lifecycle.rs#process_loss_at_publication_and_checkout_boundaries_resumes_saved_journal"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation apply::newly_immutable_commit_rejects_original_prepared_apply_without_publication -- --exact",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-apply-policy-before.log: New current immutable policy negative fails before implementation."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation apply::newly_immutable_commit_rejects_original_prepared_apply_without_publication -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-exact.log: Original immutable-policy regression passes after retained-source policy validation."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery policy::",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-provider.log: Three provider cases pass: protected/hidden/invalid policy, protected descendants, informative status and acknowledgement-only no-reannouncement."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation policy::",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-unknown.log: Two actual registered cases pass: unpublished Unknown requires current policy; already-published original can complete after policy absence and source loss."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery policy_lifecycle::",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-apply-policy-lifecycle.log: One fixture compile diagnostic: unwrap_err required Debug on owned recovered lease. Pattern matching retains exact cancellation assertion without changing production/API."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery policy_lifecycle::",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-lifecycle-after.log: Both authorization-loss and cancellation/admission/lock cases pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation apply::newly_immutable_commit_rejects_original_prepared_apply_without_publication -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-exact-final.log: Exact original target passes after final bounded head/parent-edge policy charging."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_unchanged_checkout --test stack_head_publication --test stack_source_recovery --test stack_foreground --test stack_operation_archive --test stack_reword_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-provider-final.log: All 83 directly affected provider cases pass; six subprocess helpers run through passing parents. Provider source unchanged by subsequent server-only Published receipt guard."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution --test stack_command_journal --test stack_local_preparation --test stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-server-final.log: 34 pass before final typed Published guard; final source rerun recorded below."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-units.log: Nine direct journal/combination units pass, two helpers through parents. Unit owners unchanged by final server-only guard."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-registered-final.log: 11 pass before newly discovered typed Published no-witness fault case."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-check.log: Initial three owning package all-target lane passes before final typed Published guard; final source rerun below."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-lint.log: Initial three owning package all-target lane passes before final typed Published guard; final source rerun below."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation policy::typed_published_receipt_cannot_reannounce_lost_selection_before_witness_save -- --exact",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-apply-policy-known-before.log: Actual typed Published/Required receipt has no saved witness; raw source-head restoration caused candidate reannouncement and returned Verified. Exact negative exposes wrong historical execution behavior."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation policy::typed_published_receipt_cannot_reannounce_lost_selection_before_witness_save -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-known-after.log: Exact new no-reannouncement target passes. Original receipt/head/pointer retained after loss; explicit fixture restoration allows original acknowledgement and completion with no current combination."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-registered-complete.log: Final all 12 actual registered cases pass, including both regression targets, unknown/published policy transitions and first-apply source loss/GC. Combination state remains fixture-supplied."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution --test stack_command_journal --test stack_local_preparation --test stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-server-complete.log: Final 34 integrations pass after known Published guard: nine execution, 13 journal, eight preparation and four combination metadata cases. Killed subprocesses at four boundaries recover original candidate/witness; two helpers through passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-check-complete.log: Final three owning package all-target source checks pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-lint-complete.log: Final strict owning all-target lint passes; no suppression."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-boundaries.log: 17 package boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-architecture.log: 1090 modules pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-spec-validation.log: Five validators/23 chapters/173 requirements pass before final canonical append."
+    },
+    {
+      "command": "node --test scripts/governance.test.mjs scripts/progress-mapping.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-governance.log: 33 governance/historical evidence cases pass."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-rust-format.log: Initial root/runtime Rust formatting passes."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-rust-format-final.log: Intermediate root/runtime formatting passes."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-rust-format-complete.log: Final root/runtime formatting passes after known Published guard."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-docs-check.log: Initial 139-file closure, links/anchors and nine offline diagrams in both themes pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-docs-check-final.log: Final 139-file closure, links/anchors and nine offline diagrams in both themes pass after final server fingerprint."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed retained source visible ancestry policy checks under original worker/foreground ownership, bounded inputs and authorization/cancellation. Informative selected-head status is distinct from acknowledgement-only proof, which cannot recreate a vanished candidate. Current unpublished policy and historical published completion remain separate; production transport and general checkout remain gated.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-docs-review-local.log: Owning source/manual review; informative status and typed proof, unpublished current policy and historical original acknowledgement are distinct. Real combination, general checkout and production transport remain gated."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed bounded retained source visible ancestry policy, including charged parent edges and bounded source heads, under original worker/foreground ownership and authorization/cancellation. Informative selected-head status is distinct from acknowledgement-only proof, which cannot recreate a vanished candidate. Unpublished policy and historical published completion stay separate; production transport and general checkout remain gated.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-docs-review-local-final.log: Owning source/manual review; informative status and typed proof, unpublished current policy and historical original acknowledgement are distinct. Real combination, general checkout and production transport remain gated."
+    },
+    {
+      "command": "pnpm docs:review configuration 'Reviewed current trusted immutable ancestry and combination/code/physical checks before unpublished original Prepared or Unknown publication. Already-selected original heads use acknowledgement-only recovery after policy changes and cannot reannounce lost selection. No configuration, real combination engine, general checkout or production mutation capability is implied.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-docs-review-server.log: Owning source/manual review; informative status and typed proof, unpublished current policy and historical original acknowledgement are distinct. Real combination, general checkout and production transport remain gated."
+    },
+    {
+      "command": "pnpm docs:review configuration 'Reviewed unpublished original Prepared/Unknown current policy and acknowledgement-only original publication. Typed Published receipts require acknowledgement-only recovery even before witness persistence; loss of selected ancestry cannot recreate the candidate or reset the historical receipt. Real combination engines, general checkout and production mutation transport remain required.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-docs-review-server-final.log: Owning source/manual review; informative status and typed proof, unpublished current policy and historical original acknowledgement are distinct. Real combination, general checkout and production transport remain gated."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-rust-format-complete.log: Production/tests formatted throughout implementation; final read-only formatting confirms exact source."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/cli.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md docs/implementation-plan.md docs/site/technical/local.md docs/site/reference/configuration.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-doc-format.log: Initial changed documents formatted; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/cli.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md docs/implementation-plan.md docs/site/technical/local.md docs/site/reference/configuration.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-doc-format-final.log: Final known Published requirement/manual formatted; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-coverage-format.log: Final local source review fingerprint formatted."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-verification-format.log: Initial qualification mapping formatted; remains Planned."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-verification-format-final.log: Final typed Published qualification note formatted; remains Planned."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/cli.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/site/reference/configuration.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-doc-format-check.log: Initial changed documents pass; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/cli.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/site/reference/configuration.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-doc-format-complete.log: Final changed documents pass; ledger excluded."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-progress.log: All 142 task/evidence checks pass; no completion promotion."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-spec-first.log: 14 protected files/six canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-spec-validation-final.log: Final five validators/23 chapters/173 requirements pass after known Published requirement and append."
+    },
+    {
+      "command": "python3 raw JSON body SHA-256 audit against stack-apply-policy-ledger-before.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-apply-policy-ledger-audit.log: Exactly 509 evidence objects; all 508 preceding raw bodies remain byte-identical."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Private unchanged-tree reword execution is not complete Stage 3. General tree-changing checkout, durable combination/execution coordination and selected after-state, precise blocked/recovery transport, prepare/apply/status/discovery endpoints, dropped HTTP responses and cold production browser flows remain required.",
+    "Actual combination authority/after-state and retirement remain fixtures. Explicit setup, merge/WIP preservation, membership/switching, exact whole-file/issued-hunk commits, graph/deletion/undo engines, linked-native real-storage and all approved production UI stages remain incomplete. Raw head replacement in negative fixtures is not a qualified CLI undo or combination engine.",
+    "Unrelated Rust/RustFS/UI/Storybook/root aggregate lanes are out of scope. No installed binary/service replacement, existing-repository reset/migration, package publication, screenshot comparison or baseline update. Existing __eh_frame linker warning remains unsuppressed."
+  ],
+  "next": "Continue general guarded physical checkout and durable execution/combination coordination, then real setup/merge-WIP selected state and command transport/UI wiring. Complete all seven approved stages; do not enable mutations from this private reword proof.",
+  "summary": "138 unique direct cases pass: 83 JJ provider, 34 server integration, nine journal/combination unit and 12 actual registered CLI cases. Current immutable ancestry, unpublished Unknown retry, acknowledgement-only historical publication, typed Published before-witness no-reannouncement, exact source-loss recovery, cancellation/authorization and killed-process original retry are qualified privately. Fixture combination state/retirement and raw-head fault injection do not qualify real engines. All 508 original raw ledger bodies remain unchanged. Production Stacks stays read-only; M21.2 and full integration remain In progress."
 }
 ]
 ```

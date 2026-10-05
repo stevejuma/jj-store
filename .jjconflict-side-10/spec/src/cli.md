@@ -1903,3 +1903,16 @@ match the original request before PublicationUnknown or publication. Missing or
 changed combination state and new editor bytes retain Prepared without checkout
 or head selection. Revoked registration MUST fail before restoration. Terminal
 historical retry MUST NOT restore lost source state.
+
+For an unpublished retained reword, runtime MUST revalidate current
+combination/code/physical selection and immutable parent ancestry before
+publication, including original PublicationUnknown retry. Exact source policy
+comes from trusted current combination state, not client heads. Already-selected
+publication MUST use an acknowledgement-only provider path if live policy is
+skipped; loss of the selected original candidate cannot trigger reannouncement.
+Completed/retired/rejected outcomes remain historical and unchanged.
+
+A typed Published receipt MUST use acknowledgement-only recovery even when no
+checkout witness was yet saved. Lost head selection cannot turn a known
+publication back into new execution; retain its original Published receipt and
+fail recovery without recreating the candidate.

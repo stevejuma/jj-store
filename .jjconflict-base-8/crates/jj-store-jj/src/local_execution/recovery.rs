@@ -2,6 +2,7 @@
 mod checkout;
 mod extras;
 mod indexes;
+mod policy;
 mod publication;
 mod records;
 mod retention;

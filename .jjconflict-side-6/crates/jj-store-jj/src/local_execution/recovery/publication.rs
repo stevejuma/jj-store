@@ -60,9 +60,11 @@ impl Destination {
     }
 }
 impl RecoveredHistory {
-    /// Publish the original retained candidate only. Interrupted selection is
-    /// retryable through resume_publication, without re-preparing or checkout.
-    pub async fn publish_head(self) -> Result<(Self, PublishedHead)> {
+    /// Informative original-selection status, not permission to publish.
+    pub async fn publication_selected(self) -> Result<(Self, bool)> {
+        if !self.publication || self.checkout.is_some() {
+            return Err(Error::Invalid);
+        }
         let cancellation = tokio_util::sync::CancellationToken::new();
         let cancel = cancellation.clone().drop_guard();
         let runtime = tokio::runtime::Handle::current();
@@ -70,7 +72,37 @@ impl RecoveredHistory {
             runtime.block_on(tokio::task::LocalSet::new().run_until(async {
                 let mut budget = recovery_budget();
                 budget.cancellation = cancellation;
-                let proof = publish(&self, &budget).await?;
+                self.check(&budget).await?;
+                let heads = witness::heads(self.access.metadata_path(), &budget)?;
+                let selected = ancestry::selected(&self, &heads, &budget).await?;
+                self.check(&budget).await?;
+                Ok((self, selected))
+            }))
+        })
+        .await
+        .map_err(|_| Error::Unavailable)?;
+        cancel.disarm();
+        result
+    }
+    /// Original publication acknowledgement only. A vanished candidate may not
+    /// be created/reannounced when composition skips current mutation policy.
+    pub async fn acknowledge_publication(self) -> Result<(Self, PublishedHead)> {
+        self.select_publication(false).await
+    }
+    /// Publish the original retained candidate only. Interrupted selection is
+    /// retryable through resume_publication, without re-preparing or checkout.
+    pub async fn publish_head(self) -> Result<(Self, PublishedHead)> {
+        self.select_publication(true).await
+    }
+    async fn select_publication(self, allow_new: bool) -> Result<(Self, PublishedHead)> {
+        let cancellation = tokio_util::sync::CancellationToken::new();
+        let cancel = cancellation.clone().drop_guard();
+        let runtime = tokio::runtime::Handle::current();
+        let result = tokio::task::spawn_blocking(move || {
+            runtime.block_on(tokio::task::LocalSet::new().run_until(async {
+                let mut budget = recovery_budget();
+                budget.cancellation = cancellation;
+                let proof = publish(&self, allow_new, &budget).await?;
                 Ok((self, proof))
             }))
         })
@@ -80,7 +112,11 @@ impl RecoveredHistory {
         result
     }
 }
-async fn publish(recovery: &RecoveredHistory, budget: &Budget) -> Result<PublishedHead> {
+async fn publish(
+    recovery: &RecoveredHistory,
+    allow_new: bool,
+    budget: &Budget,
+) -> Result<PublishedHead> {
     if !recovery.publication || recovery.checkout.is_some() {
         return Err(Error::Invalid);
     }
@@ -105,6 +141,9 @@ async fn publish(recovery: &RecoveredHistory, budget: &Budget) -> Result<Publish
     let source = recovery.witness.binding().operation;
     let mut heads = witness::heads(recovery.access.metadata_path(), budget)?;
     let published = ancestry::selected(recovery, &heads, budget).await?;
+    if !published && !allow_new {
+        return Err(Error::EpochChanged);
+    }
     recovery.check(budget).await?;
     destination.check()?;
     extras.check(budget)?;

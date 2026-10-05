@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed exact saved checkout linkage and checked retained commit/archive/candidate identity. Runtime compares original journal selection before head/pointer mutation; source/index repair and killed-process recovery remain separate from production routes, selected combinations and general checkout.",
-      "fingerprint": "3cf9b850912ccace72ae980df0447c30c6ea99955df30f4052995be559f44f36"
+      "reason": "Reviewed bounded retained source visible ancestry policy, including charged parent edges and bounded source heads, under original worker/foreground ownership and authorization/cancellation. Informative selected-head status is distinct from acknowledgement-only proof, which cannot recreate a vanished candidate. Unpublished policy and historical published completion stay separate; production transport and general checkout remain gated.",
+      "fingerprint": "e164732f7be04b7b17edb8267bc46536a7f53162143ce88170906e186d17d6e5"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed retained Prepared first apply: authorized registration precedes exact dependency recovery under the original lease; source-backed current combination/code/physical policy follows restoration before publication. Revocation prevents repair and terminal retry remains historical. General checkout, real combination selection and production transport remain required.",
-      "fingerprint": "320d5cee16f591a0e26df1e3aab9489538055bdcc354c83abbdb3e73dd5d0755"
+      "reason": "Reviewed unpublished original Prepared/Unknown current policy and acknowledgement-only original publication. Typed Published receipts require acknowledgement-only recovery even before witness persistence; loss of selected ancestry cannot recreate the candidate or reset the historical receipt. Real combination engines, general checkout and production mutation transport remain required.",
+      "fingerprint": "6bcd41907299b3367a3d15cd5617798f308ef55cd77e0353020bb23e920ee97f"
     }
   },
   {

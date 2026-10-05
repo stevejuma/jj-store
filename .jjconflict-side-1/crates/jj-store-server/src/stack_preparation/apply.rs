@@ -68,10 +68,25 @@ pub async fn apply_reword(
             .await?;
         check_retained(&recovery, &execution, &record.preview)?;
         let recovery = recovery.restore_extras().await?.restore_indexes().await?;
-        if record.receipt.state == s::ReceiptState::Prepared {
+        let (recovery, published) = recovery.publication_selected().await?;
+        let acknowledge_only =
+            published || matches!(record.receipt.state, s::ReceiptState::Published { .. });
+        let recovery = if !acknowledge_only {
             let context = authority.context(principal, &request).await?;
             report::check(&request, &context)?;
-        }
+            let s::Command::Reword {
+                commit: s::CommitIdentity::GitSha1(commit),
+                ..
+            } = request.command
+            else {
+                return Err(Error::Unsupported);
+            };
+            recovery
+                .validate_reword_policy(commit, context.immutable_heads)
+                .await?
+        } else {
+            recovery
+        };
         physical
             .validate(&execution.witness.binding(), request.selection.working_tree)
             .await?;
@@ -84,7 +99,11 @@ pub async fn apply_reword(
                 &s::ReceiptState::PublicationUnknown,
             )?;
         }
-        let (recovery, proof) = recovery.publish_head().await?;
+        let (recovery, proof) = if acknowledge_only {
+            recovery.acknowledge_publication().await?
+        } else {
+            recovery.publish_head().await?
+        };
         authority.authorize(principal, &request).await?;
         if matches!(
             record.receipt.state,

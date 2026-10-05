@@ -1112,3 +1112,12 @@ operation/view identity from the checked archive under its existing worker
 budget. Runtime compares that selection to the original journal before provider
 publication or pointer completion; the informative identity is not itself a
 publication proof and cannot authorize a different retained archive.
+
+Retained reword policy validation uses the original archived view's visible
+parent closure, excluding hidden evolution-only records. Trusted immutable heads
+must be unique, bounded and visible; protected ancestry cannot be rewritten.
+Validation runs under the existing original lease with authorization, bounded
+work and cancellation retained through worker exit. It writes no code or source
+metadata. Informative publication status does not grant selection authority; an
+acknowledgement-only provider path refuses to create a candidate head when the
+original operation is no longer selected through current head ancestry.

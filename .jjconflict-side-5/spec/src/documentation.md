@@ -229,3 +229,14 @@ Document retained Prepared first-apply source-loss recovery before source-backed
 context, followed by current combination/code/physical validation. Distinguish
 immutable dependency repair from publication, and record revoked registration,
 changed combination/editor rejection and terminal no-repair retry.
+
+Document current immutable-ancestry checks for unpublished Prepared and Unknown
+requests separately from acknowledgement of already-selected original heads.
+Informative status is not a proof; acknowledgement-only recovery cannot recreate
+a vanished candidate. Policy validation uses retained visible source ancestry
+and bounded worker ownership, preserving authorization/cancellation and terminal
+history without granting a production command capability.
+
+Document that a typed Published receipt uses acknowledgement-only recovery even
+before its checkout witness is saved. Losing current selected ancestry preserves
+the historical receipt and cannot reannounce the candidate.

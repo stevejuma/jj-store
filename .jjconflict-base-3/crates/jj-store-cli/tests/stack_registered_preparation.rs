@@ -3,6 +3,8 @@
 mod apply;
 #[path = "../../jj-store-jj/tests/stack_foreground/fixture.rs"]
 mod fixture;
+#[path = "stack_registered_preparation/policy.rs"]
+mod policy;
 #[path = "stack_registered_preparation/recovery.rs"]
 mod recovery;
 use fixture::*;

@@ -1,6 +1,6 @@
 use super::*;
 
-async fn prepared(f: &Installed) -> (StackCommandJournal, s::Preview, s::ApplyRequest) {
+pub(super) async fn prepared(f: &Installed) -> (StackCommandJournal, s::Preview, s::ApplyRequest) {
     let journal = f.journal();
     let saved = p::prepare_reword(
         &journal,
@@ -20,7 +20,7 @@ async fn prepared(f: &Installed) -> (StackCommandJournal, s::Preview, s::ApplyRe
     };
     (journal, saved.preview, apply)
 }
-fn lose_source(f: &Installed) {
+pub(super) fn lose_source(f: &Installed) {
     for name in ["op_store", "index"] {
         std::fs::remove_dir_all(f.folder.root().join(".jj/repo").join(name)).unwrap();
     }
@@ -38,7 +38,7 @@ fn lose_source(f: &Installed) {
         String::from_utf8_lossy(&gc.stderr)
     );
 }
-async fn execute(
+pub(super) async fn execute(
     f: &Installed,
     journal: &StackCommandJournal,
     apply: s::ApplyRequest,
@@ -177,4 +177,44 @@ async fn revoked_registration_cannot_restore_prepared_source_or_publish() {
     assert!(!f.folder.root().join(".jj/repo/op_store").exists());
     assert!(!f.folder.root().join(".jj/repo/index").exists());
     assert_prepared(&f, &journal, &preview);
+}
+
+#[tokio::test]
+async fn newly_immutable_commit_rejects_original_prepared_apply_without_publication() {
+    let f = Installed::new().await;
+    let (journal, preview, apply) = prepared(&f).await;
+    let before = f.folder.state();
+    lose_source(&f);
+    let s::Command::Reword {
+        commit: s::CommitIdentity::GitSha1(commit),
+        ..
+    } = f.request.command
+    else {
+        panic!()
+    };
+    f.combinations
+        .0
+        .lock()
+        .unwrap()
+        .as_mut()
+        .unwrap()
+        .immutable_heads = vec![commit];
+    assert!(matches!(
+        execute(&f, &journal, apply.clone()).await,
+        Err(p::Error::Provider(q::Error::Denied))
+    ));
+    assert_eq!(f.folder.state(), before);
+    assert_prepared(&f, &journal, &preview);
+    // Removing the new boundary permits the same retained candidate, not a new
+    // preview. The source and physical selection have remained unchanged.
+    f.combinations
+        .0
+        .lock()
+        .unwrap()
+        .as_mut()
+        .unwrap()
+        .immutable_heads = vec![m::GitSha1Id::new([0; 20])];
+    let done = execute(&f, &journal, apply).await.unwrap();
+    assert_eq!(done.preview, preview);
+    assert!(done.receipt.completed());
 }

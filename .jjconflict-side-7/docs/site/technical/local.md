@@ -366,6 +366,23 @@ separate from head or checkout selection. Revoked registration fails before
 repair. Terminal retry returns its historical receipt even if source state has
 been lost again, without recreating the missing records.
 
+Unpublished retained reword execution also rechecks current immutable boundaries
+against the original source's visible parent graph, including retry while
+PublicationUnknown. A newly protected commit or ancestor rejects publication;
+hidden history, unrelated boundaries and duplicate/oversized policy inputs do
+not grant eligibility. Policy validation is bounded and retains the original
+lease/admission through cancellation and authorization loss.
+
+An already-selected original operation can instead be acknowledged after live
+policy changes, then finish its guarded checkout. This acknowledges historical
+execution; it does not create another rewrite. Informative selected-head status
+is not a publication proof: acknowledgement-only recovery checks selection again
+under the native head lock and cannot recreate a disappeared candidate.
+
+A typed Published receipt always follows acknowledgement-only recovery, even
+when interruption preceded checkout witness persistence. If current selection is
+lost, recovery retains that receipt and fails without publishing again.
+
 Registered-folder execution uses the actual device registry, CLI folder provider
 and complete scanner guard. Active combination selection remains
 fixture-supplied in these execution tests. A simulated retirement outcome is not

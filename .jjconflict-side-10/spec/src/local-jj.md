@@ -1212,3 +1212,19 @@ source-backed policy. Revalidate the actual code, combination and physical
 selection after restoration; new editor changes or stale/missing combination
 state cannot publish or reset the request. Revocation cannot restore source
 records, and terminal receipts remain historical even after later source loss.
+
+Before creating a retained candidate head, including retry of an unpublished
+PublicationUnknown request, current trusted immutable heads MUST be checked
+against the exact retained source view's visible parent ancestry. A newly
+protected commit or ancestor, unrelated boundary or duplicate/oversized policy
+input fails without publication or checkout; no new candidate is prepared.
+Already-selected original publication is historical: recovery MAY acknowledge it
+and complete guarded checkout after current policy changes, but MUST NOT create
+or reannounce a candidate if that publication is no longer selected. Bounded
+policy/status work retains the original foreground lease and admission through
+worker exit; neither informational status nor policy validation is a publication
+proof.
+
+Known Published receipts always require acknowledgement-only recovery before
+checkout, including the boundary before witness persistence. Current selection
+loss cannot reauthorize publication; the receipt remains historical and pending.

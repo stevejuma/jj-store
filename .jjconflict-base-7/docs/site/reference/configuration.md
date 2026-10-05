@@ -160,3 +160,12 @@ after restoration and still rejects changed combination/code selection or
 physical edits before publication. Revoked bindings cannot restore source state;
 historical terminal retry does not repair it. No setup or configuration is
 inferred from recovery input.
+
+Current immutable policy is rechecked for unpublished original Prepared/Unknown
+reword requests. Already-selected original publication uses acknowledgement-only
+recovery after policy changes; it cannot reannounce a vanished candidate. These
+private checks add no configuration or production mutation capability.
+
+A known Published receipt cannot reauthorize candidate publication before its
+checkout witness is saved. Lost selection retains the original receipt pending
+and requires explicit recovery of the original selection.
