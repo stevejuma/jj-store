@@ -1,5 +1,13 @@
 # Specification governance
 
+Selected copy-family RPC changes require strict protobuf request/response
+validation and exact real loopback factory regression evidence. Verify additive
+framing and byte-identical legacy Inventory fields without regenerating
+unchanged HTTP contracts or repeating registered HTTP/SSE captures. Run the
+complete native RPC consumer binary and affected service/RPC/CLI checks;
+complete scale, fault, browser, RustFS and release qualification remains
+deferred.
+
 The E-READ-076 main landing preserves verified E-READ-072 through075 changes,
 all516 previous evidence entries and byte-identical source logs. Verify the
 combined main query, native backend/RPC/lifecycle, source preparation and HTTP

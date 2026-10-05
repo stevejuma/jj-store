@@ -1,5 +1,13 @@
 # Compatibility and release
 
+CopyFamily is an additive native RPC V1 method with owned typed seed flags,
+tightening limits, complete sorted identities and traversal work. Existing
+Inventory and InventoryPage wire fields, native objects, manifest, WAL and
+receipts remain unchanged. Only explicit Unimplemented selects the older peer's
+bounded inventory fallback; other errors remain visible. Exact protobuf
+round-trip and real loopback consumers qualify this boundary separately from
+complete scale, installed runtime and release acceptance.
+
 Native kind task transport is additive to V1 and preserves existing graph task,
 RPC, native object, WAL, manifest, receipt and cache formats. Its schema reports
 only bounded counters, original selection, kind and task state. Registered

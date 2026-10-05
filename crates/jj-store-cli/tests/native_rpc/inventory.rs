@@ -8,6 +8,9 @@ use sha2::{Digest as _, Sha256};
 use std::collections::BTreeMap;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
+#[path = "inventory/copy_families.rs"]
+mod copy_families;
+
 struct CountedInventory {
     inner: Arc<MemoryStore>,
     reads: AtomicUsize,

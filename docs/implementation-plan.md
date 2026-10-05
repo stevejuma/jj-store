@@ -1,5 +1,13 @@
 # jj-store implementation plan
 
+E-READ-077 delivers selected copy families through the ordinary remote native
+CLI authority, owned service facade and additive bounded RPC. Retain checked
+root selection, independent construction/result/work/scratch/deadline ceilings,
+fresh authorization and captured client-local staging. Exact loopback and strict
+wire regressions accompany the slice; no HTTP/schema, installed executable or
+authoritative format changes. Continue app preparation recovery and remaining
+indexed queries, leaving complete scale/cold/RustFS/release qualification open.
+
 Accepted 26 September 2026. The canonical requirements in `spec/src` govern
 behavior. [milestones.md](../spec/src/milestones.md) is the single
 implementation progress ledger. The [original attachment](reference/README.md)

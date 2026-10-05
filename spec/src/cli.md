@@ -1,5 +1,14 @@
 # CLI and server commands
 
+Remote selected-family acceptance must reproduce a small exact family under
+unrelated copy/file pressure through the real native factories. Count selected
+bodies and warm descriptor reads; enforce result/work/scratch/deadline limits,
+required versus optional missing seeds, current revocation, selected additions
+and acknowledged client-local staging. Malformed/oversized/duplicate/unordered
+wire requests and responses fail closed. Only explicit Unimplemented may use
+bounded complete inventory on older peers. These focused loopback fixtures do
+not qualify installed executables, complete scale, cold browsers or RustFS.
+
 Native kind preparation lifecycle regressions require exact operation pins,
 bounded progress without identities, shared graph/source background admission,
 continued interactive file access, running coalescence, owner-only cancellation,

@@ -13,6 +13,7 @@ service NativeStore {
   rpc Heads(Repository) returns (Ids);
   rpc Inventory(InventoryRequest) returns (Ids);
   rpc InventoryPage(InventoryPageRequest) returns (InventoryPageReply);
+  rpc CopyFamily(CopyFamilyRequest) returns (CopyFamilyReply);
   rpc Publish(PublishRequest) returns (Empty);
   rpc ApplyMutation(MutationRequest) returns (JsonReply);
   rpc MutationStatus(MutationStatusRequest) returns (JsonReply);
@@ -84,6 +85,18 @@ message TokenReply { TokenReceipt receipt = 1; }
 message Empty {}
 message Repository { bytes repository = 1; }
 message AccessRequest { bytes repository = 1; bool write = 2; }
+// Complete selected family; sorted unique seeds, with client-local staging excluded.
+// Limits can only tighten server-owned ceilings; timeout includes the whole lookup.
+message CopyFamilySeed { bytes id = 1; bool required = 2; }
+message CopyFamilyRequest {
+  bytes repository = 1;
+  repeated CopyFamilySeed seeds = 2;
+  uint32 max_nodes = 3;
+  uint64 max_work = 4;
+  uint64 max_bytes = 5;
+  uint32 timeout_millis = 6;
+}
+message CopyFamilyReply { repeated bytes ids = 1; uint64 work = 2; }
 message InventoryRequest { bytes repository = 1; bool copies = 2; uint32 limit = 3; }
 // scan_limit bounds inspected descriptors, including unrelated object kinds.
 // Empty filtered pages can have a continuation. Restart/expiry needs reselection.

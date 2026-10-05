@@ -1,5 +1,13 @@
 # Architecture
 
+Remote native copy-family requests compose the existing checked-root service
+provider through an owned transport facade and additive protobuf method. The RPC
+crate retains no upstream JJ dependency or credential-bearing cache. Server
+limits bound request conversion, shared construction and complete response;
+client deadlines and strict decoders protect the remote factory consumer.
+Acknowledged staging stays with the backend's captured local relations. App
+recovery integration and complete scale/RustFS qualification remain open.
+
 E-READ-076 advances clean main through the verified E-READ-072 to E-READ-075
 stack: bounded copy relations, pinned selected native families, resumable source
 kind construction and authenticated HTTP tasks. Preserve every original slice
@@ -38,9 +46,11 @@ permits with kind projections. Complete addition proof shares unchanged graphs
 or extends copy adjacency before sealing. Backend delivery combines the selected
 family with a captured sequence of bounded acknowledged parent/child
 relationships, then reads only matching bodies in deterministic reverse
-topological order. No source or credential enters retained data.
-Compatibility/RPC delivery and resumable cold construction remain following
-slices; authoritative formats and publication admission do not change.
+topological order. No source or credential enters retained data. The additive
+RPC now delivers this capability to the ordinary remote CLI authority;
+compatibility providers retain bounded inventory fallback. Larger construction
+and app recovery remain following work. Authoritative formats and publication
+admission do not change.
 
 The JJ integration owns a disposable copy relation index over owned identities.
 It seals complete parent/child adjacency under construction bounds and selects

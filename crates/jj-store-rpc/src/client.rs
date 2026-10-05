@@ -4,6 +4,7 @@ use crate::{
     wire::{self, native_store_client::NativeStoreClient},
     wire_object, wire_record,
 };
+mod copy_families;
 mod inventory;
 pub use inventory::MAX_INVENTORY_SCANNED;
 use jj_store_model as m;

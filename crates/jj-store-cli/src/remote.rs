@@ -50,6 +50,38 @@ impl BridgeContext {
 pub struct RemoteAuthority(BridgeContext);
 #[async_trait::async_trait]
 impl BackendAuthority for RemoteAuthority {
+    async fn copy_family(
+        &self,
+        seeds: &BTreeSet<m::CopyId>,
+        required: &BTreeSet<m::CopyId>,
+        limits: jj_store_jj::query::copy_index::LookupLimits,
+        deadline: tokio::time::Instant,
+    ) -> AuthorityResult<Option<jj_store_jj::query::copy_index::Family>> {
+        match self
+            .0
+            .client
+            .copy_family(
+                seeds,
+                required,
+                jj_store_service::transport::CopyFamilyLimits {
+                    max_nodes: limits.max_nodes,
+                    max_work: limits.max_work,
+                    max_bytes: limits.max_bytes,
+                },
+                deadline,
+            )
+            .await
+        {
+            Ok(family) => Ok(Some(jj_store_jj::query::copy_index::Family {
+                ids: family.ids,
+                work: family.work,
+            })),
+            // Compatibility is explicit; limit/auth/corruption failures never
+            // trigger broader work or a different selected lookup.
+            Err(error) if error.code() == tonic::Code::Unimplemented => Ok(None),
+            Err(error) => Err(error.into()),
+        }
+    }
     async fn authorize_read(&self) -> AuthorityResult<()> {
         Ok(self.0.client.authorize(false).await?)
     }

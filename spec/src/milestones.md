@@ -88087,6 +88087,238 @@ entries.
     ],
     "next": "Commit the verified main landing, advance codex/bounded-reads-landed, rebase the retained temporary workspace's empty continuation onto it and continue selected family remote delivery followed by app preparation recovery. Full qualification stays separate.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-077",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "mzmylqwx",
+    "kind": "Bounded selected copy families for the remote native CLI authority",
+    "versions": "Rust1.98.1; JJ/jj-lib0.45.1; macOS ARM64.",
+    "formats": "Additive CopyFamily native RPC V1 method with sorted typed seed flags, tightening allowances, complete sorted identity results and charged traversal work. Existing Inventory/InventoryPage framing, HTTP/OpenAPI/client contracts, native objects, manifest, WAL, receipts and cache formats are unchanged.",
+    "scope": "Focused owned service facade, RPC framing/client/server and real remote native factory consumers. Complete native_rpc binary, RPC lib and native_inventory module plus affected service/RPC/CLI all-target checks and canonical bookkeeping. Unchanged HTTP response capture and web/type lanes are out of scope. Complete scale/RSS/latency/fault/cold-browser/RustFS/installed-runtime/release and Help qualification stays deferred; no milestone promotion.",
+    "requirements": [
+      "JST-JJ-001",
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-CLI-003",
+      "JST-MUT-001",
+      "JST-GOV-002"
+    ],
+    "files": [
+      "crates/jj-store-cli/src/remote.rs",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs",
+      "crates/jj-store-cli/tests/native_rpc/inventory/copy_families.rs",
+      "crates/jj-store-rpc/proto/native.proto",
+      "crates/jj-store-rpc/src/client/copy_families.rs",
+      "crates/jj-store-rpc/src/client.rs",
+      "crates/jj-store-rpc/src/copy_families.rs",
+      "crates/jj-store-rpc/src/lib.rs",
+      "crates/jj-store-rpc/src/server.rs",
+      "crates/jj-store-service/src/transport/copy_families.rs",
+      "crates/jj-store-service/src/transport.rs",
+      "spec/src/jj-integration.md",
+      "spec/src/cli.md",
+      "spec/src/mutations.md",
+      "spec/src/architecture.md",
+      "spec/src/compatibility.md",
+      "spec/src/spec-governance.md",
+      "docs/implementation-plan.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_rpc/inventory/copy_families.rs#remote_copy_family_ignores_unrelated_inventory_and_body_pressure",
+      "crates/jj-store-cli/tests/native_rpc/inventory/copy_families.rs#rpc_copy_family_preserves_limits_selection_and_fresh_authorization",
+      "crates/jj-store-cli/tests/native_rpc/inventory/copy_families.rs#rpc_copy_family_rejects_invalid_requests_before_storage",
+      "crates/jj-store-cli/tests/native_rpc/inventory/copy_families.rs#remote_copy_family_merges_only_acknowledged_client_staging",
+      "crates/jj-store-cli/tests/native_rpc/inventory/copy_families.rs#remote_copy_family_falls_back_only_for_unimplemented_peers",
+      "crates/jj-store-cli/tests/native_rpc/inventory/copy_families.rs#rpc_copy_family_deadline_cancels_pending_storage_and_releases_capacity",
+      "crates/jj-store-rpc/src/copy_families.rs#selected_family_request_bounds_and_canonical_seed_flags",
+      "crates/jj-store-rpc/src/copy_families.rs#selected_family_response_rejects_truncation_work_and_invalid_identities",
+      "crates/jj-store-rpc/src/client/copy_families.rs#local_transport_timeout_retains_deadline_semantics",
+      "crates/jj-store-rpc/src/inventory.rs#legacy_inventory_wire_fields_remain_byte_identical"
+    ],
+    "runs": [
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Run after production and fixture edits; final format check recorded separately."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/cli.md spec/src/mutations.md spec/src/architecture.md spec/src/compatibility.md spec/src/spec-governance.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical formatting; architecture rerun after current delivery wording correction."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_rpc remote_copy_family_ignores_unrelated_inventory_and_body_pressure",
+        "result": "pass",
+        "failures": 0,
+        "note": "98.08s; 1 Rust tests passed. .local/bounded-reads/performance/remote-family-after-077.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.28s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-architecture-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_rpc remote_copy_family_ignores_unrelated_inventory_and_body_pressure",
+        "result": "fail",
+        "failures": 1,
+        "note": "23.85s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-before-077.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.05s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-boundaries-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_rpc",
+        "result": "pass",
+        "failures": 0,
+        "note": "49.17s; 28 Rust tests passed. .local/bounded-reads/performance/remote-family-complete-rpc-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_rpc",
+        "result": "pass",
+        "failures": 0,
+        "note": "61.8s; 28 Rust tests passed. .local/bounded-reads/performance/remote-family-complete-rpc-final-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_rpc rpc_copy_family_deadline_cancels_pending_storage_and_releases_capacity",
+        "result": "fail",
+        "failures": 1,
+        "note": "20.3s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-deadline-diagnostic-077.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/cli.md spec/src/mutations.md spec/src/architecture.md spec/src/compatibility.md spec/src/spec-governance.md docs/implementation-plan.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "7.99s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-doc-final-077.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/cli.md spec/src/mutations.md spec/src/architecture.md spec/src/compatibility.md spec/src/spec-governance.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.37s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-doc-format-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_rpc copy_family",
+        "result": "fail",
+        "failures": 1,
+        "note": "19.45s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-focused-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_rpc copy_family",
+        "result": "pass",
+        "failures": 0,
+        "note": "39.22s; 7 Rust tests passed. .local/bounded-reads/performance/remote-family-focused-final-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_rpc copy_family",
+        "result": "fail",
+        "failures": 2,
+        "note": "58.11s; 5 Rust tests passed. .local/bounded-reads/performance/remote-family-focused-fixed-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-service --lib native_inventory::",
+        "result": "pass",
+        "failures": 0,
+        "note": "36.89s; 13 Rust tests passed. .local/bounded-reads/performance/remote-family-native-inventory-077.log"
+      },
+      {
+        "command": "cargo check --locked --all-targets -p jj-store-service -p jj-store-rpc -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": "81.95s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-packages-077.log"
+      },
+      {
+        "command": "cargo check --locked --all-targets -p jj-store-service -p jj-store-rpc -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": "29.95s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-packages-final-077.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "7.54s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-progress-077.log"
+      },
+      {
+        "command": "pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.42s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-rust-format-077.log"
+      },
+      {
+        "command": "pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.2s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-rust-format-final-077.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.51s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-spec-first-077.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.57s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-spec-first-final-077.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.48s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-spec-validate-077.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.43s; 0 Rust tests passed. .local/bounded-reads/performance/remote-family-spec-validate-final-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-rpc --lib copy_families",
+        "result": "pass",
+        "failures": 0,
+        "note": "62.36s; 2 Rust tests passed. .local/bounded-reads/performance/remote-family-wire-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-rpc --lib",
+        "result": "pass",
+        "failures": 0,
+        "note": "14.01s; 10 Rust tests passed. .local/bounded-reads/performance/remote-family-wire-ceilings-077.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-rpc --lib",
+        "result": "pass",
+        "failures": 0,
+        "note": "37.16s; 10 Rust tests passed. .local/bounded-reads/performance/remote-family-wire-final-077.log"
+      }
+    ],
+    "notes": [
+      "Main E-READ-076 is committed as ymrvkrow/66a17841 with codex/bounded-reads-landed advanced. Its381-test focused combined landing verification and174 byte-identical source evidence files remain preserved. Rebase this retained temporary workspace empty mzmylqwx onto it without conflicts; main stays clean and unchanged during this follow-up.",
+      "Before state: real remote factories request a five-copy family among96 unrelated copies and96 files and fail with native ResourceExhausted. The exact regression now returns only the five family bodies in deterministic children-before-parents order; a repeat reads zero inventory descriptors and exactly five bodies. Cold relation construction retains its independent descriptor/cache ceilings.",
+      "Owned transport DTOs retain no upstream JJ types, source or credentials. Admit bounded sorted seed flags before set growth; required missing seeds fail and optional uncommitted seeds return no IDs. Clamp server/session defaults independently of client allowances, including a trusted endpoint ceiling exposed to the RPC decoder before seed-set growth. Final review tightened this admission and repeated both affected complete RPC consumer suites and all-target checks. One checked current root serves the ordinary remote backend call; explicit historical browser providers retain their original pins. Result identities, work, allocation, required-seed inclusion and deadlines fail closed on decode.",
+      "Actual older-peer loopback layer suppresses only CopyFamily: explicit Unimplemented alone performs one bounded Inventory call. PermissionDenied, ResourceExhausted, DeadlineExceeded, DataLoss, Unavailable and FailedPrecondition each remain errors with zero Inventory fallback calls.",
+      "Client-local acknowledged staged ancestors and descendants retain the existing captured-sequence implementation. Reacknowledged selected identities preserve committed siblings; foreign and unknown uploads are excluded. An identical acknowledged retry joins the family. No staged record enters the server projection or grants publication power.",
+      "Intermediate focused compile fails with four diagnostics because the parent fixture imports auth::Result and the generic peer service needs std::result::Result; qualify the two signatures. The next focused run has two assertion failures: incremental construction also performs one checked seed membership read, so exact descriptor evidence is three (membership plus operation/copy additions), and tonic local timeout maps to Cancelled. A diagnostic rerun confirms the deadline assertion remains failing. Preserve these logs. Normalize only a concrete tonic::TimeoutExpired source or an already-expired admitted deadline, keeping an independent remote Cancelled visible. Exact pending-I/O regression then passes and proves source read exit plus sole RPC admission release. No assertion is weakened to allow arbitrary cancellation.",
+      "Complete affected consumer verification is recorded in runs. The initial passing strict-wire two-test target is followed by the complete RPC library (ten tests). Six new real-loopback regressions plus the existing native family regression pass in the exact family target. Final complete consumer results are51 Rust tests (28 native RPC,10 RPC library and13 native inventory); all three affected package all-target checks pass. Fresh fixture servers exercise new RPC startup and teardown; complete cold browser/Linux/RustFS qualification is deferred.",
+      "Preserve all517 earlier ledger entries verbatim and JSON-identically. No installed binary replacement, dev service restart, user fixture/reset/migration, publication/push, Linux checkout or visual baseline change."
+    ],
+    "remaining": [
+      "Native application mutation providers and app kind preparation recovery/remote preparation task delivery still need integration. Indexed get_copy_records DAG range/path selection and larger copy relation chunk/disk support remain.",
+      "General filtered-log continuation preserving indirect/missing edges, uncached/ambiguous evolution, indexed code/local application search, oversized comparisons/change grouping and extreme-filter candidate selection remain.",
+      "Complete scale/RSS/latency/fault/cold-browser/RustFS/release qualification, Help/generated reference/source-review refresh and inherited installation-reference drift stay open."
+    ],
+    "next": "Commit this verified remote capability slice in the retained temporary workspace, then continue high-priority app preparation recovery and applicable native mutation capabilities. Keep full qualification separate.",
+    "result": "pending"
   }
 ]
 ```

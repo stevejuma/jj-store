@@ -636,6 +636,46 @@ impl NativeStore for NativeRpc {
         })
         .await
     }
+    async fn copy_family(
+        &self,
+        request: Request<wire::CopyFamilyRequest>,
+    ) -> Result<Response<wire::CopyFamilyReply>, Status> {
+        let started = Instant::now();
+        let session = self.bind(
+            &request.get_ref().repository,
+            self.request_access(&request)?,
+        )?;
+        let body = request.into_inner();
+        self.bounded(async {
+            let (seeds, required, limits) =
+                crate::copy_families::request(&body, session.copy_family_limits())?;
+            let deadline = started
+                .checked_add(
+                    Duration::from_millis(body.timeout_millis as u64).min(self.limits.timeout),
+                )
+                .ok_or_else(|| Status::deadline_exceeded("copy family deadline"))?;
+            let family = session
+                .copy_family(&seeds, &required, limits, deadline)
+                .await
+                .map_err(crate::copy_families::error)?;
+            if Instant::now() >= deadline {
+                return Err(Status::deadline_exceeded("copy family deadline"));
+            }
+            let reply = wire::CopyFamilyReply {
+                ids: family
+                    .ids
+                    .into_iter()
+                    .map(|id| id.as_bytes().to_vec())
+                    .collect(),
+                work: family.work as u64,
+            };
+            if Instant::now() >= deadline {
+                return Err(Status::deadline_exceeded("copy family deadline"));
+            }
+            Ok(reply)
+        })
+        .await
+    }
     async fn publish(
         &self,
         request: Request<wire::PublishRequest>,

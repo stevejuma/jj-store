@@ -1,5 +1,23 @@
 # Native JJ integration
 
+The additive CopyFamily RPC gives the ordinary remote native backend the same
+selected-family capability as its in-process authority. Capture one checked
+current inventory root after bounded admission; retain it for the entire call
+and recheck current permission, epoch and deadline. Historical browser providers
+continue to use their original pinned capability. Requests carry sorted unique
+copy seeds with required flags and tightening node/work/scratch/time allowances.
+Server-owned defaults, transport sizes and shared construction leases remain
+ceilings. Return complete sorted unique selected identities and charged
+traversal work, never bodies or a truncated success. Decode requests before set
+growth and responses before result growth. Required seeds must appear in the
+result. Only an older peer's explicit Unimplemented permits bounded inventory
+compatibility; authorization, deadline, resource, missing-selection and
+corruption failures remain errors. Client and server cancel pending I/O and
+reject late success. Acknowledged staged relationships remain captured and
+merged in the client backend, with no staged records entering the RPC
+projection. Existing Inventory, InventoryPage and persisted formats retain their
+exact framing.
+
 Prepared operation history may retain a disposable compact DAG containing exact
 operation identities, ordered parent identities and end timestamps, including
 timezone offsets. Capture it during the existing bounded operation pass. Verify

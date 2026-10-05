@@ -1,5 +1,8 @@
 //! Typed native transport facade. No upstream JJ types or mutable storage keys
 //! cross this interface. Object staging cannot advance publication authority.
+mod copy_families;
+pub use copy_families::{CopyFamily, CopyFamilyError, CopyFamilyLimits};
+
 use crate::{
     administration::{TokenListing, TokenReceipt, TokenRequest},
     auth::{BearerToken, Clock, Permission},

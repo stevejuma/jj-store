@@ -1,5 +1,14 @@
 # Typed mutations
 
+Remote native copy-family delivery captures one checked inventory root per
+ordinary backend request and uses the same source-scoped relation provider as
+in-process reads. The owned transport facade exposes identities, conservative
+work and tightening limits only, without upstream JJ types. Fresh permission,
+epoch and deadline checks surround response delivery; required unstaged seeds
+must be selected. Client-local acknowledged staging and its original captured
+sequence remain separate. This read capability grants no mutation or publication
+power and changes no closure audit, persisted format or historical browser pin.
+
 Native kind task credentials live only in the active supervised job, never its
 registry report or retained source projection. Start/status/cancel require fresh
 Read; cancel additionally requires the initiating principal. The reserved

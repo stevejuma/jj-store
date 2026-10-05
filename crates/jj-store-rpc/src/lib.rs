@@ -5,6 +5,7 @@ pub mod agent;
 mod application;
 pub mod client;
 mod collab;
+mod copy_families;
 mod inventory;
 pub mod review;
 pub mod server;
