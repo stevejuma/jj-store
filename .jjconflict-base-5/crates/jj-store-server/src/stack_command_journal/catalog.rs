@@ -35,8 +35,15 @@ impl Catalog {
                 .as_ref()
                 .is_some_and(|e| e.tree_checkout.is_some())
         });
+        let has_inventory = self.records.iter().any(|r| {
+            r.execution
+                .as_ref()
+                .is_some_and(|e| e.physical_inventory.is_some())
+        });
         if self.version
-            != if has_tree {
+            != if has_inventory {
+                5
+            } else if has_tree {
                 4
             } else if has_checkout {
                 3
@@ -67,6 +74,12 @@ impl Catalog {
     }
     pub fn include_execution(&mut self) {
         if self.records.iter().any(|r| {
+            r.execution
+                .as_ref()
+                .is_some_and(|e| e.physical_inventory.is_some())
+        }) {
+            self.version = 5;
+        } else if self.records.iter().any(|r| {
             r.execution
                 .as_ref()
                 .is_some_and(|e| e.tree_checkout.is_some())

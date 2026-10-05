@@ -35,3 +35,24 @@ pub fn plan() -> TreeCheckoutPlanV1 {
     plan.encode().unwrap();
     plan
 }
+
+pub fn inventory_plan() -> (
+    TreeCheckoutPlanV1,
+    jj_store_jj::local_execution::PhysicalInventoryV1,
+) {
+    use jj_store_jj::local_execution::{PhysicalDirectoryV1, PhysicalInventoryV1};
+    let inventory = PhysicalInventoryV1::new(
+        scope().repository,
+        1,
+        scope().physical_workspace.0,
+        vec![PhysicalDirectoryV1 {
+            path: String::new(),
+            stamp: [1, 2, 0, 0o040700, 0, 0, 0, 0],
+        }],
+        vec![],
+    )
+    .unwrap();
+    let mut value = serde_json::to_value(plan()).unwrap();
+    value["physical"] = serde_json::to_value(inventory.fingerprint()).unwrap();
+    (serde_json::from_value(value).unwrap(), inventory)
+}

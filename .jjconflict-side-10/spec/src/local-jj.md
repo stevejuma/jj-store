@@ -1249,6 +1249,26 @@ normalize new editor changes. Durable linkage, exact provider-owned installation
 progress, restricted normalization of only planned transitions and verified
 after-state remain required before interrupted physical checkout can resume.
 
+The private plan catalog MUST select the original complete inventory immutably
+before the command journal selects its reference, using journal-then-plan lock
+order. The reference binds inventory digest/encoded length and exact saved plan
+digest; the body must reproduce that plan's original physical fingerprint and
+the journal's original repository/generation/workspace binding. Authenticate the
+original principal/request/intent/prepared selection before inventory storage
+access. Exact replay cannot replace an inventory, reconstruct a missing selected
+body from caller input, or attach a new reference after Prepared. An orphan
+inventory is interrupted preparation, not permission to publish or install.
+
+Catalog version 2 adds optional saved inventory to immutable plan records;
+inventory-free version-1 catalogs retain canonical bytes. The existing
+128-record and 64-MiB aggregate limits include the inventory body, whose own
+bound remains 8 MiB. Journal version 5 adds only the inventory reference and
+requires its existing tree-plan reference. Versions 1–4 retain absent-field
+serialization and read behavior. New tree-changing publication admission MUST
+require both saved references. Historical records lacking inventory remain
+readable and cannot gain new execution input after Prepared. No capacity
+eviction, physical write or completion proof follows from this selection.
+
 ## Exact unchanged-tree checkout completion
 
 An explicit retained command whose named workspace retains identical checkout

@@ -413,6 +413,17 @@ provider-owned per-path progress, guarded interrupted installation and native
 checkout/tree-state completion remain the next foundation work before writable
 transport and UI wiring. All seven approved stages remain in progress.
 
+E-M21-031 durably binds the complete original physical inventory to its exact
+saved checkout plan and original command. Catalog version 2 selects/syncs the
+body before journal version 5 selects its digest/length/plan reference. Original
+authentication and full recovery binding precede catalog access; immutable
+replay, legacy bytes, missing-body refusal and interrupted body/reference
+selection remain separate from current physical validation. New changed-tree
+publication admission now requires both references. Provider-owned per-path
+progress, guarded interrupted installation, native checkout/tree-state
+completion and actual combination after-state remain required before command
+transport and writable UI wiring. All seven approved stages remain in progress.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

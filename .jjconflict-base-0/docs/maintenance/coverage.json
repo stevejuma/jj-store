@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed bounded complete original PhysicalInventoryV1 data, canonical namespace/hash parity and optional guard capture. Saved data grants no physical write, normalization or completion authority; durable linkage and provider-owned progress remain required.",
-      "fingerprint": "f82b33ea68924749fd42481f6e4784c2e0738207e540bece223bf205bc047501"
+      "reason": "Reviewed the public inventory byte-bound export used by durable runtime linkage; original PhysicalInventoryV1 data still grants no provider write or completion proof. Per-path progress and native tree-state completion remain required.",
+      "fingerprint": "03419eaebd0953f8ac0c74edab9dd61981810dcc69a336c04a503245d22497db"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed explicit scoped plan catalog creation, journal-then-plan locks, immutable canonical replay, original retention/effect linkage, version-4 digest/length references, legacy byte compatibility and tree-changing publication admission. No configuration field, installed service, transport, capability or physical completion is added.",
-      "fingerprint": "6a7032ba9dca90ec125d85eb2c01473ebd678c7fc9ae729c5e488be942734b49"
+      "reason": "Reviewed immutable inventory selection beside the exact plan, complete original journal authentication/binding before catalog access, journal-then-plan lock order, body-before-reference sync, shared capacity, catalog version 2/journal version 5, legacy byte preservation and strengthened tree-publication admission. No runtime configuration, installed service, transport or physical completion is introduced.",
+      "fingerprint": "b5cdf802b2a5665965cf8254897081a772d372e12a3c2692851714754591e678"
     }
   },
   {

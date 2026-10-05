@@ -46,14 +46,15 @@ async fn publication_requires_saved_original_plan_and_reopen_resolves_it() {
             .replayed
     );
     assert_eq!(fs::read(path.join("state.json")).unwrap(), encoded);
-    reopened
-        .transition(
+    assert_eq!(
+        reopened.transition(
             actor(),
             &f.apply(),
             &s::ReceiptState::Prepared,
             &s::ReceiptState::PublicationUnknown,
-        )
-        .unwrap();
+        ),
+        Err(Error::InvalidTransition)
+    ); // complete inventory is also required
     assert_eq!(reopened.pending(actor()).unwrap().len(), 1);
     assert!(
         reopened

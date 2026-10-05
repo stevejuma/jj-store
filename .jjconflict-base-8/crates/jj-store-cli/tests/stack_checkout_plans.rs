@@ -3,6 +3,10 @@
 mod candidate;
 #[path = "../../jj-store-jj/tests/stack_foreground/fixture.rs"]
 mod fixture;
+#[path = "stack_checkout_plans/inventory.rs"]
+mod inventory;
+#[path = "stack_checkout_plans/inventory_process.rs"]
+mod inventory_process;
 #[path = "stack_checkout_plans/linkage.rs"]
 mod linkage;
 #[path = "stack_checkout_plans/process.rs"]
@@ -51,9 +55,25 @@ struct Input {
 }
 impl Input {
     async fn new() -> Self {
+        Self::build(false).await
+    }
+    async fn build(real_physical: bool) -> Self {
         let folder = Fixture::new().await;
         fs::write(folder.root().join("file.txt"), b"original\n").unwrap();
         let state = folder.witness().await;
+        let physical = if real_physical {
+            jj_store_service::working_tree::scan(
+                &folder.root(),
+                state.baseline.repository,
+                state.baseline.generation,
+                Default::default(),
+                |_| Ok(()),
+            )
+            .unwrap()
+            .fingerprint
+        } else {
+            content_digest(b"original\n")
+        };
         let archive = candidate::candidate(
             &folder,
             vec![
@@ -82,7 +102,7 @@ impl Input {
                     working_copy: state.baseline.commit,
                 },
                 combination: Some(combination.clone()),
-                working_tree: content_digest(b"original\n"),
+                working_tree: physical,
             },
             s::Command::ApplyStack {
                 stack: s::StackId(m::RequestId::new([4; 16])),
@@ -128,13 +148,20 @@ impl Input {
             .await
             .unwrap();
         let before = folder.state();
-        let (recovered, plan) = recovered
-            .prepare_tree_checkout(
-                Arc::new(Files {
-                    root: folder.root(),
-                }),
-                preview.plan.request.selection.working_tree,
+        let guard: Arc<dyn PhysicalGuard> = if real_physical {
+            jj_store_service::working_tree::Observer::new(
+                local_browser::Executor::new(1).unwrap(),
+                1,
             )
+            .unwrap()
+            .physical_guard(folder.access(), folder.root())
+        } else {
+            Arc::new(Files {
+                root: folder.root(),
+            })
+        };
+        let (recovered, plan) = recovered
+            .prepare_tree_checkout(guard, preview.plan.request.selection.working_tree)
             .await
             .unwrap();
         drop(recovered);
@@ -153,6 +180,14 @@ impl Input {
             execution,
             plan,
         }
+    }
+    async fn inventory(&self) -> jj_store_jj::local_execution::PhysicalInventoryV1 {
+        jj_store_service::working_tree::Observer::new(local_browser::Executor::new(1).unwrap(), 1)
+            .unwrap()
+            .physical_guard(self.folder.access(), self.folder.root())
+            .inventory(&self.execution.witness.binding(), self.plan.physical())
+            .await
+            .unwrap()
     }
     fn journal(&self, path: &std::path::Path) -> StackCommandJournal {
         let journal = StackCommandJournal::create(path, self.scope.clone()).unwrap();

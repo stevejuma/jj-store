@@ -5,7 +5,9 @@ use jj_store_model as m;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 mod catalog;
+mod inventory;
 use catalog::Catalog;
+pub use inventory::{PhysicalInventoryReferenceV1, SavedPhysicalInventoryV1};
 pub use journal::{Error, Result};
 pub const MAX_RECORDS: usize = 128;
 pub const MAX_BYTES: usize = 64 * 1024 * 1024;
@@ -49,9 +51,14 @@ impl TreeCheckoutReferenceV1 {
 pub struct SavedTreePlanV1 {
     pub reference: TreeCheckoutReferenceV1,
     pub plan: TreeCheckoutPlanV1,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub inventory: Option<SavedPhysicalInventoryV1>,
 }
 impl SavedTreePlanV1 {
     fn validate(&self, scope: &journal::Scope) -> Result<()> {
+        if let Some(inventory) = &self.inventory {
+            inventory.validate(&self.plan)?;
+        }
         self.reference.validate()?;
         let key = self.plan.preparation();
         if scope.profile != journal::Profile::GitSha1Jj045
@@ -115,6 +122,7 @@ impl StackCheckoutPlans {
         let saved = SavedTreePlanV1 {
             reference: TreeCheckoutReferenceV1::from_plan(plan)?,
             plan: plan.clone(),
+            inventory: None,
         };
         saved.validate(&self.scope)?;
         let key = plan.preparation();
@@ -124,7 +132,7 @@ impl StackCheckoutPlans {
         let gate = self.root.gate()?;
         let (mut catalog, stamp) = self.read(&gate)?;
         if let Some(original) = catalog.lookup(principal, key.request, key.intent)? {
-            if *original != saved {
+            if original.reference != saved.reference || original.plan != saved.plan {
                 return Err(Error::IntentMismatch);
             }
             self.root.sync_selected(&gate, stamp)?;

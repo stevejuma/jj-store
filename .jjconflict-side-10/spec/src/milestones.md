@@ -90611,6 +90611,272 @@ entries.
   ],
   "next": "Durably select the complete original inventory with its exact saved command/plan, then implement provider-owned per-path installation progress, guarded interrupted checkout and native tree-state completion. Join actual combination after-state before writable transport/UI wiring; continue all seven approved stages.",
   "summary": "98 unique focused Rust parents pass: 22 service scanner/guard/inventory/projection, five explicit real-folder observers, 28 provider checkout, one service contract, 17 server preparation/execution and 25 CLI plan/registered cases. Strict all-target check/lint and governance/boundary/architecture/format/docs/spec checks pass. This qualifies original input only; M21.2 remains In progress. All 511 preceding raw evidence bodies remain byte-identical."
+},
+{
+  "id": "E-M21-031",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "nnrxmokm",
+  "kind": "Durable complete original-inventory selection and exact checkout command linkage",
+  "versions": "Rust 1.98.1; pinned JJ 0.45.1/Git SHA-1 profile; macOS ARM64. Isolated real-native candidate/scanner and metadata-only fixtures; CARGO_INCREMENTAL=0. Installed binaries/services unchanged.",
+  "formats": "Private plan catalog version 2 adds optional SavedPhysicalInventoryV1 beside an immutable exact plan; inventory-free canonical version 1 bytes unchanged. Private journal version 5 adds inventory digest/encoded length/plan digest and requires the existing tree-plan reference; versions 1–4 retain absent-field serialization/read behavior. Existing 128-record/64-MiB plan budget includes inventory bodies; each inventory remains 8 MiB. Journal budget/reservations and public/native/companion/WAL formats unchanged.",
+  "files": [
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory.rs",
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory_process.rs",
+    "crates/jj-store-cli/tests/stack_checkout_plans/linkage.rs",
+    "crates/jj-store-cli/tests/stack_checkout_plans.rs",
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-server/src/stack_checkout_plans/catalog.rs",
+    "crates/jj-store-server/src/stack_checkout_plans/inventory.rs",
+    "crates/jj-store-server/src/stack_checkout_plans/tests/fixture.rs",
+    "crates/jj-store-server/src/stack_checkout_plans/tests.rs",
+    "crates/jj-store-server/src/stack_checkout_plans.rs",
+    "crates/jj-store-server/src/stack_command_journal/catalog.rs",
+    "crates/jj-store-server/src/stack_command_journal/execution.rs",
+    "crates/jj-store-server/src/stack_command_journal/inventory.rs",
+    "crates/jj-store-server/src/stack_command_journal/transition.rs",
+    "crates/jj-store-server/src/stack_command_journal/tree_checkout.rs",
+    "crates/jj-store-server/src/stack_command_journal.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-JJ-002",
+    "JST-JJ-004",
+    "JST-GOV-002",
+    "JST-GOV-003"
+  ],
+  "before": "Exact new target fails with two missing API diagnostics. The first implementation/queued expanded compile fails because the owning inventory bound was not exported. Exporting that constant repairs both attempts; all final focused runs pass. Existing changed-tree metadata admission assertion is strengthened to require complete inventory as well as the exact plan.",
+  "scope": "Private original input only. Authenticate principal/request/intent/prepared selection and complete recovery binding before catalog access, validate exact saved plan linkage, sync immutable inventory before journal reference under journal-then-plan lock order. Immutable reopen/replay, orphan-body recovery, missing-body refusal, terminal non-upgrade, legacy bytes, contention and process loss grant no current physical validity, publication proof or checkout completion. New changed-tree publication admission requires both references.",
+  "tests": [
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory.rs#saved_complete_inventory_is_required_for_changed_tree_publication",
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory.rs#immutable_inventory_reopen_replays_without_scanning_new_editor_state",
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory.rs#inventory_binding_and_original_authentication_precede_store_access",
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory.rs#missing_inventory_and_tampered_reference_are_never_repaired_from_input",
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory.rs#terminal_legacy_request_never_acquires_inventory_or_changes_bytes",
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory.rs#inventory_contention_releases_journal_and_rejects_wrong_actor_first",
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory_process.rs#process_loss_on_each_side_of_inventory_reference_retains_exact_original",
+    "crates/jj-store-cli/tests/stack_checkout_plans/inventory_process.rs#exit_after_inventory_selection",
+    "crates/jj-store-server/src/stack_checkout_plans/tests.rs#replaced_store_or_lock_is_unavailable_and_original_selection_is_unchanged",
+    "crates/jj-store-server/src/stack_checkout_plans/tests.rs#unknown_plan_acknowledgement_keeps_exact_input_and_replay_syncs_it",
+    "crates/jj-store-server/src/stack_checkout_plans/tests.rs#aggregate_capacity_fails_before_selection_without_evicting_original",
+    "crates/jj-store-server/src/stack_checkout_plans/tests.rs#unknown_inventory_acknowledgement_reopens_exact_body_without_clearing_plan"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans inventory::saved_complete_inventory_is_required_for_changed_tree_publication -- --exact",
+      "result": "fail",
+      "failures": 2,
+      "note": "saved-inventory-before.log: Exact new regression fails before implementation with two missing save/load API diagnostics."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans inventory::saved_complete_inventory_is_required_for_changed_tree_publication -- --exact",
+      "result": "fail",
+      "failures": 1,
+      "note": "saved-inventory-after-initial.log: First implementation fails with one unresolved public MAX_INVENTORY_BYTES import; fixed by exporting the owning constant instead of duplicating the bound."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "fail",
+      "failures": 1,
+      "note": "saved-inventory-expanded.log: The queued expanded attempt also reports the same unresolved byte-bound export before the repair; no runtime test result."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-after.log: First complete implementation run passes 19 parents and three ignored invoked workers, including inventory/reference subprocess boundaries."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-final.log: Repeated complete 19-parent pass after process coverage and store fault additions. Three subprocess helpers invoked by passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-store-faults.log: Four metadata-only store cases pass, including new unknown inventory acknowledgement and existing replacement/aggregate-capacity coverage."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-final-expanded.log: 20 final CLI parents pass after the additional inventory-contention regression; three subprocess workers invoked by parents. Seven new parents plus 13 existing plan cases."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal --test stack_local_preparation --test stack_local_execution --test stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-server-regressions.log: 34 focused existing server parents pass; isolated workers invoked by passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-registered-regressions.log: 12 actual registered-folder/private reword parents pass; no production changed-tree execution is inferred."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-unit-regressions.log: 13 journal/combination/plan metadata parents pass, including the four store cases; two isolated workers invoked by parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj -p jj-store-service -p jj-store-server -p jj-store-cli --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-check.log: Owning/direct-consumer all-target type check passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-service -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-lint.log: Strict owning/direct-consumer all-target lint passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test working_tree_inventory --test working_tree_checkout",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-service-regressions.log: 12 complete inventory/registered guard parents pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_tree_checkout",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-provider-regressions.log: 18 exact retained-tree preparation parents pass; killed-worker helper invoked by its parent."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-governance.log: 50 cases pass."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-boundaries.log: 17-package boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-architecture.log: 1090 web/source ownership modules pass."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "source formatting: Repeated after source/test additions; unrelated tracked files unchanged."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-rust-format.log: Rust formatting passes."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed the public inventory byte-bound export used by durable runtime linkage; original PhysicalInventoryV1 data still grants no provider write or completion proof. Per-path progress and native tree-state completion remain required.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-docs-review-local.log: JJ source review acknowledged."
+    },
+    {
+      "command": "pnpm docs:review configuration 'Reviewed immutable inventory selection beside the exact plan, complete original journal authentication/binding before catalog access, journal-then-plan lock order, body-before-reference sync, shared capacity, catalog version 2/journal version 5, legacy byte preservation and strengthened tree-publication admission. No runtime configuration, installed service, transport or physical completion is introduced.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-docs-review-server.log: Server source review acknowledged; configuration syntax unchanged."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/architecture.md spec/src/jj-integration.md spec/src/cli.md spec/src/documentation.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-docs-format.log: Changed documentation/review metadata only; milestones excluded."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-docs-check.log: 139-file documentation closure, valid links/anchors and nine offline diagrams in both themes pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-spec-first.log: 19 protected files/five canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-spec-validation.log: Five validators/23 chapters/173 requirements pass."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/saved-inventory-ledger.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-ledger.py: appended only E-M21-031; historical evidence bodies untouched."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/saved-inventory-ledger-audit.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-ledger-audit.log: 513 objects; all 512 previous raw evidence bodies byte-identical; repeated after final evidence append."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-progress.log: 142 tasks/evidence checks pass; M21.2 remains In progress and evidence pending for incomplete feature gates."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-spec-first-final.log: final 19 protected files/six canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-spec-validation-final.log: final five-validator/23-chapter/173-requirement pass."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/architecture.md spec/src/jj-integration.md spec/src/cli.md spec/src/documentation.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-format-final.log: final changed-docs/review metadata formatting passes; milestones excluded."
+    },
+    {
+      "command": "jj --no-pager diff --git plus Python added-line trailing-whitespace assertion",
+      "result": "pass",
+      "failures": 0,
+      "note": "saved-inventory-review.patch: no trailing whitespace on added lines; source review complete."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Provider-owned per-path installation progress, restricted planned-transition normalization, actual interrupted tree-changing physical installation and native tree-state/checkout completion remain unimplemented. Dirty affected WIP requires the qualified preservation/merge engine; current tree-plan profile remains bounded.",
+    "New native candidate/scanner fixtures exercise exact saved input, with synthetic combination selection and typed candidate construction. Metadata-only unknown-acknowledgement/capacity/replacement tests are not engine evidence. Existing real registered reword execution remains distinct from changed-tree installation.",
+    "Actual durable combination after-state and execution coordination, explicit setup/merge-WIP membership/switching, prepare/apply/status/pending discovery transport and production wiring, whole-file/issued-hunk staging, graph/deletion/scoped undo, linked-native real-storage and complete cold UI flows remain approved and incomplete.",
+    "Unrelated UI/Storybook/RustFS/root aggregate lanes, installed binary/service replacement, existing-repository resets/migrations, package publication, screenshot comparison and baseline updates remain out of scope. Existing debug linker __eh_frame warning remains unsuppressed. Production Stacks remains read-only."
+  ],
+  "next": "Implement provider-owned per-path installation progress and exact original-inventory guards, then actual guarded physical installation/native tree-state completion. Join actual durable combination after-state before writable transport/UI wiring; continue all seven approved stages.",
+  "summary": "109 unique focused Rust parents pass: 20 CLI plan/inventory, 34 server integration, 12 registered CLI, 13 metadata unit, 12 service inventory/guard and 18 exact tree-plan provider. Strict all-target check/lint, governance/boundaries/architecture, format/docs and spec checks pass. This qualifies durable original input only; M21.2 remains In progress. All 512 preceding raw evidence bodies remain byte-identical."
 }
 ]
 ```

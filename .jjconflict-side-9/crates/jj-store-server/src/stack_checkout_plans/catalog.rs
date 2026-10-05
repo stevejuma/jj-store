@@ -17,7 +17,12 @@ impl Catalog {
     }
     fn validate(&self) -> Result<()> {
         self.scope.validate()?;
-        if self.version != 1 || self.plans.len() > MAX_RECORDS {
+        let version = if self.plans.iter().any(|p| p.inventory.is_some()) {
+            2
+        } else {
+            1
+        };
+        if self.version != version || self.plans.len() > MAX_RECORDS {
             return Err(Error::Invalid);
         }
         let mut requests = BTreeSet::new();
@@ -28,6 +33,9 @@ impl Catalog {
             }
         }
         Ok(())
+    }
+    pub fn include_inventory(&mut self) {
+        self.version = 2;
     }
     pub fn decode(bytes: &[u8], scope: &journal::Scope) -> Result<Self> {
         if bytes.len() > MAX_BYTES {

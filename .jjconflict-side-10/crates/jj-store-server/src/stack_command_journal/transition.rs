@@ -67,7 +67,7 @@ impl StackCommandJournal {
         if record.execution.is_some() && *next == s::ReceiptState::PublicationUnknown {
             if record.execution.as_ref().is_some_and(|e| {
                 record.preview.plan.checkout.before != record.preview.plan.checkout.after
-                    && e.tree_checkout.is_none()
+                    && (e.tree_checkout.is_none() || e.physical_inventory.is_none())
             }) {
                 return Err(Error::InvalidTransition);
             }

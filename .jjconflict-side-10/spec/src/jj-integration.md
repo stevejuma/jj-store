@@ -1151,3 +1151,9 @@ path namespace and bounds, and exposes no native write capability. The optional
 PhysicalGuard capture method defaults to unavailable; trusted service capture
 must use its qualified scanner. Merely decoding inventory data cannot normalize
 changed files, attest installation or create a provider completion proof.
+
+Runtime inventory linkage MUST validate the complete original recovery binding
+and exact tree-plan physical digest before selecting a private inventory body.
+Canonical identity and byte length are informative input references only; even
+after immutable reopen/replay they cannot grant a provider progress or checkout
+completion proof. No native write interface is added by this server composition.

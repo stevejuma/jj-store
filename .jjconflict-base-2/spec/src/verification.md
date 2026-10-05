@@ -1377,3 +1377,14 @@ capability refusal and shared admission through cancellation; explicit
 real-folder observer fixtures retain ordinary scan behavior. These passes
 qualify original input only. Durable linkage, per-path installation progress,
 interrupted checkout and native tree-state completion remain required.
+
+[E-M21-031](milestones.md) covers durable original-inventory linkage. Real
+native candidate/scanner fixtures verify body-before-reference selection, exact
+reopen/replay, complete binding checks, journal-only references and changed-tree
+publication admission. Abrupt subprocess exits on both sides of reference
+selection retain the exact original input and leave code/checkout/files
+unchanged. Missing bodies, malformed references, wrong actors and terminal
+upgrade attempts fail without repair or rewritten history. Metadata-only
+replacement/unknown-acknowledgement tests remain distinct from engine evidence.
+Per-path installation progress and actual interrupted checkout/native tree-state
+completion remain required; production Stacks stays read-only.

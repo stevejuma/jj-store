@@ -9,6 +9,7 @@ use std::path::Path;
 mod catalog;
 mod checkout;
 mod execution;
+mod inventory;
 mod transition;
 mod tree_checkout;
 use catalog::Catalog;

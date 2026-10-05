@@ -370,9 +370,25 @@ files, symlinks and empty directories. The canonical data is bounded to 4097
 total records and 8 MiB and contains no file contents or absolute folder path.
 Capture uses the registered physical guard's existing authorization, deadline
 and shared admission; validation-only guards reject this optional capability.
-Durable original-request linkage and provider-owned installation progress remain
-required. Inventory data cannot authorize normalization of later editor changes
-or attest a completed checkout.
+Provider-owned installation progress remains required. Inventory data cannot
+authorize normalization of later editor changes or attest a completed checkout.
+
+The existing private plan catalog now retains the exact original inventory next
+to its immutable plan. Journal authentication and complete recovery binding
+checks precede catalog access. The body is synced before a reference containing
+its digest, byte length and plan digest is selected under journal-then-plan lock
+order. Orphan body selection can be resumed only through the original Prepared
+request; missing already-referenced data cannot be reconstructed from caller
+input. Exact replay retains the original bytes even after new editor work,
+without claiming that current physical state is valid.
+
+Inventory-bearing plan catalogs use version 2 and journal catalogs use
+version 5. Inventory-free legacy catalogs keep their canonical representation.
+The existing 128-plan and 64-MiB aggregate budget includes saved inventories;
+the journal still stores only bounded references. New changed-tree publication
+admission requires both plan and inventory references. Terminal records cannot
+gain new input. This is durable preparation, not physical installation or native
+tree-state/checkout completion; production Stacks remains read-only.
 
 ## Private unchanged-tree execution join
 

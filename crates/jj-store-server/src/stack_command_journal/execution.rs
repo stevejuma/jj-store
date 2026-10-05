@@ -21,6 +21,8 @@ pub struct LocalExecutionV1 {
     pub checkout: Option<super::checkout::SavedCheckoutV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tree_checkout: Option<crate::stack_checkout_plans::TreeCheckoutReferenceV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub physical_inventory: Option<crate::stack_checkout_plans::PhysicalInventoryReferenceV1>,
 }
 pub fn preparation_key(principal: m::PrincipalId, preview: &s::Preview) -> StackPreparationKey {
     let request = &preview.plan.request;
@@ -57,6 +59,7 @@ impl LocalExecutionV1 {
             history: Some(history),
             checkout: None,
             tree_checkout: None,
+            physical_inventory: None,
         };
         value.validate(principal, preview)?;
         Ok(value)
@@ -86,11 +89,22 @@ impl LocalExecutionV1 {
             history: None,
             checkout: None,
             tree_checkout: None,
+            physical_inventory: None,
         };
         value.validate(principal, preview)?;
         Ok(value)
     }
     pub(super) fn validate(&self, principal: m::PrincipalId, preview: &s::Preview) -> Result<()> {
+        if let Some(inventory) = &self.physical_inventory {
+            inventory.validate()?;
+            if !self
+                .tree_checkout
+                .as_ref()
+                .is_some_and(|p| p.id == inventory.plan)
+            {
+                return Err(Error::Invalid);
+            }
+        }
         if let Some(reference) = &self.tree_checkout {
             reference.validate()?;
             if self.checkout.is_some()
@@ -174,6 +188,7 @@ impl StackCommandJournal {
         if pending.retention.is_some() {
             completed.checkout = pending.checkout.clone();
             completed.tree_checkout = pending.tree_checkout.clone();
+            completed.physical_inventory = pending.physical_inventory.clone();
             if *pending != completed {
                 return Err(Error::IntentMismatch);
             }

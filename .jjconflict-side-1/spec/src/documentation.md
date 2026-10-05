@@ -261,3 +261,11 @@ unchanged scanner digest, sorted complete file/directory rows, 4097-record and
 8-MiB canonical bounds, optional-capability refusal and existing admission,
 authorization and cancellation lifetime. Durable linkage and provider-owned
 progress remain separate gates; saved data cannot normalize new editor changes.
+
+The local manual MUST record durable original-inventory selection beside its
+exact plan, journal-before-catalog lock order and body-before-reference sync.
+Document plan catalog version 2, journal version 5, preserved inventory-free
+legacy bytes and unchanged shared capacity. Distinguish immutable replay after
+new editor work from live physical validation; terminal upgrade and missing-body
+reconstruction remain prohibited. No saved input example may advertise a
+physical completion or production mutation capability.

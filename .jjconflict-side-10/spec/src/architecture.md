@@ -173,6 +173,14 @@ contents and grants no write or completion authority. Durable original-command
 linkage and provider-owned installation progress remain separate gates before
 planned directory transitions can be distinguished from unrelated editor work.
 
+The server saves complete original inventory alongside its immutable exact plan
+within the existing private catalog budget. It authenticates the original
+journal request before store access and selects/syncs the inventory body before
+its digest/length/plan reference under journal-then-plan lock order. Catalog
+version 2 and journal version 5 preserve inventory-free legacy encodings. Saved
+inventory grants no provider execution authority; per-path progress and native
+checkout/tree-state completion remain required before production writes.
+
 The server now joins actual unpublished reword effects with exact private
 preview/journal selection, saved recovery witness and reserved retention. The
 full candidate archive is durable before retention; acknowledgement replaces

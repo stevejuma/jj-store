@@ -1,7 +1,7 @@
 use super::*;
 use crate::stack_checkout_plans::{StackCheckoutPlans, TreeCheckoutReferenceV1};
 use jj_store_jj::local_execution::TreeCheckoutPlanV1;
-fn linkage(record: &Record, plan: &TreeCheckoutPlanV1) -> Result<()> {
+pub(super) fn linkage(record: &Record, plan: &TreeCheckoutPlanV1) -> Result<()> {
     let execution = record.execution.as_ref().ok_or(Error::Invalid)?;
     let preview = &record.preview;
     let (before, after) = plan.trees();
