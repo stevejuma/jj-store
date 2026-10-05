@@ -4,6 +4,8 @@ mod bounded_reads;
 mod code_summary;
 #[path = "local_browser/index_tasks.rs"]
 mod index_tasks_acceptance;
+#[path = "local_browser/managed_code.rs"]
+mod managed_code;
 #[path = "local_browser/preparation.rs"]
 mod preparation_acceptance;
 #[path = "local_browser/prepared_comparisons.rs"]

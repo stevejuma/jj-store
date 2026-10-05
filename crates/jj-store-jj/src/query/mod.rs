@@ -2,6 +2,7 @@
 pub(crate) mod access;
 pub mod admission;
 pub mod cache;
+pub mod code_index;
 pub mod content;
 pub mod copy_index;
 mod graphs;

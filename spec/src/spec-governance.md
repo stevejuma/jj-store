@@ -1,5 +1,11 @@
 # Specification governance
 
+Managed standard JJ core-index replacement starts with exact warm-reuse and
+incremental-construction regressions, affected Rust checks and original Linux
+read-only evidence. Keep advanced projections explicit. Event maintenance and UI
+readiness require their focused lifecycle and cold browser evidence before
+landing; full release/fault/RustFS qualification remains deferred.
+
 Native kind browser delivery consumes the already-generated task contracts and
 changes no HTTP or RPC schema. Run focused preparation/settings/data-source
 regressions, web and catalog type checks, exact cold production-component

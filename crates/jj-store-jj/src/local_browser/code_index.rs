@@ -1,0 +1,236 @@
+//! Owned standard JJ code-index handle; advanced preparation remains separate.
+mod source;
+use super::*;
+use crate::query::{Cancellation, code_index as standard};
+use jj_lib::{index::Index as _, repo::Repo as _};
+use std::path::PathBuf;
+
+pub struct Prepared {
+    directory: tempfile::TempDir,
+    snapshot: Snapshot,
+    pub stats: Stats,
+    index: Arc<standard::Index>,
+    selection: [[u8; 32]; 2],
+    metadata: PathBuf,
+}
+impl Prepared {
+    pub fn snapshot(&self) -> &Snapshot {
+        &self.snapshot
+    }
+    pub fn path(&self) -> &Path {
+        self.directory.path()
+    }
+    pub(super) async fn contains(&self, id: m::GitSha1Id) -> Result<bool> {
+        self.index
+            .raw
+            .has_id(&b::CommitId::from_bytes(id.as_bytes()))
+            .await
+            .map_err(|_| Error::Unavailable)
+    }
+}
+fn selection(context: &Context, operation: m::OperationId) -> Result<[[u8; 32]; 2]> {
+    let operation = context
+        .access
+        .operations
+        .get(&operation)
+        .ok_or(Error::Incomplete)?;
+    let view = context
+        .access
+        .views
+        .get(&operation.view_id)
+        .ok_or(Error::Incomplete)?;
+    Ok([
+        operation_store::fingerprint(operation, &context.budget)?,
+        operation_store::view_fingerprint(view, &context.budget)?,
+    ])
+}
+#[derive(Debug)]
+struct Submodules;
+impl jj_lib::submodule_store::SubmoduleStore for Submodules {
+    fn name(&self) -> &str {
+        "read-only"
+    }
+}
+impl Executor {
+    /// Prepare the core graph in private storage, reusing the source JJ index.
+    /// The caller owns admission and retention; the source is never repaired.
+    pub async fn prepare_code_index(
+        &self,
+        access: Arc<dyn Access>,
+        operation: m::OperationId,
+        root: PathBuf,
+        reserved_bytes: u64,
+        limits: preparation::Limits,
+        cancellation: Cancellation,
+    ) -> Result<Prepared> {
+        limits.validate()?;
+        if !root.is_absolute() || reserved_bytes == 0 || reserved_bytes > 2 * 1024 * 1024 * 1024 {
+            return Err(Error::Limit);
+        }
+        let permit = self.workers.acquire_preparation()?;
+        let budget = Arc::new(Budget::preparation(&limits, &cancellation));
+        let cancel = cancellation.token().drop_guard();
+        budget.until(access.authorize()).await??;
+        let capture_limits = self.limits;
+        let runtime = tokio::runtime::Handle::current();
+        let result = tokio::task::spawn_blocking(move || {
+            let _permit = permit;
+            runtime.block_on(tokio::task::LocalSet::new().run_until(async {
+                budget
+                    .until(async {
+                        let root = std::fs::canonicalize(root).map_err(|_| Error::Unavailable)?;
+                        let metadata = std::fs::canonicalize(access.metadata_path())
+                            .map_err(|_| Error::Unavailable)?;
+                        if root.starts_with(&metadata) {
+                            return Err(Error::Invalid);
+                        }
+                        let context = Context::open(
+                            access,
+                            operation,
+                            budget.clone(),
+                            capture_limits,
+                            true,
+                            vec![],
+                            false,
+                        )
+                        .await?;
+                        let selected = selection(&context, operation)?;
+                        let directory = tempfile::Builder::new()
+                            .prefix(".code-index-")
+                            .tempdir_in(root)
+                            .map_err(|_| Error::Unavailable)?;
+                        let raw = loader(&metadata)?;
+                        let guard = scoped::Guard::new(
+                            raw.store().clone(),
+                            &context.access,
+                            budget.clone(),
+                            Limits {
+                                max_history_visits: limits.max_commits,
+                                ..capture_limits
+                            },
+                        );
+                        guard.construction();
+                        let store = guard.store();
+                        let operation_source = source::Source::new(
+                            raw.op_store().clone(),
+                            context.access.clone(),
+                            guard,
+                            budget.clone(),
+                            limits.max_metadata_records,
+                        );
+                        let selected_operation = operation_source.selected(operation).await?;
+                        standard::seed(
+                            &metadata.join("index"),
+                            directory.path(),
+                            &selected_operation,
+                            reserved_bytes,
+                            |bytes| {
+                                budget.work(1)?;
+                                budget.read_bytes(bytes)
+                            },
+                        )
+                        .await?;
+                        let index = standard::Index::load(
+                            directory.path(),
+                            &selected_operation,
+                            &store,
+                            limits.max_commits,
+                            || budget.work(1),
+                        )
+                        .await?;
+                        budget.authorize(&context.access).await?;
+                        Ok(Prepared {
+                            directory,
+                            snapshot: Snapshot {
+                                version: 1,
+                                profile: PROFILE,
+                                repository: context.access.repository(),
+                                generation: context.access.generation(),
+                                operation,
+                            },
+                            stats: budget.stats(),
+                            index: Arc::new(index),
+                            selection: selected,
+                            metadata: context.access.binding.metadata_path().to_owned(),
+                        })
+                    })
+                    .await?
+            }))
+        })
+        .await
+        .map_err(|_| Error::Unavailable)?;
+        cancel.disarm();
+        result
+    }
+    /// Pages hold the exact immutable index; no source index or full projection is opened.
+    pub async fn read_code_index(
+        &self,
+        access: Arc<dyn Access>,
+        prepared: Arc<Prepared>,
+        request: Request,
+    ) -> Result<Response> {
+        if !matches!(
+            request,
+            Request::Graph(GraphRequest::Log { .. }, _) | Request::Commit { .. }
+        ) {
+            return Err(Error::IndexRebuildRequired);
+        }
+        let limits = self.limits;
+        self.worker(access, move |access, budget| {
+            Box::pin(async move {
+                if access.repository() != prepared.snapshot.repository
+                    || access.metadata_path() != prepared.metadata
+                {
+                    return Err(Error::NotCommitted);
+                }
+                if access.generation() != prepared.snapshot.generation {
+                    return Err(Error::EpochChanged);
+                }
+                let operation = prepared.snapshot.operation;
+                let mut context = Context::open(
+                    access,
+                    operation,
+                    budget.clone(),
+                    limits,
+                    true,
+                    vec![],
+                    false,
+                )
+                .await?;
+                if selection(&context, operation)? != prepared.selection {
+                    return Err(Error::Corrupt);
+                }
+                Arc::get_mut(&mut context.access)
+                    .ok_or(Error::Unavailable)?
+                    .code_index = Some(prepared.clone());
+                let source = context
+                    .scoped
+                    .as_ref()
+                    .map_or(&context.store, |guard| &guard.source)
+                    .clone();
+                let guard = scoped::Guard::new(source, &context.access, budget.clone(), limits);
+                let selected = operation_store::selected(&context, operation).await?;
+                let raw = loader(context.access.binding.metadata_path())?;
+                let settings = UserSettings::from_config(StackedConfig::with_defaults())
+                    .map_err(|_| Error::Unavailable)?;
+                let repo_loader = RepoLoader::new(
+                    settings,
+                    guard.store(),
+                    selected.op_store().clone(),
+                    raw.op_heads_store().clone(),
+                    prepared.index.clone(),
+                    Arc::new(Submodules),
+                );
+                let repo = repo_loader
+                    .load_at(&selected)
+                    .await
+                    .map_err(|_| Error::Unavailable)?;
+                context.store = repo.store().clone();
+                context.scoped = Some(guard);
+                context.repo = Some(repo);
+                context.dispatch(operation, request, false).await
+            })
+        })
+        .await
+    }
+}

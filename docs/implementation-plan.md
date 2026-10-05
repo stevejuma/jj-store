@@ -1,5 +1,29 @@
 # jj-store implementation plan
 
+The approved core-browsing simplification replaces the superseded custom graph
+builder/projections with JJ 0.45.1's standard index. Retain lightweight pinned
+metadata, bookmark paging before hydration, scoped content, files-first UI and
+existing authorization/cursors/cancellation. The remaining programme is limited
+to three stages:
+
+1. Prove private warm reuse of Linux's index and native incremental
+   construction, with exact history pages and read/work counts. Keep the
+   read-only Git decoder.
+2. Use one managed native/local lifecycle, activated on first open and resumed
+   after restart. Reuse the existing per-repository event monitor with a
+   retained server lease and bounded catch-up checks. Use one coalesced
+   construction job; ready readers remain usable. Enable automatic maintenance
+   for LocalTrusted.
+3. Connect existing preparation/status/cancel and freshness recovery to ordinary
+   history, remove superseded core dependencies and setup buttons, land the
+   accumulated changes in main, and verify the original Linux dev-app flow cold.
+
+Advanced search/evolution/copy/deep-query optimisation, authenticated automatic
+maintenance and complete release/fault/RustFS qualification remain deferred.
+Keep advanced components when removing them would require another broad rewrite.
+Standard JJ construction limitations must be reported; do not add another custom
+writer. No source-index repair, repository migration or installed binary change.
+
 E-READ-078 connects native operation/copy preparation tasks to the browser's
 shared task owner, typed HTTP data source and repository index settings. Retain
 original operations, bounded progress/status admission, explicit cancellation,

@@ -470,6 +470,24 @@ TLS and explicit loopback transport rules are identical to ordinary native RPC.
 
 ## Bounded application graphs
 
+Core browsing uses the pinned `jj-lib::DefaultIndexStore` and its standard
+incremental builder in server-owned storage. One repository/profile/authority
+namespace contains JJ's per-operation associations; bookmarks share its graph.
+Reuse an indexed ancestor and read only newly needed commit bodies. Native
+backend and operation-store adapters preserve committed membership and current
+read authorization. Missing core indexes use the existing preparation task
+contract; metadata, bookmark pages and scoped content do not require an index.
+Core history must not depend on custom visibility, operation, substring or copy
+projections. Those advanced optimisations retain their explicit bounded paths
+and are outside this simplification's acceptance target.
+
+Local warm reuse copies compatible source index files under existing disk,
+file-count, read, memory and cancellation bounds before opening the private copy
+with JJ. Only the managed copy may be repaired. The existing read-only Git
+commit decoder remains mandatory for any incremental construction. Standard JJ
+construction is subject to owned admission; if it cannot meet core acceptance,
+report its specific limitation without introducing another custom writer.
+
 Prepared graph visibility and divergence flags use exact visible change groups
 from the selected admitted projection, with logarithmic point membership. They
 MUST NOT enumerate hidden incarnations merely to describe one selected commit.

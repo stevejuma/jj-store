@@ -36,6 +36,12 @@ impl Admission {
         self.commits.insert(id);
         Ok(())
     }
+    pub fn is_new(&self, id: m::CommitId) -> bool {
+        !self.commits.contains(&id)
+    }
+    pub fn len(&self) -> usize {
+        self.commits.len()
+    }
     pub fn finish_initial_load(&mut self) {
         self.inline = false;
     }

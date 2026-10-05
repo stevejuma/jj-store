@@ -42,6 +42,7 @@ pub(crate) struct Budget {
     output: AtomicU64,
     failure: Mutex<Option<Error>>,
     index: Mutex<Option<super::index::Admission>>,
+    construction_memory: Mutex<Option<Vec<super::memory::Lease>>>,
     pub(super) index_memory: Arc<super::memory::Indexes>,
 }
 impl Budget {
@@ -61,6 +62,7 @@ impl Budget {
             output: AtomicU64::new(0),
             failure: Mutex::new(None),
             index: Mutex::new(None),
+            construction_memory: Mutex::new(None),
             index_memory: Arc::default(),
         })
     }
@@ -127,6 +129,10 @@ impl Budget {
     pub fn read_bytes(&self, amount: usize) -> Result<()> {
         self.charge(&self.bytes, amount as u64, self.limits.max_object_bytes)
     }
+    pub fn start_code_index(&self) -> Result<()> {
+        *self.construction_memory.lock().unwrap() = Some(vec![]);
+        self.start_index(false)
+    }
     pub fn start_index(&self, inline: bool) -> Result<()> {
         *self.index.lock().expect("index admission") = Some(super::index::Admission::new(inline));
         // The virtual root is indexed without a physical object-store read.
@@ -140,6 +146,12 @@ impl Budget {
     fn index_commit(&self, id: m::CommitId) -> Result<()> {
         self.check()?;
         if let Some(admission) = self.index.lock().expect("index admission").as_mut() {
+            if admission.is_new(id)
+                && admission.len() % 256 == 0
+                && let Some(leases) = self.construction_memory.lock().unwrap().as_mut()
+            {
+                leases.push(super::memory::Lease::reserve(256 * 4096).map_err(|e| self.fail(e))?);
+            }
             admission.admit(id, self.limits).map_err(|e| self.fail(e))?;
         }
         Ok(())

@@ -1,5 +1,6 @@
 //! Operation-pinned ordinary GitBackend reads. No checkout or publication methods.
 mod budget;
+pub mod code_index;
 pub mod code_summary;
 pub mod conflicts;
 pub mod diff;
@@ -361,6 +362,7 @@ struct Pin {
     views: BTreeMap<m::ViewId, dto::View>,
     inventory: BTreeSet<ObjectKey>,
     prepared: Option<Arc<preparation::Prepared>>,
+    code_index: Option<Arc<code_index::Prepared>>,
 }
 impl Pin {
     fn repository(&self) -> m::RepositoryId {
@@ -372,6 +374,9 @@ impl Pin {
     async fn contains_commit(&self, id: m::GitSha1Id) -> Result<bool> {
         if self.inventory.contains(&ObjectKey::Commit(id)) {
             return Ok(true);
+        }
+        if let Some(index) = &self.code_index {
+            return index.contains(id).await;
         }
         match &self.prepared {
             Some(prepared) => prepared.contains(id).await,
@@ -453,6 +458,7 @@ impl Context {
             views: BTreeMap::new(),
             inventory: BTreeSet::new(),
             prepared: None,
+            code_index: None,
         };
         let mut pending = BTreeSet::from([operation]);
         let mut commits = BTreeSet::new();

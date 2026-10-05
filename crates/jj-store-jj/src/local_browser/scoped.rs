@@ -17,6 +17,8 @@ pub(super) struct Guard {
     commits: Mutex<BTreeSet<m::GitSha1Id>>,
     max_commits: usize,
     prepared: Option<Arc<preparation::Prepared>>,
+    code_index: Option<Arc<code_index::Prepared>>,
+    construction: Mutex<Option<Vec<crate::query::memory::Lease>>>,
     reader: Mutex<Option<git_read::Reader>>,
 }
 impl std::fmt::Debug for Guard {
@@ -40,8 +42,13 @@ impl Guard {
             commits: Mutex::new(BTreeSet::new()),
             max_commits: limits.max_history_visits,
             prepared: pin.prepared.clone(),
+            code_index: pin.code_index.clone(),
+            construction: Mutex::new(None),
             reader: Mutex::new(None),
         })
+    }
+    pub fn construction(&self) {
+        *self.construction.lock().unwrap() = Some(vec![]);
     }
     pub fn contains(&self, key: ObjectKey) -> bool {
         self.allowed
@@ -59,7 +66,11 @@ impl Guard {
             (Some(prepared), ObjectKey::Commit(id)) => prepared.contains(id).await?,
             _ => false,
         };
-        if !self.contains(key) && !prepared_member {
+        let code_member = match (&self.code_index, key) {
+            (Some(index), ObjectKey::Commit(id)) => index.contains(id).await?,
+            _ => false,
+        };
+        if !self.contains(key) && !prepared_member && !code_member {
             return Err(Error::NotCommitted);
         }
         Ok(())
@@ -115,6 +126,12 @@ impl b::Backend for Scoped {
             let mut commits = self.0.commits.lock().expect("scoped commits");
             if !commits.contains(&id_owned) && commits.len() >= self.0.max_commits {
                 return Err(error(Error::Limit));
+            }
+            if !commits.contains(&id_owned)
+                && commits.len() % 256 == 0
+                && let Some(leases) = self.0.construction.lock().unwrap().as_mut()
+            {
+                leases.push(crate::query::memory::Lease::reserve(256 * 4096).map_err(error)?);
             }
             commits.insert(id_owned);
         }

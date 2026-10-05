@@ -9,7 +9,7 @@ use std::{
     sync::Arc,
 };
 
-fn files(root: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
+pub(super) fn files(root: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
     fn visit(path: &Path, root: &Path, out: &mut BTreeMap<PathBuf, Vec<u8>>) {
         for entry in fs::read_dir(path).unwrap() {
             let entry = entry.unwrap();

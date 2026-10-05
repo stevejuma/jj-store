@@ -29,7 +29,7 @@ impl Default for Limits {
     }
 }
 impl Limits {
-    fn validate(self) -> Result<()> {
+    pub(super) fn validate(self) -> Result<()> {
         if self.max_commits == 0
             || self.max_commits > 4_000_000
             || self.max_work == 0

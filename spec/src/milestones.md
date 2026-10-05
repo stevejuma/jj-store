@@ -88580,6 +88580,181 @@ entries.
     ],
     "next": "Commit this verified UI slice, then pause at the user's explicit request. Discuss scope and implementation before landing or starting another slice.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-079",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "rwzxwqwr",
+    "kind": "focused-regression",
+    "versions": ["JJ 0.45.1", "Rust 1.98.1", "macOS ARM64"],
+    "formats": [
+      "Standard JJ default index format 6; no authoritative or wire-format change"
+    ],
+    "scope": "First approved simplification stage: prove standard JJ warm graph reuse and incremental native construction before lifecycle integration.",
+    "requirements": ["JST-JJ-005", "JST-LOCAL-004", "JST-GOV-002"],
+    "files": [
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs",
+      "crates/jj-store-cli/tests/local_browser/preparation.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/managed_code.rs",
+      "crates/jj-store-jj/src/local_browser/code_index.rs",
+      "crates/jj-store-jj/src/local_browser/code_index/source.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/operation_store.rs",
+      "crates/jj-store-jj/src/local_browser/preparation.rs",
+      "crates/jj-store-jj/src/local_browser/scoped.rs",
+      "crates/jj-store-jj/src/query/access.rs",
+      "crates/jj-store-jj/src/query/code_index.rs",
+      "crates/jj-store-jj/src/query/code_index/native.rs",
+      "crates/jj-store-jj/src/query/index.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "docs/implementation-plan.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#warm_code_index_does_not_walk_commit_bodies",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#standard_code_construction_is_read_only_when_source_index_is_absent",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#linux_standard_index_reuse_and_history_pages",
+      "crates/jj-store-cli/tests/native_lifecycle/managed_code.rs#standard_native_index_extends_indexed_ancestor"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_code::warm_code_index_does_not_walk_commit_bodies --locked -- --exact --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/baseline.log: 0 passed; old custom preparation exceeds 16 metadata records."
+      },
+      {
+        "command": "cargo check -p jj-store-jj --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/check.log: initial missing PathBuf/Repo imports and View constructor argument; corrected. check-native.log additionally preserves the missing native module-path attempt."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_code::warm_code_index_does_not_walk_commit_bodies --locked -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/warm.log: 1 passed, warm construction before history-read assertions."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_code --locked -- --nocapture",
+        "result": "fail",
+        "failures": 2,
+        "note": ".local/bounded-reads/managed/local.log and local-final.log: 0 passed, 2 failed, 1 ignored. Registered/canonical path mismatch and nested scoped source corrected. local-cold-debug.log preserves the separate failed cold page attempt."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_code --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/local-corrected.log: 2 passed, 1 ignored. Later selected-chain copying has separate Linux evidence."
+      },
+      {
+        "command": "cargo check -p jj-store-jj --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/check-selected-chain.log: source preparation now copies only the nearest indexed association and its parent segment chain."
+      },
+      {
+        "command": "JJ_STORE_LARGE_REPO=/Users/stevejuma/code/linux/.jj/repo cargo test -p jj-store-cli --test local_browser managed_code --locked -- --include-ignored --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/linux-final.log: 3 passed. Warm reuse 4.869s, 4 metadata nodes, 0 commit bodies; three 50-row pages 1.389/1.296/1.231s and 54 metadata nodes each. Source index/head/extra-head bytes unchanged."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle graph_acceptance::managed_code::standard_native_index_extends_indexed_ancestor --locked -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/native.log and native-final.log: 1 passed each. Initial 42 object reads versus 7 incremental; old pinned page retained; warm reopening at most one object read."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/local-consumers.log: 42 passed, 3 ignored; 83.55s. Direct shared local Pin/scoped/operation guard consumers, including advanced paths."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/check-consumers.log: affected crate and CLI/direct service/RPC/HTTP consumers compile."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/Focused Rust formatting."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/local-jj.md spec/src/spec-governance.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/format-docs.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/spec-first.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/spec-validate.log: 5 validators, 23 chapters, 172 requirements."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/architecture.log: 992 modules."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/progress.log: 139 tasks; bookkeeping only."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/rust-format-check.log."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/ledger-format.log: only new evidence arrays need formatter compaction."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/spec-final.log: same 5 validators/23 chapters/172 requirements after ledger update."
+      }
+    ],
+    "notes": [
+      "Approved narrower plan supersedes the old performance feature programme. Core graphs use DefaultIndexStore, the standard incremental builder and JJ revsets without custom visibility/reference/operation/copy projections. Keep advanced builders explicit until consumers can be removed without another large rewrite.",
+      "One shared standard index adapter serves two bounded source adapters. Local warm preparation follows the nearest indexed ancestor and copies only its segment chain; no source-wide operation/index-directory enumeration. Validate hash names, links, framing and parent chains before JJ decoding. Source is never opened with JJ for index repair.",
+      "Construction owns the shared preparation permit, cancellation, current authorization and per-object/work/read/metadata limits. Allocation leases precede construction batches and resident decoding. Native caller-owned namespaces reject mismatched repository/profile/epoch bindings. Handles own exact immutable selected readers; ordinary source metadata remains read-only.",
+      "Preserve read-only local Git commit decoding and extra-table access. No implicit GitBackend import, retained ref update, tree preflight, operation reconciliation or publication during construction. Native cold/incremental tests use memory transport; this is not RustFS evidence.",
+      "Original Linux source accepts standard warm reuse in seconds instead of the historical custom forty-two-minute build. Exact current Linux evidence is the three-page opt-in test, not complete app, release, fault, RSS or arbitrary deep-query qualification.",
+      "Initial path and nested-guard defects were exposed by cold/warm page assertions and corrected without weakening assertions. Preserve all earlier logs and all519 evidence entries verbatim/JSON-identically. Linker emits the inherited macOS unwind-size warning; product Rust check has no code diagnostics.",
+      "No HTTP/UI integration in this stage. Existing advanced queries and manual task routes continue unchanged; new core APIs are owned library handles. Root aggregate Rust/UI/spec check/test/build lanes, contract regeneration and visual baselines are outside this Rust-only source slice."
+    ],
+    "remaining": [
+      "Persist one managed namespace per repository/generation or epoch, account it under existing cache limits, and integrate the shared native/local task facade.",
+      "Activate on first open, reuse existing event monitors with server-held leases, coalesce code head updates and recover restart/missed events. LocalTrusted automatic maintenance first.",
+      "Connect automatic exact-selection UI retries and default-false capability, omit ordinary setup inventory controls, remove superseded core dependencies, land accumulated changes and cold-verify the original dev-app Linux flow.",
+      "Complete advanced-query, authenticated automatic maintenance, release/fault/RustFS qualification remains deferred. Native full Linux-sized cold construction has not been qualified; standard builder allocation admission can reject it explicitly."
+    ],
+    "next": "Commit this verified source proof and continue managed lifecycle/event integration in the retained workspace.",
+    "result": "pending"
   }
 ]
 ```
