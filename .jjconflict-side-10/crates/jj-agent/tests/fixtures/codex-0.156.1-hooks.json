@@ -1,0 +1,82 @@
+[
+  {
+    "hook_event_name": "SessionStart",
+    "session_id": "thr_demo",
+    "source": "startup",
+    "cwd": "<workspace>",
+    "model": "gpt-6-sol"
+  },
+  {
+    "hook_event_name": "UserPromptSubmit",
+    "session_id": "thr_demo",
+    "turn_id": "turn_1",
+    "prompt": "Update the parser",
+    "cwd": "<workspace>",
+    "model": "gpt-6-sol"
+  },
+  {
+    "hook_event_name": "PreToolUse",
+    "session_id": "thr_demo",
+    "turn_id": "turn_1",
+    "tool_use_id": "edit_1",
+    "tool_name": "apply_patch",
+    "tool_input": { "command": "*** Begin Patch\n*** End Patch" }
+  },
+  {
+    "hook_event_name": "PostToolUse",
+    "session_id": "thr_demo",
+    "turn_id": "turn_1",
+    "tool_use_id": "edit_1",
+    "tool_name": "apply_patch",
+    "tool_input": { "command": "*** Begin Patch\n*** End Patch" },
+    "tool_response": { "success": true }
+  },
+  {
+    "hook_event_name": "PreToolUse",
+    "session_id": "thr_demo",
+    "turn_id": "turn_1",
+    "tool_use_id": "shell_1",
+    "tool_name": "Bash",
+    "tool_input": { "command": "cargo test" }
+  },
+  {
+    "hook_event_name": "PostToolUse",
+    "session_id": "thr_demo",
+    "turn_id": "turn_1",
+    "tool_use_id": "shell_1",
+    "tool_name": "Bash",
+    "tool_input": { "command": "cargo test" },
+    "tool_response": { "exit_code": 1, "stderr": "test failed" }
+  },
+  {
+    "hook_event_name": "PreToolUse",
+    "session_id": "thr_demo",
+    "turn_id": "turn_1",
+    "tool_use_id": "read_1",
+    "tool_name": "Read",
+    "tool_input": { "path": "<workspace>/src/lib.rs" }
+  },
+  {
+    "hook_event_name": "PostToolUse",
+    "session_id": "thr_demo",
+    "turn_id": "turn_1",
+    "tool_use_id": "read_1",
+    "tool_name": "Read",
+    "tool_input": { "path": "<workspace>/src/lib.rs" },
+    "tool_response": { "success": true, "text": "fn main() {}" }
+  },
+  {
+    "hook_event_name": "SessionStart",
+    "session_id": "thr_demo",
+    "source": "resume",
+    "cwd": "<workspace>",
+    "model": "gpt-6-sol"
+  },
+  {
+    "hook_event_name": "SessionEnd",
+    "session_id": "thr_demo",
+    "reason": "other",
+    "cwd": "<workspace>",
+    "model": "gpt-6-sol"
+  }
+]

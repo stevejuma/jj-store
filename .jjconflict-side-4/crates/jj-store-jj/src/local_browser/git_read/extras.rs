@@ -334,7 +334,7 @@ fn decode(mut input: &[u8]) -> Result<Record> {
         let wire = tag & 7;
         if field == 0
             || (matches!(field, 1 | 2 | 4) && wire != 2)
-            || (matches!(field, 8 | 9 | 10) && wire != 0)
+            || (matches!(field, 8..=10) && wire != 0)
         {
             return Err(Error::Corrupt);
         }

@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented registered working-tree observation: exact operation and expected binding generation, server-resolved root, complete current checkout/sparse/ignore proof and changed-path summaries without contents or command tokens. Active-combination and production UI integration remain pending.",
-      "fingerprint": "87e7ff8d239f1eca49af57e54e0e24c307bc8d6c0c2b41c7bcc38cfd082dd43c"
+      "reason": "Documented immutable reserved-ref Stacks code retention, exact scope and retry, complete Git reachability, unknown ref selection and loose/packed replay. Archival retention does not qualify production command generation, source operation ancestry, head publication or guarded checkout. Four JJ read lint repairs preserve admission and preparation behavior.",
+      "fingerprint": "189a5b9631cff53c963ccbfc6475c18f6b6657e99d8bc05338cbfdecc7a23773"
     }
   },
   {

@@ -80,6 +80,22 @@ populate Unstaged.
 
 ## Portability and limits
 
+Stack preparation retention uses a separate reserved
+`refs/lapis/stacks/prepared/v1` namespace. An immutable slot binds the exact
+repository, physical workspace, principal, request, intent and preparation to
+archived operation/view and code evidence. The retainer links actual code
+commits, trees and blobs before selecting the ref, so the archive survives Git
+GC and loss of source operation/index files. Exact retry verifies and syncs the
+original loose or packed ref. A selection failure can remain unknown; an
+existing conflicting or malformed slot is never overwritten.
+
+Read lookup does not create a slot or companion state. These refs are outside
+user branches and ordinary selected push and are retained without automatic
+deletion. This is an archival primitive: it does not recreate source operation
+ancestry, generate production commands, publish operation heads or coordinate
+checkout. Writable Stacks capabilities remain unavailable until those execution
+and recovery gates qualify.
+
 Device paths, access grants, credentials and active execution journals are not
 portable repository records. Ordinary Git/JJ network commands do not transfer
 the owned companion ref. Do not assume a normal code push backs up

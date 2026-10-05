@@ -154,13 +154,13 @@ pub(super) async fn read(context: &Context, view: &dto::View, request: &Request)
         };
         let mut targets = Vec::with_capacity(ids.len());
         for id in ids {
-            if !hydrated.contains_key(&id) {
+            if let std::collections::btree_map::Entry::Vacant(entry) = hydrated.entry(id) {
                 let target = context
                     .targets(view, std::iter::once(id))
                     .await?
                     .pop()
                     .ok_or(Error::Incomplete)?;
-                hydrated.insert(id, target);
+                entry.insert(target);
             }
             targets.push(hydrated[&id].clone());
         }

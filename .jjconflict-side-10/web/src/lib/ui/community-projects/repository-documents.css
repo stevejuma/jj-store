@@ -1,0 +1,168 @@
+.community-projects__repository-document-card {
+  min-width: 0;
+  margin-block-start: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--ui-column-canvas-radius, var(--radius));
+  background: var(--background);
+  overflow: hidden;
+}
+
+.community-projects__repository-document-tabs[data-ui-component="tabs"] {
+  min-width: 0;
+  flex-direction: column;
+  gap: 0;
+}
+
+.community-projects__repository-document-header {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 2.75rem;
+  box-sizing: border-box;
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: 0.65rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+}
+
+.community-projects__repository-document-tabs [data-ui-part="tabs-list"] {
+  width: auto;
+  min-width: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.2rem;
+  overflow: hidden;
+  border-bottom: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.community-projects__repository-document-tabs [data-ui-part="tabs-trigger"] {
+  position: relative;
+  flex: 0 0 auto !important;
+  justify-content: flex-start !important;
+  gap: 0.45rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding-inline: 0.55rem;
+  background: transparent;
+  color: var(--foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 600;
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-list"][data-variant="line"]
+  > [data-ui-part="tabs-trigger"]:hover,
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-list"][data-variant="line"]
+  > [data-ui-part="tabs-trigger"]:focus-visible,
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-list"][data-variant="line"]
+  > [data-ui-part="tabs-trigger"][data-state="active"] {
+  color: var(--accent-foreground);
+  background: var(--accent);
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-trigger"]
+  svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-trigger"]::after {
+  display: none;
+}
+
+.community-projects__repository-document-tab-indicator {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: calc(-0.375rem - 1px);
+  height: 3px;
+  border-radius: 999px 999px 0 0;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-trigger"][data-state="active"]
+  .community-projects__repository-document-tab-indicator {
+  opacity: 1;
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-trigger"][data-state="active"]
+  svg {
+  color: currentColor;
+}
+
+.community-projects__repository-document-tabs [data-ui-part="tabs-content"] {
+  min-width: 0;
+}
+
+.community-projects__repository-document-edit[data-ui-component="button"] {
+  flex: none;
+}
+
+.community-projects__repository-document-more[data-ui-component="button"] {
+  position: relative;
+  height: 2rem;
+  flex: none;
+  gap: 0.2rem;
+  margin-inline-start: 0.15rem;
+  padding-inline: 0.65rem 0.45rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--community-text-secondary);
+  font-weight: 550;
+}
+
+.community-projects__repository-document-more[data-ui-component="button"][data-selected] {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  font-weight: 600;
+}
+
+.community-projects__repository-document-more[data-selected]
+  .community-projects__repository-document-tab-indicator {
+  opacity: 1;
+}
+
+.community-projects__repository-document-more[data-ui-component="button"] svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.community-projects__repository-document-menu-item[data-selected] {
+  position: relative;
+  font-weight: 600;
+}
+
+.community-projects__repository-document-menu-item[data-selected]::before {
+  position: absolute;
+  inset-block: 0.35rem;
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: 0 999px 999px 0;
+  background: var(--primary);
+  content: "";
+}
+
+.community-projects__markdown-preview {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1rem;
+  color: var(--foreground);
+  font-size: var(--community-text-body);
+  line-height: 1.6;
+}

@@ -3,10 +3,14 @@
 mod blobs;
 mod objects;
 mod prepare;
+mod stack_prepared;
 mod types;
 use gix::refs::{
     Target,
     transaction::{Change, LogChange, PreviousValue, RefEdit},
+};
+pub use stack_prepared::{
+    STACK_PREPARED_REF_PREFIX, StackPreparationKey, StackRetention, StackRetentionOutcome,
 };
 use std::{
     collections::BTreeMap,

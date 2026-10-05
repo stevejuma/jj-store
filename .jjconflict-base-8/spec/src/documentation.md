@@ -21,6 +21,11 @@ publication and foreground checkout. It records bounded capacity, durable
 replacement/unknown recovery, principal/physical scope and terminal retry
 semantics without presenting the primitive as a writable Stacks capability.
 
+Prepared code-retention documentation MUST explain the separate reserved ref
+namespace, immutable request binding and real Git closure reachability. Archives
+surviving source operation/index loss and GC do not qualify source operation
+ancestry restoration, production command preparation or physical checkout.
+
 Private physical scan documentation MUST distinguish a bounded revalidated
 inventory from a JJ snapshot, an Unstaged assignment and a filesystem CAS. It
 records limits and unsupported shapes without presenting provider projection,

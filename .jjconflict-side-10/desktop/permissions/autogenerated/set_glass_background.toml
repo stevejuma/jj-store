@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-set-glass-background"
+description = "Enables the set_glass_background command without any pre-configured scope."
+commands.allow = ["set_glass_background"]
+
+[[permission]]
+identifier = "deny-set-glass-background"
+description = "Denies the set_glass_background command without any pre-configured scope."
+commands.deny = ["set_glass_background"]
