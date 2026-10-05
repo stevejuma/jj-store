@@ -41,16 +41,9 @@ pub async fn apply_reword(
     if execution.retention.is_none() {
         return Err(Error::Unsupported);
     }
-    let context = if record.receipt.state == s::ReceiptState::Prepared {
-        let context = authority.context(principal, &request).await?;
-        report::check(&request, &context)?;
-        RecoveryContext {
-            access: context.access,
-            root: context.root,
-        }
-    } else {
-        authority.recovery(principal, &request).await?
-    };
+    // Registration is independent of source history. Current context may need
+    // lost operation/index records, so obtain it only after exact restoration.
+    let context = authority.recovery(principal, &request).await?;
     let physical = observer.physical_guard(context.access.clone(), context.root.clone());
     let recovery = if let Some(saved) = &execution.checkout {
         let recovery = coordinator
@@ -75,6 +68,10 @@ pub async fn apply_reword(
             .await?;
         check_retained(&recovery, &execution, &record.preview)?;
         let recovery = recovery.restore_extras().await?.restore_indexes().await?;
+        if record.receipt.state == s::ReceiptState::Prepared {
+            let context = authority.context(principal, &request).await?;
+            report::check(&request, &context)?;
+        }
         physical
             .validate(&execution.witness.binding(), request.selection.working_tree)
             .await?;

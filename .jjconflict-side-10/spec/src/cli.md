@@ -1893,3 +1893,13 @@ match the journal's original retention commit, archive digest and prepared
 operation/view. A key alone is insufficient. Identity mismatch may restore
 immutable archived source records but MUST NOT select a head or complete a
 checkout, and must retain the original pending receipt without re-preparation.
+
+First apply of a retained Prepared request MUST resolve authorized registration
+and restore its exact archived operation, extras and indexes before obtaining
+source-backed current context. Restoration uses the original foreground lease;
+it cannot prepare another candidate or select a head. After restoration, current
+physical/code/combination selection and the complete physical guard MUST still
+match the original request before PublicationUnknown or publication. Missing or
+changed combination state and new editor bytes retain Prepared without checkout
+or head selection. Revoked registration MUST fail before restoration. Terminal
+historical retry MUST NOT restore lost source state.

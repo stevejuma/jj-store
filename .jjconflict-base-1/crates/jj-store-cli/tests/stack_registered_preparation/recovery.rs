@@ -93,7 +93,7 @@ async fn registered_pending_recovery_resumes_saved_archive_after_operation_loss_
     assert!(!f.folder.root().join(".jj/repo/index").exists());
     assert_eq!(f.folder.state(), before);
 }
-fn journal_scope(f: &Installed) -> Scope {
+pub(super) fn journal_scope(f: &Installed) -> Scope {
     Scope {
         installation: f.installation,
         repository: f.binding.repository,

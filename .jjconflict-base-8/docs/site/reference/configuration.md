@@ -153,3 +153,10 @@ retain exact recovery inputs and reserve bounded receipt/checkout growth.
 Earlier catalogs remain readable and are not upgraded by status reads. This is
 an internal installed-policy boundary; no new configuration option, command
 route, general checkout or writable UI capability is exposed.
+
+Retained Prepared first apply resolves the existing authorized device binding
+before restoring exact source dependencies. Source-backed current policy runs
+after restoration and still rejects changed combination/code selection or
+physical edits before publication. Revoked bindings cannot restore source state;
+historical terminal retry does not repair it. No setup or configuration is
+inferred from recovery input.

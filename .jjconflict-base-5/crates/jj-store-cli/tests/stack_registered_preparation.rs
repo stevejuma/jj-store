@@ -1,4 +1,6 @@
 #![cfg(unix)]
+#[path = "stack_registered_preparation/apply.rs"]
+mod apply;
 #[path = "../../jj-store-jj/tests/stack_foreground/fixture.rs"]
 mod fixture;
 #[path = "stack_registered_preparation/recovery.rs"]

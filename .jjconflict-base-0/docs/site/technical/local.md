@@ -356,6 +356,16 @@ unfinished checkout discoverable and preserve new bytes. Process-loss tests kill
 workers after publication, receipt selection, witness selection and pointer
 completion; retry uses the same preview/candidate and saved witness.
 
+First apply of a retained Prepared request resolves registration before reading
+source history. It restores the exact archived operation, extras and indexes
+under the original foreground lease, then checks the current combination, code
+selection and physical inventory. Lost operation/index state does not require a
+new preparation. Missing or changed combination state and new editor bytes leave
+the original request Prepared without publishing; immutable dependency repair is
+separate from head or checkout selection. Revoked registration fails before
+repair. Terminal retry returns its historical receipt even if source state has
+been lost again, without recreating the missing records.
+
 Registered-folder execution uses the actual device registry, CLI folder provider
 and complete scanner guard. Active combination selection remains
 fixture-supplied in these execution tests. A simulated retirement outcome is not

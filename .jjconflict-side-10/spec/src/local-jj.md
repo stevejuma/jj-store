@@ -1204,3 +1204,11 @@ identities before runtime receipt acknowledgement. Historical completed/retired
 retry never opens a provider, rescans physical files or reexecutes the
 candidate. Tree-changing checkout and combination selection still require their
 owning engines.
+
+An original retained Prepared request MUST survive source operation/index loss
+on first apply. Resolve current registration first, then restore the exact
+original archive, extras and indexes under its foreground lease before reading
+source-backed policy. Revalidate the actual code, combination and physical
+selection after restoration; new editor changes or stale/missing combination
+state cannot publish or reset the request. Revocation cannot restore source
+records, and terminal receipts remain historical even after later source loss.

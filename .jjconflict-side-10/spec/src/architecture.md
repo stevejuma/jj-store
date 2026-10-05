@@ -952,3 +952,10 @@ replay never scans or opens a provider. Witness-bearing catalogs use private
 version 3 with bounded reserved growth; ordinary reads never upgrade older
 catalogs. This code/checkout join still needs combination selection, general
 checkout, production transport and UI capability qualification.
+
+Retained Prepared first apply resolves registration without source reads,
+restores exact source dependencies under the original foreground lease, then
+reads and checks current combination/code/physical policy before publication.
+This ordering supports operation/index loss without weakening stale-selection or
+editor guards. Terminal replay bypasses recovery; revoked bindings cannot
+restore any source state.

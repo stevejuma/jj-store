@@ -359,6 +359,15 @@ selected combination state. General checkout, first-use setup, actual
 combinations, prepare/apply/status/discovery routes and all later approved
 stages remain required; writable UI capabilities stay unavailable.
 
+E-M21-026 removes the Prepared first-apply source-loss dependency on readable
+current history. Authorized registration is resolved first; exact retained
+operation/extra/index recovery runs under the original foreground lease before
+source-backed current selection checks. Missing or changed combination state,
+new editor bytes and revoked registration still prevent publication, and
+terminal replay never repairs lost state. This remains private reword execution;
+general checkout, actual combination selection and production transport/UI
+qualification remain required.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

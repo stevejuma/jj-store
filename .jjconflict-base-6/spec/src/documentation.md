@@ -224,3 +224,8 @@ from fixture combination state and historical simulated outcomes. Document
 versions 1/2 read compatibility, version-3 saved witnesses, 8-KiB witness bounds
 and reserved growth; no production command or general checkout capability is
 implied. Source reviews cover the JJ linkage and server journal/apply owners.
+
+Document retained Prepared first-apply source-loss recovery before source-backed
+context, followed by current combination/code/physical validation. Distinguish
+immutable dependency repair from publication, and record revoked registration,
+changed combination/editor rejection and terminal no-repair retry.
