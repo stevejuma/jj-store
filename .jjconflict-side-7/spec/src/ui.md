@@ -447,6 +447,22 @@ controller and components, require a verified physical device binding, and
 advertise only qualified provider read and mutation capabilities. Catalog
 adapters remain isolated.
 
+Production stack read projection MUST retain an explicit repository, profile,
+binding generation and code-operation pin. History loads one bounded page
+without loading files or patches. Provider parents, graph edges, bookmark
+annotations, workspaces, conflicts and divergence remain available; unloaded
+files cannot imply an empty commit or manufacture linear parents. Net file lists
+compare the explicit boundary and head, including an empty list for reverted
+changes, rather than unioning per-commit hunks. Selected patches load
+independently. Unloaded, text-ready and unavailable content remain distinct;
+ordered file terms, modes and rename/copy sources remain intact. Matching-only
+diff blocks are not shown as changed hunks, and byte offsets are never treated
+as line numbers. Presentation hunk identities confer no mutation or transfer
+authority. Caller cancellation and read-owner disposal reject late results
+without closing the repository's shared transport. This read foundation does not
+fabricate a named combination or enable a command executor; production
+controller and lifecycle wiring remain separate acceptance work.
+
 The 5 October alignment review and proposed backend delivery order are recorded
 in
 [the implementation plan](../../docs/implementation-plan.md#local-stacks-backend-proposal).

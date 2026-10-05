@@ -92,3 +92,11 @@ selection and physical checkout completion. They currently define validated
 contracts, with no executable stack commands or HTTP mutation capability.
 Recoverable checkout and named-combination execution remain qualification work;
 opening a view does not create or snapshot a combination.
+
+The operation-pinned stack read owner projects real parents and graph
+annotations without loading file details with history. Net file summaries and
+selected patches compare explicit tree boundaries. It retains unloaded and
+unavailable content plus file modes and ordered rename/conflict source terms.
+Caller cancellation and view disposal release their own reads. Presentation hunk
+IDs grant no execution authority. Production controller injection and the
+recoverable command executor remain separate integration work.

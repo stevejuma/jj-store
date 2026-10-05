@@ -150,12 +150,14 @@ export interface StoreDataSource {
     from: string,
     to: string,
     cursor?: string,
+    signal?: AbortSignal,
   ): Promise<Browse.CodeWindow<Browse.CodeDiffPaths>>;
   diff(
     operation: string,
     from: string,
     to: string,
     path: string,
+    signal?: AbortSignal,
   ): Promise<Browse.CodeEnvelope<Browse.CodeDiff>>;
   conflicts(
     operation: string,

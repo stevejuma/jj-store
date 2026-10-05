@@ -15,6 +15,11 @@ qualification evidence; internal plans and evidence are not published as Help.
 
 ## Delivery and validation
 
+The stack read foundation is documented separately from production controller
+injection and executable commands. Lazy projection of pinned graph, exact tree
+diffs and unavailable file metadata MUST NOT be described as durable checkout or
+named-combination execution.
+
 The documentation source lives under `docs/site`, shared CLI long help under
 `docs/cli`, and maintenance metadata outside the published tree. MkDocs Material
 provides the standalone and embedded site. Mermaid sources remain Markdown and

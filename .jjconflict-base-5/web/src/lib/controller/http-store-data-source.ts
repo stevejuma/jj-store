@@ -166,22 +166,36 @@ export class HttpStoreDataSource
         }),
     );
   }
-  diffPaths(operation: string, from: string, to: string, cursor?: string) {
+  diffPaths(
+    operation: string,
+    from: string,
+    to: string,
+    cursor?: string,
+    signal?: AbortSignal,
+  ) {
     const query = { at_op: operation, from, to, cursor, limit: 50 };
     return this.#query<Model<"Window4">>(
       "diff-paths",
       operation,
       query,
-      (signal) => this.#client.request("diff/paths", query, { signal }),
+      (shared) => this.#client.request("diff/paths", query, { signal: shared }),
+      signal,
     );
   }
-  diff(operation: string, from: string, to: string, path: string) {
+  diff(
+    operation: string,
+    from: string,
+    to: string,
+    path: string,
+    signal?: AbortSignal,
+  ) {
     const query = { at_op: operation, from, to, path, content: true };
     return this.#query<Envelope<Model<"FileDiffResponse">>>(
       "diff",
       operation,
       query,
-      (signal) => this.#client.request("diff", query, { signal }),
+      (shared) => this.#client.request("diff", query, { signal: shared }),
+      signal,
     );
   }
   conflicts(operation: string, commit: string) {

@@ -1,6 +1,24 @@
 /** Frontend-only boundary. An adapter owns repository execution and durability. */
 export type WorkspaceHunk = { id: string; label: string; patch: string };
-export type WorkspaceFile = { path: string; hunks: WorkspaceHunk[] };
+export type WorkspaceFile = {
+  path: string;
+  hunks: WorkspaceHunk[];
+  /** Real reads distinguish an unloaded patch from an empty text diff. */
+  content?:
+    | { status: "unloaded" | "ready" }
+    | {
+        status: "unavailable";
+        reason: Extract<
+          import("../repository-read-types.js").CodeDiffChange["content"],
+          { status: "unavailable" }
+        >["reason"];
+      };
+  /** Preserve modes, ordered conflict terms and rename/copy provenance. */
+  change?: Pick<
+    import("../repository-read-types.js").CodeDiffChange,
+    "before" | "after" | "sources"
+  >;
+};
 export type StackCommit = {
   id: string;
   changeId: string;
@@ -9,6 +27,13 @@ export type StackCommit = {
   createdAt: number;
   email: string;
   immutable: boolean;
+  /** Provider graph metadata; absence is reserved for the linear mock. */
+  graph?: Pick<
+    import("../../projects/repository-log.js").RepositoryLogRevision,
+    "parents" | "bookmarks" | "workspaces" | "conflicted" | "divergent"
+  > & {
+    edges: { target: string; kind: "direct" | "indirect" | "missing" }[];
+  };
   files: WorkspaceFile[];
 };
 export type StackHead = { name: string; commit: string };

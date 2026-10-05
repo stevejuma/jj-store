@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed operation/range/version validation and bounded non-advancing page rejection for stackHistory transport; no production stack commands are enabled.",
-      "fingerprint": "b17a84f0e1f9fdaf6594894adad0d204965d719ea587523451101452927d4a1a"
+      "reason": "Reviewed explicit operation and binding pins, lazy graph/file/patch projection, preserved modes and ordered sources, and caller cancellation in native/local diff reads. Real controller injection and recoverable stack commands remain incomplete.",
+      "fingerprint": "8aeaf437ccc47589dab925e4bfbf83660c8fbffeb246667c8f03ba2d83729e05"
     }
   },
   {

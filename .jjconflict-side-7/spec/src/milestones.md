@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Deliver qualified local reads, commands and physical checkout | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Deliver qualified local reads, commands and physical checkout | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -83911,6 +83911,176 @@ entries.
   ],
   "next": "Continue lazy operation-pinned presentation reads in descendant pxztpulz, then integrate the real application lifecycle and durable local execution.",
   "out_of_scope": "Root aggregate lanes, full Rust workspace tests, package publication, installed-service changes, screenshot comparisons and visual baselines."
+},
+{
+  "id": "E-M21-003",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "enclosing Jujutsu change pxztpulz",
+  "kind": "lazy-operation-pinned-stack-read-projection",
+  "versions": "JJ 0.45.1; pnpm 10.32.1; Vitest 4.1.11; read provider parent 6c167204",
+  "formats": "Additive frontend presentation fields preserve provider graph annotations and unloaded/unavailable file metadata. Optional cancellation arguments on existing diff reads; no wire/storage/checkout/layout format changes.",
+  "files": [
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/architecture.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/ui.md",
+    "web/src/lib/controller/http-local-code-data-source.ts",
+    "web/src/lib/controller/http-store-data-source.ts",
+    "web/src/lib/controller/native-data-source.ts",
+    "web/src/lib/controller/stack-workspace/presentation.ts",
+    "web/src/lib/controller/stack-workspace/read-presentation.ts",
+    "web/src/lib/controller/stack-workspace/reads.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/tests/vite/stack-diff-transport.test.ts",
+    "web/tests/vite/stack-workspace-reads.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "before": "The new exact regression failed to load the absent read owner. First implemented run had four passes/two assertion errors: Unicode file name accidentally matched a content exclusion, and a human error message was compared to its machine code. Assertions now target context lines and structured error codes.",
+  "scope": "Introduce one explicit operation/profile/device-generation read owner over existing transports. Page history without eager files, compare exact trees for net files, load only selected patches, preserve graph/ordered conflict/mode/rename metadata, and cancel without closing shared source. The new class is a read foundation, not the production stack adapter/controller injection. Tests include native/local diff cancellation and both direct UI consumers.",
+  "tests": [
+    "web/tests/vite/stack-workspace-reads.test.ts#stack reads preserve real graph metadata and load no file details with history",
+    "web/tests/vite/stack-workspace-reads.test.ts#net files use exact boundary trees and preserve unloaded state instead of unioning commit hunks",
+    "web/tests/vite/stack-workspace-reads.test.ts#diff presentation keeps byte offsets out of line numbers and skips matching-only sections",
+    "web/tests/vite/stack-workspace-reads.test.ts#unavailable diffs retain ordered conflict terms and rename sources without fabricated text",
+    "web/tests/vite/stack-workspace-reads.test.ts#reads reject foreign snapshots, wrong tree ranges and nonadvancing pages",
+    "web/tests/vite/stack-workspace-reads.test.ts#canceling or closing rejects late reads without closing the repository source",
+    "web/tests/vite/stack-workspace-reads.test.ts#stack reads validate profile, page limits and advertised history capability before transport"
+  ],
+  "runs": [
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-reads.test.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before: missing module, one suite fails; lazy-reads-before.log"
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-reads.test.ts",
+      "result": "fail",
+      "failures": 2,
+      "note": "First implementation: four pass/two assertion errors described above; lazy-reads-after.log"
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-reads.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact after: six tests pass; subsequent capability regression included in final wider lane. lazy-reads-exact.log"
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-diff-transport.test.ts web/tests/vite/stack-workspace-reads.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Ten tests pass: independent observer cancellation and immediate retry in native/local file and patch transports; lazy-reads-transport.log"
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace*.test.ts web/tests/vite/stack-diff-transport.test.ts web/tests/vite/local-stack-history.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/history-query-transport.test.ts web/tests/vite/native-activity.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/thread-query-cache.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final 128 tests/15 files pass; includes all eleven new read/transport regressions. lazy-reads-units.log"
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh Vitest/Vite browser process: 103 interaction/accessibility tests/22 story files pass. Existing stack and repository consumers retain behavior; not cold real-provider qualification. lazy-reads-stories.log"
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial and final zero errors/warnings; lazy-reads-web-check.log and lazy-reads-web-final.log"
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero errors/warnings; 220 catalog modules; lazy-reads-catalog.log"
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "1054 modules pass; lazy-reads-architecture.log"
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "One validator passes; lazy-reads-ownership.log"
+    },
+    {
+      "command": "node --test scripts/progress-mapping.test.mjs scripts/ui-ownership.test.mjs scripts/web-architecture.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "16 tests pass; lazy-reads-governance.log"
+    },
+    {
+      "command": "pnpm docs:review application \"Reviewed explicit operation and binding pins, lazy graph/file/patch projection, preserved modes and ordered sources, and caller cancellation in native/local diff reads. Real controller injection and recoverable stack commands remain incomplete.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Application source review refreshed; published manual states read-only foundation limits."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "139 files, 13721431 bytes, nine light/dark Mermaid diagrams and valid links/anchors. lazy-reads-docs.log"
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/controller/native-data-source.ts web/src/lib/controller/http-local-code-data-source.ts web/src/lib/controller/http-store-data-source.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/controller/stack-workspace/presentation.ts web/src/lib/controller/stack-workspace/reads.ts web/src/lib/controller/stack-workspace/read-presentation.ts web/tests/vite/stack-workspace-reads.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial changed-source formatting; lazy-reads-format.log"
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/controller/stack-workspace/reads.ts web/tests/vite/stack-workspace-reads.test.ts web/tests/vite/stack-diff-transport.test.ts spec/src/ui.md spec/src/api.md spec/src/documentation.md docs/site/technical/architecture.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final changed-source/prose formatting; ledger excluded. lazy-reads-format-final.log"
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Review metadata formatting; lazy-reads-coverage-format.log"
+    },
+    {
+      "command": "pnpm exec prettier --check docs/maintenance/coverage.json docs/site/technical/architecture.md spec/src/ui.md spec/src/api.md spec/src/documentation.md web/src/lib/controller/native-data-source.ts web/src/lib/controller/http-local-code-data-source.ts web/src/lib/controller/http-store-data-source.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/controller/stack-workspace/presentation.ts web/src/lib/controller/stack-workspace/reads.ts web/src/lib/controller/stack-workspace/read-presentation.ts web/tests/vite/stack-workspace-reads.test.ts web/tests/vite/stack-diff-transport.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "All changed files formatted; lazy-reads-format-check.log"
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "11 protected files/three canonical chapters pass before ledger; lazy-reads-spec-first.log"
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Five validators, 23 chapters, 173 requirements; lazy-reads-spec-validate.log"
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final evidence bookkeeping and historical byte preservation; lazy-reads-progress.log"
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Real adapter/controller injection, bounded stack discovery and segment boundaries, disk scan, durable executor/checkout, named combinations, exact file/hunk and graph commands, linked-native qualification and complete cold application lifecycle remain. M21.2 is incomplete.",
+    "Live CUA tab selection timed out twice; no fresh native-browser review claimed. Affected Storybook acceptance ran in a fresh headless browser. Historical recorded UI review remains the alignment reference.",
+    "Inherited Clippy diagnostics remain recorded separately; this UI-only slice does not rerun Rust."
+  ],
+  "next": "Extend the controller with lazy authoritative source reads and per-action eligibility, represent absent combinations honestly, then inject a repository/binding-owned production adapter in App and qualify it cold before enabling durable writes.",
+  "out_of_scope": "Unrelated/root aggregate suites, Rust builds/tests, package publication, installed-service changes, screenshot comparisons and visual baseline updates."
 }
 ]
 ```

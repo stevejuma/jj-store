@@ -2123,3 +2123,13 @@ The local stack-history client revalidates the nested operation/head/base and
 version against its exact request, rejects oversized/non-advancing pages and
 invalid page limits before transport, and preserves the original opaque cursor.
 The envelope pin remains independently checked by the shared local query owner.
+
+The stack read projection independently checks the selected repository/profile,
+operation and binding generation, nested tree boundaries, page size and cursor
+progress before exposing provider data. File summary and selected patch reads
+accept caller cancellation in both native and local transports. Releasing one
+caller does not cancel another active observer's shared transport. Closing a
+stack read owner cancels only its reads, rejects late completion and leaves the
+repository transport owned by the application. Graph annotations and ordered
+file/mode/source metadata survive projection; presentation hunk IDs are never
+issued selection tokens or executable patch input.

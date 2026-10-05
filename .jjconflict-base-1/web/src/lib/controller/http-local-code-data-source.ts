@@ -194,7 +194,13 @@ export class HttpLocalCodeDataSource extends HttpLocalQuery {
       cursor,
     );
   }
-  diffPaths(operation: string, from: string, to: string, cursor?: string) {
+  diffPaths(
+    operation: string,
+    from: string,
+    to: string,
+    cursor?: string,
+    signal?: AbortSignal,
+  ) {
     return this.query<"diff_paths">(
       operation,
       {
@@ -209,18 +215,30 @@ export class HttpLocalCodeDataSource extends HttpLocalQuery {
         },
       },
       cursor,
+      signal,
     );
   }
-  diff(operation: string, from: string, to: string, path: string) {
-    return this.query<"diff">(operation, {
-      kind: "diff",
-      query: {
-        from: codeId(from, this.profile),
-        to: codeId(to, this.profile),
-        path,
-        content: true,
+  diff(
+    operation: string,
+    from: string,
+    to: string,
+    path: string,
+    signal?: AbortSignal,
+  ) {
+    return this.query<"diff">(
+      operation,
+      {
+        kind: "diff",
+        query: {
+          from: codeId(from, this.profile),
+          to: codeId(to, this.profile),
+          path,
+          content: true,
+        },
       },
-    });
+      undefined,
+      signal,
+    );
   }
   conflicts(operation: string, commit: string) {
     return this.query<"conflicts">(operation, {
