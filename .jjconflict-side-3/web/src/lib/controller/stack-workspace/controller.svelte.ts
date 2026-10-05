@@ -8,6 +8,7 @@ import { WorkspaceDragSession } from "./drag-session.svelte.js";
 import { workspaceControllerFiles } from "./controller-files.js";
 import { WorkspaceBranches } from "./branches.svelte.js";
 import { WorkspaceReadSession } from "./read-session.js";
+import { WorkspacePhysicalObservation } from "./physical-observation.svelte.js";
 import { WorkspaceTargetHistory } from "./target-history.svelte.js";
 import { WorkspaceStackHistory } from "./stack-history.svelte.js";
 import { WorkspaceCommitDrafts } from "./commit-drafts.svelte.js";
@@ -53,6 +54,7 @@ export class StackWorkspaceController {
     this.busy || this.loading || this.pending !== null || this.preview !== null,
   );
   readonly reads: WorkspaceReadSession;
+  readonly physical: WorkspacePhysicalObservation;
   #closed = false;
   #command = 0;
   readonly targetHistory: WorkspaceTargetHistory;
@@ -66,6 +68,7 @@ export class StackWorkspaceController {
       report?: (cause: unknown) => boolean;
     } = {},
   ) {
+    this.physical = new WorkspacePhysicalObservation(adapter);
     this.branches = new WorkspaceBranches(
       adapter,
       (snapshot) => updateWorkspaceControllerSnapshot(this, snapshot),
@@ -140,7 +143,10 @@ export class StackWorkspaceController {
   }
   async refresh() {
     if (this.#closed || this.pending || this.preview || this.busy) return;
-    await this.reads.run(() => this.adapter.read());
+    await Promise.all([
+      this.reads.run(() => this.adapter.read()),
+      this.physical.refresh(),
+    ]);
   }
 
   selectStack(id: string, branch?: string) {
@@ -278,6 +284,7 @@ export class StackWorkspaceController {
     else this.error = error instanceof Error ? error.message : String(error);
   }
   close() {
+    this.physical.close();
     this.drag.clear();
     this.targetHistory.close();
     this.details.close();

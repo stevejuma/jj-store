@@ -222,6 +222,10 @@ export type WorkspaceSourceRequest = {
 };
 export type WorkspaceFilePage = { files: WorkspaceFile[]; nextCursor?: string };
 export interface StackWorkspaceAdapter {
+  /** Current checkout evidence; never the historical read pin or complete Unstaged. */
+  observeWorkingTree?(
+    signal?: AbortSignal,
+  ): Promise<import("../working-tree-types.js").WorkingTreeObservation>;
   close?(): void;
   read(): Promise<WorkspaceSnapshot>;
   readBranches?(request: {

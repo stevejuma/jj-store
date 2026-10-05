@@ -1073,3 +1073,13 @@ generated transport contracts change in this UI-only slice; physical scans and
 durable commands require their own owning-layer and recovery gates. Historical
 evidence payloads remain byte-identical and the ledger itself is never
 reformatted.
+
+The physical-read client slice runs exact transport/owner regressions and
+directly affected Stacks, local-browser source and production application tests.
+Lifecycle ownership requires fresh affected Storybook runs and a cold built
+browser against a dirty disposable registered folder. The browser verifies
+actual observation requests, exact dirty-path summaries, ignored obstacles,
+retained historical selections/diffs and unchanged code/companion/checkout
+metadata and files. No Rust execution changes occur in this client slice;
+durable command/recovery gates remain separate. Historical ledger objects are
+appended to without formatting.

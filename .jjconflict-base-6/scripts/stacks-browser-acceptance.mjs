@@ -39,6 +39,7 @@ try {
   run(jj, ["git", "init", "--colocate", folder]);
   const command = (...args) => run(jj, ["-R", folder, ...args]);
   writeFileSync(join(folder, "README.md"), "# Local stacks fixture\n");
+  writeFileSync(join(folder, ".gitignore"), "obstacle.tmp\n");
   command("describe", "-m", "Workspace target");
   command("bookmark", "create", "main");
   command("new", "main", "-m", "Topic ancestor");
@@ -136,6 +137,10 @@ ${output}`);
     "-T",
     "id",
   ).trim();
+  // Dirty disk after the last JJ command; browser reads must not snapshot it.
+  writeFileSync(join(folder, "README.md"), "# Unsnapshotted physical change\n");
+  writeFileSync(join(folder, "unsnapshotted.txt"), "new physical file\n");
+  writeFileSync(join(folder, "obstacle.tmp"), "ignored checkout obstacle\n");
   const fixture = join(root, "browser-fixture.json");
   writeFileSync(
     fixture,

@@ -45,9 +45,11 @@ These reads retain the selected code snapshot and do not snapshot physical edits
 or change checkout files.
 
 Named combinations, applying branches and displaying complete Unstaged work are
-still under qualification. Physical-read transport does not make those controls
-available; the page must retain its unavailable state until the complete local
-workflow is supported.
+still under qualification. The controller observes current unsnapshotted file
+metadata independently of historical branch selections, with bounded reads and
+cancellation. Physical observations do not include all snapshotted combination
+WIP and do not make those controls available; the page must retain its
+unavailable state until the complete local workflow is supported.
 
 ## Prepare history when requested
 

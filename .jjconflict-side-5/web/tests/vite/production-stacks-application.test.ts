@@ -17,6 +17,12 @@ test("real bootstrap injects a verified Stacks controller and its route never re
     const stacks = controller.stackWorkspace!;
     expect(controller.state.route.page).toBe("stacks");
     expect(stacks.snapshot?.active).toBeNull();
+    await vi.waitFor(() =>
+      expect(stacks.physical.observation?.snapshot.operation).toBe(
+        stackOperation,
+      ),
+    );
+    expect(stacks.snapshot?.workspaces).toEqual([]);
     await stacks.chooseTarget(stacks.snapshot!.targetOptions![0]!);
     const branch = stacks.snapshot!.stacks[0]!;
     stacks.selectStack(branch.id);
@@ -37,6 +43,7 @@ test("real bootstrap injects a verified Stacks controller and its route never re
     ).toEqual([]);
     controller.actions.disconnect();
     expect(controller.stackWorkspace).toBeUndefined();
+    expect(stacks.physical.observation).toBeNull();
   } finally {
     controller.actions.destroy();
   }

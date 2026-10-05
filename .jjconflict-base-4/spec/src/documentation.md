@@ -121,3 +121,8 @@ Canonical ledger evidence owns cold idle/renewal and recovery qualification;
 source review acknowledgement alone cannot qualify those runtime gates. Build
 and stage the shared generated documentation sequentially within one workspace
 so another build cannot replace a manifest's closure during validation.
+
+The Stacks physical-read client integration updates the browsing manual to
+separate controller-owned current observations from historical reads, complete
+Unstaged assignment and writable controls. Its application source review and
+manual closure checks remain required; no generated API schema changes occur.

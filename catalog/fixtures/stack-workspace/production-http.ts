@@ -118,6 +118,25 @@ export function productionStacksHttp(cold = false) {
         metadata_commit: null,
         actor: null,
       });
+    if (path.endsWith("/working-tree/observe"))
+      return json({
+        snapshot: {
+          version: 1,
+          repository: stackRepository,
+          binding_generation: 2,
+          operation: stackOperation,
+          view: "c".repeat(128),
+          workspace: "default",
+          working_copy: "9".repeat(40),
+          trees: ["8".repeat(40)],
+          tree_labels: [],
+          physical_workspace: "7".repeat(64),
+          metadata_fingerprint: "6".repeat(64),
+          physical_fingerprint: "5".repeat(64),
+        },
+        changes: [],
+        obstacle_count: 0,
+      });
     if (path.endsWith("/capabilities"))
       return json({
         version: 1,

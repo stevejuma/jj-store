@@ -815,6 +815,13 @@ policy bytes and absolute source paths stay outside the response. Native hosted
 repositories and Git-only folders do not gain checkout capabilities from this
 local route.
 
+Production physical observation ownership MUST bracket each read with fresh
+registered current-operation snapshots, retaining an exact generation and one
+unambiguous head. These reads do not retarget historical code selections or
+reconcile siblings. Caller cancellation and disposal release only the owned
+waiter and reject late results. Complete client validation and a successful read
+still grant neither content-selection tokens nor active-combination assignment.
+
 The approved M21.2 read slice adds a strict typed stack-history query under
 JST-LOCAL-004. It binds an exact head and optional base to the existing
 authorized operation and binding generation. With a base, the query returns head

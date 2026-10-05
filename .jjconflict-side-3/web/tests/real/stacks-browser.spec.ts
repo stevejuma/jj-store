@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { execFileSync } from "node:child_process";
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 const fixture = process.env.JJ_STORE_STACKS_BROWSER_FIXTURE
   ? JSON.parse(
@@ -35,6 +35,11 @@ function state() {
       "utf8",
     ),
     files: files(fixture.folder),
+    checkout: ["checkout", "tree_state"].map((name) =>
+      readFileSync(join(fixture.folder, ".jj/working_copy", name)).toString(
+        "base64",
+      ),
+    ),
   };
 }
 test("cold_registered_stacks_browse_real_ancestors_files_and_diffs_without_writes", async ({
@@ -44,8 +49,16 @@ test("cold_registered_stacks_browse_real_ancestors_files_and_diffs_without_write
     errors: string[] = [],
     commands: string[] = [],
     ordinaryGraphs: string[] = [];
+  const observations: any[] = [],
+    observationRequests: unknown[] = [];
+  page.on("response", async (response) => {
+    if (response.url().endsWith("/working-tree/observe") && response.ok())
+      observations.push(await response.json());
+  });
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("request", (request) => {
+    if (request.url().endsWith("/working-tree/observe"))
+      observationRequests.push(request.postDataJSON());
     if (request.url().includes("/commands")) commands.push(request.url());
     if (
       request.url().endsWith("/query") &&
@@ -59,6 +72,20 @@ test("cold_registered_stacks_browse_real_ancestors_files_and_diffs_without_write
   await expect(
     page.getByRole("region", { name: "Local stack workspace", exact: true }),
   ).toBeVisible();
+  await expect.poll(() => observations.length).toBeGreaterThan(0);
+  expect(observations[0].snapshot.operation).toBe(fixture.operation);
+  expect(
+    observations[0].changes.map((change: any) => [change.path, change.status]),
+  ).toEqual([
+    ["README.md", "modified"],
+    ["unsnapshotted.txt", "added"],
+  ]);
+  expect(observations[0].obstacle_count).toBeGreaterThanOrEqual(2);
+  expect(observationRequests[0]).toEqual({
+    version: 1,
+    binding_generation: observations[0].snapshot.binding_generation,
+    operation: fixture.operation,
+  });
   await page.getByRole("tab", { name: "Branches", exact: true }).click();
   await page
     .getByRole("combobox", { name: "Workspace target branch", exact: true })
@@ -130,4 +157,15 @@ test("cold_registered_stacks_browse_real_ancestors_files_and_diffs_without_write
   expect(commands).toEqual([]);
   expect(errors).toEqual([]);
   expect(state()).toEqual(before);
+  if (process.env.JJ_STORE_WORKING_OBSERVATION_CAPTURE)
+    writeFileSync(
+      process.env.JJ_STORE_WORKING_OBSERVATION_CAPTURE,
+      JSON.stringify(
+        observations.map((data) => ({
+          path: "/v1/local/repos/{repo}/working-tree/observe",
+          status: 200,
+          data,
+        })),
+      ),
+    );
 });

@@ -144,15 +144,15 @@ reads; a failed refresh does not promote a partially refreshed read scope. Valid
 loaded ranges and historical diff selections survive refresh with fresh
 continuations and annotations.
 
-| Delivery stage                       | Current state                                                                                    | Remaining acceptance                                                                            |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| 1. Integrate UI and define contracts | Versioned service intent/selection/preparation/receipt types and read-adapter boundary delivered | Executable wire contracts accompany the recoverable executor                                    |
-| 2. Real browsing                     | Production browsing, private physical observations and exact WC/ignore comparison delivered      | Production physical-read integration, active-combination assignment and cold browser acceptance |
-| 3. Recoverable execution             | Planned; mutations remain unavailable                                                            | Journal, prepared operation, publication, guarded checkout, durable status and fault recovery   |
-| 4. Named combinations and membership | Planned; Workspace remains empty without qualified durable state                                 | Explicit setup, merge/WIP retention, apply/unapply, switching and restart                       |
-| 5. Staging and inline commits        | Reviewed UI and draft controller delivered                                                       | Exact whole-file engine, then server-issued hunk selections and transfers                       |
-| 6. Graph actions and recovery        | Reviewed menus and preview/recovery UI delivered                                                 | Qualified rewrite actions, deletion policy and guarded undo                                     |
-| 7. Linked-native lifecycle           | Planned; linked-native commands remain unavailable                                               | Manifest/checkout recovery, complete cold flows and real-storage evidence                       |
+| Delivery stage                       | Current state                                                                                    | Remaining acceptance                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| 1. Integrate UI and define contracts | Versioned service intent/selection/preparation/receipt types and read-adapter boundary delivered | Executable wire contracts accompany the recoverable executor                                  |
+| 2. Real browsing                     | Production browsing, private physical observations and exact WC/ignore comparison delivered      | Active-combination assignment and complete cold workflow acceptance                           |
+| 3. Recoverable execution             | Planned; mutations remain unavailable                                                            | Journal, prepared operation, publication, guarded checkout, durable status and fault recovery |
+| 4. Named combinations and membership | Planned; Workspace remains empty without qualified durable state                                 | Explicit setup, merge/WIP retention, apply/unapply, switching and restart                     |
+| 5. Staging and inline commits        | Reviewed UI and draft controller delivered                                                       | Exact whole-file engine, then server-issued hunk selections and transfers                     |
+| 6. Graph actions and recovery        | Reviewed menus and preview/recovery UI delivered                                                 | Qualified rewrite actions, deletion policy and guarded undo                                   |
+| 7. Linked-native lifecycle           | Planned; linked-native commands remain unavailable                                               | Manifest/checkout recovery, complete cold flows and real-storage evidence                     |
 
 E-M21-006 records focused controller, production Storybook and cold real-folder
 browsing evidence. This is an intermediate read delivery, not completion of
@@ -197,6 +197,16 @@ from a durable combination merge: snapshotted WIP must also be accounted for.
 Physical-read client ownership can be integrated separately, while complete
 Unstaged assignment must wait for the recoverable execution and combination
 engine in stages 3–4.
+
+E-M21-011 integrates the owned, uncached physical-read client and a separately
+owned controller observation. It validates exact registered pins, complete
+bounds, ordered terms/paths and coherent changed-file metadata without narrowing
+integers. Fresh current-head checks bracket the read; ambiguous heads remain
+unavailable. Refresh and disposal cancel only owned work and reject late
+results, while historical selections and adjacent diffs retain their own scope.
+These observations do not populate complete Unstaged or infer a combination.
+Durable execution and named combination merge/WIP state in stages 3–4 remain
+required.
 
 ### Recommended scope and model
 

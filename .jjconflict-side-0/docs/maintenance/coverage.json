@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Generated client contracts add the registered physical observation route. The production Stacks page still only browses pinned code; the manual distinguishes this read transport from complete Unstaged, named combinations and writable controls.",
-      "fingerprint": "a0bea38f66e6949af8cc55d6cb7ca3c5b545681e275b69e5416527c342dacc7e"
+      "reason": "Stacks now owns uncached current checkout observations separately from historical reads. Exact pins, complete bounds, lossless integers and cancellation are validated; observations do not populate complete Unstaged or enable commands.",
+      "fingerprint": "de83da3f06dbb2f4f282650ac8c66ea18a6669f5cc9b6bee42984f0461376047"
     }
   },
   {

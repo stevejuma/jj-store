@@ -35,9 +35,13 @@ and repository-exclude policy. The service observation owner compares this
 witness before and after the two-pass physical scan, retaining bounded admission
 through cancellation and checking current authorization. The registered
 observation transport exposes bounded change summaries and read fingerprints
-without private policy or content. Production read integration and
-active-combination assignment remain required before these reads populate
-Unstaged. No read establishes a checkout lock or publication authority.
+without private policy or content. The owned physical client validates complete
+records and lossless integers without historical caching. The Stacks controller
+owns this observation separately, brackets it with fresh current-head checks and
+cancels its own work on supersession or disposal. Historical selections remain
+unchanged. Active-combination merge/WIP assignment remains required before these
+reads populate complete Unstaged. No read establishes a checkout lock or
+publication authority.
 
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit

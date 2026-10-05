@@ -8,6 +8,7 @@ import {
   type LocalReadSnapshot,
 } from "../repository-profile.js";
 import { LoadedStackRanges } from "./loaded-ranges.js";
+import { CurrentWorkingTreeReads } from "./current-working-tree.js";
 import { stackReferencePage, stackReferenceWindow } from "./reference-pages.js";
 import { StackWorkspaceReads } from "./reads.js";
 import {
@@ -40,12 +41,17 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
   #seen = new Set<string>();
   readonly ranges = new LoadedStackRanges();
   #commits = new Map<string, WorkspaceHistoryPage["commits"][number]>();
+  readonly #physical: CurrentWorkingTreeReads;
   constructor(
     readonly source: StoreDataSource,
     readonly binding: Model<"LocalBinding">,
     public operation: string,
   ) {
     fullId(operation);
+    this.#physical = new CurrentWorkingTreeReads(source, binding);
+  }
+  observeWorkingTree(signal?: AbortSignal) {
+    return this.#physical.observe(signal);
   }
   setOperation(operation: string) {
     fullId(operation);
@@ -268,6 +274,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
   }
   close() {
     this.#closed.abort();
+    this.#physical.close();
     this.#reads?.close();
     this.#commits.clear();
     this.ranges.clear();

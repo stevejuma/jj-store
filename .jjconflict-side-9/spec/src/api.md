@@ -1546,6 +1546,14 @@ Oversize observations have no partial response. Stale, unavailable, unsupported,
 denied and busy reads remain distinguishable. This endpoint does not assign
 changes to a named combination, snapshot code or advertise writes.
 
+The owned client MUST validate complete observation records against the exact
+requested repository, binding generation and operation. Identity widths, safe
+ordered paths, tree/label terms, numeric and aggregate bounds, and coherent
+added/modified/deleted states are checked before acceptance. Native integers
+remain lossless; malformed and partial records cannot be promoted. Physical
+reads bypass historical query caching and automatic retries. Caller cancellation
+and transport disposal reject late completion, including response-body reads.
+
 Buzz shell gradient continuity and compact navigation picker surfaces are owned
 CSS presentation. The picker retains native repository/thread selection and
 keyboard navigation, with app-background surface tokens and spacing independent

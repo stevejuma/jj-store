@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete physical scan, recoverable checkout and combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -85822,6 +85822,262 @@ entries.
   ],
   "next": "Integrate an owned cancellable physical-read client with exact selection validation, then qualify durable prepared execution and combinations before enabling complete Unstaged assignment or writable UI.",
   "out_of_scope": "Unrelated UI stories/browser baselines and catalog types (generated client addition only; production web types checked), root aggregate Rust/UI lanes, package publication, installed services, checkout commands, source repository reset/migration, screenshots/baseline updates and new live visual review. Storybook remains port 6057/PID 36264."
+},
+{
+  "id": "E-M21-011",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "qtqkzlsy",
+  "kind": "Owned current physical-read client and independent Stacks observation lifecycle",
+  "versions": "Node 22+; pnpm 10.32.1; macOS ARM64; existing explicitly built development JJ 0.45.1/server binaries. No installed executable/service changes.",
+  "formats": "Consumes existing version-1 ObserveWorkingTree/ObservedWorkingTree records with exact lossless numbers. No public schema, native/WAL/companion/private persisted format change. Current physical evidence remains separate from historical selections and combination WIP.",
+  "files": [
+    "catalog/fixtures/stack-workspace/production-http.ts",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/browsing.md",
+    "scripts/stacks-browser-acceptance.mjs",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/local-jj.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "web/src/lib/controller/http-local-store-data-source.ts",
+    "web/src/lib/controller/http-working-tree.ts",
+    "web/src/lib/controller/native-data-source.ts",
+    "web/src/lib/controller/stack-workspace/controller.svelte.ts",
+    "web/src/lib/controller/stack-workspace/current-working-tree.ts",
+    "web/src/lib/controller/stack-workspace/physical-observation.svelte.ts",
+    "web/src/lib/controller/stack-workspace/production-adapter.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/src/lib/controller/working-tree-read.ts",
+    "web/src/lib/controller/working-tree-types.ts",
+    "web/src/lib/controller/working-tree-validation.ts",
+    "web/tests/real/stacks-browser.spec.ts",
+    "web/tests/vite/production-stacks-application.test.ts",
+    "web/tests/vite/stack-working-tree.test.ts",
+    "web/tests/vite/working-tree-http.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "before": "No owned physical-tree transport/client or separately canceled production Stacks observation existed; the exact transport test cannot import its missing module.",
+  "scope": "Uncached registered read client validates exact pins, identity widths, complete ordered paths/terms, bounded native integers/bytes and coherent before/after file states. Production adapter brackets observation with fresh verified single-current-head snapshots; controller owns supersession/cancellation independently of history. Shared controller lifecycle is covered by all directly affected Stacks unit/story consumers and one cold built real dirty-folder flow.",
+  "tests": [
+    "web/tests/vite/working-tree-http.test.ts#physical observation preserves exact integers and sends only pinned registered inputs",
+    "web/tests/vite/working-tree-http.test.ts#physical observation rejects mismatched snapshots, unsafe paths and incoherent complete summaries",
+    "web/tests/vite/working-tree-http.test.ts#cancellation rejects a held response-body read before the late body completes",
+    "web/tests/vite/stack-working-tree.test.ts#production adapter physical reads preserve a distinct historical operation selection",
+    "web/tests/vite/stack-working-tree.test.ts#observation owner rejects superseded and post-disposal results and clears failed evidence",
+    "web/tests/vite/production-stacks-application.test.ts#real bootstrap injects a verified Stacks controller and its route never reads the ordinary graph",
+    "web/tests/real/stacks-browser.spec.ts#cold_registered_stacks_browse_real_ancestors_files_and_diffs_without_writes"
+  ],
+  "runs": [
+    {
+      "command": "pnpm catalog:test web/tests/vite/working-tree-http.test.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "working-client-before.log: missing owned HttpWorkingTree module fails the exact regression suite before implementation; zero tests could import."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/working-tree-http.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-first.log: five transport regressions pass after the owned client/validation implementation; later cancellation and bounds cases are included in the final direct lane."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/working-tree-http.test.ts web/tests/vite/stack-working-tree.test.ts web/tests/vite/production-stack-adapter.test.ts web/tests/vite/production-stacks-application.test.ts web/tests/vite/production-stacks-lifecycle.test.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "working-client-owner-first.log: 33 pass, one missing-transport test attempted to inspect a removed spy. Retained the original spy for the no-call assertion; no production assertion weakened."
+    },
+    {
+      "command": "JJ_STORE_WORKING_OBSERVATION_CAPTURE=$PWD/.local/stacks-backend-evidence/working-transport-cold-captures.json pnpm catalog:test web/tests/vite/working-tree-http.test.ts web/tests/vite/stack-working-tree.test.ts web/tests/vite/production-stack-adapter.test.ts web/tests/vite/production-stacks-application.test.ts web/tests/vite/production-stacks-lifecycle.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-owner-repaired.log: 34 pass, including runtime validation of prior actual cold registered-server responses."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/working-tree-http.test.ts web/tests/vite/stack-working-tree.test.ts web/tests/vite/production-stack-adapter.test.ts web/tests/vite/production-stacks-application.test.ts web/tests/vite/production-stacks-lifecycle.test.ts web/tests/vite/stack-workspace-reads.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/local-browser-merge.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-direct-regressions.log: initial direct boundary coverage passes. Final expanded transport, source and owner cases are recorded next."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/working-tree-http.test.ts web/tests/vite/stack-working-tree.test.ts web/tests/vite/production-stack-adapter.test.ts web/tests/vite/production-stacks-application.test.ts web/tests/vite/production-stacks-lifecycle.test.ts web/tests/vite/stack-workspace-reads.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/local-browser-merge.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-direct-final.log: 67 pass in eight files after expanded UTF-8 ordering, tree/label, aggregate-byte and held-body cancellation cases. This ordinary invocation did not supply cold capture evidence; that case subsequently became an explicit skip and is separately qualified below."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/*stack*.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/local-browser-merge.test.ts web/tests/vite/working-tree-http.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-controller-regressions.log: complete directly affected controller/history/drag/read/source surface passes 159 tests in 20 files; one explicit real-capture validation skips in the ordinary lane and is separately passed below."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceProduction.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-production-stories.log: both production application-shell read/preparation interaction and accessibility stories pass in a fresh browser process."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/*.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-all-stack-stories.log: all 90 directly affected Stacks interaction/accessibility stories pass in 21 files with a fresh browser process; no screenshot comparisons or baseline updates."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-web-first.log and working-client-web-final.log: zero errors and warnings."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-catalog-types.log: zero errors and warnings; boundaries pass for 227 modules."
+    },
+    {
+      "command": "pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-browser-build.log: fresh production bundle, manifest and 139-file documentation closure built. Existing large-chunk and plugin-timing notices retained; no Rust/executable build."
+    },
+    {
+      "command": "JJ_STORE_WORKING_OBSERVATION_CAPTURE=$PWD/.local/stacks-backend-evidence/working-client-browser-captures.json node scripts/stacks-browser-acceptance.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-cold-browser-first.log: one fresh built-browser/isolated filesystem-server test passes against real dirty JJ checkout. Actual path-free current requests, modified README, added unsnapshotted file and ignored obstacle; histories/adjacent diffs remain valid. Operations, bookmarks, companion, physical bytes and checkout/tree_state metadata byte-identical before/after. Fresh fixture and disposable server cleaned up; existing NO_COLOR warning retained."
+    },
+    {
+      "command": "JJ_STORE_WORKING_OBSERVATION_CAPTURE=$PWD/.local/stacks-backend-evidence/working-client-browser-captures.json pnpm catalog:test web/tests/vite/stack-working-tree.test.ts -t \"validator accepts actual cold server observation evidence\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-cold-validation.log: focused runtime validator accepts actual responses from this cold browser; one pass and other cases skipped by the exact filter."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-ownership.log: production ownership and reference-source boundaries pass; no Community/Changeyard checkout dependency."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-architecture-first.log and working-client-architecture-final.log: all 1090 source modules within existing ownership/size bounds."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-boundaries.log: 17 package boundaries pass; no upstream JJ imports added to UI/service orchestration."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-governance.log: all 50 governance/dev-demo/manifest/architecture/ownership regressions pass. Changed isolated fixture script uses existing explicitly built binaries and cleans up only its own state."
+    },
+    {
+      "command": "pnpm docs:review application \"Stacks now owns uncached current checkout observations separately from historical reads. Exact pins, complete bounds, lossless integers and cancellation are validated; observations do not populate complete Unstaged or enable commands.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-docs-application-review.log: owning source/manual review acknowledged; portable coverage file subsequently formatted."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-docs-check.log: nine Mermaid diagrams and strict manual build, 139-file link/anchor closure pass."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/controller/working-tree-types.ts web/src/lib/controller/working-tree-validation.ts web/src/lib/controller/http-working-tree.ts web/src/lib/controller/native-data-source.ts web/src/lib/controller/http-local-store-data-source.ts web/src/lib/controller/stack-workspace/current-working-tree.ts web/src/lib/controller/stack-workspace/physical-observation.svelte.ts web/src/lib/controller/stack-workspace/production-adapter.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/controller/stack-workspace/controller.svelte.ts web/tests/vite/working-tree-http.test.ts web/tests/vite/stack-working-tree.test.ts web/tests/vite/production-stacks-application.test.ts catalog/fixtures/stack-workspace/production-http.ts web/tests/real/stacks-browser.spec.ts scripts/stacks-browser-acceptance.mjs spec/src/ui.md spec/src/api.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-format.log: explicit changed files formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/controller/http-working-tree.ts web/src/lib/controller/working-tree-read.ts web/src/lib/controller/stack-workspace/current-working-tree.ts web/tests/vite/working-tree-http.test.ts docs/implementation-plan.md docs/site/guides/browsing.md spec/src/architecture.md spec/src/local-jj.md spec/src/spec-governance.md spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-format-final.log: explicit changed files formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write web/tests/vite/stack-working-tree.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-format-test-final.log: explicit changed files formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-format-verification.log: explicit changed files formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatted coverage after application review; only its owning reason/fingerprint changed."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-spec-first.log: all 20 protected files map to seven updated canonical chapters."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-spec-validate.log: five validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 2,
+      "note": "working-client-progress.log: evidence used an unsupported conditional-test reference and an unanchored story path. Corrected only the ledger references; actual conditional capture test and both story lanes remain unchanged and passed, with exact commands retained."
+    },
+    {
+      "command": "pnpm exec prettier --check catalog/fixtures/stack-workspace/production-http.ts docs/implementation-plan.md docs/maintenance/coverage.json docs/site/guides/browsing.md scripts/stacks-browser-acceptance.mjs spec/src/api.md spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/spec-governance.md spec/src/ui.md spec/src/verification.md web/src/lib/controller/http-local-store-data-source.ts web/src/lib/controller/http-working-tree.ts web/src/lib/controller/native-data-source.ts web/src/lib/controller/stack-workspace/controller.svelte.ts web/src/lib/controller/stack-workspace/current-working-tree.ts web/src/lib/controller/stack-workspace/physical-observation.svelte.ts web/src/lib/controller/stack-workspace/production-adapter.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/controller/working-tree-read.ts web/src/lib/controller/working-tree-types.ts web/src/lib/controller/working-tree-validation.ts web/tests/real/stacks-browser.spec.ts web/tests/vite/production-stacks-application.test.ts web/tests/vite/stack-working-tree.test.ts web/tests/vite/working-tree-http.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-format-check.log: every changed source/test/doc passes; ledger objects intentionally not formatted."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 1,
+      "note": "working-client-progress-repaired.log: evidence result used free prose instead of the required pass/pending/blocked/fail value. Moved prose to summary and retained result=pass; no milestone promoted."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 1,
+      "note": "working-client-progress-final.log: pass correctly requires no remaining milestone gaps. Restored pending for the still-incomplete M21.2 feature; successful slice qualification remains in actual runs and summary, without weakening the checker."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-client-progress-qualified.log: 142 tasks validate after exact test-reference/result bookkeeping repairs; M21.2 remains In progress and evidence result stays pending for remaining feature gates."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "M21.2 and Stage 2 remain incomplete for complete active-combination Unstaged assignment and watcher/lifecycle qualification. Current disk delta is not all unfinished work: durable combination merge/WIP state is required. No workspace, applied membership, staged token or command capability is fabricated.",
+    "Continue Stage 3 recoverable exact unpublished execution, journal-before-publication, foreground WC coordination, guarded checkout, durable status and restart/fault/retry acceptance. Stages 4\u20137 remain approved work, including named combinations, exact file then hunk transfers, graph actions/guarded undo and linked-native full lifecycle.",
+    "Six unchanged JJ/service strict lint diagnostics remain unresolved and unwaived as recorded in E-M21-010. This UI/client slice does not rerun or claim aggregate Rust qualification."
+  ],
+  "next": "Implement and qualify the durable request journal and retained unpublished provider preparation, then guarded code publication/physical checkout before enabling combinations or writable UI.",
+  "out_of_scope": "No new visual review, screenshot comparisons/baseline updates, package publication, source-reference dependencies, installed services, reset/migration, Rust code/build/test changes or unrelated UI/Rust aggregate lanes. Storybook remains 6057; source-only HMR needs no dependency/startup restart.",
+  "summary": "Verified current physical-read client and independent Stacks observation with cold real dirty-folder browser evidence; M21.2 remains In progress."
 }
 ]
 ```

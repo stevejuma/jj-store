@@ -497,6 +497,17 @@ Adapter disposal cancels its reads without closing the shared repository
 transport. Read projection advertises no mutation capability until the durable
 executor is separately qualified.
 
+The Stacks controller owns current physical observation independently from its
+historical branch read scope. Observation selects one explicit current operation
+from a fresh verified binding snapshot and rechecks it after the read; absent or
+multiple heads remain unavailable without reconciliation. A historical selection
+is never silently replaced by the current checkout. Refresh supersedes previous
+observations, disposal cancels only Stacks-owned requests, and late results
+cannot replace newer state. Failed reads clear current observation evidence
+while retaining branch/diff selections. Physical changed-path metadata is not
+complete Unstaged: durable combination merge/WIP state must qualify before
+assignment.
+
 The production lifecycle owner MUST require LocalTrusted access, the supported
 local profile, advertised code-read capability and matching registered binding
 generation. Stacks routes MUST restore their own bounded reads instead of
