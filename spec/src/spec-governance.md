@@ -1,5 +1,14 @@
 # Specification governance
 
+The E-READ-076 main landing preserves verified E-READ-072 through075 changes,
+all516 previous evidence entries and byte-identical source logs. Verify the
+combined main query, native backend/RPC/lifecycle, source preparation and HTTP
+contracts with focused checks. Preserve the preceding complete registered
+response capture proof when production files and generated contracts are
+byte-identical; this main landing changes documentation/evidence only. Retain
+and rebase the temporary workspace for continued performance delivery, without
+milestone promotion or deferred scale/browser/RustFS/release qualification.
+
 Native kind preparation task routes require actual registered
 start/status/cancel response capture for both operation and copy kinds. Strict
 request coverage rejects unsupported kinds, omitted operations, actor fields and

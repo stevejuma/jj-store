@@ -1,5 +1,16 @@
 # Architecture
 
+E-READ-076 advances clean main through the verified E-READ-072 to E-READ-075
+stack: bounded copy relations, pinned selected native families, resumable source
+kind construction and authenticated HTTP tasks. Preserve every original slice
+and all historical ledger text/evidence; copy source logs byte-identically. Main
+verification uses its actual combined source and direct native/query/task
+consumers. The unchanged generated contract and complete277-response capture
+proof travel with the source; do not repeat release or scale qualification. Keep
+the temporary workspace open and rebase its empty continuation onto this landing
+for remote selected-family and app recovery delivery. Complete scale, fault,
+cold-browser, RustFS, release and Help qualification remains deferred.
+
 Native kind task composition uses the existing serving instance's reserved
 preparation lease, shared with native and local graph preparation. Bounded
 process-local reports retain snapshot/kind/progress and state only; sessions and

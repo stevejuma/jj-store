@@ -87909,6 +87909,184 @@ entries.
     ],
     "next": "Commit this verified task/API slice with Jujutsu, land E-READ-072 through E-READ-075 into clean main, run focused combined source verification there, and continue app/remote integration in the retained workspace. Full qualification remains separate.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-076",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "ymrvkrow",
+    "kind": "Main landing and focused combined verification of selected copy families and resumable native kind tasks",
+    "versions": "Rust1.98.1; JJ/jj-lib0.45.1; macOS ARM64.",
+    "formats": "Existing E-READ-072 through075 source and additive V1 task contracts preserved. This landing changes canonical documentation and evidence only; no further production, authoritative, generated contract or persisted format change.",
+    "scope": "User-requested landing of the four verified follow-up slices into clean main, followed by focused combined source verification. Complete copy_index/query/native_backend/native_rpc/native_lifecycle and native inventory/preparation/HTTP consumer surfaces, affected JJ/service/HTTP/RPC/CLI/server all-target checks, generated consumer/web type checks and canonical bookkeeping. Wider root aggregates, visual baselines, complete scale/RSS/latency/fault/cold-browser/RustFS/release and Help qualification remain out of scope and explicitly deferred.",
+    "requirements": [
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-API-001",
+      "JST-MUT-001",
+      "JST-GOV-002"
+    ],
+    "files": [
+      "spec/src/architecture.md",
+      "spec/src/spec-governance.md",
+      "docs/implementation-plan.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-jj/tests/copy_index.rs#copy_family_includes_ancestor_descendants_without_unrelated_parent_branches",
+      "crates/jj-store-jj/tests/native_backend/families.rs#projected_family_merges_committed_and_acknowledged_relations_only",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#native_copy_family_ignores_unrelated_inventory_and_body_pressure",
+      "crates/jj-store-cli/tests/native_lifecycle/kind_tasks.rs#native_kind_tasks_prepare_exact_selection_and_report_bounded_progress",
+      "crates/jj-store-cli/tests/native_lifecycle/kind_tasks.rs#native_kind_tasks_share_graph_capacity_coalesce_cancel_and_drop",
+      "crates/jj-store-cli/tests/native_lifecycle/kind_tasks.rs#native_kind_tasks_expire_pending_io_without_polling_and_bound_retention",
+      "crates/jj-store-cli/tests/native_lifecycle/kind_tasks.rs#native_kind_task_reports_require_current_access_after_revocation",
+      "crates/jj-store-service/src/native_inventory/preparation/tests.rs#native_kind_preparation_resumes_exact_windows_and_promotes_only_complete_ids",
+      "crates/jj-store-service/src/reads/preparation/tests.rs#prepared_kind_lookup_outlives_page_deadline_without_full_inventory",
+      "crates/jj-store-http/src/contract/tests.rs#kind_preparation_contract_is_strict_actor_free_and_metadata_only",
+      "scripts/contracts.test.mjs#tagged_union_and_required_nullable_fields_fail_closed"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/spec-governance.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main landing document formatting; output retained in this chat's main integration tool result."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.57s; 0 Rust tests passed. .local/bounded-reads/performance/main-architecture-076.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.3s; 0 Rust tests passed. .local/bounded-reads/performance/main-boundaries-076.log"
+      },
+      {
+        "command": "pnpm test:contracts",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.3s; 0 Rust tests passed. .local/bounded-reads/performance/main-contract-types-076.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-jj --test copy_index",
+        "result": "pass",
+        "failures": 0,
+        "note": "27.73s; 7 Rust tests passed. .local/bounded-reads/performance/main-copy-primitive-076.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-jj --lib query::",
+        "result": "pass",
+        "failures": 0,
+        "note": "25.08s; 66 Rust tests passed. .local/bounded-reads/performance/main-copy-query-076.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/spec-governance.md docs/implementation-plan.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.31s; 0 Rust tests passed. .local/bounded-reads/performance/main-doc-check-076.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/spec-governance.md docs/implementation-plan.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.32s; 0 Rust tests passed. .local/bounded-reads/performance/main-doc-check-final-076.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-http --lib",
+        "result": "pass",
+        "failures": 0,
+        "note": "73.14s; 22 Rust tests passed. .local/bounded-reads/performance/main-http-contract-076.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-jj --test native_backend",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.28s; 15 Rust tests passed. .local/bounded-reads/performance/main-native-backend-076.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-service --lib native_inventory::",
+        "result": "pass",
+        "failures": 0,
+        "note": "41.52s; 13 Rust tests passed. .local/bounded-reads/performance/main-native-inventory-076.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle",
+        "result": "pass",
+        "failures": 0,
+        "note": "104.77s; 235 Rust tests passed. .local/bounded-reads/performance/main-native-lifecycle-076.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_rpc",
+        "result": "pass",
+        "failures": 0,
+        "note": "148.72s; 22 Rust tests passed. .local/bounded-reads/performance/main-native-rpc-076.log"
+      },
+      {
+        "command": "cargo check --locked --all-targets -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli -p jj-store-server",
+        "result": "pass",
+        "failures": 0,
+        "note": "65.59s; 0 Rust tests passed. .local/bounded-reads/performance/main-packages-076.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-service --lib reads::preparation::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.88s; 1 Rust tests passed. .local/bounded-reads/performance/main-preparation-pin-076.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "6.33s; 0 Rust tests passed. .local/bounded-reads/performance/main-progress-076.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.98s; 0 Rust tests passed. .local/bounded-reads/performance/main-progress-final-076.log"
+      },
+      {
+        "command": "pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.75s; 0 Rust tests passed. .local/bounded-reads/performance/main-rust-format-076.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.66s; 0 Rust tests passed. .local/bounded-reads/performance/main-spec-first-076.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.4s; 0 Rust tests passed. .local/bounded-reads/performance/main-spec-validate-076.log"
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "23.93s; 0 Rust tests passed. .local/bounded-reads/performance/main-web-check-076.log"
+      }
+    ],
+    "notes": [
+      "Main was clean at empty sqsrltsw/3fb1a57e above E-READ-071 xvyloluq/a6c7b0de. It had no intervening source changes or overlap. Advance it through ysoumkvm/e874c6a2, kxupxzzm/69379656, ptnmxplv/6cc59c74 and xnwpnypq/0c09be9e, retaining all original histories. The enclosing ymrvkrow landing records new combined verification; it does not repeat E-READ-071.",
+      "All381 focused Rust tests pass from main's actual sources:7 copy primitive,66 query,15 native backend,22 native RPC,235 native lifecycle,13 native inventory,1 independent preparation pin and22 HTTP tests. Seven generated-contract Node tests and TypeScript acceptance pass; main web has zero errors/warnings. Affected six package all-target checks and canonical checks pass.",
+      "174 original E-READ-072 through075 log/metadata files copied into main's ignored evidence directory and verified byte-identically, with SHA256/byte proofs in .local/bounded-reads/performance/source-evidence-076.json. Preserve all516 earlier evidence entries and their historical text verbatim/JSON-identically.",
+      "Main production files and generated contracts are unchanged from the verified E-READ-075 parent. Its complete277-response registered HTTP/SSE capture proof travels byte-identically with the source; main reruns HTTP contract shape, native lifecycle transport consumers and generated types rather than repeating unchanged capture fixtures or release qualification.",
+      "Rebuildable source projections, original root/operation pins, fresh authorization/epoch/deadline checks, staged-acknowledgement cutoffs and shared preparation admission retain their existing contracts. The initial main progress checker rejects eleven bookkeeping references (whole files and a directory instead of named tests); replace them with exact existing regression identifiers without changing any product or test behavior. No manifest publication, source migration, dev fixture, installed executable, running dev service or Linux checkout changes. Keep the temporary workspace open and continue there after rebasing its empty change onto this landing."
+    ],
+    "remaining": [
+      "Selected copy-family RPC/client and applicable mutation providers still require delivery; the remote CLI copy authority remains on complete kind enumeration. Indexed get_copy_records DAG range/path selection and larger copy relation chunk/disk support remain.",
+      "App recovery and remote kind task delivery, general filtered-log continuation preserving indirect/missing edges, uncached/ambiguous evolution, indexed code/local application search and oversized comparison/change grouping/extreme-filter candidates remain.",
+      "Complete scale/RSS/latency/fault/cold-browser/RustFS/release qualification, Help/generated-reference/source-review refresh and inherited installation-reference drift remain open. No milestone promotion."
+    ],
+    "next": "Commit the verified main landing, advance codex/bounded-reads-landed, rebase the retained temporary workspace's empty continuation onto it and continue selected family remote delivery followed by app preparation recovery. Full qualification stays separate.",
+    "result": "pending"
   }
 ]
 ```

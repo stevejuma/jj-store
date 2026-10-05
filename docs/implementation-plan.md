@@ -27,6 +27,13 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-076 lands E-READ-072 through075 into clean main at the user's request,
+preserving all slices and their exact source evidence. Verify main's combined
+copy relation/query/backend, native source and RPC/lifecycle/task boundaries,
+HTTP contract shape and affected package/generated consumers. The retained
+workspace continues from this landing for remote selected-family delivery and
+app preparation recovery. Complete qualification remains a later slice.
+
 E-READ-075 delivers authenticated native kind tasks and strict
 start/status/cancel HTTP contracts. Exact-root preparation shares the single
 reserved background worker with native/local graph tasks, retains fixed
