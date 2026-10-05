@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete physical scan, recoverable checkout and combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete physical scan, recoverable checkout and combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -85045,6 +85045,267 @@ entries.
   ],
   "next": "Integrate exact physical observation with the provider baseline/ignore semantics and qualify read-only real-folder scans; implement and qualify durable prepared execution before enabling writable UI.",
   "out_of_scope": "UI suites/cold UI for this private Rust-only helper, generated contract capture (no route), package publication, installed-service changes, checkout writes, screenshots and visual baselines."
+},
+{
+  "id": "E-M21-008",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "slwqrnmn",
+  "kind": "Private exact local WC baseline and physical ignore comparison",
+  "versions": "Rust 1.98.1; JJ library/installed workspace tool 0.45.1; pnpm 10.32.1; macOS ARM64; existing explicit development JJ executable, no rebuild/install/service replacement",
+  "formats": "No HTTP/RPC/native/WAL/companion/persisted format change. Private typed baseline retains repository/generation, exact operation/view, workspace name, WC commit and tree terms. Raw content digest domain matches existing physical scan. Regular gitignore bytes remain private revalidated scan data.",
+  "files": [
+    "crates/jj-store-jj/src/local_browser/mod.rs",
+    "crates/jj-store-jj/src/local_browser/working_tree/ignores.rs",
+    "crates/jj-store-jj/src/local_browser/working_tree.rs",
+    "crates/jj-store-jj/tests/working_tree_baseline.rs",
+    "crates/jj-store-service/src/working_tree/mod.rs",
+    "crates/jj-store-service/src/working_tree/projection.rs",
+    "crates/jj-store-service/src/working_tree/walk.rs",
+    "crates/jj-store-service/tests/working_tree_local.rs",
+    "crates/jj-store-service/tests/working_tree_projection.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/architecture.md",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/mutations.md",
+    "spec/src/ui.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "before": "No operation-pinned whole-WC raw baseline or JJ captured-rule comparison existed; physical inventory alone could not distinguish tracked changes and ignored candidate files.",
+  "scope": "Private read-only JJ provider and service comparison, complete-result bounds (4096 baseline files, 8 MiB raw content, 2 MiB/file) and upstream JJ ignore precedence. Historical WC baseline is explicitly distinct from active physical checkout/combination assignment.",
+  "tests": [
+    "crates/jj-store-jj/tests/working_tree_baseline.rs#baseline_reads_exact_workspace_at_selected_operation_without_publication",
+    "crates/jj-store-jj/tests/working_tree_baseline.rs#baseline_limits_objects_and_rejects_submodules_without_partial_results",
+    "crates/jj-store-jj/tests/working_tree_baseline.rs#ignore_rules_use_upstream_precedence_and_do_not_reinclude_ignored_directories",
+    "crates/jj-store-jj/tests/working_tree_baseline.rs#ignore_capture_limits_duplicate_sources_and_cancellation_fail_closed",
+    "crates/jj-store-service/tests/working_tree_projection.rs#projection_preserves_tracked_ignored_changes_and_all_untracked_obstacles",
+    "crates/jj-store-service/tests/working_tree_projection.rs#projection_uses_content_and_mode_not_physical_timestamps_for_dirty_state",
+    "crates/jj-store-service/tests/working_tree_projection.rs#projection_fails_closed_on_stale_binding_captured_rules_and_cancellation",
+    "crates/jj-store-service/tests/working_tree_local.rs#real_folder_comparison_preserves_operations_metadata_and_unsnapshotted_files",
+    "crates/jj-store-service/tests/working_tree_scan.rs#physical_scan_is_read_only_sorted_and_binds_exact_binary_modes_and_names",
+    "crates/jj-store-service/tests/working_tree_scan.rs#scan_includes_untracked_obstacles_but_never_follows_links_or_metadata",
+    "crates/jj-store-service/tests/working_tree_scan.rs#physical_scan_limits_and_cancellation_return_no_partial_selection",
+    "crates/jj-store-service/tests/working_tree_scan.rs#scan_rejects_hardlinks_special_files_unsafe_names_and_workspace_replacement",
+    "crates/jj-store-service/tests/working_tree_scan.rs#physical_scan_enforces_depth_deadline_and_verify_cancellation",
+    "crates/jj-store-service/tests/working_tree_scan.rs#later_file_edits_are_detected_by_the_second_bounded_pass"
+  ],
+  "runs": [
+    {
+      "command": "cargo test --locked -p jj-store-jj --test working_tree_baseline",
+      "result": "fail",
+      "failures": 12,
+      "note": "working-baseline-before.log: missing baseline module/API plus new fixture API errors; no baseline implementation existed."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test working_tree_baseline",
+      "result": "fail",
+      "failures": 6,
+      "note": "working-baseline-before-clean.log: remaining missing module/API and fixture init hash argument. Fixture errors were repaired, not suppressed."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test working_tree_baseline",
+      "result": "fail",
+      "failures": 1,
+      "note": "working-baseline-first.log: new fixture used workspace name instead of Git hash kind."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test working_tree_baseline",
+      "result": "fail",
+      "failures": 1,
+      "note": "working-baseline-second.log repeats the same fixture init error before repair."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test working_tree_baseline",
+      "result": "fail",
+      "failures": 1,
+      "note": "working-baseline-third.log: fixture component constructor required removing ambiguous into()."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test working_tree_baseline",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-fourth.log: initial two baseline/ignore regressions pass."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-service --test working_tree_projection --test working_tree_scan",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-projection-first.log: nine tests pass; tracked ignored edits, untracked obstacles, content vs timestamp, stale binding/rules, cancellation and existing scan regressions."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test working_tree_baseline",
+      "result": "fail",
+      "failures": 1,
+      "note": "working-baseline-regressions.log: three pass, one new historical fixture tried editing the immutable root commit. Replaced the fixture root selection with a real child commit; contract assertion retained."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test working_tree_baseline",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-fixture-repair.log: four tests pass. Exact historical WC operation/view, raw binary/executable/link digests, unchanged heads, denied/missing selections, work/blob limits, submodule rejection and captured-rule precedence/cancellation."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-service --test working_tree_projection --test working_tree_scan --test local_working_copy --test stack_workspace_contracts",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-projection-final.log: 22 tests pass across physical scan/projection, existing physical Save and stacks contracts."
+    },
+    {
+      "command": "JJ_STORE_WORKING_TREE_TEST_JJ=/Users/stevejuma/code/lapismd/jj-store-stack-workspace-ui/target/debug/jj cargo test --locked -p jj-store-service --test working_tree_local real_folder_comparison_preserves_operations_metadata_and_unsnapshotted_files -- --ignored --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-cold-local.log: one fresh real colocated JJ folder retains all code/metadata/physical file bytes and operation heads; finds unsnapshotted changes and ignored obstacles. This is not registered HTTP/browser or executor acceptance."
+    },
+    {
+      "command": "JJ_STORE_WORKING_TREE_TEST_JJ=/Users/stevejuma/code/lapismd/jj-store-stack-workspace-ui/target/debug/jj cargo test --locked -p jj-store-service --test working_tree_local real_folder_comparison_preserves_operations_metadata_and_unsnapshotted_files -- --ignored --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-cold-local-final.log: exact rerun after explicitly setting the controlled fixture repository-exclude policy empty; one test passes and disposable TempDir cleans up."
+    },
+    {
+      "command": "cargo clippy --locked -p jj-store-jj --lib -- -D warnings",
+      "result": "fail",
+      "failures": 4,
+      "note": "working-baseline-lint.log: the same four existing diagnostics in git_read/extras.rs, references/prepared.rs, query/cache/resident.rs and query/index.rs. All owning files byte-identical to e687b039. No new source lint exception or waiver."
+    },
+    {
+      "command": "cargo clippy --locked -p jj-store-service --no-deps --lib -- -D warnings",
+      "result": "fail",
+      "failures": 2,
+      "note": "working-projection-lint.log: the same two existing reads.rs large enum and stack_workspace/selection.rs manual multiple diagnostics, both byte-identical to e687b039. Strict lint remains incomplete; this inspection is not a replacement passing lane."
+    },
+    {
+      "command": "cargo check --locked -p jj-store-jj -p jj-store-service --lib",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-package-check.log: both affected packages compile; no Rust workspace aggregate run."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-boundaries.log: 17 package boundaries pass. No upstream JJ import in service policy."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatted changed Rust implementation/tests; status confirms no unrelated Rust edits."
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-format-rust.log passes."
+    },
+    {
+      "command": "pnpm docs:review local \"Private WC baseline reads exact named-workspace operation/view with raw file/link digests and JJ captured ignore precedence. No latest opening, source index repair, physical snapshot, wire route or executor is added; active checkout and global/exclude capture remain unqualified.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-docs-local-review.log: reviewed owning source/manual coverage."
+    },
+    {
+      "command": "pnpm docs:review services \"Private physical comparison retains tracked ignored changes and all untracked file/link obstacles, validates captured gitignore bytes and supports cancellation. It does not establish active Unstaged, current checkout/sparse state, transport or execution.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-docs-service-review.log: reviewed owning source/manual coverage."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-docs.log: 139 files, nine rendered Mermaid diagrams, strict manual build and links/anchors pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-spec-first.log: 13 protected files and six canonical chapters pass before ledger append."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-spec.log: five validators, 23 chapters and 173 requirements pass before ledger append."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md docs/site/technical/architecture.md docs/site/technical/local.md spec/src/local-jj.md spec/src/mutations.md spec/src/jj-integration.md spec/src/architecture.md spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-format-docs.log; additional UI/plan, verification and coverage targeted formatting logged separately. milestones.md never formatted."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/architecture.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/mutations.md spec/src/jj-integration.md spec/src/architecture.md spec/src/documentation.md spec/src/ui.md spec/src/verification.md",
+      "result": "fail",
+      "failures": 2,
+      "note": "working-baseline-format-final-docs.log: coverage review JSON and the two changed verification rows needed targeted formatting."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-format-verification.log: only two verification rows changed, no historical ledger formatting."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-format-coverage.log."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/architecture.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/mutations.md spec/src/jj-integration.md spec/src/architecture.md spec/src/documentation.md spec/src/ui.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-format-docs-repaired.log: all selected documents pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 5,
+      "note": "working-baseline-progress.log: five new evidence test paths lacked required function anchors. New evidence repaired; historical objects unchanged."
+    },
+    {
+      "command": "node --test scripts/progress-mapping.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-progress-tests.log: five historical task mapping regressions pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-spec-first-final.log: 13 protected files/seven chapters, including ledger."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-spec-final.log: five validators, 23 chapters, 173 requirements including ledger."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "working-baseline-progress-repaired.log: 142 tasks pass after exact new test anchors; all 489 parent evidence objects remain byte-identical."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "M21.2 and Stage 2 remain incomplete: current physical WC operation/tree and sparse-state proof, bounded global/repository-exclude policy capture, scan transport, cold registered-folder/browser acceptance and active-combination Unstaged assignment remain. Whole-tree ignored directories still count toward physical scan limits.",
+    "Strict lint qualification remains incomplete: four unchanged JJ and two unchanged service diagnostics, reproduced and not suppressed or waived. Focused tests/compile do not qualify those failed lanes.",
+    "Recoverable exact preparation/publication/checkout, durable combinations and merge/WIP retention, file/hunk and graph commands, guarded undo, linked-native lifecycle and full cold acceptance remain approved implementation work."
+  ],
+  "next": "Capture and verify current physical WC/sparse/ignore-policy witnesses, integrate bounded read transport and real-folder UI evidence, then qualify durable prepared execution before writable controls.",
+  "out_of_scope": "UI type/Storybook/browser lanes (no UI implementation or runtime/bundle change), generated wire contracts (no new route), root Rust/UI aggregates, package publication, installed-service changes, checkout execution, screenshots/baselines and fresh live visual review. Storybook listener remains 6057/PID 36264."
 }
 ]
 ```

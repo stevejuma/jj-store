@@ -19,6 +19,7 @@ pub mod preparation;
 pub mod references;
 mod scoped;
 pub mod stacks;
+pub mod working_tree;
 pub use crate::query::Error;
 pub use crate::query::content::{Direction, Limits};
 use budget::Budget;

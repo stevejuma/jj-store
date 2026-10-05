@@ -764,6 +764,24 @@ coordination and fresh physical preconditions. No scan writes files, metadata or
 operation heads, and a scan alone grants no command or content-selection
 capability.
 
+The private baseline reader MUST select the working-copy commit from the named
+JJ workspace in the exact authorized operation/view, without opening a latest
+repository, initializing an index or snapshotting disk files. It returns bounded
+raw-content digests and file/link modes; unsupported conflicts, submodules,
+unsafe paths or incomplete objects fail without a partial baseline. A historical
+baseline is not proof of the current physical working-copy state. The provider
+must separately verify checkout metadata, sparse state and current operation
+before enabling execution or projecting the active combination's Unstaged work.
+
+Ignore classification MUST use JJ's upstream matcher with explicitly captured
+global and repository-exclude inputs followed by per-directory `.gitignore`
+bytes. Nested rules cannot reinclude files inside an ignored parent directory.
+Tracked baseline paths remain tracked even when ignored. Physical observations
+retain ignored and untracked obstacles; their classification never authorizes
+checkout replacement. Missing capture of global/exclude policy cannot silently
+be treated as empty policy. Baseline/projection helpers add no transport route,
+content-selection token or writable capability by themselves.
+
 The approved M21.2 read slice adds a strict typed stack-history query under
 JST-LOCAL-004. It binds an exact head and optional base to the existing
 authorized operation and binding generation. With a base, the query returns head

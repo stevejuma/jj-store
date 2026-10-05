@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed typed bounded stack-history ranges against the prepared graph reader; explicit operation, head/base, graph annotations and unchanged source authority remain documented.",
-      "fingerprint": "3e773a317c0dd1d8595a0bacc1df0a4a895fbe3df59432e8c04134cfe3f22a8a"
+      "reason": "Private WC baseline reads exact named-workspace operation/view with raw file/link digests and JJ captured ignore precedence. No latest opening, source index repair, physical snapshot, wire route or executor is added; active checkout and global/exclude capture remain unqualified.",
+      "fingerprint": "638dda851c1ed459d599922663abdb524ec9825a70c718b5fcd590fff42520fa"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Private physical scan fingerprints bounded descriptor-relative regular files and symlink targets, includes checkout obstacles and verifies two passes. It adds no wire route, JJ snapshot, executor or Unstaged provider projection.",
-      "fingerprint": "b019dd14c065ab1450623bdc38a47ec58dfc5397029278e468aff4b0aadc359d"
+      "reason": "Private physical comparison retains tracked ignored changes and all untracked file/link obstacles, validates captured gitignore bytes and supports cancellation. It does not establish active Unstaged, current checkout/sparse state, transport or execution.",
+      "fingerprint": "a9f75d14c824e35f8c5115c7869ba99d070794c046d581a6395de70ec06f83ef"
     }
   },
   {

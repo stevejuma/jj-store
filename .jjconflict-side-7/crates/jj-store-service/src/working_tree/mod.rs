@@ -1,7 +1,9 @@
 //! Private physical observations. Neither a JJ snapshot nor command authority.
+mod projection;
 mod walk;
 use crate::stack_workspace::PhysicalWorkspaceId;
 use jj_store_model::{RecordDigest, RepositoryId};
+pub use projection::{Change, ChangeKind, Obstacle, Projection, project};
 use sha2::{Digest as _, Sha256};
 use std::{
     collections::BTreeMap,
@@ -65,6 +67,8 @@ pub struct Entry {
     pub content: RecordDigest,
     /// Exact physical identity, mode, timestamps and bytes.
     pub fingerprint: RecordDigest,
+    /// Captured regular `.gitignore` bytes, covered by the content fingerprint.
+    pub ignore_bytes: Option<Vec<u8>>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct WorkingTree {

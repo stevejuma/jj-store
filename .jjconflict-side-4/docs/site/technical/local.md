@@ -61,6 +61,15 @@ trees gives the net changed paths, including removal of changes later reverted.
 These are read APIs; they do not apply stacks, snapshot disk edits or change
 checkout files.
 
+Private working-tree helpers also read the named workspace's exact
+operation-pinned baseline and compare raw file/link digests with bounded
+physical observations. They retain ignored/untracked checkout obstacles and use
+JJ's ignore matcher on captured bytes. These helpers add no browser/API route
+and do not establish the current physical checkout or an active combination's
+Unstaged work. Current WC and sparse proof, global/exclude policy capture and
+transport qualification remain separate steps before these reads can reach the
+UI.
+
 ## Portability and limits
 
 Device paths, access grants, credentials and active execution journals are not

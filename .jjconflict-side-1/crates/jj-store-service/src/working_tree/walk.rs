@@ -220,5 +220,6 @@ fn read_entry<F: FnMut(Phase) -> Result<()>>(
         bytes: bytes.len() as u64,
         content,
         fingerprint: RecordDigest::new(hash.finalize().into()),
+        ignore_bytes: (name == ".gitignore" && matches!(kind, Kind::File { .. })).then_some(bytes),
     })
 }

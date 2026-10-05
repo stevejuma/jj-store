@@ -1,5 +1,13 @@
 # Native JJ integration
 
+The private local working-tree baseline reader selects the named workspace's
+commit from an exact authorized operation/view through the existing scoped Git
+reader. It never loads latest state, repairs the source index, snapshots the
+working copy or publishes heads. Complete bounded raw file/link digests and
+modes are provider inputs, not a wire capability or evidence of current physical
+checkout. JJ's ignore matcher consumes captured bytes; no upstream ignore or
+working-copy type crosses into service policy.
+
 Read-only local identity hints continue to require an exact secure-config
 metadata binding before selecting a repository email. They never migrate
 configuration or introduce aliases into query evaluation. Multi-harness capture

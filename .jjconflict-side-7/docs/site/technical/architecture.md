@@ -100,9 +100,19 @@ without following them and returns no partial observation for unsafe entries,
 limits, cancellation or disagreement between its two passes. Current limits are
 8,192 cumulative entries, 16 MiB cumulative content across both passes, 2 MiB
 per file, 64 directory levels and two seconds. This inventory is not a JJ
-snapshot, displayed Unstaged assignment or filesystem CAS. Provider baseline and
-ignore projection, foreground JJ coordination and fresh apply/checkout checks
-remain required before commands become available.
+snapshot, displayed Unstaged assignment or filesystem CAS.
+
+The private provider baseline selects the named workspace's working-copy commit
+at an authorized operation/view. It reads exact raw file/link digests and modes,
+bounded to 4,096 file entries, 8 MiB total and 2 MiB per file. The private
+service comparison retains tracked ignored changes and every untracked file/link
+as a checkout obstacle. JJ's matcher applies explicitly captured global/exclude
+and per-directory rules; nested rules do not reinclude an ignored parent
+directory. The scan captures regular `.gitignore` bytes within its two-pass
+observation. No scan endpoint or active Unstaged assignment is supplied by these
+helpers. Current checkout/sparse proof, global/exclude capture, foreground
+coordination and fresh apply/checkout checks remain required before commands
+become available.
 
 The operation-pinned stack read owner projects real parents and graph
 annotations without loading file details with history. Net file summaries and

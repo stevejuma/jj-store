@@ -1033,6 +1033,17 @@ continuity. Unchanged observations and stream renewal produce no data reload.
 
 ## Local stacks protocol ownership
 
+The private physical projection compares complete bounded observations against
+an exact provider working-copy baseline using raw-content digests and modes.
+Tracked paths cannot become untracked through ignore rules. Untracked candidate
+additions and ignored files remain checkout obstacles. Captured `.gitignore`
+bytes must match their physical digest; symlink ignore files fail explicitly.
+This projection is not a JJ snapshot, active combination assignment, issued
+selection or executable preparation. Binding mismatches, malformed/duplicate
+paths, limits and caller cancellation return no partial result. Capturing
+global/exclude policy and proving current checkout/sparse state remain provider
+integration prerequisites.
+
 Under JST-LOCAL-005 and JST-UI-020, `stack_workspace` owns typed version-1
 execution selection, prepare/apply and receipt records independently of catalog
 presentation. Native and Git SHA-1 commit/tree identities remain explicit
