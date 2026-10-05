@@ -273,6 +273,21 @@ inferred copy events. A file created and copied entirely within one commit has
 no ancestor copy record. This integration does not infer renames from equal file
 contents.
 
+A disposable immutable copy relation index may retain owned copy IDs and
+distinct parent/child adjacency derived from verified descriptors. Construction
+admits node, edge, work and conservative allocation bounds before growth;
+sealing rejects missing parents and cycles. Family lookup walks the requested
+IDs' ancestors and all descendants of those ancestors through retained
+adjacency, without scanning unrelated nodes or hydrating copy bodies. Parents of
+a merge descendant do not themselves become ancestors of the original request.
+Each lookup admits visited identities, scratch bytes and edge work
+independently, checks cancellation and monotonic deadlines, and fails rather
+than returning a truncated family. This data-only primitive retains no source,
+credentials or publication capability. Source scope, global allocation leases,
+checked-root selection, current authorization, acknowledged staged copies and
+deterministic ordered-body delivery remain the integrating provider's
+responsibilities.
+
 Native factories, authenticated transport wiring and full CLI/workspace
 lifecycle acceptance remain separate M3 gates.
 

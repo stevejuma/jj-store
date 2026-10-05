@@ -1,5 +1,12 @@
 # Architecture
 
+The JJ integration owns a disposable copy relation index over owned identities.
+It seals complete parent/child adjacency under construction bounds and selects
+ancestors plus their descendants under separate request bounds. The index
+retains no native bodies, source capability or credential. Native service cache
+scope/allocation and upstream backend delivery are follow-up integration; this
+primitive does not change endpoint behavior or authoritative formats.
+
 E-READ-071 advances clean main through E-READ-069 and E-READ-070 and verifies
 the combined pinned native kind and selected inventory projection boundaries
 against main's actual sources. Keep both original slice evidence and all prior

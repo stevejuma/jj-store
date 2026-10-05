@@ -27,6 +27,15 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-072 adds an immutable bounded copy relation index and exact family
+selection over retained parent/child adjacency. Construction rejects incomplete
+or cyclic graphs; lookup follows ancestors and their descendants while excluding
+unrelated parent branches of merge descendants. Node/edge/work/byte admission,
+cancellation and deadlines are separate from selected body delivery. Integrate
+the primitive with source-scoped native projection retention, pinned read
+capabilities and acknowledged staged copies next. Endpoint behavior is unchanged
+in this primitive slice; full qualification remains deferred.
+
 E-READ-071 lands E-READ-069 and E-READ-070 into clean main at the user's
 request. Verify the combined native query/preparation, factory/RPC/lifecycle and
 WAL projection surface using main's sources, retaining byte-identical slice logs

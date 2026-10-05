@@ -86959,6 +86959,147 @@ entries.
     ],
     "next": "Commit verified main landing evidence, advance codex/bounded-reads-landed and rebase the empty temporary working change onto xvyloluq. Continue high-priority immutable copy-family lookup and resumable cold native preparation in that retained workspace. Full qualification remains deferred.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-072",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "ysoumkvm",
+    "kind": "Immutable bounded copy relation index and exact family lookup primitive",
+    "versions": "Rust1.98.1; JJ/jj-lib0.45.1; macOS ARM64.",
+    "formats": "Additive owned Rust interface only, using canonical CopyId values and distinct parent/child sets. No serialization, DTO, cursor, RPC, persisted projection, authoritative native or receipt format changes.",
+    "scope": "Rust-only unused read-index primitive. Exact new acceptance target, complete new copy_index test binary and owning JJ all-target check. No existing production consumer invokes this additive interface, so existing query/native/RPC/UI binaries, contract generation and root aggregates stay out of scope. Provider and backend wiring are a following slice; complete scale/RSS/latency/fault/cold-browser/RustFS/release qualification remains deferred.",
+    "requirements": ["JST-JJ-003", "JST-JJ-005"],
+    "files": [
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/src/query/copy_index.rs",
+      "crates/jj-store-jj/tests/copy_index.rs",
+      "spec/src/jj-integration.md",
+      "spec/src/architecture.md",
+      "docs/implementation-plan.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-jj/tests/copy_index.rs#copy_family_includes_ancestor_descendants_without_unrelated_parent_branches",
+      "crates/jj-store-jj/tests/copy_index.rs#copy_family_handles_reverse_leaf_and_multiple_seed_requests",
+      "crates/jj-store-jj/tests/copy_index.rs#copy_index_seals_only_complete_acyclic_unchanged_relations",
+      "crates/jj-store-jj/tests/copy_index.rs#copy_index_admits_growth_before_mutation_and_bounds_sealing_work",
+      "crates/jj-store-jj/tests/copy_index.rs#copy_family_applies_fresh_work_bytes_deadline_and_cancellation_bounds",
+      "crates/jj-store-jj/tests/copy_index.rs#copy_index_cpu_walks_yield_for_pending_cancellation"
+    ],
+    "runs": [
+      {
+        "command": "jj rebase -r @ -o xvyloluq",
+        "result": "pass",
+        "failures": 0,
+        "note": "After verified main landing a6c7b0de, rebase empty temporary change onto it; tree comparison empty. Reuse28 main evidence files byte-identically in landing-evidence-reuse-071.json."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --test copy_index --locked copy_family_includes_ancestor_descendants_without_unrelated_parent_branches -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Baseline fails compilation with one unresolved copy_index module import; no functional tests ran. copy-index-before-072.log."
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust formatting completed after module and test edits."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --test copy_index --locked copy_family_includes_ancestor_descendants_without_unrelated_parent_branches -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact new target passes against implemented index; copy-index-after-072.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --test copy_index --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "All6 new acceptance tests pass; copy-index-units-072.log."
+      },
+      {
+        "command": "cargo check -p jj-store-jj --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial owning package check passes in14.51s; copy-index-package-072.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --test copy_index --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "7.12s; .local/bounded-reads/performance/copy-index-final-units-072.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.97s; .local/bounded-reads/performance/copy-index-final-package-072.log"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.28s; .local/bounded-reads/performance/copy-index-rust-format-072.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.42s; .local/bounded-reads/performance/copy-index-boundaries-072.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.55s; .local/bounded-reads/performance/copy-index-architecture-072.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.11s; .local/bounded-reads/performance/copy-index-spec-first-072.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.39s; .local/bounded-reads/performance/copy-index-spec-validation-072.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.47s; .local/bounded-reads/performance/copy-index-progress-072.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.92s; .local/bounded-reads/performance/copy-index-document-format-072.log"
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/architecture.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical and plan documents formatted; copy-index-document-write-072.log."
+      }
+    ],
+    "notes": [
+      "Builder consumes descriptor parent sets and creates reverse adjacency only after node/edge/work/byte admission. Conservative allocation covers1MiB header,1024 bytes per node and512 per edge, including sealing degree/ready scratch. Exact duplicate insertion is idempotent; substituted parent relations fail. Missing parents and cycles prevent sealing.",
+      "Family lookup selects requested ancestors and all descendants of those ancestors. An unrelated parent of a merge descendant is not promoted to an ancestor. Result/visited identities and512-byte-per-node traversal scratch are admitted before growth; edge/node visits charge query work. Checks precede traversal and delivery; CPU loops yield every128 work units for pending cancellation.",
+      "Pressure fixture seals10007 copy nodes, then selects the exact five-node family under5-node/2560-byte/32-work lookup admission, excluding10000 unrelated copies and the unrelated parent branch. Reverse-root, leaf and multiple-seed cases preserve required descendants. Malformed graphs, failed growth without mutation, work/byte/node limits, missing seed, expired deadline, preexisting and pending cancellation are covered.",
+      "Index contains only owned IDs and adjacency, retains no source/authentication/cancellation capability or native object body, and cannot publish. Lookup returns an identity set; deterministic children-before-parents body delivery stays in the backend integration. Global allocation leases, source/epoch/root scope, current authorization and staged-session semantics are not implemented by this primitive.",
+      "All512 prior evidence objects and their original text are preserved verbatim. Main remains clean on verified E-READ-071; this follow-up is only in the retained temporary workspace. No endpoint behavior, installed executable, service, fixture or Linux source changed.",
+      "Final6/6 acceptance tests pass after checked node-growth arithmetic and explicit expired-sealing deadline evidence. Owning JJ all-target check, Rust formatting, boundaries, architecture, spec-first, spec-validation, progress and changed-document formatting pass. No unresolved focused product failure; no complete qualification or milestone promotion."
+    ],
+    "remaining": [
+      "Wire source-scoped native projection retention and exact family lookup into pinned ReadAccess/backend authorities, preserving current authorization, result limits, acknowledged staged copies and deterministic body delivery.",
+      "Resumable cold native kind construction remains high-priority delivery work. General filtered-log continuation, uncached/ambiguous evolution, indexed code/local search and oversized comparison/change grouping/extreme filters remain.",
+      "Complete qualification and Help/generated reference/source-review refresh stay deferred; inherited installation-reference drift remains an open qualification gate."
+    ],
+    "next": "Commit the verified copy relation primitive in the retained temporary workspace, then integrate native selected projection retention and backend family lookup. Keep main on the verified E-READ-071 landing; full qualification remains the separate later slice.",
+    "result": "pending"
   }
 ]
 ```
