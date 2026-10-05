@@ -1,5 +1,11 @@
 # Compatibility and release
 
+Native kind task transport is additive to V1 and preserves existing graph task,
+RPC, native object, WAL, manifest, receipt and cache formats. Its schema reports
+only bounded counters, original selection, kind and task state. Registered
+start/status/cancel responses and generated consumer types verify this wire
+boundary separately from large-repository/RustFS/release qualification.
+
 Native unfiltered reference windows reuse ordered prepared visibility while
 preserving version-1 DTOs, lexical anchors, divergence, explicit bookmark terms
 and signed cursor claims. Cold large reads reuse exact-snapshot index
@@ -30,8 +36,8 @@ unchanged. Compact review activity adds two further routes with version-1
 native/local summaries, strict finite windows, independent snapshot profiles and
 explicit sampled-count status. Finite code-head summaries add a native route and
 an operation-pinned local query variant with version-1 summaries and exact
-native/Git identity widths. The generated inventory now contains 118 paths (42
-local and 76 other paths). Summary DTOs carry no persisted-format change.
+native/Git identity widths. The generated inventory now contains 122 paths (42
+local and 80 other paths). Summary DTOs carry no persisted-format change.
 Focused delivery evidence does not qualify the complete combined route/browser
 inventory or promote a release milestone.
 

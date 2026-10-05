@@ -281,7 +281,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 119);
+    assert_eq!(paths.len(), 122);
     assert_eq!(
         paths
             .keys()
@@ -294,7 +294,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        77
+        80
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
@@ -702,4 +702,26 @@ fn work_activity_contracts_are_body_free_and_pin_independent_profiles() {
         schemas["LocalWorkActivityPage"]["properties"]["snapshot"]["$ref"],
         "#/components/schemas/LocalWorkSnapshot"
     );
+}
+
+#[test]
+fn kind_preparation_contract_is_strict_actor_free_and_metadata_only() {
+    let doc = openapi();
+    let paths = &doc["paths"];
+    let start = &paths["/v1/repos/{repo}/index/kinds/tasks"]["post"];
+    let schema = &start["requestBody"]["content"]["application/json"]["schema"];
+    assert_eq!(schema["required"], json!(["operation", "kind"]));
+    assert_eq!(schema["additionalProperties"], false);
+    assert_eq!(schema["properties"].as_object().unwrap().len(), 2);
+    assert!(start["responses"].get("202").is_some());
+    for (path, method) in [
+        ("/v1/repos/{repo}/index/kinds/tasks/{task}", "get"),
+        ("/v1/repos/{repo}/index/kinds/tasks/{task}/cancel", "post"),
+    ] {
+        assert!(paths[path][method]["responses"].get("200").is_some());
+        assert!(paths[path][method].get("requestBody").is_none());
+    }
+    let task = &doc["components"]["schemas"]["KindPreparationTask"];
+    assert!(task["properties"].get("progress").is_some());
+    assert!(task["properties"].get("ids").is_none());
 }

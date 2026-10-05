@@ -184,6 +184,7 @@ struct State {
     content: jj_store_service::content_search::ContentPager,
     review_commands: jj_store_service::review_mutations::ReviewCommandService,
     tasks: index_tasks::IndexTasks,
+    kind_tasks: jj_store_service::kind_tasks::KindTasks,
     commands: jj_store_service::mutations::CommandService,
     uploads: jj_store_service::uploads::Uploads,
     repository_cursor_key: [u8; 32],
@@ -288,6 +289,14 @@ impl HttpApi {
             },
         )
         .map_err(|_| "HTTP index task limits")?;
+        let kind_tasks = jj_store_service::kind_tasks::KindTasks::new(
+            queries.workers().clone(),
+            jj_store_service::kind_tasks::Limits {
+                read: config.read,
+                ..Default::default()
+            },
+        )
+        .map_err(|_| "HTTP kind preparation task limits")?;
         let commands = jj_store_service::mutations::CommandService::new(
             commands::Executor::with_workers(config.commands, queries.workers().clone())
                 .map_err(|_| "HTTP native command limits")?,
@@ -330,6 +339,7 @@ impl HttpApi {
             content: jj_store_service::content_search::ContentPager::new(Arc::new(SystemClock)),
             review_commands,
             tasks,
+            kind_tasks,
             commands,
             uploads,
             repository_cursor_key,

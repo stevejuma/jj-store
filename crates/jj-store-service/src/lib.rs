@@ -17,6 +17,7 @@ pub mod replication_control;
 pub mod transport;
 
 pub mod index_tasks;
+pub mod kind_tasks;
 pub mod local_index_tasks;
 pub mod pagination;
 pub mod reads;

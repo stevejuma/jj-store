@@ -192,6 +192,82 @@ async fn http_contract_capture_matches_registered_routes() {
         "application/json",
         task,
     );
+    for body in [
+        serde_json::json!({"operation":operation, "kind":"files"}),
+        serde_json::json!({"operation":operation, "kind":"operations", "actor":"00"}),
+        serde_json::json!({"operation":operation, "kind":"operations", "max_descriptors":1}),
+        serde_json::json!({"kind":"operations"}),
+    ] {
+        let mut request = request(&f.f.reader, "index/kinds/tasks");
+        *request.method_mut() = axum::http::Method::POST;
+        request
+            .headers_mut()
+            .insert("content-type", "application/json".parse().unwrap());
+        *request.body_mut() = Body::from(serde_json::to_vec(&body).unwrap());
+        let response = router.clone().oneshot(request).await.unwrap();
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+        let body =
+            serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap())
+                .unwrap();
+        record("index/kinds/tasks", "post", 400, "application/json", body);
+    }
+    for kind in ["operations", "copies"] {
+        let mut prepare = request(&f.f.reader, "index/kinds/tasks");
+        *prepare.method_mut() = axum::http::Method::POST;
+        prepare
+            .headers_mut()
+            .insert("content-type", "application/json".parse().unwrap());
+        *prepare.body_mut() = Body::from(
+            serde_json::to_vec(&serde_json::json!({"operation": operation, "kind":kind})).unwrap(),
+        );
+        let response = router.clone().oneshot(prepare).await.unwrap();
+        assert_eq!(response.status(), StatusCode::ACCEPTED);
+        let task: Value =
+            serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap())
+                .unwrap();
+        let task_id = task["id"].as_str().unwrap().to_owned();
+        assert_eq!(task["kind"], kind);
+        record("index/kinds/tasks", "post", 202, "application/json", task);
+        let mut done = false;
+        for _ in 0..100 {
+            let (status, task) = json(
+                &router,
+                &f.f.reader,
+                &format!("index/kinds/tasks/{task_id}"),
+            )
+            .await;
+            assert_eq!(status, StatusCode::OK);
+            if task["status"] == "ready" {
+                assert_eq!(task["progress"]["complete"], true);
+                assert!(task.get("ids").is_none());
+                record(
+                    "index/kinds/tasks/{task}",
+                    "get",
+                    200,
+                    "application/json",
+                    task,
+                );
+                done = true;
+                break;
+            }
+            tokio::time::sleep(Duration::from_millis(10)).await;
+        }
+        assert!(done, "kind fixture did not complete");
+        let mut cancel = request(&f.f.reader, &format!("index/kinds/tasks/{task_id}/cancel"));
+        *cancel.method_mut() = axum::http::Method::POST;
+        let response = router.clone().oneshot(cancel).await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let task =
+            serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap())
+                .unwrap();
+        record(
+            "index/kinds/tasks/{task}/cancel",
+            "post",
+            200,
+            "application/json",
+            task,
+        );
+    }
     for path in [
         "events".into(),
         format!("events?after=v1:{REPO}:{}:{}", before.epoch, u64::MAX),

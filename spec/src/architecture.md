@@ -1,5 +1,14 @@
 # Architecture
 
+Native kind task composition uses the existing serving instance's reserved
+preparation lease, shared with native and local graph preparation. Bounded
+process-local reports retain snapshot/kind/progress and state only; sessions and
+source credentials belong to the supervised active job. Each window uses the
+original checked root, fresh authorization and fixed total budgets.
+Settlement/expiry publish scoped hints, not per-window events. Separate strict
+HTTP task routes and generated contracts preserve existing graph task clients.
+Full scale, browser, fault, RustFS and release qualification stays deferred.
+
 Native kind preparation advances caller-owned checked roots through bounded
 descriptor windows. Data-only progress owns its original cursor, matching IDs,
 total counters, lifetime and shared allocation lease; no source or credentials
@@ -7,9 +16,9 @@ are retained. Failed/canceled windows keep conservative admission charges
 without cursor progress. Complete-root traversal alone promotes immutable kind
 data, and every supplied native session rechecks source scope, current
 permission, epoch and deadline. Historical preparation outlives its initiating
-page while ordinary complete GET limits stay unchanged. This is source
-capability delivery; background task and transport integration remain following
-work.
+page while ordinary complete GET limits stay unchanged. The supervised native
+kind task and strict HTTP routes deliver this source capability; app recovery
+controls and RPC integration remain following work.
 
 Native selected copy queries use the source-scoped descriptor relation cache.
 The original checked root, fresh authorization and request deadline stay

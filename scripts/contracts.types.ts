@@ -178,3 +178,26 @@ const invalidCustom: ReactionBody = {
   },
 };
 void [richReaction, customReaction, invalidActor, invalidCustom];
+
+type PrepareKind =
+  operations["prepare_kind"]["requestBody"]["content"]["application/json"];
+const kindStart: PrepareKind = {
+  operation: "00",
+  kind: "operations",
+};
+const invalidKind: PrepareKind = {
+  operation: "00",
+  // @ts-expect-error Only the two selected inventory kinds are exposed.
+  kind: "files",
+};
+const kindBudget: PrepareKind = {
+  operation: "00",
+  kind: "copies",
+  // @ts-expect-error Request budgets cannot relax trusted construction limits.
+  max_descriptors: 1,
+};
+declare const kindReport: Schemas["KindPreparationTask"];
+const scanned: number = kindReport.progress.stats.scanned;
+// @ts-expect-error Reports never return the complete projection identities.
+kindReport.ids;
+void [kindStart, invalidKind, kindBudget, scanned];

@@ -87578,6 +87578,337 @@ entries.
     ],
     "next": "Commit the verified resumable native kind source capability with Jujutsu, then deliver its bounded background-task/transport consumers before indexed copy/path queries. Keep the retained workspace open and main on its already verified landing. Full qualification stays separate.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-075",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "xnwpnypq",
+    "kind": "Authenticated bounded native kind preparation tasks and strict metadata-only HTTP delivery",
+    "versions": "Rust1.98.1; JJ/jj-lib0.45.1; macOS ARM64.",
+    "formats": "Additive V1 HTTP start/status/cancel routes, owned process-local task reports, OpenAPI and TypeScript schemas. Native objects, inventory/WAL/manifest/receipt, existing graph task, RPC and cache formats unchanged.",
+    "scope": "Shared serving preparation admission, pinned native source lifecycle, native HTTP composition and generated transport consumers. Exact new lifecycle regression, complete affected native lifecycle binary and HTTP crate, native inventory units and affected JJ/service/HTTP/RPC/CLI/server all-target checks; complete registered HTTP/SSE response capture required for the added routes. Generated web consumer type check. Root aggregates, unrelated UI/browser/RustFS/scale lanes out of scope; complete qualification explicitly deferred by the user.",
+    "requirements": [
+      "JST-API-001",
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-MUT-001",
+      "JST-GOV-002"
+    ],
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/kind_tasks.rs",
+      "crates/jj-store-http/src/application_events/producers.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/routes/kind_tasks.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-jj/src/query/workers.rs",
+      "crates/jj-store-service/src/index_tasks.rs",
+      "crates/jj-store-service/src/kind_tasks/state.rs",
+      "crates/jj-store-service/src/kind_tasks/worker.rs",
+      "crates/jj-store-service/src/kind_tasks.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/native_inventory/preparation/state.rs",
+      "docs/implementation-plan.md",
+      "schemas/openapi.json",
+      "scripts/contracts.types.ts",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/spec-governance.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/kind_tasks.rs#native_kind_tasks_prepare_exact_selection_and_report_bounded_progress",
+      "crates/jj-store-cli/tests/native_lifecycle/kind_tasks.rs#native_kind_tasks_share_graph_capacity_coalesce_cancel_and_drop",
+      "crates/jj-store-cli/tests/native_lifecycle/kind_tasks.rs#native_kind_tasks_expire_pending_io_without_polling_and_bound_retention",
+      "crates/jj-store-cli/tests/native_lifecycle/kind_tasks.rs#native_kind_task_reports_require_current_access_after_revocation",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_contract_capture_matches_registered_routes",
+      "crates/jj-store-http/src/contract/tests.rs#kind_preparation_contract_is_strict_actor_free_and_metadata_only"
+    ],
+    "runs": [
+      {
+        "command": "cargo fmt --all",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial module formatting failed before creating crates/jj-store-http/src/routes/kind_tasks.rs; subsequent formatter run replaced the same local log label and passes. The original failure remains in this chat's tool output."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.17s; 0 tests passed. .local/bounded-reads/performance/kind-task-architecture-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::kind_task_acceptance::native_kind_tasks_prepare_exact_selection_and_report_bounded_progress -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "80.23s; 0 tests passed. .local/bounded-reads/performance/kind-task-before-075.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.95s; 0 tests passed. .local/bounded-reads/performance/kind-task-boundaries-075.log"
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/cli.md spec/src/spec-governance.md spec/src/compatibility.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.54s; 0 tests passed. .local/bounded-reads/performance/kind-task-canonical-format-075.log"
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/compatibility.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.57s; 0 tests passed. .local/bounded-reads/performance/kind-task-compatibility-format-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::kind_task_acceptance",
+        "result": "pass",
+        "failures": 0,
+        "note": "281.54s; 4 tests passed. .local/bounded-reads/performance/kind-task-complete-lifecycle-075.log"
+      },
+      {
+        "command": "node scripts/contracts.mjs --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "781.12s; 0 tests passed. .local/bounded-reads/performance/kind-task-contract-captures-075.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/api.md spec/src/jj-integration.md spec/src/mutations.md spec/src/architecture.md spec/src/cli.md spec/src/compatibility.md spec/src/spec-governance.md docs/implementation-plan.md spec/src/milestones.md scripts/contracts.types.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "6.53s; 0 tests passed. .local/bounded-reads/performance/kind-task-doc-check-075.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/api.md spec/src/jj-integration.md spec/src/mutations.md spec/src/architecture.md spec/src/cli.md spec/src/compatibility.md spec/src/spec-governance.md docs/implementation-plan.md spec/src/milestones.md scripts/contracts.types.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.68s; 0 tests passed. .local/bounded-reads/performance/kind-task-doc-check-final-075.log"
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/jj-integration.md spec/src/mutations.md spec/src/architecture.md docs/implementation-plan.md scripts/contracts.types.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.41s; 0 tests passed. .local/bounded-reads/performance/kind-task-doc-format-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::kind_task_acceptance::native_kind_tasks_prepare_exact_selection_and_report_bounded_progress -- --exact",
+        "result": "fail",
+        "failures": 2,
+        "note": "33.64s; 0 tests passed. .local/bounded-reads/performance/kind-task-exact-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::kind_task_acceptance::native_kind_tasks_prepare_exact_selection_and_report_bounded_progress -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "92.69s; 1 tests passed. .local/bounded-reads/performance/kind-task-exact-current-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::kind_task_acceptance::native_kind_tasks_prepare_exact_selection_and_report_bounded_progress -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "136.06s; 1 tests passed. .local/bounded-reads/performance/kind-task-exact-final-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::kind_task_acceptance::native_kind_tasks_prepare_exact_selection_and_report_bounded_progress -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "18.73s; 0 tests passed. .local/bounded-reads/performance/kind-task-exact-repair-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::kind_task_acceptance::native_kind_tasks_prepare_exact_selection_and_report_bounded_progress -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "45.45s; 0 tests passed. .local/bounded-reads/performance/kind-task-exact-repair2-075.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.32s; 0 tests passed. .local/bounded-reads/performance/kind-task-format-075.log"
+      },
+      {
+        "command": "pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "15.98s; 0 tests passed. .local/bounded-reads/performance/kind-task-format-check-075.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "7.49s; 0 tests passed. .local/bounded-reads/performance/kind-task-format-deadline-075.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "7.66s; 0 tests passed. .local/bounded-reads/performance/kind-task-format-final-075.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.95s; 0 tests passed. .local/bounded-reads/performance/kind-task-format-http-075.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.72s; 0 tests passed. .local/bounded-reads/performance/kind-task-format-repaired-075.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.82s; 0 tests passed. .local/bounded-reads/performance/kind-task-format-tests-075.log"
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "222.42s; 0 tests passed. .local/bounded-reads/performance/kind-task-generate-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-http --lib",
+        "result": "fail",
+        "failures": 2,
+        "note": "1.53s; 20 tests passed. .local/bounded-reads/performance/kind-task-http-tests-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-http --lib",
+        "result": "pass",
+        "failures": 0,
+        "note": "38.25s; 22 tests passed. .local/bounded-reads/performance/kind-task-http-tests-final-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-service --lib native_inventory::",
+        "result": "pass",
+        "failures": 0,
+        "note": "22.2s; 13 tests passed. .local/bounded-reads/performance/kind-task-inventory-tests-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::kind_task_acceptance",
+        "result": "fail",
+        "failures": 1,
+        "note": "26.48s; 0 tests passed. .local/bounded-reads/performance/kind-task-lifecycle-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::kind_task_acceptance",
+        "result": "fail",
+        "failures": 1,
+        "note": "143.09s; 0 tests passed. .local/bounded-reads/performance/kind-task-lifecycle-repair-075.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle",
+        "result": "pass",
+        "failures": 0,
+        "note": "189.93s; 235 tests passed. .local/bounded-reads/performance/kind-task-native-lifecycle-075.log"
+      },
+      {
+        "command": "cargo check --locked --all-targets -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli -p jj-store-server",
+        "result": "pass",
+        "failures": 0,
+        "note": "59.21s; 0 tests passed. .local/bounded-reads/performance/kind-task-package-check-075.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "8.58s; 0 tests passed. .local/bounded-reads/performance/kind-task-progress-075.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.61s; 0 tests passed. .local/bounded-reads/performance/kind-task-progress-final-075.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.31s; 0 tests passed. .local/bounded-reads/performance/kind-task-spec-final-075.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "3.48s; 0 tests passed. .local/bounded-reads/performance/kind-task-spec-first-075.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.95s; 0 tests passed. .local/bounded-reads/performance/kind-task-spec-first-final-075.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.72s; 0 tests passed. .local/bounded-reads/performance/kind-task-spec-first-final2-075.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.92s; 0 tests passed. .local/bounded-reads/performance/kind-task-spec-first-schema-075.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.15s; 0 tests passed. .local/bounded-reads/performance/kind-task-spec-validate-075.log"
+      },
+      {
+        "command": "pnpm test:contracts",
+        "result": "fail",
+        "failures": 1,
+        "note": "6.98s; 0 tests passed. .local/bounded-reads/performance/kind-task-type-contracts-075.log"
+      },
+      {
+        "command": "pnpm test:contracts",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.85s; 0 tests passed. .local/bounded-reads/performance/kind-task-type-contracts-final-075.log"
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/contracts.types.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.47s; 0 tests passed. .local/bounded-reads/performance/kind-task-type-format-075.log"
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "23.12s; 0 tests passed. .local/bounded-reads/performance/kind-task-web-check-075.log"
+      }
+    ],
+    "notes": [
+      "Separate strict kind routes accept only explicit operation and operations/copies kind. Start returns202; status and bodyless cancel return200. Current Read/epoch gates all calls and only the owner may cancel. Same owner/repository/epoch/operation/kind running starts coalesce. Public bounded progress retains no IDs, cursor, source or credentials. Graph task contracts remain compatible.",
+      "One reserved serving preparation worker covers native graph, local graph and kind tasks with non-queuing admission before source capture; no independent pool or queue multiplies background work. Interactive file capacity remains usable. Original checked historical root, total scan/read/byte/result/allocation policy and original preparation deadline survive background windows. Per-window source checks remain fresh.",
+      "Supervised jobs own sessions and credentials only during active work. Pending I/O cancellation drops the window future while retaining its conservative work charge and no cursor/ID progress. Canceling becomes Canceled after actual exit; expiry needs no client polling. Teardown cancels actual workers and completed timers. Reports expire independently after completion, retain only bounded metadata, and restart returns task-reset. Expired jobs retain no unregistered retention timer. Scoped freshness hints occur at settlement/expiry, not each scan window.",
+      "New baseline fails one unresolved kind_tasks import before the API exists; no functional test runs. Intermediate compiler integration errors (child visibility, overbroad parameter visibility edit, identifier-only route registration and test Key conversion) were repaired. Initial formatter lookup failed because the new routes subdirectory was missing, then succeeded after creating it. Initial spec-first fails two mapped chapter requirements; updated CLI/governance chapters repair that gate. The generated consumer initially reports five TypeScript diagnostics because request DTOs are inline, not schema components; reference the actual route request type and preserve unsupported kind/budget rejection. The first HTTP suite reports two stale test expectations: 119 paths versus the correct122 after three additive routes, and required-field order; correct both exact expectations without changing the wire contract. All final substantive targets pass before commit.",
+      "Lifecycle and transport evidence uses real native in-memory publication and verified records, distinct from scale, filesystem/RustFS, installed CLI or release qualification. No milestone is promoted.",
+      "Preserve all515 previous evidence entries and their historical text verbatim. Main remains on E-READ-071 during this slice; the user explicitly requested landing E-READ-072 through this completed slice into main, focused verification there, and continued work in the retained temporary workspace. No dev service, installed executable, fixture, Linux source, publication or migration changes."
+    ],
+    "remaining": [
+      "Integrate kind preparation into app recovery and remote RPC/CLI consumers; these separate tasks are now callable through native HTTP, but existing graph controls have not yet invoked them.",
+      "Selected copy family RPC/client and applicable native mutation capability providers; indexed get_copy_records DAG range/path queries; larger copy graph chunk/disk support beyond conservative64MiB.",
+      "General filtered log continuation preserving upstream indirect/missing edges, uncached/ambiguous evolution, indexed code/local application search, oversized comparison/change grouping and extreme-filter candidates.",
+      "Complete scale/RSS/latency/fault/cold-browser/RustFS/release qualification and Help/generated-reference/source-review refresh plus inherited installation-reference drift remain open."
+    ],
+    "next": "Commit this verified task/API slice with Jujutsu, land E-READ-072 through E-READ-075 into clean main, run focused combined source verification there, and continue app/remote integration in the retained workspace. Full qualification remains separate.",
+    "result": "pending"
   }
 ]
 ```

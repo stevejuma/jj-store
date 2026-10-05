@@ -42,7 +42,9 @@ impl Workers {
             .try_acquire_owned()
             .map_err(|_| Error::Busy)
     }
-    pub(crate) fn acquire_preparation(&self) -> Result<OwnedSemaphorePermit> {
+    /// Non-queuing admission shared by native graph, local graph and source
+    /// preparation. Move the lease into the actual job until it exits.
+    pub fn acquire_preparation(&self) -> Result<OwnedSemaphorePermit> {
         self.preparation
             .clone()
             .try_acquire_owned()

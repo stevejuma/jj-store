@@ -662,9 +662,12 @@ checks. Partial progress grants no complete IDs or cache certification. Only
 terminal traversal from the start promotes a complete kind projection. Shared
 allocation leases precede growth and follow active progress/data owners beyond
 cache eviction. Source capabilities and credentials stay caller-owned; later
-publication cannot replace a preparation root. This source-only capability
-changes no persisted or wire format; background task/transport delivery remains
-separate integration.
+publication cannot replace a preparation root. The source primitive changes no
+authoritative format. Supervised native kind tasks expose bounded metadata
+through their separate HTTP contract and share the serving instance's reserved
+preparation lease with native/local graph preparation. The lease follows actual
+execution through cancel/expiry/teardown; interactive capacity remains
+available.
 
 Graph execution has a separate inline cold-build threshold (1000 indexed commits
 by default) within the hard index-admission budget. A missing or damaged cache

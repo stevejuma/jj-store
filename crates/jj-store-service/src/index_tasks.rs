@@ -30,6 +30,8 @@ pub enum Error {
     Unavailable,
     #[error(transparent)]
     Read(#[from] reads::Error),
+    #[error(transparent)]
+    Query(#[from] q::Error),
 }
 pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Clone, Copy)]
@@ -355,7 +357,7 @@ impl IndexTasks {
         Ok(entry.task.clone())
     }
 }
-fn map_wal(error: jj_store_wal::Error) -> Error {
+pub(crate) fn map_wal(error: jj_store_wal::Error) -> Error {
     match error {
         jj_store_wal::Error::Denied => Error::Denied,
         jj_store_wal::Error::Limit(_) => Error::Limit,

@@ -4,6 +4,7 @@ use tokio::sync::broadcast;
 pub(super) fn start(state: &Arc<State>) -> tokio::task::JoinHandle<()> {
     let mut receivers = vec![
         state.tasks.freshness(),
+        state.kind_tasks.freshness(),
         state.local_tasks.freshness(),
         state.search.freshness(),
     ];

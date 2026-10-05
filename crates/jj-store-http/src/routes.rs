@@ -1,4 +1,5 @@
 use super::*;
+mod kind_tasks;
 use crate::collab::{
     assets::{define as collab_emoji_define, image as collab_image},
     commands::{
@@ -43,6 +44,7 @@ use jj_store_service::{
     reads::query::content as c,
 };
 use jj_store_tantivy::paging as search_paging;
+use kind_tasks::{cancel as cancel_kind, prepare as prepare_kind, status as kind_task};
 pub(super) type Input<T> = std::result::Result<Query<T>, QueryRejection>;
 pub(super) fn input<T>(value: Input<T>) -> Result<T> {
     value.map(|Query(v)| v).map_err(|_| Error::invalid())
@@ -359,6 +361,9 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/files/{file}", file, Selection, String, Reply::Binary),
             (get, "/repos/{repo}/diff", diff, Difference, Envelope<c::diff::Response>, Reply::Json(200)),
             (get, "/repos/{repo}/diff/paths", diff_paths, DiffPaths, browsing::Window<c::diff_summary::Page>, Reply::Json(200)),
+            (post, "/repos/{repo}/index/kinds/tasks", prepare_kind, Empty, jj_store_service::kind_tasks::Task, Reply::Json(202)),
+            (get, "/repos/{repo}/index/kinds/tasks/{task}", kind_task, Empty, jj_store_service::kind_tasks::Task, Reply::Json(200)),
+            (post, "/repos/{repo}/index/kinds/tasks/{task}/cancel", cancel_kind, Empty, jj_store_service::kind_tasks::Task, Reply::Json(200)),
             (post, "/repos/{repo}/index/tasks", prepare, Empty, index_tasks::Task, Reply::Json(202)),
             (get, "/repos/{repo}/index/tasks/{task}", task, Empty, index_tasks::Task, Reply::Json(200)),
             (post, "/repos/{repo}/index/tasks/{task}/cancel", cancel, Empty, index_tasks::Task, Reply::Json(200)),
@@ -419,6 +424,7 @@ pub(super) fn document(doc: &mut Document) {
         "post",
     );
     doc.body::<crate::collab::ReactionQuery>("/v1/repos/{repo}/reactions/query", "post");
+    doc.body::<kind_tasks::Prepare>("/v1/repos/{repo}/index/kinds/tasks", "post");
     doc.body::<Prepare>("/v1/repos/{repo}/index/tasks", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations/preview", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations", "post");

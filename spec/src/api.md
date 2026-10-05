@@ -1,5 +1,24 @@
 # Read APIs and browser
 
+Native kind preparation has separate process-local tasks at
+`POST /v1/repos/{repo}/index/kinds/tasks`, with GET `/{task}` and bodyless POST
+`/{task}/cancel`. Start accepts only an explicit operation and kind
+(`operations` or `copies`); user budgets, source roots, actors and credentials
+are rejected. Start returns HTTP202, status/cancel HTTP200. The versioned report
+contains its original snapshot, kind, state and bounded descriptor/read/byte,
+window and matching-ID counters, never the identities or a cursor capability.
+Running starts coalesce by principal, repository, epoch, operation and kind. All
+three require current Read and epoch; only the owner may cancel. The task uses
+the same reserved background worker as native/local graph preparation, with
+non-queuing admission before capture. Each window reauthorizes the original
+source/root and remains within its call and fixed total budgets. Complete-root
+traversal alone promotes the rebuildable cache. Running expiry cancels pending
+I/O without polling; cancellation and teardown retain admission until job exit.
+Completed reports retain no source or credentials and expire after five minutes.
+Restart/expiry returns task-reset. Settlement/expiry emit scoped index-task
+freshness hints; descriptor windows emit no event flood. Ordinary GET ceilings
+and graph task contracts remain unchanged.
+
 Prepared native/local operation pages may traverse compact captured topology
 before hydrating source metadata. Deep anchors and merge lookahead must not read
 prior operation bodies, views or commits. The anchor must occur in the selected

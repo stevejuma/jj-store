@@ -1,5 +1,14 @@
 # Specification governance
 
+Native kind preparation task routes require actual registered
+start/status/cancel response capture for both operation and copy kinds. Strict
+request coverage rejects unsupported kinds, omitted operations, actor fields and
+user budgets. Generated consumer checks retain a metadata-only report and exact
+kind enum. Run the complete registered HTTP/SSE capture lane when these additive
+DTO/routes change. Focused lifecycle correctness remains mandatory; complete
+scale/RSS, latency, fault, cold-browser, RustFS and release qualification is
+deferred by the user and must not be claimed from these passing fixtures.
+
 The UI package guide at `web/src/lib/ui/AGENTS.md` makes the existing Settings
 form and command-row composition the default for form-like surfaces, including
 dialogs. Presentation changes retain focused interaction, geometry and

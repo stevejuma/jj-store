@@ -27,6 +27,17 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-075 delivers authenticated native kind tasks and strict
+start/status/cancel HTTP contracts. Exact-root preparation shares the single
+reserved background worker with native/local graph tasks, retains fixed
+window/total admission and fresh current authorization, and reports bounded
+progress without IDs. Expiry, cancel and teardown release source/credential
+ownership after actual exit. Generated schema/client and registered response
+capture accompany focused lifecycle correctness. App recovery and remote RPC
+delivery remain following work. After this slice land E-READ-072 through
+E-READ-075 into main, verify its focused combined source boundaries, and retain
+the temporary workspace for follow-ups. Complete qualification stays deferred.
+
 E-READ-074 adds callable native source APIs to begin, advance and finish kind
 preparation at a current or historical checked root. Each advance reads at most
 256 descriptors under its call deadline; original total work/read/byte/result,

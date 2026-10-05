@@ -23,7 +23,7 @@ impl Default for Limits {
     }
 }
 impl Limits {
-    pub(super) fn validate(self) -> q::Result<()> {
+    pub(crate) fn validate(self) -> q::Result<()> {
         let ceiling = Self::default();
         if self.max_ids == 0
             || self.max_ids > ceiling.max_ids
@@ -43,7 +43,8 @@ impl Limits {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Serialize, schemars::JsonSchema)]
+#[schemars(rename = "KindPreparationStats")]
 pub struct Stats {
     pub windows: usize,
     pub scanned: usize,
@@ -53,7 +54,8 @@ pub struct Stats {
     pub record_reads: usize,
     pub record_bytes: u64,
 }
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default, serde::Serialize, schemars::JsonSchema)]
+#[schemars(rename = "KindPreparationProgress")]
 pub struct Progress {
     pub complete: bool,
     pub matching_ids: usize,
@@ -74,6 +76,9 @@ pub struct Preparation {
     pub(super) stats: Stats,
 }
 impl Preparation {
+    pub(crate) fn deadline(&self) -> Instant {
+        self.expires
+    }
     pub fn progress(&self) -> Progress {
         Progress {
             complete: self.ready.is_some(),

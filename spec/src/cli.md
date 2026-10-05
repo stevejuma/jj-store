@@ -1,5 +1,15 @@
 # CLI and server commands
 
+Native kind preparation lifecycle regressions require exact operation pins,
+bounded progress without identities, shared graph/source background admission,
+continued interactive file access, running coalescence, owner-only cancellation,
+conservative canceled-window work and source release after actual job exit.
+Expiry must stop pending storage without a polling client. Completed retention,
+restart reset, total-work failures and current token revocation remain explicit.
+These service/HTTP fixtures create no installed CLI command or runtime change;
+full large-repository, cold-browser and real-RustFS qualification stays
+deferred.
+
 Native copy-family regressions require exact selected bodies under unrelated
 inventory pressure, stable historical roots after real publication, bounded
 addition reuse and fresh authorization. Staged family delivery includes only

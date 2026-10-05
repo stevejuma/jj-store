@@ -1,5 +1,13 @@
 # Typed mutations
 
+Native kind task credentials live only in the active supervised job, never its
+registry report or retained source projection. Start/status/cancel require fresh
+Read; cancel additionally requires the initiating principal. The reserved
+preparation lease stays with the job until actual exit after expiry, cancel or
+teardown. Each successful descriptor window rechecks current authorization and
+epoch before advancing the original root; a task report, opaque ID and complete
+cache grant no mutation or publication authority.
+
 Resumable native kind preparation binds its process-local source and checked
 historical inventory root, retaining only bounded data and allocation ownership.
 Each supplied session reauthorizes and checks current epoch; changing source,

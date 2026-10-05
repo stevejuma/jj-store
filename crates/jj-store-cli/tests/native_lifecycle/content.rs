@@ -883,6 +883,9 @@ mod worker_acceptance;
 #[path = "index_tasks.rs"]
 mod index_task_acceptance;
 
+#[path = "kind_tasks.rs"]
+mod kind_task_acceptance;
+
 #[path = "http_reads.rs"]
 mod http_acceptance;
 

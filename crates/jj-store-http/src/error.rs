@@ -210,6 +210,7 @@ impl From<tasks::Error> for Error {
             tasks::Error::EpochChanged => Self::new(StatusCode::CONFLICT, "epoch_changed"),
             tasks::Error::Reset => Self::new(StatusCode::GONE, "task_reset"),
             tasks::Error::Read(e) => e.into(),
+            tasks::Error::Query(e) => e.into(),
         }
     }
 }
