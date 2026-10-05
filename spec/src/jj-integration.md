@@ -425,6 +425,18 @@ remain distinct. Probe continuation using IDs without loading a commit body.
 Missing/evicted checkpoints use bounded body-free replay; arbitrary filtered log
 continuations remain separate delivery work.
 
+Prepared evolution MUST use an admitted exact commit-to-operation occurrence
+lookup to skip unrelated operation bodies. Seek the earliest relevant captured
+operation at or after the walk's current rank, considering every pending commit
+and the first legacy predecessor-metadata boundary. Preserve repeated IDs,
+known-empty records, pending order and within-operation splice/topology
+behavior. The disposable operation-history format3 checksum covers map-presence
+flags and sorted occurrence identities; derive ranked lookup under resident/work
+admission. Fresh readers validate and hydrate only relevant operations and
+selected commits. Formats1/2 remain readable through the existing bounded replay
+path. No source, credential, request capability or predecessor body is retained
+by the lookup.
+
 Prepared default `all()` log pages MUST retain the selected view's exact JJ
 visible order and compact identity-to-rank lookup during generation admission.
 Deep continuations seek a visible anchor and hydrate only the selected rows;

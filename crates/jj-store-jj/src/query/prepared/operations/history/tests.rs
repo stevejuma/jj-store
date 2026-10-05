@@ -492,19 +492,209 @@ fn evolution_anchor_proof_rejects_repeated_ids_and_keeps_format_one_readable() {
     assert!(!graph.unique_evolution_anchor(&first));
     assert!(graph.unique_evolution_anchor(&unique));
     let path = directory.path().join(HISTORY_NAME);
-    let mut bytes = std::fs::read(&path).unwrap();
-    let at = bytes.len() - 32 - REPEATED_BYTES;
-    bytes.truncate(at);
-    bytes[..8].copy_from_slice(MAGIC1);
-    let digest = Sha256::digest(&bytes);
-    bytes.extend_from_slice(&digest);
-    std::fs::write(&path, &bytes).unwrap();
-    let old = Graph::load(directory.path(), id(1), &ids, &mut |_| Ok(()), &mut |_| {
+    let original = std::fs::read(&path).unwrap();
+    for magic in [MAGIC1, MAGIC2] {
+        let mut bytes = original
+            [..topology_end(&original) + if magic == MAGIC2 { REPEATED_BYTES } else { 0 }]
+            .to_vec();
+        bytes[..8].copy_from_slice(magic);
+        let digest = Sha256::digest(&bytes);
+        bytes.extend_from_slice(&digest);
+        std::fs::write(&path, &bytes).unwrap();
+        let old = Graph::load(directory.path(), id(1), &ids, &mut |_| Ok(()), &mut |_| {
+            Ok(())
+        })
+        .unwrap()
+        .unwrap();
+        assert_eq!(old.ordered.len(), 2);
+        assert!(old.predecessors.is_none());
+        assert!(!old.unique_evolution_anchor(&first));
+        assert_eq!(old.unique_evolution_anchor(&unique), magic == MAGIC2);
+    }
+}
+
+fn topology_end(bytes: &[u8]) -> usize {
+    let mut at = 80;
+    let count = u64::from_be_bytes(bytes[72..80].try_into().unwrap());
+    for _ in 0..count {
+        let parents = u32::from_be_bytes(bytes[at + 76..at + 80].try_into().unwrap()) as usize;
+        at += 80 + parents * 64;
+    }
+    at
+}
+
+#[test]
+fn predecessor_lookup_seeks_ranked_repeated_occurrences_pending_branches_and_legacy_boundary() {
+    let a = backend::CommitId::from_bytes(&[1; 20]);
+    let b = backend::CommitId::from_bytes(&[2; 20]);
+    let c = backend::CommitId::from_bytes(&[3; 20]);
+    let absent = backend::CommitId::from_bytes(&[4; 20]);
+    for legacy in [false, true] {
+        let mut rows: Vec<_> = (0..8)
+            .map(|n| {
+                let mut op = operation(
+                    if n == 0 { vec![] } else { vec![native(n - 1)] },
+                    n as i64,
+                    0,
+                );
+                op.commit_predecessors = Some(Default::default());
+                op
+            })
+            .collect();
+        for (at, keys) in [
+            (0, vec![a.clone()]),
+            (2, vec![c.clone()]),
+            (4, vec![b.clone()]),
+            (6, vec![a.clone()]),
+            (7, vec![a.clone(), b.clone()]),
+        ] {
+            rows[at].commit_predecessors = Some(keys.into_iter().map(|id| (id, vec![])).collect());
+        }
+        if legacy {
+            rows[1].commit_predecessors = None;
+        }
+        let (directory, ids) = artifact(&rows, 7);
+        let graph = Graph::load(directory.path(), id(7), &ids, &mut |_| Ok(()), &mut |_| {
+            Ok(())
+        })
+        .unwrap()
+        .unwrap();
+        let lookup = graph.predecessors.as_ref().unwrap();
+        for pending in [
+            vec![a.clone()],
+            vec![b.clone(), c.clone()],
+            vec![a.clone(), a.clone(), b.clone()],
+            vec![absent.clone()],
+        ] {
+            for start in 0..=8 {
+                let expected =
+                    graph
+                        .ordered
+                        .iter()
+                        .enumerate()
+                        .skip(start)
+                        .find_map(|(rank, &position)| {
+                            let map = rows[position].commit_predecessors.as_ref();
+                            (map.is_none()
+                                || pending.iter().any(|id| map.unwrap().contains_key(id)))
+                            .then_some(rank)
+                        });
+                let mut work = 0;
+                let actual = lookup
+                    .next(&pending, start, &mut |n| {
+                        work += n;
+                        if work > 24 { Err(Error::Limit) } else { Ok(()) }
+                    })
+                    .unwrap();
+                assert_eq!(actual, expected);
+                assert!(work <= 24);
+            }
+        }
+        assert_eq!(
+            lookup.next(&[a.clone()], 0, &mut |_| Err(Error::Canceled)),
+            Err(Error::Canceled)
+        );
+        assert_eq!(
+            lookup.next(&[a.clone()], 0, &mut |_| Err(Error::Limit)),
+            Err(Error::Limit)
+        );
+        assert!(!graph.unique_evolution_anchor(&a));
+    }
+}
+
+#[test]
+fn predecessor_lookup_rejects_corrupt_presence_length_order_and_operation_membership() {
+    let a = backend::CommitId::from_bytes(&[1; 20]);
+    let b = backend::CommitId::from_bytes(&[2; 20]);
+    let mut rows = vec![operation(vec![], 0, 0), operation(vec![native(0)], 1, 0)];
+    rows[0].commit_predecessors = Some([(a.clone(), vec![])].into_iter().collect());
+    rows[1].commit_predecessors = Some([(b.clone(), vec![])].into_iter().collect());
+    let (directory, ids) = artifact(&rows, 1);
+    let path = directory.path().join(HISTORY_NAME);
+    let original = std::fs::read(&path).unwrap();
+    let at = topology_end(&original) + REPEATED_BYTES;
+    for damage in 0..8 {
+        let mut bytes = original[..original.len() - 32].to_vec();
+        match damage {
+            0 => bytes[at] = 2,
+            1 => bytes[at] = 0,
+            2 => bytes[at + 10 + 3] = 21,
+            3 => bytes[at + 10 + 11] = 255,
+            4 => bytes[at + 10 + 12] = 255,
+            5 => bytes[at + 10 + 12 + 20] = 255,
+            6 => bytes[at + 4] = 1,
+            _ => bytes[at + 4] = 255,
+        }
+        let digest = Sha256::digest(&bytes);
+        bytes.extend_from_slice(&digest);
+        std::fs::write(&path, &bytes).unwrap();
+        assert!(
+            matches!(
+                Graph::load(directory.path(), id(1), &ids, &mut |_| Ok(()), &mut |_| Ok(
+                    ()
+                )),
+                Err(Error::Corrupt)
+            ),
+            "damage {damage}"
+        );
+    }
+}
+
+#[test]
+fn predecessor_occurrences_do_not_multiply_topology_scratch() {
+    let mut rows = vec![operation(vec![], 0, 0), operation(vec![native(0)], 1, 0)];
+    for row in &mut rows {
+        row.commit_predecessors = Some(Default::default());
+    }
+    let (empty, empty_ids) = artifact(&rows, 1);
+    let baseline = Graph::load(
+        empty.path(),
+        id(1),
+        &empty_ids,
+        &mut |_| Ok(()),
+        &mut |_| Ok(()),
+    )
+    .unwrap()
+    .unwrap();
+    rows[0].commit_predecessors = Some(
+        (0..512u32)
+            .map(|n| {
+                let mut bytes = [0; 20];
+                bytes[..4].copy_from_slice(&n.to_be_bytes());
+                (backend::CommitId::from_bytes(&bytes), vec![])
+            })
+            .collect(),
+    );
+    let (populated, ids) = artifact(&rows, 1);
+    let graph = Graph::load(populated.path(), id(1), &ids, &mut |_| Ok(()), &mut |_| {
         Ok(())
     })
     .unwrap()
     .unwrap();
-    assert_eq!(old.ordered.len(), 2);
-    assert!(!old.unique_evolution_anchor(&first));
-    assert!(!old.unique_evolution_anchor(&unique));
+    assert_eq!(graph.topology_weight, baseline.topology_weight);
+    let empty_size = std::fs::metadata(empty.path().join(HISTORY_NAME))
+        .unwrap()
+        .len();
+    let populated_size = std::fs::metadata(populated.path().join(HISTORY_NAME))
+        .unwrap()
+        .len();
+    assert_eq!(populated_size - empty_size, 512 * (20 + 4));
+    let commit = backend::CommitId::from_bytes(&[0; 20]);
+    let mut charged = 0;
+    assert_eq!(
+        graph
+            .predecessors
+            .as_ref()
+            .unwrap()
+            .next(&[commit], 0, &mut |n| {
+                charged += n;
+                if charged > 16 {
+                    Err(Error::Limit)
+                } else {
+                    Ok(())
+                }
+            })
+            .unwrap(),
+        Some(1)
+    );
 }

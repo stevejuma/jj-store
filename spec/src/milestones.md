@@ -85644,6 +85644,206 @@ entries.
       "335 distinct Rust tests pass:66 query library,230 native lifecycle and39 local browser;two explicit scale tests ignored.Wider local run initially37 pass/2 fail reached obsolete format1 expectations in shared byte verifier;strict format2 magic/fixed64KiB bitmap framing preserves full checksum,membership and exact upstream index bytes.Both exact targets and complete local rerun pass."
     ],
     "next": "Commit verified E-READ-064 in the retained temporary workspace;continue highest-priority general filtered/deep-history and dedicated predecessor lookup delivery before the separate complete qualification slice."
+  },
+  {
+    "id": "E-READ-065",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "xwntxpvz",
+    "kind": "prepared-predecessor-occurrence-seek",
+    "versions": "Rust 1.98.1; jj-lib/jj-core 0.45.1; macOS ARM64.",
+    "formats": "Authoritative storage, WAL, DTO, cursor, cache receipt and upstream format 6 unchanged. Disposable operation-history JSTOPG3 adds map-presence/discovery-position flags and exact commit identity plus four-byte occurrence references. JSTOPG1/2 stay readable with bounded replay. No migration or installed executable change.",
+    "scope": "Exact sparse-history regressions and lookup units first. Complete query library and native_lifecycle/local_browser test binaries because shared native/local prepared evolution, history decoding and topology scratch affect both profiles and their graph/preparation consumers. Focused package, Rust format, boundary, architecture and changed-document checks. Root aggregates, RPC/HTTP/UI/contract generation and complete scale/RSS/latency/fault/cold-browser/real-RustFS/release qualification out of scope.",
+    "requirements": [
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-LOCAL-004",
+      "JST-API-002",
+      "JST-API-004",
+      "JST-CLI-003"
+    ],
+    "files": [
+      "crates/jj-store-cli/tests/local_browser/preparation.rs",
+      "crates/jj-store-cli/tests/local_browser/prepared_evolution_pages.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/prepared_evolution_pages.rs",
+      "crates/jj-store-jj/src/query/prepared/mod.rs",
+      "crates/jj-store-jj/src/query/prepared/operations/history/evolution.rs",
+      "crates/jj-store-jj/src/query/prepared/operations/history/predecessors.rs",
+      "crates/jj-store-jj/src/query/prepared/operations/history/tests.rs",
+      "crates/jj-store-jj/src/query/prepared/operations/history/traversal.rs",
+      "crates/jj-store-jj/src/query/prepared/operations/history.rs",
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/prepared_evolution_pages.rs#prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations",
+      "crates/jj-store-cli/tests/local_browser/prepared_evolution_pages.rs#prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations",
+      "crates/jj-store-jj/src/query/prepared/operations/history/tests.rs#predecessor_lookup_seeks_ranked_repeated_occurrences_pending_branches_and_legacy_boundary",
+      "crates/jj-store-jj/src/query/prepared/operations/history/tests.rs#predecessor_lookup_rejects_corrupt_presence_length_order_and_operation_membership",
+      "crates/jj-store-jj/src/query/prepared/operations/history/tests.rs#predecessor_occurrences_do_not_multiply_topology_scratch",
+      "crates/jj-store-jj/src/query/prepared/operations/history/tests.rs#evolution_anchor_proof_rejects_repeated_ids_and_keeps_format_one_readable"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_evolution_pages::prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations -- --exact --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Finished `test` profile [unoptimized] target(s) in 18.65s; native sparse predecessor lookup: Stats { metadata_nodes: 1910, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 52, object_bytes: 41832, work: 606 }; thread 'graph_acceptance::prepared_evolution_pages::prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations' (5971853) panicked at crates/jj-store-cli/tests/native_lifecycle/prepared_evolution_pages.rs:42:17:; test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 230 filtered out; finished in 4.21s; 24.91s; .local/bounded-reads/performance/predecessor-native-before-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_evolution_pages::prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations -- --exact --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Finished `test` profile [unoptimized] target(s) in 13.62s; local sparse predecessor lookup: Stats { metadata_nodes: 54, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 0, object_bytes: 102591, work: 9481 }; thread 'prepared_evolution_pages::prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations' (5972886) panicked at crates/jj-store-cli/tests/local_browser/prepared_evolution_pages.rs:73:9:; test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 41 filtered out; finished in 13.78s; 30.16s; .local/bounded-reads/performance/predecessor-local-before-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::prepared::operations::history::tests::predecessor_lookup -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 7.87s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 66 filtered out; finished in 0.05s; 8.47s; .local/bounded-reads/performance/predecessor-unit-after-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_evolution_pages::prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 57.30s; native sparse predecessor lookup: Stats { metadata_nodes: 312, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 5, object_bytes: 10765, work: 326 }; native sparse predecessor lookup: Stats { metadata_nodes: 312, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 5, object_bytes: 10765, work: 328 }; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 230 filtered out; finished in 4.19s; 63.76s; .local/bounded-reads/performance/predecessor-native-after-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_evolution_pages::prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 14.21s; local sparse predecessor lookup: Stats { metadata_nodes: 7, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 0, object_bytes: 43665, work: 2902 }; local sparse predecessor lookup: Stats { metadata_nodes: 7, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 0, object_bytes: 43665, work: 2904 }; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 41 filtered out; finished in 13.50s; 30.51s; .local/bounded-reads/performance/predecessor-local-after-065.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished dev profile in 9.28s; .local/bounded-reads/performance/predecessor-compile-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::prepared::operations::history::tests::predecessor_lookup -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 7.37s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 66 filtered out; finished in 0.06s; 7.89s; .local/bounded-reads/performance/predecessor-unit-compact-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_evolution_pages::prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 57.12s; native sparse predecessor lookup: Stats { metadata_nodes: 312, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 5, object_bytes: 10765, work: 326 }; native sparse predecessor lookup: Stats { metadata_nodes: 312, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 5, object_bytes: 10765, work: 328 }; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 230 filtered out; finished in 4.13s; 63.25s; .local/bounded-reads/performance/predecessor-native-compact-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_evolution_pages::prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 17.59s; local sparse predecessor lookup: Stats { metadata_nodes: 7, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 0, object_bytes: 43693, work: 2903 }; local sparse predecessor lookup: Stats { metadata_nodes: 7, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 0, object_bytes: 43693, work: 2905 }; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 41 filtered out; finished in 14.21s; 34.8s; .local/bounded-reads/performance/predecessor-local-compact-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::prepared::operations::history::tests::predecessor_occurrences_do_not_multiply_topology_scratch -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 6.76s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 68 filtered out; finished in 0.03s; 7.33s; .local/bounded-reads/performance/predecessor-memory-exact-verification-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 0.34s; test result: ok. 69 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.79s; 5.2s; .local/bounded-reads/performance/predecessor-jj-lib-verification-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 14.00s; native sparse predecessor lookup: Stats { metadata_nodes: 312, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 5, object_bytes: 10765, work: 326 }; native sparse predecessor lookup: Stats { metadata_nodes: 312, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 5, object_bytes: 10765, work: 328 }; test result: ok. 231 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 70.46s; 86.36s; .local/bounded-reads/performance/predecessor-native-lifecycle-verification-065.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 14.85s; local sparse predecessor lookup: Stats { metadata_nodes: 7, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 0, object_bytes: 43665, work: 2902 }; local sparse predecessor lookup: Stats { metadata_nodes: 7, predicate_file_bytes: 0, predicate_lines: 0, object_reads: 0, object_bytes: 43665, work: 2904 }; test result: ok. 40 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 98.30s; 115.84s; .local/bounded-reads/performance/predecessor-local-browser-verification-065.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 19.34s; 19.43s; .local/bounded-reads/performance/predecessor-packages-verification-065.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "; 1.06s; .local/bounded-reads/performance/predecessor-rust-format-verification-065.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "package boundaries ok (17 packages); 1.33s; .local/bounded-reads/performance/predecessor-boundaries-verification-065.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "web architecture ok (988 modules); 1.41s; .local/bounded-reads/performance/predecessor-architecture-verification-065.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first gate passed: 10 protected file(s), 5 canonical chapter(s).; 1.69s; .local/bounded-reads/performance/predecessor-spec-first-verification-065.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validated: 5 validators, 23 chapters, 172 requirements.; 2.6s; .local/bounded-reads/performance/predecessor-spec-validate-verification-065.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "E-READ-065: invalid result; 5.51s; .local/bounded-reads/performance/predecessor-progress-verification-065.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress ok (139 tasks; evidence bookkeeping only); 6.46s; .local/bounded-reads/performance/predecessor-progress-final-065.log"
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All matched files use Prettier code style!; 4.12s; .local/bounded-reads/performance/predecessor-doc-format-final-065.log"
+      },
+      {
+        "command": "Compare parsed historical milestone evidence against .local/bounded-reads/performance/parent-evidence-065.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 505 historical evidence entries JSON-identical. E-READ-065 is the sole new entry."
+      }
+    ],
+    "notes": [
+      "Before: 48 unrelated bookmark operations caused native one-row evolution to read 52 objects (606 work), and local to read 54 metadata records (9481 work). Both exact targets failed their independently fixed read bounds.",
+      "First lookup implementation passed both exact targets: native 5 object reads / 326-328 work; local 7 metadata records / 2902-2904 work. Then compacted occurrences to fixed-width identity plus four-byte rank with no per-ID heap allocation and separated topology scratch from occurrence bytes; final verification recorded below.",
+      "Lookup seeks the earliest captured operation at/after the current walk rank for every pending commit, capped by the first legacy metadata boundary. Fresh request readers hydrate relevant operations and selected commits. Exact repeated IDs, known-empty records, pending order and pinned within-operation topology remain unchanged.",
+      "Preparation scratch captures compact occurrence keys with pre-growth admission. Loaded occurrence ranks sort in place within commit groups under cancellation/work accounting. Checkpoints still require uniqueness proof; no source capability or operation body is retained.",
+      "Final compact sparse pages: native 5 object reads / 326-328 work; local 7 metadata records / 2903-2905 work. All fixed regression bounds unchanged.",
+      "Complete impact verification: 69 query-library, 231 native-lifecycle and 40 local-browser tests passed (340 distinct tests); 2 existing scale tests ignored. Package, Rust format, boundaries, architecture, spec-first and canonical spec validation passed. macOS debug linker unwind-size warnings remain release-qualification data.",
+      "Initial progress check failed because the new evidence entry omitted its required outer result field. Corrected to pending, matching the existing deferred complete-qualification policy; exact progress and formatting rerun below. Product checks had no failures.",
+      "One read-only progress-summary command used the main workspace ignored evidence path and got FileNotFoundError; it was rerun successfully in the temporary workspace. Main remains clean at empty yukukvts on verified lqvkpvpm."
+    ],
+    "remaining": [
+      "General filtered-log continuations, extreme uncached/ambiguous evolution, dedicated kind/copy/code-search lookup, retained oversized comparisons/change grouping and extreme filter continuation, and remaining local application search/index delivery.",
+      "Complete Linux/native scale, isolated RSS/release latency, pressure/fault/cold-browser/real-RustFS and release qualification remain deferred by the user. Existing installation-reference drift remains a separate deferred failing qualification gate. No milestone promotion.",
+      "Main E-READ-062 landing retained. Temporary workspace, Linux source, fixtures, installed executables, services and unrelated workspaces preserved."
+    ],
+    "next": "Commit verified E-READ-065 in the retained temporary workspace; continue general filtered/deep-history and dedicated kind/copy/code-search lookup delivery before the separate full qualification slice.",
+    "result": "pending"
   }
 ]
 ```

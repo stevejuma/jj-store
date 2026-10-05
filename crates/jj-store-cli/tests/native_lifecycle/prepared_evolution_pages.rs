@@ -1,6 +1,52 @@
 use super::*;
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let cache = tempfile::tempdir().unwrap();
+            let ordinary_cache = tempfile::tempdir().unwrap();
+            let (mut repo, commit) = initial(&f, local.path(), work.path()).await;
+            for n in 0..48 {
+                let mut tx = repo.start_transaction();
+                tx.repo_mut().set_local_bookmark_target(
+                    jj_lib::ref_name::RefName::new(&format!("bookmark-{n}")),
+                    o::RefTarget::normal(commit.id().clone()),
+                );
+                repo = tx.commit("unrelated bookmark").await.unwrap();
+            }
+            let read = pin(&f, oid(repo.op_id())).await;
+            let query = q::Request::Evolution {
+                commit: cid(commit.id()),
+            };
+            let ordinary = executor(ordinary_cache.path(), q::Limits::default());
+            let expected = ordinary
+                .execute(f.store.clone(), read.clone(), query.clone(), page(1))
+                .await
+                .unwrap();
+            let exec = executor(cache.path(), q::Limits::default());
+            exec.prepare_index(f.store.clone(), read.clone(), q::Cancellation::default())
+                .await
+                .unwrap();
+            for _ in 0..2 {
+                let actual = exec
+                    .execute(f.store.clone(), read.clone(), query.clone(), page(1))
+                    .await
+                    .unwrap();
+                assert_eq!(actual.data, expected.data);
+                assert_eq!(actual.next, expected.next);
+                eprintln!("native sparse predecessor lookup: {:?}", actual.stats);
+                assert!(actual.stats.object_reads <= 8, "{:?}", actual.stats);
+                assert!(actual.stats.work <= 1024, "{:?}", actual.stats);
+            }
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn prepared_evolution_continuations_resume_without_preceding_body_reads() {
     tokio::task::LocalSet::new()
         .run_until(async {

@@ -863,6 +863,19 @@ qualification remain pending until a later slice. This ordering changes no
 authority, persisted format, capacity or acceptance requirement and does not
 mark milestones Done.
 
+Prepared evolution owns a disposable exact commit-to-operation occurrence
+projection alongside operation topology. Compact identities and map-presence
+flags derive the selected JJ walk ranks under existing memory, scratch and work
+admission. Requests seek relevant metadata and the first legacy boundary without
+reading unrelated operation bodies. The checksum-covered history format3 is
+rebuildable; formats1/2 retain bounded replay. Source capabilities,
+authorization and selected-body admission remain request-owned.
+
+Occurrence rows retain fixed-width commit bytes and four-byte ranks, with no
+per-commit heap allocation. Sort ranks in place within admitted commit groups.
+Operation-walk scratch is sized from topology, independently of occurrence
+lookup bytes; adding predecessor occurrences MUST NOT multiply walk scratch.
+
 Repository directory metadata is owned by viewport leases in the application
 controller. Discovery supplies names independently; the controller limits actual
 directory reads to two across refresh and canceled generations. The shared local

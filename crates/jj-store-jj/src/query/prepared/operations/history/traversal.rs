@@ -28,7 +28,7 @@ impl Graph {
     ) -> Result<()> {
         // The resident lease includes both order and inverse rank arrays. JJ can
         // retain a complete branch chunk before yielding: charge its scratch too.
-        let _scratch = Lease::reserve(self.weight.checked_mul(4).ok_or(Error::Limit)?)?;
+        let _scratch = Lease::reserve(self.topology_weight.checked_mul(4).ok_or(Error::Limit)?)?;
         let head = self.nodes[self.position(self.selected, work)?].key;
         let ordered = {
             let mut stream = std::pin::pin!(jj_lib::dag_walk_async::topo_order_reverse_lazy(
@@ -110,7 +110,7 @@ impl Graph {
         mut work: impl FnMut(usize) -> Result<()> + 'a,
     ) -> Result<impl Stream<Item = Result<OperationId>> + 'a> {
         let head = self.nodes[self.position(start, &mut work)?].key;
-        let memory = Lease::reserve(self.weight.checked_mul(4).ok_or(Error::Limit)?)?;
+        let memory = Lease::reserve(self.topology_weight.checked_mul(4).ok_or(Error::Limit)?)?;
         Ok(jj_lib::dag_walk_async::topo_order_reverse_lazy(
             [Ok(head)],
             |node| node.id,

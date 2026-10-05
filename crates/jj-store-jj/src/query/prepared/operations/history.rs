@@ -1,6 +1,7 @@
 //! Compact exact operation topology. No bodies, stores or source capability.
 mod checkpoint;
 pub(crate) mod evolution;
+mod predecessors;
 mod traversal;
 mod window;
 use super::*;
@@ -9,7 +10,8 @@ use futures::Stream;
 use futures::TryStreamExt as _;
 pub(crate) use window::read;
 const MAGIC1: &[u8; 8] = b"JSTOPG1\0";
-const MAGIC: &[u8; 8] = b"JSTOPG2\0";
+const MAGIC2: &[u8; 8] = b"JSTOPG2\0";
+const MAGIC: &[u8; 8] = b"JSTOPG3\0";
 const REPEATED_BYTES: usize = 64 * 1024;
 const FRAMING: u64 = 80 + 32;
 const RECORD: u64 = 80;
@@ -23,6 +25,16 @@ pub(in crate::query::prepared) fn capture(
     if op.id().as_bytes().len() != 64 || op.parent_ids().len() > source.max_parents() {
         return Err(Error::Limit);
     }
+    let position = count(disk, EVO_KNOWN, &[])?;
+    disk.put(
+        EVO_KNOWN,
+        &[],
+        &position.checked_add(1).ok_or(Error::Limit)?.to_be_bytes(),
+    )?;
+    let mut known = [0; 5];
+    known[0] = u8::from(op.stores_commit_predecessors());
+    known[1..].copy_from_slice(&position.to_be_bytes());
+    disk.put(EVO_KNOWN, op.id().as_bytes(), &known)?;
     for commit in op
         .store_operation()
         .commit_predecessors
@@ -35,6 +47,10 @@ pub(in crate::query::prepared) fn capture(
         }
         let repeated = disk.get(EVO_ANCHORS, commit.as_bytes())?.is_some();
         disk.put(EVO_ANCHORS, commit.as_bytes(), &[u8::from(repeated)])?;
+        let _memory = Lease::reserve(512)?;
+        let mut key = commit.as_bytes().to_vec();
+        key.extend_from_slice(&position.to_be_bytes());
+        disk.put(EVO_LOOKUP, &key, &[])?;
     }
     let size = 16 + op.parent_ids().len() * 64;
     let _memory = Lease::reserve(size as u64 * 2 + 256)?;
@@ -107,6 +123,7 @@ pub(super) fn write(
         row = disk.after(EVO_ANCHORS, &id)?;
     }
     output(&repeated)?;
+    predecessors::write(disk, source, &mut output)?;
     space.reserve(32).map_err(io_error)?;
     file.write_all(&digest.finalize()).map_err(io_error)?;
     file.flush().map_err(io_error)?;
@@ -132,6 +149,8 @@ pub(crate) struct Graph {
     checkpoints: std::sync::Mutex<checkpoint::Cache>,
     evolution: std::sync::Mutex<evolution::Cache>,
     repeated: Option<Vec<u8>>,
+    predecessors: Option<predecessors::Lookup>,
+    topology_weight: u64,
     weight: u64,
     _memory: Lease,
 }
@@ -143,6 +162,13 @@ impl Graph {
             .binary_search_by_key(&id, |node| node.key.id)
             .map_err(|_| Error::NotCommitted)?;
         let node = &self.nodes[position];
+        if self
+            .predecessors
+            .as_ref()
+            .is_some_and(|lookup| lookup.known(position) != operation.stores_commit_predecessors())
+        {
+            return Err(Error::Corrupt);
+        }
         let end = operation.metadata().time.end;
         if end.timestamp.0 != node.key.millis
             || end.tz_offset != node.key.offset
@@ -191,7 +217,7 @@ impl Graph {
         let mut digest = Sha256::new();
         let mut header = [0; 80];
         file.read_exact(&mut header).map_err(|_| Error::Corrupt)?;
-        if (&header[..8] != MAGIC && &header[..8] != MAGIC1)
+        if (&header[..8] != MAGIC && &header[..8] != MAGIC2 && &header[..8] != MAGIC1)
             || &header[8..72] != selected.as_bytes()
             || u64::from_be_bytes(header[72..].try_into().unwrap()) != ids.len() as u64
         {
@@ -199,7 +225,7 @@ impl Graph {
         }
         digest.update(header);
         let mut nodes = Vec::with_capacity(ids.len());
-        let has_repeated = &header[..8] == MAGIC;
+        let has_repeated = &header[..8] != MAGIC1;
         let mut remaining = (metadata.len() - FRAMING)
             .checked_sub(if has_repeated {
                 REPEATED_BYTES as u64
@@ -256,6 +282,17 @@ impl Graph {
         } else {
             None
         };
+        let predecessors = if &header[..8] == MAGIC {
+            Some(predecessors::Lookup::load(
+                &mut file,
+                &mut digest,
+                &mut remaining,
+                &nodes,
+                work,
+            )?)
+        } else {
+            None
+        };
         let mut checksum = [0; 32];
         file.read_exact(&mut checksum).map_err(|_| Error::Corrupt)?;
         if remaining != 0
@@ -264,6 +301,12 @@ impl Graph {
         {
             return Err(Error::Corrupt);
         }
+        let topology_weight = nodes.iter().try_fold(64 * 1024u64, |bytes, node| {
+            work(1)?;
+            bytes
+                .checked_add(608 + node.parents.len() as u64 * 256)
+                .ok_or(Error::Limit)
+        })?;
         let mut graph = Self {
             nodes,
             selected,
@@ -271,11 +314,16 @@ impl Graph {
             checkpoints: Default::default(),
             evolution: Default::default(),
             repeated,
+            predecessors,
+            topology_weight,
             weight,
             _memory: memory,
         };
         graph.validate(work)?;
         graph.derive_selected(work)?;
+        if let Some(lookup) = &mut graph.predecessors {
+            lookup.bind(&graph.nodes, &graph.ordered, work)?;
+        }
         Ok(Some(graph))
     }
     fn position(

@@ -567,6 +567,14 @@ known-empty predecessors. Source binding/authorization and ordinary work, byte,
 visit and time limits remain unchanged; checkpoint loss cannot authorize a wider
 read or a partial result.
 
+Prepared evolution shares the exact ranked predecessor occurrence lookup.
+Unrelated bookmark-only operations need no body hydration. Lookup considers all
+pending commit IDs and stops at the first legacy metadata boundary, retaining
+known-empty versus unknown records and repeated-ID semantics. Disposable history
+format3 remains checksum-bound and admitted before decoding/ranking; formats1/2
+retain bounded replay. Relevant source operations still pass fresh fingerprint,
+membership and authorization checks; no source capability survives a request.
+
 Prepared `all()` log pages reuse the exact visible JJ order captured during
 preparation, with compact lexical rank lookup for exclusive deep anchors. Source
 hydration follows the selected window; a continuation probe loads no commit

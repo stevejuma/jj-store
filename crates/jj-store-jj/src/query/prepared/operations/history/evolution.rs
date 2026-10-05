@@ -156,6 +156,11 @@ impl State {
         work(1)?;
         while !self.pending.is_empty() && self.queued.is_empty() {
             work(1)?;
+            if let Some(lookup) = &graph.predecessors {
+                self.operation = lookup
+                    .next(&self.pending, self.operation, work)?
+                    .unwrap_or(graph.ordered.len());
+            }
             let Some(&at) = graph.ordered.get(self.operation) else {
                 // Reserve queue conversion even when the final op is exhausted.
                 self._memory = Arc::new(Lease::reserve(

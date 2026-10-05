@@ -27,6 +27,13 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-065 adds exact prepared predecessor occurrence lookup for native/local
+evolution, skipping unrelated bookmark-operation bodies while preserving the
+first legacy boundary and complete JJ ordering. Disposable history format3
+retains formats1/2 replay compatibility; current source authorization and
+selected-operation validation stay request-owned. Full qualification and the
+other remaining delivery targets stay separate.
+
 Replanned 4 October 2026 at the user's request. The first 23 bounded-read slices
 are integrated with current main at `f5cd62d4`. Continue in the existing
 `jj-store-bounded-reads` workspace. Deliver the remaining performance features

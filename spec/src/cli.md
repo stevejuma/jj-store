@@ -7,6 +7,13 @@ work/read allowances. Cover terminal pages and invalid anchors, retain current
 authority and legacy/known-empty predecessor semantics. These focused fixtures
 do not qualify complete large-repository or installed-runtime behavior.
 
+Native/local sparse predecessor regressions compare exact pages with the
+ordinary upstream walker across unrelated bookmark operations. Prepared first
+pages seek relevant operation metadata under fixed read/work allowances. Unit
+evidence covers ranked repeated occurrences, pending branches, legacy
+boundaries, old history formats, corrupted lookup framing and cancellation/work
+exhaustion.
+
 Native/local default-log continuation regressions compare exact deep pages with
 the independent upstream graph path under a fixed ordinary work budget. The
 prepared generation retains visible identity order and compact ranks; returned

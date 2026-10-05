@@ -81,7 +81,7 @@ fn prepared_index_files(
         .remove(Path::new("operation-history"))
         .expect("local preparation exports exact compact operation topology");
     assert!(history.len() >= 192 + 64 * 1024);
-    assert_eq!(&history[..8], b"JSTOPG2\0");
+    assert_eq!(&history[..8], b"JSTOPG3\0");
     assert_eq!(&history[8..72], selected.as_bytes());
     assert_eq!(
         u64::from_be_bytes(history[72..80].try_into().unwrap()),
@@ -104,7 +104,37 @@ fn prepared_index_files(
         at += parents * 64;
     }
     // The fixed repeated-ID bitmap is covered by the complete checksum above.
-    assert_eq!(at + 64 * 1024, checksum_at);
+    at += 64 * 1024;
+    let flags = &history[at..at + identities.len() * 5];
+    let mut known = Vec::new();
+    let mut positions = vec![usize::MAX; identities.len()];
+    for (node, flag) in flags.chunks_exact(5).enumerate() {
+        assert!(flag[0] <= 1);
+        known.push(flag[0]);
+        let position = u32::from_be_bytes(flag[1..].try_into().unwrap()) as usize;
+        assert!(position < positions.len());
+        assert_eq!(positions[position], usize::MAX);
+        positions[position] = node;
+    }
+    at += identities.len() * 5;
+    let commit_len = u32::from_be_bytes(history[at..at + 4].try_into().unwrap()) as usize;
+    assert_eq!(commit_len, 20);
+    let occurrences = u64::from_be_bytes(history[at + 4..at + 12].try_into().unwrap()) as usize;
+    at += 12;
+    assert_eq!(at + occurrences * (commit_len + 4), checksum_at);
+    let entries = &history[at..checksum_at];
+    for entry in entries.chunks_exact(commit_len + 4) {
+        let position = u32::from_be_bytes(entry[commit_len..].try_into().unwrap()) as usize;
+        assert!(position < positions.len());
+        assert_eq!(known[positions[position]], 1);
+    }
+    for pair in entries
+        .chunks_exact(commit_len + 4)
+        .collect::<Vec<_>>()
+        .windows(2)
+    {
+        assert!(pair[0] < pair[1]);
+    }
     let filter = files
         .remove(Path::new("local-reference-filter"))
         .expect("local preparation exports its disposable substring index");
