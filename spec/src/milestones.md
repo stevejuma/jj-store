@@ -89125,6 +89125,107 @@ entries.
     ],
     "next": "Commit this verified managed lifecycle/UI slice, land into main and record original-dev-app cold acceptance separately.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-081",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "wswkyyxy",
+    "kind": "Ordinary graph navigation without unused change inventory",
+    "versions": [
+      "JJ/jj-lib 0.45.1",
+      "Svelte 5.57.1",
+      "Vitest 4.1.11",
+      "macOS ARM64"
+    ],
+    "formats": ["No API, index or authority format change"],
+    "scope": "UI-only correction found during original Linux acceptance. Commits joins automatic exact-operation core recovery; Commits/Branches commit and diff selection avoids an unused change-reference lookup. Files reference selection remains unchanged.",
+    "requirements": ["JST-UI-005", "JST-GOV-002"],
+    "files": [
+      "web/src/lib/controller/production-store-index.ts",
+      "web/src/lib/controller/production-reference-reader.ts",
+      "web/tests/vite/managed-code-index.test.ts",
+      "web/tests/vite/production-reference-reader.test.ts",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/vite/managed-code-index.test.ts#managed history recovery preserves the exact selection and does not prepare advanced inventories",
+      "web/tests/vite/production-reference-reader.test.ts#selected commit and diff do not resolve the unused change picker"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/managed-code-index.test.ts web/tests/vite/production-reference-reader.test.ts",
+        "result": "fail",
+        "failures": 3,
+        "note": ".local/bounded-reads/managed/ui-navigation-before.log: 13 pass, 3 failures reproduce missing log recovery and redundant exact change lookup for log/branches."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/managed-code-index.test.ts web/tests/vite/production-reference-reader.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-automatic-refresh.test.ts web/tests/vite/production-route-restoration.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ui-navigation-after.log: 44 passed in 5 real files; the route-restoration path supplied does not exist and contributes no test."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/managed-code-index.test.ts web/tests/vite/production-reference-reader.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/index-freshness.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-automatic-refresh.test.ts web/tests/vite/kind-preparation.test.ts web/tests/vite/kind-preparation-http.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ui-navigation-consumers-final.log: 85 passed in 9 directly affected controller/transport files."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ui-navigation-type.log: zero diagnostics."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ui-navigation-canonical-final.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ui-navigation-progress-final.log"
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:architecture && pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ui-navigation-governance-final.log"
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/controller/production-store-index.ts web/src/lib/controller/production-reference-reader.ts web/tests/vite/managed-code-index.test.ts web/tests/vite/production-reference-reader.test.ts spec/src/api.md spec/src/ui.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ui-navigation-format-check-final.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/ui-navigation-governance.log: missing mapped api chapter; contract explanation added."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 3,
+        "note": ".local/bounded-reads/managed/ui-navigation-progress.log: named-test checker requires test() declarations; retained original name and grouped route cases in named tests."
+      }
+    ],
+    "notes": [
+      "Actual browser network inspection identified HTTP 409 index_rebuild_required from References/Changes exact lookup at selected change 64f40fdf0665e203f66cea2aee9f6e67. Route restoration never consumes that choice on Commits/Branches; removing it allows the exact commit and diff reads to proceed. No backend optimization or advanced inventory preparation is added.",
+      "Before/after tests preserve exact operation, commit and change selections. Existing explicit advanced preparation, capability gating, stale navigation and bookmark selection regressions remain.",
+      "Focused UI impact only: no Rust rebuild, full contract recapture, unrelated suite or visual baseline update. Live cold Linux acceptance and backend restart reuse follow after landing."
+    ],
+    "remaining": [
+      "Original 7470 Linux browser/restart and source-byte acceptance still pending. Advanced search/evolution/copy/deep-query, authenticated automatic maintenance and complete scale/fault/RustFS/release/visual qualification remain deferred."
+    ],
+    "next": "Land this UI correction and record final original Linux acceptance separately.",
+    "result": "pending"
   }
 ]
 ```

@@ -15,8 +15,12 @@ needs it, retains the selected operation and navigation, and retries that view
 once readiness is confirmed. Failed or canceled episodes remain explicit; do not
 spin retry loops. Navigation aborts obsolete observation. Files-first loading,
 independent last-change metadata and bounded bookmark windows remain intact.
-Ordinary setup presents automatic history maintenance and hides advanced
-inventory controls when this capability is enabled.
+Ordinary Commits recovery includes exact-operation core task observation.
+Commit/diff navigation in Commits and Branches uses the pinned commit directly
+without resolving an unused change-reference inventory. Files reference
+selection retains its required target validation. Ordinary setup presents
+automatic history maintenance and hides advanced inventory controls when this
+capability is enabled.
 
 The native browser can explicitly prepare operation or copy inventories at its
 selected operation through the existing kind-task routes. One preparation flow

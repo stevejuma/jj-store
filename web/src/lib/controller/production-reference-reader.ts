@@ -150,7 +150,8 @@ export function createProductionReferenceReader(context: ReaderContext) {
           (item) => item.workspace,
         );
       }
-      if (route.bookmark || route.changeId) {
+      // Graph detail uses the exact commit; a change choice only selects Files.
+      if (route.bookmark || (route.page === "files" && route.changeId)) {
         const kind = route.bookmark ? "bookmarks" : "changes";
         const exact = route.bookmark || route.changeId!;
         const value = await readReferences(

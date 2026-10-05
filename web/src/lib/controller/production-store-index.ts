@@ -48,7 +48,7 @@ export function createProductionStoreSettings(input: {
       data.capabilities?.automatic_code_index !== true ||
       !options.source().prepareCodeIndex ||
       !route ||
-      !["files", "branches"].includes(route.page) ||
+      !["files", "branches", "log"].includes(route.page) ||
       route.evolutionCommitId ||
       route.historyQuery
     )

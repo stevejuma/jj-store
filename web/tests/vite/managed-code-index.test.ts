@@ -59,15 +59,18 @@ function fixture() {
 }
 afterEach(() => vi.useRealTimers());
 test("managed history recovery preserves the exact selection and does not prepare advanced inventories", async () => {
-  const f = fixture();
-  f.settings.recoverCodeIndex();
-  await vi.waitFor(() => expect(f.restore).toHaveBeenCalledTimes(1));
-  expect(f.source.prepareCodeIndex).toHaveBeenCalledWith(
-    operation,
-    expect.any(AbortSignal),
-  );
-  expect(f.source.prepareIndex).not.toHaveBeenCalled();
-  expect(f.data.neededIndex).toBeNull();
+  for (const page of ["files", "branches", "log"] as const) {
+    const f = fixture();
+    f.route.page = page;
+    f.settings.recoverCodeIndex();
+    await vi.waitFor(() => expect(f.restore).toHaveBeenCalledTimes(1));
+    expect(f.source.prepareCodeIndex).toHaveBeenCalledWith(
+      operation,
+      expect.any(AbortSignal),
+    );
+    expect(f.source.prepareIndex).not.toHaveBeenCalled();
+    expect(f.data.neededIndex).toBeNull();
+  }
 });
 test("failed managed recovery requires a new episode or explicit retry", async () => {
   const f = fixture();

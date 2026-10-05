@@ -221,3 +221,41 @@ test("a missing exact bookmark does not fall back to a loaded bookmark", async (
   expect(f.data.status.files).toBe("unavailable");
   f.history.destroy();
 });
+
+test("selected commit and diff do not resolve the unused change picker", async () => {
+  for (const pageName of ["log", "branches"] as const) {
+    const f = fixture();
+    f.references.mockImplementation(async (_operation, _cursor, query) => {
+      if (query?.kind === "changes") throw new Error("index rebuild required");
+      return page("first");
+    });
+    f.history.replace({
+      ...f.history.route,
+      page: pageName,
+      commitId: commit,
+      changeId: target.change,
+      path: "src/main.rs",
+    });
+    await restoreProductionStoreRoute(
+      f.history.route,
+      f.data,
+      f.history,
+      f.reads,
+    );
+    await f.reader.loadReferencePickers();
+    expect(f.reads.loadGraph).toHaveBeenCalledTimes(1);
+    expect(f.reads.loadCommit).toHaveBeenCalledWith(commit);
+    expect(f.reads.loadPatch).toHaveBeenCalledWith("src/main.rs");
+    expect(f.data.status.navigation).toBe("ready");
+    expect(f.report).not.toHaveBeenCalled();
+    expect(
+      f.references.mock.calls.every((call) => call[2]?.kind !== "changes"),
+    ).toBe(true);
+    expect(f.history.route).toMatchObject({
+      snapshotOperationId: operation,
+      commitId: commit,
+      changeId: target.change,
+    });
+    f.history.destroy();
+  }
+});
