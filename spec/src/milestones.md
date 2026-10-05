@@ -90190,6 +90190,98 @@ entries.
       "Aggregate/root, full scale/RSS, RustFS, release and visual-baseline qualification remain outside this targeted slice; focused passes are not full-suite qualification."
     ],
     "next": "Commit the verified narrow behavior slice with Jujutsu and retain the temporary workspace. Preview serves this slice at 7470; main and installed executables remain unchanged. Address existing package lint separately if requested."
+  },
+  {
+    "id": "E-READ-085",
+    "date": "2026-10-05",
+    "tasks": ["M4.1", "M4.6", "M4.9", "M4.10", "M13.4"],
+    "requirements": [
+      "JST-GOV-003",
+      "JST-GOV-004",
+      "JST-GOV-005",
+      "JST-GOV-007"
+    ],
+    "kind": "Main workspace landing of completed graph, feedback and text-diff slices",
+    "revision": "enclosing Jujutsu change pkkupzrv",
+    "before": "Main was clean at empty pkkupzrv/19cefaa1 above xzwnoxru/4fcda245. Completed E-UI-101, E-UI-102 and E-READ-084 were a linear descendant chain ending at mrqotlum/85aababb in bounded-reads and codex-preview. No intervening main work required a merge.",
+    "scope": "Advance the main empty change onto the three completed slices without rewriting their commits; preserve all existing ledger entries and byte-identical source evidence. Both Design Core fixes wsqpzxvk/b677c9fb and lqkxrkvp/a47490e6 are already ancestors of its main workspace. Retain temporary and preview workspaces and their running fixture. Other registered workspaces are outside this landing.",
+    "formats": "No product, generated contract, native identity, index, companion, WAL, manifest, receipt or installed format change. Only this integration evidence is new. Product-tree identity reuses the source regression and cold browser evidence recorded in E-UI-101, E-UI-102 and E-READ-084; no milestone promotion.",
+    "versions": "Same source and pinned dependency versions as E-UI-101, E-UI-102 and E-READ-084. No package publication, dependency update, executable replacement or runtime restart.",
+    "files": ["spec/src/milestones.md"],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager log -r '@ | @- | (@-::mrqotlum)' --summary; jj --no-pager diff --from @- --to mrqotlum --summary; jj workspace list",
+        "result": "pass",
+        "failures": 0,
+        "note": "Read-only preflight confirmed clean main, completed three-slice chain and clean bounded-reads/preview. Unrelated workspace heads preserved."
+      },
+      {
+        "command": "jj --no-pager log -r '@ | @- | ((wsqpzxvk | lqkxrkvp) & ::@)' (Design Core main)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both foundational fixes already landed in Design Core main; no duplicate integration or publication."
+      },
+      {
+        "command": "jj rebase -r pkkupzrv -o mrqotlum; jj --no-pager st; jj --no-pager diff --from mrqotlum --to @ --summary",
+        "result": "pass",
+        "failures": 0,
+        "note": "Moved only main empty change; clean, no conflicts and empty source-tree diff. Original completed commits retained."
+      },
+      {
+        "command": "python3 - <<'PY' (tracked-file comparison and SHA-256 evidence copy)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 2632 tracked files matched bounded-reads. Copied and verified 125 source evidence files under .local/main-ui-diff-landing/source-evidence; manifests tracked-source-identity.json and copied-evidence-sha256.json retain hashes. Temporary originals retained."
+      },
+      {
+        "command": "rg -n (inspection with scripts/check-spec-first*); rg -n (inspection with spec.config.*)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two zsh inspection globs had no matches. Corrected by reading scripts/check-progress.mjs and the actual spec-validator.config.mjs. No product or verification failure."
+      },
+      {
+        "command": "pnpm exec spec-validator validate --only governance,summary,verification,book",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main canonical.log: four validators, 23 chapters, 172 requirements."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main ownership.log: repository-owned UI boundary passed. Source production files are byte-identical to the already-qualified slice."
+      },
+      {
+        "command": "pnpm exec prettier spec/src/milestones.md; python3 - <<'PY' (new-entry formatting and historical-prefix preservation)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted only the added evidence from formatter output. All 527 prior evidence entries and task rows remain byte-identical apart from the required array separator."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main progress.log: 139 tasks; ledger bookkeeping passed without changing milestone status."
+      },
+      {
+        "command": "pnpm exec spec-validator first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main spec-first.log: no protected files changed in the new integration evidence change. Original protected implementation commits retain their owning canonical updates."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main format.log: canonical ledger formatting passed."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "E-READ-084 retains 17 reproduced pre-existing Clippy diagnostics in untouched modules; this landing neither fixes nor suppresses them.",
+      "Design Core publication and registry-resolved consumer acceptance, visual baselines, advanced-query optimization and full scale/RSS/RustFS/release qualification remain deferred. Root aggregate, Rust/UI product suites and browser reruns are out of scope for this evidence-only advance; existing product and cold browser evidence is retained."
+    ],
+    "next": "Commit main integration evidence with Jujutsu and advance codex/bounded-reads-landed. Keep bounded-reads and codex-preview open for follow-up work; no runtime churn or unrelated-workspace landing."
   }
 ]
 ```
