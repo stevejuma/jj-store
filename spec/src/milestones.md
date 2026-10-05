@@ -88319,6 +88319,267 @@ entries.
     ],
     "next": "Commit this verified remote capability slice in the retained temporary workspace, then continue high-priority app preparation recovery and applicable native mutation capabilities. Keep full qualification separate.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-078",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "xzlqzrvo",
+    "kind": "Exact browser recovery and controls for bounded native kind preparation",
+    "versions": "JJ/jj-lib0.45.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; pnpm10.32.1; Node26.9.0; macOS ARM64. Existing local Design Core source-validation dependency refreshed offline; registry-resolved release qualification remains deferred.",
+    "formats": "Consumes existing KindPreparationTask HTTP/OpenAPI/generated client contracts. No HTTP/RPC schema, persisted identity/object/manifest/WAL/receipt/cache-format change. Preparation UI state is session-only.",
+    "scope": "Browser preparation owner, native HTTP data source, Settings controls and direct graph/local consumers. Exact 17-test kind boundary followed by all seven direct controller unit files, web/catalog types, four cold production-component keyboard/interaction/accessibility stories and ownership/architecture/canonical checks. No Rust production change, builds or Rust tests for this UI slice. Complete scale/RSS/latency/fault/cold full-flow/RustFS/installed-runtime/release/Help qualification and visual baselines remain deferred. No milestone promotion.",
+    "requirements": [
+      "JST-API-001",
+      "JST-UI-001",
+      "JST-UI-005",
+      "JST-UI-019",
+      "JST-GOV-002"
+    ],
+    "files": [
+      "catalog/components/store-application/StoreKindPreparation.stories.svelte",
+      "catalog/fixtures/KindPreparationFixture.svelte",
+      "docs/implementation-plan.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/http-store-write-data-source.ts",
+      "web/src/lib/controller/index-preparation-labels.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-index-preparation.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-index.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/store-settings-types.ts",
+      "web/src/lib/ui/store-application/StoreRepositoryNotices.svelte",
+      "web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte",
+      "web/tests/vite/kind-preparation-http.test.ts",
+      "web/tests/vite/kind-preparation.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/vite/kind-preparation.test.ts#native kind preparation retains the original operation and restores only after complete progress",
+      "web/tests/vite/kind-preparation.test.ts#copy preparation uses only copy task routes and cannot overlap graph preparation",
+      "web/tests/vite/kind-preparation.test.ts#kind status observes bounded progress even with healthy settlement events",
+      "web/tests/vite/kind-preparation.test.ts#kind cancellation remains retryable when confirmation fails",
+      "web/tests/vite/kind-preparation.test.ts#one in-flight kind status read suppresses later requests and stale output after navigation",
+      "web/tests/vite/kind-preparation.test.ts#native kind actions do no work for local or unsupported sources",
+      "web/tests/vite/kind-preparation-http.test.ts#native kind transport retains the selected operation and bodyless exact cancellation",
+      "web/tests/vite/kind-preparation-http.test.ts#native kind task reset remains an explicit error without graph or inventory fallback",
+      "web/tests/vite/production-store-settings.test.ts#cancel transport failure remains unconfirmed and polls without replaying cancel",
+      "web/tests/vite/index-freshness.test.ts#healthy preparation ignores foreign tasks and performs no periodic status reads"
+    ],
+    "runs": [
+      {
+        "command": "Python targeted controller/UI edit script",
+        "result": "fail",
+        "failures": 1,
+        "note": "ValueError: substring not found; controller edits were written, UI edits were not. Replaced the failed UI edit with a targeted patch. Tooling failure, not a product regression."
+      },
+      {
+        "command": "jj restore -- pnpm-lock.yaml",
+        "result": "pass",
+        "failures": 0,
+        "note": "Restored the original tracked registry lockfile after refreshing only the ignored local dependency installation. No committed dependency or sibling-source change."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/kind-preparation.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.08s; 1 tests passed. .local/bounded-reads/performance/kind-browser-after-078.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "1.47s; 0 tests passed. .local/bounded-reads/performance/kind-browser-architecture-078.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.73s; 0 tests passed. .local/bounded-reads/performance/kind-browser-architecture-final-078.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/kind-preparation.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "5.39s; 0 tests passed. .local/bounded-reads/performance/kind-browser-before-078.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.87s; 0 tests passed. .local/bounded-reads/performance/kind-browser-boundaries-078.log"
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "15.64s; 0 tests passed. .local/bounded-reads/performance/kind-browser-catalog-check-078.log"
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "17.65s; 0 tests passed. .local/bounded-reads/performance/kind-browser-catalog-check-final-078.log"
+      },
+      {
+        "command": "pnpm install --force --frozen-lockfile",
+        "result": "fail",
+        "failures": 1,
+        "note": "1.18s; 0 tests passed. .local/bounded-reads/performance/kind-browser-dependency-refresh-078.log"
+      },
+      {
+        "command": "pnpm install --force --no-frozen-lockfile --offline",
+        "result": "pass",
+        "failures": 0,
+        "note": "20.59s; 0 tests passed. .local/bounded-reads/performance/kind-browser-dependency-refresh-offline-078.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-settings.test.ts web/tests/vite/index-freshness.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-automatic-refresh.test.ts web/tests/vite/kind-preparation.test.ts web/tests/vite/kind-preparation-http.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "7.94s; 72 tests passed. .local/bounded-reads/performance/kind-browser-direct-consumers-078.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/kind-preparation.test.ts web/tests/vite/kind-preparation-http.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.19s; 17 tests passed. .local/bounded-reads/performance/kind-browser-focused-078.log"
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/StoreKindPreparation.stories.svelte catalog/fixtures/KindPreparationFixture.svelte docs/implementation-plan.md pnpm-lock.yaml spec/src/api.md spec/src/architecture.md spec/src/spec-governance.md spec/src/ui.md web/src/lib/controller/contracts.ts web/src/lib/controller/http-store-data-source.ts web/src/lib/controller/http-store-write-data-source.ts web/src/lib/controller/index-preparation-labels.ts web/src/lib/controller/native-data-source.ts web/src/lib/controller/production-index-preparation.ts web/src/lib/controller/production-store-actions.ts web/src/lib/controller/production-store-index.ts web/src/lib/controller/production-store-state.svelte.ts web/src/lib/controller/production-store-view.ts web/src/lib/ui/store-application/StoreRepositoryNotices.svelte web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte web/tests/vite/kind-preparation-http.test.ts web/tests/vite/kind-preparation.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.32s; 0 tests passed. .local/bounded-reads/performance/kind-browser-format-078.log"
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/store-application/StoreKindPreparation.stories.svelte catalog/fixtures/KindPreparationFixture.svelte docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/milestones.md spec/src/spec-governance.md spec/src/ui.md web/src/lib/controller/contracts.ts web/src/lib/controller/http-store-data-source.ts web/src/lib/controller/http-store-write-data-source.ts web/src/lib/controller/index-preparation-labels.ts web/src/lib/controller/native-data-source.ts web/src/lib/controller/production-index-preparation.ts web/src/lib/controller/production-store-actions.ts web/src/lib/controller/production-store-index.ts web/src/lib/controller/production-store-state.svelte.ts web/src/lib/controller/production-store-view.ts web/src/lib/controller/store-settings-types.ts web/src/lib/ui/store-application/StoreRepositoryNotices.svelte web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte web/tests/vite/kind-preparation-http.test.ts web/tests/vite/kind-preparation.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.76s; 0 tests passed. .local/bounded-reads/performance/kind-browser-format-check-078.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.44s; 0 tests passed. .local/bounded-reads/performance/kind-browser-ledger-format-final-078.log"
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.58s; 0 tests passed. .local/bounded-reads/performance/kind-browser-ownership-078.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "4.26s; 0 tests passed. .local/bounded-reads/performance/kind-browser-progress-078.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.38s; 0 tests passed. .local/bounded-reads/performance/kind-browser-progress-corrected-078.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.54s; 0 tests passed. .local/bounded-reads/performance/kind-browser-progress-final-078.log"
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/controller/contracts.ts web/src/lib/controller/store-settings-types.ts catalog/fixtures/KindPreparationFixture.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.36s; 0 tests passed. .local/bounded-reads/performance/kind-browser-repair-format-078.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.82s; 0 tests passed. .local/bounded-reads/performance/kind-browser-spec-first-078.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.86s; 0 tests passed. .local/bounded-reads/performance/kind-browser-spec-first-final-078.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.61s; 0 tests passed. .local/bounded-reads/performance/kind-browser-spec-validation-078.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.88s; 0 tests passed. .local/bounded-reads/performance/kind-browser-spec-validation-final-078.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreKindPreparation.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "6.68s; 0 tests passed. .local/bounded-reads/performance/kind-browser-stories-078.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreKindPreparation.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "9.81s; 3 tests passed. .local/bounded-reads/performance/kind-browser-stories-corrected-078.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreKindPreparation.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "12.07s; 4 tests passed. .local/bounded-reads/performance/kind-browser-stories-final-078.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreKindPreparation.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "13.55s; 0 tests passed. .local/bounded-reads/performance/kind-browser-stories-refreshed-078.log"
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "12.58s; 0 tests passed. .local/bounded-reads/performance/kind-browser-web-check-078.log"
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "14.54s; 0 tests passed. .local/bounded-reads/performance/kind-browser-web-check-final-078.log"
+      }
+    ],
+    "notes": [
+      "Before state: the exact native kind controller regression fails because settings.prepareKindIndex is absent. It passes after delivery; both new files then pass17 tests. The complete direct preparation/settings/HTTP/local/automatic-refresh impact surface passes72 tests in seven files. Existing graph cancellation regression already proves explicit retry, no automatic cancel replay, continued bounded observation and timer release.",
+      "Native operation and copy preparation sends an exact full operation and kind over the already implemented task routes; status and bodyless cancellation encode the retained task ID and share its abort signal. Task/reset/transport errors never invoke broader inventory or graph work. Controls remain native-only and gated by the existing index-task capability and optional typed source methods.",
+      "One shared owner admits only one graph/kind task and one request at a time. Validate the original task ID, operation, repository, kind, version and snapshot, six finite safe nonnegative counters, monotonicity and ready completeness before restoring the view. Late responses after navigation are suppressed and pending HTTP observation is aborted. Server task ownership and expiry stay independent.",
+      "Kind tasks use bounded exponential status backoff even with healthy SSE because descriptor windows deliberately emit no events. Exact settlement hints wake observation. Graph preparation retains zero periodic reads with healthy SSE. Failed cancellation restores the observable running state and remains explicitly retryable; do not represent loading or retry as confirmed recovery.",
+      "Use repository-owned Settings command rows and released public Design Core Buttons. Keep progress and exact unconfirmed cancellation contextual; transient preparation failures use the shared notification service. Local profile hides native kind controls. Production remains independent of catalog fixtures. No new Community-derived source or provenance change.",
+      "The first cold story process cannot start: the installed local Design Core package snapshot lacks panel-toggle.tokens.css now referenced by its source styles. Frozen reinstall fails with the existing pnpmfileChecksum mismatch. Offline no-frozen reinstall refreshes the existing local validation dependency without downloads; restore tracked pnpm-lock.yaml byte-for-byte. Registry-only acceptance remains deferred. The next cold run exposes a wrong new fixture stylesheet path; correct it to existing StoreSettings.css. The next run has one failed and three passed stories because the new completion assertion observes before the500ms task-status read; use findByText for the same exact terminal text without changing production timing or assertions. Final fresh story process passes all four stories with blocking axe enabled. Preserve every startup/failing log.",
+      "Architecture check catches contracts.ts at304 counted lines against300. Move the Settings state contract into dedicated store-settings-types.ts and re-export its unchanged public name; no baseline relaxation. Final architecture check and both web/catalog checks pass with zero diagnostics. Initial and final results are recorded separately.",
+      "The first progress check rejects eight test file references without named fragments. Replace them with exact path#test-name references; story evidence stays in changed files and actual runs. Canonical requirements precede implementation. Preserve all518 historical evidence entries verbatim and JSON-identically; entry revision is the enclosing Jujutsu change. Focused correctness does not establish Linux-scale, RSS, latency, full browser or RustFS acceptance.",
+      "User requests pause after committing this slice to discuss implementation. Main remains clean on E-READ-076; E-READ-077 and078 landing, main combined verification and retained-workspace continuation are pending. Keep the temporary workspace open. No installed binary replacement, user fixture/reset/migration, Linux checkout change, publication/push or visual-baseline change."
+    ],
+    "remaining": [
+      "Land E-READ-077 and078 into main and verify the focused combined sources there when the user resumes. Retain this workspace.",
+      "Remote kind preparation delivery and native application mutation capability providers remain; service commands Access still uses complete inventory and needs selected kind/family forwarding. Indexed get_copy_records DAG range/path queries and larger copy-relation chunk/disk/resumable adjacency construction remain. Kind copies preparation currently warms IDs, not relation adjacency.",
+      "General filtered-log continuation preserving indirect/missing edges, uncached/ambiguous evolution, indexed code/local application search and oversized comparison/change grouping/extreme-filter candidates remain. Reassess their priority against the original large-repository browsing flows before resuming broad delivery.",
+      "Complete scale/RSS/latency/fault/cold-browser/RustFS/release qualification, Help/generated-reference/source-review refresh and inherited installation-reference drift stay deferred."
+    ],
+    "next": "Commit this verified UI slice, then pause at the user's explicit request. Discuss scope and implementation before landing or starting another slice.",
+    "result": "pending"
   }
 ]
 ```

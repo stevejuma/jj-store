@@ -1,5 +1,12 @@
 # Specification governance
 
+Native kind browser delivery consumes the already-generated task contracts and
+changes no HTTP or RPC schema. Run focused preparation/settings/data-source
+regressions, web and catalog type checks, exact cold production-component
+stories and the ownership/architecture/canonical checks. Graph/local direct
+consumers remain in the focused impact surface. Complete large-repository, cold
+full-flow, RustFS, release and visual-baseline qualification stays deferred.
+
 Selected copy-family RPC changes require strict protobuf request/response
 validation and exact real loopback factory regression evidence. Verify additive
 framing and byte-identical legacy Inventory fields without regenerating

@@ -20,6 +20,9 @@ import type {
   StoreMutationStatusResponse,
 } from "./store-mutation-types.js";
 
+export type IndexPreparationKind = "graph" | Model<"KindPreparationKind">;
+export type KindPreparationTask = Model<"KindPreparationTask">;
+
 export interface GraphQuery {
   operation: string;
   cursor?: string;
@@ -178,6 +181,19 @@ export interface StoreDataSource {
   previewMutation(request: StoreMutationRequest): Promise<StoreMutationPreview>;
   applyMutation(request: StoreMutationRequest): Promise<StoreMutationOutcome>;
   mutationStatus(requestId: string): Promise<StoreMutationStatusResponse>;
+  prepareKindIndex?(
+    operation: string,
+    kind: Model<"KindPreparationKind">,
+    signal?: AbortSignal,
+  ): Promise<KindPreparationTask>;
+  kindIndexTask?(
+    id: string,
+    signal?: AbortSignal,
+  ): Promise<KindPreparationTask>;
+  cancelKindIndexTask?(
+    id: string,
+    signal?: AbortSignal,
+  ): Promise<KindPreparationTask>;
   prepareIndex(
     operation: string,
     signal?: AbortSignal,

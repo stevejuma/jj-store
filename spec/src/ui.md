@@ -1,5 +1,16 @@
 # Storybook presentation catalog
 
+Repository index settings expose native operation- and copy-inventory
+preparation as separate existing-style bordered command rows. Keep the selected
+operation, progress counts, cancel state and completion beside these controls;
+all preparation buttons share the active-flow gate. A ready kind report must
+prove complete traversal before the controller retries the retained view.
+Transient failures use the shared session notification service, retaining exact
+recovery and unconfirmed cancellation beside the task. Graph labels and local
+repository behavior remain unchanged; native kind controls never appear for the
+local profile. Interaction, keyboard and accessibility evidence remains separate
+from deferred visual baselines and complete scale/cold qualification.
+
 All form-like surfaces, including repository creation and conversion dialogs,
 default to the existing Settings composition: bordered rounded field groups,
 labels and descriptions on the left, bordered controls on the right, and

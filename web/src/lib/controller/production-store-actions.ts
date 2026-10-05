@@ -107,6 +107,7 @@ export function createProductionStoreActions(options: {
     startStorage: options.settings.startStorage,
     retryStorage: options.settings.retryStorage,
     controlSync: options.settings.controlSync,
+    prepareKindIndex: options.settings.prepareKindIndex,
     prepareIndex: options.settings.prepareIndex,
     cancelIndex: options.settings.cancelIndex,
     async loadMore(collection) {

@@ -1,13 +1,19 @@
-import { snapshotOperation } from "./repository-profile.js";
+import { snapshotOperation, sameCodeSnapshot } from "./repository-profile.js";
 import { storeErrorMessage } from "./http-store-data-source.js";
-import type { StoreDataSource } from "./native-data-source.js";
+import type {
+  StoreDataSource,
+  IndexPreparationKind,
+  KindPreparationTask,
+} from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 
-type Task = Awaited<ReturnType<StoreDataSource["prepareIndex"]>>;
+type Task =
+  Awaited<ReturnType<StoreDataSource["prepareIndex"]>> | KindPreparationTask;
 type Active = {
   abort: AbortController;
   task: Task | null;
   cancel: boolean;
+  selection: KindPreparationTask["snapshot"] | null;
   wake: () => void;
 };
 
@@ -31,6 +37,9 @@ export function createIndexPreparation(options: {
     old?.wake();
     data.indexPreparation = "idle";
     data.indexTaskStatus = null;
+    data.indexPreparationKind = "graph";
+    data.indexProgress = null;
+    data.indexCancellationUnconfirmed = false;
     data.indexPreparationError = "";
   }
   async function cancelIndex() {
@@ -39,17 +48,28 @@ export function createIndexPreparation(options: {
     data.indexTaskStatus = "canceling";
     active.wake();
   }
-  async function prepareIndex() {
+  const prepareIndex = () => prepare("graph");
+  const prepareKindIndex = (kind: "operations" | "copies") => prepare(kind);
+  async function prepare(kind: IndexPreparationKind) {
     const operation =
       (data.neededIndex ? snapshotOperation(data.neededIndex) : null) ??
       options.operation();
     if (active || !operation || !data.capabilities?.index_tasks) return;
     const source = options.source(),
       ticket = options.version();
+    if (
+      kind !== "graph" &&
+      (source.profile !== "native" ||
+        !source.prepareKindIndex ||
+        !source.kindIndexTask ||
+        !source.cancelKindIndexTask)
+    )
+      return;
     const run: Active = {
       abort: new AbortController(),
       task: null,
       cancel: false,
+      selection: null,
       wake: () => {},
     };
     active = run;
@@ -75,7 +95,8 @@ export function createIndexPreparation(options: {
               change.repository === source.repository &&
               change.domain === "index_tasks" &&
               change.identity === run.task?.id,
-            healthy: () => freshness.healthy,
+            // Kind windows emit no SSE hint; bounded status observations carry progress.
+            healthy: () => kind === "graph" && freshness.healthy,
             listen: (listener) => freshness.listen(listener),
             signal: AbortSignal.any([run.abort.signal, waiting.signal]),
             delay,
@@ -94,12 +115,18 @@ export function createIndexPreparation(options: {
         run.wake = done;
       });
     };
+    data.indexPreparationKind = kind;
+    data.indexProgress = null;
+    data.indexCancellationUnconfirmed = false;
     data.indexPreparation = "loading";
     data.indexTaskStatus = null;
     data.indexPreparationError = "";
     try {
       if (navigation?.aborted || !current()) return;
-      run.task = await source.prepareIndex(operation, run.abort.signal);
+      run.task =
+        kind === "graph"
+          ? await source.prepareIndex(operation, run.abort.signal)
+          : await source.prepareKindIndex!(operation, kind, run.abort.signal);
       const taskId = run.task.id;
       let polls = 0;
       while (current()) {
@@ -112,6 +139,49 @@ export function createIndexPreparation(options: {
           throw new Error(
             "Graph preparation returned a different task or operation.",
           );
+        if (kind !== "graph") {
+          if (
+            !("kind" in run.task) ||
+            run.task.kind !== kind ||
+            run.task.version !== 1 ||
+            run.task.snapshot.repo_id !== source.repository ||
+            (run.selection &&
+              !sameCodeSnapshot(run.selection, run.task.snapshot))
+          )
+            throw new Error(
+              "Inventory preparation returned a different selection.",
+            );
+          run.selection ??= run.task.snapshot;
+          const progress = run.task.progress;
+          const counters = [
+            progress.matching_ids,
+            progress.stats.windows,
+            progress.stats.scanned,
+            progress.stats.descriptor_work,
+            progress.stats.record_reads,
+            progress.stats.record_bytes,
+          ];
+          if (
+            typeof progress.complete !== "boolean" ||
+            counters.some(
+              (count) => !Number.isSafeInteger(count) || count < 0,
+            ) ||
+            progress.matching_ids > progress.stats.scanned ||
+            progress.stats.scanned > progress.stats.descriptor_work ||
+            (run.task.status === "ready" && !progress.complete) ||
+            (data.indexProgress &&
+              (progress.matching_ids < data.indexProgress.matching_ids ||
+                Object.entries(progress.stats).some(
+                  ([key, count]) =>
+                    count <
+                    data.indexProgress!.stats[
+                      key as keyof typeof progress.stats
+                    ],
+                )))
+          )
+            throw new Error("Inventory preparation returned invalid progress.");
+          data.indexProgress = progress;
+        }
         data.indexTaskStatus =
           run.cancel && run.task.status === "running"
             ? "canceling"
@@ -122,28 +192,43 @@ export function createIndexPreparation(options: {
         if (!current()) return;
         if (run.cancel) {
           try {
-            run.task = await source.cancelIndexTask(taskId, run.abort.signal);
-            if (current()) data.indexPreparationError = "";
+            run.task =
+              kind === "graph"
+                ? await source.cancelIndexTask(taskId, run.abort.signal)
+                : await source.cancelKindIndexTask!(taskId, run.abort.signal);
+            if (current()) {
+              data.indexPreparationError = "";
+              data.indexCancellationUnconfirmed = false;
+            }
           } catch (cause) {
             if (!current()) return;
             data.indexPreparationError = `Cancellation is unconfirmed: ${storeErrorMessage(cause)}`;
+            data.indexTaskStatus = run.task.status;
+            data.indexCancellationUnconfirmed = true;
           } finally {
             run.cancel = false;
           }
           // A failed cancel remains observable and may be retried explicitly.
         } else {
           observed = options.freshness?.journal.revision ?? observed;
-          run.task = await source.indexTask(taskId, run.abort.signal);
+          run.task =
+            kind === "graph"
+              ? await source.indexTask(taskId, run.abort.signal)
+              : await source.kindIndexTask!(taskId, run.abort.signal);
           polls++;
         }
       }
       if (!current()) return;
+      data.indexCancellationUnconfirmed = false;
       if (run.task.status === "canceled") {
         data.indexPreparation = "idle";
         data.indexPreparationError = "";
       } else if (run.task.status !== "ready") {
         data.indexPreparation = "failed";
-        data.indexPreparationError = "Graph index preparation failed.";
+        data.indexPreparationError =
+          kind === "graph"
+            ? "Graph index preparation failed."
+            : "Inventory preparation failed.";
       } else {
         data.neededIndex = null;
         data.status.error = "";
@@ -156,6 +241,7 @@ export function createIndexPreparation(options: {
       }
     } catch (cause) {
       if (!current()) return;
+      data.indexCancellationUnconfirmed = false;
       data.indexPreparation = "failed";
       data.indexPreparationError = storeErrorMessage(cause);
     } finally {
@@ -166,5 +252,5 @@ export function createIndexPreparation(options: {
       }
     }
   }
-  return { clear, prepareIndex, cancelIndex };
+  return { clear, prepareIndex, prepareKindIndex, cancelIndex };
 }

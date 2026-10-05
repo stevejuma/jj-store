@@ -1,5 +1,13 @@
 # jj-store implementation plan
 
+E-READ-078 connects native operation/copy preparation tasks to the browser's
+shared task owner, typed HTTP data source and repository index settings. Retain
+original operations, bounded progress/status admission, explicit cancellation,
+exact terminal completeness and view restoration. Local/graph preparation stays
+within its existing policy. Focused controller/transport and cold component
+acceptance accompanies this slice; complete scale/cold full-flow/RustFS/release
+qualification remains deferred.
+
 E-READ-077 delivers selected copy families through the ordinary remote native
 CLI authority, owned service facade and additive bounded RPC. Retain checked
 root selection, independent construction/result/work/scratch/deadline ceilings,

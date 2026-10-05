@@ -1,5 +1,17 @@
 # Read APIs and browser
 
+The native browser can explicitly prepare operation or copy inventories at its
+selected operation through the existing kind-task routes. One preparation flow
+owns one task and at most one status/cancel request at a time. Validate task ID,
+repository, operation, kind, bounded progress and terminal completeness before
+restoring reads; never substitute current heads. Native kind progress may poll
+with bounded backoff even while SSE is healthy because descriptor windows emit
+no events; settlement hints wake the exact task. Graph preparation keeps its
+existing event-driven behavior. Navigation clears obsolete observation and
+aborts pending transport; server-owned task expiry remains independent. Cancel
+is acknowledged by the server, and unconfirmed cancellation remains retryable.
+Local repositories do not advertise these native inventory controls.
+
 Native kind preparation has separate process-local tasks at
 `POST /v1/repos/{repo}/index/kinds/tasks`, with GET `/{task}` and bodyless POST
 `/{task}/cancel`. Start accepts only an explicit operation and kind

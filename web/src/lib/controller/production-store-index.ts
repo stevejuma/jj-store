@@ -101,6 +101,7 @@ export function createProductionStoreSettings(input: {
     ...search,
     clear,
     refresh,
+    prepareKindIndex: index.prepareKindIndex,
     prepareIndex: index.prepareIndex,
     cancelIndex: index.cancelIndex,
   };

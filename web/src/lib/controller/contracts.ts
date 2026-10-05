@@ -7,12 +7,9 @@ export type {
   StoreSearchResult,
   StoreSearchState,
 } from "./store-search-types.js";
-import type {
-  RepositoryHead as Head,
-  RepositoryCapabilities,
-  RepositoryProfile,
-} from "./repository-profile.js";
-import type { WorkspaceLinkSettings } from "./workspace-link-types.js";
+import type { RepositoryProfile } from "./repository-profile.js";
+import type { StoreSettingsState } from "./store-settings-types.js";
+export type { StoreSettingsState } from "./store-settings-types.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import type { FileDiffLineContext } from "@lapismd/design-core/diff";
 import type { Model } from "../api/client.js";
@@ -98,20 +95,6 @@ export interface StoreRepositorySummary {
   readonly availability?: "ready" | "unavailable" | "identity_changed";
   readonly permission: Model<"EffectivePermission"> | null;
   readonly principal?: string;
-}
-export interface StoreSettingsState extends WorkspaceLinkSettings {
-  readonly searchSettings: import("./search-settings.js").SearchSettings;
-  readonly storageSettings: import("./storage-settings.js").StorageSettings;
-  readonly syncSettings: import("./sync-settings.js").SyncSettings;
-  readonly capabilities: RepositoryCapabilities | null;
-  readonly snapshot: Head | null;
-  readonly searchStatus: Model<"SearchStatus"> | null;
-  readonly searchStatusState: StoreLoadStatus;
-  readonly searchStatusError: string;
-  readonly indexPreparation: StoreLoadStatus;
-  readonly indexPreparationError: string;
-  readonly indexTaskStatus: import("../api/client.js").Task["status"] | null;
-  readonly indexOperation: string | null;
 }
 export interface StoreControllerState {
   readonly installationReady?: boolean;
@@ -204,6 +187,7 @@ export interface StoreController {
     setWorkspacePath(path: string): void;
     linkWorkspace(): Promise<void>;
     pickWorkspaceFolder(): Promise<void>;
+    prepareKindIndex?(kind: Model<"KindPreparationKind">): Promise<void>;
     prepareIndex(): Promise<void>;
     cancelIndex(): Promise<void>;
     setSearchDraft(

@@ -1,5 +1,13 @@
 # Architecture
 
+The browser's shared preparation owner composes graph and native kind tasks
+through their typed data sources. Only the native profile supports kind starts;
+local graph preparation remains unchanged. One active task retains original
+operation/kind and bounded reports, observes settlement hints and cancels stale
+HTTP reads. Kind status backoff supplies progress without event flooding or
+parallel requests. Presentation uses the existing Settings command rows and
+released Design Core Buttons, with no Community checkout dependency.
+
 Remote native copy-family requests compose the existing checked-root service
 provider through an owned transport facade and additive protobuf method. The RPC
 crate retains no upstream JJ dependency or credential-bearing cache. Server

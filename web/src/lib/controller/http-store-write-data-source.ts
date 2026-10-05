@@ -65,6 +65,36 @@ export class HttpStoreWriteDataSource {
     );
   }
 
+  prepareKindIndex(
+    operation: string,
+    kind: Model<"KindPreparationKind">,
+    signal?: AbortSignal,
+  ) {
+    return this.client.request<Model<"KindPreparationTask">>(
+      "index/kinds/tasks",
+      {},
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ operation: fullId(operation), kind }),
+        signal,
+      },
+    );
+  }
+  kindIndexTask(id: string, signal?: AbortSignal) {
+    return this.client.request<Model<"KindPreparationTask">>(
+      `index/kinds/tasks/${encodeURIComponent(id)}`,
+      {},
+      { signal },
+    );
+  }
+  cancelKindIndexTask(id: string, signal?: AbortSignal) {
+    return this.client.request<Model<"KindPreparationTask">>(
+      `index/kinds/tasks/${encodeURIComponent(id)}/cancel`,
+      {},
+      { method: "POST", signal },
+    );
+  }
   prepareIndex(operation: string, signal?: AbortSignal) {
     return this.client.request<Task>(
       "index/tasks",

@@ -263,6 +263,19 @@ export class HttpStoreDataSource
   mutationStatus(requestId: string) {
     return this.#writes.mutationStatus(requestId);
   }
+  prepareKindIndex(
+    operation: string,
+    kind: Model<"KindPreparationKind">,
+    signal?: AbortSignal,
+  ) {
+    return this.#writes.prepareKindIndex(operation, kind, signal);
+  }
+  kindIndexTask(id: string, signal?: AbortSignal) {
+    return this.#writes.kindIndexTask(id, signal);
+  }
+  cancelKindIndexTask(id: string, signal?: AbortSignal) {
+    return this.#writes.cancelKindIndexTask(id, signal);
+  }
   prepareIndex(operation: string, signal?: AbortSignal) {
     return this.#writes.prepareIndex(operation, signal);
   }

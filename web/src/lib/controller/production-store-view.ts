@@ -102,6 +102,9 @@ export function productionStoreView(
       searchStatusState: data.searchStatusState,
       searchStatusError: data.searchStatusError,
       indexPreparation: data.indexPreparation,
+      indexPreparationKind: data.indexPreparationKind,
+      indexProgress: data.indexProgress,
+      indexCancellationUnconfirmed: data.indexCancellationUnconfirmed,
       indexPreparationError: data.indexPreparationError,
       indexTaskStatus: data.indexTaskStatus,
       indexOperation:
