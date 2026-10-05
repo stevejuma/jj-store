@@ -125,4 +125,29 @@ describe("application notification lifetime", () => {
     expect(vi.getTimerCount()).toBe(0);
     other.dispose();
   });
+
+  it("preserves action presentation without exposing callbacks or replaying dismissed notices", () => {
+    const run = vi.fn();
+    const input = notice({
+      action: {
+        id: "resolve",
+        label: "Resolve conflicts",
+        variant: "secondary",
+        run,
+      },
+    });
+    service.publish(input);
+    const record = service.records[0]!;
+    expect(record.action).toEqual({
+      id: "resolve",
+      label: "Resolve conflicts",
+      variant: "secondary",
+    });
+    expect(JSON.stringify(record)).not.toContain("run");
+    service.dismiss(record.id);
+    service.publish(input);
+    expect(service.records).toHaveLength(0);
+    service.invoke(record.id, "resolve");
+    expect(run).not.toHaveBeenCalled();
+  });
 });

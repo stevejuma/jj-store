@@ -1,5 +1,9 @@
 # Read APIs and browser
 
+Stacks conflict presentation reuses existing native conflict data and resolution
+commands; conflict-count chips and session-only notification action variants
+introduce no HTTP/RPC request fields or persisted configuration changes.
+
 LocalTrusted native/local capabilities MAY advertise `automatic_code_index`;
 absence or false retains explicit preparation. Additive native and local
 `code-index/tasks` start/status/cancel routes use existing versioned index-task

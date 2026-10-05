@@ -277,3 +277,12 @@
   background: var(--primary);
   pointer-events: none;
 }
+
+.stack-workspace .community-chip.stack-workspace__conflict-count {
+  min-width: 1.125rem;
+  height: 1.125rem;
+  min-height: 1.125rem;
+  padding-inline: 0.125rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}

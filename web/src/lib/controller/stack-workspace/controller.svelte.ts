@@ -36,6 +36,7 @@ export class StackWorkspaceController {
   snapshot = $state<WorkspaceSnapshot | null>(null);
   loading = $state(false);
   settingsOpen = $state(false);
+  conflictOpen = $state(false);
   page = $state<"branches" | "workspace">("workspace");
   selectedStack = $state<string | null>(null);
   selectedBranch = $state<string | null>(null);
@@ -112,6 +113,14 @@ export class StackWorkspaceController {
   }
   can(kind: WorkspaceCommand["kind"]) {
     return !this.locked && this.eligibility(kind).allowed;
+  }
+  openConflicts() {
+    if (
+      !this.#closed &&
+      this.can("resolve_conflict") &&
+      this.snapshot?.conflicts.length
+    )
+      this.conflictOpen = true;
   }
   filesFor(source: string) {
     return workspaceControllerFiles(this, source);
@@ -277,6 +286,7 @@ export class StackWorkspaceController {
     else this.error = error instanceof Error ? error.message : String(error);
   }
   close() {
+    this.conflictOpen = false;
     this.physical.close();
     this.drag.clear();
     this.targetHistory.close();

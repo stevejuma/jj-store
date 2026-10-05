@@ -51,7 +51,6 @@
     history?: Snippet;
   } = $props();
   let formOpen = $state(false),
-    conflictOpen = $state(false),
     formCommand = $state<WorkspaceCommand | null>(null);
   const notifications = ownNotifications();
   const showCanvas = $derived(
@@ -130,6 +129,15 @@
     title="Local workspace needs attention"
     message={snapshot?.workspaceWarning ?? ""}
     lifetime="condition"
+    action={snapshot?.conflicts.length &&
+    controller.eligibility("resolve_conflict").allowed
+      ? {
+          id: "resolve-workspace-conflicts",
+          label: "Resolve conflicts",
+          variant: "secondary",
+          run: () => controller.openConflicts(),
+        }
+      : undefined}
   />
   <StoreStacksNavigation
     {controller}
@@ -156,12 +164,20 @@
     />
   {:else}
     {#if snapshot.conflicts.length}<CommunityProjectsColumnAlert
-        title="Workspace has unresolved conflicts"
-        description={snapshot.conflicts.map((item) => item.path).join(", ")}
-        ><Button
+        inline
+        description="Workspace has unresolved conflicts"
+      >
+        {#snippet details()}<CommunityChip
+            size="indicator"
+            variant="muted"
+            class="stack-workspace__conflict-count"
+            ariaLabel={`${snapshot.conflicts.length} ${snapshot.conflicts.length === 1 ? "conflict" : "conflicts"}`}
+            >{snapshot.conflicts.length}</CommunityChip
+          >{/snippet}
+        <Button
           size="sm"
           disabled={!controller.can("resolve_conflict")}
-          onclick={() => (conflictOpen = true)}>Resolve conflicts</Button
+          onclick={() => controller.openConflicts()}>Resolve conflicts</Button
         ></CommunityProjectsColumnAlert
       >{/if}
     {#if controller.validation && !controller.preview && !formOpen}<p
@@ -275,5 +291,8 @@
     bind:open={formOpen}
   />
   <StoreStackWorkspacePreview {controller} />
-  <StoreStackWorkspaceConflict {controller} bind:open={conflictOpen} />
+  <StoreStackWorkspaceConflict
+    {controller}
+    bind:open={controller.conflictOpen}
+  />
 </section>

@@ -187,7 +187,9 @@
   play={async ({ canvasElement }) => {
     const { diff } = await openApi(canvasElement);
     await expect(
-      await within(diff).findByText("Text diff unavailable"),
+      await within(diff).findByText(
+        /This file cannot be displayed as a text diff/,
+      ),
     ).toBeVisible();
     expect(within(diff).getByText(/binary/)).toBeVisible();
     expect(

@@ -293,12 +293,39 @@ actions. Its far-right details rail shows the active workspace name/ID, target
 branch, applied-stack count and local folder, then the selected stack/branch,
 commit or file. Focused history shows selected repository-wide commit/operation
 metadata instead of stale canvas selections. Read-only rows follow existing
-Settings presentation; copy is available only for IDs/hashes. Back uses a ghost
-public Button with circular hover treatment, an icon and tooltip and restores
-the exact entry repository route and selections; a direct or reloaded focused
-link without that session route falls back to Overview. Frontend-only
-`context=stacks` on Log/Op Log and `stack_tab=branches|workspace` on Stacks
-round-trip through reload and browser history, rejecting duplicate or
+Settings presentation; copy is available only for IDs/hashes. Workspace ID copy
+hover and keyboard focus use the rounded, seven-percent foreground tint of left
+sidebar buttons. A separate Actions section reuses the sidebar's icon buttons
+for workspace settings, branch browsing, refresh, and explicit saved-membership
+reconciliation when needed. Resolve conflicts opens the same capability-gated
+workspace editor from this rail and the local-workspace notification across all
+four focused tabs, retaining the selected view and diffs. Unavailable or pending
+commands cannot execute through either entry point. Resolved conflicts clear
+their condition notice and disable resolution actions. The notification's
+Resolve conflicts action uses the public secondary variant with a themed
+background at rest, retaining a visibly distinct hover surface and visible
+keyboard focus.
+
+Unstaged uses the shared virtual FileListing in all three modes. Current
+conflict paths and unresolved target-side native terms show an accessible
+warning indicator and the same background as the workspace warning banner;
+resolved target values are not marked merely because their before-side was
+conflicted. Selected and hovered conflict rows retain this warning surface with
+a visible selection marker. Unavailable Stacks diffs show one description
+without a duplicate title, spanning both column edges directly below the header;
+the existing hunk scrollbar padding remains intact. The top workspace conflict
+banner has one row with its message, a labelled conflict-count chip and a
+trailing Resolve conflicts button, without listing paths or adding a separate
+title row; its warning icon is vertically centered with the text, vertical
+padding is 4px and the row has an 8px bottom margin. The count uses the smaller
+indicator font on a compact round secondary surface distinct from the warning
+background.
+
+Back uses a ghost public Button with circular hover treatment, an icon and
+tooltip and restores the exact entry repository route and selections; a direct
+or reloaded focused link without that session route falls back to Overview.
+Frontend-only `context=stacks` on Log/Op Log and `stack_tab=branches|workspace`
+on Stacks round-trip through reload and browser history, rejecting duplicate or
 incompatible fields. Legacy Stacks links default to Workspace. The canvas and
 its controller remain mounted through focused history navigation to preserve
 forms, drafts, columns, diffs and pending commands; repository, binding and

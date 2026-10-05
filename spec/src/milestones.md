@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053                                                                                                                                                                                                                                                           |
-| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053                                                                                                                                                                                                                             |
+| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054                                                                                                                                                                                                                                                 |
+| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054                                                                                                                                                                                                                   |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -107100,6 +107100,426 @@ entries.
   "next": "Continue Stacks work from the rebased workspace. Investigate parallel local-browser readiness/admission behavior separately before claiming full concurrency acceptance; broader provider/release and visual qualification remain unchanged.",
   "summary": "Rebased62 Stacks changes onto main yolnqxty / ba084df3, preserving591 historical evidence objects and the existing local fixture/services. Main is unchanged; other workspace change IDs are retained while bounded-reads and codex-preview independently continue work. Focused units,36 cold Storybook interaction/accessibility scenarios,22 native Stacks tests, complete18-test cache acceptance,8 recovery-index tests,295 actual contract responses and7 contract regressions pass. Type, ownership, architecture, package boundaries, formatting, documentation and specification gates pass. Original parallel service failures remain explicit; this is not release or root aggregate qualification.",
   "verification_scope": "Cross-layer rebase conflicts affect the native query/cache, local HTTP construction and their direct UI consumers. Run full local_stacks/local_browser consumer binaries, affected native graph_cache and recovery-index groups, native resident unit, complete registered contract capture and exact browser families. Root aggregate, unrelated RustFS/release lanes, screenshot comparisons and baseline updates are out of scope."
+},
+{
+  "id": "E-M21-054",
+  "tasks": [
+    "M21",
+    "M21.1",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "kind": "ui",
+  "change": "Enclosing Jujutsu change: Add Stacks conflict indicators and workspace rail actions",
+  "scope": "Refine conflicted Unstaged rows, workspace rail actions and Workspace ID hover; make unavailable diff alerts full-width and the top conflict banner a single row; provide a guarded shared editor entry from the rail and attention toast with an optional public secondary action surface. Final refinements use a smaller round count chip on a secondary background, 4px vertical banner padding/8px bottom margin, a centered warning icon and distinct native-pointer toast hover feedback.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspace.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte",
+    "catalog/fixtures/StackWorkspaceConflictApplicationFixture.svelte",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/browsing.md",
+    "docs/ui-provenance.json",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/src/lib/controller/stack-workspace/controller.svelte.ts",
+    "web/src/lib/notifications/notification-service.svelte.ts",
+    "web/src/lib/ui/community-projects/CommunityProjectsColumnAlert.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDetails.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDetailsActions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDiff.svelte",
+    "web/src/lib/ui/store-stack-workspace/stack-workspace.css",
+    "web/tests/vite/notification-service.test.ts",
+    "web/tests/vite/stack-workspace.test.ts"
+  ],
+  "versions": "JJ 0.45.1; pnpm 10.32.1; Svelte 5.57.1; existing local Design Core validation refreshed for enclosing source change ylqouwvo / DC-WS-037; registry package manifests unchanged.",
+  "formats": "No persisted TOML, layout, manifest, WAL, HTTP or RPC format changes. Notification action.variant is session-only presentation metadata; execution callbacks remain local.",
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte -t \"Unstaged conflict\"",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Initial filter matched no tests: 4 skipped; this is not regression acceptance. before.log"
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+      "result": "fail",
+      "failures": 4,
+      "detail": "Before implementation: missing conflict indicators, rail actions and matching Workspace ID hover; before-full.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "detail": "First implementation: 3 passed/1 failed due to two accessible Close buttons in the editor; fixed the story selector without changing product behavior. after.log"
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "fail",
+      "failures": 4,
+      "detail": "Four unsupported exact ByRoleOptions in the new story were removed; catalog-check.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Corrected harness: 4 passed; after-harness.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte -t RailActions",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Toast Resolve conflicts resting background was transparent; before-toast-background.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Public secondary action integration: 4 passed; after-final.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte -t UnstagedConflict",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Top banner retained a separate title row; before-banner-row.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspace.stories.svelte -t \"UnstagedConflict|ConflictPreview|RailActions\"",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Single-row banner and retained resolution flows: 3 passed, 15 unrelated stories skipped; banner-after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/stack-workspace.test.ts web/tests/vite/production-stacks-lifecycle.test.ts web/tests/vite/notification-service.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "detail": "55 passed, including guarded shared editor entry, closed-owner behavior and serialized action styling/dismissal policy; units.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspace.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte catalog/components/store-application/StoreNotifications.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "36 passed across five directly affected story families; direct-consumers.log. The banner conflict flow was rerun separately after the final inline change."
+    },
+    {
+      "command": "pnpm install --offline --force --ignore-scripts",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Refreshed the existing local Design Core validation dependency; restored pnpm-lock.yaml from the parent to retain portable registry ranges. No package publication or manifest change."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "0 errors/0 warnings before and after final banner changes; web-check.log, web-final.log, web-banner.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Corrected-source check: 0 errors/0 warnings, catalog boundaries pass; catalog-final.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Pass: 1 validator, 23 chapters, 173 requirements; ownership.log, ownership-final.log."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Pass: 1127 modules; architecture.log, architecture-final.log."
+    },
+    {
+      "command": "pnpm exec prettier --write <changed UI, story, unit, specification and manual files>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "All focused formatting passes; format.log, format-final.log, format-banner.log."
+    },
+    {
+      "command": "pnpm docs:review application \"Reviewed the single-row workspace conflict banner, target-side file indicators, full-width unavailable diffs, guarded shared editor from workspace rail/toast and secondary toast action surface; native JJ operations and notification lifetime remain unchanged.\"",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Source fingerprint refreshed after the final production edits; docs-review-final.log."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Pass: 139 self-contained files, 14820623 bytes; links and anchors valid, nine diagrams rendered in light/dark. docs-check.log, docs-check-final.log."
+    },
+    {
+      "command": "Cold local Vite restart at 7476 and Storybook restart at 6057; CUA live Stacks verification",
+      "result": "pass",
+      "failures": 0,
+      "detail": "The stale existing tab failed CDP attachment; a fresh hidden tab loaded. An initial stale CSS-cache request failed, then cold cache refresh/reload succeeded. Toast action background rgb(240, 240, 240), variant secondary; banner title absent and message/action center delta 0 CSS px. Toast opened the native conflict editor and closed without applying any command. Existing fixture/backend retained; ignored live screenshot saved."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte -t UnstagedConflict",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Before compact count banner: missing labelled chip; before-banner-count.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final count/geometry/rest/hover/focus and recovery flows: 4 passed in count-after.log, compact-final.log and hover-final.log."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final compact banner: 0 errors/0 warnings; web-count.log, web-compact.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final pointer/geometry story: 0 errors/0 warnings, 241 modules; catalog-count.log, catalog-hover.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final scoped composition passes; ownership-count.log."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final composition passes, 1127 modules; architecture-count.log."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 2,
+      "detail": "Initial evidence gate required api.md and spec-governance.md for controller/provenance edits; spec-first.log. Added explicit unchanged transport and UI-only qualification requirements."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Corrected coverage: 17 protected files/5 canonical chapters; spec-first-fixed.log."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "detail": "5 validators/23 chapters/173 requirements; spec-validate.log."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "detail": "142 tasks; progress.log."
+    },
+    {
+      "command": "pnpm exec prettier --check <22 changed files>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Focused format-check.log passes; later focused --write passes in format-count.log, format-chip.log, format-compact.log, format-hover.log."
+    },
+    {
+      "command": "pnpm docs:review application \"Reviewed the compact round conflict-count chip, 4px banner padding/8px gap, centered warning icon, guarded shared rail/toast editor and visible resting/hover/focus action states; native JJ commands, transport fields and notification lifetime remain unchanged.\"",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final source fingerprint; docs-review-hover.log."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "139 files/14820551 bytes, valid links/anchors and nine light/dark diagrams; docs-check-hover.log."
+    },
+    {
+      "command": "CUA cold live Stacks verification at http://127.0.0.1:7476/",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Toast opens/closes editor without applying. Rest rgb(240,240,240); native hover color(srgb .861036 .863 .864964). Banner height41px, vertical padding4px, margin8px; chip18x18px/12px font/secondary background; icon/text center delta0px. Ignored rest/hover screenshots; existing backend/fixture retained."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Final inline stylesheet pushed StoreStackWorkspace.svelte to 307 counted lines; moved the count-chip styling to its owned stack-workspace.css without changing specificity. architecture-owner-final.log records the subsequent 1127-module pass; original failure in architecture-last.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "After final stylesheet ownership adjustment: 4 passed, retaining native pointer hover/geometry/focus/recovery assertions; styles-final.log."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final scoped stylesheet state: 0 errors/0 warnings; web-owner-final.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final story/source state: 0 errors/0 warnings, 241 modules; catalog-owner-final.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final owner verification: 1 validator/23 chapters/173 requirements; ownership-owner-final.log."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final owner verification: 1127 modules; architecture-owner-final.log."
+    },
+    {
+      "command": "pnpm docs:review application \"Reviewed the final scoped conflict-count stylesheet, compact one-row banner, target-side file indicators, full-width unavailable diffs and guarded shared editor; toast actions retain distinct resting, hover and focus surfaces with unchanged native commands and notification lifetime.\"",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Application source fingerprint refreshed after the stylesheet move; docs-review-owner-final.log."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final closure: 139 files/14820551 bytes, valid links/anchors and 9 light/dark diagrams; docs-owner-final.log."
+    },
+    {
+      "command": "Design Core: pnpm test:workspace:pointer",
+      "result": "fail",
+      "failures": 1,
+      "detail": "New native target originally failed the focus assertion while the story interaction was still finishing; 14 existing tests passed. Added story-finished synchronization and an explicit forward Tab focus assertion without relaxing the return-focus/outline/activation checks. workspace-native-final.log."
+    },
+    {
+      "command": "Design Core: pnpm test:workspace:pointer notification-toasts.spec.ts",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Cold final source target: 1 passed, distinct resting/native-hover/focus surfaces and Enter callback count; native-target-final.log. A diagnostic run also passed; focus-debug.log."
+    },
+    {
+      "command": "Design Core: pnpm test:storybook src/shared/workspace/plugins/notifications/ControlledNotifications.stories.svelte src/shared/workspace/plugins/notifications/Notifications.stories.svelte src/shared/forms/filter-command-picker/FilterCommandPicker.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final 13 passed; stories-final.log. Shared source checks had exposed a custom-picker teardown/axe timing failure; its story now requires the popup to close before settled accessibility acceptance, with unchanged product code."
+    },
+    {
+      "command": "pnpm exec prettier --check <changed files>",
+      "result": "fail",
+      "failures": 1,
+      "detail": "docs/maintenance/coverage.json formatting drift after source review; corrected with focused --write. format-last.log and format-coverage.log."
+    },
+    {
+      "command": "Design Core: pnpm pack --pack-destination .local/toast-action-style",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Source-validation tarball includes the public variant type and notification source/CSS; pack-final.log. No package publication, portable consumer manifests unchanged."
+    },
+    {
+      "command": "Design Core: pnpm checks",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Initial source nonvisual gate rejected 5 acceptance bullets; corrected to four. checks.log."
+    },
+    {
+      "command": "Design Core: pnpm checks",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Second specification gate rejected a multi-sentence bullet; corrected to one atomic statement. checks-final.log."
+    },
+    {
+      "command": "Design Core: pnpm checks",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Types/quality/spec/static and 722 unit/3 tooling/667 story/14 existing Workspace browser tests passed; Shell first mobile-pan cold story readiness timed out before gesture assertions (10 passed/1 failed). Original trace retained; checks-complete.log and shell-timeout/."
+    },
+    {
+      "command": "Design Core: pnpm test:shell:pointer",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Exact full cold Shell rerun again timed out on story readiness before gestures; 10 passed/1 failed. shell-cold-rerun.log. No assertion or timeout changes."
+    },
+    {
+      "command": "Design Core: CI=1 pnpm checks",
+      "result": "fail",
+      "failures": 2,
+      "detail": "Post-hover run passed types/unit/static/quality/spec but failed 2/667 stories: native hover API in the public story timed out and CustomValue picker axe inspected an empty closing listbox. Moved real hover to native Playwright coverage and required popup teardown in the picker story. checks-hover-final.log."
+    },
+    {
+      "command": "pnpm exec prettier --check <23 changed files>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final source/coverage/ledger format checks pass; format-owner-final.log."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final stylesheet ownership coverage: 18 protected files/5 canonical chapters; spec-first-owner-final.log."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final 5 validators/23 chapters/173 requirements; spec-owner-final.log."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final bookkeeping pass, 142 tasks; progress-owner-final.log."
+    },
+    {
+      "command": "Design Core: CI=1 pnpm checks",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final required nonvisual aggregate: format, four type/consumer checks, governance/spec, 722 units + 3 tooling, static catalog + metadata audit (0 contract errors), 667 Storybook/axe tests, 15 Workspace/11 Shell/3 AI browser tests, 48 Shadcn browser tests and 1 existing Chromium skip for WebKit-only overlay behavior. No final failures or retries. Original cold Shell readiness target passes with unchanged assertions/timeouts. checks-verified-final.log."
+    },
+    {
+      "command": "Design Core: pnpm spec:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Evidence-only final update: validate/mdbook/spec-first all pass (3 lanes); spec-evidence-complete.log."
+    },
+    {
+      "command": "Design Core: pnpm exec prettier --check <12 changed files>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final owning source/evidence format passes; format-evidence-check.log."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final completed evidence: 5 validators/23 chapters/173 requirements; spec-evidence-complete.log."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final completed evidence: 142 tasks; progress-evidence-complete.log."
+    },
+    {
+      "command": "pnpm exec prettier --check <23 changed files>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final completed source/ledger formatting passes; format-evidence-check.log."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Registry-resolved foundational package acceptance, screenshot comparisons/baselines and broader local-browser pressure/release qualification remain separately deferred; this UI-only slice runs no Rust or contracts lane."
+  ],
+  "next": "Keep the local preview services available. Qualify a published Design Core release and registry-resolved consumer separately; screenshot comparisons/baselines and broader release/pressure gates remain deferred.",
+  "summary": "Conflict markers use unresolved target-side terms and retain the warning surface during selection/hover. The rail and toast share a capability/lock/owner-guarded editor, and resolved conditions withdraw their notice. The optional secondary toast action is fixed upstream, leaving existing ghost actions unchanged. Banner and unavailable diff explanations no longer spend an extra title row. Final source nonvisual and consumer focused checks pass; the initial readiness, harness, specification and formatting failures are resolved and retained in the evidence.",
+  "verification_scope": "UI-only: exact conflict regressions, direct application/lazy/diff/notification consumers and focused controller/lifecycle/notification units, web/catalog types, ownership, architecture, documentation and spec/progress checks. Design Core owns the generic optional presentation contract and runs its required nonvisual aggregate. Root aggregates, Rust builds/tests, contract generation, screenshot comparisons, baselines and package publication are out of scope."
 }
 ]
 ```

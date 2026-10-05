@@ -238,7 +238,7 @@
     );
     await applyPreview(canvasElement);
     await expect(
-      canvas.queryByText("Workspace has unresolved conflicts"),
+      canvas.queryByText(/^Workspace has unresolved conflicts/),
     ).not.toBeInTheDocument();
   }}
 />

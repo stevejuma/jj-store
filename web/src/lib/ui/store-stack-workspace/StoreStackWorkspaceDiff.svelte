@@ -165,6 +165,11 @@
       /></ColumnCanvas.HeaderActions
     ></ColumnCanvas.Header
   >
+  {#if file?.content?.status === "unavailable"}
+    <CommunityProjectsColumnAlert
+      description={`This file cannot be displayed as a text diff (${file.content.reason.replaceAll("_", " ")}).`}
+    />
+  {/if}
   <ColumnCanvas.Body scrollStrategy="styled">
     <StoreNotice
       noticeKey={`stack-files:${diff.source}`}
@@ -202,17 +207,12 @@
         label={`Loading diff for ${diff.path}`}
         count={3}
       />
-    {:else if file?.content?.status === "unavailable"}
-      <CommunityProjectsColumnAlert
-        title="Text diff unavailable"
-        description={`This file cannot be displayed as a text diff (${file.content.reason.replaceAll("_", " ")}).`}
-      />
-    {:else if file && !file.hunks.length && !patchRead.error}
+    {:else if file && file.content?.status !== "unavailable" && !file.hunks.length && !patchRead.error}
       <CommunityProjectsColumnAlert
         title="No text changes"
         description="There are no changed text hunks for this file."
       />
-    {:else if file}
+    {:else if file && file.content?.status !== "unavailable"}
       <section
         class="stack-workspace__hunks"
         aria-label={`Diff hunks from ${diff.origin} · ${file.path}`}

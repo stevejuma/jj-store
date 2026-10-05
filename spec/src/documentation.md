@@ -1,5 +1,9 @@
 # Application documentation
 
+The browsing manual describes conflict indicators, workspace rail actions and
+the shared editor entry from the attention toast, including its resting button
+surface, without changing local JJ commands or notification lifetime policy.
+
 Main/Stacks workspace integration regenerates the combined API references and
 reviews the source ownership changes without altering historical qualification.
 Topology-only recovery remains separate from text-filter preparation. The manual

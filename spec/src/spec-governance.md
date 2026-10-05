@@ -1,5 +1,11 @@
 # Specification governance
 
+Stacks conflict UI refinements retain owned Community compositions and the
+public Design Core notification presenter, with focused geometry, interaction,
+controller and notification-lifetime evidence; local dependency validation does
+not replace portable manifests or registry acceptance, and visual baselines and
+Rust/contract lanes remain outside this UI-only slice.
+
 Managed cache/event/core-read delivery changes shared Rust admission and direct
 HTTP/UI consumers. Its relevant wider lane is the cache tests, complete local
 browser and native lifecycle binaries, registered contract response captures,

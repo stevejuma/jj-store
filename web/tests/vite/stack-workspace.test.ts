@@ -38,6 +38,31 @@ async function run(
   expect(controller.error || controller.validation).toBe("");
 }
 describe("stack workspace UI controller and fixture", () => {
+  it("guards the shared conflict editor against stale, locked and closed entry points", async () => {
+    const { controller } = await setup();
+    const snapshot = controller.snapshot!;
+    controller.openConflicts();
+    expect(controller.conflictOpen).toBe(false);
+    snapshot.conflicts = [
+      { path: "README.md", left: "left", base: "base", right: "right" },
+    ];
+    controller.loading = true;
+    controller.openConflicts();
+    expect(controller.conflictOpen).toBe(false);
+    controller.loading = false;
+    snapshot.capabilities = snapshot.capabilities.filter(
+      (capability) => capability !== "resolve_conflict",
+    );
+    controller.openConflicts();
+    expect(controller.conflictOpen).toBe(false);
+    snapshot.capabilities.push("resolve_conflict");
+    controller.openConflicts();
+    expect(controller.conflictOpen).toBe(true);
+    controller.close();
+    expect(controller.conflictOpen).toBe(false);
+    controller.openConflicts();
+    expect(controller.conflictOpen).toBe(false);
+  });
   it("sets native drag cursor feedback and clears ownership on teardown", () => {
     const drag = new WorkspaceDragSession();
     const snapshot = workspaceFixture();

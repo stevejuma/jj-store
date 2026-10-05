@@ -2032,6 +2032,10 @@
     {
       "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSpacer.svelte",
       "reason": "Application-owned composition of public Design Core Empty, Button and the existing workspace drop guide inside the public trailingSpacer snippet; not copied from an external checkout."
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDetailsActions.svelte",
+      "reason": "Application-owned composition of existing Design Core Buttons and the owned navigation styling for capability-gated workspace rail actions; reuses the current Stacks controller and Merge Editor, with no external source dependency."
     }
   ],
   "desktopAppearance": {

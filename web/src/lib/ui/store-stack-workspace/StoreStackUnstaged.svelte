@@ -8,10 +8,12 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import {
     FileListing,
+    FileChangeStats,
     FileListingViewModeToggle,
     type FileListingViewMode,
   } from "@lapismd/design-core/diff";
   import GitBranchPlus from "@lucide/svelte/icons/git-branch-plus";
+  import TriangleAlert from "@lucide/svelte/icons/triangle-alert";
   import { activeWorkspace } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import { workspaceFileDrag } from "../../controller/stack-workspace/file-drag.js";
@@ -36,11 +38,26 @@
     });
     return () => controller.details.cancelFiles("unassigned");
   });
-  const files = $derived(
-    (controller.details.lazy
+  const changes = $derived(
+    controller.details.lazy
       ? controller.filesFor("unassigned")
-      : activeWorkspace(snapshot).unassigned
-    ).map((file) => ({
+      : activeWorkspace(snapshot).unassigned,
+  );
+  const conflictedPaths = $derived(
+    new Set([
+      ...snapshot.conflicts.map((conflict) => conflict.path),
+      ...changes
+        .filter((file) =>
+          file.change
+            ? file.change.after.length > 1
+            : file.content?.status === "unavailable" &&
+              file.content.reason === "conflict",
+        )
+        .map((file) => file.path),
+    ]),
+  );
+  const files = $derived(
+    changes.map((file) => ({
       path: file.path,
       additions: file.hunks.length,
       deletions: file.hunks.length,
@@ -130,7 +147,48 @@
         )?.path ?? null}
         onSelectPath={(path) => controller.selectFile("unassigned", path)}
         {...workspaceFileDrag(controller, () => "unassigned")}
-      />
+      >
+        {#snippet fileMeta({ file, path })}
+          {#if conflictedPaths.has(path)}
+            <span
+              data-workspace-conflict
+              role="img"
+              aria-label="Conflicted file"
+              title="Unresolved conflict"
+            >
+              <TriangleAlert size={14} aria-hidden="true" />
+            </span>
+          {:else}
+            <FileChangeStats
+              additions={file.additions}
+              deletions={file.deletions}
+            />
+          {/if}
+        {/snippet}
+      </FileListing>
     {/if}
   </ColumnCanvas.Body>
 </ColumnCanvas.Column>
+
+<style>
+  :global(
+    .stack-workspace__unstaged-body
+      [data-ui-part="file-row"]:has([data-workspace-conflict])
+  ) {
+    background: var(--jj-store-warning-background);
+    color: var(--foreground);
+  }
+  :global(
+    .stack-workspace__unstaged-body
+      [data-ui-part="file-row"][aria-current="true"]:has(
+        [data-workspace-conflict]
+      )
+  ) {
+    box-shadow: inset 2px 0 var(--jj-store-warning-foreground);
+  }
+  [data-workspace-conflict] {
+    display: inline-flex;
+    margin-inline-start: auto;
+    color: var(--jj-store-warning-foreground);
+  }
+</style>

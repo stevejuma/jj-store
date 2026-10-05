@@ -7,6 +7,7 @@
     workspaceSourceStack,
   } from "../../controller/stack-workspace/files.js";
   import StoreReadOnlyRow from "../store-settings/StoreReadOnlyRow.svelte";
+  import StoreStackWorkspaceDetailsActions from "./StoreStackWorkspaceDetailsActions.svelte";
   let {
     controller,
     workspace,
@@ -164,6 +165,7 @@
     {/if}
   </dl>
 </section>
+<StoreStackWorkspaceDetailsActions {controller} {workspace} />
 
 <style>
   .stack-workspace-details {
@@ -179,5 +181,22 @@
   }
   dl {
     margin: 0;
+  }
+  .stack-workspace-details
+    :global(.store-readonly-row:has(.store-readonly-row__copy)) {
+    border-radius: 0.75rem;
+  }
+  .stack-workspace-details
+    :global(
+      .store-readonly-row:has(
+        .store-readonly-row__copy:is(:hover, :focus-visible)
+      )
+    ) {
+    background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  }
+  .stack-workspace-details
+    :global(.store-readonly-row__copy:is(:hover, :focus-visible)) {
+    background: transparent;
+    color: var(--foreground);
   }
 </style>
