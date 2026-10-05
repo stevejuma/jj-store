@@ -1,5 +1,11 @@
 #[path = "stack_source_recovery/adversarial.rs"]
 mod adversarial;
+#[path = "stack_source_recovery/extras.rs"]
+mod extras;
+#[path = "stack_source_recovery/extras_lifecycle.rs"]
+mod extras_lifecycle;
+#[path = "stack_source_recovery/extras_limits.rs"]
+mod extras_limits;
 #[path = "stack_foreground/fixture.rs"]
 mod fixture;
 #[path = "stack_source_recovery/lifecycle.rs"]

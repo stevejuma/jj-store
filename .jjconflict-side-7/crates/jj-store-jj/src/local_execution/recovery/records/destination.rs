@@ -62,7 +62,10 @@ impl Destination {
         self.check()
     }
 }
-fn optional(parent: &File, name: &str) -> Result<Option<File>> {
+pub(in crate::local_execution::recovery) fn optional(
+    parent: &File,
+    name: &str,
+) -> Result<Option<File>> {
     match fs::statat(parent, name, AtFlags::SYMLINK_NOFOLLOW) {
         Err(rustix::io::Errno::NOENT) => Ok(None),
         Ok(info) if FileType::from_raw_mode(info.st_mode) == FileType::Directory => {
@@ -71,12 +74,12 @@ fn optional(parent: &File, name: &str) -> Result<Option<File>> {
         _ => Err(Error::Invalid),
     }
 }
-fn create(parent: &File, name: &str) -> Result<File> {
+pub(in crate::local_execution::recovery) fn create(parent: &File, name: &str) -> Result<File> {
     fs::mkdirat(parent, name, Mode::RWXU).map_err(|_| Error::EpochChanged)?;
     parent.sync_all().map_err(|_| Error::Unavailable)?;
     physical::child(parent, name)
 }
-fn same(a: &File, b: &File) -> Result<()> {
+pub(in crate::local_execution::recovery) fn same(a: &File, b: &File) -> Result<()> {
     let a = fs::fstat(a).map_err(|_| Error::Unavailable)?;
     let b = fs::fstat(b).map_err(|_| Error::Unavailable)?;
     if (a.st_dev, a.st_ino) != (b.st_dev, b.st_ino) {

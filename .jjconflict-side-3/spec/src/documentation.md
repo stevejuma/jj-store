@@ -187,3 +187,9 @@ code anchors and pending recovery are qualified separately from provider
 merge/WIP creation, actual publication and guarded physical checkout.
 Metadata-only fixtures and reader acceptance must never imply installed writable
 capabilities.
+
+The explicit retained-extra recovery manual MUST distinguish synced immutable
+segment/head restoration from operation publication, derived-index recovery and
+checkout. Document bounded complete preflight, original lock coordination,
+partial selection and exact saved-request retry without suggesting implicit Git
+import or a writable application capability.

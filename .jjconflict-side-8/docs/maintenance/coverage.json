@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed immutable reword policy from trusted configured heads, requiring visible membership and complete bounded parent ancestry before candidate writes. Exact source and cancellation behavior remain intact. Registered command context uses actual device registration and physical observation; source recovery, publication and checkout still require remaining gates.",
-      "fingerprint": "bc4a5a21a7c1ca404660c3290ff696c1caa1ad9b82e99fafc127f3de7aa84b06"
+      "reason": "Reviewed explicit saved-archive GitBackend extra recovery, complete native-record preflight, bounded private serialization, create-only original-byte preservation and nonblocking lock lifetime. Manual separates cancellation/process-loss retry from derived index, operation publication, checkout and unavailable writable capabilities.",
+      "fingerprint": "5eb0aebed663653bd299c60efec8d262ab77970c9f29caea8f65405ee2b06c3e"
     }
   },
   {

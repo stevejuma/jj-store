@@ -57,7 +57,7 @@ impl Stamp {
         })
     }
 }
-pub(in super::super) struct Extras {
+pub(crate) struct Extras {
     heads: Vec<String>,
     segments: BTreeMap<String, Segment>,
 }
@@ -200,7 +200,7 @@ impl Extras {
         self.find_record(id, budget)?.ok_or(Error::Incomplete)?;
         Ok(())
     }
-    fn find_record(&self, id: &[u8], budget: &Budget) -> Result<Option<Record>> {
+    pub(crate) fn find_record(&self, id: &[u8], budget: &Budget) -> Result<Option<Record>> {
         let mut result: Option<Vec<u8>> = None;
         for head in &self.heads {
             let mut next = Some(head);
@@ -320,7 +320,7 @@ fn varint(input: &mut &[u8]) -> Result<u64> {
     Err(Error::Corrupt)
 }
 #[derive(Default)]
-pub(in super::super) struct Record {
+pub(crate) struct Record {
     pub change: Option<b::ChangeId>,
     pub predecessors: Vec<b::CommitId>,
     pub trees: Vec<b::TreeId>,

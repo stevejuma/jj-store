@@ -1062,3 +1062,14 @@ reads a repository alias or executable configuration. Page bounds, authorized
 membership, explicit graph edges and private disposable index ownership remain
 unchanged. All stack command preparation and publication stay outside this read
 path.
+
+Retained extra recovery uses the owned archived commit fields and pinned
+upstream protobuf/table serialization in a private materialization. Existing
+source extra records are read through bounded no-follow capture and compared as
+complete native commit metadata before any missing segment is selected. Explicit
+repair adds canonical missing records while preserving original segment/head
+bytes and never calling GitBackend implicit import. The upstream extra-table
+lock shares the existing nonblocking descriptor-relative Unix protocol, with
+replacement checks and worker lifetime retained through cancellation.
+Publication, index reconstruction and checkout remain independent qualification
+boundaries.

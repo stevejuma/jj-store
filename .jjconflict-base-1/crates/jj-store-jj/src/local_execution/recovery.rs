@@ -1,4 +1,5 @@
 //! Explicit exact immutable source recovery; no heads, index or checkout repair.
+mod extras;
 mod records;
 mod retention;
 mod witness;
@@ -103,6 +104,25 @@ impl Coordinator {
     }
 }
 impl RecoveredHistory {
+    /// Trusted original-request recovery only; no publication/index/checkout.
+    pub async fn restore_extras(self) -> Result<Self> {
+        let cancellation = tokio_util::sync::CancellationToken::new();
+        let cancel = cancellation.clone().drop_guard();
+        let runtime = tokio::runtime::Handle::current();
+        let result = tokio::task::spawn_blocking(move || {
+            runtime.block_on(tokio::task::LocalSet::new().run_until(async {
+                let mut budget = recovery_budget();
+                budget.cancellation = cancellation;
+                extras::restore(&self, &budget).await?;
+                self.check(&budget).await?;
+                Ok(self)
+            }))
+        })
+        .await
+        .map_err(|_| Error::Unavailable)?;
+        cancel.disarm();
+        result
+    }
     pub async fn validate_binding(&self) -> Result<()> {
         self.check(&recovery_budget()).await
     }

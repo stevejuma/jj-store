@@ -6,7 +6,12 @@ use std::{
 };
 static NEXT: AtomicU64 = AtomicU64::new(0);
 /// Synced no-replace rename. An interrupted staging write cannot select a partial record.
-pub(super) fn select(dir: &File, name: &str, bytes: &[u8], budget: &Budget) -> Result<()> {
+pub(in crate::local_execution::recovery) fn select(
+    dir: &File,
+    name: &str,
+    bytes: &[u8],
+    budget: &Budget,
+) -> Result<()> {
     budget.work(1)?;
     let nonce = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -43,7 +48,11 @@ pub(super) fn select(dir: &File, name: &str, bytes: &[u8], budget: &Budget) -> R
     dir.sync_all().map_err(|_| Error::Unavailable)?;
     acknowledge(dir, name, budget)
 }
-pub(super) fn acknowledge(dir: &File, name: &str, budget: &Budget) -> Result<()> {
+pub(in crate::local_execution::recovery) fn acknowledge(
+    dir: &File,
+    name: &str,
+    budget: &Budget,
+) -> Result<()> {
     let bytes = physical::read(dir, name, MAX_RECORD, false, budget)?.ok_or(Error::Unavailable)?;
     let file: File = fs::openat(
         dir,

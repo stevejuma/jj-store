@@ -305,6 +305,16 @@ switching engines remain Stage 4 work; source extra/index recovery, publication,
 guarded checkout and command transport still gate Stage 3. Production writes
 remain unavailable and all seven approved stages continue.
 
+E-M21-021 qualifies explicit missing-extra restoration through the saved
+foreground lease and original retained archive. Complete private preflight
+compares existing native metadata and verifies canonical missing records before
+synced create-only segment/head selection. Original bytes remain intact through
+cancellation, process loss, lock replacement/contention, unsafe links and exact
+retry. This does not import refs or publish operation heads, rebuild source
+indexes, write checkout state or enable mutations. Derived-index recovery, safe
+publication, guarded checkout and runtime command composition still gate Stage
+3; all later approved stages remain required.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

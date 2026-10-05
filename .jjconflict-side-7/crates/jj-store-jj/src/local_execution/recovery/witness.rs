@@ -150,6 +150,9 @@ impl RecoveryWitnessV1 {
         }
         Ok(())
     }
+    pub(super) fn git_path(&self) -> &std::path::Path {
+        &self.git_path
+    }
     pub(super) fn store(&self) -> Result<MetadataStore> {
         MetadataStore::open(&self.git_path, Default::default()).map_err(evidence_error)
     }

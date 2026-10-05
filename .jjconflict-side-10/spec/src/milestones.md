@@ -154,7 +154,7 @@ shared-package release qualification does not alter those original Git gates.
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -88042,6 +88042,201 @@ entries.
   "next": "Implement exact source extra/index recovery and safe original operation publication, then guarded checkout and production command composition; continue remaining approved engines/UI wiring.",
   "out_of_scope": "No production UI/startup/Storybook or generated transport changes, fresh visual review, screenshot comparisons/baselines, package publication, installed binary/service replacement, existing repository reset/migration, reserved-ref cleanup, linked-native/real-RustFS execution or unrelated root aggregate lanes.",
   "summary": "33 unique direct cases pass: nine private combination cases (four integrations/five units), three registered-folder preparation cases, 13 journal and eight actual preparation integrations. Process-loss child executes through passing parent. Real retained archives survive metadata loss/GC; metadata Setup/CreateCombination and Published/Verified receipt fixtures explicitly do not qualify execution. Owning checks, strict no-deps lint, documentation and governance pass after recorded fixture/lint repairs. All 501 prior ledger bodies remain byte-identical. Source extra/index recovery, safe publication, guarded checkout, runtime command transport and Stages 4-7 remain incomplete."
+},
+{
+  "id": "E-M21-021",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "rykwtlvy",
+  "kind": "Explicit retained GitBackend extra-metadata restoration and exact interrupted retry",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git 2.55.0; macOS ARM64 real disposable stock-JJ folders. Installed executables/services unchanged; CARGO_INCREMENTAL=0.",
+  "formats": "Pinned upstream GitBackend protobuf and stacked-table bytes. Existing journal V1/V2, combination V1, recovery witness V1, operation archive V1, reserved ref V2, companion/native/WAL/manifest formats unchanged. No public HTTP/schema/client change.",
+  "files": [
+    "crates/jj-store-jj/src/local_browser/git_read/extras.rs",
+    "crates/jj-store-jj/src/local_browser/git_read.rs",
+    "crates/jj-store-jj/src/local_execution/guard.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/extras/destination.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/extras/materialize.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/extras.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/records/destination.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/records/synced.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/records.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/witness.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras_lifecycle.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras_limits.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "before": "Two exact new integration cases failed with three absent RecoveredHistory::restore_extras diagnostics. Initial implementation passed both but emitted one unused Backend import warning, removed. Expanded lifecycle fixture used unwrap_err requiring Debug on an owned lease; one compile diagnostic corrected with a direct canceled-result match. Review fixed a large-entry batch zero-progress risk, accounted for unique combined source/candidate bounds and added final identity/snapshot revalidation without weakening assertions.",
+  "scope": "One explicit private saved-history extra recovery step and shared nonblocking lock coordination. Bounded no-follow capture, existing native metadata comparison, private pinned-upstream canonical materialization, synced create-only missing segments/head markers, preserved source bytes and original request retry. All existing read paths remain non-repairing.",
+  "tests": [
+    "crates/jj-store-jj/tests/stack_source_recovery/extras.rs#exact_missing_extras_restore_after_source_loss_without_import_heads_or_checkout",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras.rs#conflicting_original_extra_record_fails_complete_preflight_without_table_selection",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras.rs#held_upstream_extra_lock_rejects_without_waiting_or_selecting",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras.rs#unsafe_extra_directories_segments_heads_and_locks_never_touch_targets",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras_lifecycle.rs#cancellation_after_segment_retains_admission_until_exit_and_retry_preserves_bytes",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras_lifecycle.rs#replaced_extra_lock_and_authorization_loss_leave_no_head_and_exact_retry_finishes",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras_lifecycle.rs#process_loss_after_extra_segment_reopens_saved_witness_and_exact_retry",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras_limits.rs#orphan_segment_conflict_fails_before_head_selection_and_exact_bytes_allow_retry",
+    "crates/jj-store-jj/tests/stack_source_recovery/extras_limits.rs#oversized_segment_fails_without_selecting_or_truncating_source_bytes"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery extras::",
+      "result": "fail",
+      "failures": 3,
+      "note": "stack-source-extras-before.log: Absent explicit recovery API."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery extras::",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-after.log: Two exact cases pass; one unused import warning subsequently removed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery extras",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-extras-faults.log: Lifecycle assertion had a Debug bound; corrected without changing canceled behavior."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery extras",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-faults-after.log: Seven cases pass; subprocess helper invoked through parent."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery extras",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-limits.log: Nine cases pass; includes exact orphan conflict/retry and size boundary."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery --test stack_foreground --test stack_reword_preparation --test stack_operation_archive --test stack_preparation_retention",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-direct.log: 47 direct cases pass: 18 source recovery, eight foreground, eight reword, seven archive and six retention. Three ignored process helpers are invoked by passing parents."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-source.log: Formatted only Rust source/test implementation."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-boundaries.log: 17 package boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-architecture.log: 1090 presentation modules pass; no UI code change."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-rust-format.log: Owning/runtime Rust formatting passes."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-format.log: Changed documents formatted; ledger excluded."
+    },
+    {
+      "command": "pnpm docs:review local \"Reviewed explicit saved-archive GitBackend extra recovery, complete native-record preflight, bounded private serialization, create-only original-byte preservation and nonblocking lock lifetime. Manual separates cancellation/process-loss retry from derived index, operation publication, checkout and unavailable writable capabilities.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-docs-review.log: Local source acknowledgement refreshed after manual review."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-coverage-format.log: Source-review fingerprint formatting; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-doc-format-check.log: All changed canonical/manual documents pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-docs-check.log: 139-file closure, links and anchors pass; nine Mermaid diagrams rendered in both themes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-check.log: All owning package targets pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-lint.log: Strict owning lint passes with no suppressed diagnostics."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_source_recovery extras::",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-exact-final.log: Original exact regression target plus two added lock/link cases pass (four)."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_preparation -p jj-store-cli --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-consumers.log: Eight actual preparation and three registered-folder consumers pass; process-loss helper executes through parents. Existing large-binary linker warning remains unsuppressed."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-spec-first.log: 18 protected files/five canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-spec-validation.log: Five validators/23 chapters/173 requirements pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-extras-progress.log: 142 tasks pass with M21.2 in progress."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Explicit extra restoration is private provider behavior; no writable Stacks capability, operation-head selection, derived index or physical checkout is enabled.",
+    "Stage 3 still requires derived-index restoration, exact publication preserving concurrent sibling heads, guarded checkout/durable fault recovery and prepare/apply/status/discovery composition.",
+    "All seven approved stages remain required: real setup/merge/WIP/membership/switching; exact file then issued-hunk transfer/commit; graph commands/deletion policy/guarded undo; linked-native real-storage recovery and complete cold production UI flows.",
+    "Two inherited service strict-lint diagnostics remain unresolved/unwaived. Owning no-deps lint is not aggregate service qualification. Native server-test linker emits __eh_frame size warning without suppression."
+  ],
+  "next": "Finish derived-index recovery and safe original operation publication, then guarded checkout and production command composition; continue every remaining approved engine and UI stage.",
+  "out_of_scope": "No production UI/startup or generated transport changes, fresh visual review, screenshots/baselines, publication, installed executable/service replacement, existing repository reset/migration, reserved-ref cleanup, linked-native/real-RustFS command execution or unrelated root aggregate lanes.",
+  "summary": "58 unique direct cases pass: 18 source recovery (nine new), eight foreground, eight reword, seven archive, six retention, eight actual preparation and three registered consumers. Ignored subprocess helpers execute through passing parents. Original exact extras target passes after all changes. Owning all-target check/strict no-deps lint, formatting, boundaries, architecture, documentation and mapped specification/progress checks pass. All 502 preceding evidence bodies remain byte-identical. Source index, safe operation publication, guarded checkout, runtime commands and Stages 4-7 remain incomplete; production mutations remain unavailable."
 }
 ]
 ```

@@ -1,6 +1,6 @@
 //! Bounded source reads without GitBackend extra import or table reconciliation.
 pub(super) mod commit;
-pub(super) mod extras;
+pub(crate) mod extras;
 use super::*;
 
 pub(crate) struct Reader {

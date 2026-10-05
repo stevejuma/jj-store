@@ -101,6 +101,15 @@ records. It neither publishes heads nor repairs extras/index/checkout state. The
 server must still join original authenticated journal lookup, publication and
 checkout recovery before exposing commands.
 
+Explicit retained-extra recovery additionally consumes the saved history lease.
+It captures bounded no-follow table segments and head markers, compares complete
+existing metadata, and uses pinned upstream serialization in a private mirror to
+verify only the missing records. Synced create-only writes preserve existing
+segment/head bytes under the original nonblocking extra-table lock.
+Cancellation, process loss, replacement and authorization loss retain exact
+retry input. No implicit import, head publication, derived index or checkout
+state is involved; those Stage 3 gates remain separate.
+
 The server now joins actual unpublished reword effects with exact private
 preview/journal selection, saved recovery witness and reserved retention. The
 full candidate archive is durable before retention; acknowledgement replaces

@@ -175,6 +175,24 @@ files. External editors still need separate physical-byte guards. Original
 journal/policy composition, extra/index recovery, head publication and guarded
 checkout remain required before enabling Stacks mutations.
 
+A separate explicit recovery step can restore missing GitBackend extra metadata
+from that same acknowledged archive. It holds the foreground lease and acquires
+the upstream extra-table lock without waiting. Existing complete commit fields
+must match the archive before any missing segment or head is selected. Private
+upstream serialization checks canonical records; source writes are synced and
+create-only. Existing bytes, native change IDs, predecessor history and conflict
+terms remain intact. The bound is 4 MiB per segment, 16 MiB aggregate, 128
+segments and 64 heads. A missing coordination lock may be created during
+preflight; it does not select metadata.
+
+Interrupted writes can leave exact immutable segments without head markers.
+Saved-request retry verifies them and completes the remaining records. Tests
+cover cancellation, process loss, replaced locks, authorization loss, unsafe
+links, oversized files and conflicting original/orphan records. This explicit
+repair never imports Git refs, synthesizes change identities, creates a derived
+index, publishes an operation or writes physical checkout state. It does not
+enable application mutations.
+
 Private server preparation now saves the exact real reword preview, original
 request identity, recovery witness and full candidate archive before reserved
 retention. A retry resumes that saved archive instead of preparing a replacement

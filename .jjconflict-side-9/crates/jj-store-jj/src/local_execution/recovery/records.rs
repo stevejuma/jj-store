@@ -1,5 +1,5 @@
-mod destination;
-mod synced;
+pub(super) mod destination;
+pub(super) mod synced;
 use super::*;
 use crate::local_browser::working_tree::current::physical;
 use jj_lib::{

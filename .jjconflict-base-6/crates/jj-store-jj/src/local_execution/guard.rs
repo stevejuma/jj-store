@@ -10,6 +10,7 @@ const NAME: &str = "working_copy.lock";
 pub(super) struct Guard {
     directory: File,
     file: File,
+    name: &'static str,
 }
 fn identity(info: &fs::Stat) -> (u64, u64) {
     (info.st_dev as u64, info.st_ino)
@@ -19,13 +20,17 @@ fn current(root: &Path) -> Result<File> {
 }
 impl Guard {
     pub(super) fn acquire(root: &Path) -> Result<Self> {
-        let directory = current(root)?;
+        let guard = Self::acquire_in(current(root)?, NAME)?;
+        guard.check(root)?;
+        Ok(guard)
+    }
+    pub(super) fn acquire_in(directory: File, name: &'static str) -> Result<Self> {
         // A previous holder may unlink just before releasing flock. Retrying
         // that identity race is bounded and never waits for the holder.
         for _ in 0..4 {
             let file: File = fs::openat(
                 &directory,
-                NAME,
+                name,
                 OFlags::RDWR
                     | OFlags::CREATE
                     | OFlags::CLOEXEC
@@ -48,15 +53,22 @@ impl Guard {
             if fs::fstat(&file).map_err(|_| Error::Unavailable)?.st_nlink == 0 {
                 continue;
             }
-            let guard = Self { directory, file };
-            guard.check(root)?;
+            let guard = Self {
+                directory,
+                file,
+                name,
+            };
+            guard.check_file()?;
             return Ok(guard);
         }
         Err(Error::Busy)
     }
     pub(super) fn check(&self, root: &Path) -> Result<()> {
+        self.check_directory(&current(root)?)
+    }
+    pub(super) fn check_directory(&self, current: &File) -> Result<()> {
         if identity(&fs::fstat(&self.directory).map_err(|_| Error::Unavailable)?)
-            != identity(&fs::fstat(current(root)?).map_err(|_| Error::Unavailable)?)
+            != identity(&fs::fstat(current).map_err(|_| Error::Unavailable)?)
         {
             return Err(Error::EpochChanged);
         }
@@ -64,7 +76,7 @@ impl Guard {
     }
     fn check_file(&self) -> Result<()> {
         let held = fs::fstat(&self.file).map_err(|_| Error::Unavailable)?;
-        let selected = fs::statat(&self.directory, NAME, AtFlags::SYMLINK_NOFOLLOW)
+        let selected = fs::statat(&self.directory, self.name, AtFlags::SYMLINK_NOFOLLOW)
             .map_err(|_| Error::EpochChanged)?;
         if identity(&held) != identity(&selected)
             || held.st_nlink != 1
