@@ -86165,6 +86165,154 @@ entries.
     ],
     "next": "Commit E-READ-067. Continue highest-priority pinned browser kind/copy and cold preparation delivery, then exact filtered-history continuations; retain temporary workspace and defer complete qualification.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-068",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "lzppsoto",
+    "kind": "follow-up-bounded-read-main-landing",
+    "versions": "Rust 1.98.1; jj-lib/jj-core 0.45.1; macOS ARM64.",
+    "formats": "No additional persisted, DTO, cursor, receipt, RPC wire or installed format change. Existing disposable JSTOPG3 framing and formats1/2 replay retain their verified original evidence.",
+    "scope": "User-requested follow-up main landing after performance delivery. Native/local history, catalog additions and complete kind factory/RPC changes span five directly affected slices, so combine focused owning query/WAL/cache/wire targets and complete native_rpc/native_lifecycle/local_browser binaries on main sources. Use the retained temporary target cache to avoid duplicate build storage. Focused package and changed-document checks; no root aggregates, UI, full Rust workspace, scale/RSS/latency/pressure/fault/cold-browser/real-RustFS/release or Help qualification.",
+    "requirements": [
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-LOCAL-004",
+      "JST-PUB-002",
+      "JST-PUB-006",
+      "JST-API-002",
+      "JST-API-004",
+      "JST-CLI-003"
+    ],
+    "files": [
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/prepared_log_pages.rs#prepared_all_log_pages_seek_deep_anchors_under_fixed_work",
+      "crates/jj-store-cli/tests/native_lifecycle/prepared_evolution_pages.rs#prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations",
+      "crates/jj-store-cli/tests/local_browser/prepared_evolution_pages.rs#prepared_evolution_seeks_predecessors_across_unrelated_bookmark_operations",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#in_process_kind_inventory_reuses_exact_roots_and_advances_only_additions",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#rpc_complete_kind_inventory_reuses_exact_roots_and_advances_only_additions",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#inventory_additions_seek_changed_paths_and_skip_unchanged_descriptors"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-jj --lib --locked query::",
+        "result": "pass",
+        "failures": 0,
+        "note": "25.02s; .local/bounded-reads/performance/landing-query-068.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-wal --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "25.28s; .local/bounded-reads/performance/landing-catalog-068.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-service --lib --locked native_inventory::cache::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "51.37s; .local/bounded-reads/performance/landing-cache-068.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-rpc --lib --locked inventory::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "66.59s; .local/bounded-reads/performance/landing-wire-068.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-cli --test native_rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "106.72s; .local/bounded-reads/performance/landing-rpc-068.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-cli --test native_lifecycle --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "85.56s; .local/bounded-reads/performance/landing-native-068.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "96.44s; .local/bounded-reads/performance/landing-local-068.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo check -p jj-store-wal -p jj-store-jj -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "69.56s; .local/bounded-reads/performance/landing-packages-068.log"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "6.49s; .local/bounded-reads/performance/landing-rust-format-068.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.89s; .local/bounded-reads/performance/landing-boundaries-068.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.36s; .local/bounded-reads/performance/landing-architecture-068.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.37s; .local/bounded-reads/performance/landing-spec-first-068.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.47s; .local/bounded-reads/performance/landing-spec-validation-068.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "8.38s; .local/bounded-reads/performance/landing-progress-068.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.88s; .local/bounded-reads/performance/landing-document-format-068.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rerun after attaching actual main command results; progress ok (139 tasks; evidence bookkeeping only)."
+      }
+    ],
+    "notes": [
+      "Clean main advanced from verified E-READ-062 cb2834bd to the direct E-READ-063 through E-READ-067 descendants. Before integration bookkeeping the main tree is identical to E-READ-067 2bc89a5f; no source implementation was rewritten.",
+      "137 new slice evidence logs/JSON files copied byte-identically into main with per-file SHA-256 checks in .local/bounded-reads/performance/follow-up-evidence-copy-068.json. All508 historical ledger entries preserved JSON-identically.",
+      "Current native/local visible/evolution/predecessor history, changed-path catalog additions and exact source-scoped complete kind projections retain their original correctness bounds and deferred qualification.",
+      "Verification uses CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target but compiles actual main package sources; this avoids duplicate generated storage. No installed executable, fixture, Linux source, service or unrelated workspace changed.",
+      "Initial progress validation ran before actual command rows were attached and rejected the empty runs list. Attach completed owning checks, preserve the failed bookkeeping result and rerun; no product test failed.",
+      "Combined main verification passes365 distinct Rust tests:60 query library,10 WAL library,three source-scoped cache,three inventory wire,18 native RPC,231 native lifecycle and40 local browser. Two explicit local scale tests remain ignored; nine unrelated JJ library tests are filtered out under the focused query target.",
+      "Owning WAL/JJ/service/RPC/CLI all-target package check passes. All508 historical entries remain JSON-identical, source slices unchanged and137 original evidence files byte-identical.",
+      "Corrected progress check passes after actual runs were attached. macOS debug linker unwind-size warnings remain recorded; complete release qualification is deferred."
+    ],
+    "remaining": [
+      "Pinned browser kind/copy lookup still requires a separate owned ReadAccess/provider path; current NativeSession selection cannot replace a historical read pin.",
+      "Resumable cold native kind preparation, related copy/path lookup, exact filtered-history continuation, uncached/ambiguous evolution, large comparison/change-group/extreme-filter and remaining local/code search delivery remain.",
+      "Complete qualification remains deferred. Generated Help/reference/source-review and inherited installation-reference drift remain open."
+    ],
+    "next": "Commit verified E-READ-068, advance the local landed bookmark and retain/rebase the temporary workspace for pinned browser kind/copy and cold-preparation delivery. Complete qualification remains deferred.",
+    "result": "pending"
   }
 ]
 ```

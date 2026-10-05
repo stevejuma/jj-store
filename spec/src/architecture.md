@@ -1,5 +1,14 @@
 # Architecture
 
+E-READ-068 advances clean main through the verified E-READ-063 to E-READ-067
+follow-up stack and records combined source verification there. Preserve the
+original slice evidence byte-for-byte and historical ledger entries
+JSON-identically. Native/local history, catalog additions and complete native
+factory/RPC kind reads receive their focused direct-consumer checks. Rebase the
+retained temporary workspace onto this landing for pinned browser kind/copy and
+cold-preparation delivery. Complete scale, fault, browser, RustFS, release and
+Help qualification remain separate.
+
 Immutable inventory addition reads pair selected catalog roots, skip unchanged
 references and retain a bounded radix frontier. They hydrate only additions,
 preserve exact baseline descriptor selections and reject removed/replaced

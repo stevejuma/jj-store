@@ -27,6 +27,13 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-068 lands the follow-up E-READ-063 through E-READ-067 stack into clean
+main and verifies its combined native/local history, inventory and factory/RPC
+consumers there. Preserve all original evidence and keep the temporary workspace
+open, rebased onto the verified landing. Next delivery targets pinned browser
+kind/copy lookup and cold large-root preparation; complete qualification stays
+deferred.
+
 E-READ-066 adds bounded inventory addition pages over selected immutable roots.
 Changed-path traversal and exact baseline retention replace unrelated descriptor
 reads at this primitive. E-READ-067 integrates source-scoped complete
