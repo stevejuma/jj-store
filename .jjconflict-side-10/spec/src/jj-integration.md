@@ -145,6 +145,18 @@ that all original operations, views and code records remain unchanged in that
 history. Missing original extras cannot reach upstream implicit import, and the
 returned archive can feed version-2 retention directly under the same lease.
 
+The explicit source-history recovery provider reads a saved bounded private
+witness and original reserved retention key while holding the actual foreground
+working-copy lock. Its witness checks no-follow checkout, Git binding, policy
+and head-marker observations without requiring an operation or index loader.
+Private upstream materialization supplies exact native bytes; existing records
+are decoded in an isolated cache and compared before any source writes. Synced
+no-replace rename creates only missing operation/view records and the original
+operation-store profile marker. Exact replay verifies and syncs selected
+records. No heads, index, extras, companion or checkout files are selected or
+repaired. Source restoration remains separate from runtime journal policy,
+publication and guarded checkout composition.
+
 Capsule retention derives every non-root physical commit and backend tree from
 the exact archive. Selected reads require those entries in the selected metadata
 retention inventory, even when a blob was retained for another domain. An anchor

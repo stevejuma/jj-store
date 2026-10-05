@@ -1,10 +1,12 @@
 //! Foreground local-JJ coordination. No publication or checkout capability.
 mod guard;
+mod recovery;
 mod reword;
 use crate::{
     local_browser::{self, Access, Error, Result, working_tree::CurrentState},
     query::{content::Limits, workers::Workers},
 };
+pub use recovery::{RecoveredHistory, RecoveryWitnessV1};
 pub use reword::{BookmarkEffect, PreparedCode, Reword, Rewrite};
 use std::{path::PathBuf, sync::Arc};
 use tokio::sync::OwnedSemaphorePermit;

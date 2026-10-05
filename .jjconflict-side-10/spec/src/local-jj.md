@@ -845,6 +845,39 @@ history fail before implicit import or candidate writes; cancellation still
 retains the foreground lease until the worker exits. Returning recovery input
 does not select a ref or journal, restore source state or enable execution.
 
+Explicit source-history recovery MUST bind a version-1 installation-private
+recovery witness to the original retained request before any execution. Its
+canonical bounded encoding and domain-separated digest preserve authorized
+repository/binding generation, physical workspace, original operation/view and
+WC identity, checkout metadata/policy/head fingerprints and source Git/directory
+binding. A client cannot supply recovery paths, archives or replacement intent.
+Composition MUST look up the original journal principal/request before invoking
+recovery; this provider primitive alone does not perform that policy lookup.
+
+Recovery MUST work after operation-store and derived-index loss without loading
+a latest operation or reconciling heads. It acquires the same nonblocking
+foreground lock, rechecks the saved witness and reads only the matching
+immutable reserved retention slot. Missing original source ancestry or
+mismatched workspace/tree/view inputs fail. Private upstream materialization
+supplies exact native operation/view records. The complete existing destination
+is checked for conflicts and unsafe links before any missing source directory or
+record is created. Existing identical records stay byte-identical; conflicting
+records are never overwritten. Restoring missing operation-store directories and
+their original fixed profile marker is an explicit recovery action, not
+initialization on a read.
+
+Missing immutable records MUST be selected with synced create-only rename and
+directory sync, through held no-follow directory descriptors. Replaced
+directories, linked entries, stale metadata/policy/heads, revoked authority or
+cancellation fail explicitly. An interrupted recovery may leave exact
+unpublished records; the same original identity verifies and syncs those records
+on retry. Admission and the foreground lock remain held until the recovery
+worker exits. Recovery MUST NOT select a head, recreate a derived index, restore
+Git extras, modify companion selection, alter checkout bookkeeping or write
+physical working files. Head publication, extra/index recovery, journal/status
+composition and guarded checkout still require separate qualification before
+runtime writable capabilities.
+
 Server-retained content selections bind source and parent tree identities,
 complete code/device/combination selection, safe repository path, exact
 file-state fingerprint and whole-file or verified hunk scope. Commands carry

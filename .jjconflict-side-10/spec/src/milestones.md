@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -87020,6 +87020,224 @@ entries.
   "next": "Compose real preparation/history retention with authenticated server policy and durable exact journal; qualify source restoration, exact publication and guarded checkout recovery before enabling combinations and writable UI.",
   "out_of_scope": "No HTTP/client generation or production UI/Storybook/startup changes; no fresh visual review, screenshot comparison or baseline updates. No package publication, installed service/binary replacement, existing-repository reset/migration, automatic retained-ref cleanup, native/real-RustFS execution or unrelated root aggregate lanes. All seven approved stages remain required.",
   "summary": "Complete operation/history/code recovery input now survives source metadata loss and GC, with exact private reconstruction and immutable replay. Real reword rejects lost originals before import and returns full candidate ancestry. M21.2 and complete backend/UI implementation remain In progress."
+},
+{
+  "id": "E-M21-017",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "puspqzpm",
+  "kind": "Explicit exact source operation-history recovery under foreground coordination",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git 2.55.0; macOS ARM64 isolated real stock-JJ disposable fixtures. Installed executables/services unchanged.",
+  "formats": "New private bounded RecoveryWitnessV1 with canonical encoding, 64-KiB cap and domain-separated digest; captures original authorized repository/binding, checkout/operation/view/commit, policy/head and physical Git-directory fingerprints. RecoveredHistory owns the foreground lock/admission. Existing OperationArchiveV1, reserved retention versions 1/2, original companion/native/WAL/manifest, server journal and public transport formats unchanged. Restores exact native operation/view records and original fixed op-store profile marker only; no head or checkout selection.",
+  "files": [
+    "crates/jj-store-jj/src/local_browser/mod.rs",
+    "crates/jj-store-jj/src/local_browser/working_tree/current.rs",
+    "crates/jj-store-jj/src/local_browser/working_tree/current/capture.rs",
+    "crates/jj-store-jj/src/local_evidence/mod.rs",
+    "crates/jj-store-jj/src/local_evidence/operation_archive/materialize.rs",
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/records.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/records/destination.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/records/synced.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/witness.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/adversarial.rs",
+    "crates/jj-store-jj/tests/stack_source_recovery/lifecycle.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/verification.md"
+  ],
+  "before": "Seven missing API diagnostics establish that saved witness capture and explicit retained source restoration were absent. Ordinary foreground acquisition cannot validate after source operation-store/index loss.",
+  "scope": "One local-JJ source-history recovery boundary. Saved versioned witness, original exact reserved ref lookup, metadata/policy/device revalidation without operation/index loader, nonblocking foreground lock, full native conflict/link preflight, synced no-replace restoration and exact retry. Shared current fingerprint/policy helpers retain ordinary reader behavior, so complete direct local-browser consumers run. No server runtime/transport/UI mutation enabled.",
+  "tests": [
+    "crates/jj-store-jj/tests/stack_source_recovery.rs#restart_restores_exact_retained_history_without_heads_checkout_or_index_changes",
+    "crates/jj-store-jj/tests/stack_source_recovery.rs#stale_checkout_or_original_key_cannot_restore_missing_state",
+    "crates/jj-store-jj/tests/stack_source_recovery.rs#conflicting_existing_record_fails_before_any_missing_record_is_restored",
+    "crates/jj-store-jj/tests/stack_source_recovery/adversarial.rs#recovery_codec_and_complete_key_reject_substitution",
+    "crates/jj-store-jj/tests/stack_source_recovery/adversarial.rs#unsafe_record_and_directory_links_never_touch_targets",
+    "crates/jj-store-jj/tests/stack_source_recovery/adversarial.rs#changed_heads_ignore_policy_and_source_binding_fail_without_initialization",
+    "crates/jj-store-jj/tests/stack_source_recovery/adversarial.rs#recovered_lease_keeps_foreground_exclusive_and_preserves_editor_bytes",
+    "crates/jj-store-jj/tests/stack_source_recovery/lifecycle.rs#canceled_recovery_keeps_admission_until_worker_exits_and_exact_retry_finishes",
+    "crates/jj-store-jj/tests/stack_source_recovery/lifecycle.rs#process_loss_reopens_original_witness_and_retries_partial_immutable_restoration"
+  ],
+  "runs": [
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_source_recovery",
+      "result": "fail",
+      "failures": 7,
+      "note": "stack-source-recovery-before.log: missing witness/capture/source-restoration APIs establish the absent exact source recovery boundary."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_source_recovery",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-recovery-after.log: one private archive-constant visibility compile diagnostic, fixed by a crate-private reexport; no source behavior changed."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_source_recovery",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-recovery-after1.log: two pass; restart case rejects archive labels because native resolved empty labels and checkout label storage have different representations. Recovery now compares through upstream ConflictLabels, preserving exact archive and checkout formats."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_source_recovery",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-recovery-after2.log: two pass; restart case cannot open the private temporary materialization through macOS /var symlink. Canonicalized only the owning disposable cache; source path no-follow checks remain strict."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_source_recovery",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-after3.log: all three original exact regressions pass, including total op-store/index loss, immutable conflict preflight and stale request/checkout rejection."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_source_recovery",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-recovery-full.log: added lifecycle fixture used unwrap_err with a non-Debug owned lease. Fixed the test to match canceled JoinError without changing production API or weakening the assertion."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_source_recovery",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-full1.log: nine tests pass; ignored subprocess helper actually executes through its passing parent. Real first-view process-loss retry, cancellation admission, complete key/codec rejection, changed policy/heads/binding, link rejection and exclusive recovered lease all pass."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --lib --test stack_source_recovery --test stack_operation_archive --test stack_reword_preparation --test stack_foreground --test stack_preparation_retention --test local_metadata --test local_evidence",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-direct.log: 86 passing cases: 29 units and 57 directly affected integrations. Foreground and source-recovery ignored helpers are executed in isolated subprocesses by their passing parents."
+    },
+    {
+      "command": "cargo check --locked -p jj-store-jj --all-targets",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-source-recovery-check.log: reproduced the same lifecycle fixture Debug-bound compile diagnostic before its repair; final check is recorded separately after it finishes."
+    },
+    {
+      "command": "cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "fail",
+      "failures": 2,
+      "note": "stack-source-recovery-lint.log: two new collapsible-if diagnostics in profile preflight; repaired directly without suppression."
+    },
+    {
+      "command": "cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-lint-final.log: owning source/test strict lint passes; inherited service/dependency lint remains unqualified."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "Pinned source formatting during implementation; no unrelated Rust changes."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-boundaries.log: all 17 owning package boundaries pass; upstream imports remain in JJ integration."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-architecture.log: all 1090 presentation modules pass; no production UI, column or controller behavior changed."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-rust-format.log: root/runtime Rust formatting passes."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-docs-format.log: owning canonical/manual documents only; ledger never formatted."
+    },
+    {
+      "command": "pnpm docs:review local \"Documented exact source operation/view restoration after operation/index loss, using the foreground lease, bounded saved witness, original reserved retention key, conflict/link preflight and synced no-replace records. Real cancellation and subprocess loss retry retain the original identity and leave heads, index, extras, companion and physical checkout unchanged. Runtime authenticated journal composition, extra/index repair, publication and guarded checkout remain required.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact review text and command retained in stack-source-recovery-docs-review.log and stack-source-recovery-docs-review-final.log. Final acknowledgement covers the completed owning provider and records remaining runtime publication/checkout gates."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-coverage-format.log: updated owning local source review acknowledgement only."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-docs-format-check.log: explicit changed documents pass; historical ledger excluded."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_source_recovery",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-final.log: all nine exact source cases pass after final strict-lint repair. Process helper is executed through its passing parent; no assertion weakened."
+    },
+    {
+      "command": "cargo check --locked -p jj-store-jj --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-check-final.log: final all-target source/tests check passes after fixture and lint repairs."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-cli --test local_browser",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-consumer.log: all 28 direct local reader/registration/current-observation consumers pass; two existing external-large-repo cases remain intentionally ignored. Existing macOS linker unwind-size warnings recorded; no aggregate service lint or linked-native qualification inferred."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-docs-check.log: final local source review, nine offline diagrams, strict manual build and 139-file link/anchor closure pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-spec-first.log: 17 protected files and five canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-spec-validate.log: five validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-source-recovery-progress.log: 142 tasks pass evidence bookkeeping with M21.2 In progress, pending result and all remaining approved gates preserved."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Stage 3 still requires authenticated registered-device command policy and original-request lookup, durable storage/join of the recovery witness with exact intent/effect/journal/retainer state, lost Git-extra and derived-index recovery, exact operation-head publication preserving concurrent siblings, guarded physical checkout and complete durable fault/process-loss recovery, and prepare/apply/status/discovery transport. This provider requires trusted composition to authorize the original request and grants no runtime writable capability.",
+    "Retention/recovery tests use real unpublished reword histories but isolated fixture access and synthetic request/intent/prepared keys, not a server prepared plan. Source recovery leaves heads and checkout unchanged; its metadata witness is not an external-editor byte lock.",
+    "Complete active-combination Unstaged and watcher/lifecycle acceptance require durable combination state. Approved Stages 4-7 still require merge/WIP combinations and membership/switching, exact whole-file then server-issued hunk transfers, graph actions and guarded undo, linked-native real-storage execution and complete cold production UI wiring.",
+    "Two inherited service strict-lint diagnostics from E-M21-010 remain unresolved and unwaived. Owning JJ no-deps lint does not qualify aggregate service/dependency lint."
+  ],
+  "next": "Compose original authenticated preparation/journal/retention and saved recovery witness, then qualify extras/index recovery, exact head publication and guarded checkout; continue all seven approved stages before enabling writable controls.",
+  "out_of_scope": "No public transport/client generation, production UI/Storybook/startup changes, fresh visual review, screenshot comparison or visual baselines. No package publication, installed binary/service replacement, existing-repository reset/migration, native/real-RustFS execution, retained-ref cleanup or unrelated root aggregate lanes.",
+  "summary": "114 unique direct tests pass (29 owning units, 57 local-JJ integrations, 28 CLI consumers), including nine explicit source recovery cases and real partial process-loss retry. Exact immutable op/view restoration leaves heads, index, extras, companion and physical checkout unchanged. Original journal/policy composition, publication and guarded checkout remain required; M21.2 stays In progress."
 }
 ]
 ```

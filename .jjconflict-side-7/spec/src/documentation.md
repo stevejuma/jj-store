@@ -1,5 +1,12 @@
 # Application documentation
 
+The local manual explains explicit immutable source-history restoration after
+operation-store/index loss, with a saved bounded private witness and original
+reserved retention key. Exact synced create-only recovery is separate from
+extra/index repair, journal policy, head publication and checkout. Source review
+must cover the owning recovery provider and witness; no writable capability is
+implied by these recovery primitives.
+
 The local manual records complete bounded operation-ancestry archives and
 version-2 reserved retention separately from legacy selected capsules. It
 explains read-only capture, exact private reconstruction and immutable legacy

@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented complete bounded source operation and historical code archives, strict original-extra read-only capture, exact private upstream materialization, version-2 reserved reachability and immutable legacy slots. Real reword now captures strict source history before writes and returns complete candidate ancestry with unchanged original records; missing extras cannot trigger import. Runtime journal/policy composition, source restoration, publication and checkout remain required.",
-      "fingerprint": "8c4820a7351e2142261d1c90a1e896f1967f8877fd6852fe3489aca667ae9268"
+      "reason": "Documented exact source operation/view restoration after operation/index loss, using the foreground lease, bounded saved witness, original reserved retention key, conflict/link preflight and synced no-replace records. Real cancellation and subprocess loss retry retain the original identity and leave heads, index, extras, companion and physical checkout unchanged. Runtime authenticated journal composition, extra/index repair, publication and guarded checkout remain required.",
+      "fingerprint": "1e4e95aeb43cf318adee86570c8875d2ff145e99131ed6431f9460629fc486d8"
     }
   },
   {

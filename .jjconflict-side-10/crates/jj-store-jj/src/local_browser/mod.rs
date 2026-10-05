@@ -309,7 +309,7 @@ impl Executor {
         result
     }
 }
-fn loader(path: &Path) -> Result<RepoLoader> {
+pub(crate) fn loader(path: &Path) -> Result<RepoLoader> {
     let settings = UserSettings::from_config(StackedConfig::with_defaults())
         .map_err(|_| Error::Unavailable)?;
     if std::fs::read_to_string(path.join("store/type"))

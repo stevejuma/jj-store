@@ -90,6 +90,17 @@ candidate ancestry, checking that every original record remains unchanged. No
 implicit original-extra import or synthetic change identity reaches the mutation
 transaction.
 
+JJ integration also owns explicit immutable source-history restoration, using an
+installation-private versioned witness captured under the foreground lease. The
+witness and original retention key cross the data-only composition boundary; no
+upstream repository or mutable handle does. Saved checkout/policy/heads and
+physical Git binding can be revalidated after operation/index loss. Source
+restoration consumes exact reserved history and retains the foreground lock and
+worker admission, with complete conflict preflight and synced create-only
+records. It neither publishes heads nor repairs extras/index/checkout state. The
+server must still join original authenticated journal lookup, publication and
+checkout recovery before exposing commands.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies

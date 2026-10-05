@@ -1,6 +1,6 @@
 use super::*;
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(super) struct CheckoutFiles {
+pub(crate) struct CheckoutFiles {
     pub workspace: m::RecordDigest,
     pub binding: m::RecordDigest,
     pub kind: physical::Bytes,
@@ -69,7 +69,7 @@ impl CheckoutFiles {
     }
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(super) struct Policy {
+pub(crate) struct Policy {
     pub inputs: Vec<Vec<u8>>,
     pub fingerprint: m::RecordDigest,
 }
@@ -81,6 +81,15 @@ pub(super) fn policy(root: &Path, metadata: &Path, budget: &Budget) -> Result<Po
         .downcast_ref::<jj_lib::git_backend::GitBackend>()
         .ok_or(Error::Invalid)?;
     let git = backend.git_repo();
+    policy_at_git(root, &git, backend.git_repo_path(), budget)
+}
+/// Existing Git policy can be checked without loading a missing operation or index store.
+pub(crate) fn policy_at_git(
+    root: &Path,
+    git: &gix::Repository,
+    git_path: &Path,
+    budget: &Budget,
+) -> Result<Policy> {
     let configured = git
         .config_snapshot()
         .string("core.excludesFile")
@@ -102,7 +111,7 @@ pub(super) fn policy(root: &Path, metadata: &Path, budget: &Budget) -> Result<Po
     if !global.is_absolute() {
         return Err(Error::Invalid);
     }
-    let paths = [global, backend.git_repo_path().join("info/exclude")];
+    let paths = [global, git_path.join("info/exclude")];
     let mut hash = Sha256::new_with_prefix(b"jj-store/current-ignore-policy/v1\0");
     let mut inputs = Vec::new();
     for path in paths {

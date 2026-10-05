@@ -152,6 +152,29 @@ original extras now fail before any upstream import or candidate write. The
 result can feed version-2 retention directly; source repair and runtime
 execution are still separate gates.
 
+Explicit source-history recovery can now restore missing immutable operation and
+view records after source operation-store and derived-index loss. Before
+execution, the foreground provider captures a version-1 private recovery witness
+with a bounded canonical encoding, domain-separated digest, original checkout
+and operation/view identities, current policy/heads and physical Git binding.
+The server must retain it with the original authenticated request; it is not a
+client-supplied recovery path or permission.
+
+Recovery revalidates that witness and acquires the normal nonblocking JJ lock
+before reading the matching reserved preparation. It checks all existing native
+records for conflicts and unsafe links before creating any missing source
+record. Synced create-only rename restores exact unpublished records, including
+the original operation-store profile marker. Identical existing records retain
+their bytes, and exact retry verifies and syncs them. The provider keeps its
+worker and lock until canceled work exits; process-loss retry uses the saved
+witness and same retention key.
+
+This does not recreate a derived index or lost Git extras, publish a head,
+change companion state, update checkout metadata or touch physical working
+files. External editors still need separate physical-byte guards. Original
+journal/policy composition, extra/index recovery, head publication and guarded
+checkout remain required before enabling Stacks mutations.
+
 Device paths, access grants, credentials and active execution journals are not
 portable repository records. Ordinary Git/JJ network commands do not transfer
 the owned companion ref. Do not assume a normal code push backs up

@@ -4,6 +4,12 @@ impl OperationArchiveV1 {
     /// Proves upstream operation-store reconstruction in a private disposable
     /// cache, without creating source metadata, an index or operation heads.
     pub async fn verify_materialization(&self) -> Result<()> {
+        self.materialize().await?;
+        Ok(())
+    }
+    /// Only the owned recovery coordinator may copy these verified native bytes
+    /// into source metadata; ordinary verification still discards this cache.
+    pub(crate) async fn materialize(&self) -> Result<tempfile::TempDir> {
         self.validate()?;
         let temp = tempfile::tempdir()?;
         let store = SimpleOpStore::init(
@@ -46,6 +52,6 @@ impl OperationArchiveV1 {
                 return Err(Error::Invalid("materialized operation fields"));
             }
         }
-        Ok(())
+        Ok(temp)
     }
 }

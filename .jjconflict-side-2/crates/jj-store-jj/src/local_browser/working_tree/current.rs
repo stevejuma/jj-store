@@ -1,11 +1,12 @@
 //! Existing checkout/ignore witnesses only; no WC loader, initialization or mutation.
-mod capture;
+pub(crate) mod capture;
 mod decode;
 pub(crate) mod physical;
 use super::*;
 use std::path::PathBuf;
 pub const MAX_CHECKOUT_BYTES: usize = 4 * 1024 * 1024;
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Checkout {
     pub operation: m::OperationId,
     pub workspace: String,
@@ -64,27 +65,12 @@ impl Executor {
                 if first != after || before_policy != after_policy || before_heads != after_heads {
                     return Err(Error::EpochChanged);
                 }
-                let mut hash = Sha256::new_with_prefix(b"jj-store/current-working-tree/v1\0");
-                hash.update(access.repository().as_bytes());
-                hash.update(access.generation().to_be_bytes());
-                hash.update(first.workspace.as_bytes());
-                for digest in [
-                    &first.checkout.fingerprint,
-                    &first.tree.fingerprint,
-                    &first.kind.fingerprint,
-                    &first.binding,
-                    &before_policy.fingerprint,
-                ] {
-                    hash.update(digest.as_bytes());
-                }
-                for head in &before_heads {
-                    hash.update(head.as_bytes());
-                }
+                let fingerprint = fingerprint(&access, &first, &before_policy, &before_heads);
                 Ok(CurrentState {
                     baseline,
                     checkout,
                     physical_workspace: first.workspace,
-                    fingerprint: m::RecordDigest::new(hash.finalize().into()),
+                    fingerprint,
                     base_ignores: before_policy.inputs,
                     heads: before_heads,
                 })
@@ -92,6 +78,30 @@ impl Executor {
         })
         .await
     }
+}
+pub(crate) fn fingerprint(
+    access: &Arc<dyn Access>,
+    files: &capture::CheckoutFiles,
+    policy: &capture::Policy,
+    heads: &[m::OperationId],
+) -> m::RecordDigest {
+    let mut hash = Sha256::new_with_prefix(b"jj-store/current-working-tree/v1\0");
+    hash.update(access.repository().as_bytes());
+    hash.update(access.generation().to_be_bytes());
+    hash.update(files.workspace.as_bytes());
+    for digest in [
+        &files.checkout.fingerprint,
+        &files.tree.fingerprint,
+        &files.kind.fingerprint,
+        &files.binding,
+        &policy.fingerprint,
+    ] {
+        hash.update(digest.as_bytes());
+    }
+    for head in heads {
+        hash.update(head.as_bytes());
+    }
+    m::RecordDigest::new(hash.finalize().into())
 }
 async fn heads(access: &Arc<dyn Access>, budget: &Budget) -> Result<Vec<m::OperationId>> {
     budget.until(access.authorize()).await??;

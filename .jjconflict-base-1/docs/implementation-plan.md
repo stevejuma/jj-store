@@ -256,6 +256,17 @@ import or candidate writes. This supplies recovery input; server policy/journal
 composition, source restoration, head publication, guarded checkout and runtime
 fault acceptance remain required. All seven approved stages continue unchanged.
 
+E-M21-017 adds explicit source operation/view restoration through a saved
+bounded private witness and original reserved retention key. Recovery
+revalidates physical binding, checkout/policy/heads and foreground coordination
+without loading a missing operation or index store. Complete conflict preflight
+precedes synced create-only writes; exact retry preserves existing records and
+leaves heads, index, extras, companion and physical checkout untouched.
+Process-loss and cancellation acceptance remain part of this owning provider
+slice. Runtime original-request policy/journal composition, extra/index
+recovery, publication and guarded checkout are still required before writable
+capability. The seven approved stages remain unchanged.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current
