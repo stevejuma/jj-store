@@ -868,3 +868,7 @@ unchanged. Hunk and later graph capabilities require their own acceptance.
 LocalStacksCommand v1 adds CreateStack, CreateBranch, RenameBranch, Reword and
 Empty; LocalStacksInspection v1 is an additive bounded advisory read. Native JJ
 0.45.1 and configuration TOML v1 remain unchanged.
+
+Additive version-1 Transfer/Split/Edit local command variants preserve TOML v1
+and native JJ 0.45.1 formats. Selected tree deltas retain file type/executable
+metadata through native tree values; no generic patch persistence is introduced.

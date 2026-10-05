@@ -89,7 +89,7 @@ pub(super) async fn validate(
     };
     policy::rewritable(repo, workspace_name, settings, config, affected)?;
     if !selections.is_empty() {
-        selected(repo, wc, selections).await?;
+        content::selections(repo, workspace_name, settings, config, selections).await?;
     }
     Ok(head)
 }
@@ -154,33 +154,8 @@ pub(super) async fn commit(
         return Ok(());
     }
     mut_repo.rebase_descendants().await.map_err(jj)?;
-    let current_wc = mut_repo
-        .store()
-        .get_commit(
-            mut_repo
-                .view()
-                .get_wc_commit_id(workspace_name)
-                .ok_or(Error::Invalid)?,
-        )
-        .map_err(jj)?;
-    let current_selections = selections
-        .iter()
-        .map(|selection| Selection {
-            source: current_wc.id().hex(),
-            path: selection.path.clone(),
-        })
-        .collect::<Vec<_>>();
-    let selection = selected(mut_repo, &current_wc, &current_selections).await?;
-    let squashed = rewrite::squash_commits(mut_repo, &[selection], &new, true)
-        .await
-        .map_err(jj)?
-        .ok_or(Error::Invalid)?;
-    let new = squashed
-        .commit_builder
-        .set_description(text)
-        .write()
-        .await
-        .map_err(jj)?;
+    let sources = content::remap(mut_repo, repo, selections).await?;
+    let new = content::squash(mut_repo, &sources, &new, text).await?;
     mut_repo.set_local_bookmark_target(branch.as_ref(), RefTarget::normal(new.id().clone()));
     Ok(())
 }

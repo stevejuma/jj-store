@@ -66,6 +66,16 @@ pub async fn preview(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             )
             .await?
         }
+        ref command @ (Command::Transfer { .. } | Command::Split { .. } | Command::Edit { .. }) => {
+            content::validate(
+                &repo,
+                workspace.workspace_name(),
+                &settings,
+                &config,
+                command,
+            )
+            .await?
+        }
         _ => return Err(Error::Invalid),
     };
     access.authorize().await.map_err(|_| Error::Denied)?;

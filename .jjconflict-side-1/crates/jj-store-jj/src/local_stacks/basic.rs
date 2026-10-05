@@ -227,25 +227,35 @@ pub(super) async fn execute(
             let new = insert(mutable, repo, &selected, *placement, message).await?;
             // User branch heads advance above the selected tip; retention refs follow native rebases only.
             if matches!(placement, Placement::Above) {
-                let heads = repo
-                    .view()
-                    .local_bookmarks()
-                    .filter(|(name, target)| {
-                        !name.as_str().starts_with(config::INTERNAL_PREFIX)
-                            && !config
-                                .workspaces
-                                .iter()
-                                .any(|saved| saved.target == name.as_str())
-                            && target.as_normal() == Some(selected.id())
-                    })
-                    .map(|(name, _)| name.to_owned())
-                    .collect::<Vec<_>>();
-                for name in heads {
-                    mutable.set_local_bookmark_target(&name, RefTarget::normal(new.id().clone()));
-                }
+                advance_heads(mutable, repo, config, &selected, &new);
             }
         }
         _ => return Err(Error::Invalid),
     }
     Ok(())
+}
+
+pub(super) fn advance_heads(
+    mutable: &mut MutableRepo,
+    repo: &ReadonlyRepo,
+    config: &Config,
+    selected: &Commit,
+    new: &Commit,
+) {
+    let heads = repo
+        .view()
+        .local_bookmarks()
+        .filter(|(name, target)| {
+            !name.as_str().starts_with(config::INTERNAL_PREFIX)
+                && !config
+                    .workspaces
+                    .iter()
+                    .any(|saved| saved.target == name.as_str())
+                && target.as_normal() == Some(selected.id())
+        })
+        .map(|(name, _)| name.to_owned())
+        .collect::<Vec<_>>();
+    for name in heads {
+        mutable.set_local_bookmark_target(&name, RefTarget::normal(new.id().clone()));
+    }
 }

@@ -1230,3 +1230,9 @@ from that target without rewriting unrelated target children. Explicitly
 retarget only the retained merges applying that bookmark; later commits use
 normal insertion and descendant propagation. Empty Commit selections create an
 empty commit. Refresh must not reconstruct these already-correct parent sets.
+
+Local selected-file Transfer, Split and Edit use CommitWithSelection and
+squash_commits with native descendant rebasing. Insertion resolves current
+visible source change identities before squash, so rewritten source IDs cannot
+accidentally select another commit. Empty WIP and source changes remain
+retained.

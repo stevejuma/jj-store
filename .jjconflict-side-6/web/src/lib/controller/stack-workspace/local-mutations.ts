@@ -1,3 +1,4 @@
+import { localFileSelections, localCommitSource } from "./local-selections.js";
 import type { LocalStacksCommand } from "./local-transport.js";
 import {
   WorkspaceCommandError,
@@ -13,6 +14,9 @@ export const localMutationKinds = [
   "rename_branch",
   "reword",
   "add_empty_commit",
+  "transfer",
+  "split",
+  "edit_commit",
 ] as const;
 export function localMutationCommand(
   snapshot: WorkspaceSnapshot,
@@ -85,6 +89,29 @@ export function localMutationCommand(
         commit: commit(command.commit),
         message: command.message,
         placement: command.placement,
+      };
+    case "transfer":
+      return {
+        kind: "transfer",
+        target: localCommitSource(snapshot, command.target),
+        selections: localFileSelections(
+          snapshot,
+          command.selections ?? [command.selection],
+        ),
+      };
+    case "split":
+      return {
+        kind: "split",
+        commit: commit(command.commit),
+        message: command.message,
+        selections: localFileSelections(snapshot, [command.selection]),
+      };
+    case "edit_commit":
+      return {
+        kind: "edit",
+        commit: commit(command.commit),
+        message: command.message,
+        selections: localFileSelections(snapshot, command.selections ?? []),
       };
     default:
       return null;

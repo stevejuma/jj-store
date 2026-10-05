@@ -2230,3 +2230,8 @@ exact operation/configuration revision and up to 500 visible commit IDs. It
 returns mutable flags and protection reasons without initializing or
 snapshotting. CreateStack/CreateBranch/RenameBranch/Reword/Empty variants use
 the same guarded preview and apply boundary.
+
+LocalStacksCommand adds Transfer (exact target and source files), Split and
+Edit. Advisory preview validates the same source/target policy as execution; all
+source operations/configuration revisions remain exact. Whole-file inputs do not
+grant display-only hunk authority.

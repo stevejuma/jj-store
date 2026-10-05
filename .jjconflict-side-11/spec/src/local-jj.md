@@ -1586,3 +1586,11 @@ from that target without rewriting unrelated target children. Explicitly
 retarget only the retained merges applying that bookmark; later commits use
 normal insertion and descendant propagation. Empty Commit selections create an
 empty commit. Refresh must not reconstruct these already-correct parent sets.
+
+Selected whole files can move between exact visible mutable commits and WIP
+through native squash, retaining emptied sources. Split extracts selected
+content into a new child and advances source head bookmarks; inline edit rewords
+and may squash additional selected files. Sources bind exact
+operation/commit/path identities, and merge/root/immutable shapes remain
+rejected. New commit selections may come from WIP or displayed mutable commits.
+No staging state or additional merge reconstruction is persisted.

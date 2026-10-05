@@ -326,3 +326,24 @@ test("loaded Unstaged files become draft selections without eager patches", asyn
   ).toEqual([{ source: "unassigned", path: "draft.txt" }]);
   controller.close();
 });
+
+test("loaded commit files and patches become reusable draft selections", async () => {
+  const { controller, patches } = await setup();
+  const snapshot = controller.snapshot!,
+    stack = snapshot.stacks[0]!,
+    commit = stack.commits.at(-1)!;
+  await controller.details.loadFiles(commit.id);
+  expect(commit.files.length).toBeGreaterThan(0);
+  expect(patches).toHaveLength(0);
+  const path = commit.files[0]!.path;
+  expect(
+    controller.commitDrafts.open(snapshot, stack.id, {
+      source: commit.id,
+      path,
+    }),
+  ).toBe(true);
+  await controller.details.loadDiff(commit.id, path);
+  expect(commit.files[0]!.hunks.length).toBeGreaterThan(0);
+  expect(patches).toHaveLength(1);
+  controller.close();
+});

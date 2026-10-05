@@ -33234,6 +33234,71 @@
                       {
                         "type": "object",
                         "properties": {
+                          "target": { "type": "string" },
+                          "selections": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source": { "type": "string" },
+                                "path": { "type": "string" }
+                              },
+                              "additionalProperties": false,
+                              "required": ["source", "path"]
+                            }
+                          },
+                          "kind": { "type": "string", "const": "transfer" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "target", "selections"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": { "type": "string" },
+                          "message": { "type": "string" },
+                          "selections": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source": { "type": "string" },
+                                "path": { "type": "string" }
+                              },
+                              "additionalProperties": false,
+                              "required": ["source", "path"]
+                            }
+                          },
+                          "kind": { "type": "string", "const": "split" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit", "message", "selections"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": { "type": "string" },
+                          "message": { "type": "string" },
+                          "selections": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source": { "type": "string" },
+                                "path": { "type": "string" }
+                              },
+                              "additionalProperties": false,
+                              "required": ["source", "path"]
+                            }
+                          },
+                          "kind": { "type": "string", "const": "edit" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit", "message", "selections"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
                           "name": { "type": "string" },
                           "parent": { "type": ["string", "null"] },
                           "kind": { "type": "string", "const": "create_stack" }
@@ -33558,6 +33623,71 @@
                         },
                         "additionalProperties": false,
                         "required": ["kind", "workspace"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "target": { "type": "string" },
+                          "selections": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source": { "type": "string" },
+                                "path": { "type": "string" }
+                              },
+                              "additionalProperties": false,
+                              "required": ["source", "path"]
+                            }
+                          },
+                          "kind": { "type": "string", "const": "transfer" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "target", "selections"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": { "type": "string" },
+                          "message": { "type": "string" },
+                          "selections": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source": { "type": "string" },
+                                "path": { "type": "string" }
+                              },
+                              "additionalProperties": false,
+                              "required": ["source", "path"]
+                            }
+                          },
+                          "kind": { "type": "string", "const": "split" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit", "message", "selections"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": { "type": "string" },
+                          "message": { "type": "string" },
+                          "selections": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source": { "type": "string" },
+                                "path": { "type": "string" }
+                              },
+                              "additionalProperties": false,
+                              "required": ["source", "path"]
+                            }
+                          },
+                          "kind": { "type": "string", "const": "edit" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit", "message", "selections"]
                       },
                       {
                         "type": "object",

@@ -1222,3 +1222,123 @@ async fn first_commit_on_empty_stack_forks_target_without_rewriting_other_branch
         "true"
     );
 }
+
+#[tokio::test]
+async fn selected_file_transfer_split_and_inline_edit_propagate_natively() {
+    let temp = fixture();
+    let root = temp.path();
+    let state = refresh(root).await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Work".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-one".into(),
+        },
+    )
+    .await;
+    let _ = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-two".into(),
+        },
+    )
+    .await;
+    fs::write(root.join("draft.txt"), "draft\n").unwrap();
+    let state = refresh(root).await;
+    let merge = stock(root, &["log", "--no-graph", "-r", "@-", "-T", "change_id"]);
+    let wip = stock(root, &["log", "--no-graph", "-r", "@", "-T", "change_id"]);
+    let one = stock(
+        root,
+        &["log", "--no-graph", "-r", "topic-one", "-T", "commit_id"],
+    );
+    let two = stock(
+        root,
+        &["log", "--no-graph", "-r", "topic-two", "-T", "commit_id"],
+    );
+    let state = run(
+        root,
+        Some(&state),
+        Command::Transfer {
+            target: two,
+            selections: vec![local_stacks::Selection {
+                source: one,
+                path: "one.txt".into(),
+            }],
+        },
+    )
+    .await;
+    assert!(!stock(root, &["file", "list", "-r", "topic-one"]).contains("one.txt"));
+    assert_eq!(
+        stock(root, &["file", "show", "-r", "topic-two", "one.txt"]),
+        "one\n"
+    );
+    assert_eq!(
+        stock(root, &["diff", "-r", "@", "--name-only"]),
+        "draft.txt\n"
+    );
+    let two = stock(
+        root,
+        &["log", "--no-graph", "-r", "topic-two", "-T", "commit_id"],
+    );
+    let state = run(
+        root,
+        Some(&state),
+        Command::Split {
+            commit: two.clone(),
+            message: "Extracted one".into(),
+            selections: vec![local_stacks::Selection {
+                source: two,
+                path: "one.txt".into(),
+            }],
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(root, &["diff", "-r", "topic-two", "--name-only"]),
+        "one.txt\n"
+    );
+    let two = stock(
+        root,
+        &["log", "--no-graph", "-r", "topic-two", "-T", "commit_id"],
+    );
+    let state = run(
+        root,
+        Some(&state),
+        Command::Edit {
+            commit: two,
+            message: "Edited extraction".into(),
+            selections: vec![local_stacks::Selection {
+                source: state.workspaces[0].wip_commit.clone(),
+                path: "draft.txt".into(),
+            }],
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "--no-graph", "-r", "topic-two", "-T", "description"]
+        ),
+        "Edited extraction"
+    );
+    assert_eq!(stock(root, &["diff", "-r", "@", "--name-only"]), "");
+    assert_eq!(
+        stock(root, &["log", "--no-graph", "-r", "@-", "-T", "change_id"]),
+        merge
+    );
+    assert_eq!(
+        stock(root, &["log", "--no-graph", "-r", "@", "-T", "change_id"]),
+        wip
+    );
+    assert_eq!(refresh(root).await.operation, state.operation);
+}

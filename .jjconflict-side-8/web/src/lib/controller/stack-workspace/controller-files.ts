@@ -16,6 +16,9 @@ export function acceptWorkspaceFiles(
     );
     if (workspace) workspace.unassigned = cloneWorkspace(files);
   }
+  for (const stack of controller.snapshot?.stacks ?? [])
+    for (const commit of stack.commits)
+      if (commit.id === source) commit.files = cloneWorkspace(files);
   controller.diffs = reconcileSourceDiffs(
     controller.diffs,
     source,

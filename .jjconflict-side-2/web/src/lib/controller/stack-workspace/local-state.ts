@@ -1,3 +1,4 @@
+import { localFileSelections } from "./local-selections.js";
 import { localMutationCommand, localMutationKinds } from "./local-mutations.js";
 import type { LocalStacksCommand } from "./local-transport.js";
 import type { Model } from "../../api/client.js";
@@ -92,23 +93,16 @@ export function localStacksCommand(
     const stack = snapshot.stacks.find((s) => s.id === command.stack);
     const selections =
       command.selections ?? (command.selection ? [command.selection] : []);
-    if (
-      !workspace?.wipCommit ||
-      !stack ||
-      selections.some((s) => s.source !== "unassigned" || s.hunks)
-    )
+    if (!workspace?.wipCommit || !stack)
       throw new WorkspaceCommandError(
         "invalid",
-        "Select whole files from Unstaged to create this commit.",
+        "Select an applied stack to create this commit.",
       );
     return {
       kind: "commit",
       branch: stack.name,
       message: command.message,
-      selections: selections.map((s) => ({
-        source: workspace.wipCommit!,
-        path: s.path,
-      })),
+      selections: localFileSelections(snapshot, selections),
     };
   }
   if (command.kind === "update_workspace") {

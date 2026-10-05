@@ -1,6 +1,7 @@
 //! Ordinary local JJ megamerges. App settings are local; JJ owns code and checkout.
 mod basic;
 mod config;
+mod content;
 mod inspection;
 mod mutations;
 mod policy;
@@ -74,6 +75,20 @@ pub enum Command {
     },
     Delete {
         workspace: String,
+    },
+    Transfer {
+        target: String,
+        selections: Vec<Selection>,
+    },
+    Split {
+        commit: String,
+        message: String,
+        selections: Vec<Selection>,
+    },
+    Edit {
+        commit: String,
+        message: String,
+        selections: Vec<Selection>,
     },
     CreateStack {
         name: String,
@@ -398,6 +413,17 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                         &settings,
                         &mut config,
                         &wc,
+                        &request.command,
+                    )
+                    .await?;
+                }
+                Command::Transfer { .. } | Command::Split { .. } | Command::Edit { .. } => {
+                    content::execute(
+                        tx.repo_mut(),
+                        &repo,
+                        &name,
+                        &settings,
+                        &config,
                         &request.command,
                     )
                     .await?;

@@ -33689,6 +33689,35 @@ export interface operations {
                 kind: "delete";
               }
             | {
+                target: string;
+                selections: {
+                  source: string;
+                  path: string;
+                }[];
+                /** @constant */
+                kind: "transfer";
+              }
+            | {
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                }[];
+                /** @constant */
+                kind: "split";
+              }
+            | {
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                }[];
+                /** @constant */
+                kind: "edit";
+              }
+            | {
                 name: string;
                 parent?: string | null;
                 /** @constant */
@@ -33921,6 +33950,35 @@ export interface operations {
                 workspace: string;
                 /** @constant */
                 kind: "delete";
+              }
+            | {
+                target: string;
+                selections: {
+                  source: string;
+                  path: string;
+                }[];
+                /** @constant */
+                kind: "transfer";
+              }
+            | {
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                }[];
+                /** @constant */
+                kind: "split";
+              }
+            | {
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                }[];
+                /** @constant */
+                kind: "edit";
               }
             | {
                 name: string;

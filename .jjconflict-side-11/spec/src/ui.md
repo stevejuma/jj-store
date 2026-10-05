@@ -2479,3 +2479,9 @@ commit/file/hunk command is enabled.
 Local stack/basic commit actions consume native previews and point inspection
 for displayed commits. UI commit mutability never comes from graph position or
 mock fixtures. Missing inspection support leaves those actions unavailable.
+
+Lazy changed-file summaries and requested patches update the corresponding
+loaded commit selection models, as well as Unstaged. Existing drag guides,
+staged lists, split forms and inline commit composer use native file mutations
+only after qualification. Net branch diffs remain display unions and do not
+authorize transfers.
