@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056                                                                                                                                                                                                                             |
-| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054,E-M21-055,E-M21-056                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056                                                                                                                                                                                               |
+| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058                                                                                                                                                                                                                   |
+| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054,E-M21-055,E-M21-056,E-M21-058                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058                                                                                                                                                                                     |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -108243,6 +108243,232 @@ entries.
   "next": "Keep existing preview services available; source and consumer changes are separately committed. Registry-only release qualification and visual baselines remain outside this UI slice.",
   "summary": "Shared native/workspace conflict presentation has standard menu typography, four safe persisted display settings and compact host header controls. Comparison changes retain editable and accepted content; filters cannot certify native completion. Opaque gutters cover scrolled code and current highlights. A busy three-pane skeleton replaces visible loading copy while retaining file navigation and disabled command controls. Focused Op Log uses the same presentation; whole-file staging and native capability guards remain unchanged.",
   "verification_scope": "Source-first Merge Editor regressions and required Design Core nonvisual aggregate; directly affected shared native/workspace/Op Log editor stories, web/catalog types, preference units, ownership/architecture, refreshed dependency/cold live browser and canonical/manual/progress checks. Consumer root aggregates, Rust builds/tests, screenshot comparisons, baseline updates and package publication are out of scope under the targeted UI policy. No milestone promotion or live resolution."
+},
+{
+  "id": "E-M21-058",
+  "tasks": [
+    "M21",
+    "M21.1",
+    "M21.2"
+  ],
+  "date": "2026-10-06",
+  "kind": "ui",
+  "change": "Enclosing Jujutsu change: Bound history chips and show Stacks startup skeletons",
+  "scope": "Bound shared JJ/Op Log graph chips; show skeletons across initial repository connection, independent binding discovery and actual first workspace reads; retain refresh content, use toast/Empty retry feedback, and preserve responsive More triggers during equivalent measurements.",
+  "files": [
+    "catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceLoading.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStacksNavigation.stories.svelte",
+    "catalog/fixtures/StackWorkspaceLoadingApplicationFixture.svelte",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/browsing.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/controller/contracts.ts",
+    "web/src/lib/controller/production-stacks.svelte.ts",
+    "web/src/lib/controller/production-store-view.ts",
+    "web/src/lib/controller/stack-workspace/controller-snapshot.ts",
+    "web/src/lib/controller/stack-workspace/controller.svelte.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraphCopy.svelte",
+    "web/src/lib/ui/store-application/StoreApplicationMain.svelte",
+    "web/src/lib/ui/store-application/StoreViewTabs.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceState.svelte",
+    "web/tests/browser/reads.spec.ts",
+    "web/tests/vite/production-stacks-lifecycle.test.ts"
+  ],
+  "versions": "JJ 0.45.1; pnpm 10.32.1; Svelte 5.57.1; existing supported Design Core local validation dependency retained with portable ^0.2.0 manifest and registry lockfile.",
+  "formats": "Frontend-only stackWorkspaceLoading and snapshotLoaded readiness state plus initialLoaded seed option. No API/schema/RPC, native command, JJ identity, stacks.toml, local storage, layout, manifest or WAL format changes.",
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceLoading.stories.svelte catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte",
+      "result": "fail",
+      "failures": 7,
+      "detail": "Before implementation: 7 failed/6 passed; five startup/failure stories and two chip-size regressions. /tmp/stack-startup-chips-before.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-stacks-lifecycle.test.ts",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Before readiness state: 1 failed/10 passed. Binding seed had no successful-content-read indicator. /tmp/stack-startup-unit-before.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <loading and revision-graph stories>",
+      "result": "fail",
+      "failures": 4,
+      "detail": "First fix: 4 failed/9 passed. Two existing assertions addressed chip text rather than its Badge after adding a truncation span; two new history stories used nonexistent region labels. /tmp/stack-startup-chips-after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <loading and revision-graph stories>",
+      "result": "fail",
+      "failures": 1,
+      "detail": "After semantic chip/list queries: 1 failed/12 passed. New fixture supplied commits instead of the public log route value. Corrected fixture. /tmp/stack-startup-chips-fixed.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "fail",
+      "failures": 3,
+      "detail": "Three fixture type errors: remote:null instead of optional string, and commits instead of log view. Corrected without loosening production types. /tmp/stack-startup-catalog.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <loading and revision-graph stories>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "13 passed across connecting, binding seed, held read, failure/retry and retained refresh content; bounded long JJ/Op Log chips. /tmp/stack-startup-chips-final.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-stacks-lifecycle.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "detail": "11 passed after successful workspace-read readiness. /tmp/stack-startup-unit-after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit 'web/tests/vite/stack-workspace' 'web/tests/vite/production-stacks'",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Initial directly affected controller family: 118 passed in 14 files. /tmp/stack-startup-units-final.log."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "0 errors/0 warnings, 244 catalog modules before exposing the additional discovery state. /tmp/stack-startup-web.log and /tmp/stack-startup-catalog-final.log."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 2,
+      "detail": "Two files crossed the 300 counted-line budget: controller 303, workspace 315. Extracted typed controller options and the shared startup/Empty state component; kept the boundary intact. /tmp/stack-startup-architecture.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Initial ownership check passes. /tmp/stack-startup-ownership.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <Application, Navigation, Setup, Production, Recovery, RepositoryLog and RepositoryLoading stories>",
+      "result": "fail",
+      "failures": 1,
+      "detail": "50 passed/1 failed: the narrow More trigger was replaced during redundant width measurements. /tmp/stack-startup-consumers.log."
+    },
+    {
+      "command": "CUA cold Vite reload and tab-local delayed binding discovery",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Live check exposed a connected-but-discovering gap absent from the first fixture; the neutral unavailable state still appeared during binding discovery. Added explicit reactive discovery state and a connected/ready fixture phase. Broad network latency missed the loading window and was cleared; scoped Fetch holding provided the precise reproduction. No repository mutations."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-stacks-lifecycle.test.ts",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Added discovery regression: 1 failed/11 passed before the independently exposed loading getter. /tmp/stack-discovery-unit-before.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit 'web/tests/vite/stack-workspace' 'web/tests/vite/production-stacks'",
+      "result": "pass",
+      "failures": 0,
+      "detail": "119 passed in 14 files after discovery ownership and readiness updates. /tmp/stack-discovery-units-final.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <Loading, RevisionGraph and StacksNavigation stories>",
+      "result": "fail",
+      "failures": 1,
+      "detail": "17 passed/1 failed; only narrow More remained. /tmp/stack-discovery-stories-final.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStacksNavigation.stories.svelte -t FocusedTabsFitNarrowBodyAndSupportKeyboard",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Exact failure reproduced; waiting for loaded/enabled controls did not fix it. Diagnostic showed original More disconnected, replacement closed and no menu. Temporary diagnostic removed. /tmp/stack-startup-navigation-exact.log, navigation-ready.log and navigation-diagnostic.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStacksNavigation.stories.svelte -t FocusedTabsFitNarrowBodyAndSupportKeyboard",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Exact regression passes after suppressing equivalent width/section fits: trigger remains mounted; Op Log menu selection, Back and keyboard tab movement succeed. Four other stories skipped by the exact filter. /tmp/stack-startup-navigation-after.log."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "detail": "After discovery extraction: both type checks 0 errors/0 warnings, 244 catalog modules; architecture 1140 modules. /tmp/stack-discovery-web-final.log, catalog-final.log and architecture-final.log."
+    },
+    {
+      "command": "Owned Vite-only restart using inspectRuntimeProcesses/start/ready helpers",
+      "result": "pass",
+      "failures": 0,
+      "detail": "New Vite PID 77542 on 7476; backend PID 42570 on 7478 and .local/dev-demo preserved. No Rust builds, backend restart, reset or unrelated process changes."
+    },
+    {
+      "command": "CUA held discovery refresh, loaded JJ Log chip geometry and screenshots",
+      "result": "pass",
+      "failures": 0,
+      "detail": "With only registry reads held, live main shows Loading stack workspace busy skeleton and no unavailable copy. Continued held reads and cleared raw interception, then verified loaded Revision graph. Native WIP/merge bookmark chips measure 256px; labels 241px contain 592/607px text, with complete hover titles. Temporary network state restored. Proof .local/stacks-startup-chips/live-loading.png and live-chips.png."
+    },
+    {
+      "command": "pnpm exec playwright test --config .local/stacks-startup-chips/browser.config.ts reads.spec.ts -g 'branch targets scope native history and expose repository decorations'",
+      "result": "pass",
+      "failures": 0,
+      "detail": "1 passed against existing Vite with mocked API and existing ignored native response fixtures. Updated only the chip semantic wrapper assertion; working-copy, Snapshot and operation-head decorations pass. The ignored config disables the normal Rust preview launcher. /tmp/stack-startup-browser-read.log."
+    },
+    {
+      "command": "pnpm docs:review application <startup and bounded history label review>; pnpm exec prettier --write <changed files>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Application fingerprint reviewed against the browsing guide; production and test files formatted. Native API, commands and TOML remain unchanged."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <10 affected Loading, Graph, Stacks/Application and ordinary RepositoryNavigation story files>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "70 passed in 10 files in a fresh browser process after the tab-fit fix; includes all original startup/chip regressions and direct consumer coverage. /tmp/stack-startup-all-final-stories.log."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final: 0 errors/0 warnings; 244 catalog modules. /tmp/stack-startup-all-final-web.log and catalog.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final ownership: 1 validator/23 chapters/173 requirements; architecture: 1140 modules and original line budgets respected. /tmp/stack-startup-all-final-ownership.log and architecture.log."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Offline light/dark Mermaid render, documentation closure, links and anchors pass. /tmp/stack-startup-docs-final.log."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "detail": "19 protected files/4 canonical chapters; 5 validators/23 chapters/173 requirements. /tmp/stack-startup-first-final.log and spec-final.log."
+    },
+    {
+      "command": "Final owned Vite-only restart and CUA cold reload",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final Vite PID 91981 on 7476, backend PID 42570 unchanged. Cold normal reload shows the Loading stack workspace skeleton without unavailable copy; discovery and loaded history proof retained. Network latency zero and raw interception cleared; user tabs untouched. /tmp/stack-startup-cold-restart-final.log."
+    },
+    {
+      "command": "pnpm exec prettier --check <23 changed files>; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "detail": "All changed files formatted; progress validates 142 tasks. All 596 previous evidence entries remain identical as parsed JSON data. /tmp/stack-startup-format-final.log and progress-final.log."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "next": "Keep the existing live Vite/backend available. The verified UI slice is committed independently; broader release/provider gates and visual baselines remain separate.",
+  "summary": "Native labels preserve complete values while long chip text truncates within 16rem/available width. Startup no longer interprets absent controllers or binding-only snapshots as unavailable/empty workspace content. Discovery is independently reactive, first successful reads unlock content and later refreshes retain it. Failed reads have scoped notifications and neutral retry presentation. A related exact overflow regression exposed redundant tab fitting remounting the More trigger; equivalent fits now preserve its identity.",
+  "verification_scope": "Exact before/after chip and startup regressions; all directly affected workspace controller units; affected Stacks/application/history/navigation stories, web/catalog types, UI ownership, architecture, one existing mocked native browser regression and cold live Vite verification. Additional repository-navigation stories are included because the More fix affects ordinary and focused tab hosts. Consumer root aggregates, unrelated UI families, Rust builds/tests, generated transport contracts, source package checks/publication, screenshot comparisons and baseline updates are out of scope under targeted UI policy; no milestone promotion or native repository mutations."
 }
 ]
 ```

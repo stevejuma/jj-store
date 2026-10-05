@@ -374,3 +374,6 @@ retained drafts and diffs, repository-wide history, and the direct-link Overview
 fallback, hover-only circular Back styling and the workspace/selection details
 rail. These are client presentation changes; local commands and workspace TOML
 are unchanged.
+
+The local Stacks browsing manual covers discovery/read skeletons, retained
+refresh content, notification-based retry and bounded native history labels.

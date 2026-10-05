@@ -277,6 +277,19 @@ unchanged.
 
 ## Local stack workspace catalog
 
+Responsive repository and Stacks tabs skip duplicate width/section measurements
+so a visible overflow trigger remains mounted and usable during initial layout.
+
+Stacks tracks binding discovery independently after repository connection is
+ready. Initial connection, binding discovery and the first workspace read show a
+labelled busy skeleton across Branches, Workspace, Commits and Op Log. A
+verified binding seed enables navigation but is not loaded workspace content; it
+cannot briefly render unavailable or empty workspace banners. Successful
+workspace reads release the skeleton; later refreshes retain loaded content,
+drafts and selections. Failed reads use scoped condition notifications and an
+Empty recovery state with Retry; confirmed missing bindings use contextual Empty
+presentation, without duplicate inline error banners.
+
 JST-UI-020 requires an interactive local stack workspace catalog with a
 transport-independent production controller and an injected stateful fixture
 adapter. A capability-gated Stacks repository tab appears immediately before
@@ -1391,6 +1404,11 @@ the sole current code head advances automatically; explicit historical
 operations and immutable commit/operation selections remain retained. Optional
 Refresh can still capture current heads. Updates replace the current history
 entry and preserve the deep selection when it remains available.
+
+JJ Log and Op Log graph chips cap their inline size at 16rem and the available
+row width. Long bookmark, workspace and device labels use ellipsis while their
+complete values remain in accessible text and hover titles. Chip rows wrap
+without displacing graph identities or creating horizontal overflow.
 
 Every asynchronous browsing surface preserves its final geometry while loading.
 Branches renders bookmark-card placeholders in its initial path column; JJ Log

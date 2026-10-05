@@ -152,6 +152,8 @@ export interface StoreControllerState {
 }
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
+  /** Workspace binding discovery can continue after repository connection. */
+  readonly stackWorkspaceLoading?: boolean;
   readonly stackWorkspace?: import("./stack-workspace/controller.svelte.js").StackWorkspaceController;
   readonly freshness?: import("./application-freshness.js").ApplicationFreshness;
   readonly historyQuery?: import("./history-query-types.js").HistoryQueryController;

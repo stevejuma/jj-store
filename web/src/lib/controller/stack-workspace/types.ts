@@ -297,3 +297,9 @@ export class WorkspaceCommandError extends Error {
 }
 export const cloneWorkspace = <T>(value: T): T =>
   JSON.parse(JSON.stringify(value)) as T;
+export interface StackWorkspaceControllerOptions {
+  initial?: WorkspaceSnapshot;
+  /** False when initial data is only a verified local binding seed. */
+  initialLoaded?: boolean;
+  report?: (cause: unknown) => boolean;
+}

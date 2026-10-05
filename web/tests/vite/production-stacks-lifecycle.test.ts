@@ -111,6 +111,54 @@ test("a verified binding exposes owned read-only Stacks without loading details 
   expect(stacks.controller).toBeUndefined();
   expect(source.close).not.toHaveBeenCalled();
 });
+test("binding seeds remain pending until the first successful workspace read", async () => {
+  const { stacks, source } = fixture();
+  await stacks.restore(false);
+  const controller = stacks.controller!;
+  expect(controller.snapshotLoaded).toBe(false);
+  let complete!: () => void;
+  const held = new Promise<void>((resolve) => {
+    complete = resolve;
+  });
+  const references = source.references;
+  source.references = vi.fn(async (...args) => {
+    await held;
+    return references(...args);
+  });
+  const read = stacks.restore();
+  await vi.waitFor(() => expect(controller.loading).toBe(true));
+  expect(controller.snapshotLoaded).toBe(false);
+  complete();
+  await read;
+  expect(controller.snapshotLoaded).toBe(true);
+  const refresh = controller.refresh();
+  expect(controller.snapshotLoaded).toBe(true);
+  await refresh;
+  stacks.clear();
+});
+test("binding discovery remains loading after repository connection is ready", async () => {
+  const { stacks, data, fetcher } = fixture();
+  data.status.connection = "connected";
+  data.status.navigation = "ready";
+  let finish!: (response: Response) => void;
+  fetcher.mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const read = stacks.restore(false);
+  expect(stacks.loading).toBe(true);
+  expect(stacks.controller).toBeUndefined();
+  finish(
+    new Response(JSON.stringify({ version: 1, revision: 1, bindings: [] }), {
+      headers: { "content-type": "application/json" },
+    }),
+  );
+  await read;
+  expect(stacks.loading).toBe(false);
+  stacks.clear();
+});
 test.each(["native", "authenticated", "missing", "unavailable", "generation"])(
   "%s cannot expose a local stacks controller",
   async (reason) => {

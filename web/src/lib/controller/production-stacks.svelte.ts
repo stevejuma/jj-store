@@ -20,7 +20,7 @@ export function createProductionStacks(options: {
   let controller = $state<StackWorkspaceController>();
   let adapter: ProductionStackWorkspaceAdapter | undefined;
   let owner: StoreDataSource | null = null;
-  let pending: AbortController | null = null;
+  let pending = $state<AbortController | null>(null);
   let epoch = 0;
   let loaded = false;
   function clear() {
@@ -104,6 +104,7 @@ export function createProductionStacks(options: {
           operation,
         };
         controller = new StackWorkspaceController(adapter, {
+          initialLoaded: false,
           initial: productionStackSnapshot(
             localStackReferences([]),
             pin,
@@ -161,6 +162,9 @@ export function createProductionStacks(options: {
     }
   }
   return {
+    get loading() {
+      return pending !== null;
+    },
     get controller() {
       return controller;
     },

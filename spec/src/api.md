@@ -2523,3 +2523,9 @@ persistence.
 The shared conflict file-loading skeleton consumes the existing lazy
 selected-path read and changes no endpoint, request, response or mutation
 contract.
+
+Stacks presentation distinguishes `stackWorkspaceLoading` binding discovery from
+`StackWorkspaceController.snapshotLoaded` workspace contents. A verified binding
+seed passes `initialLoaded: false`; successful reads mark contents loaded
+without resetting that state during refresh. These frontend states change no
+HTTP/RPC contracts, repository identities, commands or persisted TOML.

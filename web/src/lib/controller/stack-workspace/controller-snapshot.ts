@@ -27,6 +27,7 @@ export function updateWorkspaceControllerSnapshot(
     state.stackSelections,
   );
   state.snapshot = snapshot;
+  state.snapshotLoaded = true;
   state.targetHistory.sync(snapshot);
   state.diffs = diffs;
   const active = state.diffs.find(

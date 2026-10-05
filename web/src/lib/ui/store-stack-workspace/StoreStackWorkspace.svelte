@@ -12,7 +12,7 @@
   import Pencil from "@lucide/svelte/icons/pencil";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
-  import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
+  import StoreStackWorkspaceState from "./StoreStackWorkspaceState.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
@@ -150,17 +150,8 @@
         {onSettings}
       />{/snippet}
   </StoreStacksNavigation>
-  {#if !snapshot || (controller.loading && !snapshot)}<CommunityProjectsRepositorySkeleton
-      layout="graph"
-      label="Loading stack workspace"
-      count={5}
-    />
-  {:else if !eligible}<CommunityProjectsColumnAlert
-      title="Local checkout unavailable"
-      description={snapshot.availability === "unlinked"
-        ? "Link a local JJ checkout to use stack workspaces."
-        : "Reconnect this local checkout to use stack workspaces."}
-    />
+  {#if !snapshot || !controller.snapshotLoaded || !eligible}
+    <StoreStackWorkspaceState {controller} />
   {:else}
     {#if snapshot.conflicts.length}<CommunityProjectsColumnAlert
         inline

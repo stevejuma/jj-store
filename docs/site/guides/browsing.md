@@ -105,6 +105,10 @@ For a registered local JJ repository, select **Stacks** in its repository tabs,
 before Branches, and choose the target branch. This opens focused navigation:
 Back, Branches, Workspace, Commits and Op Log. Commits and Op Log show the
 repository-wide histories while retaining your workspace drafts and open diffs.
+On first open or reload, a skeleton covers connection, local binding discovery
+and workspace loading. Later refreshes keep loaded content and drafts visible.
+Failed reads show a notification and a Retry control instead of an inline error
+banner. History chips cap long labels with ellipsis; hover shows the full value.
 The workspace picker and workspace actions stay available. If a read starts
 while the picker is open, its choices pause until the read settles. Toggle
 Details to see the workspace name and ID, target branch, applied-stack count and

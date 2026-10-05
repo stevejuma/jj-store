@@ -30,7 +30,9 @@
   let visibleCount = $state(untrack(() => sections.length));
   let mounted = false,
     measuring = false,
-    fitAgain = false;
+    fitAgain = false,
+    fittedWidth = -1,
+    fittedSections = "";
   const visible = $derived(sections.slice(0, visibleCount));
   const overflow = $derived(sections.slice(visibleCount));
   const overflowActive = $derived(
@@ -46,6 +48,10 @@
   }
   async function fitTabs() {
     if (!mounted || !header || !tabList) return;
+    const width = header.clientWidth;
+    const sectionKey = JSON.stringify(sections);
+    // Initial observer delivery and equivalent section arrays must not remount More.
+    if (width === fittedWidth && sectionKey === fittedSections) return;
     if (measuring) {
       fitAgain = true;
       return;
@@ -53,6 +59,8 @@
     measuring = true;
     do {
       fitAgain = false;
+      fittedWidth = header.clientWidth;
+      fittedSections = JSON.stringify(sections);
       visibleCount = sections.length;
       await tick();
       while (

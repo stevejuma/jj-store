@@ -208,6 +208,7 @@
   name="Focused tabs fit narrow body and support keyboard"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await canvas.findByRole("region", { name: "Unstaged files" });
     const region = await canvas.findByRole("region", {
       name: "Local stack workspace",
     });
@@ -218,7 +219,9 @@
       const more = await canvas.findByRole("button", {
         name: "More local repository views",
       });
+      await waitFor(() => expect(more).toBeEnabled());
       await userEvent.click(more);
+      expect(more.isConnected).toBe(true);
       const portal = within(canvasElement.ownerDocument.body);
       await userEvent.click(
         await portal.findByRole("menuitem", { name: "Op Log" }),

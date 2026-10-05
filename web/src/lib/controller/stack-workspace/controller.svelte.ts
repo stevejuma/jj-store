@@ -28,12 +28,15 @@ import {
   type WorkspaceOpenDiff,
   type WorkspaceSnapshot,
   type WorkspaceTargetBranch,
+  type StackWorkspaceControllerOptions,
 } from "./types.js";
 /** Transport-independent state owner. Catalog supplies the mock adapter. */
 export class StackWorkspaceController {
   readonly drag = new WorkspaceDragSession();
   readonly commitDrafts = new WorkspaceCommitDrafts();
   snapshot = $state<WorkspaceSnapshot | null>(null);
+  /** Binding discovery may seed navigation before workspace contents are read. */
+  snapshotLoaded = $state(false);
   loading = $state(false);
   settingsOpen = $state(false);
   conflictOpen = $state(false);
@@ -65,10 +68,7 @@ export class StackWorkspaceController {
   readonly branches: WorkspaceBranches;
   constructor(
     readonly adapter: StackWorkspaceAdapter,
-    options: {
-      initial?: WorkspaceSnapshot;
-      report?: (cause: unknown) => boolean;
-    } = {},
+    options: StackWorkspaceControllerOptions = {},
   ) {
     this.physical = new WorkspacePhysicalObservation(adapter);
     this.branches = new WorkspaceBranches(
@@ -105,8 +105,10 @@ export class StackWorkspaceController {
       },
       options.report,
     );
-    if (options.initial)
+    if (options.initial) {
       updateWorkspaceControllerSnapshot(this, options.initial);
+      this.snapshotLoaded = options.initialLoaded ?? true;
+    }
   }
   eligibility(kind: WorkspaceCommand["kind"]) {
     return workspaceCommandEligibility(this.snapshot, kind);

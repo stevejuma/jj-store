@@ -78,13 +78,15 @@
                 ? "neutral"
                 : "accent"}
             title={bookmark.removed && !bookmark.added
-              ? "Removed bookmark target"
+              ? `Removed bookmark target · ${bookmark.name}${bookmark.remote ? `@${bookmark.remote}` : ""}`
               : bookmark.remote
-                ? `Remote bookmark on ${bookmark.remote}`
-                : "Local bookmark"}
-            >{bookmark.name}{bookmark.remote
-              ? `@${bookmark.remote}`
-              : ""}</CommunityChip
+                ? `Remote bookmark · ${bookmark.name}@${bookmark.remote}`
+                : `Local bookmark · ${bookmark.name}`}
+            ><span class="community-revision-graph-copy__chip-label"
+              >{bookmark.name}{bookmark.remote
+                ? `@${bookmark.remote}`
+                : ""}</span
+            ></CommunityChip
           >
         {/each}
         {#each row.revision.workspaces as workspace (workspace)}
@@ -92,16 +94,22 @@
             size="compact"
             tone="success"
             title={`Workspace ${workspace}`}
-            >{workspace === "default"
-              ? "Working copy"
-              : `Working copy · ${workspace}`}</CommunityChip
+            ><span class="community-revision-graph-copy__chip-label"
+              >{workspace === "default"
+                ? "Working copy"
+                : `Working copy · ${workspace}`}</span
+            ></CommunityChip
           >
         {/each}
         {#if row.revision.operationSnapshot}
           <CommunityChip size="compact" variant="muted">Snapshot</CommunityChip>
         {/if}
         {#each row.deviceAliases as alias (alias)}
-          <CommunityChip size="compact" tone="accent">{alias}</CommunityChip>
+          <CommunityChip size="compact" tone="accent" title={alias}
+            ><span class="community-revision-graph-copy__chip-label"
+              >{alias}</span
+            ></CommunityChip
+          >
         {/each}
       </span>
     {/if}
@@ -153,5 +161,15 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.3rem;
+  }
+  .community-revision-graph-copy__chips :global(.community-chip) {
+    max-inline-size: min(16rem, 100%);
+    min-inline-size: 0;
+  }
+  .community-revision-graph-copy__chip-label {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>

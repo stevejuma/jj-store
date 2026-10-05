@@ -6,7 +6,7 @@
   import StoreStackWorkspacePicker from "../store-stack-workspace/StoreStackWorkspacePicker.svelte";
   import StoreStacksApplicationView from "../store-stack-workspace/StoreStacksApplicationView.svelte";
   import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
-  import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
+  import StoreStackWorkspaceState from "../store-stack-workspace/StoreStackWorkspaceState.svelte";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { Snippet } from "svelte";
   import type {
@@ -63,6 +63,20 @@
     children?: Snippet<[StorePage, string]>;
   } = $props();
   const focusedStacks = $derived(isStacksRoute(current));
+  const stacksPreparing = $derived(
+    controller.stackWorkspaceLoading ||
+      controller.state.accessMode === "bootstrapping" ||
+      controller.state.status.connection === "connecting" ||
+      controller.state.status.navigation === "loading" ||
+      controller.state.status.navigation === "refreshing" ||
+      (controller.state.status.connection === "disconnected" &&
+        controller.state.status.navigation === "idle"),
+  );
+  const initialStackFailure = $derived(
+    !stackWorkspace?.snapshotLoaded &&
+      !stackWorkspace?.loading &&
+      controller.state.status.navigation === "failed",
+  );
   const stacksAvailable = $derived(
     Boolean(
       stackWorkspace?.snapshot?.folder &&
@@ -151,7 +165,7 @@
           <div class="store-application__body-regions" data-page={current.page}>
             {#key current.repository + (focusedStacks ? "stacks" : current.page)}
               {#if focusedStacks}
-                {#if stackWorkspace?.snapshot?.repository === current.repository}
+                {#if stackWorkspace && (!stackWorkspace.snapshot || stackWorkspace.snapshot.repository === current.repository) && !initialStackFailure}
                   <StoreStacksApplicationView
                     {controller}
                     workspace={stackWorkspace}
@@ -167,9 +181,9 @@
                     {/snippet}
                   </StoreStacksApplicationView>
                 {:else}
-                  <CommunityProjectsColumnAlert
-                    title="Local stack workspace unavailable"
-                    description="Stacks require a linked local repository and a workspace controller."
+                  <StoreStackWorkspaceState
+                    loading={Boolean(stacksPreparing)}
+                    onRetry={() => controller.actions.refresh()}
                   />
                 {/if}
               {:else if children}{@render children(
