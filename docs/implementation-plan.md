@@ -27,6 +27,16 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-070 adds bounded selected-inventory projection pages retaining operation
+IDs and copy-parent edges at the first descriptor read. Whole-root and addition
+windows discard unrelated identities, report processed descriptors and charged
+record reads/bytes, preserve historical selections and exclude staged
+candidates. Per-page descriptor, edge and encoded-record limits keep progress
+resumable. This primitive loads no native bodies and changes no persisted
+format. Next integrate source-scoped reverse-copy family lookup and cold kind
+preparation; JJ requires descendants of the selected copies' ancestors as well
+as ancestors.
+
 E-READ-069 routes pinned browser and explicit preparation operation/copy reads
 through the exact source-scoped kind provider. The retained checked manifest and
 original caller deadline stay explicit; unrelated descriptors charge scan work

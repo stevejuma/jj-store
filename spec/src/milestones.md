@@ -86635,6 +86635,158 @@ entries.
     ],
     "next": "Commit verified E-READ-069 in the retained temporary workspace,then continue highest-priority resumable cold kind preparation and relevant copy/path lookup.Full qualification remains deferred.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-070",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "zspxprxy",
+    "kind": "Bounded selected inventory operation and copy-edge projection primitive",
+    "versions": "Rust 1.98.1; jj-lib/jj-core and jj 0.45.1; macOS ARM64.",
+    "formats": "Additive WAL source interface only. No persisted catalog, descriptor, manifest, native body, DTO, RPC, cursor or receipt format changes.",
+    "scope": "Rust-only selected control-record reader. Shared CountedStore fixture justifies complete owning WAL library tests; selected snapshot API receives complete publication binary tests. Run owning WAL all-target check plus canonical and changed-document checks. Additive APIs have no current production consumers; unchanged consumer builds, UI, transport generation and root aggregates are out of scope. Full scale/RSS/latency/fault/cold-browser/RustFS/release qualification remains deferred.",
+    "requirements": ["JST-PUB-002", "JST-PUB-006"],
+    "files": [
+      "crates/jj-store-wal/src/catalog/page.rs",
+      "crates/jj-store-wal/src/publication/reader/projection.rs",
+      "crates/jj-store-wal/src/publication/reader.rs",
+      "crates/jj-store-wal/src/publication/reader_tests.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/tests/publication.rs",
+      "spec/src/publication.md",
+      "spec/src/architecture.md",
+      "docs/implementation-plan.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-wal/src/publication/reader_tests.rs#projection_pages_read_copy_parent_edges_once_under_unrelated_inventory_pressure",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#projection_edge_admission_continues_without_losing_a_copy_or_certifying_a_prefix",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#projection_additions_retain_copy_edges_without_reading_unchanged_descriptors",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#projection_pages_reject_invalid_shapes_limits_and_descriptor_identity",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#inventory_pages_continue_before_byte_admission_without_losing_descriptors",
+      "crates/jj-store-wal/tests/publication.rs#inventory_projections_preserve_pins_copy_edges_and_manifest_only_visibility"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked projection_pages_read_copy_parent_edges_once_under_unrelated_inventory_pressure -- --nocapture",
+        "result": "fail",
+        "failures": 2,
+        "note": "Baseline compilation fails with two missing-API errors; no functional test ran. projection-before-070.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked projection_pages_read_copy_parent_edges_once_under_unrelated_inventory_pressure -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "One exact target passes; projection-after-070.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked projection_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four projection units pass; projection-units-070.log."
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting completed after source and regression edits."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test publication --locked inventory_projections_preserve_pins_copy_edges_and_manifest_only_visibility -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "One fake-store control-plane integration target passes; projection-pins-070.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked inventory_pages_continue_before_byte_admission_without_losing_descriptors -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "One extended byte-admission target passes, including three descriptors each retaining90000 dependencies; projection-bytes-070.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "16.64s; .local/bounded-reads/performance/projection-library-070.log"
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test publication --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.55s; .local/bounded-reads/performance/projection-publication-070.log"
+      },
+      {
+        "command": "cargo check -p jj-store-wal --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "6.28s; .local/bounded-reads/performance/projection-package-070.log"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.66s; .local/bounded-reads/performance/projection-rust-format-070.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.31s; .local/bounded-reads/performance/projection-boundaries-070.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.44s; .local/bounded-reads/performance/projection-architecture-070.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.94s; .local/bounded-reads/performance/projection-spec-first-070.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.49s; .local/bounded-reads/performance/projection-spec-validation-070.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.57s; .local/bounded-reads/performance/projection-progress-070.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/publication.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.68s; .local/bounded-reads/performance/projection-document-format-070.log"
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/publication.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed document formatting passes; projection-document-write-070.log."
+      }
+    ],
+    "notes": [
+      "Whole-root and paired-root additions retain operation IDs and distinct non-placeholder copy-parent IDs at first verified descriptor admission, discarding unrelated identities/dependencies. Per window1\u2013256 descriptors,1\u201365536 copy edges,768 catalog path reads/8MiB and256 descriptor reads with1024 combined reads/32MiB encoded bytes. Callers own authorization, deadlines and whole-traversal work admission.",
+      "Edge/byte exhaustion after a processed prefix returns its exclusive continuation; zero progress errors. Processed descriptor counts include unrelated kinds. Read attempts and admitted encoded bytes include limited lookahead. Copy descriptors reject other dependency kinds; no native object bodies are read.",
+      "Pressure fixture reads all167 descriptors exactly once with zero native bodies. Additions skip1024 unchanged commit descriptors and hydrate exactly5 new descriptors. Edge continuation retains all6 copy relations without certifying a prefix. Invalid limits, missing roots, substituted identities and non-copy dependencies fail closed.",
+      "Public fake-store publication test retains historical roots after later selected publication, preserves exact child-parent additions and excludes a staged copy/operation after before-manifest unknown outcome. Foreign repository and authority-epoch addition comparisons reject. This is not native identity or real-RustFS qualification.",
+      "Upstream JJ0.45.1 related-copy semantics require ancestors and all descendants of those ancestors with deterministic children-before-parents ordering. This primitive supplies dependency relations; backend family lookup is still pending.",
+      "All510 previous evidence entries and their original text are preserved verbatim. No milestone promotion, installed executable, service, fixture, Linux source or main source changes in this delivery slice.",
+      "Complete affected WAL library14/14 and publication binary34/34 pass:48 distinct focused tests. Owning WAL all-target check passes.",
+      "Affected package and canonical checks pass. All prior evidence remains unchanged; focused verification does not qualify the full performance milestone."
+    ],
+    "remaining": [
+      "Source-scoped reverse-copy family/path lookup and resumable cold native kind preparation remain high-priority integration work.",
+      "General filtered log continuation, uncached/ambiguous evolution, indexed code/local application search and oversized comparisons/change grouping/extreme filters remain.",
+      "Complete qualification and Help/generated reference/source-review refresh stay deferred; inherited installation-reference drift remains an open qualification gate."
+    ],
+    "next": "Commit this verified primitive, then land E-READ-069 and E-READ-070 into main and verify the combined direct consumers at the user request. Keep the temporary workspace open and continue highest-priority reverse-copy and resumable cold preparation integration.",
+    "result": "pending"
   }
 ]
 ```

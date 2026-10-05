@@ -19,6 +19,9 @@ impl ScanBudget {
     pub(crate) fn remaining_bytes(&self) -> u64 {
         self.bytes
     }
+    pub(crate) fn remaining_reads(&self) -> usize {
+        self.reads
+    }
     pub(crate) fn admission(error: &Error) -> bool {
         matches!(
             error,

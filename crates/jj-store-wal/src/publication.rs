@@ -30,7 +30,7 @@ mod maintenance;
 mod native_copy;
 pub use maintenance::CheckpointCoverage;
 mod reader;
-pub use reader::InventoryPage;
+pub use reader::{CopyParents, InventoryPage, InventoryProjectionLimits, InventoryProjectionPage};
 mod replication;
 mod replication_agent;
 mod replication_domains;
@@ -375,6 +375,46 @@ pub struct ManifestSnapshot {
     version: VersionToken,
 }
 impl ManifestSnapshot {
+    /// Matching identities and copy dependency relations from one retained root.
+    /// Callers own authorization, deadline and whole-traversal admission.
+    pub async fn inventory_projection_page(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        after: Option<RecordDigest>,
+        limits: InventoryProjectionLimits,
+    ) -> Result<InventoryProjectionPage> {
+        reader::inventory_projection_page(
+            store,
+            self.manifest.repository,
+            self.manifest.inventory,
+            after,
+            limits,
+        )
+        .await
+    }
+    /// Changed descriptors only; consume from None to prove complete retention.
+    pub async fn inventory_projection_additions_page(
+        &self,
+        base: &Self,
+        store: Arc<dyn ObjectStore>,
+        after: Option<RecordDigest>,
+        limits: InventoryProjectionLimits,
+    ) -> Result<InventoryProjectionPage> {
+        if self.manifest.repository != base.manifest.repository
+            || self.manifest.epoch != base.manifest.epoch
+        {
+            return Err(Error::Corrupt("inventory comparison scope"));
+        }
+        reader::inventory_projection_additions_page(
+            store,
+            self.manifest.repository,
+            base.manifest.inventory,
+            self.manifest.inventory,
+            after,
+            limits,
+        )
+        .await
+    }
     /// Compare checked selections within one repository/authority epoch. Only
     /// full traversal from None proves that the complete base is retained.
     /// Callers must reauthorize and impose their own whole-traversal deadline.

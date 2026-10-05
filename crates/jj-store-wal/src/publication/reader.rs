@@ -1,5 +1,8 @@
 //! Read-only manifest-selected log and inventory traversal for durable consumers.
 use super::*;
+mod projection;
+pub use projection::{CopyParents, InventoryProjectionLimits, InventoryProjectionPage};
+pub(super) use projection::{inventory_projection_additions_page, inventory_projection_page};
 
 #[cfg(test)]
 #[path = "reader_tests.rs"]

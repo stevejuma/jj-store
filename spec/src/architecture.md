@@ -1,5 +1,14 @@
 # Architecture
 
+Selected inventory projection pages retain operation identities and copy-parent
+sets at the first descriptor admission. They discard unrelated descriptors and
+load no native bodies. Whole-root and paired-root additions share bounded radix
+traversal, encoded-record admission and exclusive continuations; explicit
+preparers receive scan/read/byte counters for their separate total budgets. Copy
+edges remain data-only dependencies, without ordered terms or publication
+authority. Backend reverse-copy lookup and resumable preparation integration
+remain follow-up work.
+
 Browser and explicit preparation authorities pass their retained checked
 manifest and caller deadline into the source-scoped complete kind provider.
 Historical operation wrappers forward that exact capability; choosing another

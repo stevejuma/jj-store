@@ -382,6 +382,22 @@ prefix/copy enumeration collects matching identities through bounded descriptor
 windows of the same selected root. These readers do not publish state or
 introduce a second commitment test.
 
+Bounded inventory projection windows retain only operation identities and copy
+parent identity sets from the already verified selected descriptors. They scan
+1–256 descriptors, retain at most 65,536 distinct copy-parent edges per window,
+and share the ordinary 1,024-record/32 MiB encoded scan ceiling with separately
+reserved catalog-path work. Report processed descriptor count, charged record
+reads and successful encoded record bytes so an explicit preparer can impose
+independent whole-traversal budgets. Discard unrelated identities and dependency
+sets after each descriptor; load no native object bodies. Edge or byte admission
+exhaustion returns a nonempty processed prefix with its exclusive continuation,
+or an error if no descriptor can be admitted. Empty matching results may still
+carry processed descriptors and a continuation; they never certify completion.
+Copy descriptors reject non-copy dependencies. This is a dependency relation
+projection, not ordered copy terms, a complete closure audit or publication
+authority. Paired-root addition projections retain exact baseline descriptor
+selection; only complete traversal from the start proves whole-base retention.
+
 Historical settings lookup binds epoch, publication position and exact heads to
 manifest-selected history. Position zero selects the immutable initial policy;
 later positions select their committed WAL record. Callers authorize against

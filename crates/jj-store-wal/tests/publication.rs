@@ -273,6 +273,167 @@ async fn inventory_additions_bind_checked_selections_and_exclude_staged_candidat
     ));
 }
 
+#[tokio::test]
+async fn inventory_projections_preserve_pins_copy_edges_and_manifest_only_visibility() {
+    let store = Arc::new(FaultStore::default());
+    let mut source = Source::new();
+    let copy = |n| CopyId::new([n; 64]);
+    for n in 1..=4 {
+        let key = ObjectKey::Copy(copy(n));
+        source.nodes.insert(
+            key,
+            VerifiedNode {
+                key,
+                representation: Representation::Stored {
+                    envelope_digest: EnvelopeDigest::new([n; 32]),
+                    bytes: 100,
+                },
+                dependencies: if n == 1 {
+                    BTreeSet::new()
+                } else {
+                    BTreeSet::from([ObjectKey::Copy(copy(n - 1))])
+                },
+            },
+        );
+        if n > 1 {
+            source
+                .nodes
+                .get_mut(&ObjectKey::Operation(op(n - 1)))
+                .unwrap()
+                .dependencies
+                .insert(key);
+        }
+    }
+    let c = Coordinator::new(
+        store.clone(),
+        REPO,
+        Arc::new(source),
+        Arc::new(Permit),
+        Limits::default(),
+    )
+    .unwrap();
+    c.initialize(EpochId::new([2; 16]), b"initial".to_vec())
+        .await
+        .unwrap();
+    committed(c.publish(&request(120, &[0], 1)).await.unwrap());
+    let pinned = c.read().await.unwrap();
+    committed(c.publish(&request(121, &[1], 2)).await.unwrap());
+    let selected = c.read().await.unwrap();
+    let limits = InventoryProjectionLimits {
+        descriptors: 1,
+        copy_edges: 1,
+    };
+    let mut anchor = None;
+    let mut operations = BTreeSet::new();
+    let mut copies = BTreeMap::new();
+    let mut scanned = 0;
+    loop {
+        let page = pinned
+            .inventory_projection_page(store.clone(), anchor, limits)
+            .await
+            .unwrap();
+        assert_eq!(page.scanned, 1);
+        assert!(page.record_reads <= 1_024 && page.record_bytes <= 32 * 1024 * 1024);
+        operations.extend(page.operations);
+        copies.extend(page.copies.into_iter().map(|node| (node.id, node.parents)));
+        scanned += page.scanned;
+        if page.next.is_none() {
+            break;
+        }
+        assert_ne!(page.next, anchor);
+        anchor = page.next;
+    }
+    assert_eq!(scanned, 4);
+    assert_eq!(operations, BTreeSet::from([op(0), op(1)]));
+    assert_eq!(
+        copies,
+        BTreeMap::from([
+            (copy(1), BTreeSet::new()),
+            (copy(2), BTreeSet::from([copy(1)])),
+        ])
+    );
+    let additions = selected
+        .inventory_projection_additions_page(
+            &pinned,
+            store.clone(),
+            None,
+            InventoryProjectionLimits::default(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(additions.scanned, 2);
+    assert_eq!(additions.operations, vec![op(2)]);
+    assert_eq!(
+        additions.copies,
+        vec![CopyParents {
+            id: copy(3),
+            parents: BTreeSet::from([copy(2)]),
+        }]
+    );
+    assert!(additions.next.is_none());
+
+    store.arm("manifest.json", Fault::Before);
+    assert!(matches!(
+        c.publish(&request(122, &[2], 3)).await.unwrap(),
+        PublishOutcome::OutcomeUnknown { .. }
+    ));
+    let unchanged = c.read().await.unwrap();
+    let empty = unchanged
+        .inventory_projection_additions_page(&selected, store.clone(), None, limits)
+        .await
+        .unwrap();
+    assert_eq!(empty.scanned, 0);
+    assert!(empty.operations.is_empty() && empty.copies.is_empty() && empty.next.is_none());
+    let whole = unchanged
+        .inventory_projection_page(store.clone(), None, InventoryProjectionLimits::default())
+        .await
+        .unwrap();
+    assert_eq!(whole.scanned, 6);
+    assert!(!whole.operations.contains(&op(3)));
+    assert!(!whole.copies.iter().any(|node| node.id == copy(4)));
+
+    let mut foreign = unchanged.manifest().clone();
+    foreign.repository = RepositoryId::new([99; 16]);
+    let upload = StagedUpload::from_bytes(&serde_json::to_vec(&foreign).unwrap(), 128 * 1024)
+        .await
+        .unwrap();
+    store
+        .put(
+            &Key::new(format!("repos/{}/manifest.json", foreign.repository)).unwrap(),
+            Condition::Absent,
+            &upload,
+        )
+        .await
+        .unwrap();
+    let other = ManifestSnapshot::load(store.clone(), foreign.repository)
+        .await
+        .unwrap();
+    assert!(matches!(
+        other
+            .inventory_projection_additions_page(&selected, store.clone(), None, limits)
+            .await,
+        Err(wal::Error::Corrupt("inventory comparison scope"))
+    ));
+    foreign = unchanged.manifest().clone();
+    foreign.epoch = EpochId::new([99; 16]);
+    let upload = StagedUpload::from_bytes(&serde_json::to_vec(&foreign).unwrap(), 128 * 1024)
+        .await
+        .unwrap();
+    let path = c.manifest_key();
+    let version = store.head(&path).await.unwrap().version;
+    store
+        .put(&path, Condition::Matches(version), &upload)
+        .await
+        .unwrap();
+    let other = c.read().await.unwrap();
+    assert!(matches!(
+        other
+            .inventory_projection_additions_page(&selected, store, None, limits)
+            .await,
+        Err(wal::Error::Corrupt("inventory comparison scope"))
+    ));
+}
+
 async fn replication_fixture() -> (Arc<FaultStore>, Coordinator) {
     let store = Arc::new(FaultStore::default());
     let c = coordinator(store.clone());
