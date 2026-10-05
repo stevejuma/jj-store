@@ -11,7 +11,7 @@ pub(crate) async fn read<T>(
     mut emit: impl FnMut(&Operation) -> Result<T>,
 ) -> Result<(Vec<T>, Option<OperationId>)> {
     let id = OperationId::from_slice(head.id().as_bytes()).map_err(|_| Error::Corrupt)?;
-    let mut stream = std::pin::pin!(graph.clone().walk(id, work)?);
+    let mut stream = std::pin::pin!(graph.clone().window(id, after, work)?);
     let mut found = after.is_none();
     let mut result = vec![];
     let mut next = None;

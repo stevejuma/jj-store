@@ -85,6 +85,9 @@ async fn prepared_native_operation_history_hydrates_only_deep_anchor_and_page_ca
                     assert_eq!(result.operation, selected);
                     assert!(result.stats.object_reads <= 5, "{:?}", result.stats);
                     assert!(result.stats.metadata_nodes <= 256, "{:?}", result.stats);
+                    if query != &queries[2] {
+                        assert!(result.stats.work <= 128, "{:?}", result.stats);
+                    }
                     eprintln!("native deep operation index{index}: {:?}", result.stats);
                 }
             }

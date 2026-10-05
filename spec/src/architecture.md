@@ -1,12 +1,20 @@
 # Architecture
 
+Native and local prepared operation-history readers retain the captured
+selection's exact JJ order and inverse ranks under the generation's shared
+allocation lease. Pinned upstream traversal uses admitted transient scratch
+during generation loading; selected-start pages seek by rank and charge only
+subsequent candidates. The order retains no source, metadata body, credentials
+or request capability. Historical-start traversal remains independently bounded.
+
 Native and local prepared operation-history readers share an admitted compact
 DAG and the pinned JJ topology walker. The DAG stores identifiers, parent edges
 and timestamp order keys; source bodies and read capabilities remain request
 owned. Disk publication and resident allocation are bounded before growth.
 Metadata hydration follows anchor selection and filter candidate visits, with
 independent current source admission. No repository authority or wire format
-changes; retained traversal state remains a separate delivery step.
+changes; historical-start retained traversal state remains a separate delivery
+step.
 
 The operation-read landing preserves the local and native prepared-selector
 changes as committed ancestors, with no source-tree reconstruction. Combined

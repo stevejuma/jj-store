@@ -249,6 +249,12 @@ skipping operation bodies before deep anchors. The projection is disposable;
 retained traversal checkpoints still need delivery to avoid replaying compact
 edges. This follow-up remains in bounded-reads on the E-READ-056 main landing.
 
+E-READ-058 retains the captured selection's exact operation order and inverse
+ranks during generation admission. Selected-start pages seek to deep anchors and
+scan only subsequent predicate candidates; fresh source admission and
+anchor/page/probe semantics remain intact. Historical-start continuation, deep
+log/evolution and the other retained/indexed readers remain delivery work.
+
 ### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:

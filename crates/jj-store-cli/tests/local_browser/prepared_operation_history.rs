@@ -100,10 +100,19 @@ async fn prepared_operation_history_skips_prior_bodies_for_filtered_and_historic
             ..Default::default()
         },
     );
+    let seek = q::Executor::with_workers(
+        jj_store_jj::query::workers::Workers::new(1).unwrap(),
+        q::Limits {
+            max_history_visits: 5,
+            max_work: 800,
+            ..Default::default()
+        },
+    );
     for (query, nodes) in queries.iter().zip(&expected) {
+        let reader = if query == &queries[2] { &small } else { &seek };
         for index in [8, 13, nodes.len() - 2] {
             let after = Some(q::ObjectKey::Operation(nodes[index].id));
-            let q::Response::Graph(actual) = small
+            let q::Response::Graph(actual) = reader
                 .read_prepared(
                     access.clone(),
                     prepared.clone(),
@@ -123,6 +132,9 @@ async fn prepared_operation_history_skips_prior_bodies_for_filtered_and_historic
                 (index + 2 < nodes.len()).then_some(q::ObjectKey::Operation(nodes[index + 1].id))
             );
             assert!(actual.stats.metadata_nodes <= 6, "{:?}", actual.stats);
+            if query != &queries[2] {
+                assert!(actual.stats.work <= 800, "{:?}", actual.stats);
+            }
             eprintln!("deep operation page index{index}: {:?}", actual.stats);
         }
     }

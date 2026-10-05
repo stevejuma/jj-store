@@ -9,7 +9,13 @@ walker orders these compact nodes; no heuristic order may replace it. Ready
 operation pages skip prior bodies before hydrating the anchor and predicate/page
 window. Fresh source admission and canonical fingerprints remain mandatory for
 hydrated metadata. Invalid or nonmatching anchors fail explicitly. Traversal
-work remains bounded; retained traversal checkpoints are separate delivery work.
+work remains bounded. Retain the captured selection's exact order and inverse
+ranks during generation admission using the pinned compact topology walker. Seek
+selected-start anchors through those ranks and visit only subsequent
+predicate/page candidates. Charge complete traversal scratch before derivation
+and the immutable order before growth; it shares the generation lifetime and
+contains no source or request capability. Reject disconnected captured graphs.
+Historical-start traversal checkpoints remain separate delivery work.
 
 Prepared local operation graph admission compares fresh selected operation
 metadata with the retained canonical fingerprint, without reading its view or

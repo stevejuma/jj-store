@@ -174,7 +174,44 @@ async fn compact_operation_topology_matches_jj_for_merges_skewed_times_and_every
                 .await
                 .unwrap();
             assert_eq!(actual, expected, "seed{seed},start{start}");
+            let retained: Vec<_> = graph
+                .clone()
+                .window(id(start), None, |_| Ok(()))
+                .unwrap()
+                .try_collect()
+                .await
+                .unwrap();
+            assert_eq!(retained, expected, "retained seed{seed},start{start}");
+            if start == rows.len() - 1 {
+                for (rank, anchor) in expected.iter().enumerate() {
+                    let mut work = 0;
+                    let tail: Vec<_> = graph
+                        .clone()
+                        .window(id(start), Some(*anchor), |n| {
+                            work += n;
+                            Ok(())
+                        })
+                        .unwrap()
+                        .try_collect()
+                        .await
+                        .unwrap();
+                    assert_eq!(tail, expected[rank..], "seed{seed},rank{rank}");
+                    assert_eq!(work, graph.nodes.len().ilog2() as usize + 2 + tail.len());
+                }
+            }
         }
+        assert!(matches!(
+            graph
+                .clone()
+                .window(id(rows.len() - 1), Some(id(99)), |_| Ok(())),
+            Err(Error::Invalid)
+        ));
+        assert!(matches!(
+            graph
+                .clone()
+                .window(id(rows.len() - 1), Some(id(0)), |_| Err(Error::Canceled)),
+            Err(Error::Canceled)
+        ));
         assert!(matches!(
             graph.clone().walk(id(99), |_| Ok(())),
             Err(Error::NotCommitted)
@@ -239,6 +276,13 @@ fn compact_operation_topology_rejects_selection_checksum_membership_cycles_and_b
         )),
         Err(Error::Corrupt)
     ));
+    let (directory, ids) = artifact(&rows, 0);
+    assert!(matches!(
+        Graph::load(directory.path(), id(0), &ids, &mut |_| Ok(()), &mut |_| Ok(
+            ()
+        )),
+        Err(Error::Corrupt)
+    ));
     let directory = tempfile::tempdir().unwrap();
     let scratch = directory.path().join("scratch");
     let mut disk = Tables::new(&scratch, Space::new(1024 * 1024), true).unwrap();
@@ -269,4 +313,43 @@ fn compact_operation_topology_rejects_selection_checksum_membership_cycles_and_b
             .len()
             <= maximum
     );
+}
+
+#[tokio::test]
+async fn selected_operation_continuation_seeks_under_a_fixed_work_budget() {
+    let mut rows = vec![operation(vec![], 0, 0)];
+    for index in 1..64 {
+        rows.push(operation(vec![native(index - 1)], index as i64, 0));
+    }
+    let (directory, ids) = artifact(&rows, 63);
+    let graph = Arc::new(
+        Graph::load(directory.path(), id(63), &ids, &mut |_| Ok(()), &mut |_| {
+            Ok(())
+        })
+        .unwrap()
+        .unwrap(),
+    );
+    let store: Arc<dyn o::OpStore> = Arc::new(Store(rows.clone()));
+    let head = Operation::new(store, native(63), rows[63].clone());
+    let filter = crate::query::language::operations::Filter::parse("").unwrap();
+    for _ in 0..2 {
+        let mut work = 0;
+        let (nodes, next) = read(
+            &head,
+            graph.clone(),
+            &filter,
+            Some(id(3)),
+            2,
+            |amount| {
+                work += amount;
+                if work > 16 { Err(Error::Limit) } else { Ok(()) }
+            },
+            |op| Ok(OperationId::from_slice(op.id().as_bytes()).unwrap()),
+        )
+        .await
+        .unwrap();
+        assert_eq!(nodes, [id(2), id(1)]);
+        assert_eq!(next, Some(id(1)));
+        assert!(work <= 16);
+    }
 }

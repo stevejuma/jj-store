@@ -8,8 +8,13 @@ the exact pinned JJ order for merges, skewed/equal timestamps and historical
 starts. Current authorization and fresh operation fingerprints still apply to
 every hydrated row; a missing, out-of-scope or nonmatching anchor is invalid.
 Older derived generations retain their bounded reader until explicit upgrade.
-Compact traversal still charges ordinary work/cancellation; retaining its state
-to avoid replaying prior compact edges remains separate work.
+Generation admission also retains the captured selection's exact JJ order and
+inverse ranks under shared resident and traversal-scratch admission. Ready pages
+whose resolved start equals that selection seek directly to a retained anchor
+and charge only subsequent candidates, preserving fresh source checks. The order
+contains no operation bodies, source loader or earlier request capability.
+Historical-start compact traversal still charges ordinary work/cancellation;
+retaining those additional continuations remains separate work.
 
 Prepared local operation comparisons MUST admit each requested operation from
 the retained identity lookup and verify fresh operation and view metadata

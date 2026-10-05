@@ -1,4 +1,5 @@
 //! Compact exact operation topology. No bodies, stores or source capability.
+mod traversal;
 mod window;
 use super::*;
 use futures::{Stream, TryStreamExt as _};
@@ -79,6 +80,7 @@ pub(super) fn write(
 struct Node {
     key: Order,
     parents: Vec<OperationId>,
+    rank: usize,
 }
 /// Same comparison as op_walk::OperationByEndTime, including timezone and ID.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -89,6 +91,8 @@ struct Order {
 }
 pub(crate) struct Graph {
     nodes: Vec<Node>,
+    selected: OperationId,
+    ordered: Vec<usize>,
     weight: u64,
     _memory: Lease,
 }
@@ -141,7 +145,7 @@ impl Graph {
         let weight = metadata
             .len()
             .checked_mul(4)
-            .and_then(|bytes| bytes.checked_add(ids.len() as u64 * 256 + 64 * 1024))
+            .and_then(|bytes| bytes.checked_add(ids.len() as u64 * 288 + 64 * 1024))
             .ok_or(Error::Limit)?;
         let memory = Lease::reserve(weight)?;
         let mut file = BufReader::new(std::fs::File::open(&path).map_err(|_| Error::Incomplete)?);
@@ -195,6 +199,7 @@ impl Graph {
                     offset: i32::from_be_bytes(bytes[72..76].try_into().unwrap()),
                 },
                 parents: parent_ids,
+                rank: usize::MAX,
             });
         }
         let mut checksum = [0; 32];
@@ -205,12 +210,15 @@ impl Graph {
         {
             return Err(Error::Corrupt);
         }
-        let graph = Self {
+        let mut graph = Self {
             nodes,
+            selected,
+            ordered: vec![],
             weight,
             _memory: memory,
         };
         graph.validate(work)?;
+        graph.derive_selected(work)?;
         Ok(Some(graph))
     }
     fn position(
@@ -253,40 +261,6 @@ impl Graph {
             return Err(Error::Corrupt);
         }
         Ok(())
-    }
-    pub(crate) fn walk<'a>(
-        self: Arc<Self>,
-        start: OperationId,
-        mut work: impl FnMut(usize) -> Result<()> + 'a,
-    ) -> Result<impl Stream<Item = Result<OperationId>> + 'a> {
-        let head = self.nodes[self.position(start, &mut work)?].key;
-        // JJ may retain a whole branch chunk before yielding a node. Admit a
-        // conservative complete compact frontier before entering that decoder.
-        let memory = Lease::reserve(self.weight.checked_mul(4).ok_or(Error::Limit)?)?;
-        Ok(jj_lib::dag_walk_async::topo_order_reverse_lazy(
-            [Ok(head)],
-            |node| node.id,
-            async move |node: &Order| {
-                let mut neighbors = || -> Result<Vec<Result<Order>>> {
-                    let position = self.position(node.id, &mut work)?;
-                    work(self.nodes[position].parents.len() + 1)?;
-                    self.nodes[position]
-                        .parents
-                        .iter()
-                        .map(|id| Ok(Ok(self.nodes[self.position(*id, &mut work)?].key)))
-                        .collect()
-                };
-                match neighbors() {
-                    Ok(nodes) => nodes,
-                    Err(error) => vec![Err(error)],
-                }
-            },
-            |_| Error::Corrupt,
-        )
-        .map_ok(move |node| {
-            let _memory = &memory;
-            node.id
-        }))
     }
 }
 
