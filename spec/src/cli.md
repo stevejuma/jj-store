@@ -6,9 +6,11 @@ body-read limits. Compact DAG tests cover exact merge/equal/skewed-timestamp
 ordering, framing, selection, checksum, membership, cycle and quota rejection.
 Selected-start continuation regressions enforce a fixed work budget independent
 of anchor depth, repeat the same page and compare complete native/local output.
-Exact compact ordering and generation admission are checked separately. This
-delivery does not qualify historical-start traversal checkpoints, combined scale
-or installed CLI/runtime changes.
+Exact compact ordering and generation admission are checked separately. The
+historical-start regression records a previous page, then resumes and repeats
+its continuation under an independent small work budget while rejecting a
+changed anchor or nonmatching filter. This delivery does not qualify combined
+scale or installed CLI/runtime changes.
 
 The isolated local prepared-operation regression withholds every source view,
 Git object and source/prepared commit-index file. It compares unfiltered,

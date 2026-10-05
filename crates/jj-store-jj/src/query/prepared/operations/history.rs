@@ -1,8 +1,11 @@
 //! Compact exact operation topology. No bodies, stores or source capability.
+mod checkpoint;
 mod traversal;
 mod window;
 use super::*;
-use futures::{Stream, TryStreamExt as _};
+#[cfg(test)]
+use futures::Stream;
+use futures::TryStreamExt as _;
 pub(crate) use window::read;
 const MAGIC: &[u8; 8] = b"JSTOPG1\0";
 const FRAMING: u64 = 80 + 32;
@@ -93,6 +96,7 @@ pub(crate) struct Graph {
     nodes: Vec<Node>,
     selected: OperationId,
     ordered: Vec<usize>,
+    checkpoints: std::sync::Mutex<checkpoint::Cache>,
     weight: u64,
     _memory: Lease,
 }
@@ -214,6 +218,7 @@ impl Graph {
             nodes,
             selected,
             ordered: vec![],
+            checkpoints: Default::default(),
             weight,
             _memory: memory,
         };

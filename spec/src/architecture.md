@@ -5,7 +5,11 @@ selection's exact JJ order and inverse ranks under the generation's shared
 allocation lease. Pinned upstream traversal uses admitted transient scratch
 during generation loading; selected-start pages seek by rank and charge only
 subsequent candidates. The order retains no source, metadata body, credentials
-or request capability. Historical-start traversal remains independently bounded.
+or request capability. Historical-start continuations retain at most32 evictable
+data-only checkpoints per graph. Immutable frontier/chunk arrays and visited
+bitmaps own independent shared-pool leases; live requests keep their data alive
+after eviction. Pinned chunk traversal charges work and scratch before growth.
+Fresh request stores and access remain outside every checkpoint.
 
 Native and local prepared operation-history readers share an admitted compact
 DAG and the pinned JJ topology walker. The DAG stores identifiers, parent edges
@@ -13,8 +17,8 @@ and timestamp order keys; source bodies and read capabilities remain request
 owned. Disk publication and resident allocation are bounded before growth.
 Metadata hydration follows anchor selection and filter candidate visits, with
 independent current source admission. No repository authority or wire format
-changes; historical-start retained traversal state remains a separate delivery
-step.
+changes; missing historical-start checkpoints use ordinary bounded compact
+traversal.
 
 The operation-read landing preserves the local and native prepared-selector
 changes as committed ancestors, with no source-tree reconstruction. Combined

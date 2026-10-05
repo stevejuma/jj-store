@@ -136,6 +136,48 @@ async fn prepared_operation_history_skips_prior_bodies_for_filtered_and_historic
                 assert!(actual.stats.work <= 800, "{:?}", actual.stats);
             }
             eprintln!("deep operation page index{index}: {:?}", actual.stats);
+            if query == &queries[2] && index + 2 < nodes.len() {
+                for _ in 0..2 {
+                    let q::Response::Graph(resumed) = small
+                        .read_prepared(
+                            access.clone(),
+                            prepared.clone(),
+                            q::Request::Graph(
+                                query.clone(),
+                                q::GraphWindow {
+                                    limit: 1,
+                                    after: actual.next,
+                                },
+                            ),
+                        )
+                        .await
+                        .unwrap()
+                    else {
+                        panic!()
+                    };
+                    assert_eq!(
+                        resumed.data,
+                        q::Nodes::Operations(vec![nodes[index + 2].clone()])
+                    );
+                    assert_eq!(
+                        resumed.next,
+                        (index + 3 < nodes.len())
+                            .then_some(q::ObjectKey::Operation(nodes[index + 2].id))
+                    );
+                    assert!(
+                        resumed.stats.work < actual.stats.work,
+                        "{:?} -> {:?}",
+                        actual.stats,
+                        resumed.stats
+                    );
+                    assert!(resumed.stats.metadata_nodes <= 6, "{:?}", resumed.stats);
+                    eprintln!(
+                        "local resumed operation index{}: {:?}",
+                        index + 1,
+                        resumed.stats
+                    );
+                }
+            }
         }
     }
     let request = |query, after| {

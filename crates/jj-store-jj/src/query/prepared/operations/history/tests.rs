@@ -182,6 +182,29 @@ async fn compact_operation_topology_matches_jj_for_merges_skewed_times_and_every
                 .await
                 .unwrap();
             assert_eq!(retained, expected, "retained seed{seed},start{start}");
+            let filter = crate::query::language::operations::Filter::parse("").unwrap();
+            let mut paged = vec![];
+            let mut after = None;
+            loop {
+                let (page, next) = read(
+                    &heads[0],
+                    graph.clone(),
+                    &filter,
+                    after,
+                    3,
+                    |_| Ok(()),
+                    |op| Ok(OperationId::from_slice(op.id().as_bytes()).unwrap()),
+                )
+                .await
+                .unwrap();
+                paged.extend(page);
+                if next.is_none() {
+                    break;
+                }
+                after = next;
+            }
+            assert_eq!(paged, expected, "paged seed{seed},start{start}");
+            assert!(graph.checkpoints.lock().unwrap().len() <= 32);
             if start == rows.len() - 1 {
                 for (rank, anchor) in expected.iter().enumerate() {
                     let mut work = 0;
@@ -352,4 +375,99 @@ async fn selected_operation_continuation_seeks_under_a_fixed_work_budget() {
         assert_eq!(next, Some(id(1)));
         assert!(work <= 16);
     }
+}
+
+#[tokio::test]
+async fn historical_operation_continuations_resume_without_replaying_prior_edges() {
+    let mut rows = vec![operation(vec![], 0, 0)];
+    for index in 1..64 {
+        rows.push(operation(vec![native(index - 1)], index as i64, 0));
+    }
+    let (directory, ids) = artifact(&rows, 63);
+    let graph = Arc::new(
+        Graph::load(directory.path(), id(63), &ids, &mut |_| Ok(()), &mut |_| {
+            Ok(())
+        })
+        .unwrap()
+        .unwrap(),
+    );
+    let store: Arc<dyn o::OpStore> = Arc::new(Store(rows.clone()));
+    let head = Operation::new(store, native(62), rows[62].clone());
+    let filter = crate::query::language::operations::Filter::parse("").unwrap();
+    let (first, next) = read(
+        &head,
+        graph.clone(),
+        &filter,
+        Some(id(4)),
+        1,
+        |_| Ok(()),
+        |op| Ok(OperationId::from_slice(op.id().as_bytes()).unwrap()),
+    )
+    .await
+    .unwrap();
+    assert_eq!(first, [id(3)]);
+    assert_eq!(next, Some(id(3)));
+    for _ in 0..2 {
+        let mut work = 0;
+        let (nodes, next) = read(
+            &head,
+            graph.clone(),
+            &filter,
+            Some(id(3)),
+            2,
+            |n| {
+                work += n;
+                if work > 96 { Err(Error::Limit) } else { Ok(()) }
+            },
+            |op| Ok(OperationId::from_slice(op.id().as_bytes()).unwrap()),
+        )
+        .await
+        .unwrap();
+        assert_eq!(nodes, [id(2), id(1)]);
+        assert_eq!(next, Some(id(1)));
+    }
+    let wrong = crate::query::language::operations::Filter::parse("snapshot:true").unwrap();
+    assert!(matches!(
+        read(
+            &head,
+            graph.clone(),
+            &wrong,
+            Some(id(3)),
+            1,
+            |_| Ok(()),
+            |_| Ok(())
+        )
+        .await,
+        Err(Error::Invalid)
+    ));
+    rows[3].metadata.time.end.timestamp.0 = 999;
+    let store: Arc<dyn o::OpStore> = Arc::new(Store(rows.clone()));
+    let changed = Operation::new(store, native(62), rows[62].clone());
+    assert!(matches!(
+        read(
+            &changed,
+            graph.clone(),
+            &filter,
+            Some(id(3)),
+            1,
+            |_| Ok(()),
+            |_| Ok(())
+        )
+        .await,
+        Err(Error::Corrupt)
+    ));
+    graph.checkpoints.lock().unwrap().clear();
+    let (cold, next) = read(
+        &head,
+        graph.clone(),
+        &filter,
+        Some(id(3)),
+        2,
+        |_| Ok(()),
+        |op| Ok(OperationId::from_slice(op.id().as_bytes()).unwrap()),
+    )
+    .await
+    .unwrap();
+    assert_eq!(cold, [id(2), id(1)]);
+    assert_eq!(next, Some(id(1)));
 }

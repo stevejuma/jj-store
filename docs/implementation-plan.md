@@ -252,8 +252,15 @@ edges. This follow-up remains in bounded-reads on the E-READ-056 main landing.
 E-READ-058 retains the captured selection's exact operation order and inverse
 ranks during generation admission. Selected-start pages seek to deep anchors and
 scan only subsequent predicate candidates; fresh source admission and
-anchor/page/probe semantics remain intact. Historical-start continuation, deep
-log/evolution and the other retained/indexed readers remain delivery work.
+anchor/page/probe semantics remain intact. Historical-start continuation follows
+in E-READ-059; deep log/evolution and other retained/indexed readers remain
+delivery work.
+
+E-READ-059 delivers bounded historical operation frontier/chunk checkpoints
+using the pinned JJ traversal. Retain data only at the page boundary before
+lookahead; current source admission and anchor/filter validation stay fresh.
+Missing/evicted checkpoints use bounded compact fallback. Deep log/evolution,
+lookup/difference/search/RPC delivery and full qualification remain open.
 
 ### Deferred complete qualification
 

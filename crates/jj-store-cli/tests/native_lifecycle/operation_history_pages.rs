@@ -89,6 +89,38 @@ async fn prepared_native_operation_history_hydrates_only_deep_anchor_and_page_ca
                         assert!(result.stats.work <= 128, "{:?}", result.stats);
                     }
                     eprintln!("native deep operation index{index}: {:?}", result.stats);
+                    if query == &queries[2] && index + 2 < nodes.len() {
+                        for _ in 0..2 {
+                            let resumed = exec
+                                .execute(
+                                    f.store.clone(),
+                                    access.clone(),
+                                    query.clone(),
+                                    q::Page {
+                                        limit: 1,
+                                        after: result.next,
+                                    },
+                                )
+                                .await
+                                .unwrap();
+                            assert_eq!(
+                                resumed.data,
+                                q::Nodes::Operations(vec![nodes[index + 2].clone()])
+                            );
+                            assert_eq!(
+                                resumed.next,
+                                (index + 3 < nodes.len())
+                                    .then_some(m::ObjectKey::Operation(nodes[index + 2].id))
+                            );
+                            assert!(resumed.stats.work <= 160, "{:?}", resumed.stats);
+                            assert!(resumed.stats.object_reads <= 5, "{:?}", resumed.stats);
+                            eprintln!(
+                                "native resumed operation index{}: {:?}",
+                                index + 1,
+                                resumed.stats
+                            );
+                        }
+                    }
                 }
             }
             let later = repo

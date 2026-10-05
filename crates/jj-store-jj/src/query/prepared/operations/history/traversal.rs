@@ -1,9 +1,11 @@
 //! Exact upstream topology and retained selection ranks; no source capability.
 use super::*;
-use futures::{FutureExt as _, StreamExt as _};
+use futures::FutureExt as _;
+#[cfg(test)]
+use futures::StreamExt as _;
 
 impl Graph {
-    fn neighbors(
+    pub(super) fn neighbors(
         &self,
         node: &Order,
         work: &mut impl FnMut(usize) -> Result<()>,
@@ -71,6 +73,7 @@ impl Graph {
         Ok(())
     }
 
+    #[cfg(test)]
     pub(crate) fn window<'a>(
         self: Arc<Self>,
         start: OperationId,
@@ -100,6 +103,7 @@ impl Graph {
             .left_stream())
     }
 
+    #[cfg(test)]
     pub(crate) fn walk<'a>(
         self: Arc<Self>,
         start: OperationId,

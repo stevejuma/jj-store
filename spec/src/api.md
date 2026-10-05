@@ -8,9 +8,11 @@ probe semantics, operation pins and signed cursors remain unchanged. Compact
 order for the captured selection is retained once under generation admission;
 selected-start pages seek to the anchor without replaying earlier edges. Fresh
 authorization, metadata integrity, matching-anchor and page/probe checks still
-apply. Historical-start edge replay observes ordinary work limits until its
-continuations are delivered; oversized candidate windows cannot be reported as
-complete.
+apply. Historical-start pages may resume bounded retained compact checkpoints
+selected by exact start and anchor. They recheck current source metadata and
+filter membership, retain the state before the probe, and preserve repeatable
+page/cursor results. Cache loss retains the ordinary bounded fallback; oversized
+candidate windows cannot be reported as complete.
 
 Local operation graph requests may reuse an existing prepared generation even
 without a historical prefix or child selector. Their fresh selection seal uses

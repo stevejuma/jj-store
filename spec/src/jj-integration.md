@@ -15,7 +15,14 @@ selected-start anchors through those ranks and visit only subsequent
 predicate/page candidates. Charge complete traversal scratch before derivation
 and the immutable order before growth; it shares the generation lifetime and
 contains no source or request capability. Reject disconnected captured graphs.
-Historical-start traversal checkpoints remain separate delivery work.
+Historical-start pages may retain at most32 data-only checkpoints per admitted
+graph, keyed by exact resolved start and anchor. Use the pinned JJ chunk walker
+with the complete frontier, pending chunk and visited bitmap. Reserve scratch
+and retained growth before use; share immutable chunks and copy visited bits
+only under admission. Checkpoints carry no source, request, filter or access
+capability and share bounded process retention. A reused anchor is hydrated and
+validated again. Missing or evicted checkpoints fall back to ordinary bounded
+compact traversal; no partial page is represented as complete.
 
 Prepared local operation graph admission compares fresh selected operation
 metadata with the retained canonical fingerprint, without reading its view or

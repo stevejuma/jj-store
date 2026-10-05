@@ -11,12 +11,12 @@ pub(crate) async fn read<T>(
     mut emit: impl FnMut(&Operation) -> Result<T>,
 ) -> Result<(Vec<T>, Option<OperationId>)> {
     let id = OperationId::from_slice(head.id().as_bytes()).map_err(|_| Error::Corrupt)?;
-    let mut stream = std::pin::pin!(graph.clone().window(id, after, work)?);
+    let mut cursor = graph.clone().cursor(id, after, work)?;
     let mut found = after.is_none();
     let mut result = vec![];
     let mut next = None;
     let mut last = None;
-    while let Some(id) = stream.try_next().await? {
+    while let Some(id) = cursor.next()? {
         if !found && after != Some(id) {
             continue;
         }
@@ -48,6 +48,9 @@ pub(crate) async fn read<T>(
         }
         result.push(emit(&operation)?);
         last = Some(id);
+        if result.len() == limit {
+            cursor.save(id)?;
+        }
     }
     if !found {
         return Err(Error::Invalid);

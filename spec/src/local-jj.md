@@ -13,8 +13,13 @@ inverse ranks under shared resident and traversal-scratch admission. Ready pages
 whose resolved start equals that selection seek directly to a retained anchor
 and charge only subsequent candidates, preserving fresh source checks. The order
 contains no operation bodies, source loader or earlier request capability.
-Historical-start compact traversal still charges ordinary work/cancellation;
-retaining those additional continuations remains separate work.
+Historical-start pages retain bounded data-only frontier/chunk/visited
+checkpoints after the final returned row, before probing. Exact start/anchor
+keys permit reuse across metadata filters only after fresh anchor validation.
+Use the pinned JJ chunk traversal and shared pre-growth resident/scratch leases;
+retain no operation body, source loader or prior request capability. Missing or
+evicted checkpoints use ordinary bounded traversal. Cancellation and errors
+never make an incomplete page complete.
 
 Prepared local operation comparisons MUST admit each requested operation from
 the retained identity lookup and verify fresh operation and view metadata
