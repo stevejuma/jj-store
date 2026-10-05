@@ -242,7 +242,7 @@ test("obsolete metadata is canceled and cannot replace a newer file selection", 
   });
   await reader.loadFiles(commit);
   expect(data.status.files).toBe("ready");
-  expect(metadataSignal?.aborted).toBe(false);
+  await expect.poll(() => metadataSignal?.aborted).toBe(false);
   scope.abort();
   expect(metadataSignal?.aborted).toBe(true);
   expect(data.fileRevisionStatus).toBe("unavailable");

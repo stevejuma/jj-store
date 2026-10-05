@@ -1,5 +1,17 @@
 # Storybook presentation catalog
 
+Files reuses loaded directory windows, including completed attribution, within
+the same source, read scope, operation and commit. Repeated selections share a
+pending names request. Revisiting a directory resumes only unfinished metadata
+windows at their quick/history phase, preserving pagination and resolved rows.
+Refresh, access/session replacement and changed selections invalidate retained
+pages; obsolete requests cannot publish into the new selection. Quick row
+attribution is queued before optional commit headers and landing documents, so
+those independent reads cannot hold up the first useful row metadata. The
+existing session query cache also retains successful local names-only reads for
+30 seconds, with registration-generation and exact request keys. History batches
+remain transient so pending results never delay progress through a cache hit.
+
 Opening a directory shows the existing directory skeleton while its files load,
 including navigation within a retained repository snapshot. Pagination keeps
 loaded rows and its existing tail skeleton. File names become navigable before

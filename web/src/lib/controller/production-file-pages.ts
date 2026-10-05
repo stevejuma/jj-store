@@ -9,6 +9,13 @@ export interface StoredPathPage {
   unavailableChanges?: ReadonlySet<string>;
   cursor: string | null;
   snapshot: Snapshot;
+  metadataWindows?: PathMetadataWindow[];
+}
+
+export interface PathMetadataWindow {
+  anchor?: string;
+  paths: string[];
+  phase: "quick" | "history" | "complete";
 }
 
 export const pathPageKey = (path: string, recursive: boolean) =>
@@ -23,6 +30,14 @@ export function storePathPage(
   const previous = next.get(pathPageKey(page.path, page.recursive));
   next.set(pathPageKey(page.path, page.recursive), {
     ...page,
+    metadataWindows: [
+      ...(more ? (previous?.metadataWindows ?? []) : []),
+      {
+        anchor: more ? previous?.entries.at(-1)?.path : undefined,
+        paths: page.entries.map((entry) => entry.path),
+        phase: "quick",
+      },
+    ],
     unavailableChanges: more ? previous?.unavailableChanges : undefined,
     entries:
       more && previous ? [...previous.entries, ...page.entries] : page.entries,

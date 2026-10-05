@@ -8,6 +8,7 @@ import {
   pathPageKey,
   storePathPage,
   visiblePathEntries,
+  type StoredPathPage,
 } from "./production-file-pages.js";
 import { readBlob, readPaths } from "./production-store-loaders.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
@@ -27,6 +28,40 @@ export interface FileReaderContext {
 export function createProductionFileReader(context: FileReaderContext) {
   const { data, history } = context;
   const metadata = createProductionFileMetadata(context, publish);
+  let retained:
+    | {
+        source: StoreDataSource;
+        operation: string;
+        commit: string;
+        ticket: number;
+      }
+    | undefined;
+  let pending:
+    { key: string; signal: AbortSignal; promise: Promise<boolean> } | undefined;
+  function enrich(
+    page: StoredPathPage,
+    commit: string,
+    operation: string,
+    ticket: number,
+    source: StoreDataSource,
+  ) {
+    for (const window of page.metadataWindows ?? []) {
+      const paths = new Set(window.paths);
+      metadata.load({
+        source,
+        operation,
+        commit,
+        ticket,
+        window,
+        anchor: window.anchor,
+        value: {
+          ...page,
+          entries: page.entries.filter((entry) => paths.has(entry.path)),
+          readSnapshot: page.snapshot,
+        },
+      });
+    }
+  }
   function publish(commit: string) {
     const presented = presentPaths(
       commit,
@@ -68,7 +103,13 @@ export function createProductionFileReader(context: FileReaderContext) {
     const path = options.path ?? "";
     const recursive = options.recursive ?? data.fileViewMode !== "tree";
     const more = options.more ?? false;
-    if (!more && data.snapshot?.id !== commit) {
+    if (
+      retained?.source !== source ||
+      retained.operation !== operation ||
+      retained.commit !== commit ||
+      retained.ticket !== ticket
+    ) {
+      retained = { source, operation, commit, ticket };
       data.pathPages = new Map();
       data.knownDirectories = new Set();
       data.collapsedDirectoryPaths = new Set();
@@ -77,53 +118,71 @@ export function createProductionFileReader(context: FileReaderContext) {
     }
     const previous = data.pathPages.get(pathPageKey(path, recursive));
     if (more && !previous?.cursor) return false;
-    data.status.files = more ? "refreshing" : "loading";
     const signal = metadata.bind(
       commit,
       operation,
       pathPageKey(path, recursive),
     );
-    try {
-      const value = await readPaths(source, operation, commit, {
-        path,
-        recursive,
-        includeLastChange: false,
-        signal,
-        cursor: more ? (previous?.cursor ?? undefined) : undefined,
-        expected: more ? previous?.snapshot : undefined,
-      });
-      if (!context.current(ticket, source) || signal.aborted) return false;
-      data.pathPages = storePathPage(
-        data.pathPages,
-        {
-          path: value.path,
-          recursive: value.recursive,
-          entries: value.entries,
-          cursor: value.cursor,
-          snapshot: value.readSnapshot,
-        },
-        more,
-      );
+    if (signal.aborted || !context.current(ticket, source)) return false;
+    if (!more && previous) {
       publish(commit);
-      if (!recursive) rememberDirectories(data.snapshot?.directories ?? []);
-      data.status.files =
-        data.snapshot?.files.length || data.snapshot?.directories?.length
-          ? "ready"
-          : "empty";
-      metadata.load({
-        source,
-        operation,
-        commit,
-        ticket,
-        value,
-        anchor: more ? previous?.entries.at(-1)?.path : undefined,
-      });
+      data.status.files = previous.entries.length ? "ready" : "empty";
+      enrich(previous, commit, operation, ticket, source);
       return true;
-    } catch (cause) {
-      if (!context.current(ticket, source) || signal.aborted) return false;
-      context.report(cause);
-      data.status.files = "failed";
-      return false;
+    }
+    const key = `${pathPageKey(path, recursive)}:${more ? previous?.cursor : ""}`;
+    if (pending?.key === key && pending.signal === signal)
+      return pending.promise;
+    data.status.files = more ? "refreshing" : "loading";
+    const promise = load();
+    pending = { key, signal, promise };
+    try {
+      return await promise;
+    } finally {
+      if (pending?.promise === promise) pending = undefined;
+    }
+    async function load() {
+      try {
+        const value = await readPaths(source, operation, commit, {
+          path,
+          recursive,
+          includeLastChange: false,
+          signal,
+          cursor: more ? (previous?.cursor ?? undefined) : undefined,
+          expected: more ? previous?.snapshot : undefined,
+        });
+        if (!context.current(ticket, source) || signal.aborted) return false;
+        data.pathPages = storePathPage(
+          data.pathPages,
+          {
+            path: value.path,
+            recursive: value.recursive,
+            entries: value.entries,
+            cursor: value.cursor,
+            snapshot: value.readSnapshot,
+          },
+          more,
+        );
+        publish(commit);
+        if (!recursive) rememberDirectories(data.snapshot?.directories ?? []);
+        data.status.files =
+          data.snapshot?.files.length || data.snapshot?.directories?.length
+            ? "ready"
+            : "empty";
+        enrich(
+          data.pathPages.get(pathPageKey(value.path, value.recursive))!,
+          commit,
+          operation,
+          ticket,
+          source,
+        );
+        return true;
+      } catch (cause) {
+        if (!context.current(ticket, source) || signal.aborted) return false;
+        context.report(cause);
+        data.status.files = "failed";
+        return false;
+      }
     }
   }
   function rememberDirectories(directories: readonly { path: string }[]) {
@@ -177,11 +236,7 @@ export function createProductionFileReader(context: FileReaderContext) {
       return;
     }
     const commit = history.route.commitId;
-    if (
-      commit &&
-      !data.pathPages.has(pathPageKey(path, false)) &&
-      !(await loadFiles(commit, { path, recursive: false }))
-    )
+    if (commit && !(await loadFiles(commit, { path, recursive: false })))
       return;
     const expanded = new Set(data.collapsedDirectoryPaths);
     expanded.delete(path);

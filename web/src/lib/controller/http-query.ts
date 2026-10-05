@@ -20,10 +20,12 @@ export function createHttpQuery(
       {
         queryKey: storeQueryKeys.resource(scope, kind, snapshot, args),
         staleTime:
-          snapshot &&
-          ["file", "commit", "operation", "commit-summary"].includes(kind)
-            ? Infinity
-            : 30_000,
+          kind === "paths" && args.last_change_mode === "history"
+            ? 0
+            : snapshot &&
+                ["file", "commit", "operation", "commit-summary"].includes(kind)
+              ? Infinity
+              : 30_000,
         queryFn: async ({ signal }) => {
           const value = await read(signal);
           if (!active()) throw new DOMException("Closed", "AbortError");

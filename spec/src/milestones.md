@@ -91493,6 +91493,225 @@ entries.
       "No release, optimized-build, OS-cold, RustFS or visual qualification claimed. Broader unrelated suites out of scope. Names-only setup still about 1.2s; directory response reuse and listing setup are the next measured slice. Reader reuse, completed server path-result cache and soft attribution allowance remain conditional on measurements."
     ],
     "next": "Admission-cache slice verified: commit and land it; retain temporary workspace. Continue directory UI response reuse and listing setup investigation. Remaining items describe separate qualification and conditional optimizations, not failures in this slice."
+  },
+  {
+    "id": "E-READ-090",
+    "date": "2026-10-06",
+    "tasks": ["M4.11", "M13.4"],
+    "requirements": ["JST-UI-005", "JST-UI-011", "JST-GOV-007"],
+    "kind": "Retain file directory responses and metadata progress within the active read scope",
+    "revision": "enclosing Jujutsu change xqkplmwn",
+    "before": "Directory selections always reread names and overwrite enriched pages. Concurrent clicks duplicate names requests. Returning after canceled history repeats quick attribution; loaded continuation windows are discarded. Corrected exact regression: four failed, three passed. Local transport staleTime=0 reread identical names; native history used a 30-second cache for pending batches.",
+    "scope": "Reuse the existing page map, with source/operation/commit/read-version invalidation, in-flight names coalescing and per-window quick/history/completed attribution progress. Keep successful local names responses in the existing session QueryClient for 30 seconds; generation and exact request keys isolate them. Native history is transient. Preserve source close, cancellation, refresh clearing, pagination, skeletons and shared feedback. No source persistence, backend or public-contract change. Prioritize quick row metadata ahead of optional commit headers and landing documents; these no longer hold up Description/Updated.",
+    "versions": "macOS ARM64; Vitest 4.1.11, Playwright 1.63.0, Svelte 5.57.1; pinned repository dependencies.",
+    "formats": "Internal optional StoredPathPage metadata windows; HTTP DTOs, cursor formats, source JJ/Git metadata, storage and credentials unchanged.",
+    "files": [
+      "spec/src/ui.md",
+      "web/src/lib/controller/http-local-query.ts",
+      "web/src/lib/controller/http-query.ts",
+      "web/src/lib/controller/production-file-metadata.ts",
+      "web/src/lib/controller/production-file-pages.ts",
+      "web/src/lib/controller/production-file-reader.svelte.ts",
+      "web/tests/browser/directory-response-cache.spec.ts",
+      "web/tests/vite/directory-query-cache.test.ts",
+      "web/tests/vite/directory-response-cache.test.ts",
+      "spec/src/milestones.md",
+      "spec/src/api.md",
+      "web/tests/vite/quick-file-metadata.test.ts",
+      "web/tests/vite/production-file-reader.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/directory-response-cache.test.ts#revisiting a directory retains names and completed attribution without another request",
+      "web/tests/vite/directory-query-cache.test.ts#local directory reads reuse successful responses within their generation and expire cursors",
+      "web/tests/browser/directory-response-cache.spec.ts#directory navigation shows loading once and reuses completed rows and metadata",
+      "web/tests/vite/quick-file-metadata.test.ts#quick path metadata does not wait for the optional commit header or landing documents"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/directory-response-cache.test.ts",
+        "result": "fail",
+        "failures": 4,
+        "note": "before.log initially used wrong presentation message field; corrected test fixture. before-corrected.log proves four behavior failures, three passing invalidation checks."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/directory-response-cache.test.ts web/tests/vite/production-file-reader.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "after.log: 19 pass, one existing fixture uses returned recursive mode distinct from requested mode; enrich now uses the returned page key."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/directory-response-cache.test.ts web/tests/vite/production-file-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "after-2.log: 20 tests passed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/directory-query-cache.test.ts web/tests/vite/directory-response-cache.test.ts web/tests/vite/production-file-reader.test.ts web/tests/vite/http-query.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/production-automatic-refresh.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "focused.log and final-unit.log: 52 tests passed; final-unit-2.log: 53 passed after canceled-quick skeleton regression."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 4,
+        "note": "web-check.log: four type errors from generic-union narrowing and local read method callback compatibility; fixed."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check-2.log and web-check-final.log: zero errors and warnings."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/production-store-loaders.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "loaders.log: 11 tests passed, including direct page/cursor helpers."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/directory-cache/browser.config.ts directory-response-cache.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "browser.log wrong accessible folder name; browser-2.log used root table label after entering arch. Both test selectors corrected to the existing production labels."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/directory-cache/browser.config.ts directory-response-cache.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "browser-3.log: one cold Vite/browser test passed in 8.2s; keyboard directory entry, skeleton while names are pending, rows/metadata and zero extra names/metadata requests on revisiting. Uses admitted mocked native fixture; no screenshot baseline changes. Final rerun browser-final.log passed after canceled-quick restoration."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "ownership.log: existing boundary checker passed."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "architecture.log: existing boundary checker passed."
+      },
+      {
+        "command": "python3 -u .local/directory-cache/profile-requests.py setup-profile",
+        "result": "pass",
+        "failures": 0,
+        "note": "Eight names-only Linux arch reads at existing pinned commit/operation; data unchanged. setup-profile.json and profile-requests.log retained."
+      },
+      {
+        "command": "sample 80426 8 1 -file .local/directory-cache/setup-sample.txt",
+        "result": "pass",
+        "failures": 0,
+        "note": "Process sample under read load: a representative read stack has 734/1342 samples in bounded_git_header -> gix pack index load/validate_size; operation fingerprinting 290/1342. Approximate sampling attribution, not exclusive timing; unrelated capture work also appears. Directory reader source uses direct-child tree iteration, not recursive traversal."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial new evidence used test filenames without required named anchors; corrected."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Transport cache files also require api.md; added client lifetime and transient history policy."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-surface check; no aggregate suite."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-surface check; no aggregate suite."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-surface check; no aggregate suite."
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/controller/http-local-query.ts web/src/lib/controller/http-query.ts web/src/lib/controller/production-file-pages.ts web/src/lib/controller/production-file-metadata.ts web/src/lib/controller/production-file-reader.svelte.ts web/tests/vite/directory-response-cache.test.ts web/tests/vite/directory-query-cache.test.ts web/tests/browser/directory-response-cache.spec.ts spec/src/ui.md spec/src/api.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-surface check; no aggregate suite."
+      },
+      {
+        "command": "node .local/directory-cache/linux-navigation.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial live probe timed out waiting for quick attribution after 60s. A follow-up traced the existing serial enrichment queue: headers/landing documents precede quick rows; corrected scheduling."
+      },
+      {
+        "command": "node .local/directory-cache/inspect-live.mjs; node .local/directory-cache/inspect-metadata.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Diagnostic fresh-browser reads: filenames usable, no page errors; commit_summary then file_at started before row attribution. Logs retained without credentials."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/quick-file-metadata.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "priority-before.log: pending optional header prevents quick metadata. Exact regression fails before reordering."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/quick-file-metadata.test.ts web/tests/vite/directory-query-cache.test.ts web/tests/vite/directory-response-cache.test.ts web/tests/vite/production-file-reader.test.ts web/tests/vite/http-query.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/production-automatic-refresh.test.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "priority-final.log: one prior test assumed header starts synchronously, plus unhandled rejection in new optional-read fixture when canceled before starting. Wait for header start while preserving cancellation assertions; handle unused fixture promise."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/quick-file-metadata.test.ts web/tests/vite/directory-query-cache.test.ts web/tests/vite/directory-response-cache.test.ts web/tests/vite/production-file-reader.test.ts web/tests/vite/http-query.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/production-automatic-refresh.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "priority-final-2.log: 54 tests passed across seven directly affected files, no unhandled errors."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-priority.log: zero errors/warnings after scheduling change."
+      },
+      {
+        "command": "pnpm exec playwright test --config .local/directory-cache/browser.config.ts directory-response-cache.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "browser-priority.log: one cold browser test passes after scheduling change (27.9s with concurrent checks)."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Checking only the scheduling amendment atop the already committed slice lacked its mapped API chapter. Squashed into enclosing slice, which includes api.md; merged-change gate passes."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final merged xqkplmwn: ten protected files and three canonical chapters."
+      },
+      {
+        "command": "node .local/directory-cache/linux-navigation.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "linux-navigation-final.log: probe waited for network completion but navigated before root quick metadata was published, correctly resuming canceled quick work. Probe now waits for a rendered attribution row before claiming a completed read."
+      },
+      {
+        "command": "node .local/directory-cache/linux-navigation.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "linux-navigation-settled.log/linux-navigation.json: real Linux root and arch at the recorded operation/commit. First arch names and rendering 1399ms; root-to-arch revisit round trip 256ms. Exactly one successful names and quick metadata request per directory. Revisit sends zero names or quick requests; two unfinished history windows resume. Warm development app/OS caches; not release or OS-cold qualification."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "UI and admission slices landed in main and the running preview, with the temporary workspace retained. Conditional Git pack-reader reuse remains a separate backend slice: isolated names reads still about 1.2s, live arch first visit 1.4s. Completed server path-result caching and a soft attribution allowance are not added in this measured delivery. No broader indexing/cache redesign or release qualification claimed.",
+    "out_of_scope": "Rust, full UI/catalog, released built-bundle/CSP, OS-cold Linux, RustFS and visual baselines are out of scope for this UI/controller slice. Exact cold Vite lifecycle smoke is included. Optional web-perf DevTools MCP was unavailable; used native process sampling and direct HTTP timings, not a browser performance trace."
   }
 ]
 ```

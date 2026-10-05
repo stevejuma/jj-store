@@ -40,7 +40,14 @@ export class HttpLocalQuery {
     this.client = new LocalClient(repository, fetcher);
     this.#reads = reads ?? createStoreQueryClient();
   }
-  protected read<T>(path: string, body?: unknown, signal?: AbortSignal) {
+  protected read<T>(
+    path: string,
+    body?: unknown,
+    signal?: AbortSignal,
+    _method?: "POST",
+    staleTime?: number,
+  ) {
+    this.client.closed.signal.throwIfAborted();
     if (path === "snapshot") return this.client.request<T>(path, body, signal);
     const encoded = pretty(body);
     const retained = body === undefined ? undefined : decode(encoded);
@@ -61,9 +68,10 @@ export class HttpLocalQuery {
         queryFn: ({ signal: shared }) =>
           this.client.request<T>(path, retained, shared),
         staleTime:
-          path.startsWith("work/") && body && path !== "work/query-info"
+          staleTime ??
+          (path.startsWith("work/") && body && path !== "work/query-info"
             ? Infinity
-            : 0,
+            : 0),
         gcTime: 10 * 60_000,
         retry: (failures, error) =>
           error instanceof ApiError && error.code === "busy" && failures < 2,
@@ -122,6 +130,12 @@ export class HttpLocalQuery {
           cursor: cursor ?? null,
         },
         signal,
+        undefined,
+        // Names are immutable at this operation/commit. Keep expiring cursors
+        // short lived; quick/history attribution retains its own progress policy.
+        selection.kind === "paths" && !selection.query.include_last_change
+          ? 30_000
+          : 0,
       );
     } catch (cause) {
       if (

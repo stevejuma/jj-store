@@ -1,5 +1,14 @@
 # Read APIs and browser
 
+The browser may reuse successful local names-only path responses for 30 seconds
+in its existing session cache, keyed by repository, registration generation,
+captured head and the exact operation/commit/path/window request. Closed sources
+cannot serve cached content. Retained directory rows and attribution progress
+remain within the current controller read scope; refresh or source/selection
+replacement clears them. Native and local history batches remain transient so a
+cached pending batch cannot delay further progress. No cache grants server
+authorization or extends an opaque cursor's lifetime.
+
 Local code requests may reuse server-owned folder validation during bounded
 traversal. Full registration and physical identity checks remain at read entry
 and completion, with short-lived checks renewed during long work. Cache hits

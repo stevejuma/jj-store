@@ -6,7 +6,10 @@ import {
   readFileRevision,
 } from "./production-store-loaders.js";
 import { landingDocuments } from "./production-landing-documents.js";
-import { pathPageKey } from "./production-file-pages.js";
+import {
+  pathPageKey,
+  type PathMetadataWindow,
+} from "./production-file-pages.js";
 import type { FileReaderContext } from "./production-file-reader.svelte.js";
 import type { StoreDataSource } from "./native-data-source.js";
 
@@ -16,6 +19,7 @@ export function createProductionFileMetadata(
 ) {
   const { data } = context;
   const queue = createFileReadQueue();
+  const scheduled = new WeakMap<PathMetadataWindow, AbortSignal>();
   let selected = "";
   let source: StoreDataSource | undefined;
   let scope = new AbortController();
@@ -41,8 +45,9 @@ export function createProductionFileMetadata(
     ticket: number;
     value: Awaited<ReturnType<typeof readPaths>>;
     anchor?: string;
+    window?: PathMetadataWindow;
   }) {
-    const { source, operation, commit, ticket, value, anchor } = input;
+    const { source, operation, commit, ticket, value, anchor, window } = input;
     const readSignal = signal;
     const selectedCurrent = () =>
       context.current(ticket, source) && data.snapshot?.id === commit;
@@ -66,67 +71,33 @@ export function createProductionFileMetadata(
           if (selectedCurrent()) failed();
         },
       );
-    if (data.fileRevision?.eventId !== commit) {
-      data.fileRevisionStatus = "loading";
-      add(
-        `header:${commit}`,
-        async () => {
-          const revision = await readFileRevision(
-            source,
-            operation,
-            commit,
-            readSignal,
-          );
-          if (current()) {
-            data.fileRevision = revision;
-            data.fileRevisionStatus = "ready";
-          }
-        },
-        () => {
-          data.fileRevisionStatus = "unavailable";
-        },
-      );
-    }
-    add(
-      `documents:${commit}:${landingDocuments(data.fileTerms)
-        .map(({ path, id }) => `${path}:${id}`)
-        .join(":")}`,
-      async () => {
-        const snapshot = data.snapshot;
-        if (!snapshot) return;
-        const files = new Map(data.fileTerms);
-        const enriched = await readLandingDocuments(
-          source,
-          operation,
-          snapshot,
-          files,
-          readSignal,
-        );
-        if (!current() || !data.snapshot) return;
-        const loaded = new Map(
-          enriched.files
-            .filter((file) => file.contents !== undefined || file.binary)
-            .map((file) => [file.path, file]),
-        );
-        data.snapshot = {
-          ...data.snapshot,
-          files: data.snapshot.files.map((file) =>
-            files.get(file.path) === data.fileTerms.get(file.path)
-              ? (loaded.get(file.path) ?? file)
-              : file,
-          ),
-        };
-      },
-      () => {},
-    );
     const deferred = value.entries.some(
       (entry) =>
         entry.last_change.status === "unavailable" &&
         ["not_requested", "pending"].includes(entry.last_change.reason),
     );
-    if (deferred) {
+    if (
+      window?.phase !== "complete" &&
+      (deferred || window?.phase === "history") &&
+      (!window || scheduled.get(window) !== readSignal)
+    ) {
+      if (window) scheduled.set(window, readSignal);
       const key = pathPageKey(value.path, value.recursive);
+      const retained = data.pathPages.get(key);
+      if (retained?.unavailableChanges?.size) {
+        const pending = new Set(value.entries.map((entry) => entry.path));
+        data.pathPages = new Map(data.pathPages).set(key, {
+          ...retained,
+          unavailableChanges: new Set(
+            [...retained.unavailableChanges].filter(
+              (path) => !pending.has(path),
+            ),
+          ),
+        });
+        publish(commit);
+      }
       const markUnavailable = (cause?: unknown) => {
+        if (cause !== undefined && window) window.phase = "complete";
         const page = data.pathPages.get(key);
         if (!page) return;
         const paths = new Set(
@@ -228,6 +199,7 @@ export function createProductionFileMetadata(
                     entry.last_change.status === "unavailable" &&
                     entry.last_change.reason === "pending",
                 );
+          if (window) window.phase = continueHistory ? "history" : "complete";
           if (continueHistory) {
             await pause(
               Math.min(150 * 2 ** Math.min(pass, 3), 1000),
@@ -245,10 +217,63 @@ export function createProductionFileMetadata(
       };
       add(
         `attribution:${key}:${anchor ?? ""}`,
-        () => batch("quick", 0),
+        () => batch(window?.phase === "history" ? "history" : "quick", 0),
         markUnavailable,
       );
     }
+    if (data.fileRevision?.eventId !== commit) {
+      data.fileRevisionStatus = "loading";
+      add(
+        `header:${commit}`,
+        async () => {
+          const revision = await readFileRevision(
+            source,
+            operation,
+            commit,
+            readSignal,
+          );
+          if (current()) {
+            data.fileRevision = revision;
+            data.fileRevisionStatus = "ready";
+          }
+        },
+        () => {
+          data.fileRevisionStatus = "unavailable";
+        },
+      );
+    }
+    add(
+      `documents:${commit}:${landingDocuments(data.fileTerms)
+        .map(({ path, id }) => `${path}:${id}`)
+        .join(":")}`,
+      async () => {
+        const snapshot = data.snapshot;
+        if (!snapshot) return;
+        const files = new Map(data.fileTerms);
+        const enriched = await readLandingDocuments(
+          source,
+          operation,
+          snapshot,
+          files,
+          readSignal,
+        );
+        if (!current() || !data.snapshot) return;
+        const loaded = new Map(
+          enriched.files
+            .filter((file) => file.contents !== undefined || file.binary)
+            .map((file) => [file.path, file]),
+        );
+        data.snapshot = {
+          ...data.snapshot,
+          files: data.snapshot.files.map((file) =>
+            files.get(file.path) === data.fileTerms.get(file.path)
+              ? (loaded.get(file.path) ?? file)
+              : file,
+          ),
+        };
+      },
+      () => {},
+    );
   }
   return { bind, load };
 }
