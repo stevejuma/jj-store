@@ -74,7 +74,7 @@ impl OpStore for Guard {
     }
     async fn read_operation(&self, id: &o::OperationId) -> OpStoreResult<o::Operation> {
         self.budget.authorize(&self.access).await.map_err(error)?;
-        let prepared = self.access.prepared.as_ref().filter(|_| !self.evolution);
+        let prepared = self.access.prepared.as_ref();
         let wire_id = operation_id(id).map_err(error)?;
         let expected = prepared
             .map(|p| {

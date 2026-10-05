@@ -1,5 +1,12 @@
 # CLI and server commands
 
+Native/local prepared-evolution regressions compare complete rows with the
+independent upstream predecessor walker. Deep pages avoid preceding commit-body
+hydration; repeated continuations resume data-only state under independent small
+work/read allowances. Cover terminal pages and invalid anchors, retain current
+authority and legacy/known-empty predecessor semantics. These focused fixtures
+do not qualify complete large-repository or installed-runtime behavior.
+
 Native/local default-log continuation regressions compare exact deep pages with
 the independent upstream graph path under a fixed ordinary work budget. The
 prepared generation retains visible identity order and compact ranks; returned

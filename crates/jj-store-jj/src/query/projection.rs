@@ -116,6 +116,23 @@ pub(super) struct Reader {
     _memory: Arc<memory::Indexes>,
 }
 impl Reader {
+    pub fn commit_flags(&self, commit: m::CommitId, change: m::ChangeId) -> Result<(bool, bool)> {
+        let references = &self.prepared.decorations.references;
+        self.budget
+            .work(references.len().max(1).ilog2() as usize + 2)?;
+        let Some(group) = references.get(&format!("change:{change}")) else {
+            return Ok((false, false));
+        };
+        self.budget
+            .work(group.targets.len().max(1).ilog2() as usize + 2)?;
+        Ok((
+            group
+                .targets
+                .binary_search_by_key(&commit, |row| row.commit)
+                .is_ok(),
+            group.targets.len() > 1,
+        ))
+    }
     pub fn log_window(
         &self,
         after: Option<m::CommitId>,

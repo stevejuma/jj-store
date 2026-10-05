@@ -97,10 +97,20 @@ pub(super) async fn describe(
     if !access.contains_commit(id).await? {
         return Err(Error::NotCommitted);
     }
-    let targets = repo
-        .resolve_change_id(commit.change_id())
-        .await
-        .map_err(|_| Error::Unavailable)?;
+    let change_id =
+        m::ChangeId::from_slice(commit.change_id().as_bytes()).map_err(|_| Error::Unavailable)?;
+    let (visible, divergent) = if let Some(prepared) = access.prepared.as_ref() {
+        prepared.commit_flags(id, change_id, budget)?
+    } else {
+        let targets = repo
+            .resolve_change_id(commit.change_id())
+            .await
+            .map_err(|_| Error::Unavailable)?;
+        (
+            targets.as_ref().is_some_and(|t| t.has_visible(commit.id())),
+            targets.as_ref().is_some_and(|t| t.is_divergent()),
+        )
+    };
     let (bookmarks, workspaces) =
         if let Some(prepared) = &access.prepared {
             prepared.annotations(id, budget)?
@@ -144,8 +154,7 @@ pub(super) async fn describe(
         };
     Ok(Commit {
         id,
-        change_id: m::ChangeId::from_slice(commit.change_id().as_bytes())
-            .map_err(|_| Error::Unavailable)?,
+        change_id,
         parents: commit.parent_ids().iter().map(cid).collect::<Result<_>>()?,
         description: commit.description().to_owned(),
         author: signature(commit.author()),
@@ -158,10 +167,39 @@ pub(super) async fn describe(
         conflicted: commit.has_conflict(),
         bookmarks,
         workspaces,
-        visible: targets.as_ref().is_some_and(|t| t.has_visible(commit.id())),
-        divergent: targets.as_ref().is_some_and(|t| t.is_divergent()),
+        visible,
+        divergent,
     })
 }
+async fn describe_evolution(
+    repo: &ReadonlyRepo,
+    entry: &jj_lib::evolution::CommitEvolutionEntry,
+    access: &Arc<Pin>,
+    budget: &Budget,
+) -> Result<EvolutionNode> {
+    Ok(EvolutionNode {
+        commit: describe(repo, &entry.commit, access, budget).await?,
+        operation: entry
+            .operation
+            .as_ref()
+            .map(|op| oid(op.id()))
+            .transpose()?,
+        predecessors: entry
+            .predecessor_ids()
+            .iter()
+            .map(cid)
+            .collect::<Result<_>>()?,
+        predecessors_known: entry.operation.is_some(),
+        legacy_predecessors: entry
+            .commit
+            .store_commit()
+            .predecessors
+            .iter()
+            .map(cid)
+            .collect::<Result<_>>()?,
+    })
+}
+
 struct Position {
     after: Option<ObjectKey>,
     found: bool,
@@ -349,6 +387,39 @@ pub(super) async fn run(
             if !access.contains_commit(commit).await? {
                 return Err(Error::NotCommitted);
             }
+            if let Some(graph) = access
+                .prepared
+                .as_ref()
+                .and_then(|prepared| prepared.operation_history())
+            {
+                budget.authorize(access.as_ref()).await?;
+                let after = match page.after {
+                    Some(ObjectKey::Commit(id)) => Some(b::CommitId::from_bytes(id.as_bytes())),
+                    None => None,
+                    _ => return Err(Error::Invalid),
+                };
+                let (nodes, next) = crate::query::prepared::operations::history::evolution::read(
+                    repo,
+                    graph,
+                    b::CommitId::from_bytes(commit.as_bytes()),
+                    after,
+                    page.limit,
+                    |amount| budget.work(amount),
+                    native::map_backend,
+                    async |entry| {
+                        let node = describe_evolution(repo, &entry, access, budget).await?;
+                        budget.output(&node)?;
+                        Ok(node)
+                    },
+                )
+                .await?;
+                return Ok((
+                    Nodes::Evolution(nodes),
+                    next.as_ref()
+                        .map(|id| cid(id).map(ObjectKey::Commit))
+                        .transpose()?,
+                ));
+            }
             let starts = [b::CommitId::from_bytes(commit.as_bytes())];
             let stream = jj_lib::evolution::walk_predecessors(repo, &starts);
             let mut stream = std::pin::pin!(stream);
@@ -368,27 +439,7 @@ pub(super) async fn run(
                     Action::Stop => break,
                     Action::Emit => {}
                 }
-                let node = EvolutionNode {
-                    commit: describe(repo, &entry.commit, access, budget).await?,
-                    operation: entry
-                        .operation
-                        .as_ref()
-                        .map(|op| oid(op.id()))
-                        .transpose()?,
-                    predecessors: entry
-                        .predecessor_ids()
-                        .iter()
-                        .map(cid)
-                        .collect::<Result<_>>()?,
-                    predecessors_known: entry.operation.is_some(),
-                    legacy_predecessors: entry
-                        .commit
-                        .store_commit()
-                        .predecessors
-                        .iter()
-                        .map(cid)
-                        .collect::<Result<_>>()?,
-                };
+                let node = describe_evolution(repo, &entry, access, budget).await?;
                 budget.output(&node)?;
                 nodes.push(node);
             }

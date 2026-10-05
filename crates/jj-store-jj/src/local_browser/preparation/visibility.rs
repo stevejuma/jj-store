@@ -26,6 +26,22 @@ pub(in super::super) struct VisibleChange {
     pub(in super::super) commits: Vec<m::GitSha1Id>,
 }
 impl Visibility {
+    pub(super) fn commit_flags(
+        &self,
+        commit: m::GitSha1Id,
+        change: m::ChangeId,
+        budget: &Budget,
+    ) -> Result<(bool, bool)> {
+        budget.work(self.references.len().max(1).ilog2() as usize + 2)?;
+        let Some(group) = self.references.get(&format!("change:{change}")) else {
+            return Ok((false, false));
+        };
+        budget.work(group.commits.len().max(1).ilog2() as usize + 2)?;
+        Ok((
+            group.commits.binary_search(&commit).is_ok(),
+            group.commits.len() > 1,
+        ))
+    }
     pub(super) fn log_window(
         &self,
         after: Option<m::GitSha1Id>,

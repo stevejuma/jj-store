@@ -550,13 +550,30 @@ caller's credentials are retained.
 
 ## Rich history query delivery
 
+Prepared graph visibility and divergence flags use exact visible change groups
+from the selected admitted projection, with logarithmic point membership. They
+MUST NOT enumerate hidden incarnations merely to describe one selected commit.
+Cold readers retain upstream resolution; full prefix/offset contracts are
+unchanged.
+
+Prepared evolution retains only bounded, evictable predecessor-walk state on its
+exact operation generation. Only proven unique known anchors can retain a
+checkpoint; unknown/repeated metadata keeps first-occurrence cursor semantics
+through bounded replay. Format1 histories remain readable without checkpoint
+reuse. Fresh scoped readers validate cached anchors, source operation
+fingerprints and selected bodies on every request. Preserve upstream ordering,
+duplicate/cycle behavior, legacy metadata boundaries and unknown versus
+known-empty predecessors. Source binding/authorization and ordinary work, byte,
+visit and time limits remain unchanged; checkpoint loss cannot authorize a wider
+read or a partial result.
+
 Prepared `all()` log pages reuse the exact visible JJ order captured during
 preparation, with compact lexical rank lookup for exclusive deep anchors. Source
 hydration follows the selected window; a continuation probe loads no commit
 body. Current binding/authorization, visible-anchor membership, direct parent
 order and terminal-page behavior remain exact. Arrays and sorting share existing
-resident/work admission. Arbitrary filtered revsets and evolution retain their
-separate bounded upstream path pending general continuation delivery.
+resident/work admission. Arbitrary filtered revsets retain their separate
+bounded upstream path; prepared evolution follows the checkpoint policy above.
 
 The registered-folder `query_info` request MUST share the existing local
 operation pin and worker admission. Its catalog excludes unqualified content and

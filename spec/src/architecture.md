@@ -1,5 +1,11 @@
 # Architecture
 
+Prepared evolution continuations share the selected compact operation graph and
+its bounded lifetime. Checkpoints retain commit/operation identifiers and walk
+positions with pre-admitted allocation leases; live readers own independent
+copies after eviction. All source capabilities and commit bodies stay request
+local, and continuation lookahead loads no commit body.
+
 Prepared native/local default log pages reuse the selected view's captured JJ
 visible order and compact lexical ranks. Resident admission charges both arrays
 before construction, and sorting is work-charged and cancellable. Page readers

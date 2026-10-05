@@ -19,6 +19,7 @@ use tables::Tables;
 const OPS: Table = TableDefinition::new("pending_ops");
 const OP_CHILDREN: Table = TableDefinition::new("local_operation_children");
 const OP_GRAPH: Table = TableDefinition::new("operation_graph");
+const EVO_ANCHORS: Table = TableDefinition::new("evolution_anchor_occurrences");
 const SEEN_OPS: Table = TableDefinition::new("seen_ops");
 const PENDING: Table = TableDefinition::new("pending_commits");
 const NODES: Table = TableDefinition::new("nodes");

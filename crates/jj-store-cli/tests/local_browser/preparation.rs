@@ -80,8 +80,8 @@ fn prepared_index_files(
     let history = files
         .remove(Path::new("operation-history"))
         .expect("local preparation exports exact compact operation topology");
-    assert!(history.len() >= 192);
-    assert_eq!(&history[..8], b"JSTOPG1\0");
+    assert!(history.len() >= 192 + 64 * 1024);
+    assert_eq!(&history[..8], b"JSTOPG2\0");
     assert_eq!(&history[8..72], selected.as_bytes());
     assert_eq!(
         u64::from_be_bytes(history[72..80].try_into().unwrap()),
@@ -103,7 +103,8 @@ fn prepared_index_files(
         }
         at += parents * 64;
     }
-    assert_eq!(at, checksum_at);
+    // The fixed repeated-ID bitmap is covered by the complete checksum above.
+    assert_eq!(at + 64 * 1024, checksum_at);
     let filter = files
         .remove(Path::new("local-reference-filter"))
         .expect("local preparation exports its disposable substring index");

@@ -1,5 +1,6 @@
 //! Compact exact operation topology. No bodies, stores or source capability.
 mod checkpoint;
+pub(crate) mod evolution;
 mod traversal;
 mod window;
 use super::*;
@@ -7,7 +8,9 @@ use super::*;
 use futures::Stream;
 use futures::TryStreamExt as _;
 pub(crate) use window::read;
-const MAGIC: &[u8; 8] = b"JSTOPG1\0";
+const MAGIC1: &[u8; 8] = b"JSTOPG1\0";
+const MAGIC: &[u8; 8] = b"JSTOPG2\0";
+const REPEATED_BYTES: usize = 64 * 1024;
 const FRAMING: u64 = 80 + 32;
 const RECORD: u64 = 80;
 
@@ -19,6 +22,19 @@ pub(in crate::query::prepared) fn capture(
     source.work(op.parent_ids().len() + 1)?;
     if op.id().as_bytes().len() != 64 || op.parent_ids().len() > source.max_parents() {
         return Err(Error::Limit);
+    }
+    for commit in op
+        .store_operation()
+        .commit_predecessors
+        .iter()
+        .flat_map(|map| map.keys())
+    {
+        source.work(1)?;
+        if commit.as_bytes().len() != source.commit_len() {
+            return Err(Error::Corrupt);
+        }
+        let repeated = disk.get(EVO_ANCHORS, commit.as_bytes())?.is_some();
+        disk.put(EVO_ANCHORS, commit.as_bytes(), &[u8::from(repeated)])?;
     }
     let size = 16 + op.parent_ids().len() * 64;
     let _memory = Lease::reserve(size as u64 * 2 + 256)?;
@@ -74,6 +90,23 @@ pub(super) fn write(
         output(&bytes)?;
         row = disk.after(OP_GRAPH, &id)?;
     }
+    // Count exact metadata occurrences on disk; retain only a conservative
+    // repeated-ID bitmap. No false negatives and no per-commit resident map.
+    let _memory = Lease::reserve(REPEATED_BYTES as u64 * 2 + 4096)?;
+    let mut repeated = vec![0u8; REPEATED_BYTES];
+    let mut row = disk.first(EVO_ANCHORS)?;
+    while let Some((id, value)) = row {
+        source.work(id.len() + 4)?;
+        if value == [1] {
+            for bit in repeated_bits(&id) {
+                repeated[bit / 8] |= 1 << (bit % 8);
+            }
+        } else if value != [0] {
+            return Err(Error::Corrupt);
+        }
+        row = disk.after(EVO_ANCHORS, &id)?;
+    }
+    output(&repeated)?;
     space.reserve(32).map_err(io_error)?;
     file.write_all(&digest.finalize()).map_err(io_error)?;
     file.flush().map_err(io_error)?;
@@ -97,6 +130,8 @@ pub(crate) struct Graph {
     selected: OperationId,
     ordered: Vec<usize>,
     checkpoints: std::sync::Mutex<checkpoint::Cache>,
+    evolution: std::sync::Mutex<evolution::Cache>,
+    repeated: Option<Vec<u8>>,
     weight: u64,
     _memory: Lease,
 }
@@ -156,7 +191,7 @@ impl Graph {
         let mut digest = Sha256::new();
         let mut header = [0; 80];
         file.read_exact(&mut header).map_err(|_| Error::Corrupt)?;
-        if &header[..8] != MAGIC
+        if (&header[..8] != MAGIC && &header[..8] != MAGIC1)
             || &header[8..72] != selected.as_bytes()
             || u64::from_be_bytes(header[72..].try_into().unwrap()) != ids.len() as u64
         {
@@ -164,7 +199,14 @@ impl Graph {
         }
         digest.update(header);
         let mut nodes = Vec::with_capacity(ids.len());
-        let mut remaining = metadata.len() - FRAMING;
+        let has_repeated = &header[..8] == MAGIC;
+        let mut remaining = (metadata.len() - FRAMING)
+            .checked_sub(if has_repeated {
+                REPEATED_BYTES as u64
+            } else {
+                0
+            })
+            .ok_or(Error::Corrupt)?;
         for expected in ids {
             work(1)?;
             remaining = remaining.checked_sub(RECORD).ok_or(Error::Corrupt)?;
@@ -206,6 +248,14 @@ impl Graph {
                 rank: usize::MAX,
             });
         }
+        let repeated = if has_repeated {
+            let mut bits = vec![0; REPEATED_BYTES];
+            file.read_exact(&mut bits).map_err(|_| Error::Corrupt)?;
+            digest.update(&bits);
+            Some(bits)
+        } else {
+            None
+        };
         let mut checksum = [0; 32];
         file.read_exact(&mut checksum).map_err(|_| Error::Corrupt)?;
         if remaining != 0
@@ -219,6 +269,8 @@ impl Graph {
             selected,
             ordered: vec![],
             checkpoints: Default::default(),
+            evolution: Default::default(),
+            repeated,
             weight,
             _memory: memory,
         };
@@ -271,3 +323,22 @@ impl Graph {
 
 #[cfg(test)]
 mod tests;
+
+// SHA-256 identity hashes give a conservative Bloom membership check. Collisions
+// disable checkpoints; they never permit one for an actually repeated ID.
+fn repeated_bits(id: &[u8]) -> [usize; 3] {
+    let digest = Sha256::digest(id);
+    std::array::from_fn(|n| {
+        u32::from_be_bytes(digest[n * 4..n * 4 + 4].try_into().unwrap()) as usize
+            % (REPEATED_BYTES * 8)
+    })
+}
+impl Graph {
+    fn unique_evolution_anchor(&self, id: &backend::CommitId) -> bool {
+        self.repeated.as_ref().is_some_and(|bits| {
+            repeated_bits(id.as_bytes())
+                .into_iter()
+                .any(|bit| bits[bit / 8] & (1 << (bit % 8)) == 0)
+        })
+    }
+}

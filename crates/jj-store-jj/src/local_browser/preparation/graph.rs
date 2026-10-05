@@ -188,6 +188,16 @@ pub(super) async fn load(
 }
 
 impl Prepared {
+    pub(in super::super) fn commit_flags(
+        &self,
+        commit: m::GitSha1Id,
+        change: m::ChangeId,
+        budget: &Budget,
+    ) -> Result<(bool, bool)> {
+        self.resident
+            .visibility
+            .commit_flags(commit, change, budget)
+    }
     pub(in super::super) fn log_window(
         &self,
         after: Option<m::GitSha1Id>,

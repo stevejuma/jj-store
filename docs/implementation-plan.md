@@ -293,6 +293,17 @@ all original evidence and existing fixtures/services. Keep bounded-reads open
 and resume performance delivery from the verified landing, beginning with deep
 history continuations. Complete qualification remains a separate later slice.
 
+E-READ-064 adds prepared native/local body-free evolution traversal and bounded
+data-only predecessor checkpoints. Preserve pinned upstream ordering, legacy
+boundaries and current source proof; reuse exact start/anchor state for repeated
+continuations only for proven unique known anchors. A checksum-bound
+conservative repeat bitmap in disposable history format2 preserves
+first-occurrence cursor semantics, and format1 remains readable without
+checkpoint reuse. Selected graph visibility/divergence uses point lookups over
+existing visible groups. General filtered log seeking, uncached/ambiguous
+extreme evolution and dedicated predecessor/copy/search lookups remain separate
+delivery work.
+
 ### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:

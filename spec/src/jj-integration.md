@@ -400,6 +400,31 @@ TLS and explicit loopback transport rules are identical to ordinary native RPC.
 
 ## Bounded application graphs
 
+Prepared graph visibility and divergence flags use exact visible change groups
+from the selected admitted projection, with logarithmic point membership. They
+MUST NOT enumerate hidden incarnations merely to describe one selected commit.
+Cold readers retain upstream resolution; full prefix/offset contracts are
+unchanged.
+
+Prepared evolution pages may reuse the admitted selected operation topology and
+retain at most32 evictable data-only predecessor-walk checkpoints per
+generation, keyed by exact starting commit and exclusive anchor. Preserve JJ
+0.45.1 operation order, within-operation topological sorting, duplicate handling
+and the first legacy predecessor boundary. Retain only IDs, pending/queued walk
+state and operation ranks; no store, stream, credential or request survives.
+Checkpoints require proof that the anchor has exactly one known
+predecessor-metadata occurrence in the captured operation closure; unknown or
+possibly repeated anchors use bounded replay. The owned disposable
+operation-history format2 captures a checksum-bound conservative repeated-ID
+bitmap during the existing operation pass. A positive bitmap result only
+disables caching; false positives cannot alter results. Format1 remains readable
+with checkpoint reuse disabled. Admit copied state and traversal scratch before
+growth and charge work/cancellation. Reused anchors and selected rows require
+fresh source/operation admission; absent and known-empty predecessor records
+remain distinct. Probe continuation using IDs without loading a commit body.
+Missing/evicted checkpoints use bounded body-free replay; arbitrary filtered log
+continuations remain separate delivery work.
+
 Prepared default `all()` log pages MUST retain the selected view's exact JJ
 visible order and compact identity-to-rank lookup during generation admission.
 Deep continuations seek a visible anchor and hydrate only the selected rows;
@@ -408,9 +433,9 @@ Preserve ordered direct parent edges for this ancestor-closed set, current
 authorization, selected membership, annotations and end-of-history semantics.
 Absent or hidden anchors fail explicitly. Admit all retained arrays and sort
 work before growth; retain no source, credential, stream or request capability.
-Other revsets and evolution keep the bounded upstream traversal until separately
-qualified continuation delivery; this optimization does not claim general graph
-seeking.
+Other revsets keep bounded upstream traversal until separately qualified
+continuation delivery. Evolution uses the separately governed prepared walker
+above; this default-log optimization does not claim general graph seeking.
 
 The graph executor loads only the service-selected operation through load_at,
 uses a read-only authority and permits physical object access only to the

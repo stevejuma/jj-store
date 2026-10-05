@@ -33,7 +33,7 @@ impl Source for SourceOnly {
         unreachable!()
     }
 }
-struct Store(Vec<o::Operation>);
+pub(super) struct Store(pub(super) Vec<o::Operation>);
 impl fmt::Debug for Store {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("MetadataOnlyTestStore")
@@ -75,7 +75,7 @@ impl o::OpStore for Store {
         unreachable!()
     }
 }
-fn operation(parents: Vec<o::OperationId>, millis: i64, offset: i32) -> o::Operation {
+pub(super) fn operation(parents: Vec<o::OperationId>, millis: i64, offset: i32) -> o::Operation {
     let time = backend::Timestamp {
         timestamp: backend::MillisSinceEpoch(millis),
         tz_offset: offset,
@@ -470,4 +470,41 @@ async fn historical_operation_continuations_resume_without_replaying_prior_edges
     .unwrap();
     assert_eq!(cold, [id(2), id(1)]);
     assert_eq!(next, Some(id(1)));
+}
+
+#[test]
+fn evolution_anchor_proof_rejects_repeated_ids_and_keeps_format_one_readable() {
+    let first = backend::CommitId::from_bytes(&[1; 20]);
+    let unique = backend::CommitId::from_bytes(&[2; 20]);
+    let mut rows = vec![operation(vec![], 0, 0), operation(vec![native(0)], 1, 0)];
+    rows[0].commit_predecessors = Some([(first.clone(), vec![])].into_iter().collect());
+    rows[1].commit_predecessors = Some(
+        [(first.clone(), vec![]), (unique.clone(), vec![])]
+            .into_iter()
+            .collect(),
+    );
+    let (directory, ids) = artifact(&rows, 1);
+    let graph = Graph::load(directory.path(), id(1), &ids, &mut |_| Ok(()), &mut |_| {
+        Ok(())
+    })
+    .unwrap()
+    .unwrap();
+    assert!(!graph.unique_evolution_anchor(&first));
+    assert!(graph.unique_evolution_anchor(&unique));
+    let path = directory.path().join(HISTORY_NAME);
+    let mut bytes = std::fs::read(&path).unwrap();
+    let at = bytes.len() - 32 - REPEATED_BYTES;
+    bytes.truncate(at);
+    bytes[..8].copy_from_slice(MAGIC1);
+    let digest = Sha256::digest(&bytes);
+    bytes.extend_from_slice(&digest);
+    std::fs::write(&path, &bytes).unwrap();
+    let old = Graph::load(directory.path(), id(1), &ids, &mut |_| Ok(()), &mut |_| {
+        Ok(())
+    })
+    .unwrap()
+    .unwrap();
+    assert_eq!(old.ordered.len(), 2);
+    assert!(!old.unique_evolution_anchor(&first));
+    assert!(!old.unique_evolution_anchor(&unique));
 }
