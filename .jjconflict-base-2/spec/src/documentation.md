@@ -180,3 +180,10 @@ The Stacks physical-read client integration updates the browsing manual to
 separate controller-owned current observations from historical reads, complete
 Unstaged assignment and writable controls. Its application source review and
 manual closure checks remain required; no generated API schema changes occur.
+
+The private combination catalog documentation distinguishes explicit empty
+device state from first-use repository setup. Selected pointers, exact retained
+code anchors and pending recovery are qualified separately from provider
+merge/WIP creation, actual publication and guarded physical checkout.
+Metadata-only fixtures and reader acceptance must never imply installed writable
+capabilities.

@@ -115,3 +115,12 @@ check cannot establish production CSP, resource staging or native host behavior.
 Cold built-site browser and platform-specific desktop checks provide that
 evidence. The [development guide](../contributing/development.md) lists the
 relevant lanes.
+
+Private combination state separates pending provider effects from the selected
+active pointer. It retains the exact original preview, complete proposed state
+and acknowledged code-retention anchor before execution. Current preparation is
+unavailable while the update is pending. The original journal must report the
+matching verified checkout before device selection; rejected unpublished input
+can be discarded without advancing the selected revision. Reopen and exact
+replay preserve the outcome without replacing later active state. This metadata
+owner does not execute publication, switching, merge/WIP creation or checkout.

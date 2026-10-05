@@ -124,6 +124,18 @@ request replay still precedes live context; recovery resolves registration
 without scanning lost operation/index state. Durable combination ownership and
 runtime transport/publication/checkout remain separately required.
 
+The installation-owned combination catalog now stores bounded named entries,
+exact target/merge/WIP and ordered stack references, original retained-code
+anchors, selected state and pending provider-derived updates. Its scope
+separates physical workspaces and principals. The existing private device-file
+primitive provides exclusive coordination and synced atomic replacement.
+Original request replay cannot restore an old active pointer. A pending update
+blocks preparation; selection requires the matching journal's completed checkout
+and retained execution linkage. The registered authority additionally compares
+the stored operation/view/WIP with the actual current workspace. This metadata
+component does not publish code, create merge/WIP commits or execute checkout;
+those provider/runtime gates remain required.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies

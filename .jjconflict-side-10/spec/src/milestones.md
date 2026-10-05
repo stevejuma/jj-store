@@ -154,7 +154,7 @@ shared-package release qualification does not alter those original Git gates.
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -87783,6 +87783,265 @@ entries.
   "next": "Implement exact lost-extra/derived-index recovery, publication and guarded checkout plus durable combination ownership, then command transport and all remaining approved stages.",
   "out_of_scope": "No production UI/Storybook/startup, generated HTTP/client contracts, package publication, fresh visual review/baselines, installed executable/service replacement, existing repository reset/migration, retained-ref cleanup, linked-native/real-RustFS execution or unrelated root aggregate lanes.",
   "summary": "109 unique direct cases pass (53 JJ, 25 server journal/preparation, 31 CLI registered/read cases). Three actual registered-folder cases qualify principal, physical observation and replay; immutable ancestry rejects before candidates. Owning all-target checks, strict no-deps lint, documentation and governance pass after recorded fixture/lint repairs and generated-cache cleanup. Durable combinations, source extra/index recovery, publication, checkout and all later approved stages remain incomplete."
+},
+{
+  "id": "E-M21-020",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "qtzxutkq",
+  "kind": "Private durable combination metadata and registered selected-code guard",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git 2.55.0; macOS ARM64 real disposable stock-JJ folders and reserved code refs. Installed services/executables unchanged.",
+  "formats": "Private Combination catalog V1, Snapshot V1, scoped pending/selected/rejected records and RetainedCode anchors. No public HTTP/schema/client changes. Existing journal V1/V2, LocalExecutionV1, OperationArchiveV1, reserved ref V2, companion/native/WAL/manifest formats unchanged.",
+  "files": [
+    "crates/jj-store-cli/tests/stack_registered_preparation.rs",
+    "crates/jj-store-server/src/lib.rs",
+    "crates/jj-store-server/src/stack_combinations/authority.rs",
+    "crates/jj-store-server/src/stack_combinations/catalog.rs",
+    "crates/jj-store-server/src/stack_combinations/tests.rs",
+    "crates/jj-store-server/src/stack_combinations/validation.rs",
+    "crates/jj-store-server/src/stack_combinations.rs",
+    "crates/jj-store-server/src/stack_command_journal.rs",
+    "crates/jj-store-server/src/stack_preparation/registered.rs",
+    "crates/jj-store-server/tests/stack_combinations/support.rs",
+    "crates/jj-store-server/tests/stack_combinations.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/lifecycle.md",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "before": "Exact new state-owner regression could not import the absent CombinationStore and initially had fixture path/native-ID-width errors (five diagnostics). First implementation run retained one wrong-width fixture diagnostic. Multi-combination stale fixture changed request ID without updating prepared identity; Invalid correctly preceded the expected Stale, and the fixture was repaired. A misplaced physical-state assertion caused one compile diagnostic, then moved into its owning test. Strict lint found two unnecessary unit expressions, removed without suppressions or semantic change.",
+  "scope": "One private combination-state owner and direct registered preparation consumer. Bounded named target/merge/WIP/ordered stacks, exact retained code membership, generation/active-code guards, principal/physical scope, pending/selected separation, journal receipt linkage, private synced replacement and historical replay. No runtime setup, command transport, code publication or guarded checkout is enabled.",
+  "tests": [
+    "crates/jj-store-server/tests/stack_combinations.rs#reads_never_initialize_and_selected_combinations_survive_reopen",
+    "crates/jj-store-server/tests/stack_combinations.rs#wrong_principal_scope_intent_and_unretained_code_fail_without_selection",
+    "crates/jj-store-server/tests/stack_combinations.rs#rejected_update_retains_original_outcome_without_initializing_setup",
+    "crates/jj-store-server/tests/stack_combinations.rs#selected_metadata_and_retained_code_reopen_after_source_loss_and_gc",
+    "crates/jj-store-server/src/stack_combinations/tests.rs#acknowledgement_loss_and_replacement_recover_exact_original_pending_update",
+    "crates/jj-store-server/src/stack_combinations/tests.rs#gate_stale_selection_and_malformed_generations_fail_before_replacement",
+    "crates/jj-store-server/src/stack_combinations/tests.rs#process_loss_after_device_selection_reopens_exact_original_without_reexecution",
+    "crates/jj-store-server/src/stack_combinations/tests.rs#multiple_combinations_preserve_anchors_and_historical_replay_never_rewinds",
+    "crates/jj-store-server/src/stack_combinations/tests.rs#capacity_never_evicts_original_updates_or_selects_a_partial_record",
+    "crates/jj-store-cli/tests/stack_registered_preparation.rs#caller_mode_missing_combination_and_immutable_ancestry_reject_before_selection"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_combinations",
+      "result": "fail",
+      "failures": 5,
+      "note": "stack-combinations-before.log: Absent API plus module path/native-ID-width fixture diagnostics; no state owner existed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_combinations",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-combinations-after.log: One remaining native-ID-width fixture diagnostic; fixed width to the actual 64-byte native identity."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-after2.log: Two original owner integrations pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_combinations --lib stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-faults.log: Two fault units pass; integration functions did not match this filter and zero integration cases ran. Exact unfiltered integration command follows."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_combinations",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-combinations-units.log: Three pass; stale preview fixture failed prepared identity validation before staleness. Corrected its prepared digest; two unused fixture warnings also repaired by actual physical/target assertions."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_combinations",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-combinations-units2.log: Four pass; repeated same stale fixture diagnostic before repair."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_combinations",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-combinations-units3.log: Misplaced physical-state assertion names absent local variable; relocated without weakening unchanged-source assertion."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-units4.log: Five units pass; ignored process-loss helper is invoked by its passing parent."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-final.log: Two exact owner integrations pass after generation/source-tree checks."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-final2.log: Four exact integrations pass, including rejected replay and actual reserved code through source operation/index loss and Git GC."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-units-final.log: Five final units pass after authority module extraction; child helper exits at exact device-state selection."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-registered.log: Three actual registered-folder cases pass, adding exact durable combination operation/WIP mismatch rejection before candidates."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_preparation --test stack_command_journal",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-direct.log: 13 existing journal and eight real preparation cases pass; subprocess helper exercised through parent."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-server -p jj-store-cli --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-check.log: Affected owning package targets pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "fail",
+      "failures": 2,
+      "note": "stack-combinations-lint.log: Two unused_unit diagnostics in new selection matcher, removed without suppression."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-boundaries.log: 17 package boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-architecture.log: 1090 presentation modules pass; no production UI change."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-rust-format.log: Owning/runtime Rust formatting passes."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/cli.md spec/src/documentation.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/lifecycle.md docs/site/technical/local.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-format.log: Changed canonical/manual pages formatted; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-coverage-format.log: Configuration source-review acknowledgement formatted."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/cli.md spec/src/documentation.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/lifecycle.md docs/site/technical/local.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-doc-format-check.log: Changed canonical/manual documents pass; ledger excluded."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-docs-check.log: Owning manual check passes; exact closure recorded in log."
+    },
+    {
+      "command": "pnpm docs:review configuration 'Documented installation-private combination metadata, exact retained merge/WIP anchors, pending/selected separation, journal-bound verified checkout selection, unchanged historical retry and scoped registered operation/WIP mismatch. Private state and real code retention fixtures remain distinct from simulated command publication/checkout receipts and unfinished setup, merge, membership, transport and guarded physical execution.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-docs-review.log: metadata acceptance explicitly separated from actual execution."
+    },
+    {
+      "command": "pnpm docs:review configuration 'Reviewed the private combination metadata owner after final lint repairs. Scope, pending/selected separation, exact retained merge/WIP anchors, journal checkout proof, historical retry and actual registered operation/WIP staleness remain documented. Metadata fixture publication/checkout phases do not qualify setup, merge generation, membership, runtime transport or guarded checkout.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-docs-review-final.log: metadata acceptance explicitly separated from actual execution."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatted implementation/test changes and removed unnecessary unit expressions without changing assertions."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-coverage-format-final.log: source review refreshed after lint repair; ledger excluded."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-lint-final.log: All owning targets pass strict lint after two unused-unit repairs; no diagnostic suppressed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-docs-check-final.log: Final current-source manual check passes with valid links/anchors and both theme Mermaid rendering."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-spec-first.log: 15 protected files/five canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-spec-validation.log: Five validators/23 chapters/173 requirements pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-progress.log: 142 tasks pass; no completion promotion."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-rust-format-final.log: Final owning/runtime formatting passes after lint fixes."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-combinations-progress-final.log: Final ledger passes 142 tasks; all 501 preceding evidence bodies byte-identical."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Combination metadata is durable and code archives/GC are real; Setup/CreateCombination effects and Published/Verified journal receipts in metadata tests are explicit isolated fixtures. They do not qualify actual setup, merge/WIP preservation, membership, switching or physical checkout.",
+    "Stage 3 still requires exact lost-extra/derived-index recovery, operation-head publication preserving concurrent siblings, guarded checkout/durable fault recovery, and prepare/apply/status/discovery production composition. Writable capabilities remain unavailable.",
+    "All seven approved stages remain required. Stages 4-7 need real combination engines, exact file then issued-hunk transfer/commit, all advertised graph commands/deletion policy/guarded undo, linked-native real-storage recovery and full cold production UI flows.",
+    "Two inherited service strict-lint diagnostics remain unresolved/unwaived. No-deps owning server/CLI lint does not qualify aggregate dependency/service lint. Native linker emits __eh_frame size warning on the large server test binary; no product assertion or lint is weakened."
+  ],
+  "next": "Implement exact source extra/index recovery and safe original operation publication, then guarded checkout and production command composition; continue remaining approved engines/UI wiring.",
+  "out_of_scope": "No production UI/startup/Storybook or generated transport changes, fresh visual review, screenshot comparisons/baselines, package publication, installed binary/service replacement, existing repository reset/migration, reserved-ref cleanup, linked-native/real-RustFS execution or unrelated root aggregate lanes.",
+  "summary": "33 unique direct cases pass: nine private combination cases (four integrations/five units), three registered-folder preparation cases, 13 journal and eight actual preparation integrations. Process-loss child executes through passing parent. Real retained archives survive metadata loss/GC; metadata Setup/CreateCombination and Published/Verified receipt fixtures explicitly do not qualify execution. Owning checks, strict no-deps lint, documentation and governance pass after recorded fixture/lint repairs. All 501 prior ledger bodies remain byte-identical. Source extra/index recovery, safe publication, guarded checkout, runtime command transport and Stages 4-7 remain incomplete."
 }
 ]
 ```

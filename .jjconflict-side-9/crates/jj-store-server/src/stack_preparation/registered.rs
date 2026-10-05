@@ -5,6 +5,8 @@ use jj_store_service::{auth::Permission, local_browser as registration, working_
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ActiveCombination {
     pub selection: s::CombinationSelection,
+    /// Exact selected merge/WIP operation, independently checked against disk.
+    pub code: s::CodeSelection,
     /// Configured target/immutable boundaries at this exact combination.
     pub immutable_heads: Vec<m::GitSha1Id>,
 }
@@ -161,6 +163,15 @@ impl Authority for RegisteredAuthority {
             )
             .await?
             .ok_or(Error::Unsupported)?;
+        if combination.code
+            != (s::CodeSelection::GitSha1Jj045 {
+                operation: current.baseline.operation,
+                view: current.baseline.view,
+                working_copy: current.baseline.commit,
+            })
+        {
+            return Err(Error::Stale);
+        }
         if combination.immutable_heads.is_empty()
             || combination.immutable_heads.len() > 64
             || combination

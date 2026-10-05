@@ -43,6 +43,15 @@ is still fixture-supplied for this adapter acceptance; no production command
 route or installed executable capability is added. Publication and guarded
 checkout remain unfinished.
 
+Private combination-state acceptance qualifies bounded installation/physical
+scope, principal ownership, immutable target boundaries, selected merge/WIP
+references and original pending-update recovery. Explicit creation starts empty;
+reads never initialize setup. Retained archive membership and the exact matching
+journal checkout receipt precede device selection. Metadata fixture receipts are
+not actual command publication or checkout evidence. No executable route,
+installed command, merge/WIP engine or writable capability is added by this
+state-owner slice.
+
 LocalTrusted installations with native storage own an independent conversion
 journal beside device registration. Preview captures a committed source
 operation, start retains the exact bounded archive before staging, and status

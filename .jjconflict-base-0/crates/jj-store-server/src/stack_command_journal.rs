@@ -36,7 +36,7 @@ pub struct Scope {
     pub profile: Profile,
 }
 impl Scope {
-    fn validate(&self) -> Result<()> {
+    pub(crate) fn validate(&self) -> Result<()> {
         if self.installation == [0; 16]
             || self.repository.as_bytes() == &[0; 16]
             || self.physical_workspace.0.as_bytes() == &[0; 32]
@@ -140,6 +140,9 @@ pub struct StackCommandJournal {
     scope: Scope,
 }
 impl StackCommandJournal {
+    pub(crate) fn scope(&self) -> &Scope {
+        &self.scope
+    }
     pub fn check_scope(&self, selection: &s::Selection) -> Result<()> {
         if self.scope.matches(selection) {
             Ok(())

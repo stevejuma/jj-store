@@ -292,6 +292,19 @@ combination ownership is still supplied by an isolated fixture. This adapter
 does not create setup or wire command transport. Durable combination ownership,
 extra/index recovery, publication, checkout and remaining stages stay required.
 
+E-M21-020 adds the private durable combination metadata owner and its real
+reserved-code archive linkage. Selected snapshots remain unchanged while an
+exact provider update is pending; a matching completed journal checkout receipt
+precedes device selection. Reopen, conflicting retry, private-state replacement,
+capacity and process-loss cases retain the original outcome and cannot rewind
+later state. Registered preparation now checks the stored operation/view/WIP
+against the actual physical workspace. This qualifies metadata and command
+context, with simulated publication/checkout receipts clearly separated from
+real provider evidence. First-use setup, merge/WIP generation, membership and
+switching engines remain Stage 4 work; source extra/index recovery, publication,
+guarded checkout and command transport still gate Stage 3. Production writes
+remain unavailable and all seven approved stages continue.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

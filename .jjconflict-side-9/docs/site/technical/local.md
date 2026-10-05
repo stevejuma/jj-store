@@ -237,3 +237,14 @@ private installation journal retains the original source archive and report
 across restart. Reading status cannot create a new staging attempt. Unsupported
 evidence, signing, code conflicts and non-placeholder copy IDs fail preflight
 instead of being discarded. The source and its working files remain unchanged.
+
+Named combination metadata is installation-private and scoped to one repository,
+physical workspace, JJ workspace and configured principal. Explicit creation
+starts empty; viewing Stacks cannot create first-use setup. Each selected entry
+retains its target, immutable boundaries, ordered stack references, merge/WIP
+identities and code archive anchor. Changed entries require membership in the
+new exact retained archive and increasing generations; unchanged combinations
+retain their original anchors. Actual command generation and checkout remain
+separate prerequisites. External code operations that no longer match the stored
+combination selection require explicit recovery or repair rather than silently
+adopting the new physical state.

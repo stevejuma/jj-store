@@ -85,6 +85,11 @@ impl Installed {
         };
         let combinations = Arc::new(Combinations(Mutex::new(Some(ActiveCombination {
             selection: combination.clone(),
+            code: s::CodeSelection::GitSha1Jj045 {
+                operation: current.baseline.operation,
+                view: current.baseline.view,
+                working_copy: current.baseline.commit,
+            },
             immutable_heads: vec![m::GitSha1Id::new([0; 20])],
         }))));
         let observer = Observer::new(q::Executor::new(2).unwrap(), 1).unwrap();
@@ -254,6 +259,24 @@ async fn caller_mode_missing_combination_and_immutable_ancestry_reject_before_se
         p::prepare_reword(&journal, &coordinator, &f.authority, f.actor, stale_binding).await,
         Err(p::Error::Stale)
     ));
+    let mut stale_combination = f.combinations.0.lock().unwrap().clone().unwrap();
+    stale_combination.code = s::CodeSelection::GitSha1Jj045 {
+        operation: m::OperationId::new([99; 64]),
+        view: m::ViewId::new([98; 64]),
+        working_copy: m::GitSha1Id::new([97; 20]),
+    };
+    *f.combinations.0.lock().unwrap() = Some(stale_combination);
+    assert!(matches!(
+        p::prepare_reword(
+            &journal,
+            &coordinator,
+            &f.authority,
+            f.actor,
+            f.request.clone()
+        )
+        .await,
+        Err(p::Error::Stale)
+    ));
     *f.combinations.0.lock().unwrap() = None;
     assert!(matches!(
         p::prepare_reword(
@@ -275,6 +298,7 @@ async fn caller_mode_missing_combination_and_immutable_ancestry_reject_before_se
     };
     *f.combinations.0.lock().unwrap() = Some(ActiveCombination {
         selection: f.request.selection.combination.clone().unwrap(),
+        code: f.request.selection.code.clone(),
         immutable_heads: vec![commit],
     });
     assert!(matches!(
