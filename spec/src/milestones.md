@@ -83846,6 +83846,161 @@ entries.
       "Focused93 distinct Rust tests pass:36 complete local browser (2 existing large-fixture tests intentionally ignored) and57 owning JJ units. The exact admission regression passes independently with4–5 metadata records over20 operations and withheld source views/Git bodies/index segments. Fresh selected and historical fingerprints, current denial, generation mismatch and code-view seal/retry remain qualified. Affected JJ/service/HTTP/RPC/CLI checks, Rust format, boundaries and canonical bookkeeping pass. All final canonical progress/spec-first/spec-validation/changed-document checks pass after ledger formatting; final logs local-admission-progress-final-055.log, local-admission-spec-first-final-055.log, local-admission-spec-validation-final-055.log and local-admission-docs-delivery-final-055.log. No milestone promotion; unrelated UI/native/aggregate/full-qualification lanes are out of scope.",
       "Indexed deep operation/log/evolution continuations; predecessor/copy/code search lookups; retained oversized comparisons/change groups/extreme filter candidate continuations; paged native RPC and remaining local application search/index remain feature delivery."
     ]
+  },
+  {
+    "id": "E-READ-056",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "enclosing Jujutsu change xkmpzpso",
+    "kind": "Main landing and combined focused verification of native/local prepared operation metadata reads",
+    "versions": "Rust1.98.1;jj-lib/jj-cli0.45.1;native format-2;index format-6;local Git SHA-1 browser profile;macOS ARM64.",
+    "formats": "No persistence/public DTO/schema/route/cursor/RPC change. Main advances onto committed E-READ-053/054/055 without source-tree reconstruction; temporary workspace remains registered. Both profile source readers, prepared identity/neighbor lookup and their fresh admission boundaries retain their meaning. Verification escalation: accumulated changes affect independent native/local profiles, retained cache preparation and local HTTP/provider dispatch, so complete owning JJ/service/HTTP units, local browser consumers and native graph/cache consumers run, plus exact prepared regressions and native reference/admission consumers. No UI changed since E-READ-052; UI, full response-capture replay, root aggregate and full qualification lanes are out of scope.",
+    "files": [
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md"
+    ],
+    "requirements": [
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-LOCAL-004",
+      "JST-API-002",
+      "JST-API-004"
+    ],
+    "next": "Commit verified main landing, advance codex/bounded-reads-landed, rebase clean bounded-reads onto main, and continue indexed deep operation/log/evolution pages there.",
+    "commands": [],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/prepared_operation_admission.rs#prepared_operation_pages_admit_fresh_metadata_without_any_view_or_git_reads",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#prepared_native_child_selectors_hydrate_only_selected_operation_metadata",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#prepared_native_child_selectors_preserve_branch_ambiguity_and_current_authorization"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager log -n5; jj rebase -r xkmpzpso -o oqwzuzwn; jj describe -m \"Land and verify prepared native and local operation metadata reads\"; jj --no-pager diff --from oqwzuzwn --to @ --stat",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main was clean at E-READ-052; empty change advanced to E-READ-055. Zero source-tree differences. E-READ-053/054/055 retained as committed ancestors; no merge conflicts."
+      },
+      {
+        "command": "python3 preserve bounded-reads performance evidence artifacts for E-READ-053/054/055 in main",
+        "result": "pass",
+        "failures": 0,
+        "note": "89 files copied byte-identically, existing files checked before writes. Temporary evidence and workspace preserved. All496 parent evidence records captured in parent-evidence-056.json."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_admission::prepared_operation_pages_admit_fresh_metadata_without_any_view_or_git_reads -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 59.73s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 37 filtered out; finished in 11.42s; 73.91s; .local/bounded-reads/performance/main-operation-local-exact-056.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked prepared_native_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 14.53s; test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 224 filtered out; finished in 4.99s; 21.52s; .local/bounded-reads/performance/main-operation-native-exact-056.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 1.48s; test result: ok. 36 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 50.52s; 52.31s; .local/bounded-reads/performance/main-operation-local-readers-056.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 2.82s; test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 184 filtered out; finished in 14.35s; 17.41s; .local/bounded-reads/performance/main-operation-native-graphs-056.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked reference -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 0.53s; test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 219 filtered out; finished in 50.53s; 51.14s; .local/bounded-reads/performance/main-operation-native-references-056.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 9.72s; test result: ok. 57 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.87s; 15.07s; .local/bounded-reads/performance/main-operation-owning-jj-056.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 16.53s; test result: ok. 35 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.81s; 18.76s; .local/bounded-reads/performance/main-operation-owning-service-056.log"
+      },
+      {
+        "command": "cargo test -p jj-store-http --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 38.58s; test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s; 40.57s; .local/bounded-reads/performance/main-operation-owning-http-056.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 22.95s; 23.23s; .local/bounded-reads/performance/main-operation-packages-056.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "; 1.13s; .local/bounded-reads/performance/main-operation-rust-format-056.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "package boundaries ok (17 packages); 0.45s; .local/bounded-reads/performance/main-operation-boundaries-056.log"
+      },
+      {
+        "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/architecture.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed integration documents formatted; main-operation-docs-write-056.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress ok (139 tasks; evidence bookkeeping only); .local/bounded-reads/performance/main-operation-progress-initial-056.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first gate passed: 1 protected file(s), 2 canonical chapter(s).; .local/bounded-reads/performance/main-operation-spec-first-initial-056.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validated: 5 validators, 23 chapters, 172 requirements.; .local/bounded-reads/performance/main-operation-spec-validation-initial-056.log"
+      },
+      {
+        "command": "python3 compare current ledger with parent-evidence-056.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All496 parent records remain JSON-identical; E-READ-056 sole new record,497 total."
+      },
+      {
+        "command": "pnpm spec:first --file crates/jj-store-cli/tests/local_browser/preparation.rs --file crates/jj-store-cli/tests/local_browser/prepared_operation_admission.rs --file crates/jj-store-cli/tests/local_browser/prepared_operations.rs --file crates/jj-store-cli/tests/local_browser/prepared_points_http.rs --file crates/jj-store-cli/tests/local_browser.rs --file crates/jj-store-cli/tests/native_lifecycle/graphs.rs --file crates/jj-store-jj/src/local_browser/graphs.rs --file crates/jj-store-jj/src/local_browser/mod.rs --file crates/jj-store-jj/src/local_browser/operation_store.rs --file crates/jj-store-jj/src/local_browser/preparation/graph.rs --file crates/jj-store-jj/src/query/cache/constructed.rs --file crates/jj-store-jj/src/query/cache.rs --file crates/jj-store-jj/src/query/graphs.rs --file crates/jj-store-jj/src/query/index/secondary.rs --file crates/jj-store-jj/src/query/index.rs --file crates/jj-store-jj/src/query/language/operations.rs --file crates/jj-store-jj/src/query/mod.rs --file crates/jj-store-jj/src/query/operation_neighbors.rs --file crates/jj-store-jj/src/query/prepared/mod.rs --file crates/jj-store-jj/src/query/prepared/operations/children/tests.rs --file crates/jj-store-jj/src/query/prepared/operations/children.rs --file crates/jj-store-jj/src/query/prepared/operations.rs --file crates/jj-store-jj/src/query/projection.rs --file docs/implementation-plan.md --file spec/src/api.md --file spec/src/architecture.md --file spec/src/cli.md --file spec/src/jj-integration.md --file spec/src/local-jj.md --file spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/performance/main-operation-spec-stack-056.log; Spec-first gate passed: 24 protected file(s), 6 canonical chapter(s)."
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/architecture.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed integration documents use Prettier style; main-operation-docs-format-final-056.log."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Combined main verification passes200 distinct Rust tests:36 complete local browser,43 complete native graph/cache/preparation,8 native reference/admission,57 JJ,35 service and21 HTTP units; exact1 local and3 native regressions rerun separately. Two existing local large-fixture tests intentionally ignored. Affected JJ/service/HTTP/RPC/CLI checks, Rust format and package boundaries pass. No milestone promotion. Complete scale/RSS/latency/fault/cold-browser/RustFS/release and inherited Help/generated-reference/source-review refresh remain deferred. Existing generated installation-reference drift remains a recorded failing docs:check qualification gate. No dev service, installed executable, Linux source, fixture or unrelated workspace change.",
+      "Indexed deep operation/log/evolution continuations; predecessor/copy/code search lookups; retained oversized comparisons/change groups/extreme filter candidate continuations; paged native RPC and remaining local application search/index remain feature delivery."
+    ]
   }
 ]
 ```

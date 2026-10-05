@@ -236,6 +236,13 @@ verify the focused combined read surface, and retain bounded-reads for indexed
 deep paging and the remaining feature work. Complete qualification remains
 deferred.
 
+E-READ-056 lands E-READ-053/054/055 in main and verifies the combined focused
+native/local operation read surface. The clean main change advances onto the
+completed stack without replacing source files. Keep bounded-reads registered,
+rebase its clean continuation onto this landing, then deliver indexed deep
+operation-history pages. This landing does not complete scale, Help or release
+qualification.
+
 ### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:

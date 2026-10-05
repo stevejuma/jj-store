@@ -1,5 +1,12 @@
 # Architecture
 
+The operation-read landing preserves the local and native prepared-selector
+changes as committed ancestors, with no source-tree reconstruction. Combined
+main-workspace checks cover operation selection, local code/reference/comparison
+consumers and native graph/cache consumers. The temporary workspace remains
+registered for deep-page delivery; complete scale and lifecycle qualification is
+separate and milestones retain their pending gates.
+
 Local operation graph admission reuses only the data-only retained operation
 lookup and fresh selected metadata. It checks the operation fingerprint before
 dispatch and constructs neither view authority nor a scoped commit backend. Code
