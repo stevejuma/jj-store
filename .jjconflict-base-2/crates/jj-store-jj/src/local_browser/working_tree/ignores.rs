@@ -1,9 +1,32 @@
 //! Captured ignore bytes only. Never follows a disk link or implicitly reads user config.
 use super::*;
+use jj_lib::matchers::{Matcher as _, PrefixMatcher};
 use jj_lib::{
     gitignore::GitIgnoreFile,
     repo_path::{RepoPath, RepoPathBuf},
 };
+pub struct SparseRules(PrefixMatcher);
+impl SparseRules {
+    pub fn new(prefixes: Vec<String>) -> Result<Self> {
+        if prefixes.len() > 512 {
+            return Err(Error::Limit);
+        }
+        let paths = prefixes
+            .iter()
+            .map(|p| {
+                if p.is_empty() {
+                    Ok(RepoPathBuf::root())
+                } else {
+                    safe_path(p)
+                }
+            })
+            .collect::<Result<Vec<_>>>()?;
+        Ok(Self(PrefixMatcher::new(paths)))
+    }
+    pub fn matches(&self, path: &str) -> Result<bool> {
+        Ok(self.0.matches(&safe_path(path)?))
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct IgnoreFile {

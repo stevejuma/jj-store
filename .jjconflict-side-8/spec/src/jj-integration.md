@@ -6,7 +6,14 @@ reader. It never loads latest state, repairs the source index, snapshots the
 working copy or publishes heads. Complete bounded raw file/link digests and
 modes are provider inputs, not a wire capability or evidence of current physical
 checkout. JJ's ignore matcher consumes captured bytes; no upstream ignore or
-working-copy type crosses into service policy.
+working-copy type crosses into service policy. The current provider reads
+bounded existing checkout/tree-state protobuf through descriptor-relative file
+handles; it does not call the upstream working-copy loader or initialize absent
+state. It proves exact operation/workspace/tree terms and labels, retains sparse
+prefixes, and captures actual configured/default global and Git repository
+exclude bytes. Metadata/policy/head repetition detects races; repository and
+working-copy directory identity contribute to the private witness. Service code
+uses owned sparse/ignore interfaces, never upstream protobuf or matcher types.
 
 Read-only local identity hints continue to require an exact secure-config
 metadata binding before selecting a repository email. They never migrate

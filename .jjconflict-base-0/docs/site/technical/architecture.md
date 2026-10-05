@@ -50,6 +50,14 @@ resource controls. They do not replace manifest or source-operation authority.
 See [reads and refresh](reads.md) for the supported endpoints and remaining
 large-repository qualification limits.
 
+Private physical observations join an exact current JJ checkout/sparse/policy
+witness to a two-pass bounded file scan. The service verifies identical
+metadata, policy and heads before and after the scan and current authorization
+before returning. Observation admission survives caller cancellation until the
+blocking scan exits. These private reads do not snapshot files, grant staging,
+or provide command/checkout authority; transport and named-combination
+qualification remain separate steps.
+
 ## What is authoritative?
 
 | State                         | Authority                                       | Rebuildable or device-local data        |

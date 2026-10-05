@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Private WC baseline reads exact named-workspace operation/view with raw file/link digests and JJ captured ignore precedence. No latest opening, source index repair, physical snapshot, wire route or executor is added; active checkout and global/exclude capture remain unqualified.",
-      "fingerprint": "638dda851c1ed459d599922663abdb524ec9825a70c718b5fcd590fff42520fa"
+      "reason": "Private current WC observation proves exact checkout trees and sparse scope, captures bounded global/repository ignore policy and verifies repeated metadata and heads without initializing state. No scan transport or executor is enabled.",
+      "fingerprint": "87e7ff8d239f1eca49af57e54e0e24c307bc8d6c0c2b41c7bcc38cfd082dd43c"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Private physical comparison retains tracked ignored changes and all untracked file/link obstacles, validates captured gitignore bytes and supports cancellation. It does not establish active Unstaged, current checkout/sparse state, transport or execution.",
-      "fingerprint": "a9f75d14c824e35f8c5115c7869ba99d070794c046d581a6395de70ec06f83ef"
+      "reason": "Private service observation joins repeated current WC metadata/policy/head witnesses to two-pass physical inventory under an eight-second deadline and bounded admission retained through canceled blocking scans. Sparse excluded paths remain obstacles, no transport, snapshot or execution capability.",
+      "fingerprint": "1250c5046762acb4a0940b531ee14f5ebe293225354346ae659999189829df7f"
     }
   },
   {

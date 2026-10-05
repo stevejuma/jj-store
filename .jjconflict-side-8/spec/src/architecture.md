@@ -29,9 +29,13 @@ The private JJ reader now supplies an operation-pinned named-workspace baseline
 with bounded raw file/link digests. The service compares this to the physical
 observation, retaining tracked ignored changes and untracked file/link
 obstacles. Ignore parsing stays in the JJ integration and consumes explicitly
-captured bytes. The composition layer must still capture global/exclude policy,
-verify checkout metadata and sparse state, and qualify transport before this
-becomes an active physical-workspace read.
+captured bytes. The private current provider now verifies existing bounded
+checkout metadata, exact tree terms/labels and sparse scope, and captures global
+and repository-exclude policy. The service observation owner compares this
+witness before and after the two-pass physical scan, retaining bounded admission
+through cancellation and checking current authorization. Transport qualification
+and active-combination assignment remain required before these private reads
+populate Unstaged. No read establishes a checkout lock or publication authority.
 
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit

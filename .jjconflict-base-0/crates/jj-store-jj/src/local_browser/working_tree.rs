@@ -1,8 +1,10 @@
 //! Private operation-pinned WC baseline; neither a disk snapshot nor a wire query.
+mod current;
 mod ignores;
 use super::*;
+pub use current::{Checkout, CurrentState, MAX_CHECKOUT_BYTES};
 use futures::AsyncReadExt as _;
-pub use ignores::{IgnoreFile, IgnoreRules};
+pub use ignores::{IgnoreFile, IgnoreRules, SparseRules};
 use jj_lib::matchers::EverythingMatcher;
 use sha2::{Digest as _, Sha256};
 
@@ -32,6 +34,7 @@ pub struct Baseline {
     pub workspace: String,
     pub commit: m::GitSha1Id,
     pub trees: Vec<m::GitSha1Id>,
+    pub labels: Vec<String>,
     pub entries: Vec<Entry>,
 }
 /// Same raw-byte domain as the private physical scanner; no timestamp heuristic.
@@ -72,13 +75,13 @@ impl Executor {
                 }
                 let context =
                     Context::open(access, operation, budget, limits, true, vec![], false).await?;
-                read(context, operation, workspace).await
+                read(&context, operation, workspace).await
             })
         })
         .await
     }
 }
-async fn read(context: Context, operation: m::OperationId, workspace: String) -> Result<Baseline> {
+async fn read(context: &Context, operation: m::OperationId, workspace: String) -> Result<Baseline> {
     let view_id = context.operation(operation).await?.view_id;
     let view = context.view(view_id).await?;
     let commit_id = *view.wc_commit_ids.get(&workspace).ok_or(Error::NotFound)?;
@@ -108,7 +111,7 @@ async fn read(context: Context, operation: m::OperationId, workspace: String) ->
             b::TreeValue::Symlink(id) => (Kind::Symlink, git_id(id)?),
             _ => return Err(Error::Invalid),
         };
-        let data = raw_bytes(&context, &path, id, kind, MAX_BYTES - bytes).await?;
+        let data = raw_bytes(context, &path, id, kind, MAX_BYTES - bytes).await?;
         bytes = bytes.checked_add(data.len()).ok_or(Error::Limit)?;
         if bytes > MAX_BYTES {
             return Err(Error::Limit);
@@ -141,6 +144,7 @@ async fn read(context: Context, operation: m::OperationId, workspace: String) ->
             .map(git_id)
             .collect::<Result<_>>()?,
         entries,
+        labels: commit.tree().labels().as_slice().to_vec(),
     })
 }
 async fn raw_bytes(

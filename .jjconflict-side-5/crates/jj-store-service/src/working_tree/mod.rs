@@ -1,9 +1,11 @@
 //! Private physical observations. Neither a JJ snapshot nor command authority.
+mod observer;
 mod projection;
 mod walk;
 use crate::stack_workspace::PhysicalWorkspaceId;
 use jj_store_model::{RecordDigest, RepositoryId};
-pub use projection::{Change, ChangeKind, Obstacle, Projection, project};
+pub use observer::{Observation, Observer};
+pub use projection::{Change, ChangeKind, Obstacle, Projection, project, project_sparse};
 use sha2::{Digest as _, Sha256};
 use std::{
     collections::BTreeMap,
@@ -13,6 +15,10 @@ use std::{
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum Error {
+    #[error("physical workspace observation is busy")]
+    Busy,
+    #[error("physical workspace observation is not authorized")]
+    Denied,
     #[error("invalid physical workspace entry")]
     Invalid,
     #[error("physical workspace scan limit")]

@@ -22,9 +22,10 @@ checkout coordination or a command endpoint as delivered.
 
 Private WC baseline and ignore-projection documentation MUST distinguish
 operation-pinned code from current physical checkout, state the complete-result
-bounds and retain global/exclude capture, sparse-state and transport
-qualification as outstanding work. Raw digests and physical obstacles do not
-grant staging or execution.
+bounds. Current checkout/sparse/global-exclude witnesses and private service
+observation are provider inputs; transport and active-combination qualification
+remain outstanding work. Raw digests and physical obstacles do not grant staging
+or execution.
 
 The stack read foundation is documented separately from production controller
 injection and executable commands. Lazy projection of pinned graph, exact tree

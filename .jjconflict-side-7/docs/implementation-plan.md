@@ -147,7 +147,7 @@ continuations and annotations.
 | Delivery stage                       | Current state                                                                                    | Remaining acceptance                                                                          |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
 | 1. Integrate UI and define contracts | Versioned service intent/selection/preparation/receipt types and read-adapter boundary delivered | Executable wire contracts accompany the recoverable executor                                  |
-| 2. Real browsing                     | Production browsing, private physical observations and exact WC/ignore comparison delivered      | Current checkout/sparse and ignore-policy capture; scan transport and cold integration        |
+| 2. Real browsing                     | Production browsing, private physical observations and exact WC/ignore comparison delivered      | Scan transport, active-combination assignment and cold registered-folder integration          |
 | 3. Recoverable execution             | Planned; mutations remain unavailable                                                            | Journal, prepared operation, publication, guarded checkout, durable status and fault recovery |
 | 4. Named combinations and membership | Planned; Workspace remains empty without qualified durable state                                 | Explicit setup, merge/WIP retention, apply/unapply, switching and restart                     |
 | 5. Staging and inline commits        | Reviewed UI and draft controller delivered                                                       | Exact whole-file engine, then server-issued hunk selections and transfers                     |
@@ -173,6 +173,14 @@ obstacles. Stage 2 still requires current checkout/sparse proof, global/exclude
 policy capture, transport and cold registered-folder integration. Historical
 baseline reads and private projection helpers do not populate active Unstaged or
 enable writes.
+
+E-M21-009 integrates private current checkout/sparse/ignore witnesses with the
+bounded physical observation service. It verifies metadata, policy and operation
+heads before and after the scan, checks access throughout, and retains scan
+admission until a canceled worker exits. Real disposable CLI fixtures cover
+sparse scope, unsnapshotted files, policy/metadata races and cancellation
+without writes. No scan route or active-combination assignment is enabled by
+this slice; Stage 2 and M21.2 remain incomplete.
 
 ### Recommended scope and model
 

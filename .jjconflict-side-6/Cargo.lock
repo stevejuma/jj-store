@@ -4063,6 +4063,7 @@ dependencies = [
  "prost-build",
  "protoc-bin-vendored",
  "redb",
+ "rustix",
  "schemars",
  "serde",
  "serde_json",

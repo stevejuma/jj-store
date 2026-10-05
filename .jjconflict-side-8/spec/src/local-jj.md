@@ -782,6 +782,29 @@ checkout replacement. Missing capture of global/exclude policy cannot silently
 be treated as empty policy. Baseline/projection helpers add no transport route,
 content-selection token or writable capability by themselves.
 
+Current physical reads MUST capture existing local checkout metadata through
+bounded descriptor-relative reads, decode the pinned upstream protobuf schema
+without initializing missing state, and prove the selected operation, named
+workspace and exact tree terms against the authorized WC baseline. They retain
+sparse patterns and must not interpret excluded tracked paths as deletions or
+outside-sparse files as candidate additions. Global and repository-exclude
+policy must be explicitly captured with bounded bytes, verified absence and a
+source fingerprint; failed policy reads cannot become empty rules. Repeated
+metadata, policy and operation-head observations must agree. A current read is
+still an observation, not a checkout lock or command authority.
+
+The service observation owner MUST hold bounded non-queuing admission for the
+complete metadata/scan/comparison read. Canceling the caller cancels its worker
+but cannot release scan admission before a blocking worker exits. The current
+metadata/policy/head witness before and after the two-pass physical scan must
+match, including registered repository and working-copy directory identities.
+Authorization is checked throughout the scan and before returning. One overall
+deadline covers provider reads, scan and sparse comparison; stale, revoked,
+cancelled, unsupported or oversized reads return no partial observation. Missing
+checkout metadata is never initialized. Conflict labels remain ordered and must
+match the selected WC tree along with its terms. Private observations add no
+transport or command capability; active combination assignment remains separate.
+
 The approved M21.2 read slice adds a strict typed stack-history query under
 JST-LOCAL-004. It binds an exact head and optional base to the existing
 authorized operation and binding generation. With a base, the query returns head

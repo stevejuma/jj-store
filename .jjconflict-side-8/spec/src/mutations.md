@@ -1041,8 +1041,14 @@ bytes must match their physical digest; symlink ignore files fail explicitly.
 This projection is not a JJ snapshot, active combination assignment, issued
 selection or executable preparation. Binding mismatches, malformed/duplicate
 paths, limits and caller cancellation return no partial result. Capturing
-global/exclude policy and proving current checkout/sparse state remain provider
-integration prerequisites.
+global/exclude policy and proving current checkout/sparse state are now private
+provider inputs. The service observation owner verifies identical witnesses
+before and after the physical scan and current authorization before returning.
+Sparse-excluded tracked paths do not become deletions; present outside-sparse
+paths remain obstacles and cannot become candidate additions. Admission and
+deadlines cover the complete observation, including a canceled blocking worker.
+Transport, active-combination assignment, foreground locking and fresh apply
+preconditions remain separate execution prerequisites.
 
 Under JST-LOCAL-005 and JST-UI-020, `stack_workspace` owns typed version-1
 execution selection, prepare/apply and receipt records independently of catalog

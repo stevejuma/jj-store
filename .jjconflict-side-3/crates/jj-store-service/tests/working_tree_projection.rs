@@ -31,6 +31,7 @@ fn baseline(physical: &tree::WorkingTree) -> baseline::Baseline {
         workspace: "default".into(),
         commit: m::GitSha1Id::new([3; 20]),
         trees: vec![m::GitSha1Id::new([4; 20])],
+        labels: vec![],
         entries: physical
             .entries
             .iter()
@@ -163,5 +164,50 @@ fn projection_fails_closed_on_stale_binding_captured_rules_and_cancellation() {
     assert_eq!(
         tree::project(linked.clone(), baseline(&linked), vec![], || Ok(())).unwrap_err(),
         Error::Unsupported
+    );
+}
+
+#[test]
+fn sparse_projection_keeps_excluded_paths_as_obstacles_without_false_changes() {
+    let root = fixture();
+    fs::create_dir(root.path().join("src")).unwrap();
+    fs::write(root.path().join("src/tracked"), "before").unwrap();
+    fs::write(root.path().join("excluded"), "tracked outside sparse").unwrap();
+    fs::write(root.path().join("missing"), "tracked outside sparse").unwrap();
+    let before = baseline(&scan(root.path()));
+    fs::write(root.path().join("src/tracked"), "after").unwrap();
+    fs::write(root.path().join("src/new"), "candidate").unwrap();
+    fs::write(root.path().join("outside"), "obstacle").unwrap();
+    fs::remove_file(root.path().join("missing")).unwrap();
+    let projection = tree::project_sparse(
+        scan(root.path()),
+        before,
+        vec![],
+        vec!["src".into()],
+        || Ok(()),
+    )
+    .unwrap();
+    assert_eq!(
+        projection
+            .changes
+            .iter()
+            .map(|c| (c.path.as_str(), c.kind))
+            .collect::<Vec<_>>(),
+        [
+            ("src/new", ChangeKind::Added),
+            ("src/tracked", ChangeKind::Modified),
+        ]
+    );
+    assert_eq!(
+        projection
+            .obstacles
+            .iter()
+            .map(|o| (o.entry.path.as_str(), o.outside_sparse, o.tracked))
+            .collect::<Vec<_>>(),
+        [
+            ("excluded", true, true),
+            ("outside", true, false),
+            ("src/new", false, false),
+        ]
     );
 }

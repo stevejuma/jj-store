@@ -65,10 +65,14 @@ Private working-tree helpers also read the named workspace's exact
 operation-pinned baseline and compare raw file/link digests with bounded
 physical observations. They retain ignored/untracked checkout obstacles and use
 JJ's ignore matcher on captured bytes. These helpers add no browser/API route
-and do not establish the current physical checkout or an active combination's
-Unstaged work. Current WC and sparse proof, global/exclude policy capture and
-transport qualification remain separate steps before these reads can reach the
-UI.
+and do not establish an active combination's Unstaged work. A current provider
+also reads existing checkout metadata with explicit byte/entry bounds, proves
+its selected operation and tree, and captures sparse scope plus actual global
+and repository-exclude rules. The service observes these witnesses before and
+after the physical scan and rejects metadata/policy changes or revoked access.
+It never initializes missing state. Canceled scans retain admission until their
+worker exits. Scan transport and active-combination qualification remain
+separate steps before these reads can reach the UI.
 
 ## Portability and limits
 

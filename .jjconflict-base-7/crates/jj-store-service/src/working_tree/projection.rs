@@ -19,6 +19,8 @@ pub struct Change {
 pub struct Obstacle {
     pub entry: Entry,
     pub ignored: bool,
+    pub outside_sparse: bool,
+    pub tracked: bool,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Projection {
@@ -34,6 +36,15 @@ pub fn project(
     physical: WorkingTree,
     baseline: baseline::Baseline,
     base_ignores: Vec<Vec<u8>>,
+    guard: impl FnMut() -> Result<()>,
+) -> Result<Projection> {
+    project_sparse(physical, baseline, base_ignores, vec![String::new()], guard)
+}
+pub fn project_sparse(
+    physical: WorkingTree,
+    baseline: baseline::Baseline,
+    base_ignores: Vec<Vec<u8>>,
+    prefixes: Vec<String>,
     mut guard: impl FnMut() -> Result<()>,
 ) -> Result<Projection> {
     guard()?;
@@ -88,9 +99,22 @@ pub fn project(
         .map(|entry| (entry.path.as_str(), entry))
         .collect();
     let mut changes = Vec::new();
+    let sparse = baseline::SparseRules::new(prefixes).map_err(map)?;
+    let mut obstacles = Vec::new();
     for before in &baseline.entries {
         guard()?;
         rules.ignored(&before.path).map_err(map)?; // validate even tracked paths; ignore never removes tracking
+        if !sparse.matches(&before.path).map_err(map)? {
+            if let Some(entry) = observed.remove(before.path.as_str()) {
+                obstacles.push(Obstacle {
+                    entry: entry.clone(),
+                    ignored: rules.ignored(&before.path).map_err(map)?,
+                    outside_sparse: true,
+                    tracked: true,
+                });
+            }
+            continue;
+        }
         match observed.remove(before.path.as_str()) {
             None => changes.push(Change {
                 path: before.path.clone(),
@@ -107,11 +131,11 @@ pub fn project(
             }),
         }
     }
-    let mut obstacles = Vec::new();
     for after in observed.into_values() {
         guard()?;
         let ignored = rules.ignored(&after.path).map_err(map)?;
-        if !ignored {
+        let outside_sparse = !sparse.matches(&after.path).map_err(map)?;
+        if !ignored && !outside_sparse {
             changes.push(Change {
                 path: after.path.clone(),
                 kind: ChangeKind::Added,
@@ -122,9 +146,12 @@ pub fn project(
         obstacles.push(Obstacle {
             entry: after.clone(),
             ignored,
+            outside_sparse,
+            tracked: false,
         });
     }
     changes.sort_by(|a, b| a.path.cmp(&b.path));
+    obstacles.sort_by(|a, b| a.entry.path.cmp(&b.entry.path));
     guard()?;
     Ok(Projection {
         physical,

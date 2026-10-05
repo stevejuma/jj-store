@@ -510,9 +510,11 @@ reads; identity or folder mismatch removes the controller.
 
 Private physical scan/WC baseline comparisons do not establish active Unstaged
 assignment. The UI must keep this capability unavailable until composition
-verifies current checkout/sparse state, captures complete ignore policy and
-qualifies its read transport. A historical working-copy baseline cannot become
-the active physical folder merely because it shares a workspace name.
+qualifies its read transport and active-combination assignment. Private current
+checkout/sparse/ignore witnesses and service observation now supply these
+provider inputs; they do not themselves grant a UI capability. A historical
+working-copy baseline cannot become the active physical folder merely because it
+shares a workspace name.
 
 The 5 October alignment review and proposed backend delivery order are recorded
 in
