@@ -1,10 +1,15 @@
 # Typed mutations
 
-Optional path-history maintenance uses the existing read preparation worker and
-retains only bounded derived IDs and standard JJ index output. It MUST NOT
-retain authorization, publish repository state or become a prerequisite for
-guarded mutations. Every later metadata batch reauthorizes its pinned source;
-optional maintenance failure leaves the existing graph handle available.
+Files metadata uses the existing read authority for a bounded first-parent pass.
+It returns path-change or selected-snapshot provenance without scheduling
+changed-path maintenance. Ready graph handles may prove membership; absence of
+optional path indexing does not block metadata. Snapshot fallback never masks
+authorization, cancellation, corruption or hard resource-limit failures and
+never invokes a mutation or publication path.
+
+Separately invoked path-index builders retain only bounded derived data and
+standard JJ output. Their read authority never becomes repository authority or a
+prerequisite for mutations. Files metadata does not invoke these builders.
 
 JJ read adapters may synthesize clean merged-parent files in bounded
 request-local memory to evaluate file history. They use read authorization and

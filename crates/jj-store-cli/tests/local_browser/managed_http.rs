@@ -194,7 +194,7 @@ async fn managed_local_http_activates_without_subscribers_resumes_and_captures_t
 }
 
 #[tokio::test]
-async fn managed_http_path_metadata_resumes_and_preserves_source_state() {
+async fn managed_http_path_metadata_finishes_with_snapshot_and_preserves_source_state() {
     let temp = tempfile::tempdir().unwrap();
     let folder = temp.path().join("repo");
     jj(
@@ -207,6 +207,7 @@ async fn managed_http_path_metadata_resumes_and_preserves_source_state() {
     for _ in 0..70 {
         jj(&folder, &["new", "-m", "Unrelated"]);
     }
+    fs::write(folder.join("recent.txt"), "new file\n").unwrap();
     jj(&folder, &["bookmark", "create", "main", "other"]);
     let commit = jj(
         &folder,
@@ -235,30 +236,58 @@ async fn managed_http_path_metadata_resumes_and_preserves_source_state() {
         names["data"]["data"]["entries"][0]["last_change"]["reason"],
         "not_requested"
     );
-    let deadline = tokio::time::Instant::now() + Duration::from_secs(15);
-    let mut batches = 0;
-    loop {
-        let (status, page) = request(&client, port, &base, Some(&query(true)), false).await;
-        assert_eq!(status, 200, "{page}");
-        let entry = &page["data"]["data"]["entries"][0];
-        assert_eq!(entry["path"], "old-directory", "{page}");
-        assert_eq!(entry["terms"], names["data"]["data"]["entries"][0]["terms"]);
-        if entry["last_change"]["status"] == "available" {
-            assert_eq!(
-                entry["last_change"]["description"].as_str().unwrap().trim(),
-                "Original change"
-            );
-            break;
-        }
-        assert_eq!(entry["last_change"]["reason"], "pending", "{page}");
-        batches += 1;
-        assert!(
-            tokio::time::Instant::now() < deadline,
-            "metadata never resumed"
-        );
-        tokio::time::sleep(Duration::from_millis(100)).await;
+    let (status, page) = request(&client, port, &base, Some(&query(true)), false).await;
+    assert_eq!(status, 200, "{page}");
+    let entry = &page["data"]["data"]["entries"][0];
+    assert_eq!(entry["path"], "old-directory", "{page}");
+    assert_eq!(entry["terms"], names["data"]["data"]["entries"][0]["terms"]);
+    assert_eq!(entry["last_change"]["status"], "available", "{page}");
+    assert_eq!(entry["last_change"]["attribution"], "snapshot", "{page}");
+    assert_eq!(entry["last_change"]["commit"], commit, "{page}");
+    assert_eq!(
+        entry["last_change"]["description"].as_str().unwrap().trim(),
+        "Unrelated"
+    );
+    let recent = &page["data"]["data"]["entries"][1];
+    assert_eq!(recent["path"], "recent.txt");
+    assert_eq!(recent["last_change"]["attribution"], "path_change");
+    assert_eq!(recent["last_change"]["commit"], commit);
+    // Pagination must retain the same per-row provenance and pinned selection.
+    let mut paged = query(true);
+    paged["request"]["query"]["limit"] = json!(1);
+    let (status, first) = request(&client, port, &base, Some(&paged), false).await;
+    assert_eq!(status, 200, "{first}");
+    assert_eq!(first["data"]["data"]["entries"][0], *entry);
+    paged["cursor"] = first["next_cursor"].clone();
+    assert!(paged["cursor"].is_string(), "{first}");
+    let (status, second) = request(&client, port, &base, Some(&paged), false).await;
+    assert_eq!(status, 200, "{second}");
+    assert_eq!(second["data"]["data"]["entries"][0], *recent);
+    // Names-first pagination requests metadata for its exact raw path anchor.
+    let mut seek = query(true);
+    seek["request"]["query"]["limit"] = json!(1);
+    seek["request"]["query"]["anchor"] = json!("old-directory");
+    let (status, anchored) = request(&client, port, &base, Some(&seek), false).await;
+    assert_eq!(status, 200, "{anchored}");
+    assert_eq!(anchored["data"]["data"]["entries"][0], *recent);
+    seek["request"]["query"]["anchor"] = json!("");
+    let (status, sought_first) = request(&client, port, &base, Some(&seek), false).await;
+    assert_eq!(status, 200, "{sought_first}");
+    seek["request"]["query"]["anchor"] = serde_json::Value::Null;
+    seek["cursor"] = sought_first["next_cursor"].clone();
+    let (status, sought_next) = request(&client, port, &base, Some(&seek), false).await;
+    assert_eq!(status, 200, "{sought_next}");
+    assert_eq!(sought_next["data"]["data"]["entries"][0], *recent);
+    seek["request"]["query"]["anchor"] = json!("old-directory");
+    seek["cursor"] = first["next_cursor"].clone();
+    let (status, _) = request(&client, port, &base, Some(&seek), false).await;
+    assert_eq!(status, 400, "raw anchors cannot override a signed cursor");
+    if let Some(path) = std::env::var_os("JJ_STORE_FAST_PATH_CAPTURE") {
+        let samples: Vec<_> = [&names, &page, &first, &second, &anchored].into_iter().map(|data|
+            json!({"method":"post","path":"/v1/local/repos/{repo}/query","status":200,"media":"application/json","data":data})
+        ).collect();
+        fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();
     }
-    assert!(batches > 0);
     stop.send(()).unwrap();
     running.await.unwrap();
     assert_eq!(

@@ -266,7 +266,7 @@ test("attribution failures preserve rows and report unavailable without inventin
     paths: async (
       _commit: string,
       _operation: string,
-      query: { includeLastChange: boolean },
+      query: { includeLastChange: boolean; lastChangeMode?: string },
     ) => {
       requests.push(query);
       if (query.includeLastChange) throw new Error("network unavailable");
@@ -328,55 +328,42 @@ test("attribution failures preserve rows and report unavailable without inventin
   expect(requests).toHaveLength(2);
 });
 
-for (const outcome of ["complete", "failure", "busy", "eviction"]) {
-  test(`pending row attribution ${outcome} retains usable names and resolved rows`, async () => {
+for (const outcome of [
+  "snapshot",
+  "path_change",
+  "legacy",
+  "pending",
+  "busy_snapshot",
+  "background",
+  "history_error",
+]) {
+  test(`row attribution ${outcome} settles quick metadata then optional history`, async () => {
     const data = createProductionStoreState();
     const history = createStoreRouteHistory(undefined);
     history.connect(repository, operation);
     history.push({ ...history.route, page: "files", commitId: commit });
-    const finish = Promise.withResolvers<void>();
     let batches = 0;
-    const row = (path: string, ready: boolean) => ({
-      path,
-      terms: [
-        {
-          type: "file",
-          id: "31".repeat(64),
-          executable: false,
-          copy: { kind: "placeholder" },
-        },
-      ],
-      conflicted: false,
-      last_change: ready
-        ? {
-            status: "available",
-            commit,
-            change,
-            description: "Original change",
-            author: {
-              name: "A",
-              email: "a@example.test",
-              timestamp: { millis: 1, offset_minutes: 0 },
-            },
-            committer: {
-              name: "A",
-              email: "a@example.test",
-              timestamp: { millis: 1, offset_minutes: 0 },
-            },
-          }
-        : { status: "unavailable", reason: "pending" },
-    });
+    const errors: unknown[] = [];
+    const signature = {
+      name: "A",
+      email: "a@example.test",
+      timestamp: { millis: 1, offset_minutes: 0 },
+    };
     const source = {
       repository,
       paths: async (
         _commit: string,
         _operation: string,
-        query: { includeLastChange: boolean },
+        query: { includeLastChange: boolean; lastChangeMode?: string },
       ) => {
-        if (query.includeLastChange && ++batches === 2) {
-          await finish.promise;
-          if (outcome === "busy") throw new ApiError("busy");
-        }
+        if (
+          query.includeLastChange &&
+          ++batches === 1 &&
+          outcome === "busy_snapshot"
+        )
+          throw new ApiError("busy");
+        if (outcome === "history_error" && query.lastChangeMode === "history")
+          throw new ApiError("resource_limit");
         return {
           snapshot,
           data: {
@@ -385,12 +372,202 @@ for (const outcome of ["complete", "failure", "busy", "eviction"]) {
             path: "",
             recursive: false,
             entries: [
-              row(
-                "recent.txt",
-                query.includeLastChange &&
-                  !(outcome === "eviction" && batches === 2),
-              ),
-              row("old.txt", batches >= 2),
+              {
+                path: "old.txt",
+                terms: [
+                  {
+                    type: "file",
+                    id: "31".repeat(64),
+                    executable: false,
+                    copy: { kind: "placeholder" },
+                  },
+                ],
+                conflicted: false,
+                last_change:
+                  query.includeLastChange &&
+                  outcome !== "pending" &&
+                  !(
+                    outcome === "background" &&
+                    query.lastChangeMode === "history" &&
+                    batches === 2
+                  )
+                    ? {
+                        status: "available",
+                        commit:
+                          outcome === "background" &&
+                          query.lastChangeMode === "history"
+                            ? "ab".repeat(64)
+                            : commit,
+                        change,
+                        description: "Selected commit",
+                        ...(outcome === "legacy"
+                          ? {}
+                          : {
+                              attribution:
+                                outcome === "path_change" ||
+                                (outcome === "background" &&
+                                  query.lastChangeMode === "history")
+                                  ? "path_change"
+                                  : "snapshot",
+                            }),
+                        author: signature,
+                        committer: signature,
+                      }
+                    : {
+                        status: "unavailable",
+                        reason: query.includeLastChange
+                          ? "pending"
+                          : "not_requested",
+                      },
+              },
+            ],
+            previous: null,
+            next: null,
+            stats,
+          },
+          next_cursor: null,
+          previous_cursor: null,
+        };
+      },
+      commit: async () => {
+        throw new Error("optional header unavailable");
+      },
+    } as unknown as StoreDataSource;
+    const scope = new AbortController();
+    const reader = createProductionFileReader({
+      data,
+      history,
+      source: () => source,
+      operation: () => operation,
+      version: () => 1,
+      current: () => !scope.signal.aborted,
+      signal: () => scope.signal,
+      report: (error) => {
+        errors.push(error);
+      },
+    });
+    try {
+      await reader.loadFiles(commit);
+      await expect
+        .poll(() => Object.hasOwn(data.snapshot?.pathChanges ?? {}, "old.txt"))
+        .toBe(true);
+      const result = data.snapshot?.pathChanges?.["old.txt"];
+      if (outcome === "pending") expect(result).toBeUndefined();
+      else {
+        expect(result?.eventId).toBe(commit);
+        expect(result?.message).toBe("Selected commit");
+        expect(result?.attribution).toBe(
+          ["legacy", "path_change"].includes(outcome)
+            ? "path_change"
+            : "snapshot",
+        );
+      }
+      expect(data.status.files).toBe("ready");
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      if (outcome === "background") {
+        expect(data.snapshot?.pathChanges?.["old.txt"]?.attribution).toBe(
+          "snapshot",
+        );
+        await expect
+          .poll(() => data.snapshot?.pathChanges?.["old.txt"]?.eventId)
+          .toBe("ab".repeat(64));
+      }
+      expect(batches).toBe(
+        outcome === "background"
+          ? 3
+          : outcome === "busy_snapshot"
+            ? 3
+            : ["snapshot", "path_change", "history_error"].includes(outcome)
+              ? 2
+              : 1,
+      );
+      expect(errors).toHaveLength(outcome === "history_error" ? 1 : 0);
+    } finally {
+      scope.abort();
+    }
+  });
+}
+
+for (const deeper of [false, true])
+  test(`directory navigation cancels ${deeper ? "history" : "quick"} attribution for the previous folder`, async () => {
+    const data = createProductionStoreState();
+    const history = createStoreRouteHistory(undefined);
+    history.connect(repository, operation);
+    history.push({ ...history.route, page: "files", commitId: commit });
+    let pendingSignal: AbortSignal | undefined;
+    let oldRequests = 0;
+    const source = {
+      repository,
+      paths: async (
+        _commit: string,
+        _operation: string,
+        query: {
+          includeLastChange: boolean;
+          lastChangeMode?: string;
+          path: string;
+          signal: AbortSignal;
+        },
+      ) => {
+        if (
+          query.includeLastChange &&
+          query.path === "old" &&
+          (!deeper || query.lastChangeMode === "history")
+        ) {
+          oldRequests++;
+          pendingSignal = query.signal;
+          return new Promise((_, reject) =>
+            query.signal.addEventListener(
+              "abort",
+              () => reject(query.signal.reason),
+              { once: true },
+            ),
+          );
+        }
+        return {
+          snapshot,
+          data: {
+            version: 1,
+            commit,
+            path: query.path,
+            recursive: false,
+            entries: [
+              {
+                path: `${query.path}/file.txt`,
+                terms: [
+                  {
+                    type: "file",
+                    id: "31".repeat(64),
+                    executable: false,
+                    copy: { kind: "placeholder" },
+                  },
+                ],
+                conflicted: false,
+                last_change:
+                  deeper && query.path === "old" && query.includeLastChange
+                    ? {
+                        status: "available",
+                        attribution: "snapshot",
+                        commit,
+                        change,
+                        description: "Selected commit",
+                        author: {
+                          name: "A",
+                          email: "a@example.test",
+                          timestamp: { millis: 1, offset_minutes: 0 },
+                        },
+                        committer: {
+                          name: "A",
+                          email: "a@example.test",
+                          timestamp: { millis: 1, offset_minutes: 0 },
+                        },
+                      }
+                    : {
+                        status: "unavailable",
+                        reason: query.includeLastChange
+                          ? "not_found"
+                          : "not_requested",
+                      },
+              },
             ],
             previous: null,
             next: null,
@@ -418,129 +595,18 @@ for (const outcome of ["complete", "failure", "busy", "eviction"]) {
       },
     });
     try {
-      await reader.loadFiles(commit);
-      await expect.poll(() => batches).toBe(2);
-      expect(data.status.files).toBe("ready");
-      expect(data.snapshot?.files).toHaveLength(2);
-      expect(data.snapshot?.pathChanges?.["recent.txt"]?.message).toBe(
-        "Original change",
-      );
-      expect(Object.hasOwn(data.snapshot?.pathChanges ?? {}, "old.txt")).toBe(
-        false,
-      );
-      if (outcome !== "failure") {
-        finish.resolve();
-        await expect
-          .poll(() => data.snapshot?.pathChanges?.["old.txt"]?.message)
-          .toBe("Original change");
-      } else {
-        finish.reject(new Error("later batch failed"));
-        await expect
-          .poll(() =>
-            Object.hasOwn(data.snapshot?.pathChanges ?? {}, "old.txt"),
-          )
-          .toBe(true);
-        expect(data.snapshot?.pathChanges?.["old.txt"]).toBeUndefined();
-      }
-      expect(data.snapshot?.pathChanges?.["recent.txt"]?.message).toBe(
-        "Original change",
-      );
+      await reader.loadFiles(commit, { path: "old", recursive: false });
+      await expect.poll(() => pendingSignal).toBeDefined();
+      await reader.loadFiles(commit, { path: "new", recursive: false });
+      expect(pendingSignal?.aborted).toBe(true);
       await expect
-        .poll(() => batches)
-        .toBe(["busy", "eviction"].includes(outcome) ? 3 : 2);
+        .poll(
+          () => data.pathPages.get("directory:new")?.entries[0]?.last_change,
+        )
+        .toEqual({ status: "unavailable", reason: "not_found" });
+      expect(oldRequests).toBe(1);
+      expect(data.status.files).toBe("ready");
     } finally {
       scope.abort();
-      finish.resolve();
     }
   });
-}
-
-test("directory navigation cancels pending attribution for the previous folder", async () => {
-  const data = createProductionStoreState();
-  const history = createStoreRouteHistory(undefined);
-  history.connect(repository, operation);
-  history.push({ ...history.route, page: "files", commitId: commit });
-  let pendingSignal: AbortSignal | undefined;
-  let oldRequests = 0;
-  const source = {
-    repository,
-    paths: async (
-      _commit: string,
-      _operation: string,
-      query: { includeLastChange: boolean; path: string; signal: AbortSignal },
-    ) => {
-      if (query.includeLastChange && query.path === "old") {
-        oldRequests++;
-        pendingSignal = query.signal;
-        return new Promise((_, reject) =>
-          query.signal.addEventListener(
-            "abort",
-            () => reject(query.signal.reason),
-            { once: true },
-          ),
-        );
-      }
-      return {
-        snapshot,
-        data: {
-          version: 1,
-          commit,
-          path: query.path,
-          recursive: false,
-          entries: [
-            {
-              path: `${query.path}/file.txt`,
-              terms: [
-                {
-                  type: "file",
-                  id: "31".repeat(64),
-                  executable: false,
-                  copy: { kind: "placeholder" },
-                },
-              ],
-              conflicted: false,
-              last_change: {
-                status: "unavailable",
-                reason: query.includeLastChange ? "not_found" : "not_requested",
-              },
-            },
-          ],
-          previous: null,
-          next: null,
-          stats,
-        },
-        next_cursor: null,
-        previous_cursor: null,
-      };
-    },
-    commit: async () => {
-      throw new Error("optional header unavailable");
-    },
-  } as unknown as StoreDataSource;
-  const scope = new AbortController();
-  const reader = createProductionFileReader({
-    data,
-    history,
-    source: () => source,
-    operation: () => operation,
-    version: () => 1,
-    signal: () => scope.signal,
-    current: () => true,
-    report: (cause) => {
-      throw cause;
-    },
-  });
-  try {
-    await reader.loadFiles(commit, { path: "old", recursive: false });
-    await expect.poll(() => pendingSignal).toBeDefined();
-    await reader.loadFiles(commit, { path: "new", recursive: false });
-    expect(pendingSignal?.aborted).toBe(true);
-    await expect
-      .poll(() => data.pathPages.get("directory:new")?.entries[0]?.last_change)
-      .toEqual({ status: "unavailable", reason: "not_found" });
-    expect(oldRequests).toBe(1);
-    expect(data.status.files).toBe("ready");
-  } finally {
-    scope.abort();
-  }
-});

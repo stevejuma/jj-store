@@ -3,15 +3,22 @@
 Opening a directory shows the existing directory skeleton while its files load,
 including navigation within a retained repository snapshot. Pagination keeps
 loaded rows and its existing tail skeleton. File names become navigable before
-optional Description and Updated metadata settles; managed row attribution uses
-JJ file-history semantics and resumes pending metadata in bounded requests with
-backoff, including temporary busy admission. Resolved rows remain visible while
-other rows use skeletons. Cache eviction cannot replace resolved metadata with
-pending state for the same immutable selection. Changing the directory, selected
-commit, operation or source cancels obsolete metadata; stale results cannot
-overwrite the new view. Optional failure preserves usable filenames. Transient
-state feedback belongs in the shared toast service, with no additional inline
-preparation messages.
+optional Description and Updated metadata settles. Quick attribution completes
+in one bounded first-parent pass, accepting integration commits. Unresolved rows
+show the selected commit's message/date with a compact accessible camera icon
+identifying Snapshot metadata explaining that these are snapshot details, not a
+proven last path change. Available metadata includes
+`attribution: path_change | snapshot`; older responses without attribution
+retain path-change presentation. Directory descriptions show only the first
+message line within the available column width, truncating with an ellipsis
+before Updated. Full messages remain in the commit view. Quick results remain
+visible while automatic bounded history batches refine them using JJ
+file-history semantics. Pending refinement never restores skeletons or clears
+available metadata; errors stop refinement and retain quick values. Background
+batches yield to queued page work. Busy admission may retry; changing the
+directory, commit, operation or source cancels obsolete work. Pending metadata
+uses skeletons; optional failures preserve usable filenames. Transient feedback
+belongs in shared toasts, with no inline preparation messages.
 
 When `automatic_code_index` is advertised, ordinary Files, Branches and Commits
 views recover the exact selected operation through core task observation and

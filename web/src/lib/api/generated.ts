@@ -4841,6 +4841,7 @@ export interface components {
     };
     LastChange:
       | {
+          attribution: components["schemas"]["Attribution"];
           commit: components["schemas"]["CommitId"];
           change: components["schemas"]["ChangeId"];
           description: string;
@@ -4854,6 +4855,11 @@ export interface components {
           /** @constant */
           status: "unavailable";
         };
+    /**
+     * @description Provenance of the displayed commit, not a claim about all-branch history.
+     * @enum {string}
+     */
+    Attribution: "path_change" | "snapshot";
     /** @enum {string} */
     LastChangeUnavailable:
       "merge" | "budget" | "not_requested" | "pending" | "not_found";
@@ -5719,6 +5725,7 @@ export interface components {
         };
     LocalPathsLastChange:
       | {
+          attribution: components["schemas"]["LocalPathsAttribution"];
           commit: components["schemas"]["GitSha1Id"];
           change: components["schemas"]["ChangeId"];
           description: string;
@@ -5732,6 +5739,11 @@ export interface components {
           /** @constant */
           status: "unavailable";
         };
+    /**
+     * @description Provenance of the displayed commit, not a claim about all-branch history.
+     * @enum {string}
+     */
+    LocalPathsAttribution: "path_change" | "snapshot";
     /** @enum {string} */
     LocalPathsLastChangeUnavailable:
       "merge" | "budget" | "not_requested" | "pending" | "not_found";
@@ -22810,6 +22822,7 @@ export interface operations {
         path?: string;
         recursive?: boolean;
         include_last_change?: boolean;
+        last_change_mode?: "quick" | "history";
         limit?: number;
         anchor?: string;
         direction?: "forward" | "backward";
@@ -22950,6 +22963,7 @@ export interface operations {
         path?: string;
         recursive?: boolean;
         include_last_change?: boolean;
+        last_change_mode?: "quick" | "history";
         limit?: number;
         anchor?: string;
         direction?: "forward" | "backward";
@@ -28833,6 +28847,11 @@ export interface operations {
                   recursive: boolean;
                   /** @default true */
                   include_last_change?: boolean;
+                  /**
+                   * @default quick
+                   * @enum {string}
+                   */
+                  last_change_mode?: "quick" | "history";
                   /** Format: uint */
                   limit: number;
                   anchor?: string | null;

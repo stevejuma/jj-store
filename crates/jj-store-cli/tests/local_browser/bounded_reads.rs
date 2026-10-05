@@ -44,6 +44,7 @@ async fn local_path_metadata_crosses_merges_using_first_parent_history() {
                 path: String::new(),
                 recursive: false,
                 include_last_change: true,
+                last_change_mode: Default::default(),
                 limit: 20,
                 anchor: None,
                 direction: Default::default(),
@@ -189,6 +190,7 @@ async fn historical_file_reads_stop_after_proving_the_selected_commit() {
             operation,
             q::Request::Paths(q::paths::Request {
                 include_last_change: false,
+                last_change_mode: Default::default(),
                 commit: parent,
                 path: String::new(),
                 recursive: false,
@@ -524,6 +526,7 @@ async fn registered_large_repository_metadata_smoke() {
                     operation,
                     q::Request::Paths(q::paths::Request {
                         include_last_change: false,
+                        last_change_mode: Default::default(),
                         commit: target.commit,
                         path: String::new(),
                         recursive: false,
@@ -567,6 +570,7 @@ async fn registered_large_repository_metadata_smoke() {
                         operation,
                         q::Request::Paths(q::paths::Request {
                             include_last_change: false,
+                            last_change_mode: Default::default(),
                             commit: *parent,
                             path: String::new(),
                             recursive: false,
@@ -655,6 +659,7 @@ async fn local_file_rows_read_only_the_selected_commit_and_traversed_trees() {
             operation,
             q::Request::Paths(q::paths::Request {
                 include_last_change: true,
+                last_change_mode: Default::default(),
                 commit,
                 path: String::new(),
                 recursive: false,
@@ -680,6 +685,7 @@ async fn local_file_rows_read_only_the_selected_commit_and_traversed_trees() {
             operation,
             q::Request::Paths(q::paths::Request {
                 include_last_change: true,
+                last_change_mode: Default::default(),
                 commit,
                 path: String::new(),
                 recursive: false,
@@ -711,6 +717,7 @@ async fn local_file_rows_read_only_the_selected_commit_and_traversed_trees() {
             operation,
             q::Request::Paths(q::paths::Request {
                 include_last_change: false,
+                last_change_mode: Default::default(),
                 commit,
                 path: String::new(),
                 recursive: false,
@@ -782,6 +789,7 @@ async fn local_file_rows_read_only_the_selected_commit_and_traversed_trees() {
             operation,
             q::Request::Paths(q::paths::Request {
                 include_last_change: true,
+                last_change_mode: Default::default(),
                 commit: jj_store_model::GitSha1Id::new([9; 20]),
                 path: String::new(),
                 recursive: false,

@@ -18,6 +18,8 @@ pub struct PathRequest {
     pub path: String,
     pub recursive: bool,
     pub include_last_change: bool,
+    #[serde(default)]
+    pub last_change_mode: paths::LastChangeMode,
     pub limit: usize,
 }
 #[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
@@ -157,6 +159,7 @@ impl BrowserPager {
         let limit = request.limit;
         let request = paths::Request {
             include_last_change: request.include_last_change,
+            last_change_mode: request.last_change_mode,
             commit: request.commit,
             path: request.path,
             recursive: request.recursive,

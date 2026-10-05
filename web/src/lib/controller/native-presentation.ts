@@ -219,6 +219,7 @@ export function presentPaths(
           [
             entry.path,
             {
+              attribution: value.attribution ?? "path_change",
               eventId: value.commit,
               commitId: value.commit,
               changeId: value.change,

@@ -26,6 +26,9 @@ export class HttpFileReads {
       path: input.path ?? "",
       recursive: input.recursive ?? false,
       include_last_change: input.includeLastChange ?? true,
+      ...(input.lastChangeMode
+        ? { last_change_mode: input.lastChangeMode }
+        : {}),
       anchor: input.anchor,
       limit: input.limit ?? 50,
       cursor: input.cursor,

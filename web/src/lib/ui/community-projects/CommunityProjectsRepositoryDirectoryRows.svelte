@@ -1,4 +1,5 @@
 <script lang="ts">
+  import DirectoryAttribution from "./CommunityProjectsRepositoryDirectoryAttribution.svelte";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import { createVirtualizer } from "@tanstack/svelte-virtual";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -26,6 +27,7 @@
     loading = false,
     onOpenDirectory,
     onOpenFile,
+    onSelectCommit,
     onLoadMore,
   }: {
     currentPath: string;
@@ -37,6 +39,7 @@
     loading?: boolean;
     onOpenDirectory: (path: string) => void;
     onOpenFile: (path: string) => void;
+    onSelectCommit?: (commit: RepositoryCommitSummary) => void;
     onLoadMore?: () => void;
   } = $props();
 
@@ -190,10 +193,13 @@
       >
         <Skeleton style="height: 1rem; width: 100%" />
       </div>
-    {:else}<span
-        class="community-projects__file-commit-message"
-        title={entryCommit?.message}>{entryCommit?.message ?? "—"}</span
-      >{/if}
+    {:else}
+      <DirectoryAttribution
+        commit={entryCommit}
+        path={entry?.path}
+        {onSelectCommit}
+      />
+    {/if}
   </Table.Cell>
   <Table.Cell>
     {#if entryCommit?.createdAt}

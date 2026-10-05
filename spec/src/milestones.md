@@ -90922,6 +90922,441 @@ entries.
       "Complete release, scale/RSS, fault/RustFS, registry-resolved foundational packages and visual baselines remain deferred. Existing E-READ-084 Clippy diagnostics are unchanged and not rerun. Root aggregate spec/check/test/build lanes are out of scope under targeted verification policy."
     ],
     "next": "Land this verified implementation slice on clean main with Jujutsu and retain the temporary workspace and 7470 preview. Qualify cold large-repository preparation and complete older-row coverage in a separately bounded follow-up; no broader search/evolution/copy optimization in this slice."
+  },
+  {
+    "id": "E-READ-088",
+    "date": "2026-10-05",
+    "tasks": ["M4.1", "M4.6", "M4.9", "M4.10", "M13.4"],
+    "requirements": [
+      "JST-API-001",
+      "JST-API-005",
+      "JST-UI-003",
+      "JST-JJ-003",
+      "JST-LOCAL-004",
+      "JST-GOV-008"
+    ],
+    "kind": "Quick jj-lib metadata with Snapshot provenance and automatic bounded history refinement",
+    "revision": "enclosing Jujutsu change vqzozuvl",
+    "before": "Exact local HTTP regression returns Pending instead of terminal snapshot metadata (before.log). Earlier pinned Linux investigation measured 1.5-1.7s names-only and 2.1-2.9s per unfinished metadata batch. Git pack reopening and operation fingerprinting remain outside this slice.",
+    "scope": "Native/local quick mode shares a 64-step first-parent scan, comparing grouped tree values and accepting integration commits. Selected-commit fallback is genuine Snapshot metadata. Per user follow-up, Files displays quick values first then automatically refines using the existing bounded JJ file-history reader, preserving visible values through pending/errors and canceling obsolete work. No Files-triggered changed-path indexing. First-line descriptions truncate before Updated; camera icon replaces Snapshot chip. Direct local metadata path seeks work after page one without overriding signed cursors.",
+    "formats": "Additive HTTP V1 available last_change.attribution (path_change or snapshot) and optional last_change_mode (quick default, history). Older responses without attribution retain path-change presentation and do not trigger unsupported refinement. Existing routes, source formats and native identities remain. Cursor query digest binds mode; no source/index repair or installed CLI replacement.",
+    "versions": "macOS ARM64; JJ/jj-lib 0.45.1; Rust 1.98.1; Node 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Vitest 4.1.11; Storybook 10.5.7.",
+    "files": [
+      "catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+      "crates/jj-store-cli/tests/local_browser/bounded_reads.rs",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs",
+      "crates/jj-store-cli/tests/local_browser/managed_http.rs",
+      "crates/jj-store-cli/tests/local_browser/prepared_points.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/browsing.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/path_metadata.rs",
+      "crates/jj-store-http/src/local_browser.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-jj/src/local_browser/paths.rs",
+      "crates/jj-store-jj/src/query/content/paths.rs",
+      "crates/jj-store-service/src/code_indexes/paths.rs",
+      "crates/jj-store-service/src/pagination/browsing.rs",
+      "docs/ui-provenance.json",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/http-file-reads.ts",
+      "web/src/lib/controller/http-local-code-data-source.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/native-presentation.ts",
+      "web/src/lib/controller/production-file-loaders.ts",
+      "web/src/lib/controller/production-file-metadata.ts",
+      "web/src/lib/projects/repository-log.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectory.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectoryAttribution.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectoryRows.svelte",
+      "web/src/lib/ui/community-projects/repository-directory.css",
+      "web/tests/vite/production-file-reader.test.ts",
+      "spec/src/spec-governance.md"
+    ],
+    "removed_tests": [
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#wide_path_history_skips_unrelated_commits_once_per_window",
+      "crates/jj-store-cli/tests/local_browser/managed_http.rs#managed_http_path_metadata_resumes_and_preserves_source_state"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/managed_http.rs#managed_http_path_metadata_finishes_with_snapshot_and_preserves_source_state",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#indexed_path_metadata_finishes_with_snapshot_beyond_sixty_four_commits",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#wide_path_metadata_finishes_in_one_shared_scan",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#indexed_merge_metadata_uses_integration_without_source_writes",
+      "crates/jj-store-cli/tests/native_lifecycle/path_metadata.rs#path_metadata_crosses_merges_and_retains_the_ancestry_bound",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#indexed_path_history_resumes_beyond_sixty_four_commits",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#indexed_merge_history_resolves_parent_contents_without_source_writes"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_http_path_metadata_finishes_with_snapshot_and_preserves_source_state --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "before.log: Expected initial Pending-versus-Snapshot regression."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "check.log: Passed; unused Context field warning was removed, then restored as used by user-requested history mode."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_http_path_metadata_finishes_with_snapshot_and_preserves_source_state --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "http.log: Incomplete Context removal missed one initializer; corrected."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "fail",
+        "failures": 1,
+        "note": "contracts-generate.log: Same Context compilation error; corrected before regeneration."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "contracts-generate-fixed.log: First quick-only contracts regenerated."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_http_path_metadata_finishes_with_snapshot_and_preserves_source_state --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "http-fixed.log: Exact regression passes."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "web-check.log: Ran before generated attribution type was ready; one missing-field error corrected by regeneration."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check-generated.log: Zero errors/warnings after generation."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "architecture.log: Directory rows exceeded the 300-line cap; extracted attribution presentation into a focused component."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_crosses_merges_and_retains_the_ancestry_bound --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native.log: One quick-mode regression passes; native source write fault remains unconsumed."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_code:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-managed.log: Six pass, one opt-in Linux smoke ignored."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser bounded_reads:: --locked -- --test-threads=2",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-bounded.log: Seven pass, one opt-in smoke ignored; point membership, unrelated reads, corruption behavior preserved."
+      },
+      {
+        "command": "JJ_STORE_FAST_PATH_CAPTURE=$PWD/.local/fast-path-metadata/local-contracts.json cargo test -p jj-store-cli --test local_browser managed_http_path_metadata_finishes_with_snapshot_and_preserves_source_state --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "http-capture-final.log: One passes; source parity and mixed provenance."
+      },
+      {
+        "command": "JJ_STORE_BROWSING_CONTRACT_CAPTURE=$PWD/.local/fast-path-metadata/native-contracts.json cargo test -p jj-store-cli --test native_lifecycle browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-http.log: One passes; unauthorized/stale/cursor-bound reads."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle browsing_acceptance:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-browsing.log: Nine pass; direct native browsing/reference consumers."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "check-final.log: Passed prior to history follow-up."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "ui-units.log: Initial 10 tests pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "directory-story.log: Three cold interaction/accessibility stories pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "description-before.log: One expected failure reproduces body text in directory description; two pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "description-after.log: Three pass with first-line/ellipsis geometry, keyboard and target navigation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "icon-story.log: Three pass with accessible Snapshot camera icon and no chip text."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_http_path_metadata_finishes_with_snapshot_and_preserves_source_state --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "anchor-before.log: One expected regression: local raw metadata page anchor returned400."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "history-check.log: Incorrect module alias introduced while threading mode; corrected."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "history-contracts.log: Final quick/history request and attribution schema generated."
+      },
+      {
+        "command": "pnpm exec vitest run --config web/vitest.config.ts web/tests/vite/production-file-reader.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "history-ui.log: Incorrect nonexistent config path; corrected to catalog-unit project."
+      },
+      {
+        "command": "pnpm exec vitest run --config web/vitest.config.ts web/tests/vite/production-file-reader.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "history-ui-final.log: Incorrect nonexistent config path; corrected to catalog-unit project."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "history-ui-corrected.log: 12 pass including progressive refinement and cancellation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "history-ui-complete.log: 13 pass including preserving quick values and reporting a history failure."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "backend-build.log: Quick backend built; existing Darwin linker unwind-size warning."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "backend-restart.log: 7470 Vite retained; fixture preserved."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "boundaries.log: 17 packages."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "architecture-final.log: 1001 modules; extracted attribution component."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-first-history.log: 28 protected files; eight chapters."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check-final.log: Zero errors/warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "catalog-check-final.log: Zero errors/warnings;196 modules."
+      },
+      {
+        "command": "pnpm test:contracts",
+        "result": "pass",
+        "failures": 0,
+        "note": "contracts-final.log: Contract unit and TypeScript checks."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "fail",
+        "failures": 1,
+        "note": "ownership-final.log: new extracted attribution component lacked its local provenance entry; entry copied from its owning directory rows and revalidated."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_code:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "history-local.log: Eight pass, one opt-in smoke ignored. Quick and deeper modes, old paths beyond64, merges, shared wide scan and source byte parity."
+      },
+      {
+        "command": "JJ_STORE_FAST_PATH_CAPTURE=$PWD/.local/fast-path-metadata/local-contracts.json cargo test -p jj-store-cli --test local_browser managed_http_path_metadata_finishes_with_snapshot_and_preserves_source_state --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "anchor-final.log: One passes. Quick mixed provenance, signed pagination, direct metadata seek and continuation, raw-anchor plus cursor rejection, source byte parity."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_crosses_merges_and_retains_the_ancestry_bound --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "history-native.log: One passes. Quick integrations/Snapshot and deeper original changes; authoritative write fault remains unconsumed."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "check-history-final.log: Affected package checks pass."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "backend-history-build.log: Quick/history executable built; existing linker warning."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "backend-final-build.log: Final direct-seek cursor fix rebuilt."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "backend-history-restart.log: Backend replaced with fixture and Vite preserved; transient reload during restart was retried after readiness."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check-complete.log: Final UI zero errors/warnings."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "architecture-complete.log: 1001 modules pass."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-final-fixed.log: Five validators,23 chapters,172 requirements pass after provenance entry."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "ownership-complete.log: Production ownership passes."
+      },
+      {
+        "command": "node .local/fast-path-metadata/format-ledger.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "ledger-format.log: Only newest E-READ-088 formatted; all530 previous entries preserved. Initial formatting guard rejected an indentation mismatch before writing; corrected."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress-history.log: 139 tasks; no milestone promotion."
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "rust-format-final.log: Rust source formatted."
+      },
+      {
+        "command": "xargs pnpm exec prettier --check < .local/fast-path-metadata/changed-format-files.txt",
+        "result": "pass",
+        "failures": 0,
+        "note": "format-final.log: Changed UI/contracts/specification/provenance files checked."
+      },
+      {
+        "command": "node --input-type=module responseValidator over local-contracts.json and native-contracts.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "contract-captures-final.log: Five local and11 native real HTTP response samples validate against generated schema."
+      },
+      {
+        "command": "python3 .local/fast-path-metadata/linux-benchmark.py",
+        "result": "fail",
+        "failures": 1,
+        "note": "linux-timings.log/json:17 HTTP200 responses captured. Eighteenth request produced an HTTP error with non-JSON body; parser failed. Performance target missed; no cache/index expansion. Each quick page makes one names and one metadata request; metadata work root314779,arch312816,block320037;67 metadata nodes, zero predicate bytes/lines. Process-first timing with retained OS caches, not an OS-cold benchmark."
+      },
+      {
+        "command": "CUA final Linux root and block interaction and CDP observation on7470",
+        "result": "pass",
+        "failures": 0,
+        "note": "Directory skeleton observed; final block quick response18.799s, all50 rows Snapshot. Eight observed history responses200 at1.941-4.892s; still50 Pending in the eighth response (37 metadata nodes,306101work, zero predicate file bytes). Quick values stayed visible. Later root history visibly replaced integration values with s390 Remove GENERIC_LOCKBREAK and accel/amdxdna Fix mm_struct reference leak; no body errors. Description first line, ellipsis, actual width265px versus501px content, right edge901.8125 before Updated at910.609375. Icon accessible name retained, no text chip. Exact UI navigation cancellation is covered by unit regression; no exhaustive Linux history claim."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "spec-first-final.log: provenance extraction required mapped governance chapter; added the ownership note."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "fail",
+        "failures": 1,
+        "note": "spec-final.log: new extracted attribution component missing provenance entry; copied its parent attribution and final ownership/canonical checks passed."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-first-complete.log/progress-complete.log: final protected-file and evidence gates; no milestone promotion."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "backend-final-restart.log: final executable, existing fixture and Vite retained."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Five-second warm target missed: pre-refinement final quick algorithm root 13.927-14.766s, arch 8.920-14.048s, block 27.340s; root19/41 discovered, arch5/23, block0/50, all other rows Snapshot. First requests after backend restart13.468/9.648/23.394s; OS caches were not cleared. Nine names requests1.209-3.528s.17 captured HTTP200 responses; final18th request returned a non-JSON error and the initial benchmark parser failed. Browser snapshot503 Busy was observed during concurrent measurements; later isolated root and block reads completed. No target-pass claim.",
+      "Implementation and focused quick/history, pagination, cancellation, provenance and layout checks complete. Large Linux warm metadata remains above five seconds; full older-path convergence is not claimed. Bounded background refinement is enabled per the user follow-up, with no hidden rows or metadata reset while pending.",
+      "Reader-cache redesign, broader indexing, release/scale/RustFS and visual baselines are out of scope. Root aggregate checks/tests/builds and unrelated full suites are out of scope under targeted verification policy. Existing Darwin unwind-table linker warning remains; no installed CLI replacement or source-repository mutation."
+    ],
+    "next": "Land this verified slice in main while retaining bounded-reads and codex-preview workspaces. Any reader-cache or larger performance redesign requires a separate agreed slice; five-second target remains open."
   }
 ]
 ```

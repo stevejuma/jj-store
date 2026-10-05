@@ -140,7 +140,10 @@ explicit negative fixtures are permitted. Design Core and Mira remain
 foundational dependencies. Visual fidelity is established by browser and
 interaction evidence, not by dependency exclusion. Existing Community package
 qualification is historical evidence; new slices copy the necessary source
-closure locally.
+closure locally. The extracted directory attribution component retains its
+parent directory component's pinned Community source and Apache-2.0 license. Its
+Snapshot icon and truncated commit subject remain repository-owned presentation
+with focused interaction and layout evidence.
 
 Shared repository card surface tokens are maintained locally with their original
 Community graph source and license in the provenance manifest. Pointer hover,

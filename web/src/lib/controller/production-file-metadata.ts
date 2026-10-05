@@ -47,15 +47,19 @@ export function createProductionFileMetadata(
     const selectedCurrent = () =>
       context.current(ticket, source) && data.snapshot?.id === commit;
     const current = () => !readSignal.aborted && selectedCurrent();
-    const add = (key: string, run: () => Promise<void>, failed: () => void) =>
+    const add = (
+      key: string,
+      run: () => Promise<void>,
+      failed: (cause?: unknown) => void,
+    ) =>
       queue.add(
         key,
         async () => {
           if (!current()) return;
           try {
             await run();
-          } catch {
-            if (current()) failed();
+          } catch (cause) {
+            if (current()) failed(cause);
           }
         },
         () => {
@@ -122,7 +126,7 @@ export function createProductionFileMetadata(
     );
     if (deferred) {
       const key = pathPageKey(value.path, value.recursive);
-      const markUnavailable = () => {
+      const markUnavailable = (cause?: unknown) => {
         const page = data.pathPages.get(key);
         if (!page) return;
         const paths = new Set(
@@ -142,81 +146,106 @@ export function createProductionFileMetadata(
           ]),
         });
         publish(commit);
+        if (cause !== undefined) context.report(cause);
       };
-      add(
-        `attribution:${key}:${anchor ?? ""}`,
-        async () => {
-          let attempts = 0;
-          while (current()) {
-            const result = await readPaths(source, operation, commit, {
-              path: value.path,
-              recursive: value.recursive,
-              includeLastChange: true,
-              anchor,
-              limit: value.entries.length,
-              expected: value.readSnapshot,
-              signal: readSignal,
-            }).catch((error: unknown) => {
-              if (error instanceof ApiError && error.code === "busy")
-                return undefined;
-              throw error;
-            });
-            if (!current()) return;
-            if (!result) {
-              await pause(
-                Math.min(150 * 2 ** Math.min(attempts++, 3), 1000),
-                readSignal,
-              );
-              continue;
-            }
-            const page = data.pathPages.get(key);
-            if (!page) return;
-            const records = new Map(
-              result.entries.map((entry) => [entry.path, entry]),
-            );
-            if (
-              value.entries.some(
-                (entry) =>
-                  pretty(records.get(entry.path)?.terms) !==
-                  pretty(entry.terms),
-              )
-            )
-              throw new Error("File attribution selection changed.");
-            data.pathPages = new Map(data.pathPages).set(key, {
-              ...page,
-              unavailableChanges: new Set(
-                [...(page.unavailableChanges ?? [])].filter(
-                  (path) => !records.has(path),
-                ),
-              ),
-              entries: page.entries.map((entry) => {
-                const record = records.get(entry.path);
-                if (!record || pretty(record.terms) !== pretty(entry.terms))
-                  return entry;
-                if (
-                  entry.last_change.status === "available" &&
-                  record.last_change.status === "unavailable" &&
-                  record.last_change.reason === "pending"
-                )
-                  return entry;
-                return record;
-              }),
-            });
-            publish(commit);
-            if (
-              !result.entries.some(
-                (entry) =>
-                  entry.last_change.status === "unavailable" &&
-                  entry.last_change.reason === "pending",
-              )
-            )
-              return;
+      const batch = async (
+        mode: "quick" | "history",
+        pass: number,
+      ): Promise<void> => {
+        let attempts = 0;
+        while (current()) {
+          const result = await readPaths(source, operation, commit, {
+            path: value.path,
+            recursive: value.recursive,
+            includeLastChange: true,
+            ...(mode === "history" ? { lastChangeMode: mode } : {}),
+            anchor,
+            limit: value.entries.length,
+            expected: value.readSnapshot,
+            signal: readSignal,
+          }).catch((error: unknown) => {
+            if (error instanceof ApiError && error.code === "busy")
+              return undefined;
+            throw error;
+          });
+          if (!current()) return;
+          if (!result) {
             await pause(
               Math.min(150 * 2 ** Math.min(attempts++, 3), 1000),
               readSignal,
             );
+            continue;
           }
-        },
+          const page = data.pathPages.get(key);
+          if (!page) return;
+          const records = new Map(
+            result.entries.map((entry) => [entry.path, entry]),
+          );
+          if (
+            value.entries.some(
+              (entry) =>
+                pretty(records.get(entry.path)?.terms) !== pretty(entry.terms),
+            )
+          )
+            throw new Error("File attribution selection changed.");
+          data.pathPages = new Map(data.pathPages).set(key, {
+            ...page,
+            unavailableChanges: new Set(
+              [...(page.unavailableChanges ?? [])].filter(
+                (path) => !records.has(path),
+              ),
+            ),
+            entries: page.entries.map((entry) => {
+              const record = records.get(entry.path);
+              if (!record || pretty(record.terms) !== pretty(entry.terms))
+                return entry;
+              if (
+                entry.last_change.status === "available" &&
+                record.last_change.status === "unavailable"
+              )
+                return entry;
+              // Keep quick values visible while deeper history is pending.
+              // Old servers without provenance complete after the quick read.
+              return record.last_change.status === "unavailable" &&
+                record.last_change.reason === "pending"
+                ? {
+                    ...record,
+                    last_change: { status: "unavailable", reason: "budget" },
+                  }
+                : record;
+            }),
+          });
+          publish(commit);
+          const continueHistory =
+            mode === "quick"
+              ? result.entries.some(
+                  (entry) =>
+                    entry.last_change.status === "available" &&
+                    entry.last_change.attribution !== undefined,
+                )
+              : result.entries.some(
+                  (entry) =>
+                    entry.last_change.status === "unavailable" &&
+                    entry.last_change.reason === "pending",
+                );
+          if (continueHistory) {
+            await pause(
+              Math.min(150 * 2 ** Math.min(pass, 3), 1000),
+              readSignal,
+            );
+            if (current())
+              add(
+                `history:${key}:${anchor ?? ""}:${pass}`,
+                () => batch("history", pass + 1),
+                markUnavailable,
+              );
+          }
+          return;
+        }
+      };
+      add(
+        `attribution:${key}:${anchor ?? ""}`,
+        () => batch("quick", 0),
         markUnavailable,
       );
     }

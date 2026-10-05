@@ -40,7 +40,7 @@ export type RepositoryCommitSummary = Pick<
   | "committedAtMs"
   | "author"
   | "authorEmail"
->;
+> & { attribution?: "path_change" | "snapshot" };
 
 export type RepositoryWorkingCopy = {
   workspace: string;

@@ -436,8 +436,13 @@ fn now() -> Result<u64> {
         .map_err(|_| Error::unavailable())
 }
 fn digest(request: &local::Request) -> Result<String> {
+    let mut selected = request.clone();
+    // A direct seek chooses the initial window; the signed cursor owns later anchors.
+    if let local::Request::Paths(page) = &mut selected {
+        page.anchor = None;
+    }
     Ok(hex::encode(Sha256::digest(
-        serde_json::to_vec(request).map_err(|_| Error::invalid())?,
+        serde_json::to_vec(&selected).map_err(|_| Error::invalid())?,
     )))
 }
 fn cursor(key: &[u8; 32], value: Cursor) -> Result<String> {
@@ -477,7 +482,7 @@ fn apply_anchor(request: &mut local::Request, anchor: Option<Anchor>) -> Result<
         R::OperationChanges(p) => p.anchor.is_none(),
         _ => true,
     };
-    if !absent {
+    if !absent && (anchor.is_some() || !matches!(request, R::Paths(_))) {
         return Err(Error::invalid());
     }
     if let Some(anchor) = anchor {

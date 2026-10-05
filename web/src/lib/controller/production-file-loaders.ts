@@ -45,6 +45,7 @@ export async function readPaths(
     path: string;
     recursive: boolean;
     includeLastChange?: boolean;
+    lastChangeMode?: "quick" | "history";
     anchor?: string;
     signal?: AbortSignal;
     limit?: number;

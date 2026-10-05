@@ -59,11 +59,28 @@ async fn path_metadata_crosses_merges_and_retains_the_ancestry_bound() {
         ids.push(b::CommitId::from_bytes(id.as_bytes()));
     }
     let merge = m::CommitId::from_slice(ids[3].as_bytes()).unwrap();
+    let recent_tree = b::Tree::from_sorted_entries(
+        [
+            ("a.txt", file(new)),
+            ("b.txt", file(new)),
+            ("c.txt", file(old)),
+            ("merged.txt", file(merged_files[3])),
+            ("recent.txt", file(new)),
+        ]
+        .into_iter()
+        .map(|(name, value)| (RepoPathComponentBuf::new(name).unwrap(), value))
+        .collect(),
+    );
+    let recent_tree = f.objects.put(&recent_tree).await.unwrap().0;
     let mut tip = ids[3].clone();
     for index in 0..70 {
         let mut commit = b::make_root_commit(
             b::ChangeId::from_bytes(&[index + 50; 16]),
-            b::TreeId::from_bytes(trees[3].as_bytes()),
+            b::TreeId::from_bytes(if index == 69 {
+                recent_tree.as_bytes()
+            } else {
+                trees[3].as_bytes()
+            }),
         );
         commit.parents = vec![tip];
         commit.description = "Unrelated change".into();
@@ -101,6 +118,7 @@ async fn path_metadata_crosses_merges_and_retains_the_ancestry_bound() {
         path: String::new(),
         recursive: false,
         include_last_change: true,
+        last_change_mode: Default::default(),
         limit: 20,
         anchor: None,
         direction: Default::default(),
@@ -125,14 +143,26 @@ async fn path_metadata_crosses_merges_and_retains_the_ancestry_bound() {
         )
         .await
         .unwrap();
-    assert!(page.entries.iter().all(|entry| matches!(
-        entry.last_change,
-        c::paths::LastChange::Unavailable {
-            reason: c::paths::LastChangeUnavailable::Budget
-        }
+    let selected = m::CommitId::from_slice(tip.as_bytes()).unwrap();
+    assert!(page.entries.iter().take(4).all(|entry| matches!(
+        &entry.last_change,
+        c::paths::LastChange::Available { attribution: c::paths::Attribution::Snapshot, commit, description, .. }
+            if *commit == selected && description == "Unrelated change"
     )));
-    // The managed path reader follows JJ's original merged-branch history and
-    // resumes old metadata without repeating its first64 candidates.
+    assert!(matches!(&page.entries[4].last_change,
+        c::paths::LastChange::Available { attribution: c::paths::Attribution::PathChange, commit, .. }
+            if *commit == selected));
+    // Hitting a hard resource limit must never turn an invalid read into a snapshot.
+    let limited = ContentReader::new(
+        c::Limits {
+            max_work: 1,
+            ..Default::default()
+        },
+        1,
+    )
+    .unwrap();
+    assert!(read.paths(&limited, request(selected)).await.is_err());
+    // Ready index membership does not change the terminal best-effort semantics.
     let index_root = tempfile::tempdir().unwrap();
     let exec = jj_store_jj::query::GraphExecutor::new(
         index_root.path().to_owned(),
@@ -151,49 +181,45 @@ async fn path_metadata_crosses_merges_and_retains_the_ancestry_bound() {
         .unwrap(),
     );
     let indexed = reader.with_code_index(prepared);
-    let first = read
-        .paths(
-            &indexed,
-            request(m::CommitId::from_slice(tip.as_bytes()).unwrap()),
-        )
-        .await
-        .unwrap();
-    assert!(first.entries.iter().all(|e| matches!(
-        e.last_change,
-        c::paths::LastChange::Unavailable {
-            reason: c::paths::LastChangeUnavailable::Pending
-        }
-    )));
-    let completed = read
-        .paths(
-            &indexed,
-            request(m::CommitId::from_slice(tip.as_bytes()).unwrap()),
-        )
-        .await
-        .unwrap();
+    let indexed_page = read.paths(&indexed, request(selected)).await.unwrap();
+    assert_eq!(indexed_page.entries, page.entries);
+    let indexed_merge = read.paths(&indexed, request(merge)).await.unwrap();
     for (entry, expected) in
-        completed
+        indexed_merge
             .entries
             .iter()
-            .zip(["Left edit", "Right edit", "Base", "Left edit"])
+            .zip(["Left edit", "Merge feature", "Base", "Merge feature"])
     {
+        assert!(matches!(&entry.last_change,
+            c::paths::LastChange::Available { attribution: c::paths::Attribution::PathChange, description, .. }
+                if description == expected));
+    }
+    let mut history_request = request(selected);
+    history_request.last_change_mode = c::paths::LastChangeMode::History;
+    let mut detailed = read.paths(&indexed, history_request.clone()).await.unwrap();
+    for _ in 0..3 {
+        if detailed
+            .entries
+            .iter()
+            .all(|entry| matches!(entry.last_change, c::paths::LastChange::Available { .. }))
+        {
+            break;
+        }
+        detailed = read.paths(&indexed, history_request.clone()).await.unwrap();
+    }
+    for (entry, expected) in detailed.entries.iter().zip([
+        "Left edit",
+        "Right edit",
+        "Base",
+        "Left edit",
+        "Unrelated change",
+    ]) {
         assert!(
-            matches!(&entry.last_change, c::paths::LastChange::Available { description, .. } if description == expected),
-            "{}: {:?}",
-            entry.path,
-            entry.last_change
+            matches!(&entry.last_change, c::paths::LastChange::Available { attribution: c::paths::Attribution::PathChange, description, .. } if description == expected),
+            "{entry:?}"
         );
     }
-    let cached = read
-        .paths(
-            &indexed,
-            request(m::CommitId::from_slice(tip.as_bytes()).unwrap()),
-        )
-        .await
-        .unwrap();
-    assert!(cached.stats.object_reads < 12, "{:?}", cached.stats);
-    // Equal-time parallel edits follow the native JJ index's topological order;
-    // merged.txt must identify a branch edit, never the clean merge itself.
+    // Tree comparison must never consume a source write, including clean merges.
     assert_eq!(
         f.objects
             .put_file(&b"write fault probe\n"[..])

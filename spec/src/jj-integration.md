@@ -1017,32 +1017,25 @@ include directory entries. They MUST NOT descend into unrelated child trees to
 construct a direct-child page. Conflict terms retain upstream trivial-resolution
 semantics; deeper content remains separately admitted.
 
-Optional managed path attribution uses JJ's File revset predicate and normal
-merged-parent comparison, preserving original branch changes and merge conflict
-resolutions. A shared ancestry window admits at most 64 candidates per request;
-wide windows reduce that count to at most 1024 candidate/path evaluations so
-directory width cannot multiply an entire history batch by every pending row.
-For multiple unresolved rows, a single union File predicate first excludes
-commits that touch none of their paths. Only matching candidates enter
-row-specific predicates, and both passes share the candidate/path admission.
-Unresolved rows resume using a bounded evictable ID-only frontier. Cache hits
-still require fresh authority and exact immutable path terms. JJ file-predicate
-polls use the existing unconstrained runtime boundary so synchronous upstream
-polling cannot stall on a scheduler-only cooperative yield; owned work, byte,
-cancellation and deadline admission still applies. No credential, store, stream
-or request is retained. Cache entries and frontier/row scratch are bounded and
-charged to the existing process allocation allowance. Names-only reads do no
-ancestry or changed-path preparation. The existing managed task queue may extend
-JJ's standard changed-path index at most 64 commits per demand batch, with
-independent preparation bytes/work/deadline/cancellation admission. Publish
-graph readiness before optional path maintenance and retain usable ready handles
-while it runs. Source indexes remain read-only; changed-path output and
-operation associations belong only to the managed disposable namespace. No
-second indexing framework or repository authority is introduced. Compatibility
-readers retain the old bounded first-parent contract. Lightweight local commit
-headers expose native commit data without requiring visible-change/evolution
-evaluation. Scoped file content requires exact commit/path/file agreement before
-opening a stream.
+Quick path attribution uses one shared first-parent walk through jj-lib commit
+and tree APIs, with at most 64 history steps for the visible page. File values
+and directory tree IDs are compared against the first parent; integration merges
+are valid path changes. Each relevant directory tree is read once per visited
+commit, and resolved rows leave the scan. No merged-parent reconstruction or
+file-content comparison is required for this presentation. Rows unresolved at
+the scan bound return the selected commit's real metadata with
+`attribution: snapshot`; discovered changes use `path_change`. These are
+terminal quick results, never invented file-change facts. Ordinary
+authorization, operation membership, cancellation, corruption and resource
+errors remain errors, not snapshot fallback. Names-only reads do no ancestry
+work. Files attribution MUST NOT schedule changed-path preparation. Explicit
+history mode reuses the existing core-index JJ file predicate and bounded
+resumable frontier (up to 64 candidates and 1024 path evaluations per batch).
+This mode can prepare the core index, but does not schedule changed-path
+indexing. Ready core indexes may still prove historical commit membership. Core
+graph preparation and separately requested advanced queries retain their
+contracts. Local commit headers and file content retain exact selection and term
+checks.
 
 JJ's clean merged-parent comparison may synthesize file content. Read adapters
 retain these blobs only for the current request, under fresh read authorization,

@@ -19973,6 +19973,18 @@
             "explode": true
           },
           {
+            "name": "last_change_mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["quick", "history"],
+              "default": "quick"
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -20126,6 +20138,11 @@
             "path": { "type": "string", "default": "" },
             "recursive": { "type": "boolean", "default": true },
             "include_last_change": { "type": "boolean", "default": true },
+            "last_change_mode": {
+              "type": "string",
+              "enum": ["quick", "history"],
+              "default": "quick"
+            },
             "limit": {
               "type": "integer",
               "format": "uint",
@@ -20201,6 +20218,18 @@
             "in": "query",
             "required": false,
             "schema": { "type": "boolean", "default": true },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "last_change_mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["quick", "history"],
+              "default": "quick"
+            },
             "style": "form",
             "explode": true
           },
@@ -20285,6 +20314,11 @@
             "path": { "type": "string", "default": "" },
             "recursive": { "type": "boolean", "default": true },
             "include_last_change": { "type": "boolean", "default": true },
+            "last_change_mode": {
+              "type": "string",
+              "enum": ["quick", "history"],
+              "default": "quick"
+            },
             "limit": {
               "type": "integer",
               "format": "uint",
@@ -26916,6 +26950,11 @@
                               "include_last_change": {
                                 "type": "boolean",
                                 "default": true
+                              },
+                              "last_change_mode": {
+                                "type": "string",
+                                "enum": ["quick", "history"],
+                                "default": "quick"
                               },
                               "limit": {
                                 "type": "integer",
@@ -41565,6 +41604,7 @@
           {
             "type": "object",
             "properties": {
+              "attribution": { "$ref": "#/components/schemas/Attribution" },
               "commit": { "$ref": "#/components/schemas/CommitId" },
               "change": { "$ref": "#/components/schemas/ChangeId" },
               "description": { "type": "string" },
@@ -41574,6 +41614,7 @@
             },
             "required": [
               "status",
+              "attribution",
               "commit",
               "change",
               "description",
@@ -41592,6 +41633,11 @@
             "required": ["status", "reason"]
           }
         ]
+      },
+      "Attribution": {
+        "type": "string",
+        "enum": ["path_change", "snapshot"],
+        "description": "Provenance of the displayed commit, not a claim about all-branch history."
       },
       "LastChangeUnavailable": {
         "type": "string",
@@ -43391,6 +43437,9 @@
           {
             "type": "object",
             "properties": {
+              "attribution": {
+                "$ref": "#/components/schemas/LocalPathsAttribution"
+              },
               "commit": { "$ref": "#/components/schemas/GitSha1Id" },
               "change": { "$ref": "#/components/schemas/ChangeId" },
               "description": { "type": "string" },
@@ -43400,6 +43449,7 @@
             },
             "required": [
               "status",
+              "attribution",
               "commit",
               "change",
               "description",
@@ -43418,6 +43468,11 @@
             "required": ["status", "reason"]
           }
         ]
+      },
+      "LocalPathsAttribution": {
+        "type": "string",
+        "enum": ["path_change", "snapshot"],
+        "description": "Provenance of the displayed commit, not a claim about all-branch history."
       },
       "LocalPathsLastChangeUnavailable": {
         "type": "string",

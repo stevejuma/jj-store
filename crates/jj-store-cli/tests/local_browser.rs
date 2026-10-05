@@ -431,6 +431,7 @@ async fn local_code_reads_pin_operations_and_preserve_repository_state() {
             op,
             Request::Paths(jj_store_jj::local_browser::paths::Request {
                 include_last_change: true,
+                last_change_mode: Default::default(),
                 commit,
                 path: "".into(),
                 recursive: true,
@@ -668,6 +669,7 @@ async fn local_code_reads_cover_graphs_diffs_roots_conflicts_and_multiple_heads(
             op,
             Request::Paths(q::paths::Request {
                 include_last_change: true,
+                last_change_mode: Default::default(),
                 commit: merge,
                 path: "".into(),
                 recursive: true,

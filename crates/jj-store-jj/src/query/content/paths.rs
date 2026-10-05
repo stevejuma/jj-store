@@ -5,6 +5,16 @@ use jj_lib::{matchers::PrefixMatcher, object_id::ObjectId as _, tree::TreeMergeE
 use serde::Deserialize;
 use std::collections::VecDeque;
 
+#[derive(
+    Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum LastChangeMode {
+    #[default]
+    Quick,
+    History,
+}
+
 const LAST_CHANGE_VISITS: usize = 64;
 fn include_metadata() -> bool {
     true
@@ -18,14 +28,24 @@ pub struct Request {
     pub recursive: bool,
     #[serde(default = "include_metadata")]
     pub include_last_change: bool,
+    #[serde(default)]
+    pub last_change_mode: LastChangeMode,
     pub limit: usize,
     pub anchor: Option<String>,
     pub direction: Direction,
+}
+/// Provenance of the displayed commit, not a claim about all-branch history.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum Attribution {
+    PathChange,
+    Snapshot,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum LastChange {
     Available {
+        attribution: Attribution,
         commit: m::CommitId,
         change: m::ChangeId,
         description: String,
@@ -150,7 +170,9 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     let previous = (has_previous && !found.is_empty()).then(|| found.front().unwrap().0.clone());
     let next = (has_next && !found.is_empty()).then(|| found.back().unwrap().0.clone());
     let changes = if request.include_last_change {
-        context.last_changes(&store, request.commit, &found).await?
+        context
+            .last_changes(&store, request.commit, &found, request.last_change_mode)
+            .await?
     } else {
         vec![
             LastChange::Unavailable {
@@ -192,8 +214,17 @@ impl Context {
         store: &std::sync::Arc<jj_lib::store::Store>,
         mut id: m::CommitId,
         rows: &VecDeque<(String, jj_lib::backend::MergedTreeValue)>,
+        mode: LastChangeMode,
     ) -> Result<Vec<LastChange>> {
-        if let Some(index) = self.code_index.as_ref().map(|p| p.index.clone()) {
+        if rows.is_empty() {
+            return Ok(vec![]);
+        }
+        if mode == LastChangeMode::History {
+            let index = self
+                .code_index
+                .as_ref()
+                .map(|p| p.index.clone())
+                .ok_or(Error::IndexRebuildRequired)?;
             use crate::query::code_index::path_history::Change;
             let changes = index
                 .history
@@ -215,6 +246,7 @@ impl Context {
                         self.last_change_available(
                             m::CommitId::from_slice(commit.as_bytes())
                                 .map_err(|_| Error::Corrupt)?,
+                            Attribution::PathChange,
                         )
                         .await?
                     }
@@ -228,59 +260,93 @@ impl Context {
             }
             return Ok(result);
         }
-        let mut results = vec![
-            LastChange::Unavailable {
-                reason: LastChangeUnavailable::Budget
-            };
-            rows.len()
-        ];
-        let mut pending = rows
-            .iter()
-            .enumerate()
-            .map(|(index, (path, value))| Ok((index, native_path(path)?, value)))
-            .collect::<Result<Vec<_>>>()?;
-        // Traverse the shared first-parent chain once for the entire window.
-        // Compare merges to their first parent too: changed paths are attributed
-        // to their integration commit without traversing other parent histories.
+
+        // A snapshot is useful final metadata when the bounded scan finds no
+        // path change. It always describes the explicitly selected commit.
+        let fallback = self
+            .last_change_available(id, Attribution::Snapshot)
+            .await?;
+        let mut results = vec![fallback; rows.len()];
+        let mut pending: Vec<_> = (0..rows.len()).collect();
         for _ in 0..LAST_CHANGE_VISITS {
             if pending.is_empty() {
                 break;
             }
             let commit = self.commit(store, id).await?;
-            let parents = commit.parent_ids();
-            if parents.is_empty() {
-                let value = self.last_change_available(id).await?;
-                for (index, _, _) in pending {
-                    results[index] = value.clone();
-                }
+            let Some(parent_id) = commit.parent_ids().first() else {
                 break;
+            };
+            let parent_id =
+                m::CommitId::from_slice(parent_id.as_bytes()).map_err(|_| Error::Corrupt)?;
+            let prior = self.commit(store, parent_id).await?;
+            if commit.tree_ids() == prior.tree_ids() {
+                id = parent_id;
+                continue;
             }
-            let parent =
-                m::CommitId::from_slice(parents[0].as_bytes()).map_err(|_| Error::Corrupt)?;
-            let prior = self.commit(store, parent).await?;
+            // Group by directory, including recursive pages, so sibling rows
+            // share a single tree lookup. Never open file contents or merge parents.
+            let mut directories = std::collections::BTreeMap::<&str, Vec<usize>>::new();
+            for row in &pending {
+                directories
+                    .entry(parent(&rows[*row].0))
+                    .or_default()
+                    .push(*row);
+            }
+            let roots = prior.tree().trees().await.map_err(map_backend)?;
             let mut unchanged = Vec::new();
             let mut changed = None;
-            for (index, path, value) in pending {
-                self.budget.authorize(self.access.as_ref()).await?;
-                self.budget.work(1)?;
-                let prior_value = prior.tree().path_value(&path).await.map_err(map_backend)?;
-                if prior_value == *value {
-                    unchanged.push((index, path, value));
-                } else {
-                    if changed.is_none() {
-                        changed = Some(self.last_change_available(id).await?);
+            for (directory, indices) in directories {
+                let prefix = native_path(directory)?;
+                let trees = roots
+                    .sub_tree_recursive(&prefix)
+                    .await
+                    .map_err(map_backend)?;
+                let wanted: std::collections::BTreeMap<_, _> = indices
+                    .iter()
+                    .map(|row| (rows[*row].0.as_str(), *row))
+                    .collect();
+                let mut values = std::collections::BTreeMap::new();
+                if let Some(trees) = trees {
+                    for (name, _) in jj_lib::merged_tree::all_merged_tree_entries(&trees) {
+                        self.budget.work(1)?;
+                        let path = prefix.join(name);
+                        if let Some(row) = wanted.get(path.as_internal_file_string()) {
+                            values.insert(*row, trees.value(name).cloned());
+                        }
                     }
-                    results[index] = changed.as_ref().unwrap().clone();
+                }
+                for row in indices {
+                    self.budget.authorize(self.access.as_ref()).await?;
+                    self.budget.work(1)?;
+                    let prior_value = values
+                        .remove(&row)
+                        .unwrap_or_else(|| jj_lib::merge::Merge::resolved(None));
+                    if prior_value == rows[row].1 {
+                        unchanged.push(row);
+                    } else {
+                        if changed.is_none() {
+                            changed = Some(
+                                self.last_change_available(id, Attribution::PathChange)
+                                    .await?,
+                            );
+                        }
+                        results[row] = changed.as_ref().unwrap().clone();
+                    }
                 }
             }
             pending = unchanged;
-            id = parent;
+            id = parent_id;
         }
         Ok(results)
     }
-    async fn last_change_available(&self, id: m::CommitId) -> Result<LastChange> {
+    async fn last_change_available(
+        &self,
+        id: m::CommitId,
+        attribution: Attribution,
+    ) -> Result<LastChange> {
         let commit = self.commit_dto(id).await?;
         Ok(LastChange::Available {
+            attribution,
             commit: id,
             change: commit.change_id,
             description: commit.description,

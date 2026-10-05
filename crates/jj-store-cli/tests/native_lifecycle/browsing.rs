@@ -186,6 +186,7 @@ async fn native_browser_windows_preserve_references_paths_groups_and_exact_diffs
             &reader,
             c::paths::Request {
                 include_last_change: true,
+                last_change_mode: Default::default(),
                 commit: f.head,
                 path: String::new(),
                 recursive: true,
@@ -400,6 +401,7 @@ async fn signed_browser_cursors_bind_queries_support_backward_windows_and_reset_
         path: String::new(),
         recursive: false,
         include_last_change: false,
+        last_change_mode: Default::default(),
         limit: 1,
     };
     let browse::Start::Window(rows) = browser
@@ -429,6 +431,7 @@ async fn signed_browser_cursors_bind_queries_support_backward_windows_and_reset_
                 Some(f.operation),
                 browse::PathRequest {
                     include_last_change: true,
+                    last_change_mode: Default::default(),
                     ..path_request
                 },
                 rows.next_cursor.as_deref(),
@@ -470,6 +473,7 @@ async fn direct_directory_rows_include_directories_and_bookmark_pages_hydrate_on
             &reader(),
             c::paths::Request {
                 include_last_change: true,
+                last_change_mode: Default::default(),
                 commit: f.head,
                 path: String::new(),
                 recursive: false,

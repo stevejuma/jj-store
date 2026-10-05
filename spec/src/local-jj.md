@@ -683,16 +683,17 @@ all must agree with a selected native tree term before content can be read.
 These queries reuse scoped read capabilities, preserve explicit conflict terms
 and do not admit unrelated Git objects. Legacy bare-ID reads retain their
 membership checks. `include_last_change=false` returns file rows independently
-of history; managed attribution uses JJ file-history predicates on bounded
-64-commit ancestry windows. Its ID-only continuation and resolved-row cache are
-scoped to the exact operation, commit and path window; they never admit
-arbitrary Git objects. Pending metadata resumes with fresh authorization and
-immutable term checks. Standard changed-path preparation extends only the
-private managed copy in bounded demand batches through the existing task worker.
-Compatible source changed-path segments may be copied under the same
-framing/checksum/file/byte admission as graph segments. Source operation links,
-indexes, Git refs and extra metadata remain unchanged. Compatibility readers
-retain their 64-visit first-parent fallback.
+of history. Optional attribution makes one shared jj-lib first-parent scan of at
+most 64 steps, comparing tree terms without merged-parent reconstruction.
+Integration commits are accepted. Unresolved rows return selected-commit
+metadata labeled `snapshot`; confirmed path changes use `path_change`. All
+returned IDs remain under the exact operation and fresh authorization. Quick
+metadata finishes without continuation. Optional history mode reuses bounded JJ
+file-history batches, retaining quick UI values while pending; neither mode
+schedules changed-path maintenance. Source indexes, operation links, Git refs
+and extra metadata remain unchanged. Ready core indexes may still prove
+historical membership; bounded cold proofs retain their existing failure and
+recovery behavior.
 
 Managed JJ merged-parent file comparisons may retain bounded request-local
 synthetic Git blobs, using canonical Git blob identities and read authorization.

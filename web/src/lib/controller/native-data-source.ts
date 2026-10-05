@@ -45,6 +45,7 @@ export interface ReferenceQuery {
 
 export interface PathQuery {
   includeLastChange?: boolean;
+  lastChangeMode?: "quick" | "history";
   anchor?: string;
   signal?: AbortSignal;
   path?: string;

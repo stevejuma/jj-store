@@ -14,17 +14,26 @@ The browser automatically starts or observes core preparation after a core read
 needs it, retains the selected operation and navigation, and retries that view
 once readiness is confirmed. Failed or canceled episodes remain explicit; do not
 spin retry loops. Navigation aborts obsolete observation. Files-first loading,
-independent last-change metadata and bounded bookmark windows remain intact.
-Ordinary Commits recovery includes exact-operation core task observation.
-Revision, operation and evolution graph columns scroll both axes in their
-existing viewport. Row content follows each row's occupied lanes while vertical
-virtualization retains the same bounded page and selection. Horizontal movement
-does not request additional history or change operation pins. Commit/diff
-navigation in Commits and Branches uses the pinned commit directly without
-resolving an unused change-reference inventory. Files reference selection
-retains its required target validation. Ordinary setup presents automatic
-history maintenance and hides advanced inventory controls when this capability
-is enabled.
+independent best-effort metadata and bounded bookmark windows remain intact.
+Available path metadata adds `attribution: path_change | snapshot`. Snapshot
+values describe the exact selected commit when the 64-step first-parent scan
+finds no path change; clients label this provenance and stop repeating quick
+metadata reads. After quick results, Files automatically requests
+`last_change_mode=history` batches to refine them through the existing JJ file
+predicate. Missing mode defaults to `quick`; it is bound into native and local
+cursor queries. Pending history retains all displayed quick values. A direct
+local path anchor can start a metadata seek, but cannot override a signed
+cursor. Authorization, integrity, cancellation and hard resource failures remain
+errors. Ordinary Commits recovery includes exact-operation core task
+observation. Revision, operation and evolution graph columns scroll both axes in
+their existing viewport. Row content follows each row's occupied lanes while
+vertical virtualization retains the same bounded page and selection. Horizontal
+movement does not request additional history or change operation pins.
+Commit/diff navigation in Commits and Branches uses the pinned commit directly
+without resolving an unused change-reference inventory. Files reference
+selection retains its required target validation. Ordinary setup presents
+automatic history maintenance and hides advanced inventory controls when this
+capability is enabled.
 
 Repository preparation, cancellation and read-state feedback uses persistent
 application toasts with the existing request actions. Pending content uses
@@ -587,14 +596,16 @@ that reference; resolving one target must not replace the selected reference.
 `GET /commits/{commit}/paths` returns direct file and directory terms for a
 nonrecursive path window, while a recursive query walks leaf paths only as far
 as the requested forward window plus a bounded probe. It reports exact native
-terms. Managed core attribution uses JJ file-history semantics over the selected
-commit's ancestors, including changes on merged branches. Names load without
-ancestry work. Optional metadata advances at most 64 candidate commits per
-batch; `pending` means another bounded batch can resume, rather than permanent
-unavailability. Resolved rows and a bounded credential-free ancestry frontier
-are reused on the exact immutable operation/commit/path selection. An exhausted
-history with no change reports `not_found`. Compatibility readers without a
-managed index retain their separately bounded first-parent lookup.
+terms. Names load without ancestry work. Optional metadata makes one shared
+first-parent pass of at most 64 steps through jj-lib commit and tree APIs.
+Comparing file values and directory tree IDs accepts integration merges as path
+changes. Unresolved rows use the selected commit's genuine metadata with
+`attribution: snapshot`; discovered rows use `path_change`. This quick response
+is terminal and does not schedule changed-path preparation. History mode
+separately reuses the existing bounded ancestry continuation. Core graph
+preparation remains available when needed to prove historical membership. Hard
+authorization, corruption, cancellation and resource failures remain explicit
+errors, never snapshot fallback.
 
 Each browsing response carries signed `previous_cursor` and `next_cursor` values
 over the same retained snapshot registry as graph and directory pages. Their
@@ -2060,17 +2071,17 @@ before target hydration; each returned target retains exact pinned membership.
 
 Path windows accept `include_last_change` (default true for existing clients).
 False returns row identities and `not_requested` attribution without walking
-parents. Managed attribution uses one shared JJ ancestry window, capped at 64
-candidates per batch. It filters only those candidates through JJ's file
-predicate and resumes from the unvisited ancestry frontier. Pending rows keep
-skeletons while the client repeats that exact optional read with bounded
-concurrency and backoff; navigation cancels obsolete work. Terminal failure
-settles optional metadata without discarding rows. Each metadata result is
-joined only to matching immutable commit/path/term identities. Metadata failure
-cannot discard rows. Directory navigation shows a skeleton while its file read
-is loading even when the repository retains a prior snapshot. Ready file names
-remain independent of optional row attribution and pagination retains already
-loaded rows.
+parents. Optional attribution finishes in one shared first-parent scan of at
+most 64 steps. Available results identify `path_change` or `snapshot`
+provenance; older responses without the field are treated as `path_change`.
+Snapshot rows show a compact accessible Snapshot icon and link to the selected
+commit they describe. The client stops after a successful metadata response;
+only busy admission may retry, and navigation cancels obsolete work. Each
+metadata result is joined only to matching immutable commit/path/term
+identities. Metadata failure cannot discard rows. Directory navigation shows a
+skeleton while its file read is loading even when the repository retains a prior
+snapshot. Ready file names remain independent of optional row attribution and
+pagination retains already loaded rows.
 
 Reference windows support `kind=workspaces` independently of visible-change
 history. Each row names one workspace and its exact selected target. Bookmarks

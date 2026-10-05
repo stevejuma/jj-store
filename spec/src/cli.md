@@ -1,11 +1,14 @@
 # CLI and server commands
 
 Directory row metadata acceptance covers native service and real local JJ merge
-fixtures. Managed reads must resume past 64 ancestors, use JJ file-history merge
-semantics, preserve cached rows and source state, and make progress when
-synchronous JJ polling encounters Tokio cooperative admission. Compatibility
-readers retain bounded first-parent attribution. These reads change no installed
-CLI command.
+fixtures. A single shared first-parent scan accepts integration commits and
+finishes after at most 64 steps. Older unresolved rows return the selected
+commit's real metadata with snapshot provenance. Automatic background history
+then refines those values through the existing bounded reader; no changed-path
+maintenance is required. Verify quick retention during pending history and
+cancellation after navigation. Verify mixed provenance, pagination, source
+preservation and unchanged authorization/error behavior. These reads change no
+installed CLI command.
 
 Selected-file diff acceptance covers both the native service fixture and the
 actual local JJ folder reader with longer UTF-8 files and sparse, separated

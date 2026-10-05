@@ -192,6 +192,7 @@
         {loading}
         {onOpenDirectory}
         {onOpenFile}
+        {onSelectCommit}
         onLoadMore={() => void onLoadMore()}
       />
     </Table.Root>

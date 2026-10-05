@@ -175,3 +175,82 @@
     canvasElement.style.width = "";
   }}
 />
+
+<Story
+  name="Snapshot metadata is labeled and opens its own commit"
+  args={{
+    entries: [
+      { type: "blob", name: "old.txt", path: "old.txt" },
+      { type: "tree", name: "src", path: "src" },
+    ],
+    pathCommits: {
+      "old.txt": {
+        eventId: "selected-commit",
+        changeId: "selected-change",
+        message:
+          "Selected snapshot with a deliberately long subject that must stay inside the description column\n\nA full commit body belongs in the commit view.",
+        createdAt: 1700000000,
+        author: "A",
+        attribution: "snapshot",
+      },
+      src: {
+        eventId: "integration-commit",
+        changeId: "integration-change",
+        message:
+          "Merge feature\n\nIntegration body is not a table description.",
+        createdAt: 1699999990,
+        author: "A",
+        attribution: "path_change",
+      },
+    },
+    previewDocuments: [],
+  }}
+  play={async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByLabelText(
+        "Snapshot details, not a confirmed last path change",
+      ),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByText("Snapshot", { exact: true }),
+    ).not.toBeInTheDocument();
+    const snapshot = canvas.getByRole("button", {
+      name: /^View snapshot commit for old.txt: Selected snapshot/,
+    });
+    canvasElement.style.width = "35rem";
+    await expect(snapshot.textContent?.trim()).toBe(
+      args.pathCommits["old.txt"]!.message.split("\n")[0],
+    );
+    await waitFor(() => {
+      const cell = snapshot.closest("td")!;
+      const nextCell = cell.nextElementSibling!;
+      expect(snapshot.getBoundingClientRect().right).toBeLessThanOrEqual(
+        nextCell.getBoundingClientRect().left,
+      );
+      expect(snapshot.scrollWidth).toBeGreaterThan(snapshot.clientWidth);
+      expect(getComputedStyle(snapshot).textOverflow).toBe("ellipsis");
+      expect(getComputedStyle(snapshot).whiteSpace).toBe("nowrap");
+    });
+    snapshot.focus();
+    await userEvent.keyboard("{Enter}");
+    await expect(args.onSelectCommit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventId: "selected-commit",
+        attribution: "snapshot",
+      }),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", {
+        name: /^View path change commit for src: Merge feature/,
+      }),
+    );
+    await expect(args.onSelectCommit).toHaveBeenCalledWith(
+      expect.objectContaining({ eventId: "integration-commit" }),
+    );
+    await expect(
+      canvas.queryByRole("status", { name: /Loading metadata/ }),
+    ).not.toBeInTheDocument();
+    canvasElement.style.width = "";
+  }}
+/>

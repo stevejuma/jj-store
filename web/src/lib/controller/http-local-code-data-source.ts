@@ -96,6 +96,9 @@ export class HttpLocalCodeDataSource extends HttpLocalQuery {
           path: input.path ?? "",
           recursive: input.recursive ?? false,
           include_last_change: input.includeLastChange ?? true,
+          ...(input.lastChangeMode
+            ? { last_change_mode: input.lastChangeMode }
+            : {}),
           limit: input.limit ?? 50,
           anchor: input.anchor ?? null,
           direction: "forward",

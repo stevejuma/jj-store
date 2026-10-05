@@ -1,10 +1,16 @@
 # Compatibility and release
 
-Optional V1 path metadata adds `pending` and `not_found` reasons. Pending rows
-resume through bounded requests; older non-managed readers retain their existing
-results. Managed namespaces can copy and extend pinned JJ 0.45.1 changed-path
-format-0 segments alongside commit format-6 segments. These are disposable
-adapters; source indexes and authoritative repository formats remain unchanged.
+Available V1 path metadata adds `attribution: path_change | snapshot`. Snapshot
+metadata describes the selected revision when bounded first-parent history finds
+no change; clients identify it with an accessible Snapshot icon. Missing
+attribution on older responses retains path-change presentation. Existing
+unavailable reason variants remain readable. Additive `last_change_mode`
+defaults to `quick`; `history` reuses bounded JJ file-history batches. Files
+first shows quick values, then refines automatically while retaining values
+through pending/error states. Neither mode schedules changed-path extensions. JJ
+0.45.1 commit format-6 and changed-path format-0 remain standard disposable
+adapters. Source indexes and authoritative repository formats remain unchanged;
+no migration is required.
 
 Managed core task routes and the optional default-off `automatic_code_index`
 capability are additive to HTTP V1. They reuse native/local task report schemas
