@@ -1,3 +1,4 @@
+import { workspaceFileDrag } from "../../src/lib/controller/stack-workspace/file-drag.js";
 import { expect, test, vi } from "vitest";
 import { StackWorkspaceController } from "../../src/lib/controller/stack-workspace/controller.svelte.js";
 import {
@@ -345,5 +346,33 @@ test("loaded commit files and patches become reusable draft selections", async (
   await controller.details.loadDiff(commit.id, path);
   expect(commit.files[0]!.hunks.length).toBeGreaterThan(0);
   expect(patches).toHaveLength(1);
+  controller.close();
+});
+test("accepted lazy native file rows can drag whole files before patches are loaded", async () => {
+  const { controller, original } = await setup();
+  const commit = original.stacks[0]!.commits[0]!;
+  controller.snapshot!.capabilities = ["transfer", "create_commit"];
+  controller.snapshot!.stacks[0]!.commits[0]!.immutable = false;
+  await controller.details.loadFiles(commit.id);
+  const bindings = workspaceFileDrag(controller, () => commit.id);
+  const file = controller.filesFor(commit.id)[0]!;
+  expect(bindings.fileDraggable?.({ path: file.path } as never)).toBe(true);
+  const data = { setData: vi.fn(), effectAllowed: "" };
+  bindings.onFileDragStart?.(
+    {
+      dataTransfer: data,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    } as never,
+    { path: file.path } as never,
+  );
+  expect(data.setData).toHaveBeenCalled();
+  const net = workspaceFileDrag(controller, () =>
+    workspaceBranchSource(
+      controller.snapshot!.stacks[0]!.id,
+      controller.snapshot!.stacks[0]!.name,
+    ),
+  );
+  expect(net.fileDraggable?.({ path: file.path } as never)).toBe(false);
   controller.close();
 });

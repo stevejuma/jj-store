@@ -18,6 +18,9 @@ export type LocalStacksHunkRequest = Exact<
   >["content"]["application/json"]
 >;
 export interface LocalStacksTransport {
+  conflict?(
+    request: LocalStacksHunkRequest,
+  ): Promise<Model<"LocalStacksConflict">>;
   hunks?(
     request: LocalStacksHunkRequest,
   ): Promise<Model<"LocalStacksHunkResponse">>;
@@ -30,6 +33,12 @@ export interface LocalStacksTransport {
 
 export class HttpLocalStacksTransport implements LocalStacksTransport {
   constructor(readonly client: LocalClient) {}
+  conflict(request: LocalStacksHunkRequest) {
+    return this.client.request<Model<"LocalStacksConflict">>(
+      "stacks/conflict",
+      request,
+    );
+  }
   hunks(request: LocalStacksHunkRequest) {
     return this.client.request<Model<"LocalStacksHunkResponse">>(
       "stacks/hunks",

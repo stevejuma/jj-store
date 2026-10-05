@@ -254,7 +254,7 @@ async fn malformed_toml_is_an_error_and_does_not_replace_saved_settings() {
 }
 
 #[tokio::test]
-async fn cli_branch_advancement_refreshes_merge_and_retains_wip() {
+async fn cli_branch_advancement_requires_explicit_reconciliation_and_retains_wip() {
     let temp = fixture();
     let root = temp.path();
     let state = refresh(root).await;
@@ -297,6 +297,10 @@ async fn cli_branch_advancement_refreshes_merge_and_retains_wip() {
     );
     let next = refresh(root).await;
     assert_ne!(state.operation, next.operation);
+    assert!(!root.join("two.txt").exists());
+    assert!(root.join("one.txt").exists());
+    assert!(next.workspaces[0].membership_changed);
+    let next = run(root, Some(&next), Command::Reconcile).await;
     assert!(root.join("two.txt").exists());
     assert!(!root.join("one.txt").exists());
     assert_eq!(
@@ -1740,4 +1744,284 @@ async fn moving_a_tip_retains_applied_edges_in_inactive_workspaces() {
         refresh(root).await.workspaces[0].merge_commit,
         state.workspaces[0].merge_commit
     );
+}
+#[tokio::test]
+async fn native_undo_redo_includes_cli_and_never_reapplies_toml_membership() {
+    let temp = fixture();
+    let root = temp.path();
+    let mut state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "History".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-one".into(),
+        },
+    )
+    .await;
+    let config = fs::read(root.join(".jj/jj-store/stacks.toml")).unwrap();
+    state = run(root, Some(&state), Command::Undo).await;
+    assert!(state.can_redo);
+    assert!(!root.join("one.txt").exists());
+    assert_eq!(
+        fs::read(root.join(".jj/jj-store/stacks.toml")).unwrap(),
+        config
+    );
+    state = refresh(root).await;
+    assert!(!root.join("one.txt").exists());
+    state = run(root, Some(&state), Command::Redo).await;
+    assert!(state.can_undo);
+    assert!(root.join("one.txt").exists());
+    stock(root, &["describe", "-m", "external CLI edit"]);
+    state = refresh(root).await;
+    state = run(root, Some(&state), Command::Undo).await;
+    assert!(state.can_redo);
+    assert!(
+        !stock(
+            root,
+            &[
+                "--ignore-working-copy",
+                "log",
+                "-r",
+                "@",
+                "--no-graph",
+                "-T",
+                "description"
+            ]
+        )
+        .contains("external CLI edit")
+    );
+    state = run(root, Some(&state), Command::Redo).await;
+    assert!(
+        stock(
+            root,
+            &[
+                "--ignore-working-copy",
+                "log",
+                "-r",
+                "@",
+                "--no-graph",
+                "-T",
+                "description"
+            ]
+        )
+        .contains("external CLI edit")
+    );
+    state = run(root, Some(&state), Command::Undo).await;
+    state = run(root, Some(&state), Command::Undo).await;
+    state = run(root, Some(&state), Command::Undo).await;
+    assert!(state.can_redo);
+    assert!(state.workspaces[0].unavailable_reason.is_some());
+    assert!(state.active.is_none());
+    assert!(refresh(root).await.active.is_none());
+}
+#[tokio::test]
+async fn delete_top_bookmark_preserves_lower_bookmarks_and_native_commits() {
+    let temp = fixture();
+    let root = temp.path();
+    let mut state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Delete".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-one".into(),
+        },
+    )
+    .await;
+    assert!(state.can_undo);
+    let tip = stock(
+        root,
+        &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"],
+    );
+    stock(root, &["bookmark", "create", "lower", "-r", "topic-one-"]);
+    state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::DeleteBranch {
+            branch: "topic-one".into(),
+        },
+    )
+    .await;
+    assert!(stock(root, &["bookmark", "list", "lower"]).contains("lower"));
+    assert_eq!(
+        stock(root, &["log", "-r", &tip, "--no-graph", "-T", "commit_id"]),
+        tip
+    );
+    assert!(!state.workspaces[0].applied.contains(&"topic-one".into()));
+    let tip = stock(
+        root,
+        &["log", "-r", "topic-two", "--no-graph", "-T", "commit_id"],
+    );
+    state = run(root, Some(&state), Command::Abandon { commit: tip }).await;
+    assert!(!root.join("two.txt").exists());
+    assert!(state.can_undo);
+}
+#[tokio::test]
+async fn native_conflict_resolution_and_selected_discard_preserve_other_content() {
+    let temp = fixture();
+    let root = temp.path();
+    stock(root, &["new", "main", "-m", "left"]);
+    fs::write(root.join("base.txt"), "left\n").unwrap();
+    stock(root, &["bookmark", "create", "left"]);
+    stock(root, &["new", "main", "-m", "right"]);
+    fs::write(root.join("base.txt"), "right\n").unwrap();
+    stock(root, &["bookmark", "create", "right"]);
+    stock(root, &["new", "main"]);
+    let mut state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Conflicts".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    for b in ["left", "right"] {
+        state = run(root, Some(&state), Command::Apply { branch: b.into() }).await;
+    }
+    assert!(state.conflicts.contains(&"base.txt".into()));
+    let source = state.workspaces[0].wip_commit.clone();
+    let conflict = local_stacks::conflict(
+        Arc::new(Access(root.join(".jj/repo"))),
+        root.canonicalize().unwrap(),
+        local_stacks::HunkRequest {
+            version: 1,
+            binding_generation: 1,
+            operation: state.operation,
+            revision: state.revision,
+            source,
+            path: "base.txt".into(),
+        },
+    )
+    .await
+    .unwrap();
+    assert_eq!(
+        conflict.terms,
+        vec![
+            Some("left\n".into()),
+            Some("base\n".into()),
+            Some("right\n".into())
+        ]
+    );
+    state = run(
+        root,
+        Some(&state),
+        Command::Resolve {
+            path: "base.txt".into(),
+            content: "resolved\n".into(),
+        },
+    )
+    .await;
+    assert!(state.conflicts.is_empty());
+    assert_eq!(
+        fs::read_to_string(root.join("base.txt")).unwrap(),
+        "resolved\n"
+    );
+    fs::write(root.join("discard.txt"), "discard\n").unwrap();
+    fs::write(root.join("keep.txt"), "keep\n").unwrap();
+    state = refresh(root).await;
+    let source = state.workspaces[0].wip_commit.clone();
+    state = run(
+        root,
+        Some(&state),
+        Command::Discard {
+            selections: vec![local_stacks::Selection {
+                source,
+                path: "discard.txt".into(),
+                hunks: None,
+            }],
+        },
+    )
+    .await;
+    assert!(!root.join("discard.txt").exists());
+    assert!(root.join("keep.txt").exists());
+    assert!(state.can_undo);
+}
+#[tokio::test]
+async fn selected_hunk_discard_retains_unselected_hunks() {
+    let temp = fixture();
+    let root = temp.path();
+    stock(root, &["new", "main", "-m", "text"]);
+    let original = (0..24).map(|n| format!("line {n}\n")).collect::<String>();
+    fs::write(root.join("lines.txt"), &original).unwrap();
+    stock(root, &["bookmark", "create", "text"]);
+    stock(root, &["new", "main"]);
+    let mut state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Discard hunks".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "text".into(),
+        },
+    )
+    .await;
+    fs::write(
+        root.join("lines.txt"),
+        original
+            .replace("line 1\n", "first changed\n")
+            .replace("line 21\n", "second changed\n"),
+    )
+    .unwrap();
+    state = refresh(root).await;
+    let source = state.workspaces[0].wip_commit.clone();
+    let hunks = local_stacks::hunks(
+        Arc::new(Access(root.join(".jj/repo"))),
+        root.canonicalize().unwrap(),
+        local_stacks::HunkRequest {
+            version: 1,
+            binding_generation: 1,
+            operation: state.operation,
+            revision: state.revision,
+            source: source.clone(),
+            path: "lines.txt".into(),
+        },
+    )
+    .await
+    .unwrap();
+    assert_eq!(hunks.hunks.len(), 2);
+    state = run(
+        root,
+        Some(&state),
+        Command::Discard {
+            selections: vec![local_stacks::Selection {
+                source,
+                path: "lines.txt".into(),
+                hunks: Some(vec![hunks.hunks[0].id.clone()]),
+            }],
+        },
+    )
+    .await;
+    assert_eq!(
+        fs::read_to_string(root.join("lines.txt")).unwrap(),
+        original.replace("line 21\n", "second changed\n")
+    );
+    assert!(state.can_undo);
 }

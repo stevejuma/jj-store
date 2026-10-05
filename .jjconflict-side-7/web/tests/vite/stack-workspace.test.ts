@@ -568,6 +568,21 @@ describe("stack workspace UI controller and fixture", () => {
     await run(controller, { kind: "delete_stack", stack: stack.id });
     expect(controller.snapshot!.stacks).toHaveLength(3);
   });
+  it("deletes only the top stack bookmark while retaining lower bookmarks and commits", async () => {
+    const { controller } = await setup();
+    const before = controller.snapshot!.stacks.find(
+      (stack) => stack.id === "api",
+    )!;
+    const ids = before.commits.map((commit) => commit.id);
+    await run(controller, { kind: "delete_stack", stack: before.id });
+    const retained = controller.snapshot!.stacks.find(
+      (stack) => stack.id === before.id,
+    )!;
+    expect(retained.name).toBe("feature/model");
+    expect(retained.heads.map((head) => head.name)).toEqual(["feature/model"]);
+    expect(retained.commits.map((commit) => commit.id)).toEqual(ids);
+    controller.close();
+  });
   it("preserves original unknown requests and resolves by receipt before stale checks", async () => {
     const { adapter, controller } = await setup("unknown");
     const command: WorkspaceCommand = {

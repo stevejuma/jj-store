@@ -8,6 +8,27 @@ pub(super) fn router() -> Router<Arc<State>> {
         .route("/local/repos/{repo}/stacks/preview", post(preview))
         .route("/local/repos/{repo}/stacks/inspect", post(inspect))
         .route("/local/repos/{repo}/stacks/hunks", post(hunks))
+        .route("/local/repos/{repo}/stacks/conflict", post(conflict))
+}
+async fn conflict(
+    ExtractState(state): ExtractState<Arc<State>>,
+    Path(repo): Path<m::RepositoryId>,
+    args: routes::Input<routes::Empty>,
+    body: Body<stacks::HunkRequest>,
+) -> Result<Response> {
+    routes::input(args)?;
+    let request = decode_body(body)?;
+    let access = bound_folder(&state, repo).await?;
+    access.authorize().await?;
+    let root = std::path::PathBuf::from(&access.folder.path);
+    let runtime = tokio::runtime::Handle::current();
+    let value = blocking(&state, move || {
+        runtime
+            .block_on(stacks::conflict(access, root, request))
+            .map_err(map_error)
+    })
+    .await?;
+    state.json(&value)
 }
 async fn hunks(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -105,6 +126,12 @@ fn map_error(error: stacks::Error) -> Error {
     }
 }
 pub(super) fn document(document: &mut crate::contract::Document) {
+    document.local_endpoint::<routes::Empty, stacks::Conflict>(
+        "post",
+        "/local/repos/{repo}/stacks/conflict",
+        "local_stacks_conflict",
+    );
+    document.body::<stacks::HunkRequest>("/v1/local/repos/{repo}/stacks/conflict", "post");
     document.local_endpoint::<routes::Empty, stacks::HunkResponse>(
         "post",
         "/local/repos/{repo}/stacks/hunks",

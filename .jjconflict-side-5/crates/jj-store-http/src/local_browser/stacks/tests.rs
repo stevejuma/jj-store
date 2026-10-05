@@ -145,6 +145,13 @@ async fn preview_retains_registration_and_same_origin_admission() {
             .0,
         StatusCode::FORBIDDEN
     );
+    let conflict = serde_json::json!({"version":1,"binding_generation":6,"operation":"a".repeat(128),"revision":0,"source":"b".repeat(40),"path":"test.txt"});
+    assert_eq!(
+        request_at(&api, repo, conflict, "https://foreign.example", "/conflict")
+            .await
+            .0,
+        StatusCode::FORBIDDEN
+    );
     assert!(!root.path().join(".jj/jj-store").exists());
 }
 #[tokio::test]

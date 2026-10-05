@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -94688,6 +94688,157 @@ entries.
     "web/src/lib/api/generated.ts",
     "web/src/lib/controller/stack-workspace/local-mutations.ts",
     "web/tests/vite/local-stack-file-mutations.test.ts"
+  ]
+},
+{
+  "id": "E-M21-050",
+  "kind": "Native bookmark deletion, conflicts, discard, repository Undo/Redo and explicit reference reconciliation",
+  "versions": "jj-lib/JJ 0.45.1; existing Rust/TypeScript and released foundational dependencies",
+  "formats": "Additive local command/state/conflict contracts; local TOML v1 unchanged",
+  "tests": [
+    "crates/jj-store-jj/tests/local_stacks.rs#native_undo_redo_includes_cli_and_never_reapplies_toml_membership",
+    "crates/jj-store-jj/tests/local_stacks.rs#native_conflict_resolution_and_selected_discard_preserve_other_content",
+    "crates/jj-store-jj/tests/local_stacks.rs#selected_hunk_discard_retains_unselected_hunks",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#accepted lazy native file rows can drag whole files before patches are loaded",
+    "web/tests/vite/production-stack-adapter.test.ts#lazy local diff reads replace display hunks with native byte-bound selections",
+    "crates/jj-store-jj/tests/local_stacks.rs#cli_branch_advancement_requires_explicit_reconciliation_and_retains_wip"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks native_undo_redo_includes_cli_and_never_reapplies_toml_membership --locked (before/initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Missing commands before implementation; then missing conflict trait import and observational CLI log produced a new import/export operation. Fixed trait and used --ignore-working-copy for observational assertions."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "22 native tests pass. CLI advance now requires explicit reconciliation; WIP content retained."
+    },
+    {
+      "command": "cargo test -p jj-store-http local_browser::stacks::tests --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Two transport/admission tests pass including guarded conflict requests."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/local-stack-file-mutations.test.ts web/tests/vite/production-stack-adapter.test.ts web/tests/vite/stack-workspace-lazy-controller.test.ts (initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Drag event stub lacked stopPropagation; runtime FileListing import caused timeout. Fixed stub and type-only import."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/local-stack-file-mutations.test.ts web/tests/vite/production-stack-adapter.test.ts web/tests/vite/stack-workspace-lazy-controller.test.ts web/tests/vite/stack-workspace.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Focused controller, production adapter, lazy drag and recovery regressions pass."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRecovery.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceMenus.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceCommands.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceDrag.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceProduction.stories.svelte (initial)",
+      "result": "fail",
+      "failures": 3,
+      "note": "One suite import failed during Vite dependency optimization reload; two read-only production diff stories requested mutation tokens. Guarded token reads by accepted mutable capability/source."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceRecovery.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceMenus.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceCommands.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceDrag.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceProduction.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "23 interaction/accessibility scenarios pass in a fresh test process."
+    },
+    {
+      "command": "pnpm check:architecture (initial and after public type reuse)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Adapter exceeded source budget by four then one counted line; used existing public function type for delegation, without changing allowance."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm test:contracts; pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero type diagnostics; seven contract tests and ownership/architecture/boundary checks pass."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/local-stack-file-mutations.test.ts web/tests/vite/production-stack-adapter.test.ts web/tests/vite/stack-workspace-lazy-controller.test.ts web/tests/vite/stack-workspace.test.ts (expanded initial)",
+      "result": "fail",
+      "failures": 1,
+      "note": "Native token fixture lacked qualified inspect/preview capabilities. Added those interfaces so the test exercises the actual mutable provider profile."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/local-stack-file-mutations.test.ts web/tests/vite/production-stack-adapter.test.ts web/tests/vite/stack-workspace-lazy-controller.test.ts web/tests/vite/stack-workspace.test.ts (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "69 units pass, including lower-bookmark retention and capability gating."
+    },
+    {
+      "command": "pnpm exec spec-validator first; pnpm check:progress (initial)",
+      "result": "fail",
+      "failures": 3,
+      "note": "Spec-first passed. Progress identified two file-only test references and renamed historical automatic-reconciliation test. Corrected exact references and recorded replaced regression in removed_tests; historical objects retained."
+    },
+    {
+      "command": "cargo fmt --all; pnpm exec prettier --write affected files; pnpm exec spec-validator first; pnpm check:progress (final)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatting, spec-first and evidence mapping pass; prior evidence objects/raw prefix preserved."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Dependent-stack projection and cold real-server mutation acceptance follow. Historical prepared-command M21 profile remains separate. Screenshots/baselines, release publication and aggregate lanes excluded."
+  ],
+  "date": "2026-10-05",
+  "revision": "wpyuuwwvsxtknwvvkutyltyulxyvvqun",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "files": [
+    "catalog/fixtures/stack-workspace/adapter.ts",
+    "catalog/fixtures/stack-workspace/data.ts",
+    "catalog/fixtures/stack-workspace/menu-reducer.ts",
+    "catalog/fixtures/stack-workspace/preview.ts",
+    "catalog/fixtures/stack-workspace/reducer.ts",
+    "catalog/fixtures/stack-workspace/validation.ts",
+    "crates/jj-store-http/src/local_browser/stacks.rs",
+    "crates/jj-store-http/src/local_browser/stacks/tests.rs",
+    "crates/jj-store-jj/src/local_stacks/conflicts.rs",
+    "crates/jj-store-jj/src/local_stacks/destructive.rs",
+    "crates/jj-store-jj/src/local_stacks/history.rs",
+    "crates/jj-store-jj/src/local_stacks/hunks.rs",
+    "crates/jj-store-jj/src/local_stacks/mod.rs",
+    "crates/jj-store-jj/src/local_stacks/preview.rs",
+    "crates/jj-store-jj/src/local_stacks/state.rs",
+    "crates/jj-store-jj/tests/local_stacks.rs",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/compatibility.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/stack-workspace/eligibility.ts",
+    "web/src/lib/controller/stack-workspace/file-drag.ts",
+    "web/src/lib/controller/stack-workspace/local-mutations.ts",
+    "web/src/lib/controller/stack-workspace/local-session.ts",
+    "web/src/lib/controller/stack-workspace/local-state.ts",
+    "web/src/lib/controller/stack-workspace/local-transport.ts",
+    "web/src/lib/controller/stack-workspace/presentation.ts",
+    "web/src/lib/controller/stack-workspace/production-adapter.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceActions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceConflict.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDiff.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspacePicker.svelte",
+    "web/tests/vite/local-stack-file-mutations.test.ts",
+    "web/tests/vite/production-stack-adapter.test.ts",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts",
+    "web/tests/vite/stack-workspace.test.ts"
+  ],
+  "removed_tests": [
+    "crates/jj-store-jj/tests/local_stacks.rs#cli_branch_advancement_refreshes_merge_and_retains_wip"
   ]
 }
 ]

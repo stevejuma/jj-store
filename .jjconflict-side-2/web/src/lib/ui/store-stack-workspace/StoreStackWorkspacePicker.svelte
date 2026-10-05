@@ -20,12 +20,13 @@
         id: item.id,
         name: item.name,
         description:
+          item.unavailableReason ??
           `${item.applied.length} applied stacks` +
-          (item.id === snapshot.active
-            ? ` · ${controller.filesFor("unassigned").length}${controller.details.fileState("unassigned").nextCursor ? "+" : ""} unstaged files`
-            : item.wipCommit
-              ? ""
-              : ` · ${item.unassigned.length} unstaged files`),
+            (item.id === snapshot.active
+              ? ` · ${controller.filesFor("unassigned").length}${controller.details.fileState("unassigned").nextCursor ? "+" : ""} unstaged files`
+              : item.wipCommit
+                ? ""
+                : ` · ${item.unassigned.length} unstaged files`),
       }))}
       searchLabel="Search workspaces"
       groupLabel="Workspaces"

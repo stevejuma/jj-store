@@ -83,6 +83,7 @@ export type NamedWorkspace = {
   unassigned: WorkspaceFile[];
   mergeCommit?: string;
   wipCommit?: string;
+  unavailableReason?: string;
 };
 export type WorkspaceConflict = {
   path: string;
@@ -115,6 +116,8 @@ export type WorkspaceSnapshot = {
   capabilities: WorkspaceCommand["kind"][];
   capabilityReasons?: Partial<Record<WorkspaceCommand["kind"], string>>;
   canUndo: boolean;
+  canRedo?: boolean;
+  membershipChanged?: boolean;
   workspaceWarning?: string;
 };
 /** Stateful catalog execution fixtures always begin with explicit setup. */
@@ -207,7 +210,8 @@ export type WorkspaceCommand =
     }
   | { kind: "uncommit"; commit: string }
   | { kind: "resolve_conflict"; path: string; content: string }
-  | { kind: "undo" };
+  | { kind: "undo" | "redo" | "reconcile_workspace" }
+  | { kind: "discard"; selections: WorkspaceSelection[] };
 export type WorkspaceRequest = {
   readKey?: string;
   id: string;
@@ -268,6 +272,12 @@ export interface StackWorkspaceAdapter {
   readFileDiff?(
     request: WorkspaceSourceRequest & { path: string },
   ): Promise<WorkspaceFile>;
+  readConflict?(request: {
+    repository: string;
+    revision: number;
+    readKey?: string;
+    path: string;
+  }): Promise<WorkspaceConflict>;
   preview(request: WorkspaceRequest): Promise<WorkspacePreview>;
   apply(request: WorkspaceRequest): Promise<WorkspaceOutcome>;
   status(requestId: string): Promise<WorkspaceOutcome>;

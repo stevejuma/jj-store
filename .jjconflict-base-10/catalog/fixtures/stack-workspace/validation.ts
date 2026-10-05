@@ -147,6 +147,8 @@ export function validateFixtureCommand(
     !snapshot.conflicts.some((item) => item.path === command.path)
   )
     fail("This conflict is no longer present.");
+  if (command.kind === "redo" && !snapshot.canRedo)
+    fail("There is no operation to redo.");
   if (command.kind === "undo" && !snapshot.canUndo)
     fail("There is no command to undo.");
   if (command.kind === "reorder_commit" && "target" in command) {

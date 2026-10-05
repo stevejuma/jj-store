@@ -249,12 +249,10 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       signal,
     );
   }
-  readStackHistory(
-    request: WorkspaceStackHistoryRequest,
-    signal?: AbortSignal,
-  ) {
-    return this.readTargetHistory(request, signal);
-  }
+  readStackHistory: NonNullable<StackWorkspaceAdapter["readStackHistory"]> = (
+    request,
+    signal,
+  ) => this.readTargetHistory(request, signal);
   async readSourceFiles(request: WorkspaceSourceRequest) {
     const range = stackSourceRange(
       this.#context(request),
@@ -277,6 +275,14 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
     );
     this.#context(request);
     return this.#local.hunks(request.source, file);
+  }
+  async readConflict(
+    request: Parameters<NonNullable<StackWorkspaceAdapter["readConflict"]>>[0],
+  ) {
+    this.#context(request);
+    const conflict = await this.#local.conflict(request.path);
+    this.#context(request);
+    return conflict;
   }
   preview(request: WorkspaceRequest) {
     return this.#local.preview(request);

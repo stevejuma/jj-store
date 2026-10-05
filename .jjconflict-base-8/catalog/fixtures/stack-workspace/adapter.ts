@@ -27,6 +27,7 @@ export class MockStackWorkspaceAdapter implements StackWorkspaceAdapter {
     { request: WorkspaceRequest; snapshot: WorkspaceSnapshot }
   >();
   #history: WorkspaceSnapshot[] = [];
+  #future: WorkspaceSnapshot[] = [];
   #sequence = 0;
   constructor(snapshot = workspaceFixture(), fault: FixtureFault = "none") {
     this.snapshot = cloneWorkspace(snapshot);
@@ -112,10 +113,17 @@ export class MockStackWorkspaceAdapter implements StackWorkspaceAdapter {
       );
     }
     if (request.command.kind === "undo") {
+      this.#future.push(cloneWorkspace(this.snapshot));
       const previous = this.#history.pop()!;
       previous.revision = this.snapshot.revision + 1;
       this.snapshot = previous;
+    } else if (request.command.kind === "redo") {
+      this.#history.push(cloneWorkspace(this.snapshot));
+      const next = this.#future.pop()!;
+      next.revision = this.snapshot.revision + 1;
+      this.snapshot = next;
     } else {
+      this.#future = [];
       this.#history.push(cloneWorkspace(this.snapshot));
       reduceFixture(
         this.snapshot,
@@ -125,6 +133,7 @@ export class MockStackWorkspaceAdapter implements StackWorkspaceAdapter {
       this.snapshot.revision++;
     }
     this.snapshot.canUndo = this.#history.length > 0;
+    this.snapshot.canRedo = this.#future.length > 0;
     this.#receipts.set(request.id, {
       request: cloneWorkspace(request),
       snapshot: cloneWorkspace(this.snapshot),

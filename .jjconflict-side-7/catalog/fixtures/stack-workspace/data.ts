@@ -148,6 +148,8 @@ export function workspaceFixture(
       "rebase",
       "resolve_conflict",
       "undo",
+      "redo",
+      "discard",
     ],
   };
 }

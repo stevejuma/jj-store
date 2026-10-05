@@ -90,6 +90,40 @@ pub async fn preview(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             )
             .await?
         }
+        ref command @ (Command::DeleteBranch { .. }
+        | Command::Abandon { .. }
+        | Command::Discard { .. }) => {
+            destructive::validate(
+                &repo,
+                workspace.workspace_name(),
+                &settings,
+                &config,
+                command,
+            )
+            .await?
+        }
+        Command::Resolve {
+            ref path,
+            ref content,
+        } => {
+            conflicts::validate(
+                &repo,
+                workspace.workspace_name(),
+                &settings,
+                &config,
+                path,
+                content,
+            )
+            .await?
+        }
+        Command::Reconcile => {
+            parents(repo.as_ref(), config.active().ok_or(Error::Invalid)?)?;
+            Preview{title:"Reapply saved workspace branches".into(),summary:"Explicitly rebuild membership from the saved applied bookmarks and preserve WIP. This changes native graph state; TOML is not an Undo journal.".into(),paths:vec![]}
+        }
+        Command::Undo | Command::Redo => {
+            history::target(&repo, matches!(request.command, Command::Redo)).await?;
+            Preview{title:"Restore native JJ operation".into(),summary:"Repository-wide JJ Undo/Redo includes CLI operations. Code and bookmarks follow the native operation log; local TOML remains separate and is not reapplied.".into(),paths:vec![]}
+        }
         _ => return Err(Error::Invalid),
     };
     access.authorize().await.map_err(|_| Error::Denied)?;

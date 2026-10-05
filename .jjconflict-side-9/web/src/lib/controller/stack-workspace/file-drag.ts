@@ -1,6 +1,6 @@
 import type { ComponentProps } from "svelte";
-import { FileListing } from "@lapismd/design-core/diff";
-import { workspaceFileSelection } from "./files.js";
+import type { FileListing } from "@lapismd/design-core/diff";
+import { workspaceFileSelection, workspaceAggregateSource } from "./files.js";
 import type { StackWorkspaceController } from "./controller.svelte.js";
 
 /** Host policy for the public FileListing native row-drag callbacks. */
@@ -14,14 +14,36 @@ export function workspaceFileDrag(
   | "directoryDraggable"
   | "onDirectoryDragStart"
 > {
-  const file = (path: string) =>
-    (controller.can("create_commit") || controller.can("transfer")) &&
-    !controller.details.lazy &&
-    controller.snapshot
-      ? workspaceFileSelection(controller.snapshot, source(), path)
-      : null;
+  const file = (path: string) => {
+    if (
+      !(controller.can("create_commit") || controller.can("transfer")) ||
+      !controller.snapshot
+    )
+      return null;
+    const owner = source();
+    if (!controller.details.lazy)
+      return workspaceFileSelection(controller.snapshot, owner, path);
+    if (
+      workspaceAggregateSource(owner) ||
+      !controller.filesFor(owner).some((f) => f.path === path)
+    )
+      return null;
+    if (
+      owner !== "unassigned" &&
+      !controller.snapshot.stacks.some((s) =>
+        s.commits.some((c) => c.id === owner && !c.immutable),
+      )
+    )
+      return null;
+    return { source: owner, path };
+  };
   const folder = (path: string) => {
-    if (!controller.snapshot || controller.locked || controller.details.lazy)
+    if (
+      !controller.snapshot ||
+      controller.locked ||
+      (controller.details.lazy &&
+        Boolean(controller.details.fileState(source()).nextCursor))
+    )
       return [];
     const selections = controller
       .filesFor(source())

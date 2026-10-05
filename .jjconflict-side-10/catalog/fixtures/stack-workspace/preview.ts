@@ -37,7 +37,7 @@ export function fixtureSummary(
   }
   switch (command.kind) {
     case "delete_stack":
-      return `Delete “${stackName(command.stack)}” and its commit entries, and remove it from every named combination. Unassigned edits remain. This can be undone.`;
+      return `Delete “${stackName(command.stack)}” bookmark, and remove its membership from every named combination. Unassigned edits remain. This can be undone.`;
     case "delete_workspace":
       return `Remove the saved configuration for “${workspaceName(command.workspace)}”. Branches, commits, the current checkout and unfinished JJ work are retained.`;
     case "update_workspace":
@@ -75,7 +75,7 @@ export function fixtureSummary(
     case "rename_branch":
       return `Rename branch “${command.branch}” to “${command.name.trim()}”. Its commit history remains.`;
     case "delete_branch":
-      return `Delete branch “${command.name}” and its own commits. Lower branch segments and Unstaged edits remain. This can be undone.`;
+      return `Delete branch bookmark “${command.name}”. Native commits are retained. Lower branch segments and Unstaged edits remain. This can be undone.`;
     case "squash_branch":
       return `Squash all commits in branch “${command.name}”, retaining their messages and files. Lower branch segments remain.`;
     case "delete_commit":
@@ -91,7 +91,13 @@ export function fixtureSummary(
     case "resolve_conflict":
       return `Resolve ${command.path} with the reviewed text and retain it as an unassigned workspace edit.`;
     case "undo":
-      return "Restore the state before the last command, including stack histories, applied combinations and unassigned edits.";
+      return "Restore the previous native JJ operation. Workspace configuration remains separate.";
+    case "redo":
+      return "Restore the native operation undone most recently.";
+    case "discard":
+      return "Discard only the selected Unstaged content after confirmation.";
+    case "reconcile_workspace":
+      return "Explicitly reapply saved branches while retaining unfinished work.";
     default:
       return commandTitle(command);
   }

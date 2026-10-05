@@ -25,11 +25,16 @@ export function projectLocalStacks(
         `branch:${JSON.stringify([branch])}`,
     ),
     unassigned: [],
-    mergeCommit: workspace.merge_commit,
-    wipCommit: workspace.wip_commit,
+    mergeCommit: workspace.merge_commit || undefined,
+    wipCommit: workspace.wip_commit || undefined,
+    unavailableReason: workspace.unavailable_reason ?? undefined,
   }));
   snapshot.workspaceWarning =
     state.warning ??
+    active?.unavailable_reason ??
+    (active?.membership_changed
+      ? "Native branch membership differs from saved configuration after a CLI/Undo change. Review it and explicitly reapply saved branches to reconcile; Refresh does not change the graph."
+      : null) ??
     (active?.conflicted
       ? "This workspace contains native JJ conflicts. Inspect and resolve them with JJ; your branch membership and unfinished work are retained."
       : "");
@@ -50,6 +55,54 @@ export function projectLocalStacks(
             "create_workspace",
             ...(state.workspaces.length ? ["switch_workspace" as const] : []),
           ];
+  snapshot.canUndo = state.can_undo ?? false;
+  snapshot.canRedo = state.can_redo ?? false;
+  snapshot.membershipChanged = active?.membership_changed ?? false;
+  snapshot.conflicts = (state.conflicts ?? []).map((path) => ({
+    path,
+    left: "",
+    base: "",
+    right: "",
+  }));
+  for (const branch of active?.applied ?? []) {
+    if (!snapshot.stacks.some((s) => s.name === branch)) {
+      snapshot.stacks.push({
+        id: `branch:${JSON.stringify([branch])}`,
+        name: branch,
+        base: active?.target ?? "",
+        heads: [],
+        commits: [],
+        conflicts: false,
+      });
+      snapshot.branchUnavailableReasons = {
+        ...snapshot.branchUnavailableReasons,
+        [branch]:
+          "This saved applied bookmark is missing or conflicted. Restore it with JJ or explicitly unapply it.",
+      };
+    }
+  }
+  if (active?.unavailable_reason || active?.membership_changed) {
+    const recovery = [
+      "update_workspace",
+      "delete_workspace",
+      "switch_workspace",
+      "unapply_stack",
+      "apply_stack",
+      "undo",
+      "redo",
+      "reconcile_workspace",
+    ];
+    snapshot.capabilityReasons = Object.fromEntries(
+      localMutationKinds
+        .filter((k) => !recovery.includes(k))
+        .map((k) => [k, snapshot.workspaceWarning]),
+    );
+    snapshot.capabilities = snapshot.capabilities.filter((k) =>
+      recovery.includes(k),
+    );
+  }
+  if (!snapshot.capabilities.includes("undo"))
+    snapshot.capabilities.push("undo", "redo");
   if (active) {
     snapshot.target =
       snapshot.targetOptions?.find(

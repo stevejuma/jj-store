@@ -1,14 +1,19 @@
 //! Ordinary local JJ megamerges. App settings are local; JJ owns code and checkout.
 mod basic;
 mod config;
+mod conflicts;
 mod content;
+mod destructive;
 mod graph;
+mod history;
+pub use conflicts::{Conflict, conflict};
 mod hunks;
 mod inspection;
 mod mutations;
 mod policy;
 mod preview;
 mod settings;
+mod state;
 use self::config::{Config, SavedWorkspace};
 use crate::local_browser::Access;
 pub use hunks::{Hunk, HunkRequest, HunkResponse, hunks};
@@ -27,6 +32,7 @@ use jj_lib::{
 pub use preview::{Preview, preview};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use state::state;
 use std::{path::PathBuf, sync::Arc};
 
 #[derive(Debug, thiserror::Error)]
@@ -52,6 +58,22 @@ fn jj(error: impl std::fmt::Display) -> Error {
 #[schemars(rename = "LocalStacksCommand")]
 pub enum Command {
     Refresh,
+    Reconcile,
+    Undo,
+    Redo,
+    DeleteBranch {
+        branch: String,
+    },
+    Abandon {
+        commit: String,
+    },
+    Discard {
+        selections: Vec<Selection>,
+    },
+    Resolve {
+        path: String,
+        content: String,
+    },
     Move {
         commit: String,
         target: String,
@@ -176,6 +198,10 @@ pub struct NamedWorkspace {
     pub merge_commit: String,
     pub wip_commit: String,
     pub conflicted: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unavailable_reason: Option<String>,
+    #[serde(default)]
+    pub membership_changed: bool,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "LocalStacksState")]
@@ -187,6 +213,12 @@ pub struct State {
     pub workspaces: Vec<NamedWorkspace>,
     /// Publication succeeded but settings/checkout need attention. Never retry the command.
     pub warning: Option<String>,
+    #[serde(default)]
+    pub can_undo: bool,
+    #[serde(default)]
+    pub can_redo: bool,
+    #[serde(default)]
+    pub conflicts: Vec<String>,
 }
 
 /// Runs under HTTP admission, JJ's WC lock and a local settings lock; never shells out.
@@ -239,8 +271,10 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
     }
     let mut detached = false;
     // An external edit/undo must not silently attach a named workspace to another change.
-    if let Some(active) = config.active()
-        && resolve_any(repo.as_ref(), &active.wip_ref)?.change_id() != wc.change_id()
+    if !matches!(request.command, Command::Undo | Command::Redo)
+        && let Some(active) = config.active()
+        && !resolve_any(repo.as_ref(), &active.wip_ref)
+            .is_ok_and(|w| w.change_id() == wc.change_id())
     {
         if !refresh {
             return Err(Error::Stale);
@@ -294,180 +328,207 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
     if detached {
         warning = Some("The CLI selected another working change. Your named workspaces are retained; choose one to return to it.".into());
     }
-    let rebuild = refresh
-        && config
-            .active()
-            .map(|saved| needs_rebuild(repo.as_ref(), saved))
-            .transpose()?
-            .unwrap_or(false);
-    if !refresh || rebuild {
+    if !refresh {
         let mut tx = repo.start_transaction();
-        if rebuild {
-            let saved = config.active().ok_or(Error::Invalid)?;
-            let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
-            tx.repo_mut()
-                .set_wc_commit(name.clone(), rebuilt.id().clone())
-                .map_err(jj)?;
-        } else {
-            match request.command {
-                Command::Setup {
-                    ref name,
-                    ref target,
-                } => {
-                    if !config.workspaces.is_empty() {
-                        return Err(Error::Invalid);
-                    }
-                    config.namespace = settings.get_rng().new_change_id(16).hex();
-                    let saved = config.new_workspace(name, target, &settings)?;
-                    build(tx.repo_mut(), &repo, &saved, Some(&wc), true).await?;
-                    config.active = Some(saved.id.clone());
-                    config.workspaces.push(saved);
+        let mut description = format!("Stacks: {:?}", request.command);
+        match request.command {
+            Command::Setup {
+                ref name,
+                ref target,
+            } => {
+                if !config.workspaces.is_empty() {
+                    return Err(Error::Invalid);
                 }
-                Command::Create { ref name } => {
-                    let target = config
-                        .active()
-                        .or_else(|| config.workspaces.first())
-                        .ok_or(Error::Invalid)?
-                        .target
-                        .clone();
-                    let saved = config.new_workspace(name, &target, &settings)?;
-                    build(tx.repo_mut(), &repo, &saved, None, false).await?;
-                    config.active = Some(saved.id.clone());
-                    config.workspaces.push(saved);
-                }
-                Command::Switch { ref workspace } => {
-                    let saved = config
-                        .workspaces
-                        .iter()
-                        .find(|w| &w.id == workspace)
-                        .ok_or(Error::Invalid)?;
-                    let target = resolve_any(repo.as_ref(), &saved.wip_ref)?;
-                    let target = if needs_rebuild(repo.as_ref(), saved)? {
-                        build(tx.repo_mut(), &repo, saved, Some(&target), false).await?
-                    } else {
-                        target
-                    };
-                    tx.repo_mut()
-                        .set_wc_commit(name.clone(), target.id().clone())
-                        .map_err(jj)?;
-                    config.active = Some(saved.id.clone());
-                }
-                Command::Apply { ref branch } | Command::Unapply { ref branch } => {
-                    resolve(repo.as_ref(), branch)?;
-                    let saved = config.active_mut().ok_or(Error::Invalid)?;
-                    if matches!(request.command, Command::Apply { .. }) {
-                        if !saved.applied.iter().any(|b| b == branch) {
-                            saved.applied.push(branch.clone());
-                        }
-                    } else {
-                        saved.applied.retain(|b| b != branch);
-                    }
-                    let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
-                    tx.repo_mut()
-                        .set_wc_commit(name.clone(), rebuilt.id().clone())
-                        .map_err(jj)?;
-                }
-                Command::SetTarget { ref branch } => {
-                    resolve(repo.as_ref(), branch)?;
-                    let saved = config.active_mut().ok_or(Error::Invalid)?;
-                    saved.target = branch.clone();
-                    let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
-                    tx.repo_mut()
-                        .set_wc_commit(name.clone(), rebuilt.id().clone())
-                        .map_err(jj)?;
-                }
-                Command::Update {
-                    ref workspace,
-                    name: ref new_name,
-                    ref target,
-                } => {
-                    if config.active.as_ref() != Some(workspace) {
-                        return Err(Error::Invalid);
-                    }
-                    config.validate_name(new_name, Some(workspace))?;
-                    resolve(repo.as_ref(), target)?;
-                    let saved = config.active_mut().ok_or(Error::Invalid)?;
-                    saved.name = new_name.trim().into();
-                    if saved.target != *target {
-                        saved.target = target.clone();
-                        let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
-                        tx.repo_mut()
-                            .set_wc_commit(name.clone(), rebuilt.id().clone())
-                            .map_err(jj)?;
-                    }
-                }
-                Command::Delete { ref workspace } => {
-                    if !config.workspaces.iter().any(|saved| &saved.id == workspace) {
-                        return Err(Error::Invalid);
-                    }
-                    config.workspaces.retain(|saved| &saved.id != workspace);
-                    if config.active.as_ref() == Some(workspace) {
-                        config.active = None;
-                    }
-                    // Keep WC, user and retention bookmarks unchanged. JJ owns unfinished work.
-                }
-                Command::Commit {
-                    ref branch,
-                    ref message,
-                    ref selections,
-                } => {
-                    mutations::commit(
-                        tx.repo_mut(),
-                        &repo,
-                        &name,
-                        &settings,
-                        &config,
-                        &wc,
-                        branch,
-                        message,
-                        selections,
-                    )
-                    .await?;
-                }
-                Command::CreateStack { .. }
-                | Command::CreateBranch { .. }
-                | Command::RenameBranch { .. }
-                | Command::Reword { .. }
-                | Command::Empty { .. } => {
-                    basic::execute(
-                        tx.repo_mut(),
-                        &repo,
-                        &name,
-                        &settings,
-                        &mut config,
-                        &wc,
-                        &request.command,
-                    )
-                    .await?;
-                }
-                Command::Transfer { .. } | Command::Split { .. } | Command::Edit { .. } => {
-                    content::execute(
-                        tx.repo_mut(),
-                        &repo,
-                        &name,
-                        &settings,
-                        &config,
-                        &request.command,
-                    )
-                    .await?;
-                }
-                Command::Move { .. }
-                | Command::Squash { .. }
-                | Command::Uncommit { .. }
-                | Command::Rebase { .. }
-                | Command::SquashBranch { .. } => {
-                    graph::execute(
-                        tx.repo_mut(),
-                        &repo,
-                        &name,
-                        &settings,
-                        &config,
-                        &request.command,
-                    )
-                    .await?;
-                }
-                Command::Refresh => unreachable!(),
+                config.namespace = settings.get_rng().new_change_id(16).hex();
+                let saved = config.new_workspace(name, target, &settings)?;
+                build(tx.repo_mut(), &repo, &saved, Some(&wc), true).await?;
+                config.active = Some(saved.id.clone());
+                config.workspaces.push(saved);
             }
+            Command::Create { ref name } => {
+                let target = config
+                    .active()
+                    .or_else(|| config.workspaces.first())
+                    .ok_or(Error::Invalid)?
+                    .target
+                    .clone();
+                let saved = config.new_workspace(name, &target, &settings)?;
+                build(tx.repo_mut(), &repo, &saved, None, false).await?;
+                config.active = Some(saved.id.clone());
+                config.workspaces.push(saved);
+            }
+            Command::Switch { ref workspace } => {
+                let saved = config
+                    .workspaces
+                    .iter()
+                    .find(|w| &w.id == workspace)
+                    .ok_or(Error::Invalid)?;
+                let target = resolve_any(repo.as_ref(), &saved.wip_ref)?;
+                tx.repo_mut()
+                    .set_wc_commit(name.clone(), target.id().clone())
+                    .map_err(jj)?;
+                config.active = Some(saved.id.clone());
+            }
+            Command::Apply { ref branch } | Command::Unapply { ref branch } => {
+                if matches!(request.command, Command::Apply { .. }) {
+                    resolve(repo.as_ref(), branch)?;
+                }
+                let saved = config.active_mut().ok_or(Error::Invalid)?;
+                if matches!(request.command, Command::Apply { .. }) {
+                    if !saved.applied.iter().any(|b| b == branch) {
+                        saved.applied.push(branch.clone());
+                    }
+                } else {
+                    saved.applied.retain(|b| b != branch);
+                }
+                let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
+                tx.repo_mut()
+                    .set_wc_commit(name.clone(), rebuilt.id().clone())
+                    .map_err(jj)?;
+            }
+            Command::SetTarget { ref branch } => {
+                resolve(repo.as_ref(), branch)?;
+                let saved = config.active_mut().ok_or(Error::Invalid)?;
+                saved.target = branch.clone();
+                let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
+                tx.repo_mut()
+                    .set_wc_commit(name.clone(), rebuilt.id().clone())
+                    .map_err(jj)?;
+            }
+            Command::Update {
+                ref workspace,
+                name: ref new_name,
+                ref target,
+            } => {
+                if config.active.as_ref() != Some(workspace) {
+                    return Err(Error::Invalid);
+                }
+                config.validate_name(new_name, Some(workspace))?;
+                resolve(repo.as_ref(), target)?;
+                let saved = config.active_mut().ok_or(Error::Invalid)?;
+                saved.name = new_name.trim().into();
+                if saved.target != *target {
+                    saved.target = target.clone();
+                    let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
+                    tx.repo_mut()
+                        .set_wc_commit(name.clone(), rebuilt.id().clone())
+                        .map_err(jj)?;
+                }
+            }
+            Command::Delete { ref workspace } => {
+                if !config.workspaces.iter().any(|saved| &saved.id == workspace) {
+                    return Err(Error::Invalid);
+                }
+                config.workspaces.retain(|saved| &saved.id != workspace);
+                if config.active.as_ref() == Some(workspace) {
+                    config.active = None;
+                }
+                // Keep WC, user and retention bookmarks unchanged. JJ owns unfinished work.
+            }
+            Command::Commit {
+                ref branch,
+                ref message,
+                ref selections,
+            } => {
+                mutations::commit(
+                    tx.repo_mut(),
+                    &repo,
+                    &name,
+                    &settings,
+                    &config,
+                    &wc,
+                    branch,
+                    message,
+                    selections,
+                )
+                .await?;
+            }
+            Command::CreateStack { .. }
+            | Command::CreateBranch { .. }
+            | Command::RenameBranch { .. }
+            | Command::Reword { .. }
+            | Command::Empty { .. } => {
+                basic::execute(
+                    tx.repo_mut(),
+                    &repo,
+                    &name,
+                    &settings,
+                    &mut config,
+                    &wc,
+                    &request.command,
+                )
+                .await?;
+            }
+            Command::Transfer { .. } | Command::Split { .. } | Command::Edit { .. } => {
+                content::execute(
+                    tx.repo_mut(),
+                    &repo,
+                    &name,
+                    &settings,
+                    &config,
+                    &request.command,
+                )
+                .await?;
+            }
+            Command::Move { .. }
+            | Command::Squash { .. }
+            | Command::Uncommit { .. }
+            | Command::Rebase { .. }
+            | Command::SquashBranch { .. } => {
+                graph::execute(
+                    tx.repo_mut(),
+                    &repo,
+                    &name,
+                    &settings,
+                    &config,
+                    &request.command,
+                )
+                .await?;
+            }
+            Command::DeleteBranch { .. } | Command::Abandon { .. } | Command::Discard { .. } => {
+                destructive::execute(
+                    tx.repo_mut(),
+                    &repo,
+                    &name,
+                    &settings,
+                    &mut config,
+                    &wc,
+                    &request.command,
+                )
+                .await?
+            }
+            Command::Resolve {
+                ref path,
+                ref content,
+            } => {
+                conflicts::execute(
+                    tx.repo_mut(),
+                    &repo,
+                    &name,
+                    &settings,
+                    &config,
+                    &wc,
+                    path,
+                    content,
+                )
+                .await?
+            }
+            Command::Reconcile => {
+                let saved = config.active().ok_or(Error::Invalid)?;
+                let wip = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
+                tx.repo_mut()
+                    .set_wc_commit(name.clone(), wip.id().clone())
+                    .map_err(jj)?;
+            }
+            Command::Undo | Command::Redo => {
+                description = history::restore(
+                    tx.repo_mut(),
+                    &repo,
+                    matches!(request.command, Command::Redo),
+                )
+                .await?;
+            }
+            Command::Refresh => unreachable!(),
         }
         // Setup and Create select their freshly retained WIP.
         if matches!(
@@ -484,10 +545,7 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             tx.repo_mut().set_wc_commit(name.clone(), wip).map_err(jj)?;
         }
         tx.repo_mut().rebase_descendants().await.map_err(jj)?;
-        repo = tx
-            .commit(format!("Stacks: {:?}", request.command))
-            .await
-            .map_err(jj)?;
+        repo = tx.commit(description).await.map_err(jj)?;
         let mut checkout_failed = false;
         let new_wc = repo
             .store()
@@ -500,15 +558,17 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                 repo.op_id().hex()
             ));
         }
-        config.revision += 1;
-        if let Err(error) = storage.save(&config) {
-            warning = Some(format!(
-                "JJ operation {} applied; local settings could not be saved: {error}. Do not repeat the command.",
-                repo.op_id().hex()
-            ));
+        if !matches!(request.command, Command::Undo | Command::Redo) {
+            config.revision += 1;
+            if let Err(error) = storage.save(&config) {
+                warning = Some(format!(
+                    "JJ operation {} applied; local settings could not be saved: {error}. Do not repeat the command.",
+                    repo.op_id().hex()
+                ));
+            }
         }
         if checkout_failed {
-            return state(&repo, &config, warning);
+            return state(&repo, &config, &name, warning).await;
         }
     }
     if let Err(error) = locked.finish(repo.op_id().clone()).await {
@@ -517,7 +577,7 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             repo.op_id().hex()
         ));
     }
-    state(&repo, &config, warning)
+    state(&repo, &config, &name, warning).await
 }
 
 fn resolve(repo: &dyn jj_lib::repo::Repo, reference: &str) -> Result<Commit> {
@@ -610,29 +670,4 @@ async fn build(
     );
     mut_repo.set_local_bookmark_target(saved.wip_ref.as_ref(), RefTarget::normal(wip.id().clone()));
     Ok(wip)
-}
-fn state(repo: &ReadonlyRepo, config: &Config, warning: Option<String>) -> Result<State> {
-    Ok(State {
-        version: 1,
-        operation: repo.op_id().hex().parse().map_err(|_| Error::Invalid)?,
-        revision: config.revision,
-        active: config.active.clone(),
-        warning,
-        workspaces: config
-            .workspaces
-            .iter()
-            .map(|w| {
-                Ok(NamedWorkspace {
-                    id: w.id.clone(),
-                    name: w.name.clone(),
-                    target: w.target.clone(),
-                    target_commit: resolve(repo, &w.target)?.id().hex(),
-                    applied: w.applied.clone(),
-                    merge_commit: resolve_any(repo, &w.merge_ref)?.id().hex(),
-                    wip_commit: resolve_any(repo, &w.wip_ref)?.id().hex(),
-                    conflicted: resolve_any(repo, &w.wip_ref)?.has_conflict(),
-                })
-            })
-            .collect::<Result<_>>()?,
-    })
 }

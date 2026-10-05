@@ -48,7 +48,7 @@ struct Generated {
     after: Vec<u8>,
     parts: Vec<Part>,
 }
-async fn bytes(
+pub(super) async fn bytes(
     repo: &dyn Repo,
     path: &RepoPath,
     value: &MergedTreeValue,

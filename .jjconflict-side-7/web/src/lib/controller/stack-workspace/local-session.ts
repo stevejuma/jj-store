@@ -75,7 +75,16 @@ export class LocalStacksSession {
     )
       return file;
     const snapshot = this.current();
-    if (!snapshot) return file;
+    if (
+      !snapshot?.capabilities.includes("transfer") ||
+      (source !== "unassigned" &&
+        !snapshot.stacks.some((stack) =>
+          stack.commits.some(
+            (commit) => commit.id === source && !commit.immutable,
+          ),
+        ))
+    )
+      return file;
     const result = await this.source.stacks.hunks({
       version: 1,
       binding_generation: this.binding.generation,
@@ -90,7 +99,37 @@ export class LocalStacksSession {
       result.path !== file.path
     )
       throw new ApiError("snapshot_mismatch");
-    return { ...file, hunks: result.hunks };
+    return result.reason ? file : { ...file, hunks: result.hunks };
+  }
+  async conflict(path: string) {
+    if (!this.source.stacks?.conflict || !this.active()?.wip_commit)
+      throw new WorkspaceCommandError(
+        "invalid",
+        "Native conflict reading is unavailable.",
+      );
+    const source = this.active()!.wip_commit;
+    const result = await this.source.stacks.conflict({
+      version: 1,
+      binding_generation: this.binding.generation,
+      operation: this.pin().operation,
+      revision: this.state!.revision,
+      source,
+      path,
+    });
+    this.signal.throwIfAborted();
+    if (result.source !== source || result.path !== path)
+      throw new ApiError("snapshot_mismatch");
+    if (result.reason || result.terms.length !== 3)
+      throw new WorkspaceCommandError(
+        "invalid",
+        result.reason ?? "This conflict needs native JJ resolution.",
+      );
+    return {
+      path,
+      left: result.terms[0] ?? "",
+      base: result.terms[1] ?? "",
+      right: result.terms[2] ?? "",
+    };
   }
   async inspect(commits: StackCommit[]) {
     await inspectLocalCommits(
@@ -116,7 +155,8 @@ export class LocalStacksSession {
             (mutation) => mutation !== "create_commit" && mutation === kind,
           ),
       );
-    await this.inspect(result.stacks.flatMap((stack) => stack.commits));
+    if (!this.active()?.unavailable_reason)
+      await this.inspect(result.stacks.flatMap((stack) => stack.commits));
     return result;
   }
   async references(
@@ -165,6 +205,17 @@ export class LocalStacksSession {
     if (!this.source.stacks) return unavailableStackCommand();
     const snapshot = stackReadContext(this.current(), request, this.signal);
     const command = request.command;
+    if (command.kind === "switch_workspace") {
+      const workspace = snapshot.workspaces.find(
+        (w) => w.id === command.workspace,
+      );
+      if (!workspace?.wipCommit)
+        throw new WorkspaceCommandError(
+          "invalid",
+          workspace?.unavailableReason ??
+            "Restore this workspace’s native references before switching.",
+        );
+    }
     const local = localStacksCommand(snapshot, command);
     if (localMutationKinds.some((kind) => kind === command.kind)) {
       if (!this.source.stacks.preview) return unavailableStackCommand();

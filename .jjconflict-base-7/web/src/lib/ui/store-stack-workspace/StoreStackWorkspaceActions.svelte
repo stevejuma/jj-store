@@ -8,6 +8,7 @@
   import Trash from "@lucide/svelte/icons/trash-2";
   import Ellipsis from "@lucide/svelte/icons/ellipsis";
   import GitBranchPlus from "@lucide/svelte/icons/git-branch-plus";
+  import Redo from "@lucide/svelte/icons/redo-2";
   import Undo from "@lucide/svelte/icons/undo-2";
   import Refresh from "@lucide/svelte/icons/refresh-cw";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
@@ -66,6 +67,11 @@
               onSelect={() => onSettings?.()}
               ><Settings aria-hidden="true" />Settings</Menu.Item
             >
+            {#if snapshot.membershipChanged}<Menu.Item
+                disabled={!controller.can("reconcile_workspace")}
+                onSelect={() => command({ kind: "reconcile_workspace" })}
+                ><Refresh aria-hidden="true" />Reapply saved branches</Menu.Item
+              >{/if}
             <Menu.Item
               disabled={!controller.can("create_workspace")}
               title={controller.eligibility("create_workspace").reason ||
@@ -125,6 +131,23 @@
           >{controller.eligibility("undo").reason || "Undo"}</Tooltip.Content
         >
       </Tooltip.Root>
+      {#if snapshot.capabilities.includes("redo")}
+        <Tooltip.Root
+          ><Tooltip.Trigger
+            >{#snippet child({ props })}<Button
+                {...props}
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Redo"
+                disabled={!controller.can("redo") || !snapshot.canRedo}
+                onclick={() => command({ kind: "redo" })}
+                ><Redo aria-hidden="true" /></Button
+              >{/snippet}</Tooltip.Trigger
+          ><Tooltip.Content
+            >{controller.eligibility("redo").reason || "Redo"}</Tooltip.Content
+          ></Tooltip.Root
+        >
+      {/if}
     {/if}
     <Tooltip.Root>
       <Tooltip.Trigger>

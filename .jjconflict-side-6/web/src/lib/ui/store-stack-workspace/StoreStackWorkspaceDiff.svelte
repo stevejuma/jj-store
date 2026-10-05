@@ -12,6 +12,7 @@
     workspaceHunkSelection,
   } from "../../controller/stack-workspace/files.js";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
+  import Trash from "@lucide/svelte/icons/trash-2";
   import Columns from "@lucide/svelte/icons/columns-2";
   import { TARGET_HISTORY_ORIGIN } from "../../controller/stack-workspace/target-history.svelte.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
@@ -57,10 +58,9 @@
     }
   });
   const executable = $derived(
-    !controller.details.lazy &&
-      (controller.can("transfer") ||
-        controller.can("split") ||
-        controller.can("create_commit")),
+    controller.can("transfer") ||
+      controller.can("split") ||
+      controller.can("create_commit"),
   );
   const selection = $derived(
     diff.origin === TARGET_HISTORY_ORIGIN ||
@@ -98,6 +98,26 @@
     ><ColumnCanvas.HeaderActions>
       {#if file}
         <CommunityDiffControls bind:viewMode bind:wrap />
+        {#if selection && diff.source === "unassigned" && controller.snapshot?.capabilities.includes("discard")}
+          <Tooltip.Provider
+            ><Tooltip.Root
+              ><Tooltip.Trigger
+                >{#snippet child({ props })}<Button
+                    {...props}
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label="Discard selected changes"
+                    disabled={!controller.can("discard") || !hasSelection}
+                    onclick={() =>
+                      selection &&
+                      onCommand({ kind: "discard", selections: [selection] })}
+                    ><Trash aria-hidden="true" /></Button
+                  >{/snippet}</Tooltip.Trigger
+              ><Tooltip.Content>Discard selected changes</Tooltip.Content
+              ></Tooltip.Root
+            ></Tooltip.Provider
+          >
+        {/if}
         {#if selection && diff.source !== "unassigned"}
           <Tooltip.Provider
             ><Tooltip.Root
@@ -192,6 +212,8 @@
             path={file.path}
             selection={diff.origin === TARGET_HISTORY_ORIGIN ||
             !executable ||
+            (controller.details.lazy &&
+              !/^native:[0-9a-f]{64}$/u.test(hunk.id)) ||
             !controller.can("transfer")
               ? null
               : workspaceHunkSelection(
@@ -201,7 +223,9 @@
                   hunk.id,
                 )}
             checked={!selection?.hunks || selection.hunks.includes(hunk.id)}
-            selectable={Boolean(selection)}
+            selectable={Boolean(selection) &&
+              (!controller.details.lazy ||
+                /^native:[0-9a-f]{64}$/u.test(hunk.id))}
             disabled={controller.locked}
             {viewMode}
             {wrap}

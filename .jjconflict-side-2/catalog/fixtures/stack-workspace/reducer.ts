@@ -111,11 +111,11 @@ export function reduceFixture(
       stack!.name = command.name.trim();
       break;
     case "delete_stack":
-      snapshot.stacks = snapshot.stacks.filter(
-        (item) => item.id !== command.stack,
+      reduceMenuFixture(
+        snapshot,
+        { kind: "delete_branch", stack: command.stack, name: stack!.name },
+        nextId,
       );
-      for (const item of snapshot.workspaces)
-        item.applied = item.applied.filter((id) => id !== command.stack);
       break;
     case "create_commit": {
       const files: WorkspaceFile[] = [];
@@ -218,6 +218,12 @@ export function reduceFixture(
       ]);
       for (const item of snapshot.stacks) item.conflicts = false;
       break;
+    case "discard":
+      for (const selection of command.selections)
+        selectedChanges(snapshot, selection, true);
+      break;
+    case "redo":
+    case "reconcile_workspace":
     case "undo":
       break;
     default:

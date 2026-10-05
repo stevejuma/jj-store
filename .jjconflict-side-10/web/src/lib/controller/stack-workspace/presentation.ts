@@ -136,7 +136,10 @@ export function commandTitle(command: WorkspaceCommand) {
       uncommit: "Uncommit",
       rebase: "Rebase stack",
       resolve_conflict: "Resolve conflict",
-      undo: "Undo last command",
+      undo: "Undo",
+      redo: "Redo",
+      discard: "Discard selected changes",
+      reconcile_workspace: "Reapply saved branches",
     } satisfies Record<WorkspaceCommand["kind"], string>
   )[command.kind];
 }

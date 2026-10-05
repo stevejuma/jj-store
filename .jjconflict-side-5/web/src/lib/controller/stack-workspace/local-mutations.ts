@@ -23,6 +23,14 @@ export const localMutationKinds = [
   "squash_branch",
   "uncommit",
   "rebase",
+  "delete_stack",
+  "delete_branch",
+  "delete_commit",
+  "resolve_conflict",
+  "undo",
+  "redo",
+  "discard",
+  "reconcile_workspace",
 ] as const;
 export function localMutationCommand(
   snapshot: WorkspaceSnapshot,
@@ -180,6 +188,30 @@ export function localMutationCommand(
           "Choose an available branch.",
         );
       return { kind: "squash_branch", branch: command.name };
+    case "delete_stack":
+      return { kind: "delete_branch", branch: stack(command.stack).name };
+    case "delete_branch":
+      if (!stack(command.stack).heads.some((h) => h.name === command.name))
+        throw new WorkspaceCommandError(
+          "invalid",
+          "Choose an available branch.",
+        );
+      return { kind: "delete_branch", branch: command.name };
+    case "delete_commit":
+      return { kind: "abandon", commit: commit(command.commit) };
+    case "resolve_conflict":
+      return { kind: "resolve", path: command.path, content: command.content };
+    case "undo":
+      return { kind: "undo" };
+    case "redo":
+      return { kind: "redo" };
+    case "reconcile_workspace":
+      return { kind: "reconcile" };
+    case "discard":
+      return {
+        kind: "discard",
+        selections: localFileSelections(snapshot, command.selections),
+      };
     default:
       return null;
   }

@@ -72,7 +72,6 @@ export function reduceMenuFixture(
           removeCommit(snapshot, commit.id);
         }
       } else {
-        for (const commit of group.commits) removeCommit(snapshot, commit.id);
         stack.heads = stack.heads.filter((head) => head.name !== command.name);
         stack.name = stack.heads[0]?.name ?? stack.name;
         if (!stack.heads.length) {

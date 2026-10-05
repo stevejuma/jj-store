@@ -970,6 +970,18 @@ test("lazy local diff reads replace display hunks with native byte-bound selecti
         },
       ],
     }),
+    preview: async () => ({
+      title: "Native preview",
+      summary: "JJ mutation",
+      paths: [],
+    }),
+    inspect: async (request) => ({
+      commits: request.commits.map((commit) => ({
+        commit,
+        mutable: true,
+        reason: null,
+      })),
+    }),
     hunks: async (request) => {
       calls.push(request);
       return {
