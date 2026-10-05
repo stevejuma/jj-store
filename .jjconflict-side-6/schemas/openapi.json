@@ -32824,6 +32824,234 @@
         }
       }
     },
+    "/v1/local/repos/{repo}/stacks": {
+      "post": {
+        "operationId": "local_stacks_execute",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LocalStacksState" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0
+                  },
+                  "binding_generation": {
+                    "type": "integer",
+                    "format": "uint64",
+                    "minimum": 0
+                  },
+                  "operation": {
+                    "type": ["string", "null"],
+                    "pattern": "^[0-9a-f]{128}$",
+                    "minLength": 128,
+                    "maxLength": 128
+                  },
+                  "revision": {
+                    "type": ["integer", "null"],
+                    "format": "uint64",
+                    "minimum": 0
+                  },
+                  "command": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": { "type": "string", "const": "refresh" }
+                        },
+                        "required": ["kind"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "target": { "type": "string" },
+                          "kind": { "type": "string", "const": "setup" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "name", "target"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "kind": { "type": "string", "const": "create" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "name"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "workspace": { "type": "string" },
+                          "kind": { "type": "string", "const": "switch" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "workspace"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "branch": { "type": "string" },
+                          "kind": { "type": "string", "const": "apply" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "branch"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "branch": { "type": "string" },
+                          "kind": { "type": "string", "const": "unapply" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "branch"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "branch": { "type": "string" },
+                          "kind": { "type": "string", "const": "set_target" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "branch"]
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "required": ["version", "binding_generation", "command"]
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/local/repositories/conversion/preview": {
       "post": {
         "operationId": "local_repository_conversion_preview",
@@ -45128,6 +45356,54 @@
             "required": ["type"],
             "additionalProperties": false
           }
+        ]
+      },
+      "LocalStacksState": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "operation": { "$ref": "#/components/schemas/OperationId" },
+          "revision": { "type": "integer", "format": "uint64", "minimum": 0 },
+          "active": { "type": ["string", "null"] },
+          "workspaces": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LocalStacksWorkspace" }
+          },
+          "warning": {
+            "type": ["string", "null"],
+            "description": "Publication succeeded but settings/checkout need attention. Never retry the command."
+          }
+        },
+        "required": [
+          "version",
+          "operation",
+          "revision",
+          "active",
+          "workspaces",
+          "warning"
+        ]
+      },
+      "LocalStacksWorkspace": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "target": { "type": "string" },
+          "target_commit": { "type": "string" },
+          "applied": { "type": "array", "items": { "type": "string" } },
+          "merge_commit": { "type": "string" },
+          "wip_commit": { "type": "string" },
+          "conflicted": { "type": "boolean" }
+        },
+        "required": [
+          "id",
+          "name",
+          "target",
+          "target_commit",
+          "applied",
+          "merge_commit",
+          "wip_commit",
+          "conflicted"
         ]
       },
       "ConversionPreview": {

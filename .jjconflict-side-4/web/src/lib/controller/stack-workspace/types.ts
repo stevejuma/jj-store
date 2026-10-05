@@ -80,6 +80,8 @@ export type NamedWorkspace = {
   name: string;
   applied: string[];
   unassigned: WorkspaceFile[];
+  mergeCommit?: string;
+  wipCommit?: string;
 };
 export type WorkspaceConflict = {
   path: string;
@@ -112,6 +114,7 @@ export type WorkspaceSnapshot = {
   capabilities: WorkspaceCommand["kind"][];
   capabilityReasons?: Partial<Record<WorkspaceCommand["kind"], string>>;
   canUndo: boolean;
+  workspaceWarning?: string;
 };
 /** Stateful catalog execution fixtures always begin with explicit setup. */
 export type ConfiguredWorkspaceSnapshot = WorkspaceSnapshot & {
@@ -199,6 +202,7 @@ export type WorkspaceCommand =
   | { kind: "resolve_conflict"; path: string; content: string }
   | { kind: "undo" };
 export type WorkspaceRequest = {
+  readKey?: string;
   id: string;
   repository: string;
   revision: number;
@@ -211,7 +215,9 @@ export type WorkspacePreview = {
   conflicts: string[];
 };
 export type WorkspaceOutcome =
-  { status: "committed"; snapshot: WorkspaceSnapshot } | { status: "unknown" };
+  | { status: "committed"; snapshot: WorkspaceSnapshot }
+  | { status: "unknown" }
+  | { status: "refreshed"; snapshot: WorkspaceSnapshot };
 export type WorkspaceSourceRequest = {
   repository: string;
   revision: number;
@@ -222,6 +228,8 @@ export type WorkspaceSourceRequest = {
 };
 export type WorkspaceFilePage = { files: WorkspaceFile[]; nextCursor?: string };
 export interface StackWorkspaceAdapter {
+  /** Ordinary JJ commands must not be retried after an unknown response. */
+  readonly retryPending?: boolean;
   /** Current checkout evidence; never the historical read pin or complete Unstaged. */
   observeWorkingTree?(
     signal?: AbortSignal,

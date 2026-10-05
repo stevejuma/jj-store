@@ -5,6 +5,7 @@ mod conversion;
 mod events;
 mod index_tasks;
 mod reviews;
+mod stacks;
 mod work;
 mod working_copy;
 mod working_tree;
@@ -103,6 +104,7 @@ pub(super) fn router() -> Router<Arc<State>> {
         .merge(work::router())
         .merge(working_copy::router())
         .merge(working_tree::router())
+        .merge(stacks::router())
         .merge(conversion::router())
         .merge(agents::router())
         .merge(reviews::router())
@@ -715,6 +717,7 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
     reviews::document(document);
     working_copy::document(document);
     working_tree::document(document);
+    stacks::document(document);
     conversion::document(document);
     events::document(document);
 }

@@ -17819,6 +17819,103 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## LocalStacksState
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "revision": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "active": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "workspaces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LocalStacksWorkspace"
+      }
+    },
+    "warning": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Publication succeeded but settings/checkout need attention. Never retry the command."
+    }
+  },
+  "required": [
+    "version",
+    "operation",
+    "revision",
+    "active",
+    "workspaces",
+    "warning"
+  ]
+}
+```
+
+## LocalStacksWorkspace
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "target": {
+      "type": "string"
+    },
+    "target_commit": {
+      "type": "string"
+    },
+    "applied": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "merge_commit": {
+      "type": "string"
+    },
+    "wip_commit": {
+      "type": "string"
+    },
+    "conflicted": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "target",
+    "target_commit",
+    "applied",
+    "merge_commit",
+    "wip_commit",
+    "conflicted"
+  ]
+}
+```
+
 ## ConversionPreview
 
 ```text

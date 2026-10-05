@@ -1,0 +1,98 @@
+/* CommunityProjects.css native review fields and Community directory card anatomy (Apache-2.0). */
+.store-projects__review-directory {
+  container-type: inline-size;
+  container-name: native-reviews;
+}
+.community-projects__review-group-list .store-projects__native-review-row {
+  grid-template-columns:
+    1rem minmax(0, 1fr) 5.25rem minmax(0, 0.5fr)
+    2rem 1.5rem 6.5rem;
+}
+.community-projects__review-group-list
+  .store-projects__native-review-row
+  .community-projects__review-row-branch {
+  display: flex;
+}
+.store-projects__native-review-row
+  .community-projects__review-row-branch
+  > span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.store-projects__review-unavailable,
+.community-projects__review-group-list
+  .store-projects__native-review-row
+  > time.community-relative-time {
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  text-align: right;
+  white-space: nowrap;
+  justify-self: end;
+}
+.community-projects__review-group-list[data-layout="grid"] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 0.5rem;
+}
+.community-projects__review-group-list[data-layout="grid"]
+  .store-projects__native-review-row {
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  align-items: start;
+  row-gap: 0.45rem;
+  min-height: 6.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  padding: 0.8rem;
+  background: color-mix(in srgb, var(--muted) 12%, transparent);
+}
+.community-projects__review-group-list[data-layout="grid"]
+  .community-projects__review-row-title {
+  grid-column: 2;
+  grid-row: 1;
+}
+.community-projects__review-group-list[data-layout="grid"]
+  .community-projects__review-row-id {
+  grid-column: 3;
+  grid-row: 1;
+}
+.community-projects__review-group-list[data-layout="grid"]
+  .community-projects__review-row-branch {
+  grid-column: 2 / -1;
+  grid-row: 2;
+}
+.community-projects__review-group-list[data-layout="grid"]
+  .community-projects__review-row-comments {
+  grid-column: 1;
+  grid-row: 3;
+  justify-content: start;
+}
+.community-projects__review-group-list[data-layout="grid"]
+  .community-member-hover-card__trigger {
+  grid-column: 2;
+  grid-row: 3;
+  justify-self: start;
+}
+.community-projects__review-group-list[data-layout="grid"]
+  .store-projects__native-review-row
+  > time {
+  grid-column: 3;
+  grid-row: 3;
+}
+@container native-reviews (max-width: 40rem) {
+  .community-projects__review-group-list:not([data-layout="grid"])
+    .store-projects__native-review-row {
+    grid-template-columns: 1rem minmax(0, 1fr) 5.25rem 2rem;
+  }
+  .community-projects__review-group-list:not([data-layout="grid"])
+    .community-projects__review-row-branch,
+  .community-projects__review-group-list:not([data-layout="grid"])
+    .community-member-hover-card__trigger,
+  .community-projects__review-group-list:not([data-layout="grid"])
+    .store-projects__native-review-row
+    > time,
+  .community-projects__review-group-list:not([data-layout="grid"])
+    .store-projects__review-unavailable {
+    display: none;
+  }
+}

@@ -1,151 +1,168 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { execFileSync } from "node:child_process";
-import { readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { resolve, join } from "node:path";
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 const fixture = process.env.JJ_STORE_STACKS_BROWSER_FIXTURE
   ? JSON.parse(
       readFileSync(process.env.JJ_STORE_STACKS_BROWSER_FIXTURE, "utf8"),
     )
   : null;
 test.skip(!fixture, "Owned isolated Stacks browser fixture required");
-const binary = resolve(process.env.CARGO_TARGET_DIR ?? "target", "debug/jj");
-function state() {
-  const jj = (...args: string[]) =>
-    execFileSync(
-      binary,
-      ["-R", fixture.folder, "--ignore-working-copy", "--no-pager", ...args],
-      { encoding: "utf8" },
-    );
-  const files = (folder: string): unknown[] =>
-    readdirSync(folder, { withFileTypes: true })
-      .filter((entry) => ![".jj", ".git"].includes(entry.name))
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((entry) => [
-        entry.name,
-        entry.isDirectory()
-          ? files(join(folder, entry.name))
-          : readFileSync(join(folder, entry.name)).toString("base64"),
-      ]);
-  return {
-    operations: jj("op", "log", "-n", "20", "-T", 'id ++ "\\n"'),
-    bookmarks: jj("bookmark", "list", "-T", 'name ++ "\\n"'),
-    companion: readFileSync(
-      join(fixture.folder, ".git/refs/lapis/state/v1"),
-      "utf8",
-    ),
-    files: files(fixture.folder),
-    checkout: ["checkout", "tree_state"].map((name) =>
-      readFileSync(join(fixture.folder, ".jj/working_copy", name)).toString(
-        "base64",
-      ),
-    ),
-  };
-}
-test("cold_registered_stacks_browse_real_ancestors_files_and_diffs_without_writes", async ({
+
+test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async ({
   page,
 }) => {
-  const before = state(),
-    errors: string[] = [],
-    commands: string[] = [],
-    ordinaryGraphs: string[] = [];
-  const observations: any[] = [],
-    observationRequests: unknown[] = [];
-  page.on("response", async (response) => {
-    if (response.url().endsWith("/working-tree/observe") && response.ok())
-      observations.push(await response.json());
-  });
+  const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  page.on("request", (request) => {
-    if (request.url().endsWith("/working-tree/observe"))
-      observationRequests.push(request.postDataJSON());
-    if (request.url().includes("/commands")) commands.push(request.url());
-    if (
-      request.url().endsWith("/query") &&
-      request.postDataJSON()?.request?.kind === "graph"
-    )
-      ordinaryGraphs.push(request.url());
-  });
+  const companion = readFileSync(
+    join(fixture.folder, ".git/refs/lapis/state/v1"),
+    "utf8",
+  );
+  const view = (name: "Branches" | "Workspace") =>
+    page
+      .getByRole("tablist", { name: "Local repository views", exact: true })
+      .getByRole("tab", { name, exact: true });
+  const confirm = async () => {
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Apply command", exact: true })
+      .click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  };
+  const create = async (name: string, first = false) => {
+    if (first)
+      await page
+        .getByRole("button", { name: "Create workspace", exact: true })
+        .click();
+    else {
+      await page
+        .getByRole("button", { name: "Workspace actions", exact: true })
+        .click();
+      await page
+        .getByRole("menuitem", { name: "Create workspace", exact: true })
+        .click();
+    }
+    await page
+      .getByRole("dialog")
+      .getByRole("textbox", { name: "Name", exact: true })
+      .fill(name);
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Preview command", exact: true })
+      .click();
+    await confirm();
+    await expect(
+      page.getByRole("combobox", {
+        name: "Active stack workspace",
+        exact: true,
+      }),
+    ).toContainText(name);
+  };
   await page.goto(
     `/#/repos/${fixture.repository}/stacks?at_op=${fixture.operation}`,
   );
   await expect(
     page.getByRole("region", { name: "Local stack workspace", exact: true }),
   ).toBeVisible();
-  await expect.poll(() => observations.length).toBeGreaterThan(0);
-  expect(observations[0].snapshot.operation).toBe(fixture.operation);
-  expect(
-    observations[0].changes.map((change: any) => [change.path, change.status]),
-  ).toEqual([
-    ["README.md", "modified"],
-    ["unsnapshotted.txt", "added"],
-  ]);
-  expect(observations[0].obstacle_count).toBeGreaterThanOrEqual(2);
-  expect(observationRequests[0]).toEqual({
-    version: 1,
-    binding_generation: observations[0].snapshot.binding_generation,
-    operation: fixture.operation,
-  });
-  await page.getByRole("tab", { name: "Branches", exact: true }).click();
-  await page
-    .getByRole("combobox", { name: "Workspace target branch", exact: true })
-    .click();
-  await page.getByRole("option", { name: /main/ }).click();
-  await page.getByRole("option", { name: /topic/ }).click();
-  const prepare = page.getByRole("button", {
-    name: "Prepare graph index",
+  const target = page.getByRole("combobox", {
+    name: "Workspace target branch",
     exact: true,
   });
-  await expect(prepare).toBeVisible();
-  await prepare.click();
-  const stack = page.getByRole("region", { name: "Stack topic", exact: true });
+  await expect(target).toBeEnabled();
+  await target.click();
+  await page.getByRole("option", { name: /main/ }).click();
+  await create("Primary", true);
+  const unstaged = page.getByRole("region", {
+    name: "Unstaged files",
+    exact: true,
+  });
   await expect(
-    stack.getByRole("button", { name: "Topic tip", exact: true }),
+    unstaged.getByRole("button", { name: "unsnapshotted.txt", exact: true }),
   ).toBeVisible();
-  await stack
-    .getByRole("button", { name: "Topic ancestor", exact: true })
-    .click();
-  await stack
-    .getByRole("button", { name: "src/topic.ts", exact: true })
-    .click();
-  const diff = page.getByRole("region", { name: /^Selected changes from/ });
+  await view("Branches").click();
   await expect(
-    diff.getByRole("group", { name: /^Draggable hunk/ }),
+    page.getByText("2 unstaged files", { exact: true }),
   ).toBeVisible();
-  await expect(diff).toContainText("export const one = 1");
+  await page.getByRole("option", { name: /topic/ }).click();
+  await page
+    .getByRole("button", { name: "Prepare graph index", exact: true })
+    .click();
+  const topic = page.getByRole("region", { name: "Stack topic", exact: true });
   await expect(
-    diff.getByRole("group", { name: /^Draggable hunk/ }),
-  ).toHaveAttribute("draggable", "false");
-  await expect(
-    page.getByRole("button", { name: "Create stack", exact: true }),
-  ).toBeDisabled();
+    topic.getByRole("button", { name: "Topic ancestor", exact: true }),
+  ).toBeVisible();
+  await topic.getByRole("button", { name: "Apply topic", exact: true }).click();
+  await confirm();
+  await view("Workspace").click();
+  await expect(topic).toBeVisible();
+  expect(readFileSync(join(fixture.folder, "src/topic.ts"), "utf8")).toContain(
+    "export const two = 2",
+  );
+  await unstaged
+    .getByRole("button", { name: "unsnapshotted.txt", exact: true })
+    .click();
+  const diff = page.getByRole("region", { name: /Selected changes from/ });
+  await expect(diff).toContainText("new physical file");
+  expect(
+    await diff
+      .getByRole("group", { name: /Draggable hunk/ })
+      .getAttribute("draggable"),
+  ).toBe("false");
+  await create("Second");
+  writeFileSync(join(fixture.folder, "second.txt"), "second workspace edit\n");
   await page.getByRole("button", { name: "Refresh", exact: true }).click();
   await expect(
-    stack.getByRole("button", { name: "Topic ancestor", exact: true }),
+    unstaged.getByRole("button", { name: "second.txt", exact: true }),
+  ).toBeVisible();
+  const picker = page.getByRole("combobox", {
+    name: "Active stack workspace",
+    exact: true,
+  });
+  await picker.click();
+  await page.getByRole("option", { name: /Primary/ }).click();
+  await confirm();
+  await expect(
+    unstaged.getByRole("button", { name: "unsnapshotted.txt", exact: true }),
   ).toBeVisible();
   await expect(
-    diff.getByRole("group", { name: /^Draggable hunk/ }),
-  ).toBeVisible();
-  await stack
-    .getByRole("button", { name: "Show all changes in topic", exact: true })
+    unstaged.getByRole("button", { name: "second.txt", exact: true }),
+  ).toHaveCount(0);
+  await view("Branches").click();
+  await page.getByRole("option", { name: /topic/ }).click();
+  await topic
+    .getByRole("button", { name: "Unapply topic", exact: true })
     .click();
+  await confirm();
+  await view("Workspace").click();
+  await expect(topic).toHaveCount(0);
+  await page.reload();
+  await expect(picker).toContainText("Primary");
   await expect(
-    stack.getByRole("button", { name: "src/topic.ts", exact: true }),
+    unstaged.getByRole("button", { name: "unsnapshotted.txt", exact: true }),
   ).toBeVisible();
-  await page.getByRole("option", { name: /main/ }).click();
+  await picker.click();
+  await page.getByRole("option", { name: /Second/ }).click();
+  await confirm();
   await expect(
-    page.getByRole("region", { name: "Stack main", exact: true }),
+    unstaged.getByRole("button", { name: "second.txt", exact: true }),
   ).toBeVisible();
-  await page
-    .getByRole("tablist", { name: "Local repository views", exact: true })
-    .getByRole("tab", { name: "Workspace", exact: true })
-    .click();
-  await expect(
-    page.getByText("No stack workspace", { exact: true }).first(),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Create workspace", exact: true }),
-  ).toBeDisabled();
+  const config = readFileSync(
+    join(fixture.folder, ".jj/jj-store/stacks.toml"),
+    "utf8",
+  );
+  expect(config).toContain("[[workspaces]]");
+  expect(config).toContain('target = "main"');
+  const tracked = execFileSync(
+    "/opt/homebrew/bin/jj",
+    ["-R", fixture.folder, "--ignore-working-copy", "file", "list"],
+    { encoding: "utf8" },
+  );
+  expect(tracked).not.toContain(".jj/");
+  expect(tracked).not.toContain("obstacle.tmp");
+  expect(
+    readFileSync(join(fixture.folder, ".git/refs/lapis/state/v1"), "utf8"),
+  ).toBe(companion);
   expect(
     (
       await new AxeBuilder({ page })
@@ -153,19 +170,5 @@ test("cold_registered_stacks_browse_real_ancestors_files_and_diffs_without_write
         .analyze()
     ).violations,
   ).toEqual([]);
-  expect(ordinaryGraphs).toEqual([]);
-  expect(commands).toEqual([]);
   expect(errors).toEqual([]);
-  expect(state()).toEqual(before);
-  if (process.env.JJ_STORE_WORKING_OBSERVATION_CAPTURE)
-    writeFileSync(
-      process.env.JJ_STORE_WORKING_OBSERVATION_CAPTURE,
-      JSON.stringify(
-        observations.map((data) => ({
-          path: "/v1/local/repos/{repo}/working-tree/observe",
-          status: 200,
-          data,
-        })),
-      ),
-    );
 });

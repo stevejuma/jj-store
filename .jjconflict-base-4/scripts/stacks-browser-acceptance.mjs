@@ -90,6 +90,12 @@ try {
   child = spawn(server, ["run", "--config", config, "--format=json"], {
     cwd: repositoryRoot,
     stdio: ["ignore", "pipe", "pipe"],
+    env: {
+      ...process.env,
+      JJ_CONFIG: join(root, "jj.toml"),
+      GIT_CONFIG_NOSYSTEM: "1",
+      GIT_CONFIG_GLOBAL: "/dev/null",
+    },
   });
   let output = "";
   child.stdout.on("data", (value) => (output += value));
@@ -137,7 +143,7 @@ ${output}`);
     "-T",
     "id",
   ).trim();
-  // Dirty disk after the last JJ command; browser reads must not snapshot it.
+  // Dirty disk after the last JJ command; active Stacks refresh snapshots it.
   writeFileSync(join(folder, "README.md"), "# Unsnapshotted physical change\n");
   writeFileSync(join(folder, "unsnapshotted.txt"), "new physical file\n");
   writeFileSync(join(folder, "obstacle.tmp"), "ignored checkout obstacle\n");
@@ -174,7 +180,7 @@ ${output}`);
     },
   );
   console.log(
-    "Cold real-folder Stacks reads passed; operations, bookmarks, companion and checkout unchanged.",
+    "Cold real-folder Stacks core commands passed; local TOML and independent WIP verified.",
   );
 } finally {
   if (child && child.exitCode === null) {

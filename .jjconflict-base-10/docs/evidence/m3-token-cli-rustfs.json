@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "image": "rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f",
+  "topology": "single container, one data volume, independent HTTP client connections",
+  "rounds": 20,
+  "contenders": 16,
+  "started_at": "2026-09-27T02:03:26.583377+00:00",
+  "tests": [
+    {
+      "name": "concurrent_create_exactly_one_winner",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.298
+    },
+    {
+      "name": "concurrent_cas_exactly_one_winner",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.485
+    },
+    {
+      "name": "stale_tokens_do_not_overwrite",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.058
+    },
+    {
+      "name": "size_range_checksum_and_partial_rejection",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.193
+    },
+    {
+      "name": "interrupted_upload_is_not_published",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.007
+    },
+    {
+      "name": "discarded_acknowledgement_resolves_by_read",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.215
+    },
+    {
+      "name": "process_kill_restart_preserves_data_and_fences_stale_token",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.565
+    },
+    {
+      "name": "conditional_delete_cannot_remove_new_incarnation",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.019
+    },
+    {
+      "name": "authenticated_server_cli_cold_restart_and_revocation",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 8.687
+    }
+  ],
+  "limitations": [
+    "No multi-node/load-balancer qualification",
+    "Discarded acknowledgement simulates an unknown client outcome, not a faulty RustFS network",
+    "Server fixture uses generated repository-scoped credentials; shared TLS and full semantic-policy qualification remain separate gates"
+  ],
+  "image_id": "sha256:6063afb658b569520afbac082418f17b369fa72f4702a6a90a4a010b13117124",
+  "server_client": {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "jj-store-cli",
+      "--test",
+      "server_executable",
+      "--locked",
+      "real_rustfs_server_cli_restart_and_revocation",
+      "--",
+      "--ignored",
+      "--nocapture"
+    ],
+    "exit_code": 0,
+    "output": "\nrunning 1 test\ntest real_rustfs_server_cli_restart_and_revocation ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 7.95s\n\n    Finished `test` profile [unoptimized] target(s) in 0.66s\n     Running tests/server_executable.rs (target/debug/deps/server_executable-4601bca7a01c6b57)\n"
+  },
+  "failures": 0,
+  "result": "pass"
+}

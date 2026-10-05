@@ -504,3 +504,187 @@ test("operation refresh revalidates loaded target ancestry and rejects the old r
   ).rejects.toThrow(/scope/);
   adapter.close();
 });
+
+test("local state enables only core commands and projects named WIP into Unstaged", async () => {
+  const { source, binding, calls } = fixture();
+  const state: Model<"LocalStacksState"> = {
+    version: 1,
+    operation,
+    revision: 1,
+    active: "work",
+    warning: null,
+    workspaces: [
+      {
+        id: "work",
+        name: "Work",
+        target: "main",
+        target_commit: base,
+        applied: ["topic"],
+        merge_commit: parent,
+        conflicted: false,
+        wip_commit: tip,
+      },
+    ],
+  };
+  const commands: unknown[] = [];
+  Object.assign(source, {
+    stacks: {
+      execute: async (request: unknown) => {
+        commands.push(request);
+        return state;
+      },
+    },
+  });
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  const snapshot = await adapter.read();
+  expect(snapshot.active).toBe("work");
+  expect(snapshot.capabilities).toEqual([
+    "create_workspace",
+    "switch_workspace",
+    "apply_stack",
+    "unapply_stack",
+  ]);
+  expect(snapshot.workspaces[0]?.applied).toEqual([snapshot.stacks[0]?.id]);
+  expect(adapter.observeWorkingTree).toBeUndefined();
+  await adapter.readSourceFiles({
+    repository,
+    revision: snapshot.revision,
+    readKey: snapshot.readKey,
+    source: "unassigned",
+  });
+  expect(calls).toContainEqual(["files", operation, parent, tip]);
+  const request = {
+    id: "apply",
+    readKey: snapshot.readKey,
+    repository,
+    revision: snapshot.revision,
+    command: { kind: "unapply_stack" as const, stack: snapshot.stacks[0]!.id },
+  };
+  await adapter.preview(request);
+  expect(commands).toHaveLength(1);
+  await adapter.apply(request);
+  expect(commands).toHaveLength(2);
+  expect(commands[1]).toMatchObject({
+    command: { kind: "unapply", branch: "topic" },
+    operation,
+    revision: 1,
+  });
+  adapter.close();
+});
+test("unknown local outcomes refresh state without executing or claiming command completion", async () => {
+  const { source, binding } = fixture();
+  const requests: unknown[] = [];
+  Object.assign(source, {
+    stacks: {
+      execute: async (request: unknown) => {
+        requests.push(request);
+        return {
+          version: 1,
+          operation,
+          revision: 0,
+          active: null,
+          workspaces: [],
+          warning: null,
+        };
+      },
+    },
+  });
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  expect(adapter.retryPending).toBe(false);
+  const result = await adapter.status("lost-response");
+  expect(result.status).toBe("refreshed");
+  expect(requests).toEqual([
+    {
+      version: 1,
+      binding_generation: 2,
+      operation: null,
+      revision: null,
+      command: { kind: "refresh" },
+    },
+  ]);
+  adapter.close();
+});
+
+test("confirmed local membership settles before the new operation graph index is prepared", async () => {
+  const { source, binding, pin, captured } = fixture();
+  const state: Model<"LocalStacksState"> = {
+    version: 1,
+    operation,
+    revision: 1,
+    active: "work",
+    warning: null,
+    workspaces: [
+      {
+        id: "work",
+        name: "Work",
+        target: "main",
+        target_commit: base,
+        applied: [],
+        merge_commit: parent,
+        conflicted: false,
+        wip_commit: tip,
+      },
+    ],
+  };
+  const references = source.references;
+  source.references = (async (...args: Parameters<typeof references>) => {
+    const page = await references(...args);
+    return { ...page, data: { ...page.data, operation: pin.operation } };
+  }) as typeof references;
+  Object.assign(source, {
+    stacks: {
+      execute: async (request: { command: { kind: string } }) => {
+        if (request.command.kind === "apply") {
+          state.operation = "f".repeat(128);
+          state.revision++;
+          state.workspaces[0]!.applied = ["topic"];
+          pin.operation = state.operation;
+          captured.heads = [state.operation];
+          source.stackHistory = async () => {
+            throw new Error("index rebuild required");
+          };
+        }
+        return state;
+      },
+    },
+  });
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  const snapshot = await adapter.read();
+  await adapter.readStackHistory({
+    repository,
+    revision: snapshot.revision,
+    readKey: snapshot.readKey,
+    stack: snapshot.stacks[0]!.id,
+    branch: "topic",
+    head: tip,
+    base,
+    limit: 40,
+  });
+  const result = await adapter.apply({
+    id: "apply",
+    repository,
+    revision: snapshot.revision,
+    readKey: snapshot.readKey,
+    command: { kind: "apply_stack", stack: snapshot.stacks[0]!.id },
+  });
+  expect(result.status).toBe("committed");
+  if (result.status !== "unknown") {
+    expect(result.snapshot.workspaces[0]!.applied).toEqual([
+      snapshot.stacks[0]!.id,
+    ]);
+    expect(result.snapshot.stacks[0]!.segments).toBeUndefined();
+  }
+  adapter.close();
+});

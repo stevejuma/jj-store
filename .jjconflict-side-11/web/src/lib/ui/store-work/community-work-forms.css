@@ -1,0 +1,60 @@
+/* CommunitySettings.css (Apache-2.0): shared field group and settings rows. */
+.store-work__form-sections {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.store-work__field {
+  min-width: 0;
+}
+.store-work__control {
+  flex: 1.5;
+  min-width: 0;
+  width: 100%;
+}
+.store-work__control > select {
+  width: 100%;
+}
+
+.community-settings__option-group,
+.community-settings__identity,
+.community-settings__emoji-builder {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 0.25rem);
+  background: var(--background);
+}
+
+.community-settings__option-group[data-ui-part="field-group"] {
+  gap: 0;
+}
+
+.community-settings__option-row {
+  min-height: 4.25rem;
+  padding: 0.75rem 1rem;
+}
+
+.community-settings__option-row + .community-settings__option-row {
+  border-block-start: 1px solid var(--border);
+}
+
+.community-settings__option-row [data-ui-part="field-label"] {
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+}
+
+.community-settings__option-row > p {
+  font-size: var(--community-text-secondary);
+}
+
+.community-settings__option-row:not(.store-work__field--bordered)
+  [data-ui-component="input"],
+.community-settings__option-row:not(.store-work__field--bordered)
+  [data-ui-component="textarea"] {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  box-shadow: none;
+}

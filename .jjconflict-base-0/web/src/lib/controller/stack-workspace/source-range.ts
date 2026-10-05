@@ -9,6 +9,17 @@ export function stackSourceRange(
   commits: Map<string, StackCommit>,
   source: string,
 ): StackTreeRange {
+  if (source === "unassigned") {
+    const workspace = snapshot.workspaces.find(
+      (workspace) => workspace.id === snapshot.active,
+    );
+    if (workspace?.mergeCommit && workspace.wipCommit)
+      return { from: workspace.mergeCommit, to: workspace.wipCommit };
+    throw new WorkspaceCommandError(
+      "invalid",
+      "Select a named workspace first.",
+    );
+  }
   if (source.startsWith("branch:")) {
     let identity: unknown;
     try {

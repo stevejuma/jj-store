@@ -1,0 +1,126 @@
+/* CommunityProjects.css (Apache-2.0): card layout and layout controls. */
+
+.community-projects__layout-controls
+  > [data-ui-part="toggle-group-item"][data-state="on"] {
+  background: var(--background);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
+.community-projects__layout-controls > [data-ui-part="toggle-group-item"] {
+  width: 1.65rem;
+  min-width: 1.65rem;
+  height: 1.65rem;
+  min-height: 1.65rem;
+  border-radius: 0.4rem;
+  padding: 0;
+}
+
+.community-projects__list[data-layout="grid"]
+  .community-projects__repository-row {
+  display: grid;
+  min-height: 7rem;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  align-content: start;
+  align-items: start;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  padding: 0.8rem;
+  background: color-mix(in srgb, var(--muted) 12%, transparent);
+}
+
+.community-projects__list[data-layout="grid"]
+  .community-projects__repository-row
+  > .community-projects__row-icon {
+  grid-column: 1;
+  grid-row: 1;
+  margin-top: 0.1rem;
+}
+
+.community-projects__list[data-layout="grid"]
+  .community-projects__repository-target {
+  grid-column: 2;
+  grid-row: 1 / 3;
+}
+
+.community-projects__list[data-layout="grid"]
+  .community-projects__repository-target
+  > span {
+  display: grid;
+  align-items: start;
+  gap: 0.35rem;
+}
+
+.community-projects__list[data-layout="grid"]
+  .community-projects__repository-target
+  > span
+  > strong {
+  width: fit-content;
+}
+
+.community-projects__list[data-layout="grid"]
+  .community-projects__repository-row
+  .community-projects__row-meta {
+  width: 100%;
+  grid-column: 1 / -1;
+  grid-row: 3;
+  grid-template-columns: 2rem minmax(4rem, 1fr) 6.5rem 1.5rem;
+  margin-block-start: 0.75rem;
+}
+
+.community-projects__task-list[data-layout="grid"]
+  .community-projects__task-row {
+  min-height: 6.25rem;
+  grid-template-columns: 1rem minmax(0, 1fr) auto;
+  grid-template-rows: auto auto 1fr;
+  align-content: start;
+  align-items: start;
+  row-gap: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  padding: 0.8rem;
+  background: color-mix(in srgb, var(--muted) 12%, transparent);
+}
+
+.community-projects__task-list[data-layout="grid"]
+  .community-projects__task-row
+  > .community-projects__task-status-icon {
+  grid-column: 1;
+  grid-row: 1;
+  margin-top: 0.1rem;
+}
+
+.community-projects__task-list[data-layout="grid"]
+  .community-projects__task-row
+  > strong {
+  grid-column: 2;
+  grid-row: 1;
+  white-space: normal;
+}
+
+.community-projects__task-list[data-layout="grid"]
+  .community-projects__task-repository {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.community-projects__task-list[data-layout="grid"]
+  .community-projects__task-row-assignees {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.community-projects__task-list[data-layout="grid"]
+  .community-projects__task-comments {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.community-projects__task-list[data-layout="grid"]
+  .community-projects__task-row
+  > time {
+  grid-column: 2 / -1;
+  grid-row: 3;
+  align-self: end;
+  text-align: left;
+}

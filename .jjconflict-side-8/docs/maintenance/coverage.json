@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the provider-owned stable physical identity read for historical stack admission: unchanged observer digest, bounded no-follow directory checks across authorization, refusal on races/revocation, and independence from current code/checkout/policy/editor reads. Runtime registration, original journal validation and production wiring remain separate gates.",
-      "fingerprint": "b867b2aef08f415d31fb1618569855249c2224c9912087d75754e08bd4ab0fd8"
+      "reason": "Reviewed ordinary jj-lib snapshot/merge/rebase/checkout, local TOML namespaces, WIP retention and conflict-state projection; historical archive execution is outside this path.",
+      "fingerprint": "3d76a2aa519258c7b31daca6d0d8735bb023dd50519e9ab263cbcd796447ebb8"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed bounded current-workspace discovery inputs and selected catalog contracts, profile and readiness linkage, terminal-history separation and strict public response limits. The manual distinguishes these records from the unimplemented registered runtime join and production transport.",
-      "fingerprint": "b069b1aab37472acfccc4fcfc30c9246684741635b9bae1d4469227fbe066d28"
+      "reason": "Documented owned local Stacks command DTOs and service reexport of the ordinary physical-folder engine, separate from manifest and retained-executor profiles.",
+      "fingerprint": "91b69dc26f8da67aefeebbabc6890949c993d3b18360599750518a9b199768d1"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Registered LocalTrusted administrative working-tree observation resolves the root from current device registration, rechecks the captured binding, and exposes strict path-free inputs and safe bounded response summaries through the endpoint inventory.",
-      "fingerprint": "c094f760f9494bc350796095eba5f0194713318b8d1a9eafe06e2b322d82fedc"
+      "reason": "Documented registered same-origin LocalTrusted administrative Stacks POST commands, generation and operation/config pins, and post-publication warnings.",
+      "fingerprint": "13dd5660b1e1837f8f00f6c0db9bc36cea793398995b80529d0ff8eca1661faf"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Stacks now owns uncached current checkout observations separately from historical reads. Exact pins, complete bounds, lossless integers and cancellation are validated; observations do not populate complete Unstaged or enable commands.",
-      "fingerprint": "de83da3f06dbb2f4f282650ac8c66ea18a6669f5cc9b6bee42984f0461376047"
+      "reason": "Reviewed real workspace core commands, operation changes that reset lazy graph ranges, Unstaged counts and native conflict notices; later editing capabilities remain disabled.",
+      "fingerprint": "8aff9356a714f30ff02875a4a8f95f911845bd6babc2bf1f5e694dddade3c72d"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated OpenAPI and client types for registered physical working-tree observation; actual cold filesystem responses now join the existing complete registered-route capture inventory.",
-      "fingerprint": "5fb483b76836a48900b10f41356402b98fff332e0ac0fc160c9721dfc231c50f"
+      "reason": "Reviewed generated local Stacks command/state contracts including native conflict flags and exact command pins.",
+      "fingerprint": "6bdedc9ec3af42714e0eaba80132999db609f462eb85bf6b6076d4ff4d8e7d70"
     }
   }
 ]

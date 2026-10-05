@@ -105,6 +105,9 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     if request.kind != Kind::Changes {
         for (name, target) in &view.local_bookmarks {
             context.budget.work(1)?;
+            if name.starts_with("jj-store/workspaces/") {
+                continue;
+            }
             let ids: BTreeSet<_> = target.0.iter().flatten().copied().collect();
             let targets = if request.query.is_empty() {
                 vec![]
@@ -195,6 +198,7 @@ async fn bookmark_window(context: &Context, view: &dto::View, request: &Request)
     let mut selected: Vec<_> = if let Some(name) = &request.exact {
         view.local_bookmarks
             .get_key_value(name)
+            .filter(|(name, _)| !name.starts_with("jj-store/workspaces/"))
             .into_iter()
             .collect()
     } else {
@@ -202,12 +206,14 @@ async fn bookmark_window(context: &Context, view: &dto::View, request: &Request)
             Direction::Forward => view
                 .local_bookmarks
                 .range::<str, _>((anchor.map_or(Unbounded, Excluded), Unbounded))
+                .filter(|(name, _)| !name.starts_with("jj-store/workspaces/"))
                 .take(request.limit)
                 .collect(),
             Direction::Backward => view
                 .local_bookmarks
                 .range::<str, _>((Unbounded, anchor.map_or(Unbounded, Excluded)))
                 .rev()
+                .filter(|(name, _)| !name.starts_with("jj-store/workspaces/"))
                 .take(request.limit)
                 .collect(),
         }
@@ -220,7 +226,8 @@ async fn bookmark_window(context: &Context, view: &dto::View, request: &Request)
         .filter(|_| request.exact.is_none())
         .and_then(|(name, _)| {
             view.local_bookmarks
-                .first_key_value()
+                .iter()
+                .find(|(name, _)| !name.starts_with("jj-store/workspaces/"))
                 .filter(|(first, _)| first < name)
                 .map(|_| format!("bookmark:{name}"))
         });
@@ -229,7 +236,9 @@ async fn bookmark_window(context: &Context, view: &dto::View, request: &Request)
         .filter(|_| request.exact.is_none())
         .and_then(|(name, _)| {
             view.local_bookmarks
-                .last_key_value()
+                .iter()
+                .rev()
+                .find(|(name, _)| !name.starts_with("jj-store/workspaces/"))
                 .filter(|(last, _)| last > name)
                 .map(|_| format!("bookmark:{name}"))
         });

@@ -16,12 +16,16 @@ export function workspaceCommandEligibility(
         snapshot.capabilityReasons?.[kind] ??
         "This command is not available for this local checkout.",
     };
-  if (!snapshot.target)
+  if (!snapshot.target && kind !== "switch_workspace")
     return {
       allowed: false,
       reason: "Choose a workspace target branch first.",
     };
-  if (!selectedWorkspace(snapshot) && kind !== "create_workspace")
+  if (
+    !selectedWorkspace(snapshot) &&
+    kind !== "create_workspace" &&
+    kind !== "switch_workspace"
+  )
     return { allowed: false, reason: "Set up a named stack workspace first." };
   return { allowed: true, reason: "" };
 }

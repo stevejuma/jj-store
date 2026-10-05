@@ -18,6 +18,7 @@ export function localStackReferences(
   for (const reference of references) {
     if (reference.kind !== "bookmark")
       throw new ApiError("invalid_stack_references");
+    if (reference.name.startsWith("jj-store/workspaces/")) continue;
     if (names.has(reference.name))
       throw new ApiError("invalid_stack_references");
     names.add(reference.name);

@@ -320,3 +320,11 @@ its WIP tree retains the previous native checkout baseline. The implementation
 plan and progress evidence keep the seven approved backend stages in progress.
 No documentation review may imply automatic initialization on reads or enable an
 unqualified command capability.
+
+## Ordinary local Stacks documentation
+
+The local and transport guides MUST distinguish normal local JJ megamerges,
+per-physical-workspace TOML, snapshots and operation-log inspection from the
+historical retained-executor profile. Browsing guidance identifies qualified
+core controls and the remaining disabled file/hunk/graph operations. Historical
+ledger entries and previous qualified provider evidence remain preserved.

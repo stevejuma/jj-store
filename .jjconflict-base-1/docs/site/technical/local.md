@@ -16,6 +16,34 @@ flowchart TB
   Commit --> Evidence[Explicitly retained evidence closure]
 ```
 
+## Local stack workspaces
+
+The Stacks page operates directly on a registered ordinary local JJ folder using
+jj-lib 0.45.1. Setup retains the existing checkout, applied branches become the
+parents of a megamerge, and a WIP child retains unfinished edits. Switching
+snapshots the outgoing workspace and checks out the selected workspace's WIP.
+Active refresh follows external branch-tip changes and normal JJ ignore,
+auto-track, sparse-checkout and file-size policy.
+
+Names, target branches, ordered membership and local retention bookmark names
+are saved atomically in `.jj/jj-store/stacks.toml`. This file is outside tracked
+repository contents. Code trees stay in JJ, retained by internal local bookmarks
+excluded from application branch choices. Each physical JJ workspace has its own
+configuration namespace.
+
+Core production controls cover setup, create/switch, target selection and
+apply/unapply. Remaining graph and file/hunk actions stay disabled until their
+own acceptance slices. Preview is advisory; commands validate the shown
+operation and settings revision. After a lost response, refresh current JJ state
+and inspect its operation history before another attempt. A reported settings or
+checkout failure after publication identifies the applied operation rather than
+inviting a repeat. CLI selection of a different working change detaches the
+active local selection while retaining named workspaces.
+
+The retained executor described in historical sections below is superseded for
+this local Stacks profile. Manifest-backed execution remains a separate
+provider.
+
 ## Selection and retention
 
 The companion ref lives outside ordinary branches, tags and upstream `refs/jj`.

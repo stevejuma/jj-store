@@ -1,3 +1,4 @@
+import { outcomeText, blocksRetry } from "./local-state.js";
 import { updateWorkspaceControllerSnapshot } from "./controller-snapshot.js";
 import {
   selectWorkspaceFile,
@@ -209,6 +210,7 @@ export class StackWorkspaceController {
       id: globalThis.crypto.randomUUID(),
       repository: snapshot.repository,
       revision: snapshot.revision,
+      ...(snapshot.readKey ? { readKey: snapshot.readKey } : {}),
       command: cloneWorkspace(command),
     };
     const ticket = ++this.#command;
@@ -230,6 +232,7 @@ export class StackWorkspaceController {
   async apply() {
     const request = this.pending ?? this.preview?.request;
     if (!request || this.busy || this.#closed) return;
+    if (blocksRetry(this.adapter, this.pending)) return;
     this.busy = true;
     this.error = this.validation = "";
     try {
@@ -264,7 +267,7 @@ export class StackWorkspaceController {
       this.pending = request;
       return;
     }
-    if (this.snapshot)
+    if (this.snapshot && result.status === "committed")
       this.commitDrafts.committed(this.snapshot, request.command);
     updateWorkspaceControllerSnapshot(this, result.snapshot);
     const created = this.commitDrafts.created(result.snapshot, request.command);
@@ -275,7 +278,7 @@ export class StackWorkspaceController {
     }
     this.pending = null;
     this.preview = null;
-    this.outcome = "Command completed";
+    this.outcome = outcomeText(result.status);
     Object.assign(this, retainedWorkspaceSelection(result.snapshot, this));
   }
   private failed(error: unknown) {

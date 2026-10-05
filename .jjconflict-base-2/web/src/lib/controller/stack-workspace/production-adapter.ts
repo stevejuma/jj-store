@@ -1,5 +1,7 @@
+import { findWorkspaceTarget } from "./local-state.js";
+import { LocalStacksSession } from "./local-session.js";
 import { readIssuedStackHistory } from "./issued-history.js";
-import { stackReadContext, unavailableStackCommand } from "./read-context.js";
+import { stackReadContext } from "./read-context.js";
 import { stackSourceRange } from "./source-range.js";
 import { ApiError, fullId, type Model } from "../../api/client.js";
 import type { StoreDataSource } from "../native-data-source.js";
@@ -32,6 +34,10 @@ import {
 export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
   readonly #closed = new AbortController();
   #epoch = 0;
+  readonly #local: LocalStacksSession;
+  get retryPending() {
+    return this.#local.retryPending;
+  }
   #snapshot: WorkspaceSnapshot | null = null;
   #pin: LocalReadSnapshot | null = null;
   #reads: StackWorkspaceReads | null = null;
@@ -49,9 +55,19 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
   ) {
     fullId(operation);
     this.#physical = new CurrentWorkingTreeReads(source, binding);
+    this.#local = new LocalStacksSession(
+      source,
+      binding,
+      this.#closed.signal,
+      () => this.#snapshot,
+      () => this.#pin!,
+      (state) => this.read(state),
+    );
   }
-  observeWorkingTree(signal?: AbortSignal) {
-    return this.#physical.observe(signal);
+  get observeWorkingTree() {
+    return this.source.stacks
+      ? undefined
+      : (signal?: AbortSignal) => this.#physical.observe(signal);
   }
   setOperation(operation: string) {
     fullId(operation);
@@ -60,10 +76,15 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       this.#epoch++;
     }
   }
-  async read() {
+  async read(known?: Model<"LocalStacksState">) {
     this.#closed.signal.throwIfAborted();
     const epoch = ++this.#epoch;
-    const captured = await this.source.snapshot();
+    const state = await this.#local.refresh(known);
+    if (state) this.operation = state.operation;
+    // Native commands may outpace the rebuildable graph index. Reissue lazy
+    // ranges at the new pin rather than making command settlement depend on it.
+    if (state && this.#pin?.operation !== state.operation) this.ranges.clear();
+    const captured = await this.source.snapshot(true);
     this.#closed.signal.throwIfAborted();
     const pin = verifiedLocalStackPin(
       this.source,
@@ -77,15 +98,11 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       this.#closed.signal,
       this.#pages,
     );
+    await this.#local.references(result.references, pin);
     if (epoch !== this.#epoch) throw new ApiError("snapshot_mismatch");
     const projection = localStackReferences(result.references);
     const previous = this.#snapshot;
-    const target =
-      projection.targets.find(
-        (target) =>
-          target.name === previous?.target?.name &&
-          target.commit === previous.target.commit,
-      ) ?? null;
+    const target = this.#local.targetFor(projection.targets, previous?.target);
     if (!this.#pin || !sameCodeSnapshot(this.#pin, pin)) {
       const reads = new StackWorkspaceReads(this.source, pin);
       try {
@@ -128,6 +145,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       this.ranges.restore(stack, target?.commit),
     );
     this.#snapshot.loadedTargetHistory = this.ranges.target(target?.commit);
+    this.#local.project(this.#snapshot);
     return cloneWorkspace(this.#snapshot);
   }
   #context(request: {
@@ -141,16 +159,9 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
     request: Parameters<NonNullable<StackWorkspaceAdapter["chooseTarget"]>>[0],
   ) {
     const snapshot = this.#context(request);
-    const target = snapshot.targetOptions?.find(
-      (target) =>
-        target.name === request.target.name &&
-        target.commit === request.target.commit,
-    );
-    if (!target)
-      throw new WorkspaceCommandError(
-        "invalid",
-        "Choose an exact available target branch.",
-      );
+    const target = findWorkspaceTarget(snapshot, request.target);
+    if (this.source.stacks && this.#local.state?.active)
+      return this.#local.target(target);
     this.ranges.clear();
     this.#commits.clear();
     for (const stack of this.#projection!.stacks)
@@ -163,6 +174,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       snapshot.revision + 1,
       snapshot.branchesNextCursor,
     );
+    this.#local.project(this.#snapshot);
     return cloneWorkspace(this.#snapshot);
   }
   async readBranches(request: {
@@ -217,6 +229,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
     this.#snapshot.loadedTargetHistory = this.ranges.target(
       snapshot.target?.commit,
     );
+    this.#local.project(this.#snapshot);
     return cloneWorkspace(this.#snapshot);
   }
   readTargetHistory(
@@ -263,14 +276,14 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
     this.#context(request);
     return file;
   }
-  preview(_request: WorkspaceRequest) {
-    return unavailableStackCommand();
+  preview(request: WorkspaceRequest) {
+    return this.#local.preview(request);
   }
-  apply(_request: WorkspaceRequest) {
-    return unavailableStackCommand();
+  apply(request: WorkspaceRequest) {
+    return this.#local.apply(request);
   }
   status(_requestId: string) {
-    return unavailableStackCommand();
+    return this.#local.status();
   }
   close() {
     this.#closed.abort();

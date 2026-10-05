@@ -40,6 +40,19 @@ global ignore-policy paths/bytes. Stale bindings or checkout state fail rather
 than returning a partial scan. These fingerprints do not issue staging tokens,
 assign changes to a combination or enable checkout commands.
 
+### Local Stacks
+
+`POST /v1/local/repos/{repo}/stacks` operates on the registered physical JJ
+workspace. `refresh` snapshots current working files using JJ policy and returns
+an operation pin. Setup, create, switch, apply, unapply and set-target commands
+also name the expected operation, binding generation and local TOML revision.
+Their response identifies the resulting operation and named merge/WIP commits.
+Settings live in `.jj/jj-store/stacks.toml`; code stays in JJ storage. This
+local path uses normal JJ transactions and checkout. Previews are advisory and
+lost responses are resolved by inspecting current state/op history before
+another attempt. No command receipt or automatic replay is promised. Historical
+query pins continue to read their original operations.
+
 ## Mutations
 
 Owned workspace-discovery input binds a repository, current registration

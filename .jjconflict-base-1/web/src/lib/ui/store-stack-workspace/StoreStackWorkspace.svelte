@@ -110,6 +110,12 @@
     lifetime="condition"
   />
   <StoreNotificationHost owner={notifications} />
+  <StoreNotice
+    noticeKey="local-stack-settings"
+    title="Local workspace needs attention"
+    message={snapshot?.workspaceWarning ?? ""}
+    lifetime="condition"
+  />
   {#if !snapshot || (controller.loading && !snapshot)}<CommunityProjectsRepositorySkeleton
       layout="graph"
       label="Loading stack workspace"
@@ -229,7 +235,10 @@
         </CommunityChip>
         <CommunityChip variant="muted" shape="square">
           {#snippet leading()}<File size={14} aria-hidden="true" />{/snippet}
-          {workspace?.unassigned.length ?? 0} unstaged files
+          {controller.filesFor("unassigned")
+            .length}{controller.details.fileState("unassigned").nextCursor
+            ? "+"
+            : ""} unstaged files
         </CommunityChip>
       </div>
       <span role="status">{controller.outcome}</span

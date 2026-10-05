@@ -13,6 +13,7 @@ pub mod local_evidence;
 pub mod local_execution;
 pub mod local_metadata;
 pub mod local_repository;
+pub mod local_stacks;
 pub mod native_dto;
 pub mod objects;
 pub mod operation_stores;

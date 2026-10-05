@@ -200,7 +200,7 @@ async fn prepared_reference_windows_seek_visible_changes_before_hydrating_target
         &["--at-op", &original, "describe", "-m", "Right"],
     );
     jj(source.path(), &["log", "--no-graph", "-r", "all()"]);
-    for name in ["a", "middle", "z"] {
+    for name in ["a", "middle", "z", "jj-store/workspaces/fixture/wip"] {
         jj(source.path(), &["bookmark", "create", name]);
     }
     let operation = jj(
@@ -241,6 +241,15 @@ async fn prepared_reference_windows_seek_visible_changes_before_hydrating_target
             ..
         }
     )));
+    let bookmark_names: Vec<_> = all
+        .references
+        .iter()
+        .filter_map(|r| match r {
+            q::references::Reference::Bookmark { name, .. } => Some(name.as_str()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(bookmark_names, vec!["a", "conflicted", "middle", "z"]);
     assert!(all.references.iter().any(|r| matches!(
         r,
         q::references::Reference::Bookmark {
@@ -257,7 +266,11 @@ async fn prepared_reference_windows_seek_visible_changes_before_hydrating_target
         })
         .collect();
     let mut requests = vec![];
-    for kind in [q::references::Kind::Changes, q::references::Kind::All] {
+    for kind in [
+        q::references::Kind::Bookmarks,
+        q::references::Kind::Changes,
+        q::references::Kind::All,
+    ] {
         for direction in [q::Direction::Forward, q::Direction::Backward] {
             for anchor in [
                 None,
@@ -265,10 +278,43 @@ async fn prepared_reference_windows_seek_visible_changes_before_hydrating_target
                 Some(format!("change:{}", changes[changes.len() / 2])),
                 Some("z".into()),
             ] {
+                if kind == q::references::Kind::Bookmarks
+                    && anchor
+                        .as_deref()
+                        .is_some_and(|value: &str| !value.starts_with("bookmark:"))
+                {
+                    continue;
+                }
                 requests.push(request(kind, anchor, direction, None));
             }
         }
     }
+    requests.push(request(
+        q::references::Kind::Bookmarks,
+        None,
+        q::Direction::Forward,
+        Some("jj-store/workspaces/fixture/wip".into()),
+    ));
+    let q::Response::References(filtered) = ordinary
+        .read(
+            access.clone(),
+            operation,
+            q::Request::References(q::references::Request {
+                query: "jj-store/workspaces/".into(),
+                ..request(
+                    q::references::Kind::Bookmarks,
+                    None,
+                    q::Direction::Forward,
+                    None,
+                )
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(filtered.references.is_empty());
     requests.push(request(
         q::references::Kind::Changes,
         None,
@@ -321,7 +367,12 @@ async fn prepared_reference_windows_seek_visible_changes_before_hydrating_target
             .read(
                 access.clone(),
                 operation,
-                q::Request::References(requests[0].clone())
+                q::Request::References(request(
+                    q::references::Kind::Changes,
+                    None,
+                    q::Direction::Forward,
+                    None
+                ))
             )
             .await,
         Err(q::Error::Limit)
@@ -338,15 +389,15 @@ async fn prepared_reference_windows_seek_visible_changes_before_hydrating_target
     }
     fs::remove_dir_all(prepared.path().join("segments")).unwrap();
     for (request, expected) in requests.into_iter().zip(expected) {
-        let q::Response::References(actual) = small
-            .read_prepared(
-                access.clone(),
-                prepared.clone(),
-                q::Request::References(request),
-            )
-            .await
-            .unwrap()
-        else {
+        let query = q::Request::References(request);
+        let response = if query.can_use_prepared_index() {
+            small
+                .read_prepared(access.clone(), prepared.clone(), query)
+                .await
+        } else {
+            small.read(access.clone(), operation, query).await
+        };
+        let q::Response::References(actual) = response.unwrap() else {
             panic!()
         };
         assert_eq!(actual.references, expected.references);

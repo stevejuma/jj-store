@@ -1,3 +1,28 @@
+# Ordinary local stack workspace delivery — 5 October 2026
+
+The updated user-approved plan keeps the reviewed UI and operation-pinned reads,
+and replaces the stack write path with normal jj-lib operations. Local settings
+live in `.jj/jj-store/stacks.toml`; named workspaces are megamerges plus
+retained WIP children. Configuration is local to the physical JJ workspace.
+
+First deliver setup/target, discovery/create/switch and apply/unapply together,
+with normal snapshot/ignore handling and independent unfinished work. Verify the
+production UI against a disposable local JJ folder, commit and pause for review.
+Then, after approval, deliver whole-file staging/commits, hunk transfer and the
+remaining graph/menu operations. Enable capabilities only with acceptance.
+
+Use the existing clean JJ change above the verified current parent, preserve UI
+and useful browsing, and retire the stack-only archived-preparation recovery
+path. Historical evidence remains unchanged. Follow JST-LOCAL-005's ordinary
+local profile; manifest-backed execution, publication and visual baselines are
+outside this slice. Lost command responses require state/op-log inspection, not
+automatic retry. Atomic TOML save is not a cross-file JJ transaction.
+
+# Historical backend proposal and delivery evidence
+
+The plan below is preserved as historical context and superseded for ordinary
+local Stacks writes by the plan above.
+
 # jj-store implementation plan
 
 The approved core-browsing simplification replaces the superseded custom graph

@@ -111,6 +111,15 @@ export function productionStacksHttp(cold = false) {
           },
         ],
       });
+    if (path.endsWith("/stacks"))
+      return json({
+        version: 1,
+        operation: stackOperation,
+        revision: 0,
+        active: null,
+        workspaces: [],
+        warning: null,
+      });
     if (path.endsWith("/snapshot"))
       return json({
         ...pin,

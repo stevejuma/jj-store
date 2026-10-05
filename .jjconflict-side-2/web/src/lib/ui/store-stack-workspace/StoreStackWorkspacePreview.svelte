@@ -26,7 +26,9 @@
         />{/if}
       {#if controller.pending}<CommunityProjectsColumnAlert
           title="Outcome awaiting confirmation"
-          description="Check status or retry the original request. New commands stay blocked."
+          description={controller.adapter.retryPending === false
+            ? "Refresh JJ state and inspect operation history before another attempt."
+            : "Check status or retry the original request. New commands stay blocked."}
         />
         <p class="stack-workspace__request">
           Request: {controller.pending.id}
@@ -44,10 +46,16 @@
       {#if controller.pending}<Button
           variant="outline"
           disabled={controller.busy}
-          onclick={() => controller.checkStatus()}>Check status</Button
+          onclick={() => controller.checkStatus()}
+          >{controller.adapter.retryPending === false
+            ? "Refresh JJ state"
+            : "Check status"}</Button
         >{/if}
       <Button
-        disabled={controller.busy || Boolean(controller.validation)}
+        disabled={controller.busy ||
+          Boolean(controller.validation) ||
+          (Boolean(controller.pending) &&
+            controller.adapter.retryPending === false)}
         onclick={() => controller.apply()}
         >{controller.pending
           ? "Retry original command"
