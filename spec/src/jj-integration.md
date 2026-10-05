@@ -400,6 +400,18 @@ TLS and explicit loopback transport rules are identical to ordinary native RPC.
 
 ## Bounded application graphs
 
+Prepared default `all()` log pages MUST retain the selected view's exact JJ
+visible order and compact identity-to-rank lookup during generation admission.
+Deep continuations seek a visible anchor and hydrate only the selected rows;
+they MUST NOT replay preceding graph entries or load a body for lookahead.
+Preserve ordered direct parent edges for this ancestor-closed set, current
+authorization, selected membership, annotations and end-of-history semantics.
+Absent or hidden anchors fail explicitly. Admit all retained arrays and sort
+work before growth; retain no source, credential, stream or request capability.
+Other revsets and evolution keep the bounded upstream traversal until separately
+qualified continuation delivery; this optimization does not claim general graph
+seeking.
+
 The graph executor loads only the service-selected operation through load_at,
 uses a read-only authority and permits physical object access only to the
 captured committed inventory. It runs upstream revset, operation-walk and
@@ -1165,16 +1177,17 @@ index-only generation.
 
 Native retained visibility and reference identities MUST use pre-admitted flat
 arrays rather than one tree node, formatted key and target allocation per
-commit. Keep sorted full commit IDs for exact visible membership, sorted native
-change/commit pairs for lexical reference groups, and compact group boundaries.
-Seek arbitrary lexical anchors without formatting or copying unselected keys.
-The construction reservation covers maximum array capacities, upstream prefix
-bitsets and bounded traversal scratch before growth. Sort in place with charged,
-cancellable comparison batches, rejecting duplicate visible identities. Prefix
-ambiguity and hidden target offsets remain delegated to the pinned upstream
-index. This changes no persisted index, cache receipt or public contract.
-Admission arithmetic for a two-million-row format-6 index must leave room inside
-the unchanged process pool for further admitted work; that arithmetic is not
+commit. Keep exact visible JJ commit order with compact lexical ranks for
+membership and default-log seeking, sorted native change/commit pairs for
+lexical reference groups, and compact group boundaries. Seek arbitrary lexical
+anchors without formatting or copying unselected keys. The construction
+reservation covers maximum array capacities, upstream prefix bitsets and bounded
+traversal scratch before growth. Sort in place with charged, cancellable
+comparison batches, rejecting duplicate visible identities. Prefix ambiguity and
+hidden target offsets remain delegated to the pinned upstream index. This
+changes no persisted index, cache receipt or public contract. Admission
+arithmetic for a two-million-row format-6 index must leave room inside the
+unchanged process pool for further admitted work; that arithmetic is not
 measured RSS, construction or large-fixture qualification.
 
 A verified disk index without its resident selected-view projection follows the

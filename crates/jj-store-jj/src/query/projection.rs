@@ -99,7 +99,7 @@ impl Prepared {
 }
 struct Decorations {
     heads: BTreeSet<b::CommitId>,
-    visible: Vec<m::CommitId>,
+    visible: prepared::visible::Visible<m::CommitId>,
     changes: Box<dyn ChangeIdIndex>,
     references: References,
     bookmarks: BTreeMap<m::CommitId, Vec<Bookmark>>,
@@ -116,6 +116,16 @@ pub(super) struct Reader {
     _memory: Arc<memory::Indexes>,
 }
 impl Reader {
+    pub fn log_window(
+        &self,
+        after: Option<m::CommitId>,
+        limit: usize,
+    ) -> Result<(&[m::CommitId], Option<m::CommitId>)> {
+        self.prepared
+            .decorations
+            .visible
+            .window(after, limit, |amount| self.budget.work(amount))
+    }
     pub fn reference_filter(&self) -> Result<&crate::query::prepared::filters::Reader> {
         self.prepared
             .filter

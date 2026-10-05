@@ -550,6 +550,14 @@ caller's credentials are retained.
 
 ## Rich history query delivery
 
+Prepared `all()` log pages reuse the exact visible JJ order captured during
+preparation, with compact lexical rank lookup for exclusive deep anchors. Source
+hydration follows the selected window; a continuation probe loads no commit
+body. Current binding/authorization, visible-anchor membership, direct parent
+order and terminal-page behavior remain exact. Arrays and sorting share existing
+resident/work admission. Arbitrary filtered revsets and evolution retain their
+separate bounded upstream path pending general continuation delivery.
+
 The registered-folder `query_info` request MUST share the existing local
 operation pin and worker admission. Its catalog excludes unqualified content and
 cross-operation predicates. Standard JJ 0.45.1 aliases MUST evaluate against

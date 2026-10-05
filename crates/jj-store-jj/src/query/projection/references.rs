@@ -10,8 +10,9 @@ pub(super) fn id(id: &b::CommitId) -> Result<m::CommitId> {
 pub(super) fn commit_weight(commits: u32) -> u64 {
     // Flat targets (80), membership IDs (64), group offsets (4), plus 44
     // bytes/row for upstream prefix bitsets and bounded traversal scratch.
+    // Four additional bytes retain lexical ranks over exact visible JJ order.
     // Heads/reverse labels and fixed overhead are reserved independently.
-    u64::from(commits) * 192
+    u64::from(commits) * 196
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]

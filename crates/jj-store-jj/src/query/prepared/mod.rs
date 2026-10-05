@@ -8,6 +8,7 @@ pub(crate) mod filters;
 pub(crate) mod operations;
 mod segment;
 mod tables;
+pub(crate) mod visible;
 use super::{Error, Result, access::Budget};
 use disk::{Disk, Space, Table, io_error};
 use jj_lib::{backend, object_id::ObjectId as _, operation::Operation, store::Store};

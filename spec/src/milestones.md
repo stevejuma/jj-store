@@ -115,7 +115,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                                                       | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                     | E-M13-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                                                     | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                               | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                                                       | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                   | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040,E-READ-041,E-READ-008,E-READ-042,E-READ-043,E-READ-044,E-READ-045,E-READ-046,E-READ-047,E-READ-048,E-READ-049,E-READ-050,E-READ-051,E-READ-052,E-READ-053,E-READ-057,E-READ-058,E-READ-059,E-READ-060,E-READ-061,E-READ-062                                                                                                                                                                                                                                                                                                                              |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040,E-READ-041,E-READ-008,E-READ-042,E-READ-043,E-READ-044,E-READ-045,E-READ-046,E-READ-047,E-READ-048,E-READ-049,E-READ-050,E-READ-051,E-READ-052,E-READ-053,E-READ-057,E-READ-058,E-READ-059,E-READ-060,E-READ-061,E-READ-062,E-READ-063                                                                                                                                                                                                                                                                                                                   |
 | M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                                                     | Independent local/native conversion with complete collaboration history                                                        | Retain eligible conversions; qualify portable anchored profiles and remaining prerequisite gates | E-M13-026,E-M13-027,E-M13-028,E-M13-029                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                                               | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                                             | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                               | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017,E-M13-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -85196,6 +85196,218 @@ entries.
       "Existing source fixtures,Linux checkout,installed binaries,services and unrelated workspaces retained;generated main incremental cache alone removed to recover disk admission."
     ],
     "next": "Commit verified E-READ-062 in main,set landed bookmark,rebase clean bounded-reads continuation onto it,and continue default deep-log paging first before general filtered/evolution continuation work."
+  },
+  {
+    "id": "E-READ-063",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "yxwwpyoo",
+    "kind": "prepared-default-log-rank-seeking-native-and-local",
+    "versions": "Rust1.98.1;jj-lib0.45.1;macOS ARM64.",
+    "formats": "No authoritative object,WAL,index,cache receipt,cursor,DTO or contract changes. Native reservation196 bytes/indexed commit replaces192; local384-byte reservation retained.",
+    "scope": "Complete query library and CLI native_lifecycle/local_browser binaries:shared visible membership serves native/local graphs and reference/prefix consumers,and changed test registrations feed both binaries. Exact before/after first. Package/format/boundary/architecture and changed-document checks only. Root aggregate,WAL/RPC/HTTP/UI/contract generation and complete qualification out of scope.",
+    "requirements": [
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-LOCAL-004",
+      "JST-API-002",
+      "JST-API-004",
+      "JST-CLI-003"
+    ],
+    "files": [
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-cli/tests/local_browser/prepared_log_pages.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/prepared_log_pages.rs",
+      "crates/jj-store-jj/src/local_browser/graphs.rs",
+      "crates/jj-store-jj/src/local_browser/preparation/graph.rs",
+      "crates/jj-store-jj/src/local_browser/preparation/visibility.rs",
+      "crates/jj-store-jj/src/query/graphs.rs",
+      "crates/jj-store-jj/src/query/prepared/mod.rs",
+      "crates/jj-store-jj/src/query/prepared/visible.rs",
+      "crates/jj-store-jj/src/query/projection.rs",
+      "crates/jj-store-jj/src/query/projection/changes.rs",
+      "crates/jj-store-jj/src/query/projection/decorations.rs",
+      "crates/jj-store-jj/src/query/projection/references.rs",
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/prepared_log_pages.rs#prepared_all_log_pages_seek_deep_anchors_under_fixed_work",
+      "crates/jj-store-cli/tests/local_browser/prepared_log_pages.rs#prepared_all_log_pages_seek_deep_anchors_under_fixed_work",
+      "crates/jj-store-jj/src/query/prepared/visible.rs#deep_visible_windows_seek_exact_order_under_fixed_work",
+      "crates/jj-store-jj/src/query/prepared/visible.rs#visible_order_rejects_duplicates_work_exhaustion_and_zero_pages"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (initial before, max_work160)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fixture initially reused protected root change ID; Denied. Corrected fixture to distinct nonroot IDs; prepared-log-native-before-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (corrected traversal before, max_work160)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Deep traversal fails Limit; prepared-log-native-corrected-before-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (initial implementation, max_work160)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Required fresh request admission exceeds initial fixture allowance; prepared-log-native-after-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (diagnostic allowance5000, assertion160 retained)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Diagnostic exposes 219 work/95 metadata nodes/3 object reads; retained160 assertion fails; prepared-log-native-diagnostic-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (controlled parent traversal before, max_work300)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Restored only old traversal from parent while keeping identical projection/admission; deep page fails Limit at calibrated fixture allowance. Implemented traversal restored byte-identically in finally block; prepared-log-native-calibrated-before-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (final exact, calibrated fixture allowance)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 exact regression passes; 224-commit fixture compares independent upstream all() & all(), first/deep/repeated/terminal pages, ordered edges/cursors and excluded anchor. Native work181\u2013219, at most3 object reads under300. prepared-log-native-final-exact-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (corrected traversal before, max_work160)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Deep traversal fails Limit; prepared-log-local-before-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (initial implementation, max_work160)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Required fresh request admission exceeds initial fixture allowance; prepared-log-local-after-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (diagnostic allowance5000, assertion160 retained)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Diagnostic exposes 430 work/5 metadata nodes; retained160 assertion fails; prepared-log-local-diagnostic-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (controlled parent traversal before, max_work512)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Restored only old traversal from parent while keeping identical projection/admission; deep page fails Limit at calibrated fixture allowance. Implemented traversal restored byte-identically in finally block; prepared-log-local-calibrated-before-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_log_pages::prepared_all_log_pages_seek_deep_anchors_under_fixed_work -- --exact --nocapture (final exact, calibrated fixture allowance)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 exact regression passes; 224-commit fixture compares independent upstream all() & all(), first/deep/repeated/terminal pages, ordered edges/cursors and excluded anchor. Local work376\u2013440, at most5 metadata nodes under512. prepared-log-local-final-exact-063.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked (initial implementation)",
+        "result": "pass",
+        "failures": 0,
+        "note": "61 existing tests pass before two new visibility units were added; prepared-log-jj-lib-initial-063.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formats changed Rust packages before final exact runs."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked",
+        "result": "pass",
+        "note": "    Finished `test` profile [unoptimized] target(s) in 5.77s; test result: ok. 63 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.69s; 11.02s; .local/bounded-reads/performance/prepared-log-jj-lib-063.log",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked -- --nocapture",
+        "result": "pass",
+        "note": "    Finished `test` profile [unoptimized] target(s) in 14.04s; test result: ok. 229 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 83.69s; 99.74s; .local/bounded-reads/performance/prepared-log-native-lifecycle-063.log",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked -- --nocapture",
+        "result": "pass",
+        "note": "    Finished `test` profile [unoptimized] target(s) in 17.81s; test result: ok. 38 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 81.72s; 102.37s; .local/bounded-reads/performance/prepared-log-local-browser-063.log",
+        "failures": 0
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-cli --locked",
+        "result": "pass",
+        "note": "    Finished `dev` profile [unoptimized] target(s) in 16.60s; 16.71s; .local/bounded-reads/performance/prepared-log-packages-063.log",
+        "failures": 0
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "note": "; 0.96s; .local/bounded-reads/performance/prepared-log-rust-format-063.log",
+        "failures": 0
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "note": "package boundaries ok (17 packages); 1.27s; .local/bounded-reads/performance/prepared-log-boundaries-063.log",
+        "failures": 0
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "note": "web architecture ok (988 modules); 1.38s; .local/bounded-reads/performance/prepared-log-architecture-063.log",
+        "failures": 0
+      },
+      {
+        "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "docs/implementation-plan.md 105ms (unchanged)\nspec/src/architecture.md 77ms\nspec/src/cli.md 133ms (unchanged)\nspec/src/jj-integration.md 74ms\nspec/src/local-jj.md 54ms (unchanged)\nspec/src/milestones.md 1351ms\n; 3.07s; .local/bounded-reads/performance/prepared-log-docs-format-063.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "\n> @lapismd/jj-store@0.1.0 spec:first /Users/stevejuma/code/lapismd/jj-store-bounded-reads\n> spec-validator first\n\nSpec-first gate passed: 15 protected file(s), 5 canonical chapter(s).\n; 1.66s; .local/bounded-reads/performance/prepared-log-spec-first-063.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "\n> @lapismd/jj-store@0.1.0 spec:validate /Users/stevejuma/code/lapismd/jj-store-bounded-reads\n> spec-validator validate\n\nSpecification validated: 5 validators, 23 chapters, 172 requirements.\n; 2.21s; .local/bounded-reads/performance/prepared-log-spec-validation-063.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "\n> @lapismd/jj-store@0.1.0 check:progress /Users/stevejuma/code/lapismd/jj-store-bounded-reads\n> node scripts/check-progress.mjs\n\nprogress ok (139 tasks; evidence bookkeeping only)\n; 3.46s; .local/bounded-reads/performance/prepared-log-progress-063.log"
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Checking formatting...\nAll matched files use Prettier code style!\n; 3.02s; .local/bounded-reads/performance/prepared-log-docs-check-063.log"
+      },
+      {
+        "command": "python3 compare ledger to parent-evidence-063.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All503 historical evidence entries preserved JSON-identically; E-READ-063 sole new entry."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "330 distinct Rust tests pass:63 query library,229 native lifecycle and38 local browser;two explicit scale tests ignored. Default all() pages now seek captured exact visible JJ order and hydrate selected bodies only. Arbitrary filtered revsets and evolution continuations remain open; no general graph-seek claim or milestone promotion.",
+      "Dedicated kind/predecessor/copy/code-search lookup,retained oversized comparison/change groups/extreme-filter candidates and remaining local application search/index remain delivery work.",
+      "Complete scale/RSS/latency/pressure/cancellation/fault,cold-browser/real-RustFS/release and inherited Help/generated-reference/source-review qualification remains deferred. Installation-reference drift remains a recorded failing qualification gate;debug unwind warning remains unqualified for release.",
+      "Main E-READ-062 landing already verified. Temporary workspace,Linux source,fixtures,installed executables,services and unrelated workspaces retained."
+    ],
+    "next": "Commit verified default-log slice in retained temporary workspace;continue bounded evolution and general filtered-history delivery with fresh source authority and data-only continuations."
   }
 ]
 ```

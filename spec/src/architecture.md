@@ -1,5 +1,13 @@
 # Architecture
 
+Prepared native/local default log pages reuse the selected view's captured JJ
+visible order and compact lexical ranks. Resident admission charges both arrays
+before construction, and sorting is work-charged and cancellable. Page readers
+seek an anchor without preceding graph replay and create fresh authorized source
+readers only for selected bodies. No retained stream, source or credentials
+enter these immutable projections; other revsets and evolution remain separate
+work.
+
 The E-READ-057 through E-READ-061 delivery stack lands into the clean main
 workspace without rewriting its implementation evidence. Combined verification
 covers prepared native/local operation history and bounded native inventory
@@ -942,13 +950,14 @@ capacity before growth. No persisted format or repository authority changes.
 
 Native resident visibility and ordered reference groups use flat full-ID arrays
 and compact group boundaries. Their conservative per-indexed-commit admission is
-192 bytes, including bounded traversal/prefix scratch, instead of 512 bytes for
-trees, formatted keys and per-group allocations. Native format-6 decoding
-retains its separate reservation. In-place construction sorting charges work and
-checks cancellation in finite batches; lexical pages allocate only selected keys
-and targets. The two-million-row admission regression checks room for further
-admitted state within the unchanged 1GiB process pool. It does not prove RSS,
-elapsed time, complex-frontier peak usage or complete large-scale serving.
+196 bytes, including compact log ranks and bounded traversal/prefix scratch,
+instead of 512 bytes for trees, formatted keys and per-group allocations. Native
+format-6 decoding retains its separate reservation. In-place construction
+sorting charges work and checks cancellation in finite batches; lexical pages
+allocate only selected keys and targets. The two-million-row admission
+regression checks room for further admitted state within the unchanged 1GiB
+process pool. It does not prove RSS, elapsed time, complex-frontier peak usage
+or complete large-scale serving.
 
 Native resident retention charges framed index allocations, the selected-view
 projection and the bounded database cache. Complete filter files remain charged

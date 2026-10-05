@@ -188,6 +188,15 @@ pub(super) async fn load(
 }
 
 impl Prepared {
+    pub(in super::super) fn log_window(
+        &self,
+        after: Option<m::GitSha1Id>,
+        limit: usize,
+        budget: &Budget,
+    ) -> Result<(&[m::GitSha1Id], Option<m::GitSha1Id>)> {
+        self.resident.visibility.log_window(after, limit, budget)
+    }
+
     pub(in super::super) fn operation_history(
         &self,
     ) -> Option<Arc<prepared::operations::history::Graph>> {

@@ -271,6 +271,41 @@ pub(super) async fn run(
                     )
                 })?;
             budget.check()?;
+            if expression.trim() == "all()"
+                && let Some(prepared) = &access.prepared
+            {
+                budget.authorize(access.as_ref()).await?;
+                let after = match page.after {
+                    Some(ObjectKey::Commit(id)) => Some(id),
+                    None => None,
+                    _ => return Err(Error::Invalid),
+                };
+                let (ids, next) = prepared.log_window(after, page.limit, budget)?;
+                let mut nodes = Vec::with_capacity(ids.len());
+                for id in ids {
+                    let commit = repo
+                        .store()
+                        .get_commit_async(&b::CommitId::from_bytes(id.as_bytes()))
+                        .await
+                        .map_err(native::map_backend)?;
+                    let node = CommitNode {
+                        commit: describe(repo, &commit, access, budget).await?,
+                        edges: commit
+                            .parent_ids()
+                            .iter()
+                            .map(|parent| {
+                                Ok(Edge {
+                                    target: cid(parent)?,
+                                    kind: EdgeKind::Direct,
+                                })
+                            })
+                            .collect::<Result<_>>()?,
+                    };
+                    budget.output(&node)?;
+                    nodes.push(node);
+                }
+                return Ok((Nodes::Log(nodes), next.map(ObjectKey::Commit)));
+            }
             let set = resolved.evaluate(repo).map_err(|_| Error::Unavailable)?;
             let mut stream = set.stream_graph();
             let mut nodes = vec![];

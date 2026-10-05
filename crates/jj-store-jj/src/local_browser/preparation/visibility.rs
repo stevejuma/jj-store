@@ -14,7 +14,7 @@ use jj_lib::{
 
 pub(super) struct Visibility {
     heads: BTreeSet<b::CommitId>,
-    visible: BTreeSet<m::GitSha1Id>,
+    visible: crate::query::prepared::visible::Visible<m::GitSha1Id>,
     changes: Box<dyn ChangeIdIndex>,
     pub(in super::super) references: BTreeMap<String, VisibleChange>,
     bookmarks: BTreeMap<m::GitSha1Id, Vec<Bookmark>>,
@@ -26,6 +26,15 @@ pub(in super::super) struct VisibleChange {
     pub(in super::super) commits: Vec<m::GitSha1Id>,
 }
 impl Visibility {
+    pub(super) fn log_window(
+        &self,
+        after: Option<m::GitSha1Id>,
+        limit: usize,
+        budget: &Budget,
+    ) -> Result<(&[m::GitSha1Id], Option<m::GitSha1Id>)> {
+        self.visible
+            .window(after, limit, |amount| budget.work(amount))
+    }
     pub(super) async fn build(
         index: &DefaultReadonlyIndex,
         source: &LocalSource,
@@ -78,7 +87,7 @@ impl Visibility {
             .evaluate_revset(&expression, source.loader.store())
             .map_err(|_| Error::Unavailable)?;
         let mut stream = set.commit_change_ids();
-        let mut visible = BTreeSet::new();
+        let mut visible = Vec::with_capacity(index.num_commits() as usize);
         let mut references = BTreeMap::new();
         while let Some((id, change)) = stream.try_next().await.map_err(|_| Error::Unavailable)? {
             if visible.len() % 256 == 0 {
@@ -90,7 +99,7 @@ impl Visibility {
             }
             let id = git_id(&id)?;
             let change = m::ChangeId::from_slice(change.as_bytes()).map_err(|_| Error::Corrupt)?;
-            visible.insert(id);
+            visible.push(id);
             references
                 .entry(format!("change:{change}"))
                 .or_insert_with(|| VisibleChange {
@@ -100,6 +109,9 @@ impl Visibility {
                 .commits
                 .push(id);
         }
+        let visible = crate::query::prepared::visible::Visible::new(visible, |amount| {
+            source.budget.work(amount)
+        })?;
         for targets in references.values_mut() {
             source.budget.work(targets.commits.len() * 32)?;
             targets.commits.sort_unstable();

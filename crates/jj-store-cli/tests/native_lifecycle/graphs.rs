@@ -1,3 +1,5 @@
+#[path = "prepared_log_pages.rs"]
+mod prepared_log_pages;
 use super::*;
 use jj_store_jj::query as q;
 use jj_store_service::reads::{CommittedRead, OpenRead, ReadLimits};

@@ -281,13 +281,19 @@ cumulative bytes fill their admission. Independent descriptor allowance admits
 the existing 16 MiB record format under a 32 MiB cumulative ceiling. Dedicated
 kind lookup and the remaining deep/indexed read features still require delivery.
 
-### Deferred complete qualification
+E-READ-063 retains exact prepared native/local visible order and compact lexical
+ranks for default `all()` history pages. Seek deep anchors directly, preserve
+the ancestor-closed set's ordered direct edges, and hydrate only the selected
+page. General filtered revsets/evolution and the other retained/indexed readers
+remain delivery work; this default-query optimization does not complete them.
 
 E-READ-062 lands delivery through E-READ-061 into the clean main workspace and
 verifies the combined prepared-operation and inventory surface there. Preserve
 all original evidence and existing fixtures/services. Keep bounded-reads open
 and resume performance delivery from the verified landing, beginning with deep
 history continuations. Complete qualification remains a separate later slice.
+
+### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:
 

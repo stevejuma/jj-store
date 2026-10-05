@@ -35,8 +35,7 @@ impl ChangeIdIndex for Changes {
                 *state = if self
                     .decorations
                     .visible
-                    .binary_search(&id(commit).map_err(|e| IndexError::Other(Box::new(e)))?)
-                    .is_ok()
+                    .contains(&id(commit).map_err(|e| IndexError::Other(Box::new(e)))?)
                 {
                     ResolvedChangeState::Visible
                 } else {

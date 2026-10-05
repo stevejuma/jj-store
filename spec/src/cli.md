@@ -1,5 +1,11 @@
 # CLI and server commands
 
+Native/local default-log continuation regressions compare exact deep pages with
+the independent upstream graph path under a fixed ordinary work budget. The
+prepared generation retains visible identity order and compact ranks; returned
+rows, ordered edges, annotations, invalid anchors and final empty pages remain
+exact. Full scale and general filtered/evolution paging qualification stay open.
+
 Native remote operation/copy enumeration uses bounded manifest-pinned RPC scan
 pages. Its complete-result adapter admits matching IDs before growth and rejects
 truncation, duplicate identities, snapshot replacement and total scan/deadline

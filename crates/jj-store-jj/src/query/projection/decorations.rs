@@ -64,13 +64,7 @@ impl Decorations {
             visible.push(commit);
             references.push(change, commit)?;
         }
-        references::sort(&mut visible, budget)?;
-        for pair in visible.windows(2) {
-            budget.work(1)?;
-            if pair[0] == pair[1] {
-                return Err(budget.fail(Error::Corrupt));
-            }
-        }
+        let visible = prepared::visible::Visible::new(visible, |amount| budget.work(amount))?;
         references.finish(budget)?;
         drop(stream);
         drop(set);
