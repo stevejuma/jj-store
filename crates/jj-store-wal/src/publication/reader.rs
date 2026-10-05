@@ -29,12 +29,40 @@ pub(super) async fn inventory_page(
     let mut paths = crate::catalog::ScanBudget::new(768, 8 * 1024 * 1024);
     let page = catalog.page(root, after, limit, &mut paths).await?;
     let used = 8 * 1024 * 1024 - paths.remaining_bytes();
+    inventory_window(&records, page, used).await
+}
+
+pub(super) async fn inventory_additions_page(
+    store: Arc<dyn ObjectStore>,
+    repository: RepositoryId,
+    before: Option<RecordRef>,
+    after: Option<RecordRef>,
+    anchor: Option<RecordDigest>,
+    limit: usize,
+) -> Result<InventoryPage> {
+    if before.is_none() || after.is_none() {
+        return Err(Error::Corrupt("missing committed inventory"));
+    }
+    let records = Records::new(store, repository);
+    let catalog = Catalog::new(records.clone());
+    let mut paths = crate::catalog::ScanBudget::new(768, 8 * 1024 * 1024);
+    let page = catalog
+        .additions_page(before, after, anchor, limit, &mut paths)
+        .await?;
+    let used = 8 * 1024 * 1024 - paths.remaining_bytes();
+    inventory_window(&records, page, used).await
+}
+
+async fn inventory_window(
+    records: &Records,
+    page: crate::catalog::Page,
+    used: u64,
+) -> Result<InventoryPage> {
     let mut budget = crate::catalog::ScanBudget::new(256, 32 * 1024 * 1024 - used);
     let mut keys = Vec::with_capacity(page.entries.len());
     let mut last = None;
     for (key, reference) in page.entries {
-        let node: VerifiedNode = match budget.get(&records, reference, RecordKind::Inventory).await
-        {
+        let node: VerifiedNode = match budget.get(records, reference, RecordKind::Inventory).await {
             Ok(node) => node,
             Err(error) if crate::catalog::ScanBudget::admission(&error) && !keys.is_empty() => {
                 return Ok(InventoryPage { keys, next: last });

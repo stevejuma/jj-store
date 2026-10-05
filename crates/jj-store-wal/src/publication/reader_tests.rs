@@ -6,6 +6,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 struct CountedStore {
     inner: jj_store_object::memory::MemoryStore,
     reads: AtomicUsize,
+    descriptors: AtomicUsize,
 }
 #[async_trait::async_trait]
 impl ObjectStore for CountedStore {
@@ -14,6 +15,9 @@ impl ObjectStore for CountedStore {
     }
     async fn get(&self, key: &Key, range: Option<ByteRange>) -> jj_store_object::Result<Download> {
         self.reads.fetch_add(1, Ordering::Relaxed);
+        if key.as_str().contains("/inventories/") {
+            self.descriptors.fetch_add(1, Ordering::Relaxed);
+        }
         self.inner.get(key, range).await
     }
     async fn put(
@@ -24,6 +28,54 @@ impl ObjectStore for CountedStore {
     ) -> jj_store_object::Result<WriteOutcome> {
         self.inner.put(key, condition, upload).await
     }
+}
+
+#[tokio::test]
+async fn inventory_additions_seek_changed_paths_and_skip_unchanged_descriptors() {
+    let store = Arc::new(CountedStore::default());
+    let records = Records::new(store.clone(), REPO);
+    let catalog = Catalog::new(records.clone());
+    let mut entries = BTreeMap::new();
+    for n in 0..4096 {
+        entries.insert(
+            object_key(key(n)),
+            put_node(&records, key(n), BTreeSet::new()).await,
+        );
+    }
+    let before = catalog.update(None, entries.clone()).await.unwrap();
+    let additions = (9000..9003)
+        .map(|n| (object_key(key(n)), key(n)))
+        .collect::<BTreeMap<_, _>>();
+    let mut changes = BTreeMap::new();
+    for (digest, key) in &additions {
+        changes.insert(*digest, put_node(&records, *key, BTreeSet::new()).await);
+    }
+    let after = catalog.update(before, changes).await.unwrap();
+    store.reads.store(0, Ordering::Relaxed);
+    store.descriptors.store(0, Ordering::Relaxed);
+    let mut anchor = None;
+    let mut actual = Vec::new();
+    loop {
+        let page = inventory_additions_page(store.clone(), REPO, before, after, anchor, 2)
+            .await
+            .unwrap();
+        actual.extend(page.keys);
+        anchor = page.next;
+        if anchor.is_none() {
+            break;
+        }
+    }
+    assert_eq!(actual, additions.into_values().collect::<Vec<_>>());
+    let reads = store.reads.load(Ordering::Relaxed);
+    let descriptors = store.descriptors.load(Ordering::Relaxed);
+    eprintln!("inventory additions: {reads} reads, {descriptors} descriptors");
+    assert!(
+        reads <= 128,
+        "addition lookup scanned unrelated catalog paths"
+    );
+    // The first page's lookahead is catalog-only. Descriptors load once.
+    assert_eq!(descriptors, 3, "unchanged descriptors must not be hydrated");
+    assert_eq!(catalog.entries(before, 4096).await.unwrap(), entries);
 }
 const REPO: RepositoryId = RepositoryId::new([1; 16]);
 fn key(n: u64) -> ObjectKey {
@@ -258,6 +310,32 @@ async fn inventory_pages_continue_before_byte_admission_without_losing_descripto
         .expect("byte-limited window must retain a continuation");
     assert_eq!(actual.last(), Some(&next));
     let rest = inventory_page(store.clone(), REPO, root, Some(next), 256)
+        .await
+        .unwrap();
+    actual.extend(rest.keys.into_iter().map(object_key));
+    assert!(rest.next.is_none());
+    assert_eq!(actual, entries.keys().copied().collect::<Vec<_>>());
+    let before = catalog
+        .update(
+            None,
+            BTreeMap::from([(
+                object_key(key(89_999)),
+                put_node(&records, key(89_999), BTreeSet::new()).await,
+            )]),
+        )
+        .await
+        .unwrap();
+    let after = catalog.update(before, entries.clone()).await.unwrap();
+    let page = inventory_additions_page(store.clone(), REPO, before, after, None, 256)
+        .await
+        .unwrap();
+    assert!(!page.keys.is_empty() && page.keys.len() < 3);
+    let next = page
+        .next
+        .expect("addition descriptor admission must preserve continuation");
+    let mut actual = page.keys.into_iter().map(object_key).collect::<Vec<_>>();
+    assert_eq!(actual.last(), Some(&next));
+    let rest = inventory_additions_page(store, REPO, before, after, Some(next), 256)
         .await
         .unwrap();
     actual.extend(rest.keys.into_iter().map(object_key));

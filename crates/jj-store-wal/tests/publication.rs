@@ -211,6 +211,68 @@ async fn fixture() -> (Arc<FaultStore>, Coordinator) {
     (store, c)
 }
 
+#[tokio::test]
+async fn inventory_additions_bind_checked_selections_and_exclude_staged_candidates() {
+    let (store, c) = fixture().await;
+    let before = c.read().await.unwrap();
+    committed(c.publish(&request(120, &[0], 1)).await.unwrap());
+    let after = c.read().await.unwrap();
+    let page = after
+        .inventory_additions_page(&before, store.clone(), None, 8)
+        .await
+        .unwrap();
+    assert_eq!(page.keys, vec![ObjectKey::Operation(op(1))]);
+    assert!(page.next.is_none());
+    store.arm("manifest.json", Fault::Before);
+    assert!(matches!(
+        c.publish(&request(121, &[1], 2)).await.unwrap(),
+        PublishOutcome::OutcomeUnknown { .. }
+    ));
+    let unchanged = c.read().await.unwrap();
+    let page = unchanged
+        .inventory_additions_page(&after, store.clone(), None, 8)
+        .await
+        .unwrap();
+    assert!(page.keys.is_empty() && page.next.is_none());
+    let mut foreign = unchanged.manifest().clone();
+    foreign.repository = RepositoryId::new([99; 16]);
+    let bytes = serde_json::to_vec(&foreign).unwrap();
+    let upload = StagedUpload::from_bytes(&bytes, 128 * 1024).await.unwrap();
+    store
+        .put(
+            &Key::new(format!("repos/{}/manifest.json", foreign.repository)).unwrap(),
+            Condition::Absent,
+            &upload,
+        )
+        .await
+        .unwrap();
+    let other = ManifestSnapshot::load(store.clone(), foreign.repository)
+        .await
+        .unwrap();
+    assert!(matches!(
+        other
+            .inventory_additions_page(&after, store.clone(), None, 8)
+            .await,
+        Err(wal::Error::Corrupt("inventory comparison scope"))
+    ));
+    foreign = unchanged.manifest().clone();
+    foreign.epoch = EpochId::new([99; 16]);
+    let upload = StagedUpload::from_bytes(&serde_json::to_vec(&foreign).unwrap(), 128 * 1024)
+        .await
+        .unwrap();
+    let path = c.manifest_key();
+    let version = store.head(&path).await.unwrap().version;
+    store
+        .put(&path, Condition::Matches(version), &upload)
+        .await
+        .unwrap();
+    let other = c.read().await.unwrap();
+    assert!(matches!(
+        other.inventory_additions_page(&after, store, None, 8).await,
+        Err(wal::Error::Corrupt("inventory comparison scope"))
+    ));
+}
+
 async fn replication_fixture() -> (Arc<FaultStore>, Coordinator) {
     let store = Arc::new(FaultStore::default());
     let c = coordinator(store.clone());

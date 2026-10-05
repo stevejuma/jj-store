@@ -27,6 +27,12 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-066 adds bounded inventory addition pages over selected immutable roots.
+Changed-path traversal and exact baseline retention replace unrelated descriptor
+reads at this primitive. Integration into source-scoped complete operation/copy
+projections is the next delivery slice; cold preparation and paged RPC semantics
+remain separate from this optimization and from complete qualification.
+
 E-READ-065 adds exact prepared predecessor occurrence lookup for native/local
 evolution, skipping unrelated bookmark-operation bodies while preserving the
 first legacy boundary and complete JJ ordering. Disposable history format3

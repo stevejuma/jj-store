@@ -1,5 +1,12 @@
 # Architecture
 
+Immutable inventory addition reads pair selected catalog roots, skip unchanged
+references and retain a bounded radix frontier. They hydrate only additions,
+preserve exact baseline descriptor selections and reject removed/replaced
+entries. Complete consumption from the start can advance a rebuildable kind
+projection; partial pages grant no complete-root certification. Authorization,
+source scope and result admission remain the consumer's responsibilities.
+
 Prepared evolution continuations share the selected compact operation graph and
 its bounded lifetime. Checkpoints retain commit/operation identifiers and walk
 positions with pre-admitted allocation leases; live readers own independent

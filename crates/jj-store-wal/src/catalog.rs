@@ -10,6 +10,7 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 
 const LEAF_CAPACITY: usize = 32;
+mod additions;
 mod page;
 pub use page::{Page, ScanBudget};
 #[derive(Clone, Serialize, Deserialize)]

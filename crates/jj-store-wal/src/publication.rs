@@ -375,6 +375,31 @@ pub struct ManifestSnapshot {
     version: VersionToken,
 }
 impl ManifestSnapshot {
+    /// Compare checked selections within one repository/authority epoch. Only
+    /// full traversal from None proves that the complete base is retained.
+    /// Callers must reauthorize and impose their own whole-traversal deadline.
+    pub async fn inventory_additions_page(
+        &self,
+        base: &Self,
+        store: Arc<dyn ObjectStore>,
+        after: Option<RecordDigest>,
+        limit: usize,
+    ) -> Result<InventoryPage> {
+        if self.manifest.repository != base.manifest.repository
+            || self.manifest.epoch != base.manifest.epoch
+        {
+            return Err(Error::Corrupt("inventory comparison scope"));
+        }
+        reader::inventory_additions_page(
+            store,
+            self.manifest.repository,
+            base.manifest.inventory,
+            self.manifest.inventory,
+            after,
+            limit,
+        )
+        .await
+    }
     /// Bounded selected descriptor window. Callers must authorize before and
     /// after traversal. No current selection or full closure is reconstructed.
     pub async fn inventory_page(

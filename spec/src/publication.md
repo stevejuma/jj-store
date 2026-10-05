@@ -649,6 +649,20 @@ identity, so sparse kind filters may produce empty windows with a continuation.
 Never represent such a window as the complete inventory. No selected root or
 authoritative format changes.
 
+Checked snapshots may compare their immutable inventory roots within one
+repository and authority epoch. Addition pages skip equal record references and
+visit only changed radix paths, validating that every visited baseline entry
+retains its exact descriptor reference. Leaf/branch transitions partition only
+one admitted leaf; the frontier admits at most 1,024 entries. Use the same
+exclusive digest anchors, page-size, read and encoded-byte limits as ordinary
+inventory windows, and hydrate only newly selected descriptors. Missing or
+replaced baseline entries fail closed. A nonempty admitted prefix may continue;
+zero-progress exhaustion remains an error. Only complete traversal from the
+start proves that a derived baseline was retained; a partial or anchored page
+cannot certify an entire root. Callers retain current authorization, deadline
+and epoch checks. This optimization cannot select staged objects, replace
+publication/recovery closure audits or change any persisted format.
+
 Application readers may verify one object against a checked manifest's immutable
 inventory catalog root without materializing the whole repository. The radix
 path and inventory record identity are verified; each dependency followed by a
