@@ -2040,6 +2040,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/repos/{repo}/working-tree/observe": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_working_tree_observe"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repositories/conversion/preview": {
     parameters: {
       query?: never;
@@ -6279,6 +6296,52 @@ export interface components {
       path: string;
       fingerprint: string;
     };
+    ObservedWorkingTree: {
+      snapshot: components["schemas"]["WorkingTreeSnapshot"];
+      changes: components["schemas"]["WorkingTreeChange"][];
+      /** Format: uint32 */
+      obstacle_count: number;
+    };
+    WorkingTreeSnapshot: {
+      /** Format: uint32 */
+      version: number;
+      repository: components["schemas"]["RepositoryId"];
+      /** Format: uint64 */
+      binding_generation: number;
+      operation: components["schemas"]["OperationId"];
+      view: components["schemas"]["ViewId"];
+      workspace: string;
+      working_copy: components["schemas"]["GitSha1Id"];
+      trees: components["schemas"]["GitSha1Id"][];
+      tree_labels: string[];
+      physical_workspace: components["schemas"]["RecordDigest"];
+      metadata_fingerprint: components["schemas"]["RecordDigest"];
+      physical_fingerprint: components["schemas"]["RecordDigest"];
+    };
+    WorkingTreeChange: {
+      path: string;
+      status: components["schemas"]["WorkingTreeChangeStatus"];
+      before: components["schemas"]["WorkingTreeFileState"] | null;
+      after: components["schemas"]["WorkingTreeFileState"] | null;
+    };
+    /** @enum {string} */
+    WorkingTreeChangeStatus: "added" | "modified" | "deleted";
+    WorkingTreeFileState: {
+      kind: components["schemas"]["WorkingTreeFileKind"];
+      /** Format: uint64 */
+      bytes: number;
+      content_digest: components["schemas"]["RecordDigest"];
+    };
+    WorkingTreeFileKind:
+      | {
+          executable: boolean;
+          /** @constant */
+          type: "file";
+        }
+      | {
+          /** @constant */
+          type: "symlink";
+        };
     ConversionPreview: {
       /** Format: uint32 */
       version: number;
@@ -33078,6 +33141,146 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["WorkingFile"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description stale_work, cursor_reset, intent_conflict or work_replication_unsupported. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_working_tree_observe: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ObservedWorkingTree"];
         };
       };
       /** @description Invalid request, unknown query field or invalid cursor. */

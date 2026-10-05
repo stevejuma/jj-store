@@ -32668,6 +32668,162 @@
         }
       }
     },
+    "/v1/local/repos/{repo}/working-tree/observe": {
+      "post": {
+        "operationId": "local_working_tree_observe",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ObservedWorkingTree" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "stale_work, cursor_reset, intent_conflict or work_replication_unsupported.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0
+                  },
+                  "binding_generation": {
+                    "type": "integer",
+                    "format": "uint64",
+                    "minimum": 0
+                  },
+                  "operation": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{128}$",
+                    "minLength": 128,
+                    "maxLength": 128
+                  }
+                },
+                "additionalProperties": false,
+                "required": ["version", "binding_generation", "operation"]
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/local/repositories/conversion/preview": {
       "post": {
         "operationId": "local_repository_conversion_preview",
@@ -44857,6 +45013,121 @@
           "workspace",
           "path",
           "fingerprint"
+        ]
+      },
+      "ObservedWorkingTree": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "snapshot": { "$ref": "#/components/schemas/WorkingTreeSnapshot" },
+          "changes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WorkingTreeChange" },
+            "maxItems": 4096
+          },
+          "obstacle_count": {
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        },
+        "required": ["snapshot", "changes", "obstacle_count"]
+      },
+      "WorkingTreeSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "repository": { "$ref": "#/components/schemas/RepositoryId" },
+          "binding_generation": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "operation": { "$ref": "#/components/schemas/OperationId" },
+          "view": { "$ref": "#/components/schemas/ViewId" },
+          "workspace": { "type": "string" },
+          "working_copy": { "$ref": "#/components/schemas/GitSha1Id" },
+          "trees": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GitSha1Id" }
+          },
+          "tree_labels": { "type": "array", "items": { "type": "string" } },
+          "physical_workspace": { "$ref": "#/components/schemas/RecordDigest" },
+          "metadata_fingerprint": {
+            "$ref": "#/components/schemas/RecordDigest"
+          },
+          "physical_fingerprint": {
+            "$ref": "#/components/schemas/RecordDigest"
+          }
+        },
+        "required": [
+          "version",
+          "repository",
+          "binding_generation",
+          "operation",
+          "view",
+          "workspace",
+          "working_copy",
+          "trees",
+          "tree_labels",
+          "physical_workspace",
+          "metadata_fingerprint",
+          "physical_fingerprint"
+        ]
+      },
+      "WorkingTreeChange": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/WorkingTreeChangeStatus" },
+          "before": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/WorkingTreeFileState" },
+              { "type": "null" }
+            ]
+          },
+          "after": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/WorkingTreeFileState" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": ["path", "status", "before", "after"]
+      },
+      "WorkingTreeChangeStatus": {
+        "type": "string",
+        "enum": ["added", "modified", "deleted"]
+      },
+      "WorkingTreeFileState": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "$ref": "#/components/schemas/WorkingTreeFileKind" },
+          "bytes": { "type": "integer", "format": "uint64", "minimum": 0 },
+          "content_digest": { "$ref": "#/components/schemas/RecordDigest" }
+        },
+        "required": ["kind", "bytes", "content_digest"]
+      },
+      "WorkingTreeFileKind": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "executable": { "type": "boolean" },
+              "type": { "type": "string", "const": "file" }
+            },
+            "required": ["type", "executable"]
+          },
+          {
+            "type": "object",
+            "properties": { "type": { "type": "string", "const": "symlink" } },
+            "required": ["type"],
+            "additionalProperties": false
+          }
         ]
       },
       "ConversionPreview": {

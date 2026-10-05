@@ -71,8 +71,12 @@ its selected operation and tree, and captures sparse scope plus actual global
 and repository-exclude rules. The service observes these witnesses before and
 after the physical scan and rejects metadata/policy changes or revoked access.
 It never initializes missing state. Canceled scans retain admission until their
-worker exits. Scan transport and active-combination qualification remain
-separate steps before these reads can reach the UI.
+worker exits. The registered `working-tree/observe` transport takes an exact
+operation and expected binding generation, resolves the folder on the server,
+and returns bounded change summaries and read fingerprints. It excludes raw
+contents and private policy bytes/paths. Active-combination assignment and
+production UI integration remain separate steps before these physical reads
+populate Unstaged.
 
 ## Portability and limits
 

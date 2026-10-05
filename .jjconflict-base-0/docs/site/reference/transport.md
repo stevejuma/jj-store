@@ -31,6 +31,15 @@ anchors are refused. The client checks the nested range as well as the envelope
 and refuses oversized or non-advancing pages. This additive read variant grants
 no stack mutation or physical checkout capability.
 
+Local `working-tree/observe` is a read-only POST with a version, expected
+registered binding generation and exact operation. The server resolves the
+folder and compares bounded current checkout/sparse/ignore witnesses around a
+two-pass physical scan. Its complete response contains changed-path summaries,
+operation/view/WC identities and read fingerprints, with no physical contents or
+global ignore-policy paths/bytes. Stale bindings or checkout state fail rather
+than returning a partial scan. These fingerprints do not issue staging tokens,
+assign changes to a combination or enable checkout commands.
+
 ## Mutations
 
 Typed commands carry a stable request identity, exact intent and applicable

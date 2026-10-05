@@ -7,6 +7,7 @@ mod index_tasks;
 mod reviews;
 mod work;
 mod working_copy;
+mod working_tree;
 use axum::{
     Json,
     extract::{Path, State as ExtractState},
@@ -101,6 +102,7 @@ pub(super) fn router() -> Router<Arc<State>> {
         .merge(index_tasks::router())
         .merge(work::router())
         .merge(working_copy::router())
+        .merge(working_tree::router())
         .merge(conversion::router())
         .merge(agents::router())
         .merge(reviews::router())
@@ -319,6 +321,9 @@ pub(crate) async fn binding(
     state: &State,
     repo: m::RepositoryId,
 ) -> Result<Arc<dyn local::Access>> {
+    Ok(bound_folder(state, repo).await?)
+}
+async fn bound_folder(state: &State, repo: m::RepositoryId) -> Result<Arc<Binding>> {
     let manager = manager(state)?;
     let check = manager.clone();
     let (folder, generation) = blocking(state, move || check.folder(repo).map_err(map)).await?;
@@ -709,6 +714,7 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
     agents::document(document);
     reviews::document(document);
     working_copy::document(document);
+    working_tree::document(document);
     conversion::document(document);
     events::document(document);
 }

@@ -42,6 +42,8 @@ mod scoped_differences;
 mod stacks;
 #[path = "local_browser/working_copy.rs"]
 mod working_copy_acceptance;
+#[path = "local_browser/working_tree.rs"]
+mod working_tree_acceptance;
 use jj_store_cli::local_browser::LocalFolders;
 use jj_store_service::local_browser::FolderProvider;
 use std::{fs, process::Command};
@@ -1666,6 +1668,7 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     );
     drop(stream);
     let mut review_samples = working_copy_acceptance::qualify(&endpoint, id, &folder).await;
+    review_samples.extend(working_tree_acceptance::qualify(&endpoint, id, &folder).await);
     for (kind, exact) in [
         ("workspaces", None),
         ("workspaces", Some("default")),

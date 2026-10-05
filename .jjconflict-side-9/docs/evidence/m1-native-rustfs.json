@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "image": "rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f",
+  "topology": "single container, one data volume, independent HTTP client connections",
+  "rounds": 20,
+  "contenders": 16,
+  "started_at": "2026-09-26T23:10:14.409423+00:00",
+  "tests": [
+    {
+      "name": "concurrent_create_exactly_one_winner",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 2.371
+    },
+    {
+      "name": "concurrent_cas_exactly_one_winner",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 4.028
+    },
+    {
+      "name": "stale_tokens_do_not_overwrite",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.179
+    },
+    {
+      "name": "size_range_checksum_and_partial_rejection",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 1.975
+    },
+    {
+      "name": "interrupted_upload_is_not_published",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.033
+    },
+    {
+      "name": "discarded_acknowledgement_resolves_by_read",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.253
+    },
+    {
+      "name": "process_kill_restart_preserves_data_and_fences_stale_token",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 3.358
+    },
+    {
+      "name": "conditional_delete_cannot_remove_new_incarnation",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 0.038
+    },
+    {
+      "name": "compiled_rust_native_transport",
+      "result": "pass",
+      "failures": 0,
+      "seconds": 9.647
+    }
+  ],
+  "limitations": [
+    "No multi-node/load-balancer qualification",
+    "Discarded acknowledgement simulates an unknown client outcome, not a faulty RustFS network",
+    "Publication/ACL enforcement belongs to later project adapters"
+  ],
+  "image_id": "sha256:6063afb658b569520afbac082418f17b369fa72f4702a6a90a4a010b13117124",
+  "rust_client": {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "jj-store-jj",
+      "--test",
+      "rustfs",
+      "--locked",
+      "--",
+      "--ignored",
+      "--nocapture"
+    ],
+    "exit_code": 0,
+    "output": "\nrunning 1 test\nRust adapter: 8x8 create/CAS races, stale tokens, range, native metadata, 8 MiB streamed binary duplicate and verified GET, real dropped acknowledgement: passed\ntest real_rustfs_transport_and_native_blob_contract ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.41s\n\nwarning: unused import: `tokio::io::AsyncReadExt`\n --> crates/jj-store-object/src/memory.rs:7:5\n  |\n7 | use tokio::io::AsyncReadExt as _;\n  |     ^^^^^^^^^^^^^^^^^^^^^^^\n  |\n  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default\n\nwarning: `jj-store-object` (lib) generated 1 warning\n   Compiling jj-store-jj v0.1.0 (/Users/stevejuma/code/lapismd/jj-store/crates/jj-store-jj)\n    Finished `test` profile [unoptimized] target(s) in 2.72s\n     Running tests/rustfs.rs (target/debug/deps/rustfs-99c3319f38f09a46)\n"
+  },
+  "failures": 0,
+  "result": "pass"
+}

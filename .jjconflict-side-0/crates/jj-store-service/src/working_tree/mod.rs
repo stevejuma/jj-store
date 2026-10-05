@@ -1,8 +1,13 @@
 //! Private physical observations. Neither a JJ snapshot nor command authority.
+mod contracts;
 mod observer;
 mod projection;
 mod walk;
 use crate::stack_workspace::PhysicalWorkspaceId;
+pub use contracts::{
+    ObserveWorkingTree, ObservedWorkingTree, WorkingTreeChange, WorkingTreeFileKind,
+    WorkingTreeFileState, WorkingTreeSnapshot,
+};
 use jj_store_model::{RecordDigest, RepositoryId};
 pub use observer::{Observation, Observer};
 pub use projection::{Change, ChangeKind, Obstacle, Projection, project, project_sparse};

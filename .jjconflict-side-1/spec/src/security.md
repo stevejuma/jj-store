@@ -335,6 +335,14 @@ credentials. Broader permissions, current revocation, retention/purge and export
 policy stay separately gated in M18.7; reading historical hashes does not bypass
 current visibility.
 
+The LocalTrusted physical working-tree observation endpoint accepts an exact
+operation and expected registered binding generation, never an arbitrary folder
+path. Administrative installation admission and the existing same-origin,
+literal-loopback, protocol and media-type checks apply. The captured binding is
+rechecked throughout the scan and before response delivery; revoked or replaced
+folders return no partial inventory. Ignore-policy source paths and bytes stay
+private. Read fingerprints grant no command, staging or checkout authority.
+
 Enabled configuration requires native authority and LocalTrusted Write or Admin;
 authenticated, read-only and filesystem-only enablement is rejected. A selected
 OpenCode read-only API endpoint must be a literal loopback HTTP(S) origin with

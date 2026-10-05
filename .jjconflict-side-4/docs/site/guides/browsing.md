@@ -37,6 +37,18 @@ or unavailable while the file list stays usable. Bookmark and workspace lists
 load bounded windows; use their continuation controls to browse more entries. An
 explicit selected name remains usable outside the first window.
 
+## Local Stacks
+
+Stacks browses branches and bounded histories for registered local Git-backed JJ
+folders. Select a branch or commit to inspect its changed files and exact diffs.
+These reads retain the selected code snapshot and do not snapshot physical edits
+or change checkout files.
+
+Named combinations, applying branches and displaying complete Unstaged work are
+still under qualification. Physical-read transport does not make those controls
+available; the page must retain its unavailable state until the complete local
+workflow is supported.
+
 ## Prepare history when requested
 
 If a history view requires preparation, use **Prepare graph index** for the

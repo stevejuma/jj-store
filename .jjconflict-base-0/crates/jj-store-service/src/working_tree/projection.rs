@@ -2,7 +2,9 @@
 use super::*;
 use jj_store_jj::local_browser::working_tree as baseline;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, schemars::JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[schemars(rename = "WorkingTreeChangeStatus")]
 pub enum ChangeKind {
     Added,
     Modified,

@@ -52,7 +52,7 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Private current WC observation proves exact checkout trees and sparse scope, captures bounded global/repository ignore policy and verifies repeated metadata and heads without initializing state. No scan transport or executor is enabled.",
+      "reason": "Documented registered working-tree observation: exact operation and expected binding generation, server-resolved root, complete current checkout/sparse/ignore proof and changed-path summaries without contents or command tokens. Active-combination and production UI integration remain pending.",
       "fingerprint": "87e7ff8d239f1eca49af57e54e0e24c307bc8d6c0c2b41c7bcc38cfd082dd43c"
     }
   },
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Private service observation joins repeated current WC metadata/policy/head witnesses to two-pass physical inventory under an eight-second deadline and bounded admission retained through canceled blocking scans. Sparse excluded paths remain obstacles, no transport, snapshot or execution capability.",
-      "fingerprint": "1250c5046762acb4a0940b531ee14f5ebe293225354346ae659999189829df7f"
+      "reason": "Owned version-1 physical observation request/summary contracts retain exact operation/view/WC and metadata/physical fingerprints, bound complete changes to 4096, and omit private policy, contents and executable selections.",
+      "fingerprint": "a9cd74a410472a415ac85c6cbef1ad2413adf11bb213647edadca632cc47a5b9"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed executable local stack_history query and generated response inventory; opaque query-bound continuation and raw-anchor refusal retain existing admission.",
-      "fingerprint": "0302ba6730fd79f2bb858a4bb98b0dd8fbf317249c9edc173c4b13865a361093"
+      "reason": "Registered LocalTrusted administrative working-tree observation resolves the root from current device registration, rechecks the captured binding, and exposes strict path-free inputs and safe bounded response summaries through the endpoint inventory.",
+      "fingerprint": "c094f760f9494bc350796095eba5f0194713318b8d1a9eafe06e2b322d82fedc"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Production Stacks now uses an explicitly injected registered-folder read owner, bounded operation-pinned histories and exact diffs; physical scans and durable execution remain future stages.",
-      "fingerprint": "52891ddd8210cda3b33c5c19fab8abc9ba90ab624e6c727ae583fc245bcd1d10"
+      "reason": "Generated client contracts add the registered physical observation route. The production Stacks page still only browses pinned code; the manual distinguishes this read transport from complete Unstaged, named combinations and writable controls.",
+      "fingerprint": "a0bea38f66e6949af8cc55d6cb7ca3c5b545681e275b69e5416527c342dacc7e"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated OpenAPI client for the additive local stack-history query; registered HTTP capture inventory independently validates the actual responses.",
-      "fingerprint": "cb590d2896ea9bfa37cf4fc41576a3433980eeca2171be054b9afcd9558514ec"
+      "reason": "Regenerated OpenAPI and client types for registered physical working-tree observation; actual cold filesystem responses now join the existing complete registered-route capture inventory.",
+      "fingerprint": "5fb483b76836a48900b10f41356402b98fff332e0ac0fc160c9721dfc231c50f"
     }
   }
 ]

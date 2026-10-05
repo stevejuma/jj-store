@@ -17595,6 +17595,230 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## ObservedWorkingTree
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "snapshot": {
+      "$ref": "#/components/schemas/WorkingTreeSnapshot"
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkingTreeChange"
+      },
+      "maxItems": 4096
+    },
+    "obstacle_count": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "snapshot",
+    "changes",
+    "obstacle_count"
+  ]
+}
+```
+
+## WorkingTreeSnapshot
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "binding_generation": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "view": {
+      "$ref": "#/components/schemas/ViewId"
+    },
+    "workspace": {
+      "type": "string"
+    },
+    "working_copy": {
+      "$ref": "#/components/schemas/GitSha1Id"
+    },
+    "trees": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/GitSha1Id"
+      }
+    },
+    "tree_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "physical_workspace": {
+      "$ref": "#/components/schemas/RecordDigest"
+    },
+    "metadata_fingerprint": {
+      "$ref": "#/components/schemas/RecordDigest"
+    },
+    "physical_fingerprint": {
+      "$ref": "#/components/schemas/RecordDigest"
+    }
+  },
+  "required": [
+    "version",
+    "repository",
+    "binding_generation",
+    "operation",
+    "view",
+    "workspace",
+    "working_copy",
+    "trees",
+    "tree_labels",
+    "physical_workspace",
+    "metadata_fingerprint",
+    "physical_fingerprint"
+  ]
+}
+```
+
+## WorkingTreeChange
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/components/schemas/WorkingTreeChangeStatus"
+    },
+    "before": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkingTreeFileState"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "after": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkingTreeFileState"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "path",
+    "status",
+    "before",
+    "after"
+  ]
+}
+```
+
+## WorkingTreeChangeStatus
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "added",
+    "modified",
+    "deleted"
+  ]
+}
+```
+
+## WorkingTreeFileState
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "$ref": "#/components/schemas/WorkingTreeFileKind"
+    },
+    "bytes": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "content_digest": {
+      "$ref": "#/components/schemas/RecordDigest"
+    }
+  },
+  "required": [
+    "kind",
+    "bytes",
+    "content_digest"
+  ]
+}
+```
+
+## WorkingTreeFileKind
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "executable": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "file"
+        }
+      },
+      "required": [
+        "type",
+        "executable"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "symlink"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
+```
+
 ## ConversionPreview
 
 ```text

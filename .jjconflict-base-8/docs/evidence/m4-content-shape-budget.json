@@ -1,0 +1,119 @@
+{
+  "recorded_at": "2026-09-27T04:26:31.165527+00:00",
+  "host": {
+    "system": "Darwin",
+    "release": "27.0.0",
+    "machine": "arm64"
+  },
+  "command": [
+    "/Users/stevejuma/code/lapismd/jj-store/target/release/examples/content_qualification"
+  ],
+  "binary_sha256": "ec533c01bbe3d60f61a1422d3d1a2f36b1a042b112dba51d88bd458a8e533598",
+  "cargo_lock_sha256": "4fc78780f3556da9661dff3049e635481a9925766d9d8196d7c2a2f4745fbbac",
+  "scenario": "content",
+  "scope": "Encoded immutable fixture storage (large content uses disk spools) and production native query executor; no service authorization, network, RustFS or browser cost. Whole-process memory includes fixture generation and encoded source objects.",
+  "ceilings": {
+    "peak_process_bytes": 1073741824,
+    "cpu_seconds": 60,
+    "wall_seconds": 180
+  },
+  "process": {
+    "exit_code": 0,
+    "wall_seconds": 7.702588542015292,
+    "cpu_seconds": 7.359787,
+    "peak_rss_bytes": 111181824
+  },
+  "native": {
+    "profile": "jj-native-0.45.1-v1",
+    "revision": "7c41cdeb16b6b321c64e789a966b6adf723816a5",
+    "build": "release",
+    "limits": {
+      "max_metadata_nodes": 4000000,
+      "max_merge_terms": 65,
+      "max_tree_entries": 50000,
+      "max_parent_edges": 256,
+      "max_work": 1000000,
+      "max_blob_bytes": 268435456,
+      "max_read_bytes": 536870912,
+      "max_output_bytes": 16777216,
+      "timeout_millis": 30000
+    },
+    "runs": [
+      {
+        "name": "dense_tree_at_limit",
+        "result": "pass",
+        "entries": 50000,
+        "arity": 1,
+        "rows": 500,
+        "stats": {
+          "metadata_nodes": 400044,
+          "object_reads": 2,
+          "object_bytes": 2250676,
+          "work": 50508
+        },
+        "millis": 59
+      },
+      {
+        "name": "dense_tree_over_limit",
+        "result": "pass",
+        "entries": 50001,
+        "arity": 1,
+        "error": "Limit",
+        "millis": 21
+      },
+      {
+        "name": "merge_at_limit",
+        "result": "pass",
+        "entries": 5000,
+        "arity": 65,
+        "rows": 500,
+        "stats": {
+          "metadata_nodes": 120178,
+          "object_reads": 4,
+          "object_bytes": 684504,
+          "work": 325512
+        },
+        "millis": 98
+      },
+      {
+        "name": "merge_over_limit",
+        "result": "pass",
+        "entries": 5000,
+        "arity": 1025,
+        "error": "Limit",
+        "millis": 0
+      },
+      {
+        "name": "cumulative_nodes_over_limit",
+        "result": "pass",
+        "max_nodes": 10,
+        "error": "Limit",
+        "millis": 0
+      },
+      {
+        "name": "stream_blob_at_limit",
+        "result": "pass",
+        "verified_bytes": 268435456,
+        "returned_bytes": 268435456,
+        "max_chunk_bytes": 65536,
+        "millis": 2533
+      },
+      {
+        "name": "verified_tail_range",
+        "result": "pass",
+        "verified_bytes": 268435456,
+        "returned_bytes": 16,
+        "max_chunk_bytes": 16,
+        "millis": 2385
+      },
+      {
+        "name": "blob_over_limit",
+        "result": "pass",
+        "error": "Limit",
+        "millis": 7
+      }
+    ]
+  },
+  "stderr": "",
+  "passed": true
+}
