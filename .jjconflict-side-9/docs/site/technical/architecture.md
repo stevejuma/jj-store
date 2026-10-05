@@ -109,6 +109,15 @@ contracts, with no executable stack commands or HTTP mutation capability.
 Recoverable checkout and named-combination execution remain qualification work;
 opening a view does not create or snapshot a combination.
 
+Owned recovery records separate stable physical/profile scope from current code,
+binding and combination generations. Exact status binds the original request ID
+and intent digest. Public results validate the preview and historical receipt
+together and exclude installation paths, principal, private execution archives
+and retention references. Pending discovery is actor scoped, excludes terminal
+outcomes and admits at most 128 records within an eight-MiB response. The server
+journal projects these records from existing private state; runtime admission,
+HTTP routes and durable cancellation coordination remain separate work.
+
 A private physical scanner supplies bounded, revalidated observations for future
 checkout preparation. It fingerprints exact bytes, modes, paths and workspace
 identity, including ignored and untracked obstacles. It reads symlink targets

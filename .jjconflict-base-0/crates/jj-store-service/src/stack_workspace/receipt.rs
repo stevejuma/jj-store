@@ -88,4 +88,17 @@ impl Receipt {
             }
         )
     }
+    /// Original preparation/publication/checkout discovery only; terminal
+    /// receipts remain available by exact status but cannot occupy this list.
+    pub fn pending(&self) -> bool {
+        matches!(
+            self.state,
+            ReceiptState::Prepared
+                | ReceiptState::PublicationUnknown
+                | ReceiptState::Published {
+                    checkout: CheckoutState::Required | CheckoutState::Blocked { .. },
+                    ..
+                }
+        )
+    }
 }

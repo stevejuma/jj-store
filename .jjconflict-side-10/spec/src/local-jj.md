@@ -736,6 +736,22 @@ rejection and retired undone/abandoned operations. Neither completed nor retired
 receipts authorize command execution. Discovery and durable journal storage
 remain separate provider qualification.
 
+Public command recovery MUST identify the original repository, physical
+workspace, JJ workspace and code profile independently of current binding,
+operation and combination generations. Exact status additionally binds the
+original request ID and intent digest; cancellation input also names the exact
+preparation. Authentication and registration remain separate runtime admission.
+Versioned public results MUST contain only the validated original preview,
+historical receipt and replay flag, never a private execution archive, physical
+inventory, retention key, principal or installation path. A result validates
+receipt-to-preview linkage before projection. Pending discovery MUST be
+actor/scoped, complete within the journal's 128-record bound, unique by request
+ID and exclude completed, rejected and retired receipts. Public results retain
+an eight-MiB response bound. These records and journal projection methods do not
+initialize missing state, revalidate against a newer code snapshot, execute a
+command or authorize HTTP/UI capabilities. Cancellation contract validation does
+not yet qualify its coordinated runtime implementation.
+
 The installation-private stack command journal MUST explicitly create its
 bounded state outside repository checkouts. Open, status and pending discovery
 MUST NOT initialize missing state. Its scope binds installation, repository,

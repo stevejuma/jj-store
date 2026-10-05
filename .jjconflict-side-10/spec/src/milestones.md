@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Wire original setup, command discovery/status and production lifecycle | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Wire original setup, command discovery/status and production lifecycle | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -92218,6 +92218,272 @@ entries.
   ],
   "next": "Implement the owned bounded discovery/command-result interface and registered runtime, then local HTTP and initial-setup controller lifecycle. Continue all remaining approved stages.",
   "summary": "Fresh live review confirms the retained composition still aligns. Documentation formatting, source-review/build/link closure, mapped spec-first, specification and 142 task progress checks pass. All 517 historical raw evidence bodies remain byte-identical. No backend/UI source or capability changes; production writes and remaining seven-stage acceptance stay incomplete."
+},
+{
+  "id": "E-M21-037",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "unzloutz",
+  "kind": "Owned public command recovery contracts and validated existing-state journal projections",
+  "versions": "JJ 0.45.1/Git SHA-1 profile; version-1 service contracts. Real registered setup/execution acceptance uses isolated folders and explicit test/development binaries.",
+  "formats": "Additive owned public result/status/pending/cancellation-identity contracts, 128-command and eight-MiB response bounds. Existing private journal version 6, combination version 1 and native/companion/WAL formats are unchanged. No HTTP route or generated transport change.",
+  "files": [
+    "crates/jj-store-cli/tests/stack_registered_preparation/setup.rs",
+    "crates/jj-store-server/src/stack_command_journal/public.rs",
+    "crates/jj-store-server/src/stack_command_journal.rs",
+    "crates/jj-store-server/tests/stack_command_journal/public.rs",
+    "crates/jj-store-server/tests/stack_command_journal.rs",
+    "crates/jj-store-service/src/stack_workspace/mod.rs",
+    "crates/jj-store-service/src/stack_workspace/receipt.rs",
+    "crates/jj-store-service/src/stack_workspace/recovery.rs",
+    "crates/jj-store-service/tests/stack_command_recovery_contracts.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/reference/transport.md",
+    "docs/site/technical/architecture.md",
+    "docs/site/technical/lifecycle.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/mutations.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-MUT-001",
+    "JST-CLI-004",
+    "JST-UI-020",
+    "JST-DOC-002",
+    "JST-GOV-002",
+    "JST-GOV-003"
+  ],
+  "before": "Existing service protocol contracts pass 9 tests. New recovery-contract tests initially fail compilation with 17 missing-type diagnostics; new server projection tests fail compilation with 12 missing-method diagnostics. After implementation 5 recovery parents pass and one schema test fails because it reads definitions rather than the emitted $defs. The lookup is corrected without weakening schema/private-data assertions.",
+  "scope": "Stable repository/physical/JJ-workspace/profile scope independent of live generations; exact original ID/digest/preparation binding, preview/receipt linkage and strict public serialization. Existing journal status/pending project only owned public results with actor checks, bounded unique discovery, terminal exclusion and reopen/read-only evidence. Actual registered setup verifies projection while retained private execution exists and proves these reads leave code/disk state unchanged. Receipt pending predicate is centralized with unchanged semantics. Cancellation validation grants no execution authority.",
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test stack_workspace_contracts",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-before.log: Before state: 9 pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test stack_command_recovery_contracts",
+      "result": "fail",
+      "failures": 17,
+      "note": "public-command-red.log: 17 compiler diagnostics for missing public contracts; no test body ran."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal public::",
+      "result": "fail",
+      "failures": 12,
+      "note": "public-command-server-red.log: 12 compiler diagnostics for missing projection methods; no test body ran."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test stack_command_recovery_contracts --test stack_workspace_contracts",
+      "result": "fail",
+      "failures": 1,
+      "note": "public-command-service.log: 5 recovery parents pass, 1 schema lookup fails; schema assertions retained."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test stack_command_recovery_contracts public_schema_excludes_private_execution_and_current_snapshots -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-schema-exact.log: Exact original runtime regression passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test stack_command_recovery_contracts --test stack_workspace_contracts",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-service-after.log: 6 recovery and 9 protocol parents pass; valid oversized preview is rejected without partial output."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal public::",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-server-exact.log: All 3 exact projection parents pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal -- --test-threads=1",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-journal-family.log: All 16 affected journal parents pass using explicit serial fixture lane."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation setup::registered_setup_creates_real_merge_wip_and_selects_combination_only_after_native_checkout -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-registered-exact.log: Actual registered setup with retained archive, safe projections and unchanged disk/code reads passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation -- --test-threads=1",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-registered-family.log: All 19 actual registered authorization/preparation/execution/recovery parents pass."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-boundaries.log: 17 package boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-architecture.log: 1090 modules pass."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-ownership.log: Owned UI boundary passes."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-governance.log: 50 governance parents pass."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-docs.log: 139 documentation files, source reviews, build and links/anchors pass."
+    },
+    {
+      "command": "pnpm docs:review services \"Reviewed stable original command recovery scope, validated preview and historical receipt linkage, bounded actor-scoped pending discovery and cancellation identity inputs. The transport reference distinguishes these service contracts from unimplemented routes and coordinated cancellation.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "tool result: Owning source fingerprint refreshed after page review."
+    },
+    {
+      "command": "pnpm docs:review configuration \"Reviewed existing-state journal projections for original command status and pending requests, actor/scope checks, terminal history and private execution exclusion. Lifecycle documentation keeps registration admission, coordinated cancellation and HTTP composition outside this primitive.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "tool result: Owning source fingerprint refreshed after page review."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "tool result: Rust formatting applied."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md docs/site/technical/architecture.md docs/site/reference/transport.md docs/site/technical/lifecycle.md spec/src/local-jj.md spec/src/mutations.md spec/src/cli.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-format.log: Changed documents formatted; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-coverage-format.log: Source review formatting; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/maintenance/coverage.json docs/site/technical/architecture.md docs/site/reference/transport.md docs/site/technical/lifecycle.md spec/src/local-jj.md spec/src/mutations.md spec/src/cli.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-format-check.log: Changed-document formatting passes; ledger excluded."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_command_journal -- --test-threads=1",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-journal-library.log: 7 parents pass; 2 isolated process helpers remain intentionally ignored in the ordinary listing."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_combinations --test stack_local_execution --test stack_local_preparation -- --test-threads=1",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-server-consumers.log: 8 combination, 9 execution and 8 preparation parents pass; 2 process helpers intentionally ignored by ordinary listing and exercised by their owning parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-service -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-clippy.log: Strict all-target no-deps checks pass for the three affected Rust packages."
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-rust-format.log: Rust formatting passes."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 2,
+      "note": "public-command-spec-first.log: Gate initially reports 2 missing mapped architecture/documentation chapters; canonical requirements are added before exact rerun."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-spec-validate.log: Five validators, 23 chapters and 173 requirements pass before mapped-chapter additions; final rerun follows."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-progress.log: 142 task bookkeeping checks pass; no milestone is marked complete."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-mapped-format.log: Mapped canonical chapters formatted; ledger excluded."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/public-command-ledger-audit.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "tool result: 519 evidence objects; all 518 historical raw bodies byte-identical. Repeated after final entry update."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-spec-first-after.log: Exact repaired gate passes: 14 protected files and 6 canonical chapters."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-spec-validate-after.log: Five validators, 23 chapters and 173 requirements pass after canonical mapped-chapter additions."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-mapped-format-check.log: Mapped chapter formatting passes; ledger excluded."
+    },
+    {
+      "command": "python3 -u .local/stacks-backend-evidence/public-command-rust-checks.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "tool result: Sequential affected Rust checks all return exit 0."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "public-command-progress-after.log: Final 142 task bookkeeping checks and historical body audit are repeated after this evidence update."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Bounded current workspace discovery and owned runtime composition, local HTTP/generated contracts, production setup/controller recovery and coordinated cancellation remain incomplete. No writable production capability is enabled.",
+    "Dirty-work capture, named combinations/switching, membership/rebuild, whole-file/server-issued hunk transfer, graph/deletion/scoped undo, linked-native and full cold UI qualification remain approved and required.",
+    "Root aggregate, UI/Storybook, RustFS, transport-generation and publication lanes are outside this Rust protocol/projection slice. No installed executable/service replacement, existing repository reset/migration, screenshot comparison or baseline update. Port 6057 remains untouched. Existing __eh_frame debug-linker warning remains unsuppressed. Default-parallel full server qualification is not claimed."
+  ],
+  "next": "Implement bounded owned current-workspace discovery and registered runtime, then local HTTP and the original setup/pending/status/cancel production lifecycle. Continue every remaining approved stage.",
+  "summary": "82 unique focused Rust parents pass across recovery/protocol contracts, journal integration/library, direct execution consumers and actual registered execution. Strict all-target no-deps checks for service/server/CLI, 50 governance tests, source boundaries, architecture, UI ownership, documentation, formatting, repaired mapped specification and progress checks pass. All 518 historical raw ledger bodies are preserved. Public recovery projection is qualified; runtime/transport and complete backend/UI integration remain unfinished.",
+  "tests": []
 }
 ]
 ```

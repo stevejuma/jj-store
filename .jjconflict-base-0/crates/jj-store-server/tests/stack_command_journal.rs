@@ -8,6 +8,8 @@ mod fixture;
 use fixture::*;
 #[path = "stack_command_journal/admission.rs"]
 mod admission;
+#[path = "stack_command_journal/public.rs"]
+mod public;
 
 #[test]
 fn retained_preparation_survives_reopen_and_conflicting_request_reuse() {

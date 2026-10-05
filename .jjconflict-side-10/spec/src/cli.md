@@ -1,5 +1,14 @@
 # CLI and server commands
 
+The private stack journal exposes validated service-owned command status and
+pending projections. Exact lookup authenticates the original actor, stable
+physical/profile scope, request and intent before projection; it does not accept
+a current code or combination generation. Pending discovery is actor scoped,
+bounded and excludes terminal receipts. Public results strip private execution
+archives, retention and physical evidence. These methods open only existing
+private state and add no route, CLI command or writable UI capability. Runtime
+registration admission and coordinated cancellation remain separate work.
+
 The existing cold filesystem-server registration fixture now qualifies the
 registered working-tree observation route alongside physical-file Save. It
 builds only development/test outputs, registers an isolated real Git-backed JJ

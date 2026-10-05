@@ -293,6 +293,14 @@ manual cannot present private coordination as an enabled production workflow.
 
 ## Initial stack setup documentation boundary
 
+Recovery documentation MUST distinguish owned public command projections from
+runtime and HTTP composition. It explains exact stable scope/ID/digest lookup,
+original preview/receipt validation, bounded actor-scoped pending discovery and
+terminal history. Public results exclude private execution and do not install
+current workspace snapshots. Service and server source review fingerprints MUST
+cover this projection boundary. Cancellation identity validation does not
+qualify durable cancellation execution or enable production controls.
+
 The local technical guide records initial merge/WIP preparation and original
 registered execution separately from dirty-work capture, membership/switching,
 command transport and writable UI. Setup preserves unsnapshotted bytes in place;

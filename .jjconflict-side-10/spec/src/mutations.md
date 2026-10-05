@@ -1102,3 +1102,12 @@ incomplete checkout remains pending recovery, and retired commands cannot be
 executed through replay. Unknown publication cannot be treated as rejection or a
 new command. Persistent provider/journal and transport qualification are
 required before these records enable production mutation controls.
+
+The owned command-recovery DTOs retain stable physical/profile scope separately
+from live generations. Status binds original ID and intent digest; cancellation
+also binds the original preparation and accepts no replacement selection or
+command. Public command results validate complete preview/receipt linkage and
+exclude private server execution records. Pending discovery rejects terminal
+receipts, duplicate IDs, scope mismatch and resource-limit violations. These
+contracts grant no execution or cancellation authority; executable admission,
+durable cancellation coordination and HTTP composition remain separate gates.

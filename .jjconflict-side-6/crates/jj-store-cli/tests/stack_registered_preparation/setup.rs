@@ -167,6 +167,33 @@ async fn registered_setup_creates_real_merge_wip_and_selects_combination_only_af
         .unwrap()
         .unwrap();
     assert!(record.execution.unwrap().combination.is_some());
+    let status_request = s::StatusRequest {
+        version: 1,
+        scope: s::RecoveryScope::from(&f.request.selection),
+        request_id: f.request.request_id,
+        intent_digest: f.request.intent_digest,
+    };
+    let public = journal.public_status(f.f.actor, &status_request).unwrap();
+    public.validate().unwrap();
+    assert_eq!(public.result.as_ref().unwrap().preview, prepared.preview);
+    let public_json = serde_json::to_value(&public).unwrap();
+    let result_fields = public_json["result"].as_object().unwrap();
+    assert_eq!(result_fields.len(), 4);
+    assert!(!result_fields.contains_key("execution"));
+    assert!(!result_fields.contains_key("principal"));
+    let pending_request = s::PendingRequest {
+        version: 1,
+        scope: status_request.scope.clone(),
+    };
+    assert_eq!(
+        journal
+            .public_pending(f.f.actor, &pending_request)
+            .unwrap()
+            .commands[0]
+            .preview,
+        prepared.preview
+    );
+    assert_eq!(f.f.folder.state(), before);
     let replay = f.prepare(&journal).await.unwrap();
     assert!(replay.replayed);
     assert_eq!(replay.preview, prepared.preview);

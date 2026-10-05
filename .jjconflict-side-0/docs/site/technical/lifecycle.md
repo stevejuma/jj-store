@@ -45,6 +45,15 @@ state. Exact retries retain the original preview and outcome; conflicting reuse
 is rejected. Capacity admission reserves room for later receipt states rather
 than evicting earlier requests.
 
+Public journal projections preserve original status across live generation
+changes. They authenticate the original actor and stable physical/profile scope
+before returning a validated preview/receipt pair. Pending discovery includes
+prepared, publication-unknown and required/blocked checkout states, and excludes
+terminal results. Exact status retains terminal history. Neither read creates
+private state or changes code, disk or combination selection. The registered
+runtime must separately admit folder access before exposing these projections;
+HTTP composition and coordinated unpublished cancellation remain unimplemented.
+
 Atomic replacement and sync select journal state. Loss after replacement leaves
 an unknown outcome; reopen and exact replay recover the selected receipt. A
 publication-unknown or incomplete-checkout receipt prevents another publication

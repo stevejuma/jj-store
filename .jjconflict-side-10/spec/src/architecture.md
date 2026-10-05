@@ -1045,6 +1045,15 @@ selects it after native checkout but before final acknowledgement. Browsing
 never creates this state. HTTP command transport, writable controller wiring,
 membership/switching and dirty-work capture remain separate qualification gates.
 
+The public recovery boundary projects service-owned original preview/receipt
+pairs from the existing installation journal. Stable repository/physical/JJ
+workspace/profile scope is independent of live generations; exact status binds
+the original actor, ID and digest. Pending discovery is bounded and excludes
+terminal history. Public results MUST exclude private execution archives,
+retention keys, principals and installation paths. These contracts and
+projections do not create state or enable transport, runtime cancellation or
+production mutations; current workspace discovery remains separate work.
+
 The follow-up UI/backend review retains the seven-stage delivery scope. The next
 production checkpoint composes this qualified initial setup through
 service-owned bounded workspace discovery and public command-result interfaces,

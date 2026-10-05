@@ -11,6 +11,7 @@ mod checkout;
 mod combination;
 mod execution;
 mod inventory;
+mod public;
 mod transition;
 mod tree_checkout;
 use catalog::Catalog;
@@ -308,19 +309,7 @@ impl StackCommandJournal {
         Ok(catalog
             .records
             .into_iter()
-            .filter(|r| {
-                r.principal == principal
-                    && matches!(
-                        r.receipt.state,
-                        s::ReceiptState::Prepared
-                            | s::ReceiptState::PublicationUnknown
-                            | s::ReceiptState::Published {
-                                checkout: s::CheckoutState::Required
-                                    | s::CheckoutState::Blocked { .. },
-                                ..
-                            }
-                    )
-            })
+            .filter(|r| r.principal == principal && r.receipt.pending())
             .collect())
     }
 }

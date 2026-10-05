@@ -42,6 +42,14 @@ assign changes to a combination or enable checkout commands.
 
 ## Mutations
 
+The service defines versioned stack command status, pending and cancellation
+inputs for future local transport. Status requires the original stable scope,
+request ID and intent digest; cancellation also names the original preparation.
+Results contain the original validated preview, historical receipt and replay
+flag. They never carry private execution data or a replacement current snapshot.
+These contracts and journal projections do not add HTTP routes or enable stack
+mutations. Cancellation identity validation is not an execution protocol.
+
 Typed commands carry a stable request identity, exact intent and applicable
 expected versions. The authenticated actor is derived by the service; caller
 labels cannot assign authorship. Preparation/preview and publication are
