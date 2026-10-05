@@ -1145,6 +1145,8 @@ mod content_acceptance;
 
 #[path = "native_lifecycle/browsing.rs"]
 mod browsing_acceptance;
+#[path = "native_lifecycle/path_metadata.rs"]
+mod path_metadata_acceptance;
 
 #[path = "native_lifecycle/http_browsing.rs"]
 mod http_browsing_acceptance;

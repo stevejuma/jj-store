@@ -1,5 +1,10 @@
 # CLI and server commands
 
+Directory row metadata acceptance covers native service and real local JJ merge
+fixtures. First-parent history must retain unchanged-path attribution, identify
+changes integrated at a merge and preserve bounded unavailable results past the
+existing ancestry cap. These reads change no installed CLI command.
+
 Selected-file diff acceptance covers both the native service fixture and the
 actual local JJ folder reader with longer UTF-8 files and sparse, separated
 edits. Verify complete before/after reconstruction and retain bounded refusal

@@ -834,13 +834,13 @@ for older Prepared/StoredResult V1 receipts.
 
 Reference lookup exposes native bookmark merge terms and visible changes without
 inventing a default bookmark or deleted history. Recursive path reads stop after
-the requested window and report unavailable last-change metadata when merge or
-work budgets prevent exact attribution. Operation grouping uses recorded
-predecessors first, preserves ambiguous lineage and requires explicit parent
-selection for merge operations. Diff summaries retain exact before/after terms,
-copy and rename sources, conflicts and binary/oversized reasons; selected file
-content remains a separate verified read. These read-only queries cannot stage
-objects, reconcile heads or publish repository state.
+the requested window and report unavailable last-change metadata when ancestry
+or work budgets prevent exact first-parent attribution. Operation grouping uses
+recorded predecessors first, preserves ambiguous lineage and requires explicit
+parent selection for merge operations. Diff summaries retain exact before/after
+terms, copy and rename sources, conflicts and binary/oversized reasons; selected
+file content remains a separate verified read. These read-only queries cannot
+stage objects, reconcile heads or publish repository state.
 
 Native RPC V1 snapshot messages include the repository code-state version in
 addition to epoch, global publication position and heads. Administration clients
@@ -1019,10 +1019,14 @@ semantics; deeper content remains separately admitted.
 
 Optional path attribution is a separately budgeted request. Within a window the
 reader shares one parent-chain traversal and retains upstream path-value and
-merge semantics; exhaustion reports unavailable attribution without invented
-last-change commits. Lightweight local commit headers expose native commit data
-without requiring visible-change/evolution evaluation. Scoped file content
-requires exact commit/path/file agreement before opening a stream.
+merge-term semantics. First-parent attribution includes merge commits: changed
+terms belong to the integration commit; equal terms continue along its first
+parent. The existing 64-visit cap and request admission remain unchanged; no
+second-parent history or merge-base reconstruction is requested. Exhaustion
+reports unavailable attribution without invented last-change commits.
+Lightweight local commit headers expose native commit data without requiring
+visible-change/evolution evaluation. Scoped file content requires exact
+commit/path/file agreement before opening a stream.
 
 Workspace references are projected directly from the pinned view's workspace
 map. Shared targets are hydrated once per window; target annotations on a

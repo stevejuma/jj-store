@@ -90282,6 +90282,190 @@ entries.
       "Design Core publication and registry-resolved consumer acceptance, visual baselines, advanced-query optimization and full scale/RSS/RustFS/release qualification remain deferred. Root aggregate, Rust/UI product suites and browser reruns are out of scope for this evidence-only advance; existing product and cold browser evidence is retained."
     ],
     "next": "Commit main integration evidence with Jujutsu and advance codex/bounded-reads-landed. Keep bounded-reads and codex-preview open for follow-up work; no runtime churn or unrelated-workspace landing."
+  },
+  {
+    "id": "E-READ-086",
+    "date": "2026-10-05",
+    "tasks": ["M4.1", "M4.6", "M4.9", "M4.10", "M13.4"],
+    "requirements": [
+      "JST-API-001",
+      "JST-API-005",
+      "JST-UI-003",
+      "JST-JJ-003",
+      "JST-LOCAL-004"
+    ],
+    "kind": "Bounded merge path metadata and directory navigation skeletons",
+    "revision": "enclosing Jujutsu change yolnqxty",
+    "before": "Original Linux master/arch metadata requests returned HTTP200 with merge-unavailable for all 23 arch rows and all 41 root rows. File names loaded independently; Description and Updated were blank because the first-parent attribution walk stopped at its selected merge. Folder navigation retained a repository snapshot, so the UI skipped its initial-only skeleton while the new directory read was pending.",
+    "scope": "Remove only the unconditional merge stop from native and local path attribution. Compare exact path terms to the first parent: changed paths are attributed to their integration commit; unchanged paths continue through that parent. Keep one shared window traversal, 64 visits and existing work/bytes/deadline/authorization admission. Display the existing directory skeleton whenever its files are loading, including retained snapshots; keep pagination and optional attribution independent. No backend redesign or new indexes.",
+    "formats": "No DTO/schema/route/generated client, stored native identity, companion, index, cursor, WAL, manifest, receipt, credential or installed CLI change. Existing Merge enum value retained for compatibility; Budget and NotRequested results remain unchanged. First-parent attribution deliberately identifies branch integration, not an exhaustive search across every parent.",
+    "versions": "Same pinned macOS ARM64, JJ/jj-lib 0.45.1, rustc 1.98.1, Node 26.9.0, pnpm 10.32.1, Svelte 5.57.1, Storybook 10.5.7 and Vitest 4.1.11 development setup as E-READ-084/085.",
+    "files": [
+      "catalog/components/store-application/StoreDirectoryNavigation.stories.svelte",
+      "catalog/fixtures/RepositoryDirectoryNavigationFixture.svelte",
+      "crates/jj-store-cli/tests/local_browser/bounded_reads.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/path_metadata.rs",
+      "crates/jj-store-cli/tests/native_lifecycle.rs",
+      "crates/jj-store-jj/src/local_browser/paths.rs",
+      "crates/jj-store-jj/src/query/content/paths.rs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/path_metadata.rs#path_metadata_crosses_merges_and_retains_the_ancestry_bound",
+      "crates/jj-store-cli/tests/local_browser/bounded_reads.rs#local_path_metadata_crosses_merges_using_first_parent_history"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_crosses_merges_and_retains_the_ancestry_bound --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial native-before.log had two test-harness receiver errors; wrapped the CommittedRead in Arc before establishing the product baseline."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_crosses_merges_and_retains_the_ancestry_bound --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "native-before-corrected.log: exact regression returned Unavailable/Merge for a.txt."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser local_path_metadata_crosses_merges_using_first_parent_history --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "local-before.log: real JJ merge fixture returned Unavailable/Merge for a.txt."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreDirectoryNavigation.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "skeleton-before.log: folder navigation with a retained snapshot had no Loading repository files skeleton."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_crosses_merges_and_retains_the_ancestry_bound --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-after.log: merge integration and unchanged-path attribution passed; 70 unchanged descendants retained Budget beyond the existing 64-visit cap."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser local_path_metadata_crosses_merges_using_first_parent_history --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-after.log: one real local JJ merge regression passed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreDirectoryNavigation.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "stories-after.log: three cold browser stories passed, including retained-snapshot navigation, pending optional metadata and existing document interactions."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "file-reader.log: four lifecycle tests passed; rows stay independent of metadata/documents, and cancellation/failure preserve selection."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check.log: zero errors or warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "catalog-check.log: new story fixture getter inferred string instead of StoreLoadStatus; fixed its explicit return type."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "catalog-check-final.log: zero errors/warnings and 196 owned catalog modules."
+      },
+      {
+        "command": "pnpm check:ui-ownership; pnpm check:architecture; pnpm exec spec-validator validate --only governance,summary,verification,book",
+        "result": "pass",
+        "failures": 0,
+        "note": "Ownership and 1000-module architecture passed; four canonical validators passed across 23 chapters and 172 requirements."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "rust-format.log: affected Rust formatting passed."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/StoreDirectoryNavigation.stories.svelte catalog/fixtures/RepositoryDirectoryNavigationFixture.svelte web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte spec/src/api.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/cli.md spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "format.log: affected presentation and canonical chapters formatted."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "rust-check.log: affected packages and their required dependency checks passed."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle browsing_acceptance --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-browsing.log: nine direct browsing/HTTP consumer tests passed. verification-scope.md records the escalation for both path-reader profiles and their direct consumers."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser bounded_reads --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-bounded.log: seven passed, one existing optional Linux fixture ignored. Actual original Linux acceptance was run separately."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "backend-build.log: built the explicit development backend; no installed CLI replacement. Existing linker unwind warning retained."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "backend-restart.log: restarted only preview backend after build completed; Vite HMR and existing fixture preserved."
+      },
+      {
+        "command": "cua_repl: cold original Linux master/arch load, observed HTTP responses and folder navigation under temporary network latency",
+        "result": "pass",
+        "failures": 0,
+        "note": "linux-before-summary.json: 41 root and 23 arch rows all merge-unavailable. linux-after-summary.json: 19/41 root and 5/23 arch rows available; remaining 22/18 are explicit Budget under unchanged 64 visits. Charged work 312154/311343 within the existing one-million cap; metadata bytes about 3.34MiB. Description and Updated visibly render; linux-metadata-rendered.png records the page. linux-folder-skeleton.png captures pending arch/arm64 navigation with retained snapshot. Temporary latency restored; fresh-page console had zero errors."
+      },
+      {
+        "command": "jj rebase -r yolnqxty -o pkkupzrv; jj rebase -r mwovxnyo -o yolnqxty",
+        "result": "pass",
+        "failures": 0,
+        "note": "Started temporary work from clean main and advanced the clean preview to the verified production tree for original-page checks. No unrelated workspace or source-repository edits."
+      },
+      {
+        "command": "pnpm check:progress; pnpm exec spec-validator first; pnpm exec spec-validator validate --only governance,summary,verification,book",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final: 139 tasks, eight protected files with six canonical chapters, four canonical validators. Task status and all 528 prior evidence entries remain unchanged."
+      },
+      {
+        "command": "pnpm exec prettier spec/src/milestones.md; pnpm exec prettier --write spec/src/jj-integration.md; pnpm exec prettier --check (affected presentation and six canonical chapters)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final formatting passed; only the new ledger entry was replaced from formatter output, preserving the historical prefix and task rows."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Older row metadata remains explicitly unavailable when no first-parent change is found within the existing 64-visit cap. Original Linux acceptance retains 22 root and 18 arch Budget rows; no exhaustive history claim or automatic unbounded retry.",
+      "Full release/RustFS/scale/RSS, registry-resolved foundational packages and visual baselines remain outside this narrow slice. Existing reproduced package Clippy diagnostics from E-READ-084 are unchanged and not rerun."
+    ],
+    "next": "Commit this verified narrow slice and advance clean main with Jujutsu; preserve the temporary workspace and fixed 7470 preview. Deeper metadata coverage requires a separately scoped bounded-history policy."
   }
 ]
 ```

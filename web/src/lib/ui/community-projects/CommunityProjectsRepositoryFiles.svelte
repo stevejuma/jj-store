@@ -59,6 +59,9 @@
         view.status.files === "loading" ||
         view.settings.indexPreparation === "loading"),
   );
+  const directoryLoading = $derived(
+    !view.route.path && view.status.files === "loading",
+  );
   const fileTreeStyle = $derived(
     `--ui-shell-body-sidebar-width: ${fileTreeWidth}px`,
   );
@@ -231,7 +234,7 @@
       editing={editing && view.repository.profile !== "git_sha1_jj045"}
       bind:filename={editFilename}
     />
-    {#if initialLoading}<CommunityProjectsRepositorySkeleton
+    {#if initialLoading || directoryLoading}<CommunityProjectsRepositorySkeleton
         layout="directory"
         label="Loading repository files"
       />{:else}

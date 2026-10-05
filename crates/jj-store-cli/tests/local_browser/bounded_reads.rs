@@ -3,6 +3,73 @@ use jj_store_jj::{local_browser as q, query::workers::Workers};
 use std::sync::Arc;
 
 #[tokio::test]
+async fn local_path_metadata_crosses_merges_using_first_parent_history() {
+    let temp = tempfile::tempdir().unwrap();
+    jj(temp.path(), &["git", "init", "--colocate"]);
+    for name in ["a.txt", "b.txt", "c.txt"] {
+        std::fs::write(temp.path().join(name), "base\n").unwrap();
+    }
+    jj(temp.path(), &["describe", "-m", "Base"]);
+    jj(temp.path(), &["bookmark", "create", "base"]);
+    jj(temp.path(), &["new", "base", "-m", "Left edit"]);
+    std::fs::write(temp.path().join("a.txt"), "left\n").unwrap();
+    jj(temp.path(), &["bookmark", "create", "left"]);
+    jj(temp.path(), &["new", "base", "-m", "Right edit"]);
+    std::fs::write(temp.path().join("b.txt"), "right\n").unwrap();
+    jj(temp.path(), &["bookmark", "create", "right"]);
+    jj(
+        temp.path(),
+        &["new", "left", "right", "-m", "Merge feature"],
+    );
+    let commit = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let operation = jj(
+        temp.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(temp.path().join(".jj/repo")));
+    let q::Response::Paths(page) = q::Executor::new(1)
+        .unwrap()
+        .read(
+            access,
+            operation,
+            q::Request::Paths(q::paths::Request {
+                commit,
+                path: String::new(),
+                recursive: false,
+                include_last_change: true,
+                limit: 20,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(page.entries.len(), 3);
+    for (entry, expected) in page
+        .entries
+        .iter()
+        .zip(["Left edit", "Merge feature", "Base"])
+    {
+        assert!(
+            matches!(&entry.last_change, q::paths::LastChange::Available { description, .. } if description.trim() == expected),
+            "{}: {:?}",
+            entry.path,
+            entry.last_change
+        );
+    }
+}
+
+#[tokio::test]
 async fn ordinary_point_reads_do_not_import_missing_extra_metadata() {
     let temp = tempfile::tempdir().unwrap();
     jj(temp.path(), &["git", "init", "--colocate"]);

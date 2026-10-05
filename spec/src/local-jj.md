@@ -684,7 +684,10 @@ These queries reuse scoped read capabilities, preserve explicit conflict terms
 and do not admit unrelated Git objects. Legacy bare-ID reads retain their
 membership checks. `include_last_change=false` returns file rows independently
 of history; explicit attribution shares one bounded parent traversal across the
-page.
+page. Its first-parent comparison includes merges without walking other parent
+histories; a changed path belongs to that integration commit, while an unchanged
+path continues toward its previous change. Retain the 64-visit cap and all
+scoped authorization, native path terms and request admission.
 
 Local workspace windows and exact bookmark/workspace resolution consume only the
 selected operation/view and returned target records. Neither needs a JJ index or

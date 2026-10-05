@@ -1,5 +1,11 @@
 # Storybook presentation catalog
 
+Opening a directory shows the existing directory skeleton while its files load,
+including navigation within a retained repository snapshot. Pagination keeps
+loaded rows and its existing tail skeleton. File names become navigable before
+optional Description and Updated metadata settles; merge-history attribution
+retains the selected first-parent semantics and bounded unavailable outcomes.
+
 When `automatic_code_index` is advertised, ordinary Files, Branches and Commits
 views recover the exact selected operation through core task observation and
 retry after readiness. Navigation cancels obsolete observation;

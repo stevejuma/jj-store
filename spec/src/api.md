@@ -587,9 +587,11 @@ that reference; resolving one target must not replace the selected reference.
 `GET /commits/{commit}/paths` returns direct file and directory terms for a
 nonrecursive path window, while a recursive query walks leaf paths only as far
 as the requested forward window plus a bounded probe. It reports exact native
-terms and batches bounded last-change attribution. Merge ambiguity and the fixed
-ancestry budget are explicit unavailable states rather than substitutions with
-the selected commit.
+terms and batches bounded last-change attribution. Attribution compares exact
+path terms along the selected commit's first-parent history, including merges. A
+merge is the last change when its path differs from its first parent; an
+unchanged path continues through that parent. The fixed ancestry budget remains
+an explicit unavailable state rather than substitution with the selected commit.
 
 Each browsing response carries signed `previous_cursor` and `next_cursor` values
 over the same retained snapshot registry as graph and directory pages. Their
@@ -2055,10 +2057,15 @@ before target hydration; each returned target retains exact pinned membership.
 
 Path windows accept `include_last_change` (default true for existing clients).
 False returns row identities and `not_requested` attribution without walking
-parents. Attribution traverses one shared bounded first-parent chain per window,
-with explicit merge/budget outcomes. Clients load rows before attribution, use
-independent cursor bindings for each query, and join metadata only to matching
-immutable commit/path/term identities. Metadata failure cannot discard rows.
+parents. Attribution traverses one shared first-parent chain per window, capped
+at 64 visits, and does not stop merely because a commit has multiple parents.
+Exhaustion retains explicit budget outcomes. Clients load rows before
+attribution, use independent cursor bindings for each query, and join metadata
+only to matching immutable commit/path/term identities. Metadata failure cannot
+discard rows. Directory navigation shows a skeleton while its file read is
+loading even when the repository retains a prior snapshot. Ready file names
+remain independent of optional row attribution and pagination retains already
+loaded rows.
 
 Reference windows support `kind=workspaces` independently of visible-change
 history. Each row names one workspace and its exact selected target. Bookmarks

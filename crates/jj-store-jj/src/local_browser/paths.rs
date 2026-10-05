@@ -208,7 +208,8 @@ impl Context {
             .map(|(index, (path, value))| Ok((index, native_path(path)?, value)))
             .collect::<Result<Vec<_>>>()?;
         // Traverse the shared first-parent chain once for the entire window.
-        // A merge terminates attribution explicitly; no row invents a result.
+        // Compare merges to their first parent too: changed paths are attributed
+        // to their integration commit without traversing other parent histories.
         for _ in 0..LAST_CHANGE_VISITS {
             if pending.is_empty() {
                 break;
@@ -219,14 +220,6 @@ impl Context {
                 let value = self.last_change_available(id).await?;
                 for (index, _, _) in pending {
                     results[index] = value.clone();
-                }
-                break;
-            }
-            if parents.len() != 1 {
-                for (index, _, _) in pending {
-                    results[index] = LastChange::Unavailable {
-                        reason: LastChangeUnavailable::Merge,
-                    };
                 }
                 break;
             }
