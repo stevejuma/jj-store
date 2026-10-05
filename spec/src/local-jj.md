@@ -820,3 +820,15 @@ references identify the source in the existing rebuild-required snapshot.
 Successful response snapshots and signed continuations remain bound to the outer
 operation and full request, while reference pages identify the source. Empty
 bookmark and workspace windows keep metadata-only source reads.
+
+Prepared local operation selectors with child (`+`) steps MUST seek an exact
+operation-bound parent/child projection instead of scanning history from its
+head. Preserve upstream prefix, parent/child, empty and ambiguity semantics for
+every mixed suffix. Only retained ancestors participate; later operations never
+become children in an old prepared snapshot. Source fingerprints and current
+authorization remain mandatory for selected metadata. Admit disk growth and flat
+resident edge allocations before construction/decoding. Old disposable artifacts
+without the projection require explicit preparation for ID-prefix child
+selection; no full history fallback is allowed. Current-operation relative
+selectors retain their bounded metadata-only cold reader and reuse a ready
+neighbor projection opportunistically.

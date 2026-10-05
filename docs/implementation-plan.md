@@ -187,6 +187,13 @@ shared transport/cache consumers in main, preserve historical evidence, then
 retain and rebase bounded-reads for further delivery. Full scale and
 Help/generated-reference/source-review qualification remain deferred.
 
+E-READ-053 delivers indexed local child-operation selectors through a bounded
+sorted edge projection and selected-only metadata hydration. Mixed suffixes,
+ambiguity and later-head exclusion retain upstream semantics. Historical
+prefix-based cold child selection needs explicit preparation; current-relative
+selectors retain their bounded cold reader. Native child selection and deeper
+graph continuations remain separate work; main retains the E-READ-052 landing.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

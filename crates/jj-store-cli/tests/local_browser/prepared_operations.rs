@@ -51,6 +51,11 @@ async fn prepared_operation_prefixes_resolve_with_only_selected_metadata() {
         selected[..9].to_string(),
         selected[..12].to_uppercase(),
         format!("{}-", &selected[..9]),
+        format!("{}++", &selected[..9]),
+        format!("{}+-", &selected[..9]),
+        format!("{}-+", &selected[..9]),
+        format!("{}++-", &selected[..9]),
+        "@-+".to_owned(),
     ];
     let mut expected = vec![];
     for selector in &selectors {
@@ -123,6 +128,7 @@ async fn prepared_operation_prefixes_resolve_with_only_selected_metadata() {
     for entry in fs::read_dir(source.path().join(".jj/repo/index/segments")).unwrap() {
         fs::write(entry.unwrap().path(), b"unavailable source commit index").unwrap();
     }
+    fs::remove_file(prepared.path().join("local-operation-children")).unwrap();
     for (selector, expected) in selectors.iter().zip(expected) {
         let q::Response::Graph(actual) = small
             .read_prepared(access.clone(), prepared.clone(), request(selector))
@@ -133,16 +139,25 @@ async fn prepared_operation_prefixes_resolve_with_only_selected_metadata() {
         };
         assert_eq!(actual.data, expected.data);
         assert_eq!(actual.next, expected.next);
-        assert!(actual.stats.metadata_nodes <= 8, "{:?}", actual.stats);
+        // Preserve the original single-step bound; each additional child step
+        // may read one additional selected operation, never intervening history.
+        let maximum = 8 + selector.matches('+').count().saturating_sub(1) as u64;
+        assert!(actual.stats.metadata_nodes <= maximum, "{:?}", actual.stats);
     }
-    // Indexed child-neighbor lookup remains a separate delivery. The pinned
-    // upstream child selector still obeys ordinary metadata-walk admission.
-    assert!(matches!(
-        small
-            .read_prepared(access.clone(), prepared.clone(), request(&child_selector))
-            .await,
-        Err(q::Error::Limit)
-    ));
+    let q::Response::Graph(child_small) = small
+        .read_prepared(access.clone(), prepared.clone(), request(&child_selector))
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(child_small.data, child_expected.data);
+    assert_eq!(child_small.next, child_expected.next);
+    assert!(
+        child_small.stats.metadata_nodes <= 8,
+        "{:?}",
+        child_small.stats
+    );
     let q::Response::Graph(child_actual) = executor
         .read_prepared(access.clone(), prepared.clone(), request(&child_selector))
         .await
@@ -168,6 +183,12 @@ async fn prepared_operation_prefixes_resolve_with_only_selected_metadata() {
                 prepared.clone(),
                 request(&prefix.to_string())
             )
+            .await,
+        Err(q::Error::InvalidQuery(_))
+    ));
+    assert!(matches!(
+        small
+            .read_prepared(access.clone(), prepared.clone(), request("@+"))
             .await,
         Err(q::Error::InvalidQuery(_))
     ));
@@ -207,4 +228,102 @@ async fn prepared_operation_prefixes_resolve_with_only_selected_metadata() {
             .await
             .is_ok()
     );
+}
+
+#[tokio::test]
+async fn prepared_child_operation_selectors_reject_retained_branch_ambiguity_and_later_children() {
+    let source = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    jj(source.path(), &["git", "init", "--colocate"]);
+    for n in 0..8 {
+        jj(source.path(), &["new", "-m", &format!("History {n}")]);
+    }
+    let branch = jj(
+        source.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    );
+    jj(source.path(), &["new", "-m", "Left"]);
+    jj(source.path(), &["--at-op", &branch, "new", "-m", "Right"]);
+    jj(source.path(), &["log", "--no-graph", "-r", "all()"]);
+    let operation = jj(
+        source.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(source.path().join(".jj/repo")));
+    let executor = q::Executor::new(1).unwrap();
+    let request = |selector: &str| {
+        q::Request::Graph(
+            q::GraphRequest::OperationsFiltered {
+                query: format!("from:{selector}"),
+            },
+            q::GraphWindow {
+                limit: 1,
+                after: None,
+            },
+        )
+    };
+    let ordinary = executor
+        .read(access.clone(), operation, request(&format!("{branch}+")))
+        .await;
+    assert!(matches!(ordinary, Err(q::Error::InvalidQuery(_))));
+    let prepared = Arc::new(
+        executor
+            .prepare_index(
+                access.clone(),
+                operation,
+                output.path().into(),
+                32 * 1024 * 1024,
+                q::preparation::Limits::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
+    let small = q::Executor::with_workers(
+        jj_store_jj::query::workers::Workers::new(1).unwrap(),
+        q::Limits {
+            max_history_visits: 4,
+            ..Default::default()
+        },
+    );
+    assert!(matches!(
+        small
+            .read_prepared(
+                access.clone(),
+                prepared.clone(),
+                request(&format!("{branch}+"))
+            )
+            .await,
+        Err(q::Error::InvalidQuery(_))
+    ));
+    // Current-relative children reuse prepared lookup, with a bounded cold fallback.
+    assert!(request("@+").can_use_prepared_index());
+    assert!(!request("@+").needs_prepared_index());
+    assert!(!request("@-").needs_prepared_index());
+    // Merge parents are ambiguous before any parent body is requested.
+    assert!(matches!(
+        small
+            .read_prepared(access.clone(), prepared.clone(), request("@-+"))
+            .await,
+        Err(q::Error::InvalidQuery(_))
+    ));
+    jj(source.path(), &["new", "-m", "Later excluded child"]);
+    assert!(matches!(
+        small
+            .read_prepared(access.clone(), prepared.clone(), request("@+"))
+            .await,
+        Err(q::Error::InvalidQuery(_))
+    ));
+    assert!(matches!(
+        small
+            .read_prepared(
+                Arc::new(Denied(ReadBinding(source.path().join(".jj/repo")))),
+                prepared,
+                request(&format!("{branch}+"))
+            )
+            .await,
+        Err(q::Error::Denied)
+    ));
 }

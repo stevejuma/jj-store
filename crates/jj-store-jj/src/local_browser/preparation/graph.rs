@@ -227,6 +227,15 @@ impl Prepared {
             .operations
             .fingerprint(id, |amount| budget.work(amount))
     }
+    pub(in super::super) fn child_operation(
+        &self,
+        parent: m::OperationId,
+        budget: &Budget,
+    ) -> Result<jj_lib::object_id::PrefixResolution<o::OperationId>> {
+        self.resident
+            .operations
+            .child(parent, |amount| budget.work(amount))
+    }
     pub(in super::super) fn resolve_operation(
         &self,
         prefix: &jj_lib::object_id::HexPrefix,

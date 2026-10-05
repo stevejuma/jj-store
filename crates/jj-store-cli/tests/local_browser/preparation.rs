@@ -54,6 +54,29 @@ fn prepared_index_files(
     for pair in records.chunks_exact(128).collect::<Vec<_>>().windows(2) {
         assert!(pair[0][..64] < pair[1][..64]);
     }
+    let children = files
+        .remove(Path::new("local-operation-children"))
+        .expect("local preparation exports its retained parent/child projection");
+    assert!(children.len() >= 104);
+    assert_eq!((children.len() - 104) % 128, 0);
+    assert_eq!(&children[..8], b"JSTLCH1\0");
+    assert_eq!(&children[8..72], selected.as_bytes());
+    let checksum_at = children.len() - 32;
+    assert_eq!(
+        &children[checksum_at..],
+        Sha256::digest(&children[..checksum_at]).as_slice()
+    );
+    let identities: std::collections::BTreeSet<_> =
+        records.chunks_exact(128).map(|row| &row[..64]).collect();
+    let edges = &children[72..checksum_at];
+    for row in edges.chunks_exact(128) {
+        assert_ne!(&row[..64], &row[64..]);
+        assert!(identities.contains(&row[..64]));
+        assert!(identities.contains(&row[64..]));
+    }
+    for pair in edges.chunks_exact(128).collect::<Vec<_>>().windows(2) {
+        assert!(pair[0] < pair[1]);
+    }
     let filter = files
         .remove(Path::new("local-reference-filter"))
         .expect("local preparation exports its disposable substring index");

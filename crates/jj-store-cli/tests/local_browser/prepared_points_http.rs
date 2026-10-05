@@ -188,6 +188,30 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
     let cold_prefix: Value = cold_prefix.json().await.unwrap();
     assert_eq!(cold_prefix["code"], "index_rebuild_required");
     assert_eq!(cold_prefix["local_snapshot"]["operation"], operation);
+    let child_operation = json!({"operation":operation,"cursor":null,
+        "request":{"kind":"graph","query":[{"graph":"operations_filtered","query":"from:@-+"},
+            {"limit":1,"after":null}]}});
+    let child_cold: Value = post(&query_path, child_operation.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(child_cold["snapshot"]["operation"], operation);
+    assert_eq!(
+        child_cold["data"]["data"]["data"]["nodes"][0]["id"],
+        operation
+    );
+    assert!(
+        child_cold["data"]["data"]["stats"]["metadata_nodes"]
+            .as_u64()
+            .unwrap()
+            <= 8,
+        "{child_cold}"
+    );
     for query in [&operation_comparison, &operation_changes] {
         let cold = post(&query_path, query.clone()).send().await.unwrap();
         assert_eq!(cold.status(), reqwest::StatusCode::CONFLICT);
@@ -266,6 +290,18 @@ async fn local_point_http_uses_ready_membership_and_only_falls_back_when_cold() 
         historical_operation
     );
     assert!(stats(&prefix) <= 8, "{prefix}");
+    let child: Value = post(&query_path, child_operation)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(child["snapshot"]["operation"], operation);
+    assert_eq!(child["data"]["data"]["data"]["nodes"][0]["id"], operation);
+    assert!(stats(&child) <= 8, "{child}");
     let comparison: Value = post(&query_path, operation_comparison)
         .send()
         .await

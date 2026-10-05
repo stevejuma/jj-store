@@ -16,6 +16,7 @@ use std::{path::Path, sync::Arc};
 use tables::Tables;
 
 const OPS: Table = TableDefinition::new("pending_ops");
+const OP_CHILDREN: Table = TableDefinition::new("local_operation_children");
 const SEEN_OPS: Table = TableDefinition::new("seen_ops");
 const PENDING: Table = TableDefinition::new("pending_commits");
 const NODES: Table = TableDefinition::new("nodes");
@@ -286,6 +287,16 @@ async fn build_with_tables(
         let op = budget.operation(&id).await?;
         for parent in op.parent_ids() {
             disk.put(OPS, parent.as_bytes(), &[])?;
+            if budget.operation_lookup() {
+                budget.work(1)?;
+                if parent.as_bytes().len() != 64 || id.as_bytes().len() != 64 {
+                    return Err(Error::Corrupt);
+                }
+                let mut edge = [0; 128];
+                edge[..64].copy_from_slice(parent.as_bytes());
+                edge[64..].copy_from_slice(id.as_bytes());
+                disk.put(OP_CHILDREN, &edge, &[])?;
+            }
         }
         let view = budget.view(&op).await?;
         if filter.is_some() && op.id() == operation {

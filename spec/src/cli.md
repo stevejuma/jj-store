@@ -1936,3 +1936,10 @@ recovery, source-only preparation, forward/backward windows, unchanged outer
 snapshot and signed cursor binding. Reject newer and unrelated ready operations,
 preserve current authorization, and serve shallow operation relations above the
 ordinary commit-history limit without reading unrelated Git bodies.
+
+Prepared local child-selector regressions MUST match the ordinary operation
+selector under a small read budget, including mixed parent/child suffixes,
+ambiguous branches and later-head exclusion. Selected operation metadata stays
+readable without Git bodies or source commit indexes; the retained edge lookup
+survives removal of its disposable file. Independently corrupted projections
+fail framing/checksum/membership checks before serving.

@@ -376,7 +376,47 @@ pub(super) async fn run_operations(
         _ => "",
     })?;
     let heads = [if access.prepared.is_some() {
-        filter.start_at_admitted(head).await?
+        filter
+            .start_at_indexed(
+                head,
+                async |parent, prior| {
+                    use jj_lib::object_id::PrefixResolution;
+                    budget.authorize(access).await?;
+                    let prepared = access.prepared.as_ref().ok_or(Error::Unavailable)?;
+                    let id = match prepared.child_operation(oid(parent.id())?, budget)? {
+                        PrefixResolution::SingleMatch(id) => id,
+                        _ => {
+                            return Err(crate::query::language::invalid(
+                                "unresolved_symbol",
+                                "Operation selector is missing or ambiguous in this history.",
+                            ));
+                        }
+                    };
+                    if let Some(prior) = prior.filter(|prior| prior.id() == &id) {
+                        budget.work(prior.parent_ids().len())?;
+                        if !prior.parent_ids().contains(parent.id()) {
+                            return Err(Error::Corrupt);
+                        }
+                        return Ok(prior.clone());
+                    }
+                    let data = head
+                        .op_store()
+                        .read_operation(&id)
+                        .await
+                        .map_err(crate::query::language::operations::store_error)?;
+                    budget.work(data.parents.len())?;
+                    if !data.parents.contains(parent.id()) {
+                        return Err(Error::Corrupt);
+                    }
+                    Ok(jj_lib::operation::Operation::new(
+                        head.op_store().clone(),
+                        id,
+                        data,
+                    ))
+                },
+                |amount| budget.work(amount),
+            )
+            .await?
     } else {
         filter.start_at(head, || budget.work(1)).await?
     }];

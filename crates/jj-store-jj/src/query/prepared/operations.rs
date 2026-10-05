@@ -1,4 +1,5 @@
 //! Disposable fixed-width retained-operation identities, never source authority.
+mod children;
 use super::*;
 use crate::query::memory::Lease;
 use jj_lib::object_id::{HexPrefix, PrefixResolution};
@@ -16,6 +17,7 @@ struct Record {
 }
 pub(crate) struct Lookup {
     ids: Vec<Record>,
+    children: Option<children::Lookup>,
     _memory: Lease,
 }
 
@@ -58,6 +60,7 @@ pub(super) fn write(
     file.write_all(&digest.finalize()).map_err(io_error)?;
     file.flush().map_err(io_error)?;
     file.get_ref().sync_all().map_err(io_error)?;
+    children::write(path, selected, disk, source, space)?;
     Ok(())
 }
 impl Lookup {
@@ -90,7 +93,7 @@ impl Lookup {
                 .and_then(|n| n.checked_add(64 * 1024))
                 .ok_or(Error::Limit)?,
         )?;
-        let mut file = BufReader::new(std::fs::File::open(path).map_err(|_| Error::Incomplete)?);
+        let mut file = BufReader::new(std::fs::File::open(&path).map_err(|_| Error::Incomplete)?);
         let mut digest = Sha256::new();
         let mut header = [0; 72];
         file.read_exact(&mut header).map_err(|_| Error::Corrupt)?;
@@ -124,10 +127,29 @@ impl Lookup {
         {
             return Err(Error::Corrupt);
         }
+        let children = children::Lookup::load(
+            path.parent().ok_or(Error::Corrupt)?,
+            selected,
+            &ids,
+            maximum,
+            &mut work,
+            &mut read_bytes,
+        )?;
         Ok(Self {
             ids,
+            children,
             _memory: memory,
         })
+    }
+    pub(crate) fn child(
+        &self,
+        parent: OperationId,
+        work: impl FnMut(usize) -> Result<()>,
+    ) -> Result<PrefixResolution<jj_lib::op_store::OperationId>> {
+        self.children
+            .as_ref()
+            .ok_or(Error::IndexRebuildRequired)?
+            .child(parent, work)
     }
     pub(crate) fn fingerprint(
         &self,

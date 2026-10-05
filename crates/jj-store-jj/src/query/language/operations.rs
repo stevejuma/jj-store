@@ -200,6 +200,66 @@ impl Filter {
             .as_ref()
             .is_some_and(|value| !value.starts_with('@'))
     }
+    pub(crate) fn needs_index_lookup(&self) -> bool {
+        self.needs_prefix_lookup() || self.from.as_ref().is_some_and(|value| value.contains('+'))
+    }
+    /// The callback seeks only children in the exact retained operation closure.
+    pub(crate) async fn start_at_indexed(
+        &self,
+        head: &Operation,
+        child: impl AsyncFn(&Operation, Option<&Operation>) -> Result<Operation>,
+        mut work: impl FnMut(usize) -> Result<()>,
+    ) -> Result<Operation> {
+        let Some(selector) = &self.from else {
+            return Ok(head.clone());
+        };
+        if !selector.contains('+') {
+            return self.start_at_admitted(head).await;
+        }
+        let symbol = selector.trim_end_matches(['-', '+']);
+        let mut selected =
+            jj_lib::op_walk::resolve_op_at(&head.op_store(), std::slice::from_ref(head), symbol)
+                .await
+                .map_err(|error| match error {
+                    jj_lib::op_walk::OpsetEvaluationError::OpStore(error) => store_error(error),
+                    _ => invalid(
+                        "unresolved_symbol",
+                        "Operation selector is missing or ambiguous in this history.",
+                    ),
+                })?;
+        let mut prior: Option<Operation> = None;
+        for step in selector[symbol.len()..].chars() {
+            work(1)?;
+            let next = if step == '+' {
+                child(&selected, prior.as_ref()).await?
+            } else {
+                if selected.parent_ids().len() != 1 {
+                    return Err(invalid(
+                        "unresolved_symbol",
+                        "Operation selector is missing or ambiguous in this history.",
+                    ));
+                }
+                if let Some(prior) = prior
+                    .as_ref()
+                    .filter(|prior| prior.id() == &selected.parent_ids()[0])
+                {
+                    // Reversing the previous child step reuses immutable metadata
+                    // already verified under this request's same guarded store.
+                    prior.clone()
+                } else {
+                    selected
+                        .parents()
+                        .await
+                        .map_err(store_error)?
+                        .pop()
+                        .unwrap()
+                }
+            };
+            prior = Some(selected);
+            selected = next;
+        }
+        Ok(selected)
+    }
     pub async fn start_at(
         &self,
         head: &Operation,

@@ -922,3 +922,8 @@ their source and historical evidence exactly. Main verification records native
 and local reference readers, shared cancellation/cache consumers and owning
 package/contract checks separately from deferred scale and Help qualification.
 The retained temporary workspace continues from that verified landing.
+
+Local operation child lookup is a rebuildable projection, owned by explicit
+preparation and shared resident admission. Main remains at verified E-READ-052;
+new delivery continues in the retained bounded-reads workspace. No read rebuilds
+the projection, changes operation heads or publishes repository state.

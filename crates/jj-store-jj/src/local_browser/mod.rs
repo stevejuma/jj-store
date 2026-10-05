@@ -179,6 +179,8 @@ impl Request {
     /// their bounded cold reader. Bare file IDs have no selected tree proof.
     pub fn can_use_prepared_index(&self) -> bool {
         self.needs_prepared_index()
+            || matches!(self, Self::Graph(GraphRequest::OperationsFiltered { query }, _)
+                if crate::query::language::operations::Filter::parse(query).is_ok_and(|filter| filter.needs_index_lookup()))
             || matches!(
                 self,
                 Self::CommitSummary { .. }

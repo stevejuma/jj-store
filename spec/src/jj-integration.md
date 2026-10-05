@@ -40,8 +40,9 @@ foreign/future operations.
 Prepared operation prefix reads compare historical source metadata against
 captured canonical fingerprints because SimpleOpStore does not hash operation
 filenames. Fingerprint mismatch fails explicitly. Prefix resolution and
-membership charge logarithmic lookup work; child suffixes retain the pinned
-upstream bounded operation walk until indexed neighbor lookup is delivered.
+membership charge logarithmic lookup work. Prepared local child suffixes seek
+retained reverse edges and hydrate selected metadata; native child suffixes
+retain the pinned upstream bounded walk pending their indexed delivery.
 
 WorkStore comment reactions use the existing native RPC collaboration command
 and read envelopes with an additive typed target. Exact WorkStore selection is
@@ -1171,3 +1172,10 @@ operation-metadata parent proof from the retained outer selection. Bound visits,
 frontier memory, work, cancellation and deadlines before reading the prepared
 source generation. Preserve registration checks and exact source selection
 seals; a warm index never establishes source authority.
+
+The local prepared operation lookup may retain a disposable sorted parent/child
+edge projection built during the existing bounded source operation pass. It is
+selected by the same exact operation and checked fingerprints, never authority
+for new objects. Seek at most two candidate identities to distinguish a unique
+child from ambiguity; hydrate only a selected child and verify its parent edge.
+No native JJ index, authoritative object or public schema format changes.

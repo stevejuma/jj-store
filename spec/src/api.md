@@ -2127,3 +2127,9 @@ Targeted reaction invalidation reads the target from the query argument segment
 of the shared scope/resource key. A trailing epoch segment must not hide the
 target. Refetch only the matching target while retaining unrelated cached data
 and other authorization sessions.
+
+Local operation-filter queries with child suffixes reuse exact prepared
+operation neighbors. Historical ID-prefix selectors retain explicit cold
+exact-operation rebuild recovery; selectors rooted at `@` remain usable through
+the bounded metadata-only cold reader. Signed cursors bind the complete query.
+Missing, ambiguous or outside-snapshot children remain explicit selector errors.
