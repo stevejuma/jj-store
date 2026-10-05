@@ -1,5 +1,16 @@
 # Architecture
 
+Native kind preparation advances caller-owned checked roots through bounded
+descriptor windows. Data-only progress owns its original cursor, matching IDs,
+total counters, lifetime and shared allocation lease; no source or credentials
+are retained. Failed/canceled windows keep conservative admission charges
+without cursor progress. Complete-root traversal alone promotes immutable kind
+data, and every supplied native session rechecks source scope, current
+permission, epoch and deadline. Historical preparation outlives its initiating
+page while ordinary complete GET limits stay unchanged. This is source
+capability delivery; background task and transport integration remain following
+work.
+
 Native selected copy queries use the source-scoped descriptor relation cache.
 The original checked root, fresh authorization and request deadline stay
 explicit; construction coalesces per root and shares admitted memory and work

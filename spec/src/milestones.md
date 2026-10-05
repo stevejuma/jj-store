@@ -87368,6 +87368,216 @@ entries.
     ],
     "next": "Commit the verified E-READ-073 source/backend family slice with Jujutsu and continue resumable cold native kind preparation in the retained workspace. Do not repeat the completed E-READ-071 main landing. Full qualification stays separate.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-074",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "ptnmxplv",
+    "kind": "Callable bounded resumable native kind source preparation and complete-root cache promotion",
+    "versions": "Rust1.98.1; JJ/jj-lib0.45.1; macOS ARM64.",
+    "formats": "Additive owned Rust source APIs and caller-owned process-local progress only. No native, manifest, WAL, receipt, DTO/schema, HTTP/RPC, signed cursor or persisted index format change.",
+    "scope": "Rust-only native inventory/preparation capability with a pinned CommittedRead entry point. Exact new resume/promotion acceptance, complete native_inventory cache/family/preparation units, existing independent read preparation units and service all-target check. Production graph/background-task execution and all transport payloads/call sites are unchanged; JJ/RPC/CLI/UI tests, root aggregates and contract generation remain out of scope. Full scale/RSS/latency/fault/cold-browser/RustFS/release/Help qualification remains explicitly deferred.",
+    "requirements": ["JST-JJ-003", "JST-JJ-005", "JST-MUT-001"],
+    "files": [
+      "crates/jj-store-service/src/native_inventory/cache.rs",
+      "crates/jj-store-service/src/native_inventory/preparation/state.rs",
+      "crates/jj-store-service/src/native_inventory/preparation/tests/cancellation.rs",
+      "crates/jj-store-service/src/native_inventory/preparation/tests.rs",
+      "crates/jj-store-service/src/native_inventory/preparation.rs",
+      "crates/jj-store-service/src/native_inventory.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-service/src/native_inventory/preparation/tests.rs#native_kind_preparation_resumes_exact_windows_and_promotes_only_complete_ids",
+      "crates/jj-store-service/src/native_inventory/preparation/tests.rs#native_kind_preparation_keeps_total_bounds_after_failed_windows",
+      "crates/jj-store-service/src/native_inventory/preparation/tests.rs#native_kind_preparation_authorization_and_deadlines_precede_window_admission",
+      "crates/jj-store-service/src/native_inventory/preparation/tests.rs#native_kind_preparation_rejects_foreign_sources_and_epoch_changes_after_promotion",
+      "crates/jj-store-service/src/native_inventory/preparation/tests.rs#pinned_kind_preparation_outlives_the_initiating_page_and_empty_kind_is_complete",
+      "crates/jj-store-service/src/native_inventory/preparation/tests.rs#prepared_kind_progress_and_ready_ids_reauthorize_after_token_revocation",
+      "crates/jj-store-service/src/native_inventory/preparation/tests/cancellation.rs#interrupted_kind_windows_retain_conservative_work_without_advancing_or_promoting",
+      "crates/jj-store-service/src/reads/preparation/tests.rs#prepared_kind_lookup_outlives_page_deadline_without_full_inventory"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_kind_preparation_resumes_exact_windows_and_promotes_only_complete_ids -- --nocapture",
+        "result": "fail",
+        "failures": 13,
+        "note": "Baseline lacks Limits and three source APIs;13 compiler diagnostics, two unused-import warnings, no functional tests. .local/bounded-reads/performance/kind-preparation-before-074.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_kind_preparation_resumes_exact_windows_and_promotes_only_complete_ids -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Implemented target: one fixture assertion failure (605 actual descriptors versus assumed602); no production fault. .local/bounded-reads/performance/kind-preparation-after-074.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/performance/kind-preparation-format-074.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/performance/kind-preparation-format-final-074.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/performance/kind-preparation-format-delivery-074.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/performance/kind-preparation-format-reuse-074.log"
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/mutations.md spec/src/architecture.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/performance/kind-preparation-document-format-074.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_kind_preparation_resumes_exact_windows_and_promotes_only_complete_ids -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "12.11s; 1 tests passed. .local/bounded-reads/performance/kind-preparation-after-repair-074.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_inventory::",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.04s; 12 tests passed. .local/bounded-reads/performance/kind-preparation-units-074.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked reads::preparation::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.4s; 1 tests passed. .local/bounded-reads/performance/kind-preparation-pinned-074.log"
+      },
+      {
+        "command": "cargo check -p jj-store-service --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "25.81s; 0 tests passed. .local/bounded-reads/performance/kind-preparation-package-074.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked prepared_kind_progress_and_ready_ids_reauthorize_after_token_revocation -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "9.32s; 1 tests passed. .local/bounded-reads/performance/kind-preparation-revocation-074.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_inventory::",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.12s; 13 tests passed. .local/bounded-reads/performance/kind-preparation-units-final-074.log"
+      },
+      {
+        "command": "cargo check -p jj-store-service --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.39s; 0 tests passed. .local/bounded-reads/performance/kind-preparation-package-final-074.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_kind_preparation_resumes_exact_windows_and_promotes_only_complete_ids -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "9.55s; 1 tests passed. .local/bounded-reads/performance/kind-preparation-exact-delivery-074.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_inventory::",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.84s; 13 tests passed. .local/bounded-reads/performance/kind-preparation-units-delivery-074.log"
+      },
+      {
+        "command": "cargo check -p jj-store-service --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.7s; 0 tests passed. .local/bounded-reads/performance/kind-preparation-package-delivery-074.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/kind-preparation-boundaries-074.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/kind-preparation-architecture-074.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/kind-preparation-spec-first-074.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/kind-preparation-spec-validation-074.log"
+      },
+      {
+        "command": "pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/kind-preparation-rust-format-074.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/kind-preparation-progress-074.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/mutations.md spec/src/architecture.md docs/implementation-plan.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/kind-preparation-document-check-074.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.28s; 0 tests passed. .local/bounded-reads/performance/kind-preparation-ledger-progress-074.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/mutations.md spec/src/architecture.md docs/implementation-plan.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.02s; 0 tests passed. .local/bounded-reads/performance/kind-preparation-ledger-format-074.log"
+      }
+    ],
+    "notes": [
+      "New source APIs begin at a fresh checked root or CommittedRead historical selection, advance at most256 descriptors per call, and finish only complete results under fresh source/epoch/permission/deadline checks. The initiating page result ceiling/lifetime does not replace separately admitted preparation limits. Unselected/staged objects and later selections cannot enter the pinned traversal.",
+      "A caller-owned Preparation retains checked manifest, source scope, kind, cursor, identities, counters and shared allocation lease only. It retains no NativeSession, object store, source capability, principal, bearer, mutation guard or async job. Eight shared native inventory permits bound active windows; the shared64MiB pool charges each cold progress header and admitted matching-ID growth. Data owners retain charges after cache eviction. Fixed total descriptor/read/encoded-byte/result/allocation/lifetime limits never renew across calls.",
+      "Reserve each bounded window before I/O: at most256 descriptors,1024 record attempts and32MiB encoded record allowance. Successful verified windows reconcile to reported actual counters. Failed/canceled/unknown windows retain conservative charges and do not move cursor or IDs; retries cannot conceal spent work. Matching growth is admitted before insertion. Partial finish returns IndexRebuildRequired and promotes no complete projection.",
+      "Terminal complete-root traversal moves identities and their existing allocation into the ordinary source-scoped kind cache. A concurrent caller proving the same immutable root can supply that complete data to a paused preparation without further descriptor reads or whole-set comparison under the cache lock. Complete owners share allocation; normal GET two-million-descriptor ceilings stay unchanged.",
+      "The exact new baseline failed compilation with13 missing method/type diagnostics and two unused-import warnings while the new source API was absent; no functional tests ran. First implemented acceptance failed once because the fixture assumed602 descriptors while native bootstrap actually selected605. Derive the exact expected count from the checked original root, preserving all three256-sized windows and complete identity assertions; the same target then passes.",
+      "Evidence uses verified native in-memory records and test-only selected descriptor/policy changes, distinct from guarded publication, transport delivery and real-RustFS qualification. A work-counter test crosses the ordinary two-million ceiling under the explicit total budget; it does not claim a cold two-million-object scale run.",
+      "Preserve all514 prior evidence objects and original ledger text verbatim. Main remains on verified E-READ-071; E-READ-072 through E-READ-074 follow-ups remain in the retained temporary workspace. No installed executable, dev service, fixture, Linux source, publication or migration changes."
+    ],
+    "remaining": [
+      "Wire callable kind preparation through bounded authenticated background-task/HTTP/RPC/client delivery and its request-local cancellation/progress controls. Existing graph preparation does not invoke this capability; no endpoint is claimed resumable yet.",
+      "Deliver selected family RPC/client and native mutation capabilities, plus indexed get_copy_records DAG range/path lookup. Large copy graphs exceeding conservative64MiB admission may need chunk/disk support.",
+      "General filtered-log continuation preserving indirect/missing edges, uncached/ambiguous evolution, indexed code/local application search and oversized comparison/change grouping/extreme-filter candidates remain.",
+      "Complete scale/RSS/latency/fault/cold-browser/RustFS/release qualification, Help/generated-reference/source-review refresh and inherited installation-reference drift remain open. No milestone promotion."
+    ],
+    "next": "Commit the verified resumable native kind source capability with Jujutsu, then deliver its bounded background-task/transport consumers before indexed copy/path queries. Keep the retained workspace open and main on its already verified landing. Full qualification stays separate.",
+    "result": "pending"
   }
 ]
 ```

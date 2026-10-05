@@ -27,6 +27,16 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-074 adds callable native source APIs to begin, advance and finish kind
+preparation at a current or historical checked root. Each advance reads at most
+256 descriptors under its call deadline; original total work/read/byte/result,
+allocation and lifetime limits remain fixed. Failed or canceled windows retain
+conservative charges and leave identities/cursor unchanged. Terminal traversal
+promotes complete matching IDs into the ordinary source-scoped kind cache;
+partial results remain unavailable. Background task/HTTP/RPC/client integration
+and the large-scale qualification remain following slices. Continue the task
+delivery before indexed copy-record and selected family RPC work.
+
 E-READ-073 wires pinned native copy-family capabilities through the
 source-scoped selected relation cache and upstream backend. Cold construction
 reads descriptors only; warm lookup reads no descriptors, and ordered delivery

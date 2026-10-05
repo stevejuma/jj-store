@@ -650,6 +650,22 @@ serving boundary.
 
 ## Explicit index preparation
 
+Explicit native kind preparation retains a checked source/repository/epoch/root,
+exclusive cursor and matching identities independently of an ordinary GET's
+two-million-descriptor ceiling. Each advance inspects at most 256 descriptors
+under its own call deadline, while original total descriptor, record-read,
+encoded-byte, matching-ID, allocation and lifetime limits never renew. Reserve
+the bounded window's work before I/O; unknown or canceled windows retain that
+charge and leave their cursor/identities unchanged. Advance cursor/identities
+only after successful verified window reads and fresh authorization/epoch
+checks. Partial progress grants no complete IDs or cache certification. Only
+terminal traversal from the start promotes a complete kind projection. Shared
+allocation leases precede growth and follow active progress/data owners beyond
+cache eviction. Source capabilities and credentials stay caller-owned; later
+publication cannot replace a preparation root. This source-only capability
+changes no persisted or wire format; background task/transport delivery remains
+separate integration.
+
 Graph execution has a separate inline cold-build threshold (1000 indexed commits
 by default) within the hard index-admission budget. A missing or damaged cache
 stops with IndexRebuildRequired as soon as verified commit reads reach that

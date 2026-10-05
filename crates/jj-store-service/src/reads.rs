@@ -299,6 +299,18 @@ impl CommittedRead {
         query::ReadAccess::authorize(access.as_ref()).await?;
         Ok(result)
     }
+    /// Begins bounded explicit kind preparation at this read's historical root.
+    /// Its caller-owned lifetime and result admission outlive this page session.
+    pub async fn begin_kind_preparation(
+        &self,
+        copies: bool,
+        limits: crate::native_inventory::preparation::Limits,
+    ) -> query::Result<crate::native_inventory::preparation::Preparation> {
+        self.authorize().await.map_err(query_error)?;
+        self.session
+            .begin_kind_preparation_at(&self.base, copies, limits, self.deadline)
+            .await
+    }
     /// Execute through the owned JJ boundary; the caller supplies trusted cache
     /// and worker limits, never user-selected local paths or store credentials.
     pub async fn graph(

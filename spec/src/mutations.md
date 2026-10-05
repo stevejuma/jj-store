@@ -1,5 +1,16 @@
 # Typed mutations
 
+Resumable native kind preparation binds its process-local source and checked
+historical inventory root, retaining only bounded data and allocation ownership.
+Each supplied session reauthorizes and checks current epoch; changing source,
+repository or epoch cannot resume another preparation. Individual call deadlines
+and the original total budgets/lifetime remain distinct. Failed or canceled
+window I/O retains conservative work charges but commits no cursor/identity
+progress. Partial IDs remain unavailable and cannot enter the complete cache.
+Terminal complete-root proof may publish a rebuildable projection only, never
+repository state; ordinary read scan ceilings and semantic publication audits
+remain unchanged.
+
 Copy relation reuse is read-only. Pinned browser and preparation capabilities
 forward their original checked inventory selection and caller deadline; cached
 source/root graphs never recapture current copy membership. Current permission

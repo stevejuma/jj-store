@@ -104,7 +104,7 @@ impl Cache {
             .unwrap()
             .retain(|entry| entry.key != key);
     }
-    fn reserve(&self, bytes: usize) -> Option<Lease> {
+    pub(super) fn reserve(&self, bytes: usize) -> Option<Lease> {
         if bytes > self.budget.limit {
             return None;
         }
@@ -129,6 +129,45 @@ impl Cache {
             lease,
             incremental,
         }
+    }
+    pub(super) fn publish_prepared(
+        &self,
+        key: Key,
+        selected: ManifestSnapshot,
+        ids: BTreeSet<m::ObjectKey>,
+        lease: Lease,
+    ) -> Arc<Data> {
+        let now = tokio::time::Instant::now();
+        let mut entries = self.entries.lock().unwrap();
+        entries.retain(|entry| now.saturating_duration_since(entry.created) < self.ttl);
+        if let Some(entry) = entries.iter().find(|entry| entry.key == key) {
+            // Both callers prove complete traversal of the same immutable root.
+            // Reuse that proof without comparing every ID under this lock.
+            return entry.data.clone();
+        }
+        let data = Arc::new(Data {
+            selected,
+            ids,
+            _lease: lease,
+        });
+        if self.roots != 0 {
+            while entries.len() >= self.roots {
+                let oldest = entries
+                    .iter()
+                    .enumerate()
+                    .min_by_key(|(_, entry)| entry.touched)
+                    .unwrap()
+                    .0;
+                entries.swap_remove(oldest);
+            }
+            entries.push(Entry {
+                key,
+                data: data.clone(),
+                created: now,
+                touched: now,
+            });
+        }
+        data
     }
     pub fn finish(
         &self,
