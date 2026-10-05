@@ -2036,17 +2036,17 @@ there is no fallback that admits unrelated or later Git objects. These readers
 change no HTTP request, response, schema or capability. Their comprehensive
 transport/browser qualification remains in the later bounded-read slice.
 
-Local Changes/All reference queries whose embedded operation equals the outer
-operation use prepared ordered visibility. When cold they return the existing
-exact-operation rebuild-required response, allowing the existing recovery flow.
-Continuations preserve lexical order and hydrate only page targets. Nonempty
-filters additionally use compact disk postings and exact description checks on
-pinned visible targets before page hydration. Filtered Bookmarks share this
-recovery and selection path; workspace queries and empty bookmark windows retain
-metadata-only cold reads. A different embedded operation remains separate
-indexed-delivery work. Reference DTOs, signed cursors and preparation task
-contracts are unchanged; a resumed cursor still rejects a different filter and
-retains its exact old operation after publication.
+Local Changes/All reference queries use their embedded operation's prepared
+ordered visibility. When cold they return the existing exact-operation
+rebuild-required response, allowing the existing recovery flow. Continuations
+preserve lexical order and hydrate only page targets. Nonempty filters
+additionally use compact disk postings and exact description checks on pinned
+visible targets before page hydration. Filtered Bookmarks share this recovery
+and selection path; workspace queries and empty bookmark windows retain
+metadata-only cold reads. Different source selections require the
+operation-parent proof described below. Reference DTOs, signed cursors and
+preparation task contracts are unchanged; a resumed cursor still rejects a
+different filter and retains its exact old operation after publication.
 
 Composed native Changes/All reference reads with an empty query MUST reuse the
 embedded operation's prepared ordered visible change groups and select their
@@ -2061,8 +2061,8 @@ operation retain the outer read's current authorization and committed object
 membership while selecting the source operation's exact prepared generation.
 Cold source preparation remains explicit; existing browser pages select the same
 operation for their outer snapshot and embedded reference request. Small-cache
-profiles preserve their existing bounded filter reader. Local differently
-embedded reference recovery and paged native RPC remain separate delivery work.
+profiles preserve their existing bounded filter reader. Paged native RPC remains
+separate delivery work.
 
 Local operation-prefix graph queries use ready exact-operation generations and
 existing rebuild-required recovery when cold. This delivery changes no request,
@@ -2109,3 +2109,21 @@ heartbeats; the browser treats 45 seconds without traffic as a stalled feed.
 Shared refcounted metadata monitors and filesystem hints validate committed
 changes within five seconds under qualified healthy load. Idle monitors retire
 after a bounded grace period.
+
+Local differently embedded references MUST prove the source is an ancestor of
+the explicit outer selection using bounded operation metadata. Indexed cold
+recovery reports the source in `local_snapshot.operation`; success keeps the
+outer `snapshot.operation` and source reference-page operation. Browser
+validation accepts only those exact pins. Signed cursors bind both operations
+through the outer selection and complete request digest. No schema change is
+required.
+
+Caller abort releases its query observer synchronously before rejecting. An
+immediate identical retry therefore starts fresh transport when no other caller
+remains, while an active shared caller continues to own the existing transport.
+Normal completion and final cleanup release the observer exactly once.
+
+Targeted reaction invalidation reads the target from the query argument segment
+of the shared scope/resource key. A trailing epoch segment must not hide the
+target. Refetch only the matching target while retaining unrelated cached data
+and other authorization sessions.

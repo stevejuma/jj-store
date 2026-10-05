@@ -819,3 +819,79 @@ test("local_rebuild_errors_reject_a_different_operation_or_registration", async 
     source.close();
   }
 });
+
+test("local_embedded_reference_query_validates_source_recovery_and_outer_success", async () => {
+  const { HttpLocalQuery } =
+    await import("../../src/lib/controller/http-local-query.js");
+  class Query extends HttpLocalQuery {
+    referencesAt(source: string) {
+      return this.query(operation, {
+        kind: "references",
+        query: {
+          operation: source,
+          query: "",
+          exact: null,
+          kind: "changes",
+          limit: 1,
+          anchor: null,
+          direction: "forward",
+        },
+      });
+    }
+  }
+  const embedded = "66".repeat(64);
+  let mode = "cold";
+  const source = new Query(repository, async (url, init) => {
+    if (String(url).endsWith("snapshot")) return json(head);
+    const body = JSON.parse(String(init?.body));
+    assert.equal(body.operation, operation);
+    assert.equal(body.request.query.operation, embedded);
+    const snapshot = {
+      version: 1,
+      profile: head.profile,
+      repository,
+      generation: 1,
+      operation: mode === "cold" ? embedded : operation,
+    };
+    if (mode.startsWith("cold")) {
+      return new Response(
+        pretty({ code: "index_rebuild_required", local_snapshot: snapshot }),
+        { status: 409, headers: { "content-type": "application/json" } },
+      );
+    }
+    return json({
+      snapshot,
+      data: {
+        kind: "references",
+        data: {
+          version: 1,
+          operation: mode === "wrong_source" ? operation : embedded,
+          references: [],
+          previous: null,
+          next: null,
+          stats: { metadata_nodes: 1, object_bytes: 0, work: 1 },
+        },
+      },
+      next_cursor: null,
+      previous_cursor: null,
+    });
+  });
+  await assert.rejects(source.referencesAt(embedded), (error: any) => {
+    assert.equal(error.code, "index_rebuild_required");
+    assert.equal(error.snapshot.operation, embedded);
+    return true;
+  });
+  mode = "cold_wrong";
+  await assert.rejects(source.referencesAt(embedded), {
+    code: "snapshot_mismatch",
+  });
+  mode = "ready";
+  const ready = await source.referencesAt(embedded);
+  assert.equal(ready.snapshot.operation, operation);
+  assert.equal(ready.data.operation, embedded);
+  mode = "wrong_source";
+  await assert.rejects(source.referencesAt(embedded), {
+    code: "snapshot_mismatch",
+  });
+  source.close();
+});

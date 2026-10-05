@@ -1,5 +1,6 @@
 //! Bounded bookmark and visible-change lookup at one local operation.
 mod prepared;
+pub(super) mod selection;
 use super::*;
 use serde::Deserialize;
 use std::collections::{BTreeMap, BTreeSet};

@@ -1930,3 +1930,9 @@ state; shared bounded heads/companion checks validate their meaning and cover
 missed physical notifications. No browser poll is needed while the advertised
 application feed is healthy. Exact task and request receipts remain
 authoritative.
+
+Local embedded-operation reference regressions MUST prove cold exact-source
+recovery, source-only preparation, forward/backward windows, unchanged outer
+snapshot and signed cursor binding. Reject newer and unrelated ready operations,
+preserve current authorization, and serve shallow operation relations above the
+ordinary commit-history limit without reading unrelated Git bodies.

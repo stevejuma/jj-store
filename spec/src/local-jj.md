@@ -809,3 +809,14 @@ state; shared bounded heads/companion checks validate their meaning and cover
 missed physical notifications. No browser poll is needed while the advertised
 application feed is healthy. Exact task and request receipts remain
 authoritative.
+
+Local reference requests may select a retained ancestor operation independently
+of their outer read operation. Prove source membership through bounded read-only
+operation parent metadata, with current registration authorization, before
+consulting prepared data. No view or Git commit walk establishes that relation.
+Prepared windows use only the source's exact generation and selection seal; a
+ready generation cannot admit newer or unrelated operations. Cold indexed
+references identify the source in the existing rebuild-required snapshot.
+Successful response snapshots and signed continuations remain bound to the outer
+operation and full request, while reference pages identify the source. Empty
+bookmark and workspace windows keep metadata-only source reads.

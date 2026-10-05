@@ -533,10 +533,7 @@ async fn query(
         operation: query.operation,
     };
     let data = match query.request {
-        request
-            if request.can_use_prepared_index()
-                && !matches!(&request, local::Request::References(r) if r.operation != query.operation) =>
-        {
+        request if request.can_use_prepared_index() => {
             match state
                 .local_tasks
                 .read(access.clone(), query.operation, request.clone())
@@ -556,19 +553,28 @@ async fn query(
                 Err(jj_store_service::local_index_tasks::Error::Query(
                     local::Error::IndexRebuildRequired,
                 )) => {
-                    // A cold response still proves the exact retained operation;
-                    // it never walks commits or repairs a source index.
-                    state
-                        .local_reader
-                        .read(
-                            access,
-                            query.operation,
-                            local::Request::Operation {
-                                operation: query.operation,
-                            },
-                        )
-                        .await?;
-                    return Err(Error::local_rebuild(snapshot));
+                    let source = match &request {
+                        local::Request::References(r) => r.operation,
+                        _ => query.operation,
+                    };
+                    // Differing reference sources were proved by the task reader.
+                    // Same-operation cold reads still establish retained metadata.
+                    if source == query.operation {
+                        state
+                            .local_reader
+                            .read(
+                                access,
+                                query.operation,
+                                local::Request::Operation {
+                                    operation: query.operation,
+                                },
+                            )
+                            .await?;
+                    }
+                    return Err(Error::local_rebuild(local::Snapshot {
+                        operation: source,
+                        ..snapshot
+                    }));
                 }
                 Err(error) => return Err(error.into()),
             }

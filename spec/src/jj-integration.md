@@ -1165,3 +1165,9 @@ through their existing owner. It carries no transport authority and changes no
 RPC schema. Alternating idle pull/push scheduling does not trigger browser
 reads; frontiers, checkpoint settlement, faults and pause/lifetime transitions
 do.
+
+The local adapter's independently embedded reference operation requires an
+operation-metadata parent proof from the retained outer selection. Bound visits,
+frontier memory, work, cancellation and deadlines before reading the prepared
+source generation. Preserve registration checks and exact source selection
+seals; a warm index never establishes source authority.

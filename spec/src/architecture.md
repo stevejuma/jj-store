@@ -909,3 +909,10 @@ checks. Cache readiness cannot grant access to later or unpublished operations.
 Cold preparation and retry retain the explicit source without changing the outer
 read or any persisted/public contract. Local cross-operation recovery remains
 separate delivery work.
+
+Local embedded reference selection is an owned adapter responsibility. The
+service task registry chooses the source generation; the adapter proves its
+operation-parent relationship to the retained outer read before serving data.
+HTTP and browser recovery keep source preparation separate from the outer
+response/cursor pin. Caller query leases release synchronously on abort so an
+immediate retry cannot inherit an unowned pending transport.

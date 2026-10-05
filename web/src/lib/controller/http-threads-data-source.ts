@@ -45,7 +45,8 @@ export class HttpThreadsDataSource implements ThreadTransport {
       return (
         kind === "reaction-target" &&
         (!target ||
-          (key.at(-1) as { target?: string })?.target === targetKey(target))
+          (key[root.length + 2] as { target?: string } | undefined)?.target ===
+            targetKey(target))
       );
     if (scope === "emojis") return kind === "reaction-emojis";
     return kind.startsWith("thread-") || kind.startsWith("reaction-");

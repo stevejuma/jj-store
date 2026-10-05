@@ -173,6 +173,13 @@ membership from a ready cache. Local cross-operation recovery and remaining
 child/deep/difference/search/candidate/RPC delivery stay open, together with the
 separate comprehensive qualification slice.
 
+E-READ-051 selects exact prepared local source operations after bounded parent
+metadata admission, with source-specific cold recovery and unchanged outer
+snapshots/cursors. Reject newer and unrelated warm selections. Local browser
+validation checks both pins. Land E-READ-050/051 into main and verify the
+focused combined surface before continuing indexed child/deep continuations
+here. Complete scale and release qualification stays deferred.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

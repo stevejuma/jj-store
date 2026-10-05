@@ -263,6 +263,12 @@ impl Executor {
         let limits = self.limits;
         self.worker(access, move |access, budget| {
             Box::pin(async move {
+                let operation = if let Request::References(r) = &request {
+                    if r.operation != operation {
+                        references::selection::validate(access.clone(), operation, r.operation, budget.clone(), limits).await?;
+                    }
+                    r.operation
+                } else { operation };
                 let operation_only = match &request {
                     Request::Graph(GraphRequest::Operations, _) => true,
                     Request::Graph(GraphRequest::OperationsFiltered {query}, _) => !crate::query::language::operations::Filter::parse(query)?.needs_prefix_lookup(),

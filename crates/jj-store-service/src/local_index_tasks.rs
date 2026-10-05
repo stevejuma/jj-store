@@ -412,24 +412,36 @@ impl IndexTasks {
             return Err(q::Error::Invalid.into());
         }
         Self::authorize(access.as_ref()).await?;
+        let source = match &request {
+            q::Request::References(r) => r.operation,
+            _ => operation,
+        };
         let prepared = {
             let mut registry = self.registry.lock().expect("local index registry");
             registry.prune();
-            let entry = registry
+            registry
                 .0
                 .values_mut()
-                .find(|entry| entry.matches(access.as_ref(), operation) && entry.prepared.is_some())
-                .ok_or(q::Error::IndexRebuildRequired)?;
-            entry.used = Instant::now();
-            entry
-                .prepared
-                .as_ref()
-                .and_then(q::preparation::Retained::get)
-                .ok_or(q::Error::IndexRebuildRequired)?
+                .find(|entry| entry.matches(access.as_ref(), source) && entry.prepared.is_some())
+                .and_then(|entry| {
+                    entry.used = Instant::now();
+                    entry
+                        .prepared
+                        .as_ref()
+                        .and_then(q::preparation::Retained::get)
+                })
+        };
+        let Some(prepared) = prepared else {
+            if source != operation {
+                self.executor
+                    .validate_reference_operation(access, operation, source)
+                    .await?;
+            }
+            return Err(q::Error::IndexRebuildRequired.into());
         };
         Ok(self
             .executor
-            .read_prepared(access, prepared, request)
+            .read_prepared_at(access, operation, prepared, request)
             .await?)
     }
 }

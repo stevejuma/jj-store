@@ -18,6 +18,8 @@ mod prepared_points;
 mod prepared_points_http;
 #[path = "local_browser/prepared_references.rs"]
 mod prepared_references;
+#[path = "local_browser/reference_embedded.rs"]
+mod reference_embedded;
 #[path = "local_browser/reviews.rs"]
 mod review_acceptance;
 #[path = "local_browser/scoped_differences.rs"]

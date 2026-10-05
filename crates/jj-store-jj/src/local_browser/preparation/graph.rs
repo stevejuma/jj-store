@@ -354,7 +354,21 @@ impl Executor {
         prepared: Arc<Prepared>,
         request: Request,
     ) -> Result<Response> {
+        self.read_prepared_at(access, prepared.snapshot.operation, prepared, request)
+            .await
+    }
+    /// Read a source reference generation under an independently selected outer operation.
+    pub async fn read_prepared_at(
+        &self,
+        access: Arc<dyn Access>,
+        outer: m::OperationId,
+        prepared: Arc<Prepared>,
+        request: Request,
+    ) -> Result<Response> {
         if !request.can_use_prepared_index() {
+            return Err(Error::Invalid);
+        }
+        if outer != prepared.snapshot.operation && !matches!(&request, Request::References(_)) {
             return Err(Error::Invalid);
         }
         let limits = self.limits;
@@ -374,6 +388,16 @@ impl Executor {
                 let operation = prepared.snapshot.operation;
                 if matches!(&request, Request::References(r) if r.operation != operation) {
                     return Err(Error::NotCommitted);
+                }
+                if outer != operation {
+                    references::selection::validate(
+                        access.clone(),
+                        outer,
+                        operation,
+                        budget.clone(),
+                        limits,
+                    )
+                    .await?;
                 }
                 let mut context = Context::open(
                     access,

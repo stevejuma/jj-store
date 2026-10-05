@@ -108,6 +108,9 @@ export class HttpLocalQuery {
     next_cursor: string | null;
     previous_cursor: string | null;
   }> {
+    const selection: LocalCodeRequest = request;
+    const sourceOperation =
+      selection.kind === "references" ? selection.query.operation : operation;
     const head = await this.snapshot();
     let response: Model<"LocalCodeQueryResponse">;
     try {
@@ -131,7 +134,7 @@ export class HttpLocalQuery {
           pin.version !== 1 ||
           pin.profile !== this.profile ||
           pin.repository !== this.repository ||
-          pin.operation !== operation ||
+          pin.operation !== sourceOperation ||
           String(pin.generation) !== String(head.generation)
         )
           throw new ApiError("snapshot_mismatch");
@@ -148,7 +151,10 @@ export class HttpLocalQuery {
       response.snapshot.repository !== this.repository ||
       response.snapshot.operation !== operation ||
       String(response.snapshot.generation) !== String(head.generation) ||
-      response.data.kind !== request.kind
+      response.data.kind !== request.kind ||
+      (request.kind === "references" &&
+        response.data.kind === "references" &&
+        response.data.data.operation !== sourceOperation)
     )
       throw new ApiError("snapshot_mismatch");
     const snapshot: LocalReadSnapshot = {
