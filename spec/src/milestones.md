@@ -89894,6 +89894,302 @@ entries.
       "Visual baselines remain unapproved. Rust, root aggregates, full repository/release/fault/RustFS and registry-only qualification are out of scope for this presentation-only slice. No milestone status is promoted. Advanced-query optimization stays deferred."
     ],
     "next": "Commit the verified slice in bounded-reads and retain the refreshed 7470 preview for review."
+  },
+  {
+    "id": "E-READ-084",
+    "date": "2026-10-05",
+    "tasks": ["M4.1", "M4.6", "M13.4"],
+    "requirements": [
+      "JST-API-001",
+      "JST-API-004",
+      "JST-API-005",
+      "JST-UI-003",
+      "JST-JJ-003",
+      "JST-LOCAL-004"
+    ],
+    "kind": "Selected text-diff admission and accurate unavailable presentation",
+    "revision": "enclosing Jujutsu change mrqotlum",
+    "before": "Linux altera_edac.c is valid UTF-8 without NUL bytes; 62341/62397-byte versions have 2223/2226 guarded lines. A whole-file product of 4948398 exceeded 250000 and returned HTTP200 unavailable/complexity. The UI discarded this reason and displayed Binary diff unavailable. The CLI completed the same comparison in 77ms, with 35 additions and 32 deletions.",
+    "scope": "One shared private admission helper for native/local selected-file text readers: retain JJ default native hunks for small comparisons; exact leading/trailing boundaries and ordered unique common lines partition longer inputs before cumulative bounded native comparisons. Keep text, output, cancellation, authority and total-work caps. Retain typed unavailable reasons in the selected patch; binary alone gets a binary label, pending patch reads show skeletons and unavailable content remains contextual without duplicate request toasts. Adapt the existing review-anchor consumer; no review feature redesign.",
+    "formats": "Existing V1 diff DTOs and reason enum unchanged; no generated contracts, repository/index/native object/WAL/manifest/companion persistence or authority changes. The original content-diff slice okkvprsm/aaa805a2 introduced the app-owned 256KiB and 250000 caps on 2026-09-27. Pinned jj-lib/JJ core 0.45.1 has no corresponding configurable caps; native diff defaults, including its internal histogram behavior, remain untouched.",
+    "versions": "macOS ARM64; JJ/jj-lib/JJ core 0.45.1; rustc 1.98.1; Node 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Vitest 4.1.11; Storybook 10.5.7.",
+    "files": [
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte",
+      "catalog/fixtures/DiffFixture.svelte",
+      "crates/jj-store-cli/tests/local_browser/scoped_differences.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/diff.rs",
+      "crates/jj-store-jj/src/lib.rs",
+      "crates/jj-store-jj/src/line_diff.rs",
+      "crates/jj-store-jj/src/line_diff/tests.rs",
+      "crates/jj-store-jj/src/local_browser/diff.rs",
+      "crates/jj-store-jj/src/query/content/diff.rs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/production-store-loaders.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/controller/review-anchor-patch.ts",
+      "web/src/lib/projects/presentation.ts",
+      "web/src/lib/projects/repository-diff.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogDiff.svelte",
+      "web/tests/production-store-loaders.test.ts",
+      "web/tests/repository-diff.test.ts",
+      "web/tests/vite/production-patch-reader.test.ts"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/diff.rs#content_diff_long_file_sparse_edits_remain_text",
+      "crates/jj-store-cli/tests/local_browser/scoped_differences.rs#local_diff_long_file_sparse_edits_remain_text",
+      "crates/jj-store-jj/src/line_diff/tests.rs#small_diffs_retain_jj_default_hunks_and_exact_bytes",
+      "crates/jj-store-jj/src/line_diff/tests.rs#sparse_long_file_edits_with_insertions_and_final_newline_change",
+      "crates/jj-store-jj/src/line_diff/tests.rs#repeated_common_lines_are_trimmed_without_unique_anchors",
+      "crates/jj-store-jj/src/line_diff/tests.rs#expensive_repeated_comparisons_refuse_complete_content",
+      "crates/jj-store-jj/src/line_diff/tests.rs#request_budget_cancellation_propagates_without_a_partial_diff",
+      "web/tests/production-store-loaders.test.ts#selected patch preserves the backend unavailable reason",
+      "web/tests/repository-diff.test.ts#only confirmed binary content uses a binary label",
+      "web/tests/vite/production-patch-reader.test.ts#selected patch stays pending until its typed unavailable result arrives",
+      "web/tests/vite/production-patch-reader.test.ts#obsolete patch responses cannot replace a new selection",
+      "web/tests/vite/production-patch-reader.test.ts#failed patch reads clear pending state and report through the request service"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle content_diff_long_file_sparse_edits_remain_text --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial harness used a single-thread Tokio runtime; corrected to the native fixture's required four-thread runtime before establishing the product baseline."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle content_diff_long_file_sparse_edits_remain_text --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Corrected before run: text comparison returned Complexity."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser local_diff_long_file_sparse_edits_remain_text --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: the local reader returned Complexity."
+      },
+      {
+        "command": "pnpm exec tsx --test --test-name-pattern='selected patch preserves' web/tests/production-store-loaders.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: unavailable reason was discarded; duplicate focused run reproduced the same failure."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib line_diff --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 shared admission/default-hunk/byte-preservation/cumulative-limit/cancellation tests passed."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle content_diff_long_file_sparse_edits_remain_text --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "After: 1 passed."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser local_diff_long_file_sparse_edits_remain_text --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "After: 1 passed."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle content_acceptance::diff_acceptance --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 direct diff/conflict subtree tests passed; no full native-lifecycle claim."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser scoped_differences --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 selected local comparison regressions passed."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust packages and compiled direct dependencies passed."
+      },
+      {
+        "command": "cargo clippy -p jj-store-jj --lib --locked -- -D warnings",
+        "result": "fail",
+        "failures": 17,
+        "note": "All diagnostics are in untouched modules; the exact prior revision reproduces the same 17 diagnostics."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo clippy --manifest-path /tmp/jj-store-diff-lint-baseline/Cargo.toml -p jj-store-jj --lib --locked -- -D warnings",
+        "result": "fail",
+        "failures": 17,
+        "note": "Clean disposable workspace at uklvrtou/1dde77e0. Diagnostic headers and all 17 owning source files are byte-identical. The workspace was forgotten, its own empty change abandoned and its directory removed."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm exec tsx --test --test-name-pattern='selected patch preserves' web/tests/production-store-loaders.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "After: 1 passed."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/production-store-loaders.test.ts web/tests/production-inspection-pages.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 passed."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/repository-diff.test.ts web/tests/review-comment-anchor.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 passed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-patch-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 passed, repeated after adding stale-patch removal; pending, obsolete selection and failed-request state covered."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh browser runner: initially 6, finally 7 stories passed, including stacked operation and standalone comparison. Existing accessibility setup retained; no baseline changes."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final: zero errors or warnings. Initial run caught the direct review-anchor consumer of readPatch; destructuring its patch preserves its existing contract."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final: zero errors or warnings; 194 catalog module boundaries passed."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "998 modules passed."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm exec spec-validator validate --only governance",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm exec spec-validator validate --only summary",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm exec spec-validator validate --only verification",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm exec spec-validator validate --only book",
+        "result": "pass",
+        "failures": 0,
+        "note": ""
+      },
+      {
+        "command": "pnpm exec spec-validator validate --only internal",
+        "result": "fail",
+        "failures": 1,
+        "note": "Unsupported validator name; replaced with enabled governance/summary/verification/book validators. Repeating --only flags selected only the last name, so each actual enabled lane was then run separately."
+      },
+      {
+        "command": "jj --no-pager diff --check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Unsupported JJ option; formatting and the actual canonical/source gates were used instead."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/fixtures/DiffFixture.svelte spec/src/api.md spec/src/jj-integration.md spec/src/ui.md web/src/lib/controller/production-store-loaders.ts web/src/lib/controller/production-store-reader.svelte.ts web/src/lib/controller/review-anchor-patch.ts web/src/lib/projects/presentation.ts web/src/lib/projects/repository-diff.ts web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogDiff.svelte web/tests/production-store-loaders.test.ts web/tests/repository-diff.test.ts web/tests/vite/production-patch-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed UI, tests and canonical chapters formatted. Ledger appended separately without rewriting historical entries."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Built only the development JJ/store binaries. Existing macOS linker unwind-size warning retained."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 pnpm dev:backend:restart",
+        "result": "fail",
+        "failures": 1,
+        "note": "First attempt overlapped Cargo replacing the executable and failed with ENOENT. Fixture unchanged. Completed explicit backend build, then repeated successfully; Vite and main services were retained."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Successful backend-only replacement in the existing preview; persistent RustFS/search fixture retained."
+      },
+      {
+        "command": "CUA/CDP fresh background Linux commit comparison after backend restart; select drivers/edac/altera_edac.c then drivers/edac/versalnet_edac.c",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original pinned operation/from/to retained. Altera returns text with 53 structured hunks, 35 additions and 32 deletions (matching the CLI), 1195ms cold request and total charged work 444819/1000000. Both file diffs render. Switching files shows a pending skeleton; no console errors. Screenshot/response summary saved under .local/bounded-diff. Temporary Network/cache changes restored and tab closed."
+      },
+      {
+        "command": "pnpm exec spec-validator first",
+        "result": "fail",
+        "failures": 2,
+        "note": "First attempt required the mapped cli.md and local-jj.md chapters. Added the narrow selected-diff acceptance and read-only local behavior requirements without widening product scope."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md",
+        "result": "fail",
+        "failures": 1,
+        "note": "New evidence arrays needed canonical formatter layout. Historical evidence content and text are retained."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final ledger: 139 tasks; historical entries retained; no milestone promotion."
+      },
+      {
+        "command": "pnpm exec spec-validator first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final: 19 protected files mapped to six owning canonical chapters."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md spec/src/cli.md spec/src/local-jj.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final canonical formatting passed; formatter output was checked to preserve all preceding ledger text byte-for-byte."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Package Clippy remains red with 17 reproduced pre-existing diagnostics in untouched modules; not fixed or suppressed by this slice.",
+      "Aggregate/root, full scale/RSS, RustFS, release and visual-baseline qualification remain outside this targeted slice; focused passes are not full-suite qualification."
+    ],
+    "next": "Commit the verified narrow behavior slice with Jujutsu and retain the temporary workspace. Preview serves this slice at 7470; main and installed executables remain unchanged. Address existing package lint separately if requested."
   }
 ]
 ```

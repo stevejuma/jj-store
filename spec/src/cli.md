@@ -1,5 +1,11 @@
 # CLI and server commands
 
+Selected-file diff acceptance covers both the native service fixture and the
+actual local JJ folder reader with longer UTF-8 files and sparse, separated
+edits. Verify complete before/after reconstruction and retain bounded refusal
+for unresolved comparisons. The browser consumes explicit unavailable reasons;
+these regressions change no installed CLI command or repository source.
+
 Managed core browsing acceptance uses the CLI package's actual filesystem and
 native server fixtures. Cover first-open activation without subscribers,
 external code updates, restart reuse, unchanged source files, exact historical

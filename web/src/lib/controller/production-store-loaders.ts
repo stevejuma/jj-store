@@ -235,7 +235,7 @@ export async function readPatch(
   operation: string,
   path: string,
   comparison: Comparison,
-): Promise<string | undefined> {
+): Promise<import("../projects/repository-diff.js").SelectedPatch> {
   const value = await source.diff(
     operation,
     comparison.from,
@@ -244,5 +244,8 @@ export async function readPatch(
   );
   assertPinned(value.snapshot, source, operation);
   const change = value.data.changes.find((item) => item.path === path);
-  return change ? presentPatch(change) : undefined;
+  if (!change) return {};
+  return change.content.status === "unavailable"
+    ? { unavailableReason: change.content.reason }
+    : { patch: presentPatch(change) };
 }

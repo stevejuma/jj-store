@@ -102,6 +102,45 @@ fn text(change: &d::Change) -> &[d::Hunk] {
     hunks
 }
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn content_diff_long_file_sparse_edits_remain_text() {
+    let mut h = History::new().await;
+    let before = (0..2300)
+        .map(|n| format!("line {n}\r\n"))
+        .collect::<String>();
+    let after = before
+        .replace("line 20\r\n", "changed 20\r\ninserted\r\n")
+        .replace("line 1100\r\n", "changed 1100\r\n")
+        .replace("line 2200\r\n", "changed 2200\r\n");
+    let value = h.file(before.as_bytes()).await;
+    let tree = h.tree(vec![("long.c", value)]).await;
+    h.publish(vec![tree], vec![""]).await;
+    let from = h.commit;
+    let value = h.file(after.as_bytes()).await;
+    let tree = h.tree(vec![("long.c", value)]).await;
+    let read = h.publish(vec![tree], vec![""]).await;
+    let response = read
+        .diff(
+            &reader(),
+            d::Request {
+                from,
+                to: h.commit,
+                path: "long.c".into(),
+                content: true,
+            },
+        )
+        .await
+        .unwrap();
+    let hunks = text(&response.changes[0]);
+    assert_eq!(
+        hunks.iter().map(|v| v.before.as_str()).collect::<String>(),
+        before
+    );
+    assert_eq!(
+        hunks.iter().map(|v| v.after.as_str()).collect::<String>(),
+        after
+    );
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn content_diff_native_lines_modes_binary_symlinks_submodules_and_prefixes() {
     let mut h = History::new().await;
     let a = "alpha\r\nβeta\nno final newline";

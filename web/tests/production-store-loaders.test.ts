@@ -23,6 +23,7 @@ import {
   readGraph,
   readLandingDocuments,
   readOperationInspection,
+  readPatch,
   readReferences,
 } from "../src/lib/controller/production-store-loaders.js";
 import { repositoryLandingDocumentLabel } from "../src/lib/ui/community-projects/repository-browser.js";
@@ -95,6 +96,36 @@ function source(overrides: Partial<StoreDataSource> = {}): StoreDataSource {
     ...overrides,
   };
 }
+
+test("selected patch preserves the backend unavailable reason", async () => {
+  const data = source({
+    diff: async () => ({
+      snapshot: snapshot(),
+      data: {
+        version: 1,
+        from: before,
+        to: after,
+        path: "long.c",
+        stats,
+        changes: [
+          {
+            path: "long.c",
+            before: [],
+            after: [],
+            sources: [],
+            content: { status: "unavailable", reason: "complexity" },
+          },
+        ],
+      },
+    }),
+  });
+  assert.deepEqual(
+    await readPatch(data, operation, "long.c", { from: before, to: after }),
+    {
+      unavailableReason: "complexity",
+    },
+  );
+});
 
 test("native presentation preserves conflicting targets and exact identifiers", () => {
   const references = presentReferences([

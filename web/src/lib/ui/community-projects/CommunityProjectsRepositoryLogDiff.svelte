@@ -15,6 +15,10 @@
 
   import type { RepositoryLogRevision } from "../../projects/repository-log.js";
   import { repositoryLogFileStats } from "../../projects/repository-log-files.js";
+  import {
+    unavailableDiffMessage,
+    type DiffUnavailableReason,
+  } from "../../projects/repository-diff.js";
   import CommunityProjectsRepositoryLogRail from "./CommunityProjectsRepositoryLogRail.svelte";
   import CommunityProjectsRepositorySkeleton from "./CommunityProjectsRepositorySkeleton.svelte";
   import type { StoreController } from "../../controller/contracts.js";
@@ -26,6 +30,7 @@
   let {
     path,
     patch,
+    unavailableReason,
     files,
     operation,
     loading = false,
@@ -35,6 +40,7 @@
   }: {
     path: string | null;
     patch: string | undefined;
+    unavailableReason?: DiffUnavailableReason | undefined;
     files: readonly FileListingFile[];
     operation?: RepositoryLogRevision | undefined;
     loading?: boolean | undefined;
@@ -47,6 +53,7 @@
   let wrap = $state(false);
   const operationDisclosure = sectionDisclosure(() => ["oplog", "operation"]);
   const stats = $derived(repositoryLogFileStats(files, path));
+  const unavailable = $derived(unavailableDiffMessage(unavailableReason));
   const operationPanelId = $derived(
     operation ? `operation-details-${operation.eventId.slice(0, 16)}` : "",
   );
@@ -157,10 +164,8 @@
                 <Empty.Media variant="icon">
                   <FileWarningIcon aria-hidden="true" />
                 </Empty.Media>
-                <Empty.Title>Binary diff unavailable</Empty.Title>
-                <Empty.Description
-                  >Binary or unavailable text diff for {path}.</Empty.Description
-                >
+                <Empty.Title>{unavailable.title}</Empty.Title>
+                <Empty.Description>{unavailable.description}</Empty.Description>
               </Empty.Header>
             </Empty.Root>
             {@render inlineDiscussion()}
@@ -225,10 +230,8 @@
             <Empty.Media variant="icon">
               <FileWarningIcon aria-hidden="true" />
             </Empty.Media>
-            <Empty.Title>Binary diff unavailable</Empty.Title>
-            <Empty.Description
-              >Binary or unavailable text diff for {path}.</Empty.Description
-            >
+            <Empty.Title>{unavailable.title}</Empty.Title>
+            <Empty.Description>{unavailable.description}</Empty.Description>
           </Empty.Header>
         </Empty.Root>
         {@render inlineDiscussion()}

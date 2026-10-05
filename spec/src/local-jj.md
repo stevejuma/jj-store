@@ -1,5 +1,11 @@
 # Local Git-backed JJ collaboration
 
+Local selected-file text comparisons use the shared native JJ line-diff
+admission policy in api.md. Exact common lines may partition longer files before
+bounded comparison of the remaining spans, without building or reading a new
+repository index. Preserve complete text bytes, pinned operations and explicit
+unavailable reasons; no companion or Git object is changed by the comparison.
+
 Ready local operation graph pages may use the shared checksum-verified compact
 operation DAG to order candidate identities and skip history before the anchor.
 They hydrate only the anchor, subsequent predicate candidates and the bounded

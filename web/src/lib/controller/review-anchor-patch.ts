@@ -47,12 +47,17 @@ export async function readReviewAnchorPatch(
     comparisonOperation = operation;
   }
   if (!from) return;
-  const patch = await readPatch(source, comparisonOperation, comparisonPath, {
-    from,
-    to,
-    beforeOperation: context?.before_operation_id ?? comparisonOperation,
-    afterOperation: context?.after_operation_id ?? comparisonOperation,
-  });
+  const { patch } = await readPatch(
+    source,
+    comparisonOperation,
+    comparisonPath,
+    {
+      from,
+      to,
+      beforeOperation: context?.before_operation_id ?? comparisonOperation,
+      afterOperation: context?.after_operation_id ?? comparisonOperation,
+    },
+  );
   if (!patch) return;
   if (target.target !== "code_text") return { path, patch };
   const file = await source.file(

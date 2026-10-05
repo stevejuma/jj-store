@@ -681,6 +681,16 @@ Traversal, change count, text bytes, estimated line-comparison work, output and
 time are bounded; complete structured responses fail rather than silently
 truncating.
 
+Native and local text readers retain the pinned JJ line-diff algorithm and its
+defaults. The service's text, comparison-work, output and time caps are separate
+admission policy, not upstream JJ configuration. Small comparisons use JJ
+directly. Longer files may remove exact common leading/trailing lines and use
+ordered unique common lines as anchors before applying JJ to the remaining
+spans. The cumulative line-comparison estimate for those spans remains capped;
+anchor discovery observes the request's work/cancellation budget. Returned hunks
+reconstruct both complete inputs, including CRLF and final-newline state. An
+over-budget comparison retains the explicit `complexity` reason.
+
 Conflict descriptors preserve ordered add/remove terms, absent terms, native
 values, labels, executable flags, copies and external submodules. A distinct V1
 fingerprint binds repository, epoch, native profile, exact commit/change IDs,

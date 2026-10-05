@@ -1,5 +1,12 @@
 # Native JJ integration
 
+Selected native and local text comparisons share service admission around the
+pinned JJ default line-diff implementation. Exact common boundaries and ordered
+unique common lines may split larger inputs into bounded native comparisons; the
+aggregate comparison-work ceiling, request cancellation, byte verification,
+output limits and explicit unavailable reasons remain enforced. This is a
+rebuildable read projection and changes no native identity or stored format.
+
 The additive CopyFamily RPC gives the ordinary remote native backend the same
 selected-family capability as its in-process authority. Capture one checked
 current inventory root after bounded admission; retain it for the entire call

@@ -171,14 +171,24 @@ export function createProductionStoreReader(
       source = context.source(),
       ticket = context.version();
     if (!comparison || !operation) return;
+    if (data.detail) data.detail = { ...data.detail, pendingPatch: path };
     try {
-      const patch = await readPatch(source, operation, path, comparison);
+      const { patch, unavailableReason } = await readPatch(
+        source,
+        operation,
+        path,
+        comparison,
+      );
       if (!context.current(ticket, source) || !data.detail) return;
+      const patches = { ...data.detail.patches };
+      if (patch) patches[path] = patch;
+      else delete patches[path];
       data.detail = {
         ...data.detail,
-        patches: {
-          ...data.detail.patches,
-          ...(patch ? { [path]: patch } : {}),
+        patches,
+        patchUnavailableReasons: {
+          ...data.detail.patchUnavailableReasons,
+          [path]: unavailableReason,
         },
       };
       history.replace({
@@ -187,6 +197,9 @@ export function createProductionStoreReader(
       });
     } catch (cause) {
       if (context.current(ticket, source)) context.report(cause);
+    } finally {
+      if (context.current(ticket, source) && data.detail?.pendingPatch === path)
+        data.detail = { ...data.detail, pendingPatch: undefined };
     }
   }
   async function loadMoreDetail() {
@@ -202,6 +215,7 @@ export function createProductionStoreReader(
           : await readMoreOperationInspection(source, continuation);
       if (!context.current(ticket, source) || !data.detail) return;
       data.detail = {
+        ...data.detail,
         files: [...data.detail.files, ...page.files],
         patches: data.detail.patches,
       };

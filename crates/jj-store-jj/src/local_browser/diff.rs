@@ -2,10 +2,7 @@
 use super::native::{Text, map_backend};
 use super::*;
 use futures::StreamExt as _;
-use jj_lib::{
-    diff::{ContentDiff, DiffHunkKind},
-    matchers::PrefixMatcher,
-};
+use jj_lib::{diff::DiffHunkKind, matchers::PrefixMatcher};
 use serde::Deserialize;
 
 #[derive(Clone, Debug, Serialize, Deserialize, schemars::JsonSchema)]
@@ -187,41 +184,27 @@ impl Context {
         let [before, after] = inputs.as_slice() else {
             unreachable!()
         };
-        let lines = |text: &str| {
-            text.bytes()
-                .filter(|&b| b == b'\n')
-                .count()
-                .saturating_add(1)
-        };
-        let cells = lines(before)
-            .checked_mul(lines(after))
-            .ok_or(Error::Limit)?;
-        if cells > self.limits.max_diff_cells {
+        let Some(spans) =
+            crate::line_diff::bounded(before, after, self.limits.max_diff_cells, |work| {
+                self.budget.work(work)
+            })?
+        else {
             return Ok(unavailable(Unavailable::Complexity));
-        }
-        self.budget.work(cells)?;
-        let diff = ContentDiff::by_line([before.as_bytes(), after.as_bytes()]);
+        };
         self.budget.authorize(self.access.as_ref()).await?;
         let mut hunks = vec![];
-        let (mut before_start, mut after_start) = (0, 0);
-        for hunk in diff.hunks() {
+        for span in spans {
             self.budget.work(1)?;
             let hunk = Hunk {
-                kind: match hunk.kind {
+                kind: match span.kind {
                     DiffHunkKind::Matching => HunkKind::Matching,
                     DiffHunkKind::Different => HunkKind::Different,
                 },
-                before_start,
-                after_start,
-                before: std::str::from_utf8(hunk.contents[0].as_ref())
-                    .map_err(|_| Error::Corrupt)?
-                    .to_owned(),
-                after: std::str::from_utf8(hunk.contents[1].as_ref())
-                    .map_err(|_| Error::Corrupt)?
-                    .to_owned(),
+                before_start: span.before.start,
+                after_start: span.after.start,
+                before: before[span.before].to_owned(),
+                after: after[span.after].to_owned(),
             };
-            before_start += hunk.before.len();
-            after_start += hunk.after.len();
             self.budget.output(&hunk)?;
             hunks.push(hunk);
         }

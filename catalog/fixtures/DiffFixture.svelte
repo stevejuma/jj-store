@@ -3,7 +3,18 @@
   import { createRepositoryLogCanvas } from "../../web/src/lib/projects/repository-log-canvas.js";
   import CommunityProjectsRepositoryLogDiff from "../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogDiff.svelte";
   import { sampleDetail } from "./repository.js";
-  let { path = "README.md" }: { path?: string | null } = $props();
+  import type { DiffUnavailableReason } from "../../web/src/lib/projects/repository-diff.js";
+  let {
+    path = "README.md",
+    unavailableReason,
+    loading = false,
+    operation,
+  }: {
+    path?: string | null;
+    unavailableReason?: DiffUnavailableReason;
+    loading?: boolean;
+    operation?: import("../../web/src/lib/projects/repository-log.js").RepositoryLogRevision;
+  } = $props();
   const canvas = createRepositoryLogCanvas();
   canvas.select(0, "revision");
   canvas.select(1, "README.md");
@@ -13,6 +24,9 @@
   <ColumnCanvas.Root controller={canvas}
     ><CommunityProjectsRepositoryLogDiff
       {path}
+      {unavailableReason}
+      {loading}
+      {operation}
       patch={path ? sampleDetail.patches[path] : undefined}
       files={sampleDetail.files}
     /></ColumnCanvas.Root

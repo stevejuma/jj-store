@@ -779,7 +779,12 @@ while the file-diff card keeps its file header and view controls underneath.
 Parent operation navigation remains available without opening a standalone
 details column. Missing selected-file diffs and binary or unavailable diffs use
 the shared shadcn Empty composition with icon media rather than plain status
-text. An open standalone diff column with no selected file uses the same icon
+text. The selected patch retains its typed unavailable reason: only `binary`
+uses a binary label; complexity, size, conflicts, multiple sources and
+structural changes explain their distinct content limitation. Missing results
+use a neutral unavailable label. Pending comparisons retain skeletons. These
+contextual unavailable-content explanations do not duplicate transient request
+toasts. An open standalone diff column with no selected file uses the same icon
 Empty composition. Files opens the copied Community directory table until a file
 is selected; directory, file and snapshot navigation participate in the
 in-memory Back/Forward history.

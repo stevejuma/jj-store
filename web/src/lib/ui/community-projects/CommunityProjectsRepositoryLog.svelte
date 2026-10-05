@@ -248,7 +248,12 @@
       {patch}
       {files}
       operation={selectedOperation}
-      loading={detailLoading}
+      loading={detailLoading ||
+        (!!selectedPath &&
+          controller?.state.detail?.pendingPatch === selectedPath)}
+      unavailableReason={selectedPath
+        ? controller?.state.detail?.patchUnavailableReasons?.[selectedPath]
+        : undefined}
       {now}
       onSelectOperation={onSelectRevision}
       {controller}
