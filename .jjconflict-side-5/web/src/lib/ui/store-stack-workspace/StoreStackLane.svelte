@@ -89,6 +89,9 @@
           class="stack-workspace__action-menu"
           ><Menu.Group>
             <Menu.Item
+              disabled={!controller.can(
+                applied ? "unapply_stack" : "apply_stack",
+              )}
               onSelect={() =>
                 onCommand({
                   kind: applied ? "unapply_stack" : "apply_stack",
@@ -99,6 +102,8 @@
                 />{/if}{applied ? "Unapply stack" : "Apply stack"}</Menu.Item
             >
             <Menu.Item
+              disabled={!controller.can("rename_stack")}
+              title={controller.eligibility("rename_stack").reason || undefined}
               onSelect={() =>
                 onCommand({
                   kind: "rename_stack",
@@ -107,10 +112,14 @@
                 })}><Pencil aria-hidden="true" />Rename stack</Menu.Item
             >
             <Menu.Item
+              disabled={!controller.can("rebase")}
+              title={controller.eligibility("rebase").reason || undefined}
               onSelect={() => onCommand({ kind: "rebase", stack: stack.id })}
               ><GitBranch aria-hidden="true" />Rebase onto base</Menu.Item
             >
             <Menu.Item
+              disabled={!controller.can("delete_stack")}
+              title={controller.eligibility("delete_stack").reason || undefined}
               onSelect={() =>
                 onCommand({ kind: "delete_stack", stack: stack.id })}
               ><Trash aria-hidden="true" />Delete stack</Menu.Item
@@ -147,7 +156,9 @@
         <Card.Content class="stack-workspace__branch-actions">
           <Button
             size="sm"
-            disabled={controller.locked}
+            disabled={!controller.can(
+              applied ? "unapply_stack" : "apply_stack",
+            )}
             aria-label={`${applied ? "Unapply" : "Apply"} ${stack.name}`}
             onclick={() =>
               onCommand({

@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreStackDiffHunk from "./StoreStackDiffHunk.svelte";
   import CommunityDiffControls from "../community-diff-controls/CommunityDiffControls.svelte";
+  import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
+  import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import {
-    workspaceSourceFiles,
     workspaceAggregateSource,
     workspaceHunkSelection,
   } from "../../controller/stack-workspace/files.js";
@@ -28,18 +31,41 @@
   let viewMode = $state<"unified" | "split">("unified"),
     wrap = $state(false);
   const file = $derived(
-    (diff.origin === TARGET_HISTORY_ORIGIN
-      ? (controller.targetHistory.commits.find(
-          (commit) => commit.id === diff.source,
-        )?.files ?? [])
-      : controller.snapshot
-        ? workspaceSourceFiles(controller.snapshot, diff.source)
-        : []
-    ).find((item) => item.path === diff.path),
+    controller.filesFor(diff.source).find((item) => item.path === diff.path),
+  );
+  const patchRead = $derived(
+    controller.details.patchState(diff.source, diff.path),
+  );
+  const filesState = $derived(controller.details.fileState(diff.source));
+  $effect(() => {
+    const source = diff.source,
+      path = diff.path;
+    controller.snapshot?.revision;
+    controller.snapshot?.readKey;
+    untrack(() => {
+      void controller.details.loadFiles(source);
+    });
+    return () => controller.details.cancelDiff(source, path);
+  });
+  $effect(() => {
+    if (file?.content?.status === "unloaded") {
+      const source = diff.source,
+        path = diff.path;
+      untrack(() => {
+        void controller.details.loadDiff(source, path);
+      });
+    }
+  });
+  const executable = $derived(
+    !controller.details.lazy &&
+      (controller.can("transfer") ||
+        controller.can("split") ||
+        controller.can("create_commit")),
   );
   const selection = $derived(
     diff.origin === TARGET_HISTORY_ORIGIN ||
-      workspaceAggregateSource(diff.source)
+      workspaceAggregateSource(diff.source) ||
+      !executable
       ? null
       : {
           source: diff.source,
@@ -82,7 +108,7 @@
                     variant="ghost"
                     size="icon-sm"
                     aria-label="Split selected changes"
-                    disabled={controller.locked || !hasSelection}
+                    disabled={!controller.can("split") || !hasSelection}
                     onclick={() =>
                       selection &&
                       onCommand({
@@ -102,16 +128,58 @@
       {/if}
       <ColumnCanvas.Close
         aria-label="Close Diff column"
-        onclick={() => {
-          if (diff.origin === TARGET_HISTORY_ORIGIN)
-            controller.targetHistory.diff = null;
-          else controller.closeDiff(diff.origin);
-        }}
+        onclick={() => controller.closeDiff(diff.origin)}
       /></ColumnCanvas.HeaderActions
     ></ColumnCanvas.Header
   >
   <ColumnCanvas.Body scrollStrategy="styled">
-    {#if file}
+    <StoreNotice
+      noticeKey={`stack-files:${diff.source}`}
+      title="Changed files unavailable"
+      message={filesState.error}
+      lifetime="condition"
+    />
+    <StoreNotice
+      noticeKey={`stack-patch:${diff.source}:${diff.path}`}
+      title="Diff unavailable"
+      message={patchRead.error}
+      lifetime="condition"
+    />
+    {#if patchRead.error}<Button
+        size="sm"
+        variant="outline"
+        onclick={() => void controller.details.loadDiff(diff.source, diff.path)}
+        >Retry diff</Button
+      >{/if}
+    {#if controller.details.lazy && !file}
+      {#if filesState.error}<Button
+          size="sm"
+          variant="outline"
+          onclick={() => void controller.details.loadFiles(diff.source)}
+          >Retry changed files</Button
+        >
+      {:else}<CommunityProjectsRepositorySkeleton
+          layout="diff"
+          label={`Loading diff for ${diff.path}`}
+          count={3}
+        />{/if}
+    {:else if file?.content?.status === "unloaded" && !patchRead.error}
+      <CommunityProjectsRepositorySkeleton
+        layout="diff"
+        label={`Loading diff for ${diff.path}`}
+        count={3}
+      />
+    {:else if file?.content?.status === "unavailable"}
+      <CommunityProjectsColumnAlert
+        title="Text diff unavailable"
+        description={`This file cannot be displayed as a text diff (${file.content.reason.replaceAll("_", " ")}).`}
+      />
+    {:else if file && !file.hunks.length && !patchRead.error}
+      <CommunityProjectsColumnAlert
+        title="No text changes"
+        description="There are no changed text hunks for this file."
+      />
+    {:else if file}
       <section
         class="stack-workspace__hunks"
         aria-label={`Diff hunks from ${diff.origin} · ${file.path}`}
@@ -122,7 +190,9 @@
             drag={controller.drag}
             origin={diff.origin}
             path={file.path}
-            selection={diff.origin === TARGET_HISTORY_ORIGIN
+            selection={diff.origin === TARGET_HISTORY_ORIGIN ||
+            !executable ||
+            !controller.can("transfer")
               ? null
               : workspaceHunkSelection(
                   controller.snapshot!,

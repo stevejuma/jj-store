@@ -46,6 +46,11 @@
   );
   function command(value: WorkspaceCommand) {
     if (controller.locked) return;
+    const eligibility = controller.eligibility(value.kind);
+    if (!eligibility.allowed) {
+      controller.validation = eligibility.reason;
+      return;
+    }
     controller.validation = "";
     if (value.kind === "move_commit" && value.branch) {
       void controller.prepare(value);
@@ -120,7 +125,7 @@
         description={snapshot.conflicts.map((item) => item.path).join(", ")}
         ><Button
           size="sm"
-          disabled={controller.locked}
+          disabled={!controller.can("resolve_conflict")}
           onclick={() => (conflictOpen = true)}>Resolve conflicts</Button
         ></CommunityProjectsColumnAlert
       >{/if}

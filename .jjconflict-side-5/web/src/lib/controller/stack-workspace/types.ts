@@ -81,6 +81,8 @@ export type WorkspaceSnapshot = {
   profile: "native" | "git_sha1_jj045";
   availability: "ready" | "unlinked" | "unavailable";
   revision: number;
+  /** Opaque read scope; numeric revision remains a UI counter. */
+  readKey?: string;
   base: string;
   active: string;
   target: WorkspaceTargetBranch;
@@ -88,6 +90,7 @@ export type WorkspaceSnapshot = {
   stacks: WorkspaceStack[];
   conflicts: WorkspaceConflict[];
   capabilities: WorkspaceCommand["kind"][];
+  capabilityReasons?: Partial<Record<WorkspaceCommand["kind"], string>>;
   canUndo: boolean;
 };
 export type WorkspaceSelection = {
@@ -183,11 +186,25 @@ export type WorkspacePreview = {
 };
 export type WorkspaceOutcome =
   { status: "committed"; snapshot: WorkspaceSnapshot } | { status: "unknown" };
+export type WorkspaceSourceRequest = {
+  repository: string;
+  revision: number;
+  readKey?: string;
+  source: string;
+  cursor?: string;
+  signal?: AbortSignal;
+};
+export type WorkspaceFilePage = { files: WorkspaceFile[]; nextCursor?: string };
 export interface StackWorkspaceAdapter {
   read(): Promise<WorkspaceSnapshot>;
   readTargetHistory(
     request: WorkspaceHistoryRequest,
+    signal?: AbortSignal,
   ): Promise<WorkspaceHistoryPage>;
+  readSourceFiles?(request: WorkspaceSourceRequest): Promise<WorkspaceFilePage>;
+  readFileDiff?(
+    request: WorkspaceSourceRequest & { path: string },
+  ): Promise<WorkspaceFile>;
   preview(request: WorkspaceRequest): Promise<WorkspacePreview>;
   apply(request: WorkspaceRequest): Promise<WorkspaceOutcome>;
   status(requestId: string): Promise<WorkspaceOutcome>;

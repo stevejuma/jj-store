@@ -47,8 +47,9 @@
       />{/if}
     {#snippet footer()}<Button variant="outline" onclick={() => (open = false)}
         >Close</Button
-      ><Button disabled={!complete || controller.busy} onclick={prepare}
-        >Preview resolution</Button
+      ><Button
+        disabled={!complete || !controller.can("resolve_conflict")}
+        onclick={prepare}>Preview resolution</Button
       >{/snippet}
   </DialogFrame></Dialog.Root
 >

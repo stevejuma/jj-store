@@ -98,5 +98,14 @@ annotations without loading file details with history. Net file summaries and
 selected patches compare explicit tree boundaries. It retains unloaded and
 unavailable content plus file modes and ordered rename/conflict source terms.
 Caller cancellation and view disposal release their own reads. Presentation hunk
-IDs grant no execution authority. Production controller injection and the
+IDs grant no execution authority.
+
+The stack controller accepts optional lazy source-file and patch adapters. Each
+inline file list and adjacent diff owns its loading, retry and continuation
+state. Read-scope changes cancel stale reads and preserve other open diff
+origins. Unstaged uses the same authoritative source reads; unavailable text
+patches remain explicit. Command controls check individual provider
+capabilities, while browsing and Copy remain available without an executor.
+These paths are covered by controller regressions and isolated app-shell
+stories. Production adapter injection, real-folder lifecycle acceptance and the
 recoverable command executor remain separate integration work.

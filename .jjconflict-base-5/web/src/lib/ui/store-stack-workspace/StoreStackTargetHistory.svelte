@@ -7,7 +7,7 @@
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsRevisionGraph from "../community-projects/CommunityProjectsRevisionGraph.svelte";
-  import CommunityProjectsRepositoryLogFiles from "../community-projects/CommunityProjectsRepositoryLogFiles.svelte";
+  import StoreStackSourceFiles from "./StoreStackSourceFiles.svelte";
   import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
@@ -126,16 +126,11 @@
             >{/snippet}
           {#snippet selectedFiles()}
             {#if selected}
-              <CommunityProjectsRepositoryLogFiles
-                title="Changed files"
+              <StoreStackSourceFiles
+                {controller}
+                source={selected.id}
+                readOnly
                 ariaLabel={`Changed files in ${branch.name}`}
-                compact
-                scrollStrategy="styled"
-                files={selected.files.map((file) => ({
-                  path: file.path,
-                  additions: file.hunks.length,
-                  deletions: file.hunks.length,
-                }))}
                 selectedPath={history.diff?.source === selected.id
                   ? history.diff.path
                   : null}

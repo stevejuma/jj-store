@@ -1,5 +1,8 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -23,9 +26,21 @@
   } = $props();
   let mode = $state<FileListingViewMode>("tree");
   const snapshot = $derived(controller.snapshot!);
-  const workspace = $derived(activeWorkspace(snapshot));
+  const readState = $derived(controller.details.fileState("unassigned"));
+  $effect(() => {
+    snapshot.revision;
+    snapshot.readKey;
+    snapshot.active;
+    untrack(() => {
+      void controller.details.loadFiles("unassigned");
+    });
+    return () => controller.details.cancelFiles("unassigned");
+  });
   const files = $derived(
-    workspace.unassigned.map((file) => ({
+    (controller.details.lazy
+      ? controller.filesFor("unassigned")
+      : activeWorkspace(snapshot).unassigned
+    ).map((file) => ({
       path: file.path,
       additions: file.hunks.length,
       deletions: file.hunks.length,
@@ -45,6 +60,12 @@
       >{files.length}</ColumnCanvas.Count
     >
     <ColumnCanvas.HeaderActions>
+      {#if readState.error}<Button
+          size="sm"
+          variant="outline"
+          onclick={() => void controller.details.loadFiles("unassigned")}
+          >Retry unstaged files</Button
+        >{/if}
       <FileListingViewModeToggle bind:mode />
       <Tooltip.Provider
         ><Tooltip.Root>
@@ -84,15 +105,32 @@
     ondrop={onChangesDrop}
   >
     <StoreStackDropGuide feedback={controller.drag.for({ kind: "working" })} />
-    <FileListing
-      {files}
-      {mode}
-      virtualize
-      selectedPath={controller.diffs.find(
-        (diff) => diff.origin === "working" && diff.source === "unassigned",
-      )?.path ?? null}
-      onSelectPath={(path) => controller.selectFile("unassigned", path)}
-      {...workspaceFileDrag(controller, () => "unassigned")}
+    <StoreNotice
+      noticeKey="stack-files:unassigned"
+      title="Unstaged files unavailable"
+      message={readState.error}
+      lifetime="condition"
     />
+    {#if controller.details.lazy && !readState.loaded && !readState.error}
+      <CommunityProjectsRepositorySkeleton
+        layout="changed-files"
+        label="Loading unstaged files"
+        count={4}
+      />
+    {:else}
+      <FileListing
+        {files}
+        {mode}
+        loading={readState.loading}
+        hasMore={Boolean(readState.nextCursor) && !readState.error}
+        onLoadMore={() => void controller.details.loadFiles("unassigned", true)}
+        virtualize
+        selectedPath={controller.diffs.find(
+          (diff) => diff.origin === "working" && diff.source === "unassigned",
+        )?.path ?? null}
+        onSelectPath={(path) => controller.selectFile("unassigned", path)}
+        {...workspaceFileDrag(controller, () => "unassigned")}
+      />
+    {/if}
   </ColumnCanvas.Body>
 </ColumnCanvas.Column>

@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed explicit operation and binding pins, lazy graph/file/patch projection, preserved modes and ordered sources, and caller cancellation in native/local diff reads. Real controller injection and recoverable stack commands remain incomplete.",
-      "fingerprint": "8aeaf437ccc47589dab925e4bfbf83660c8fbffeb246667c8f03ba2d83729e05"
+      "reason": "Reviewed lazy controller/source-file and patch integration, independent cancellation and retry, exact read scopes, capability reasons, disabled commit/file/hunk drags and read-only app-shell stories. Production injection, absent-combination setup, real-folder lifecycle and durable execution remain incomplete.",
+      "fingerprint": "f819c191a94dd07b5aa3b98d49f59b46840a67a5ff8a55f2d5552527e6c20e8d"
     }
   },
   {

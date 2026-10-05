@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Deliver qualified local reads, commands and physical checkout | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Deliver qualified local reads, commands and physical checkout | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -84081,6 +84081,217 @@ entries.
   ],
   "next": "Extend the controller with lazy authoritative source reads and per-action eligibility, represent absent combinations honestly, then inject a repository/binding-owned production adapter in App and qualify it cold before enabling durable writes.",
   "out_of_scope": "Unrelated/root aggregate suites, Rust builds/tests, package publication, installed-service changes, screenshot comparisons and visual baseline updates."
+},
+{
+  "id": "E-M21-004",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "enclosing Jujutsu change vmyysrmu",
+  "kind": "lazy-stack-controller-and-capability-gated-presentation",
+  "versions": "JJ 0.45.1; pnpm 10.32.1; Vitest 4.1.11; parent read foundation 89239a29",
+  "formats": "Optional opaque read keys, capability reasons and lazy adapter methods are presentation-only. Numeric revisions remain UI counters. No wire, storage, checkout or layout-format changes.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte",
+    "catalog/fixtures/StackWorkspaceLazyApplicationFixture.svelte",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/architecture.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/ui.md",
+    "web/src/lib/controller/stack-workspace/controller.svelte.ts",
+    "web/src/lib/controller/stack-workspace/diff-selection.ts",
+    "web/src/lib/controller/stack-workspace/eligibility.ts",
+    "web/src/lib/controller/stack-workspace/file-drag.ts",
+    "web/src/lib/controller/stack-workspace/lazy-details.svelte.ts",
+    "web/src/lib/controller/stack-workspace/retained-diffs.ts",
+    "web/src/lib/controller/stack-workspace/target-history.svelte.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/src/lib/ui/store-stack-workspace/StoreStackBookmarkActions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackBookmarkCard.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackCommitActions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackCommitComposer.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackDiffHunk.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackLane.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackRelativeActions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackSourceFiles.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackTargetHistory.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceActions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceConflict.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDiff.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspacePicker.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSpacer.svelte",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "before": "Six exact new controller tests fail because lazy source reads, authoritative files and per-command eligibility do not exist. Initial implementation misplaces selection read hooks, producing five failures and one pass; corrected hooks restore the exact regression.",
+  "scope": "Use lazy authoritative file summaries and selected patches in branch, commit, target-history, Unstaged and independent adjacent diff views. Keep loading/retry/continuation source-scoped; cancel stale/closed reads and retain other origins. Gate mutation menus, composer actions and drags per advertised capability; preserve browsing and Copy. Render unavailable patches explicitly and accept provider hunk headers without duplicating file headers. Extract diff-selection/retention helpers within the 300-line production budget. No production adapter, command executor or named-combination setup is enabled.",
+  "tests": [
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#lazy file reads are authoritative, selected independently, and do not globally lock browsing",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#opening lazy diffs keeps each stack's adjacent diff and only loads selected patches",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#branch net files load inline and never fall back to the mock's reverted file union",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#refresh and teardown cancel reads and reject late completions",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#closing one diff cancels its patch while the other stack remains open",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#read-only capabilities allow browsing and reject preview without invoking the executor",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#file page retry retains the exact cursor and rejects duplicate and cyclic continuations",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#opaque read-key changes invalidate loaded details even when the UI revision is unchanged",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#target-history selection loads only its files and listed patch with caller cancellation",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#loaded adjacent diffs retain their paths across refresh and remove missing files only after a complete summary",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#oversized file pages are rejected without installing partial files",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#target-history reads abort when only the opaque read key changes"
+  ],
+  "runs": [
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-lazy-controller.test.ts",
+      "result": "fail",
+      "failures": 6,
+      "note": "Before: missing filesFor/can/read behavior; lazy-controller-before-final.log (earlier before log also has six failures)."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-lazy-controller.test.ts",
+      "result": "fail",
+      "failures": 5,
+      "note": "Initial hooks inserted in selection methods that do not open files; lazy-controller-after.log."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-lazy-controller.test.ts web/tests/vite/stack-workspace-target-history.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Corrected 13 tests; expanded 17 tests; final 19 tests. Logs: lazy-controller-corrected.log, lazy-controller-expanded.log, lazy-controller-exact-final.log. Strengthened opaque-key cancellation assertion also passes in final wider unit run."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace*.test.ts web/tests/vite/stack-diff-transport.test.ts web/tests/vite/local-stack-history.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/history-query-transport.test.ts web/tests/vite/native-activity.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/thread-query-cache.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "138 tests initially; final 140 tests/16 files pass, including 12 new controller regressions. lazy-controller-units.log and lazy-controller-units-final.log."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Three new read-only/lazy interaction/accessibility stories pass twice, including authoritative Unstaged. lazy-controller-stories-first.log and lazy-controller-stories-exact.log."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Fresh Vitest/Vite browser processes: 106 tests/23 story files pass in both affected runs. lazy-controller-stories.log and lazy-controller-stories-final.log. Not production provider qualification."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceDrag.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceHeaderDrops.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final commit-row capability drag guard: 12 tests/three files pass. lazy-controller-final-drag-stories.log."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "fail",
+      "failures": 5,
+      "note": "Initial Svelte state-name collision; lazy-controller-web-check.log. Renamed the patch read variable without weakening diagnostics."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Subsequent final/completed/verified runs have zero errors and warnings. lazy-controller-web-final.log, lazy-controller-web-complete.log and lazy-controller-web-verified.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "fail",
+      "failures": 7,
+      "note": "Initial Svelte state collision plus unsupported Testing Library exact role options; lazy-controller-catalog-check.log. Fixed names and role matchers."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final/complete/verified zero errors and warnings; 222 catalog modules. lazy-controller-catalog-final.log, lazy-controller-catalog-complete.log and lazy-controller-catalog-verified.log."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial/final 1061 modules pass; controller extracted rather than raising its source budget. lazy-controller-architecture.log and lazy-controller-architecture-final.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "One validator passes, copied source ownership intact; lazy-controller-ownership.log."
+    },
+    {
+      "command": "node --test scripts/progress-mapping.test.mjs scripts/ui-ownership.test.mjs scripts/web-architecture.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "16 tests pass; lazy-controller-governance.log."
+    },
+    {
+      "command": "pnpm docs:review application \"Reviewed lazy controller/source-file and patch integration, independent cancellation and retry, exact read scopes, capability reasons, disabled commit/file/hunk drags and read-only app-shell stories. Production injection, absent-combination setup, real-folder lifecycle and durable execution remain incomplete.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Application source coverage refreshed after final presentation edits; lazy-controller-docs-review-complete.log. Earlier reviews are retained in matching logs."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Repeated after source reviews; final 139 files, nine light/dark Mermaid diagrams, valid links and anchors. lazy-controller-docs-check.log, lazy-controller-docs-final.log and lazy-controller-docs-complete.log."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/controller/stack-workspace/*.ts web/src/lib/ui/store-stack-workspace/*.svelte web/tests/vite/stack-workspace-lazy-controller.test.ts spec/src/api.md spec/src/ui.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial source formatting; lazy-controller-format.log. Additional targeted formatting commands and results are retained in lazy-controller-*-format*.log; historical ledger excluded throughout."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatting after documentation reviews; lazy-controller-coverage-format.log, lazy-controller-coverage-format-final.log and lazy-controller-coverage-format-complete.log."
+    },
+    {
+      "command": "pnpm exec prettier --check catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte catalog/fixtures/StackWorkspaceLazyApplicationFixture.svelte docs/maintenance/coverage.json docs/site/technical/architecture.md spec/src/api.md spec/src/documentation.md spec/src/ui.md web/src/lib/controller/stack-workspace/controller.svelte.ts web/src/lib/controller/stack-workspace/diff-selection.ts web/src/lib/controller/stack-workspace/eligibility.ts web/src/lib/controller/stack-workspace/file-drag.ts web/src/lib/controller/stack-workspace/lazy-details.svelte.ts web/src/lib/controller/stack-workspace/retained-diffs.ts web/src/lib/controller/stack-workspace/target-history.svelte.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/ui/store-stack-workspace/StoreStackBookmarkActions.svelte web/src/lib/ui/store-stack-workspace/StoreStackBookmarkCard.svelte web/src/lib/ui/store-stack-workspace/StoreStackCommitActions.svelte web/src/lib/ui/store-stack-workspace/StoreStackCommitComposer.svelte web/src/lib/ui/store-stack-workspace/StoreStackDiffHunk.svelte web/src/lib/ui/store-stack-workspace/StoreStackLane.svelte web/src/lib/ui/store-stack-workspace/StoreStackRelativeActions.svelte web/src/lib/ui/store-stack-workspace/StoreStackSourceFiles.svelte web/src/lib/ui/store-stack-workspace/StoreStackTargetHistory.svelte web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceActions.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceConflict.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDiff.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspacePicker.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSpacer.svelte web/tests/vite/stack-workspace-lazy-controller.test.ts",
+      "result": "fail",
+      "failures": 1,
+      "note": "Initial source-file second-pass formatting issue; lazy-controller-format-check.log. Later concurrent review changed coverage.json during formatting check: one formatting failure; lazy-controller-format-verified.log. Final check is sequential after review completion."
+    },
+    {
+      "command": "pnpm exec prettier --check catalog/components/store-stack-workspace/StoreStackWorkspaceLazy.stories.svelte catalog/fixtures/StackWorkspaceLazyApplicationFixture.svelte docs/maintenance/coverage.json docs/site/technical/architecture.md spec/src/api.md spec/src/documentation.md spec/src/ui.md web/src/lib/controller/stack-workspace/controller.svelte.ts web/src/lib/controller/stack-workspace/diff-selection.ts web/src/lib/controller/stack-workspace/eligibility.ts web/src/lib/controller/stack-workspace/file-drag.ts web/src/lib/controller/stack-workspace/lazy-details.svelte.ts web/src/lib/controller/stack-workspace/retained-diffs.ts web/src/lib/controller/stack-workspace/target-history.svelte.ts web/src/lib/controller/stack-workspace/types.ts web/src/lib/ui/store-stack-workspace/StoreStackBookmarkActions.svelte web/src/lib/ui/store-stack-workspace/StoreStackBookmarkCard.svelte web/src/lib/ui/store-stack-workspace/StoreStackCommitActions.svelte web/src/lib/ui/store-stack-workspace/StoreStackCommitComposer.svelte web/src/lib/ui/store-stack-workspace/StoreStackDiffHunk.svelte web/src/lib/ui/store-stack-workspace/StoreStackLane.svelte web/src/lib/ui/store-stack-workspace/StoreStackRelativeActions.svelte web/src/lib/ui/store-stack-workspace/StoreStackSourceFiles.svelte web/src/lib/ui/store-stack-workspace/StoreStackTargetHistory.svelte web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceActions.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceConflict.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDiff.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspacePicker.svelte web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSpacer.svelte web/tests/vite/stack-workspace-lazy-controller.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final changed-file formatting passes; lazy-controller-format-complete.log. Exact argument list is the current jj diff file list excluding the ledger."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "29 protected files/three canonical chapters pass; lazy-controller-spec-first.log. Final including ledger also passes in lazy-controller-spec-first-final.log."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Five validators, 23 chapters, 173 requirements; lazy-controller-spec-validate.log and lazy-controller-spec-validate-final.log."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final ledger/check scope bookkeeping passes; 485 historical JSON evidence objects preserved byte-identically; lazy-controller-progress.log."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "M21.2 remains incomplete: production adapter/App injection, absent-target/combination setup, bounded stack discovery and real graph segments, disk scanning, durable executor/checkout, named combinations, exact file/hunk and graph commands, linked-native and complete cold application lifecycle qualification remain.",
+    "Live CUA selection of the existing 6057 story timed out in Emulation.setFocusEmulationEnabled; no new live visual review is claimed. Fresh headless Storybook interaction/accessibility evidence remains distinct from a real-provider lifecycle run.",
+    "Inherited Clippy diagnostics remain recorded separately; this UI-only slice does not rerun Rust."
+  ],
+  "next": "Represent an absent workspace target and named combination honestly, then build the repository/binding-scoped production read adapter and inject it through App lifecycle. Qualify real-folder browsing before enabling any durable write.",
+  "out_of_scope": "Root aggregate suites, Rust builds/tests, package publication, installed-service changes, screenshot comparisons and visual baseline updates."
 }
 ]
 ```

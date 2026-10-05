@@ -3,9 +3,6 @@
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   let { controller }: { controller: StackWorkspaceController } = $props();
   const snapshot = $derived(controller.snapshot);
-  const eligible = $derived(
-    snapshot?.availability === "ready" && Boolean(snapshot.folder),
-  );
 </script>
 
 {#if snapshot}
@@ -28,9 +25,9 @@
       emptyResult="No matching workspaces."
       controlled
       scrollStrategy="styled"
-      disabled={controller.locked || !eligible}
+      disabled={!controller.can("switch_workspace")}
       onChange={(workspace) => {
-        if (!controller.locked && eligible)
+        if (controller.can("switch_workspace"))
           void controller.prepare({ kind: "switch_workspace", workspace });
       }}
     />

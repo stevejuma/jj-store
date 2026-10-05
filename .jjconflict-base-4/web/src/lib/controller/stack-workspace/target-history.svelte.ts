@@ -6,6 +6,7 @@ import {
   type WorkspaceOpenDiff,
   type WorkspaceSnapshot,
   type WorkspaceTargetBranch,
+  type WorkspaceFile,
 } from "./types.js";
 
 export const TARGET_HISTORY_ORIGIN = "target-history";
@@ -27,7 +28,16 @@ export class WorkspaceTargetHistory {
   #cursors = new Set<string>();
   #epoch = 0;
   #closed = false;
-  constructor(readonly adapter: StackWorkspaceAdapter) {}
+  #readKey: string | undefined;
+  #abort = new AbortController();
+  constructor(
+    readonly adapter: StackWorkspaceAdapter,
+    readonly details?: {
+      files(source: string): WorkspaceFile[];
+      selectCommit(source: string): void;
+      selectFile(source: string, path: string): void;
+    },
+  ) {}
 
   sync(snapshot: WorkspaceSnapshot) {
     const next: WorkspaceHistoryRequest = {
@@ -37,8 +47,15 @@ export class WorkspaceTargetHistory {
       head: snapshot.target.commit,
       limit: TARGET_HISTORY_PAGE_SIZE,
     };
-    if (JSON.stringify(next) === JSON.stringify(this.#request)) return;
+    if (
+      JSON.stringify(next) === JSON.stringify(this.#request) &&
+      snapshot.readKey === this.#readKey
+    )
+      return;
+    this.#readKey = snapshot.readKey;
     this.#epoch++;
+    this.#abort.abort();
+    this.#abort = new AbortController();
     this.#request = next;
     this.branch = cloneWorkspace(snapshot.target);
     this.commits = [];
@@ -73,7 +90,10 @@ export class WorkspaceTargetHistory {
     this.loading = true;
     this.error = "";
     try {
-      const page = await this.adapter.readTargetHistory(request);
+      const page = await this.adapter.readTargetHistory(
+        request,
+        this.#abort.signal,
+      );
       if (this.#closed || epoch !== this.#epoch) return;
       if (
         page.commits.length > request.limit ||
@@ -111,19 +131,22 @@ export class WorkspaceTargetHistory {
     }
   }
   selectCommit(id: string) {
-    if (this.commits.some((commit) => commit.id === id)) this.selectedId = id;
+    if (this.commits.some((commit) => commit.id === id)) {
+      this.selectedId = id;
+      this.details?.selectCommit(id);
+    }
   }
   selectFile(source: string, path: string) {
-    if (
-      !this.commits
-        .find((commit) => commit.id === source)
-        ?.files.some((file) => file.path === path)
-    )
-      return;
+    const files =
+      this.details?.files(source) ??
+      this.commits.find((commit) => commit.id === source)?.files;
+    if (!files?.some((file) => file.path === path)) return;
     this.diff = { origin: TARGET_HISTORY_ORIGIN, source, path };
+    this.details?.selectFile(source, path);
   }
   close() {
     this.#closed = true;
     this.#epoch++;
+    this.#abort.abort();
   }
 }

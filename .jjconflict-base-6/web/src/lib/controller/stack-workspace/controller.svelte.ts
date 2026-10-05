@@ -1,9 +1,19 @@
+import {
+  selectWorkspaceFile,
+  closeWorkspaceDiff,
+  activateWorkspaceDiff,
+} from "./diff-selection.js";
 import { WorkspaceDragSession } from "./drag-session.svelte.js";
 import { WorkspaceTargetHistory } from "./target-history.svelte.js";
 import { WorkspaceCommitDrafts } from "./commit-drafts.svelte.js";
+import { WorkspaceLazyDetails } from "./lazy-details.svelte.js";
+import { workspaceCommandEligibility } from "./eligibility.js";
+import {
+  retainedWorkspaceDiffs,
+  reconcileSourceDiffs,
+} from "./retained-diffs.js";
 import {
   workspaceSourceFiles,
-  workspaceSourceStack,
   workspaceBranchSource,
   workspaceAggregateSource,
   retainedStackSelections,
@@ -48,8 +58,50 @@ export class StackWorkspaceController {
   #closed = false;
   #command = 0;
   readonly targetHistory: WorkspaceTargetHistory;
+  readonly details: WorkspaceLazyDetails;
   constructor(readonly adapter: StackWorkspaceAdapter) {
-    this.targetHistory = new WorkspaceTargetHistory(adapter);
+    this.details = new WorkspaceLazyDetails(
+      adapter,
+      (source, files, complete) => {
+        this.diffs = reconcileSourceDiffs(this.diffs, source, files, complete);
+        if (this.targetHistory.diff)
+          this.targetHistory.diff =
+            reconcileSourceDiffs(
+              [this.targetHistory.diff],
+              source,
+              files,
+              complete,
+            )[0] ?? null;
+        const active = this.diffs.find(
+          (diff) =>
+            diff.source === this.source && diff.path === this.selectedPath,
+        );
+        if (active) activateWorkspaceDiff(this, active);
+      },
+    );
+    this.targetHistory = new WorkspaceTargetHistory(adapter, {
+      files: (source) => this.filesFor(source),
+      selectCommit: (source) => {
+        void this.details.loadFiles(source);
+      },
+      selectFile: (source, path) => {
+        void this.details.loadDiff(source, path);
+      },
+    });
+  }
+  eligibility(kind: WorkspaceCommand["kind"]) {
+    return workspaceCommandEligibility(this.snapshot, kind);
+  }
+  can(kind: WorkspaceCommand["kind"]) {
+    return !this.locked && this.eligibility(kind).allowed;
+  }
+  filesFor(source: string) {
+    if (this.details.lazy) return this.details.files[source] ?? [];
+    return (
+      this.targetHistory.commits.find((commit) => commit.id === source)
+        ?.files ??
+      (this.snapshot ? workspaceSourceFiles(this.snapshot, source) : [])
+    );
   }
   async selectTargetBranch() {
     if (this.locked || !this.snapshot || this.#closed) return;
@@ -97,6 +149,7 @@ export class StackWorkspaceController {
       [id]: workspaceBranchSource(id, name!),
     };
     this.selectedCommit = this.selectedPath = this.selection = null;
+    void this.details.loadFiles(workspaceBranchSource(id, name!));
   }
   selectCommit(id: string) {
     if (this.locked) return;
@@ -108,94 +161,35 @@ export class StackWorkspaceController {
       this.stackSelections = { ...this.stackSelections, [stack.id]: id };
     this.selectedPath = null;
     this.selection = null;
+    void this.details.loadFiles(id);
   }
   selectFile(source: string, path: string, hunks?: string[]) {
-    if (this.locked) return;
-    const snapshot = this.snapshot;
-    if (
-      !snapshot ||
-      !workspaceSourceFiles(snapshot, source).some((file) => file.path === path)
-    )
-      return;
-    const origin =
-      source === "unassigned" || source === "combined"
-        ? "working"
-        : `stack-${workspaceSourceStack(snapshot, source)!.id}`;
-    const diff: WorkspaceOpenDiff = {
-      origin,
-      source,
-      path,
-      ...(hunks ? { hunks: [...hunks] } : {}),
-    };
-    const index = this.diffs.findIndex((item) => item.origin === origin);
-    if (index < 0) this.diffs = [...this.diffs, diff];
-    else this.diffs = this.diffs.map((item, i) => (i === index ? diff : item));
-    this.activateDiff(diff);
+    selectWorkspaceFile(this, source, path, hunks);
   }
   closeDiff(origin: string) {
-    this.diffs = this.diffs.filter((diff) => diff.origin !== origin);
-    if (
-      !this.diffs.some(
-        (diff) =>
-          diff.source === this.source && diff.path === this.selectedPath,
-      )
-    ) {
-      this.selectedPath = null;
-      this.selection = null;
-    }
-  }
-  private activateDiff(diff: WorkspaceOpenDiff) {
-    this.selectedPath = diff.path;
-    this.source = diff.source;
-    this.selectedCommit = diff.origin === "working" ? null : diff.source;
-    this.selection = workspaceAggregateSource(diff.source)
-      ? null
-      : {
-          source: diff.source,
-          path: diff.path,
-          ...(diff.hunks ? { hunks: [...diff.hunks] } : {}),
-        };
+    closeWorkspaceDiff(this, origin);
   }
   private updateSnapshot(snapshot: WorkspaceSnapshot) {
-    const switched = this.snapshot?.active !== snapshot.active;
-    const diffs = new Map<string, WorkspaceOpenDiff>();
-    for (const diff of this.diffs) {
-      if (switched && diff.origin === "working") continue;
-      const file = workspaceSourceFiles(snapshot, diff.source).find(
-        (file) => file.path === diff.path,
-      );
-      if (!file) continue;
-      const stack = workspaceSourceStack(snapshot, diff.source);
-      const origin =
-        diff.origin === "working"
-          ? "working"
-          : stack
-            ? `stack-${stack.id}`
-            : null;
-      if (!origin) continue;
-      diffs.set(origin, {
-        ...diff,
-        origin,
-        ...(diff.hunks
-          ? {
-              hunks: diff.hunks.filter((id) =>
-                file.hunks.some((hunk) => hunk.id === id),
-              ),
-            }
-          : {}),
-      });
-    }
+    this.details.sync(snapshot);
+    const diffs = retainedWorkspaceDiffs(
+      snapshot,
+      this.snapshot?.active,
+      this.diffs,
+      this.details.lazy
+        ? (source) => this.details.files[source] ?? []
+        : undefined,
+    );
     this.stackSelections = retainedStackSelections(
       snapshot,
       this.stackSelections,
     );
     this.snapshot = snapshot;
     this.targetHistory.sync(snapshot);
-    this.diffs = [...diffs.values()];
+    this.diffs = diffs;
     const active = this.diffs.find(
       (diff) => diff.source === this.source && diff.path === this.selectedPath,
     );
-    if (active) this.activateDiff(active);
+    if (active) activateWorkspaceDiff(this, active);
     else {
       this.selectedPath = null;
       this.selection = null;
@@ -205,12 +199,9 @@ export class StackWorkspaceController {
     const snapshot = this.snapshot;
     if (!snapshot || this.locked || this.#closed) return;
     this.error = this.validation = this.outcome = "";
-    if (
-      snapshot.availability !== "ready" ||
-      !snapshot.folder ||
-      !snapshot.capabilities.includes(command.kind)
-    ) {
-      this.validation = "This command requires an available local checkout.";
+    const eligibility = this.eligibility(command.kind);
+    if (!eligibility.allowed) {
+      this.validation = eligibility.reason;
       return;
     }
     const request: WorkspaceRequest = {
@@ -294,6 +285,7 @@ export class StackWorkspaceController {
   close() {
     this.drag.clear();
     this.targetHistory.close();
+    this.details.close();
     this.#closed = true;
     this.#read++;
     this.#command++;

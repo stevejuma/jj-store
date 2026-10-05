@@ -6,15 +6,13 @@
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsRevisionGraph from "../community-projects/CommunityProjectsRevisionGraph.svelte";
-  import CommunityProjectsRepositoryLogFiles from "../community-projects/CommunityProjectsRepositoryLogFiles.svelte";
+  import StoreStackSourceFiles from "./StoreStackSourceFiles.svelte";
   import StoreStackBookmarkActions from "./StoreStackBookmarkActions.svelte";
   import StoreStackCommitActions from "./StoreStackCommitActions.svelte";
   import {
     workspaceBranchSource,
-    workspaceSourceFiles,
     workspaceAggregateSource,
   } from "../../controller/stack-workspace/files.js";
-  import { workspaceFileDrag } from "../../controller/stack-workspace/file-drag.js";
   import {
     buildRepositoryLogGraph,
     repositoryLogSvgWidth,
@@ -158,21 +156,12 @@
   </Card.Header>
   {#if branchSelected}
     <Card.Content class="stack-workspace__branch-files">
-      <CommunityProjectsRepositoryLogFiles
-        title="Changed files"
+      <StoreStackSourceFiles
+        {controller}
+        source={branchSource}
         ariaLabel={`Changed files in branch ${name}`}
-        compact
-        scrollStrategy="styled"
-        files={workspaceSourceFiles(controller.snapshot!, branchSource).map(
-          (file) => ({
-            path: file.path,
-            additions: file.hunks.length,
-            deletions: file.hunks.length,
-          }),
-        )}
         selectedPath={diff?.source === branchSource ? diff.path : null}
         onSelectPath={(path) => controller.selectFile(branchSource, path)}
-        fileDrag={workspaceFileDrag(controller, () => branchSource)}
       />
     </Card.Content>
   {/if}
@@ -190,6 +179,8 @@
       canSquash={commits.length > 1 &&
         !commits.some((commit) => commit.immutable)}
       disabled={controller.locked}
+      enabled={(kind) => controller.can(kind)}
+      reason={(kind) => controller.eligibility(kind).reason}
       {onCommand}
     />{/if}
   <!-- Native drag events delegate to the owned graph's revision rows. -->
@@ -199,7 +190,7 @@
       const id = eventCommit(event);
       if (
         id &&
-        !controller.locked &&
+        (controller.can("move_commit") || controller.can("reorder_commit")) &&
         !commits.find((commit) => commit.id === id)?.immutable
       )
         controller.drag.start(event, { kind: "commit", commit: id });
@@ -255,7 +246,7 @@
         if (!controller.locked) controller.selectCommit(revision.eventId);
       }}
       draggable={(revision) =>
-        !controller.locked &&
+        (controller.can("move_commit") || controller.can("reorder_commit")) &&
         !commits.find((commit) => commit.id === revision.eventId)?.immutable}
     >
       {#snippet rowActions(revision)}
@@ -273,24 +264,19 @@
           {commit}
           {stack}
           disabled={controller.locked}
+          enabled={(kind) => controller.can(kind)}
+          reason={(kind) => controller.eligibility(kind).reason}
           selection={diffSelection}
           {onCommand}
         />
       {/snippet}
       {#snippet selectedFiles()}
-        {#if selected}<CommunityProjectsRepositoryLogFiles
-            title="Changed files"
+        {#if selected}<StoreStackSourceFiles
+            {controller}
+            source={selected.id}
             ariaLabel={`Changed files in ${name}`}
-            files={selected.files.map((file) => ({
-              path: file.path,
-              additions: file.hunks.length,
-              deletions: file.hunks.length,
-            }))}
-            compact
-            scrollStrategy="styled"
             selectedPath={diff?.source === selected.id ? diff.path : null}
             onSelectPath={(path) => controller.selectFile(selected.id, path)}
-            fileDrag={workspaceFileDrag(controller, () => selected!.id)}
           />{/if}
       {/snippet}
     </CommunityProjectsRevisionGraph>

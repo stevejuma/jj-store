@@ -2133,3 +2133,12 @@ stack read owner cancels only its reads, rejects late completion and leaves the
 repository transport owned by the application. Graph annotations and ordered
 file/mode/source metadata survive projection; presentation hunk IDs are never
 issued selection tokens or executable patch input.
+
+Optional controller read adapters retain an opaque presentation read key in
+addition to their exact provider operation/binding pin. Frontend numeric
+revisions are presentation counters, never command publication identities.
+Source summaries and selected patches carry independent cancellation and reject
+responses after owner invalidation. The adapter must not fall back to fixture
+files when a provider has not loaded that source. Capability reasons explain
+unavailable actions before preview; backend authorization and preparation remain
+independent mandatory checks.

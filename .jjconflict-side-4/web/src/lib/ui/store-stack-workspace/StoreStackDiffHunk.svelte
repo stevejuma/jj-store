@@ -86,7 +86,9 @@
       files={[
         {
           path,
-          patch: `diff --git a/${path} b/${path}\n--- a/${path}\n+++ b/${path}\n${hunk.patch}`,
+          patch: hunk.patch.startsWith("diff --git ")
+            ? hunk.patch
+            : `diff --git a/${path} b/${path}\n--- a/${path}\n+++ b/${path}\n${hunk.patch}`,
         },
       ]}
       {viewMode}

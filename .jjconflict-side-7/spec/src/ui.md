@@ -463,6 +463,18 @@ without closing the repository's shared transport. This read foundation does not
 fabricate a named combination or enable a command executor; production
 controller and lifecycle wiring remain separate acceptance work.
 
+The shared stack controller MUST support optional lazy file-summary and patch
+reads without substituting mock unions for missing provider data. Loading, retry
+and continuation state belong to each source or diff, and cannot lock unrelated
+browsing. Branch and commit selections load their inline file panel; only
+opening a listed file loads its patch. Independent adjacent diffs retain their
+sources while another selection loads. Scope changes, closing a diff and
+controller disposal cancel only the owned reads and reject late completion. File
+continuations remain bounded and advancing. Copy and browsing stay available
+when mutation capabilities are absent; each mutation control uses its own
+advertised capability and unavailable reason. A disabled executor is never
+called to discover whether a command is eligible.
+
 The 5 October alignment review and proposed backend delivery order are recorded
 in
 [the implementation plan](../../docs/implementation-plan.md#local-stacks-backend-proposal).

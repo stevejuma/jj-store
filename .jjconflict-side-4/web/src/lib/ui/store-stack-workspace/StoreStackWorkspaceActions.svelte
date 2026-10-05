@@ -59,11 +59,17 @@
         >
           <Menu.Group>
             <Menu.Item
+              disabled={!controller.can("create_workspace")}
+              title={controller.eligibility("create_workspace").reason ||
+                undefined}
               onSelect={() => command({ kind: "create_workspace", name: "" })}
               ><Plus aria-hidden="true" />Create workspace</Menu.Item
             >
             {#each snapshot.workspaces.filter((item) => item.id !== snapshot.active) as item (item.id)}
               <Menu.Item
+                disabled={!controller.can("delete_workspace")}
+                title={controller.eligibility("delete_workspace").reason ||
+                  undefined}
                 onSelect={() =>
                   command({ kind: "delete_workspace", workspace: item.id })}
                 ><Trash aria-hidden="true" />Delete {item.name}</Menu.Item
@@ -80,14 +86,17 @@
               variant="ghost"
               size="icon-sm"
               aria-label="Create stack"
-              disabled={controller.locked || !eligible}
+              disabled={!controller.can("create_stack")}
               onclick={() => command({ kind: "create_stack", name: "" })}
             >
               <GitBranchPlus aria-hidden="true" />
             </Button>
           {/snippet}
         </Tooltip.Trigger>
-        <Tooltip.Content>Create stack</Tooltip.Content>
+        <Tooltip.Content
+          >{controller.eligibility("create_stack").reason ||
+            "Create stack"}</Tooltip.Content
+        >
       </Tooltip.Root>
       <Tooltip.Root>
         <Tooltip.Trigger>
@@ -97,14 +106,16 @@
               variant="ghost"
               size="icon-sm"
               aria-label="Undo"
-              disabled={controller.locked || !snapshot.canUndo || !eligible}
+              disabled={!controller.can("undo") || !snapshot.canUndo}
               onclick={() => command({ kind: "undo" })}
             >
               <Undo aria-hidden="true" />
             </Button>
           {/snippet}
         </Tooltip.Trigger>
-        <Tooltip.Content>Undo</Tooltip.Content>
+        <Tooltip.Content
+          >{controller.eligibility("undo").reason || "Undo"}</Tooltip.Content
+        >
       </Tooltip.Root>
     {/if}
     <Tooltip.Root>

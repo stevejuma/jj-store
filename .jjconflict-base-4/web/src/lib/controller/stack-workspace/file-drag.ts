@@ -1,6 +1,6 @@
 import type { ComponentProps } from "svelte";
 import { FileListing } from "@lapismd/design-core/diff";
-import { workspaceFileSelection, workspaceSourceFiles } from "./files.js";
+import { workspaceFileSelection } from "./files.js";
 import type { StackWorkspaceController } from "./controller.svelte.js";
 
 /** Host policy for the public FileListing native row-drag callbacks. */
@@ -15,12 +15,16 @@ export function workspaceFileDrag(
   | "onDirectoryDragStart"
 > {
   const file = (path: string) =>
-    !controller.locked && controller.snapshot
+    (controller.can("create_commit") || controller.can("transfer")) &&
+    !controller.details.lazy &&
+    controller.snapshot
       ? workspaceFileSelection(controller.snapshot, source(), path)
       : null;
   const folder = (path: string) => {
-    if (!controller.snapshot || controller.locked) return [];
-    const selections = workspaceSourceFiles(controller.snapshot, source())
+    if (!controller.snapshot || controller.locked || controller.details.lazy)
+      return [];
+    const selections = controller
+      .filesFor(source())
       .filter((item) => item.path.startsWith(`${path}/`))
       .map((item) => file(item.path));
     return selections.length && selections.every((item) => item !== null)

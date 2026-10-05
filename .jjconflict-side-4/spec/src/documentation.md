@@ -18,7 +18,9 @@ qualification evidence; internal plans and evidence are not published as Help.
 The stack read foundation is documented separately from production controller
 injection and executable commands. Lazy projection of pinned graph, exact tree
 diffs and unavailable file metadata MUST NOT be described as durable checkout or
-named-combination execution.
+named-combination execution. Controller lazy-file/patch integration and
+capability-gated catalog evidence remain distinct from real production adapter
+injection and checkout lifecycle qualification.
 
 The documentation source lives under `docs/site`, shared CLI long help under
 `docs/cli`, and maintenance metadata outside the published tree. MkDocs Material

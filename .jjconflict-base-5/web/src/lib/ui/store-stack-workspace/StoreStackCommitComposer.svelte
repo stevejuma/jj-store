@@ -25,7 +25,7 @@
   const workspace = $derived(controller.snapshot!.active);
   const draft = $derived(controller.commitDrafts.get(workspace, stack.id));
   function open(selection?: WorkspaceSelection) {
-    if (controller.locked || !controller.snapshot) return;
+    if (!controller.can("create_commit") || !controller.snapshot) return;
     if (!controller.commitDrafts.open(controller.snapshot, stack.id, selection))
       controller.validation =
         "The selected changes are unavailable or immutable.";
@@ -133,7 +133,9 @@
           >
           <Button
             type="submit"
-            disabled={controller.locked || !draft.title.trim()}
+            disabled={!controller.can(
+              draft.commit ? "edit_commit" : "create_commit",
+            ) || !draft.title.trim()}
             >{draft.commit ? "Save commit" : "Create commit"}</Button
           >
         </Card.Footer>
@@ -146,7 +148,7 @@
       <Button
         variant="outline"
         class="stack-workspace__drop"
-        disabled={controller.locked}
+        disabled={!controller.can("create_commit")}
         aria-label={`Assign to ${stack.name}`}
         onclick={() => open(controller.selection ?? undefined)}
         >Drop files to stage or commit directly</Button
@@ -157,7 +159,7 @@
     >
       <Button
         variant="outline"
-        disabled={controller.locked}
+        disabled={!controller.can("create_commit")}
         aria-label={`Create commit in ${stack.name}`}
         onclick={() => open()}>Start a commit…</Button
       >

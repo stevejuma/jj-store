@@ -23,6 +23,8 @@
     canRewrite,
     canSquash,
     disabled,
+    enabled = () => true,
+    reason = () => "",
     onCommand,
   }: {
     stack: string;
@@ -34,6 +36,8 @@
     canRewrite: boolean;
     canSquash: boolean;
     disabled: boolean;
+    enabled?: (kind: WorkspaceCommand["kind"]) => boolean;
+    reason?: (kind: WorkspaceCommand["kind"]) => string;
     onCommand: (command: WorkspaceCommand) => void;
   } = $props();
 </script>
@@ -52,7 +56,7 @@
               variant="outline"
               size="icon-sm"
               aria-label={`Add empty commit to ${name}`}
-              {disabled}
+              disabled={disabled || !enabled("create_commit")}
               onclick={() =>
                 onCommand({ kind: "create_commit", stack, message: "" })}
               ><GitCommit aria-hidden="true" /></Button
@@ -75,7 +79,7 @@
           </Button>
         {/snippet}
       </Tooltip.Trigger><Tooltip.Content
-        >Push requires the separately approved backend integration.</Tooltip.Content
+        >Push is not available for this stack workspace.</Tooltip.Content
       ></Tooltip.Root
     >
   </Tooltip.Provider>
@@ -100,6 +104,8 @@
       />
       <Menu.Separator />
       <StoreStackRelativeActions
+        {enabled}
+        {reason}
         {stack}
         {commit}
         {empty}
@@ -109,6 +115,9 @@
       />
       <Menu.Group>
         <Menu.Item
+          title={reason(empty ? "create_commit" : "add_empty_commit") ||
+            undefined}
+          disabled={!enabled(empty ? "create_commit" : "add_empty_commit")}
           onSelect={() =>
             onCommand(
               empty
@@ -122,26 +131,36 @@
             )}><GitCommit aria-hidden="true" />Add empty commit</Menu.Item
         >
         <Menu.Item
-          disabled={!canSquash}
+          title={reason("squash_branch") || undefined}
+          disabled={!canSquash || !enabled("squash_branch")}
           onSelect={() => onCommand({ kind: "squash_branch", stack, name })}
           ><GitMerge aria-hidden="true" />Squash all commits</Menu.Item
         >
         <Menu.Separator />
         <Menu.Item
+          title={reason("rename_branch") || undefined}
+          disabled={!enabled("rename_branch")}
           onSelect={() =>
             onCommand({ kind: "rename_branch", stack, branch: name, name })}
           ><Pencil aria-hidden="true" />Rename branch</Menu.Item
         >
         <Menu.Item
-          disabled={!canRewrite}
+          title={reason("delete_branch") || undefined}
+          disabled={!canRewrite || !enabled("delete_branch")}
           variant="destructive"
           onSelect={() => onCommand({ kind: "delete_branch", stack, name })}
           ><Trash aria-hidden="true" />Delete branch</Menu.Item
         >
-        <Menu.Item onSelect={() => onCommand({ kind: "rebase", stack })}
+        <Menu.Item
+          title={reason("rebase") || undefined}
+          disabled={!enabled("rebase")}
+          onSelect={() => onCommand({ kind: "rebase", stack })}
           ><GitBranch aria-hidden="true" />Rebase onto base</Menu.Item
         >
-        <Menu.Item onSelect={() => onCommand({ kind: "unapply_stack", stack })}
+        <Menu.Item
+          title={reason("unapply_stack") || undefined}
+          disabled={!enabled("unapply_stack")}
+          onSelect={() => onCommand({ kind: "unapply_stack", stack })}
           ><Eject aria-hidden="true" />Unapply stack</Menu.Item
         >
       </Menu.Group></Menu.Content

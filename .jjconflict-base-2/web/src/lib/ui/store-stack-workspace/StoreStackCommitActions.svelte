@@ -23,12 +23,16 @@
     stack,
     disabled,
     selection,
+    enabled = () => true,
+    reason = () => "",
     onCommand,
   }: {
     commit: StackCommit;
     stack: WorkspaceStack;
     disabled: boolean;
     selection: WorkspaceSelection | null;
+    enabled?: (kind: WorkspaceCommand["kind"]) => boolean;
+    reason?: (kind: WorkspaceCommand["kind"]) => string;
     onCommand: (command: WorkspaceCommand) => void;
   } = $props();
   const previous = $derived(
@@ -54,7 +58,8 @@
   >
     <Menu.Group>
       <Menu.Item
-        disabled={commit.immutable}
+        title={reason("reword") || undefined}
+        disabled={commit.immutable || !enabled("reword")}
         onSelect={() =>
           onCommand({
             kind: "reword",
@@ -63,7 +68,8 @@
           })}><Pencil aria-hidden="true" />Reword commit</Menu.Item
       >
       <Menu.Item
-        disabled={commit.immutable}
+        title={reason("edit_commit") || undefined}
+        disabled={commit.immutable || !enabled("edit_commit")}
         onSelect={() =>
           onCommand({
             kind: "edit_commit",
@@ -72,7 +78,8 @@
           })}><GitBranch aria-hidden="true" />Edit commit</Menu.Item
       >
       <Menu.Item
-        disabled={commit.immutable}
+        title={reason("delete_commit") || undefined}
+        disabled={commit.immutable || !enabled("delete_commit")}
         variant="destructive"
         onSelect={() => onCommand({ kind: "delete_commit", commit: commit.id })}
         ><Trash aria-hidden="true" />Delete commit</Menu.Item
@@ -86,6 +93,8 @@
         ]}
       />
       <StoreStackRelativeActions
+        {enabled}
+        {reason}
         stack={stack.id}
         commit={commit.id}
         immutable={commit.immutable}
@@ -93,13 +102,16 @@
       />
       <Menu.Separator />
       <Menu.Item
-        disabled={commit.immutable}
+        title={reason("move_commit") || undefined}
+        disabled={commit.immutable || !enabled("move_commit")}
         onSelect={() =>
           onCommand({ kind: "move_commit", commit: commit.id, stack: "" })}
         ><GitBranch aria-hidden="true" />Move to stack</Menu.Item
       >
       <Menu.Item
+        title={reason("split") || undefined}
         disabled={commit.immutable ||
+          !enabled("split") ||
           selection?.source !== commit.id ||
           selection.hunks?.length === 0}
         onSelect={() =>
@@ -111,7 +123,10 @@
           })}><Columns aria-hidden="true" />Split selected changes</Menu.Item
       >
       <Menu.Item
-        disabled={commit.immutable || stack.commits.at(-1)?.id === commit.id}
+        title={reason("reorder_commit") || undefined}
+        disabled={commit.immutable ||
+          !enabled("reorder_commit") ||
+          stack.commits.at(-1)?.id === commit.id}
         onSelect={() =>
           onCommand({
             kind: "reorder_commit",
@@ -120,7 +135,8 @@
           })}><ArrowUp aria-hidden="true" />Move up</Menu.Item
       >
       <Menu.Item
-        disabled={commit.immutable || !previous}
+        title={reason("reorder_commit") || undefined}
+        disabled={commit.immutable || !enabled("reorder_commit") || !previous}
         onSelect={() =>
           onCommand({
             kind: "reorder_commit",
@@ -129,14 +145,19 @@
           })}><ArrowDown aria-hidden="true" />Move down</Menu.Item
       >
       <Menu.Item
-        disabled={commit.immutable || !previous || previous.immutable}
+        title={reason("squash") || undefined}
+        disabled={commit.immutable ||
+          !enabled("squash") ||
+          !previous ||
+          previous.immutable}
         onSelect={() =>
           previous &&
           onCommand({ kind: "squash", commit: commit.id, target: previous.id })}
         ><GitMerge aria-hidden="true" />Squash into previous</Menu.Item
       >
       <Menu.Item
-        disabled={commit.immutable}
+        title={reason("uncommit") || undefined}
+        disabled={commit.immutable || !enabled("uncommit")}
         onSelect={() => onCommand({ kind: "uncommit", commit: commit.id })}
         ><Undo aria-hidden="true" />Uncommit</Menu.Item
       >

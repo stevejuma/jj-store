@@ -15,9 +15,7 @@
   } = $props();
   const target = { kind: "new-stack" as const };
   const available = $derived(
-    !controller.locked &&
-      controller.snapshot?.capabilities.includes("create_stack") &&
-      !controller.snapshot.conflicts.length,
+    controller.can("create_stack") && !controller.snapshot?.conflicts.length,
   );
 </script>
 

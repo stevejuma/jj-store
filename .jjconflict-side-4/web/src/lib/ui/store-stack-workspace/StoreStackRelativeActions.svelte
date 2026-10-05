@@ -11,6 +11,8 @@
     immutable = false,
     empty = false,
     below,
+    enabled = () => true,
+    reason = () => "",
     onCommand,
   }: {
     stack: string;
@@ -18,17 +20,24 @@
     immutable?: boolean;
     empty?: boolean;
     below?: string;
+    enabled?: (kind: WorkspaceCommand["kind"]) => boolean;
+    reason?: (kind: WorkspaceCommand["kind"]) => string;
     onCommand: (command: WorkspaceCommand) => void;
   } = $props();
 </script>
 
 <Menu.Sub
   ><Menu.SubTrigger
+    title={reason(empty ? "create_commit" : "add_empty_commit") || undefined}
+    disabled={!enabled(empty ? "create_commit" : "add_empty_commit")}
     ><GitCommit aria-hidden="true" />Add empty commit</Menu.SubTrigger
   >
   <Menu.SubContent class="stack-workspace__action-menu"
     ><Menu.Group>
       <Menu.Item
+        title={reason(empty ? "create_commit" : "add_empty_commit") ||
+          undefined}
+        disabled={!enabled(empty ? "create_commit" : "add_empty_commit")}
         onSelect={() =>
           onCommand(
             empty
@@ -42,7 +51,8 @@
           )}><ArrowUp aria-hidden="true" />Add empty commit above</Menu.Item
       >
       <Menu.Item
-        disabled={immutable || empty}
+        title={reason("add_empty_commit") || undefined}
+        disabled={immutable || empty || !enabled("add_empty_commit")}
         onSelect={() =>
           onCommand({
             kind: "add_empty_commit",
@@ -56,11 +66,15 @@
 </Menu.Sub>
 <Menu.Sub
   ><Menu.SubTrigger
+    title={reason("create_branch") || undefined}
+    disabled={!enabled("create_branch")}
     ><GitBranch aria-hidden="true" />Create branch</Menu.SubTrigger
   >
   <Menu.SubContent class="stack-workspace__action-menu"
     ><Menu.Group>
       <Menu.Item
+        title={reason("create_branch") || undefined}
+        disabled={!enabled("create_branch")}
         onSelect={() =>
           onCommand({
             kind: "create_branch",
@@ -71,6 +85,8 @@
           })}><ArrowUp aria-hidden="true" />Create branch above</Menu.Item
       >
       <Menu.Item
+        title={reason("create_branch") || undefined}
+        disabled={!enabled("create_branch")}
         onSelect={() =>
           onCommand({
             kind: "create_branch",
