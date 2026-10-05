@@ -1,5 +1,11 @@
 # Application documentation
 
+The local manual records qualified unpublished reword generation and its exact
+source, bounds and rewrite effects separately from runtime execution. Candidate
+retention compatibility and cancellation evidence do not qualify server command
+policy, head publication or checkout recovery; application write capabilities
+remain unavailable. Documentation review tracks this owning provider change.
+
 The local technical manual distinguishes qualified foreground working-copy
 coordination from unfinished command publication and guarded checkout recovery.
 It documents Busy, exact metadata/policy checks and process-loss release without

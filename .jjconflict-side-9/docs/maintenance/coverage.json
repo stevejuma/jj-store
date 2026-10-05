@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Qualified nonblocking foreground JJ working-copy leases with exact authorized metadata/head validation, bounded admission and cancellation, real CLI contention/process loss, unsafe lock rejection and release that never unlinks. No snapshot/publication/checkout capability; physical editor bytes remain separately guarded.",
-      "fingerprint": "79f5140f60e3bb1fc645ae83fe84897cf36f90fbdda2a88979a6af01015dec65"
+      "reason": "Documented real unpublished reword at the exact foreground source; bounded visible membership and exact complete descendant closure, message/author/change/tree invariants, local bookmark terms, unchanged checkout and candidate cancellation/authorization loss. Runtime journal/policy composition, ancestry recovery, publication and checkout remain unfinished.",
+      "fingerprint": "dfc7aacbc04155b0b431e304edfc47c69ae67a1dd8b808a588bf23d826ff44d2"
     }
   },
   {

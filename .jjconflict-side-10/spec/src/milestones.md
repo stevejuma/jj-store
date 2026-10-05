@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -86633,6 +86633,182 @@ entries.
   "next": "Compose the foreground lease with actual unpublished command preparation, retained exact code and private journal transitions, then prove operation-head publication and guarded checkout recovery before enabling combinations or writable UI.",
   "out_of_scope": "No UI, Storybook, startup, contract generation or installed service/binary changes. No package publication, real RustFS/native execution, existing repo reset/migration, screenshot comparison/baseline updates or fresh visual review. Root aggregates and unrelated packages/consumers are out of scope under targeted policy.",
   "summary": "Qualified nonblocking foreground coordination with real stock JJ and process-loss/cancellation/identity evidence. Complete backend/UI integration remains In progress."
+},
+{
+  "id": "E-M21-015",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "xtvzomsr",
+  "kind": "Real exact unpublished local reword preparation under foreground coordination",
+  "versions": "Rust 1.98.1; pinned JJ 0.45.1 Git SHA-1 profile; real stock JJ isolated source fixtures and actual integration transaction/rebase/candidate write; macOS ARM64.",
+  "formats": "No existing wire, capsule, retained-ref, journal, companion, native/WAL/manifest encodings changed. New owned private-provider Reword/PreparedCode reports carry exact source/prepared capsules, stable rewrite groups, ordered local bookmark terms and before/after checkout trees. Existing evidence admission remains bounded at 100,000 commit records/16 MiB before the qualified reword profile admits at most 4096 source records, 1024 local bookmarks and 65536 message bytes; preparation deadline 30 seconds. Affected signed or unresolved-tree inputs remain unsupported.",
+  "files": [
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/reword/report.rs",
+    "crates/jj-store-jj/src/local_execution/reword.rs",
+    "crates/jj-store-jj/tests/stack_reword_preparation/lifecycle.rs",
+    "crates/jj-store-jj/tests/stack_reword_preparation.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "before": "Exact reword provider regression fails with three absent export/method diagnostics. The implementation then fixes one pinned WorkspaceName conversion compile diagnostic before obtaining any passing product result.",
+  "scope": "One JJ integration boundary: foreground-owned blocking candidate worker, exact operation/view/workspace source, visible membership and complete descendant closure, real unpublished reword/rebase transaction, source/prepared evidence and invariant report. Candidate creation never publishes or updates checkout; cancellation keeps lock/worker ownership until exit. Direct tests compose the existing retainer with fixture keys; runtime intent/journal composition is not inferred.",
+  "tests": [
+    "crates/jj-store-jj/tests/stack_reword_preparation.rs#exact_reword_preparation_retains_change_tree_and_dirty_checkout_without_publication",
+    "crates/jj-store-jj/tests/stack_reword_preparation.rs#invalid_reword_root_and_hidden_targets_create_no_published_state",
+    "crates/jj-store-jj/tests/stack_reword_preparation.rs#ancestor_reword_reports_all_descendants_and_exact_bookmark_terms",
+    "crates/jj-store-jj/tests/stack_reword_preparation.rs#actual_prepared_reword_is_compatible_with_reserved_ref_retention",
+    "crates/jj-store-jj/tests/stack_reword_preparation/lifecycle.rs#cancellation_after_candidate_write_releases_lease_only_when_worker_exits",
+    "crates/jj-store-jj/tests/stack_reword_preparation/lifecycle.rs#authorization_loss_after_candidate_write_exposes_no_preparation_or_publication"
+  ],
+  "runs": [
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_reword_preparation",
+      "result": "fail",
+      "failures": 3,
+      "note": "stack-reword-before.log: missing Reword export and two absent prepare_reword method diagnostics establish the missing real provider boundary."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_reword_preparation",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-reword-first.log: implementation compilation reports one invalid conversion to borrowed WorkspaceName. Replaced it with the pinned WorkspaceName::new API; no assertion or contract weakened."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_reword_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-second.log: both initial real generation and invalid root/hidden/message cases pass."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_reword_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-complete1.log and stack-reword-closure-final.log: all six cases pass, including a real three-commit ancestor rewrite, exact bookmark terms and tree/author/change invariants, owned candidate-to-reserved-ref retention, and cancellation/authorization loss after actual operation candidate creation. Final validation additionally proves the complete visible descendant closure and exact target/descendant messages."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_reword_preparation --test stack_foreground --test stack_preparation_retention --test local_metadata --test local_evidence",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-direct.log and stack-reword-direct-final.log: final 40 passing tests across five complete direct binaries (6 reword, 8 foreground, 6 retention, 14 metadata, 6 evidence). Foreground process-loss helper is explicitly ignored in ordinary invocation but actually invoked by its passing parent."
+    },
+    {
+      "command": "cargo check --locked -p jj-store-jj --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-check.log and stack-reword-check-final.log: owning all-target source check passes, including the final exact-closure validation."
+    },
+    {
+      "command": "cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-lint.log and stack-reword-lint-final.log: strict owning integration lint passes without warnings suppressed; dependency/service lint remains outside this qualified lane."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --lib",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-unit.log: all 29 owning units pass. Existing native/current reads and archive/object helpers are reused unchanged."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "Pinned Rust formatting during implementation; no unrelated source changed."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-boundaries.log: 17 packages pass; upstream transaction/repository objects remain inside the integration boundary."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-architecture.log: 1090 modules pass; no production/catalog/reference-checkout ownership changes."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-format-rust.log: root and embedded-runtime formatting checks pass."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-docs-format.log: explicit canonical/manual formatting only; milestones.md excluded."
+    },
+    {
+      "command": "pnpm docs:review local \"Documented real unpublished local reword generation at the exact foreground source, unsigned resolved-tree bounds, stable author/change/tree and descendant/bookmark effects, unchanged checkout, candidate cancellation and authorization loss. Runtime policy/journal composition, ancestry recovery, publication and checkout remain unfinished.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-docs-review.log: source review covers the initial real generation boundary."
+    },
+    {
+      "command": "pnpm docs:review local \"Documented real unpublished reword at the exact foreground source; bounded visible membership and exact complete descendant closure, message/author/change/tree invariants, local bookmark terms, unchanged checkout and candidate cancellation/authorization loss. Runtime journal/policy composition, ancestry recovery, publication and checkout remain unfinished.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-docs-review-final.log: source fingerprint refreshed after final exact-descendant closure and archive-limit classification changes."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-coverage-format.log and stack-reword-coverage-format-final.log: review JSON formatted independently from ledger."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-format-docs.log: all affected docs/coverage pass formatting."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-spec-first.log: eight protected files and five owning canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-spec-validate.log: five validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-progress.log and stack-reword-progress-final.log: 142 tasks pass bookkeeping after final evidence; M21.2 remains In progress and result stays pending for remaining approved work."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-reword-docs-check.log: nine offline Mermaid diagrams, strict manual build and 139-file link/anchor closure pass."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Stage 3 remains incomplete: server-owned command authorization/immutable boundary policy and original-request status lookup; intent/prepared-plan/retainer/journal composition; retained source operation ancestry and recovery; exact head publication preserving concurrent siblings; guarded physical checkout and durable recovery; runtime prepare/apply/status/discovery and boundary fault/process-loss acceptance. Only reword candidates are implemented; no runtime write capability enabled.",
+    "Reword candidate retention acceptance uses explicit isolated fixture access and synthetic request/intent/prepared keys, not registered-device HTTP or an actual service prepared plan. An unpublished candidate alone is not a durable receipt or proof of execution, and the foreground metadata lease is not a lock against editor bytes.",
+    "Stage 2 complete active-combination Unstaged and watcher/lifecycle acceptance, and approved Stages 4-7 durable merge/WIP combinations, file then server-issued hunk transfers, all graph actions/guarded undo and linked-native real-storage/cold full-flow wiring remain required.",
+    "Two inherited service strict-lint diagnostics from E-M21-010 remain unresolved and unwaived. No aggregate Rust lint qualification claimed."
+  ],
+  "next": "Join actual preparation and exact owned effects to server request/journal/retainer policy; retain and recover source operation ancestry, then qualify exact upstream publication and physical checkout before enabling combinations or writable UI.",
+  "out_of_scope": "No HTTP/client wire generation, production UI/Storybook/startup change or fresh visual review. No installed binary/service replacement, package publication, existing-repository reset/migration, real RustFS/native physical execution or screenshot/baseline updates. Unrelated Rust/UI/root aggregate lanes are out of scope under targeted verification.",
+  "summary": "Real unpublished reword candidates now preserve exact source, complete descendant/bookmark effects and dirty checkout under foreground ownership. The approved complete backend/UI implementation remains In progress."
 }
 ]
 ```

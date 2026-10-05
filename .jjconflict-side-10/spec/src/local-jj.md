@@ -799,6 +799,22 @@ editors and does not prove physical bytes: the bounded physical observation and
 fresh checkout guards remain required. This coordination primitive alone cannot
 publish code, modify checkout bookkeeping or enable a runtime write capability.
 
+Local reword preparation MUST pin the foreground lease's exact source operation,
+view and named workspace, authorize before and after work, and write only an
+unpublished JJ transaction. Source membership follows visible parent ancestry,
+not hidden predecessor records or an arbitrary client commit. Root, hidden,
+oversized, signed or unsupported tree inputs fail without publication. The
+bounded source closure and rewrite report MUST preserve stable change identity,
+author, exact trees, descendant rewrites and ordered bookmark effects. The named
+workspace's checkout tree must remain unchanged for this preparation.
+
+Preparation MUST retain worker and foreground admission until a canceled worker
+actually exits. It returns exact owned source/prepared capsules, without
+selecting a retention ref, journal record, operation head or checkout metadata.
+The caller's command policy, exact intent/retention/journal composition and
+publication/checkout recovery remain separate required gates. An unpublished
+reword primitive MUST NOT enable a runtime mutation capability.
+
 Server-retained content selections bind source and parent tree identities,
 complete code/device/combination selection, safe repository path, exact
 file-state fingerprint and whole-file or verified hunk scope. Commands carry

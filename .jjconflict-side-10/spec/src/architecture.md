@@ -66,6 +66,15 @@ does not snapshot, publish or finish checkout state. Composition must separately
 revalidate physical bytes and join the retained exact operation with journal,
 publication and checkout recovery before enabling writes.
 
+Local reword preparation consumes and returns the foreground lease through a
+blocking worker. It pins the exact source, checks visible ancestry and bounded
+unsigned/resolved input, stages a real unpublished transaction, then verifies
+descendant and bookmark effects with unchanged author/tree/checkout invariants.
+Owned source/prepared capsules can feed retention; no upstream repository handle
+or publication ability escapes. Server command policy and exact historical
+journal lookup still precede any runtime use. Other commands, source ancestry
+recovery, head publication and guarded checkout remain separate execution gates.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies

@@ -108,6 +108,23 @@ lock, so apply and checkout still need fresh physical-byte guards. No runtime
 write capability, operation publication or checkout recovery is enabled by the
 lease alone.
 
+The private reword provider now writes real unpublished candidates at the
+lease's exact operation. It checks visible parent ancestry, retains stable
+change and author identity, completes descendant rewrites and reports exact
+local bookmark terms. Source admission uses the bounded evidence archive; this
+initial unsigned, resolved-tree profile permits at most 4096 source commit
+records, 1024 local bookmarks and a 64-KiB message, with a 30-second preparation
+deadline. It requires the named checkout tree to remain unchanged. Root, hidden
+or unsupported inputs remain unavailable, and no client patch or physical
+snapshot is involved.
+
+The lease and worker remain owned until candidate work exits after cancellation.
+Authorization loss withholds the candidate result. Source/prepared archives are
+compatible with reserved-ref retention, but preparation does not select a ref,
+journal record, head or checkout metadata. Server intent and policy composition,
+operation-ancestry recovery, publication and checkout gates are still
+unfinished; the application continues to advertise no Stacks write capability.
+
 Device paths, access grants, credentials and active execution journals are not
 portable repository records. Ordinary Git/JJ network commands do not transfer
 the owned companion ref. Do not assume a normal code push backs up

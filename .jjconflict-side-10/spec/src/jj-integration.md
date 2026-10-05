@@ -116,6 +116,16 @@ directory/lock identities. There is no snapshot, reconciliation, code
 publication or working-copy bookkeeping update. External editor bytes are
 separately guarded by composition.
 
+Local reword preparation consumes the foreground lease on an isolated blocking
+worker and uses the pinned ordinary GitBackend transaction at its exact source
+operation. No latest load, import or reconciliation is permitted. Before any
+candidate write it checks the complete bounded source archive, visible parent
+membership, supported unsigned tree records and command bounds. It completes
+descendant rewrites and verifies the exact source/prepared archive, rewrite map,
+local bookmark terms and unchanged checkout tree. Candidate writes remain
+unpublished. Cancellation retains admission and the lock until the worker exits;
+no upstream transaction or repository object crosses the owned result boundary.
+
 Capsule retention derives every non-root physical commit and backend tree from
 the exact archive. Selected reads require those entries in the selected metadata
 retention inventory, even when a blob was retained for another domain. An anchor
