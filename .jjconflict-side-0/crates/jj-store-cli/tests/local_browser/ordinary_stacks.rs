@@ -54,5 +54,24 @@ pub async fn qualify(endpoint: &str, id: &str, folder: &Path) -> Vec<Value> {
             .unwrap()
             .contains("Core primary")
     );
+    let workspace = state["active"].as_str().unwrap().to_owned();
+    for command in [
+        json!({"kind":"update","workspace":workspace,"name":"Updated second","target":"core-topic"}),
+        json!({"kind":"delete","workspace":workspace}),
+    ] {
+        state=client.post(format!("{endpoint}/local/repos/{id}/stacks"))
+          .header("x-jj-store-protocol","1")
+          .json(&json!({"version":1,"binding_generation":snapshot["generation"],"operation":state["operation"],"revision":state["revision"],"command":command}))
+          .send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+        assert!(state["warning"].is_null(), "{state}");
+        samples.push(json!({"path":"/v1/local/repos/{repo}/stacks","method":"post","status":200,"media":"application/json","data":state}));
+    }
+    assert!(state["active"].is_null());
+    assert_eq!(state["workspaces"].as_array().unwrap().len(), 1);
+    assert!(
+        !fs::read_to_string(folder.join(".jj/jj-store/stacks.toml"))
+            .unwrap()
+            .contains("Updated second")
+    );
     samples
 }

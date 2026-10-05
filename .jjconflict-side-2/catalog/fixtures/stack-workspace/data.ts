@@ -136,6 +136,7 @@ export function workspaceFixture(
       "create_workspace",
       "switch_workspace",
       "delete_workspace",
+      "update_workspace",
       "create_commit",
       "reword",
       "move_commit",

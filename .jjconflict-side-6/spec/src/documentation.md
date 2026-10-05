@@ -328,3 +328,8 @@ per-physical-workspace TOML, snapshots and operation-log inspection from the
 historical retained-executor profile. Browsing guidance identifies qualified
 core controls and the remaining disabled file/hunk/graph operations. Historical
 ledger entries and previous qualified provider evidence remain preserved.
+
+Local Stacks documentation includes active workspace Settings and confirmed
+configuration-only deletion. Generated API references reflect the additive
+Update/Delete variants. Source review keeps the ordinary jj-lib/TOML profile
+separate from historical retained-executor qualification.

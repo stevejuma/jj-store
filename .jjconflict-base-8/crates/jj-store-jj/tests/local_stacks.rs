@@ -509,3 +509,194 @@ async fn linked_physical_workspaces_keep_separate_toml_and_honor_native_sparse_c
     assert!(config.contains("Linked"));
     assert!(!config.contains("Source"));
 }
+
+#[tokio::test]
+async fn workspace_settings_and_removal_preserve_dirty_jj_work_and_reload() {
+    let temp = fixture();
+    let root = temp.path();
+    let state = refresh(root).await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Work".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    let first = state.active.clone().unwrap();
+    fs::write(root.join("draft.txt"), "unfinished work\n").unwrap();
+    let state = refresh(root).await;
+    let before_change = stock(root, &["log", "-r", "@", "--no-graph", "-T", "change_id"]);
+    let state = run(
+        root,
+        Some(&state),
+        Command::Update {
+            workspace: first.clone(),
+            name: "Renamed".into(),
+            target: "topic-one".into(),
+        },
+    )
+    .await;
+    assert_eq!(state.workspaces[0].name, "Renamed");
+    assert_eq!(state.workspaces[0].target, "topic-one");
+    assert_eq!(
+        stock(root, &["log", "-r", "@", "--no-graph", "-T", "change_id"]),
+        before_change
+    );
+    assert!(root.join("one.txt").exists());
+    assert_eq!(
+        fs::read_to_string(root.join("draft.txt")).unwrap(),
+        "unfinished work\n"
+    );
+    assert_eq!(refresh(root).await.workspaces[0].name, "Renamed");
+    let merge = state.workspaces[0].merge_commit.clone();
+    let wip = state.workspaces[0].wip_commit.clone();
+    let state = run(
+        root,
+        Some(&state),
+        Command::Update {
+            workspace: first.clone(),
+            name: "Name only".into(),
+            target: "topic-one".into(),
+        },
+    )
+    .await;
+    assert_eq!(state.workspaces[0].merge_commit, merge);
+    assert_eq!(state.workspaces[0].wip_commit, wip);
+    let retained_wip = state.workspaces[0].wip_commit.clone();
+    let state = run(
+        root,
+        Some(&state),
+        Command::Create {
+            name: "Other".into(),
+        },
+    )
+    .await;
+    let second = state.active.clone().unwrap();
+    let state = run(root, Some(&state), Command::Delete { workspace: first }).await;
+    assert_eq!(state.active.as_ref(), Some(&second));
+    assert_eq!(state.workspaces.len(), 1);
+    assert_eq!(
+        stock(root, &["file", "show", "-r", &retained_wip, "draft.txt"]),
+        "unfinished work\n"
+    );
+    fs::write(root.join("second.txt"), "another draft\n").unwrap();
+    let state = refresh(root).await;
+    let wc = stock(root, &["log", "-r", "@", "--no-graph", "-T", "commit_id"]);
+    let bookmarks = stock(root, &["bookmark", "list", "-T", "name"]);
+    let state = run(root, Some(&state), Command::Delete { workspace: second }).await;
+    assert!(state.active.is_none() && state.workspaces.is_empty());
+    assert_eq!(
+        stock(root, &["log", "-r", "@", "--no-graph", "-T", "commit_id"]),
+        wc
+    );
+    assert_eq!(stock(root, &["bookmark", "list", "-T", "name"]), bookmarks);
+    assert_eq!(
+        fs::read_to_string(root.join("second.txt")).unwrap(),
+        "another draft\n"
+    );
+    // Retained app bookmarks keep both WIPs reachable, even after settings removal.
+    assert!(stock(root, &["bookmark", "list"]).contains("/wip"));
+    assert!(refresh(root).await.workspaces.is_empty());
+}
+
+#[tokio::test]
+async fn workspace_settings_reject_invalid_and_stale_intent_without_config_changes() {
+    let temp = fixture();
+    let root = temp.path();
+    let state = refresh(root).await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "First".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    let inactive = state.active.clone().unwrap();
+    let state = run(
+        root,
+        Some(&state),
+        Command::Create {
+            name: "Second".into(),
+        },
+    )
+    .await;
+    let active = state.active.clone().unwrap();
+    let bytes = fs::read(root.join(".jj/jj-store/stacks.toml")).unwrap();
+    let wip = state
+        .workspaces
+        .iter()
+        .find(|w| w.id == active)
+        .unwrap()
+        .wip_commit
+        .clone();
+    for command in [
+        Command::Update {
+            workspace: active.clone(),
+            name: "First".into(),
+            target: "main".into(),
+        },
+        Command::Update {
+            workspace: active.clone(),
+            name: "\n".into(),
+            target: "main".into(),
+        },
+        Command::Update {
+            workspace: active.clone(),
+            name: "Valid".into(),
+            target: "missing".into(),
+        },
+        Command::Update {
+            workspace: inactive,
+            name: "Valid".into(),
+            target: "main".into(),
+        },
+        Command::Delete {
+            workspace: "missing".into(),
+        },
+    ] {
+        let error = local_stacks::execute(
+            Arc::new(Access(root.join(".jj/repo"))),
+            root.canonicalize().unwrap(),
+            Request {
+                version: 1,
+                binding_generation: 1,
+                operation: Some(state.operation),
+                revision: Some(state.revision),
+                command,
+            },
+        )
+        .await
+        .unwrap_err();
+        assert!(matches!(error, local_stacks::Error::Invalid));
+        assert_eq!(
+            fs::read(root.join(".jj/jj-store/stacks.toml")).unwrap(),
+            bytes
+        );
+    }
+    let error = local_stacks::execute(
+        Arc::new(Access(root.join(".jj/repo"))),
+        root.canonicalize().unwrap(),
+        Request {
+            version: 1,
+            binding_generation: 1,
+            operation: Some(state.operation),
+            revision: Some(state.revision - 1),
+            command: Command::Delete { workspace: active },
+        },
+    )
+    .await
+    .unwrap_err();
+    assert!(matches!(error, local_stacks::Error::Stale));
+    assert_eq!(
+        stock(root, &["log", "-r", "@", "--no-graph", "-T", "commit_id"]),
+        wip
+    );
+    assert_eq!(
+        fs::read(root.join(".jj/jj-store/stacks.toml")).unwrap(),
+        bytes
+    );
+}

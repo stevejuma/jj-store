@@ -742,7 +742,17 @@ the applied operation and retain changes; no archive or bespoke recovery engine
 is a prerequisite. Native conflict trees remain conflicts. Internal retention
 bookmarks are excluded from application branch and push choices.
 
+Settings update the active workspace's name and target together. Names are
+nonempty, bounded and unique; target selection must resolve an unambiguous
+non-internal bookmark. A target change uses the existing native WIP rebase; a
+name-only edit preserves merge/WIP identities. Deleting a named workspace
+removes its TOML entry and detaches it when active, without changing the
+physical checkout, user bookmarks or native commits. Internal retention
+bookmarks remain to keep unfinished work reachable. Deletion requires explicit
+UI confirmation.
+
 Core acceptance covers TOML/restart, dirty setup, create/switch, apply/unapply,
+settings update and deletion preserving checkout and native unfinished work,
 independent WIP retention, stale commands, external CLI changes and cold browser
 integration. Whole-file/hunk and remaining graph commands follow this usable
 core and remain capability-disabled until qualified.

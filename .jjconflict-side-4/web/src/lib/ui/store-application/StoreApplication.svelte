@@ -243,6 +243,7 @@
   />
   {#if !settingsOpen}<StoreApplicationRightPanels
       {controller}
+      {stackWorkspace}
       {shell}
       onSelectPage={selectPage}
       threadFocused={threadPanel.focused}

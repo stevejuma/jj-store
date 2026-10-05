@@ -3,6 +3,7 @@
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { mergeProps } from "bits-ui";
+  import Settings from "@lucide/svelte/icons/settings";
   import Plus from "@lucide/svelte/icons/plus";
   import Trash from "@lucide/svelte/icons/trash-2";
   import Ellipsis from "@lucide/svelte/icons/ellipsis";
@@ -14,9 +15,11 @@
   let {
     controller,
     command,
+    onSettings,
   }: {
     controller: StackWorkspaceController;
     command: (value: WorkspaceCommand) => void;
+    onSettings?: () => void;
   } = $props();
   const snapshot = $derived(controller.snapshot);
   const eligible = $derived(
@@ -58,6 +61,11 @@
           class="stack-workspace__action-menu"
         >
           <Menu.Group>
+            <Menu.Item
+              disabled={!onSettings || !snapshot.active}
+              onSelect={() => onSettings?.()}
+              ><Settings aria-hidden="true" />Settings</Menu.Item
+            >
             <Menu.Item
               disabled={!controller.can("create_workspace")}
               title={controller.eligibility("create_workspace").reason ||

@@ -2007,3 +2007,8 @@ binds the combination before publication, and finishes native pointer and
 combination selection before success. Recovery uses only the saved candidate; no
 CLI syntax, installed binary replacement or writable production route is implied
 by private library qualification.
+
+Ordinary local Stacks Settings and removal remain application HTTP commands
+through the registered filesystem runtime. They use jj-lib directly; no new CLI
+syntax, installed executable or service is introduced. Focused registered
+local-browser responses cover Update and Delete alongside the core commands.

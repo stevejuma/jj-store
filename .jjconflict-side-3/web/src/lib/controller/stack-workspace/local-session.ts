@@ -110,12 +110,20 @@ export class LocalStacksSession {
   async preview(request: WorkspaceRequest) {
     if (!this.source.stacks) return unavailableStackCommand();
     const snapshot = stackReadContext(this.current(), request, this.signal);
-    localStacksCommand(snapshot, request.command);
+    const command = request.command;
+    localStacksCommand(snapshot, command);
     return {
       request,
-      title: "Review workspace change",
+      title:
+        command.kind === "delete_workspace"
+          ? "Delete workspace?"
+          : "Review workspace change",
       summary:
-        "Apply this change using the current local JJ workspace. Unfinished changes are retained; JJ will represent any conflicts.",
+        command.kind === "delete_workspace"
+          ? `Remove the saved configuration for “${snapshot.workspaces.find((w) => w.id === command.workspace)?.name}”. Branches, commits, the current checkout and unfinished JJ work are retained.`
+          : command.kind === "update_workspace"
+            ? `Update “${snapshot.workspaces.find((w) => w.id === command.workspace)?.name}” to name “${command.name.trim()}” and target “${command.targetBranch.name}”. Applied branches and unfinished JJ work are retained.`
+            : "Apply this change using the current local JJ workspace. Unfinished changes are retained; JJ will represent any conflicts.",
       conflicts: [],
     };
   }

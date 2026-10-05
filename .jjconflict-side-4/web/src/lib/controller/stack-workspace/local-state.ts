@@ -38,6 +38,8 @@ export function projectLocalStacks(
         ? [
             "create_workspace",
             "switch_workspace",
+            "update_workspace",
+            "delete_workspace",
             "apply_stack",
             "unapply_stack",
           ]
@@ -80,6 +82,36 @@ export function localStacksCommand(
     return snapshot.workspaces.length
       ? { kind: "create", name: command.name }
       : { kind: "setup", name: command.name, target: snapshot.target.name };
+  }
+  if (command.kind === "update_workspace") {
+    if (
+      snapshot.active !== command.workspace ||
+      !command.name.trim() ||
+      new TextEncoder().encode(command.name).length > 128 ||
+      /[\u0000-\u001f\u007f]/u.test(command.name) ||
+      snapshot.workspaces.some(
+        (w) => w.id !== command.workspace && w.name === command.name.trim(),
+      )
+    )
+      throw new WorkspaceCommandError(
+        "invalid",
+        "Enter a unique workspace name up to 128 bytes.",
+      );
+    const target = findWorkspaceTarget(snapshot, command.targetBranch);
+    return {
+      kind: "update",
+      workspace: command.workspace,
+      name: command.name.trim(),
+      target: target.name,
+    };
+  }
+  if (command.kind === "delete_workspace") {
+    if (!snapshot.workspaces.some((w) => w.id === command.workspace))
+      throw new WorkspaceCommandError(
+        "invalid",
+        "This workspace is no longer available.",
+      );
+    return { kind: "delete", workspace: command.workspace };
   }
   if (command.kind === "switch_workspace")
     return { kind: "switch", workspace: command.workspace };

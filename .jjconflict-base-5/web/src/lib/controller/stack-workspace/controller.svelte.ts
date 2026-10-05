@@ -36,6 +36,7 @@ export class StackWorkspaceController {
   readonly commitDrafts = new WorkspaceCommitDrafts();
   snapshot = $state<WorkspaceSnapshot | null>(null);
   loading = $state(false);
+  settingsOpen = $state(false);
   page = $state<"branches" | "workspace">("workspace");
   selectedStack = $state<string | null>(null);
   selectedBranch = $state<string | null>(null);

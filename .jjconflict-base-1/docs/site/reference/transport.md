@@ -108,3 +108,10 @@ Local requests retain exact loopback origin/protocol rules; shared requests use
 current scoped credentials. Static application and Help assets have their own
 allowlists. Unknown `/v1` paths never fall back to HTML, and filesystem paths
 from a request never select arbitrary static files.
+
+The ordinary local Stacks endpoint also accepts version-1 Update and Delete
+commands. Update edits the active named workspace's name and target together;
+Delete removes only its saved local configuration. Both validate the shown
+operation and TOML revision. Native work is retained; unknown outcomes require
+inspection instead of automatic replay. See
+[Local repositories](../technical/local.md#local-stack-workspaces).

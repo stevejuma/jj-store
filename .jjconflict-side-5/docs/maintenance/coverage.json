@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed ordinary jj-lib snapshot/merge/rebase/checkout, local TOML namespaces, WIP retention and conflict-state projection; historical archive execution is outside this path.",
-      "fingerprint": "3d76a2aa519258c7b31daca6d0d8735bb023dd50519e9ab263cbcd796447ebb8"
+      "reason": "Reviewed ordinary jj-lib Settings updates and configuration-only workspace deletion; native checkout and retention bookmarks remain, with historical executor limits separate.",
+      "fingerprint": "570906703f56c580c381fd6b8e43ebbec3985157bb9f930df730046e4d9915a8"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed real workspace core commands, operation changes that reset lazy graph ranges, Unstaged counts and native conflict notices; later editing capabilities remain disabled.",
-      "fingerprint": "8aff9356a714f30ff02875a4a8f95f911845bd6babc2bf1f5e694dddade3c72d"
+      "reason": "Workspace actions now open Threads-style Settings for local name and target edits, retaining drafts through previews and preserving native JJ work on confirmed configuration removal.",
+      "fingerprint": "552733d28cabdfc5131b24c413acaa5cd61e588dc2a4a127e1f783676f90e37d"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated local Stacks command/state contracts including native conflict flags and exact command pins.",
-      "fingerprint": "6bdedc9ec3af42714e0eaba80132999db609f462eb85bf6b6076d4ff4d8e7d70"
+      "reason": "Reviewed generated LocalStacksCommand Update and Delete request variants with unchanged version-1 transport, revision admission and native work retention.",
+      "fingerprint": "7f0025c46de6d48881c119e9b354b4c334b748c8ca4f61fa55bdd821d56f4dd3"
     }
   }
 ]

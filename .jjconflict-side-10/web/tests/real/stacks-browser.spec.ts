@@ -147,6 +147,113 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
   await expect(
     unstaged.getByRole("button", { name: "second.txt", exact: true }),
   ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Workspace actions", exact: true })
+    .click();
+  await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
+  const settings = page.getByRole("complementary", {
+    name: "Workspace settings",
+    exact: true,
+  });
+  await expect(settings).toBeVisible();
+  await settings
+    .getByRole("textbox", { name: "Workspace name", exact: true })
+    .fill("Second renamed");
+  await settings
+    .getByRole("combobox", { name: "Workspace target branch", exact: true })
+    .click();
+  await page.getByRole("option", { name: /^docs/ }).click();
+  await settings
+    .getByRole("button", { name: "Save settings", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toContainText("Second renamed");
+  await confirm();
+  await expect(picker).toContainText("Second renamed");
+  expect(readFileSync(join(fixture.folder, "second.txt"), "utf8")).toBe(
+    "second workspace edit\n",
+  );
+  await settings
+    .getByRole("button", { name: "Close workspace settings", exact: true })
+    .click();
+  await page.reload();
+  await expect(picker).toContainText("Second renamed");
+  await page
+    .getByRole("button", { name: "Workspace actions", exact: true })
+    .click();
+  await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
+  await expect(
+    settings.getByRole("textbox", { name: "Workspace name", exact: true }),
+  ).toHaveValue("Second renamed");
+  await expect(
+    settings.getByRole("combobox", {
+      name: "Workspace target branch",
+      exact: true,
+    }),
+  ).toContainText("docs");
+  await settings
+    .getByRole("button", { name: "Delete workspace", exact: true })
+    .click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Cancel preview", exact: true })
+    .click();
+  await expect(picker).toContainText("Second renamed");
+  const wcBeforeDelete = execFileSync(
+    "/opt/homebrew/bin/jj",
+    [
+      "-R",
+      fixture.folder,
+      "--ignore-working-copy",
+      "log",
+      "-r",
+      "@",
+      "--no-graph",
+      "-T",
+      "commit_id",
+    ],
+    { encoding: "utf8" },
+  );
+  await settings
+    .getByRole("button", { name: "Delete workspace", exact: true })
+    .click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Delete workspace", exact: true })
+    .click();
+  await expect(
+    page
+      .locator('[data-ui-part="empty-title"]')
+      .getByText("No stack workspace", { exact: true }),
+  ).toBeVisible();
+  expect(readFileSync(join(fixture.folder, "second.txt"), "utf8")).toBe(
+    "second workspace edit\n",
+  );
+  expect(
+    execFileSync(
+      "/opt/homebrew/bin/jj",
+      [
+        "-R",
+        fixture.folder,
+        "--ignore-working-copy",
+        "log",
+        "-r",
+        "@",
+        "--no-graph",
+        "-T",
+        "commit_id",
+      ],
+      { encoding: "utf8" },
+    ),
+  ).toBe(wcBeforeDelete);
+  await picker.click();
+  await page.getByRole("option", { name: /Primary/ }).click();
+  await confirm();
+  await expect(
+    unstaged.getByRole("button", { name: "unsnapshotted.txt", exact: true }),
+  ).toBeVisible();
+  expect(
+    readFileSync(join(fixture.folder, ".jj/jj-store/stacks.toml"), "utf8"),
+  ).not.toContain("Second renamed");
   const config = readFileSync(
     join(fixture.folder, ".jj/jj-store/stacks.toml"),
     "utf8",

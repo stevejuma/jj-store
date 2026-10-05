@@ -117,6 +117,7 @@ export function commandTitle(command: WorkspaceCommand) {
       delete_stack: "Delete stack",
       create_workspace: "Create workspace",
       switch_workspace: "Switch workspace",
+      update_workspace: "Update workspace settings",
       delete_workspace: "Delete workspace",
       create_commit: "Create commit",
       reword: "Reword commit",

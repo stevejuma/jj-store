@@ -170,6 +170,12 @@ export type WorkspaceCommand =
   | { kind: "rename_stack"; stack: string; name: string }
   | { kind: "switch_workspace" | "delete_workspace"; workspace: string }
   | {
+      kind: "update_workspace";
+      workspace: string;
+      name: string;
+      targetBranch: { name: string; commit: string };
+    }
+  | {
       kind: "create_commit";
       stack: string;
       message: string;

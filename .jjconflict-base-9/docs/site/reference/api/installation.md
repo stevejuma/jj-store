@@ -13260,6 +13260,48 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     "kind",
                     "branch"
                   ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "workspace": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "const": "update"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "workspace",
+                    "name",
+                    "target"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "workspace": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "const": "delete"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "workspace"
+                  ]
                 }
               ]
             }

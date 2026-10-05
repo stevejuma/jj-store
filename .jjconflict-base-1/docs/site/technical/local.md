@@ -31,14 +31,26 @@ repository contents. Code trees stay in JJ, retained by internal local bookmarks
 excluded from application branch choices. Each physical JJ workspace has its own
 configuration namespace.
 
-Core production controls cover setup, create/switch, target selection and
-apply/unapply. Remaining graph and file/hunk actions stay disabled until their
-own acceptance slices. Preview is advisory; commands validate the shown
-operation and settings revision. After a lost response, refresh current JJ state
-and inspect its operation history before another attempt. A reported settings or
-checkout failure after publication identifies the applied operation rather than
-inviting a repeat. CLI selection of a different working change detaches the
-active local selection while retaining named workspaces.
+Core production controls cover setup, create/switch, target selection,
+apply/unapply, Settings and workspace deletion. Open **Workspace actions →
+Settings** to edit the active workspace's name and target branch in the inline
+sidebar. Saving previews both values together before applying them. A name-only
+change preserves the merge and WIP; changing the target rebases unfinished work
+with JJ's normal conflict handling.
+
+**Delete workspace** requires confirmation and removes only the saved entry in
+`stacks.toml`. The physical checkout, user branches, commits and unfinished work
+remain in JJ; the internal retention bookmarks keep that work reachable.
+Deleting the active workspace clears its selection. Select another named
+workspace to resume it, or create one from the retained checkout.
+
+Remaining graph and file/hunk actions stay disabled until their own acceptance
+slices. Preview is advisory; commands validate the shown operation and settings
+revision. After a lost response, refresh current JJ state and inspect its
+operation history before another attempt. A reported settings or checkout
+failure after publication identifies the applied operation rather than inviting
+a repeat. CLI selection of a different working change detaches the active local
+selection while retaining named workspaces.
 
 The retained executor described in historical sections below is superseded for
 this local Stacks profile. Manifest-backed execution remains a separate

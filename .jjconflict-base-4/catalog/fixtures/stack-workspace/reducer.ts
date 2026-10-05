@@ -24,6 +24,28 @@ export function reduceFixture(
   command: WorkspaceCommand,
   nextId: () => string,
 ) {
+  if (command.kind === "delete_workspace") {
+    snapshot.workspaces = snapshot.workspaces.filter(
+      (item) => item.id !== command.workspace,
+    );
+    if (snapshot.active === command.workspace) {
+      const state: import("../../../web/src/lib/controller/stack-workspace/types.js").WorkspaceSnapshot =
+        snapshot;
+      state.active = null;
+    }
+    return;
+  }
+  if (command.kind === "update_workspace") {
+    const workspace = activeWorkspace(snapshot);
+    workspace.name = command.name.trim();
+    snapshot.target = snapshot.targetOptions!.find(
+      (t) =>
+        t.name === command.targetBranch.name &&
+        t.commit === command.targetBranch.commit,
+    )!;
+    snapshot.base = snapshot.target.name;
+    return;
+  }
   const workspace = activeWorkspace(snapshot);
   const stack =
     "stack" in command
@@ -54,11 +76,6 @@ export function reduceFixture(
     }
     case "switch_workspace":
       snapshot.active = command.workspace;
-      break;
-    case "delete_workspace":
-      snapshot.workspaces = snapshot.workspaces.filter(
-        (item) => item.id !== command.workspace,
-      );
       break;
     case "create_stack": {
       if (command.parent) {

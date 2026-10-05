@@ -1206,3 +1206,9 @@ custom op-head/tree-state publication. A different external working change
 detaches active selection and retains the old named WIP; later selection
 restores it. Concurrent edits cause stale command rejection. Native conflicts
 remain native conflict trees.
+
+Active workspace settings use the existing native build/rebase path only when
+the target changes; renaming preserves JJ identities. Deletion removes local
+configuration and retains the native WIP, checkout and retention bookmarks. Both
+commands validate the shown operation/configuration revision under the existing
+settings and working-copy locks.

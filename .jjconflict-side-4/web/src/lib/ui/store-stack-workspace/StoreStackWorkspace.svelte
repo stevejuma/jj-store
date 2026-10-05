@@ -33,10 +33,12 @@
     controller,
     showStackActions = true,
     showPicker = true,
+    onSettings,
   }: {
     controller: StackWorkspaceController;
     showStackActions?: boolean;
     showPicker?: boolean;
+    onSettings?: () => void;
   } = $props();
   let formOpen = $state(false),
     conflictOpen = $state(false),
@@ -171,7 +173,7 @@
             disabled={controller.locked}>Workspace</Tabs.Trigger
           ></Tabs.List
         >
-        <StoreStackWorkspaceActions {controller} {command} />
+        <StoreStackWorkspaceActions {controller} {command} {onSettings} />
       </nav>
       <Tabs.Content value={controller.page} class="stack-workspace__content">
         {#if !snapshot.target}<StoreStackWorkspaceSetup {controller} />{/if}

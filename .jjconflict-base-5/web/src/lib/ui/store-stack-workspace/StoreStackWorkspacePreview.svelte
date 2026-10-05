@@ -5,6 +5,9 @@
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   let { controller }: { controller: StackWorkspaceController } = $props();
+  const deleting = $derived(
+    controller.preview?.request.command.kind === "delete_workspace",
+  );
 </script>
 
 <Dialog.Root
@@ -52,6 +55,7 @@
             : "Check status"}</Button
         >{/if}
       <Button
+        variant={deleting ? "destructive" : "default"}
         disabled={controller.busy ||
           Boolean(controller.validation) ||
           (Boolean(controller.pending) &&
@@ -59,7 +63,9 @@
         onclick={() => controller.apply()}
         >{controller.pending
           ? "Retry original command"
-          : "Apply command"}</Button
+          : deleting
+            ? "Delete workspace"
+            : "Apply command"}</Button
       >
     {/snippet}
   </DialogFrame>

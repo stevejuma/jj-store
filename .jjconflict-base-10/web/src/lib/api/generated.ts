@@ -33485,6 +33485,18 @@ export interface operations {
                 branch: string;
                 /** @constant */
                 kind: "set_target";
+              }
+            | {
+                workspace: string;
+                name: string;
+                target: string;
+                /** @constant */
+                kind: "update";
+              }
+            | {
+                workspace: string;
+                /** @constant */
+                kind: "delete";
               };
         };
       };

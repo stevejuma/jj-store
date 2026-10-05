@@ -544,12 +544,16 @@ describe("stack workspace UI controller and fixture", () => {
       activeWorkspace(controller.snapshot!).unassigned.map((file) => file.path),
     ).not.toContain("src/api.ts");
   });
-  it("creates, switches and deletes named combinations; rejects deleting the active one", async () => {
+  it("creates, switches and previews deletion of active and inactive combinations", async () => {
     const { controller } = await setup();
     await run(controller, { kind: "create_workspace", name: "Review" });
     const id = controller.snapshot!.active;
     await controller.prepare({ kind: "delete_workspace", workspace: id });
-    expect(controller.validation).toContain("Switch away");
+    expect(controller.preview?.request.command).toEqual({
+      kind: "delete_workspace",
+      workspace: id,
+    });
+    controller.cancelPreview();
     await run(controller, { kind: "switch_workspace", workspace: "daily" });
     await run(controller, { kind: "delete_workspace", workspace: id });
     expect(controller.snapshot!.workspaces).toHaveLength(2);

@@ -41,12 +41,33 @@ fn jj(error: impl std::fmt::Display) -> Error {
 #[schemars(rename = "LocalStacksCommand")]
 pub enum Command {
     Refresh,
-    Setup { name: String, target: String },
-    Create { name: String },
-    Switch { workspace: String },
-    Apply { branch: String },
-    Unapply { branch: String },
-    SetTarget { branch: String },
+    Setup {
+        name: String,
+        target: String,
+    },
+    Create {
+        name: String,
+    },
+    Switch {
+        workspace: String,
+    },
+    Apply {
+        branch: String,
+    },
+    Unapply {
+        branch: String,
+    },
+    SetTarget {
+        branch: String,
+    },
+    Update {
+        workspace: String,
+        name: String,
+        target: String,
+    },
+    Delete {
+        workspace: String,
+    },
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -268,6 +289,36 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                     tx.repo_mut()
                         .set_wc_commit(name.clone(), rebuilt.id().clone())
                         .map_err(jj)?;
+                }
+                Command::Update {
+                    ref workspace,
+                    name: ref new_name,
+                    ref target,
+                } => {
+                    if config.active.as_ref() != Some(workspace) {
+                        return Err(Error::Invalid);
+                    }
+                    config.validate_name(new_name, Some(workspace))?;
+                    resolve(&repo, target)?;
+                    let saved = config.active_mut().ok_or(Error::Invalid)?;
+                    saved.name = new_name.trim().into();
+                    if saved.target != *target {
+                        saved.target = target.clone();
+                        let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
+                        tx.repo_mut()
+                            .set_wc_commit(name.clone(), rebuilt.id().clone())
+                            .map_err(jj)?;
+                    }
+                }
+                Command::Delete { ref workspace } => {
+                    if !config.workspaces.iter().any(|saved| &saved.id == workspace) {
+                        return Err(Error::Invalid);
+                    }
+                    config.workspaces.retain(|saved| &saved.id != workspace);
+                    if config.active.as_ref() == Some(workspace) {
+                        config.active = None;
+                    }
+                    // Keep WC, user and retention bookmarks unchanged. JJ owns unfinished work.
                 }
                 Command::Refresh => unreachable!(),
             }

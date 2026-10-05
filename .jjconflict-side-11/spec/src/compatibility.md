@@ -851,3 +851,10 @@ explicit; operation/binding pins and opaque cursor admission are unchanged.
 Offline OpenAPI and client generation plus actual local HTTP response capture
 cover this shape. Native object codecs, companion metadata, WAL and checkout
 formats do not change.
+
+LocalStacksCommand version 1 adds Update and Delete variants for active
+workspace settings and local configuration removal. Generated OpenAPI/TypeScript
+remain source-derived; existing configuration version 1 TOML and native JJ
+0.45.1 identities are unchanged. Focused real registered-folder captures and
+cold browser acceptance qualify these additive variants, independently of
+storage publication or package release qualification.

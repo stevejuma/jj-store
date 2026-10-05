@@ -31,17 +31,27 @@ impl Config {
             .iter_mut()
             .find(|w| Some(&w.id) == self.active.as_ref())
     }
+    pub fn validate_name(&self, name: &str, except: Option<&str>) -> Result<()> {
+        if name.trim().is_empty()
+            || name.len() > 128
+            || name.chars().any(char::is_control)
+            || self
+                .workspaces
+                .iter()
+                .any(|w| Some(w.id.as_str()) != except && w.name == name.trim())
+        {
+            return Err(Error::Invalid);
+        }
+        Ok(())
+    }
     pub fn new_workspace(
         &self,
         name: &str,
         target: &str,
         settings: &jj_lib::settings::UserSettings,
     ) -> Result<SavedWorkspace> {
-        if name.trim().is_empty()
-            || name.len() > 128
-            || self.workspaces.len() >= 64
-            || self.workspaces.iter().any(|w| w.name == name.trim())
-        {
+        self.validate_name(name, None)?;
+        if self.workspaces.len() >= 64 {
             return Err(Error::Invalid);
         }
         let id = settings.get_rng().new_change_id(16).hex();

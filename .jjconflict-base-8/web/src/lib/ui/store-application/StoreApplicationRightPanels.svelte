@@ -6,6 +6,8 @@
   } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
   import { useAppearance } from "../../appearance/store.svelte.js";
+  import StoreStackWorkspaceSettings from "../store-stack-workspace/StoreStackWorkspaceSettings.svelte";
+  import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import { tick, untrack } from "svelte";
   import { repositoryDetailsPanelId } from "../layout-storage.js";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
@@ -18,11 +20,13 @@
   import StoreRepositoryContextActions from "./StoreRepositoryContextActions.svelte";
   let {
     controller,
+    stackWorkspace,
     shell,
     onSelectPage,
     threadFocused = false,
   }: {
     controller: StoreController;
+    stackWorkspace?: StackWorkspaceController;
     threadFocused?: boolean;
     shell: AppShellController;
     onSelectPage: StoreController["actions"]["selectPage"];
@@ -80,6 +84,43 @@
       previousAgentKey = key;
     });
   });
+  const stackSettingsKey = $derived(
+    current.page === "stacks" &&
+      stackWorkspace?.settingsOpen &&
+      stackWorkspace.snapshot?.repository === current.repository
+      ? stackWorkspace.snapshot.active
+      : null,
+  );
+  let previousStackKey: string | null = null;
+  $effect(() => {
+    const key = stackSettingsKey;
+    untrack(() => {
+      if (previousStackKey && key !== previousStackKey) {
+        stackWorkspace && (stackWorkspace.settingsOpen = false);
+        if (!agentKey && current.page !== "threads") {
+          shell.right.close();
+          if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
+        }
+      } else if (key) {
+        shell.right.open();
+        if (shell.mobile.resolvedMode === "mobile")
+          shell.mobile.show("right", "right");
+      }
+      previousStackKey = key;
+    });
+  });
+  async function closeStackSettings() {
+    if (stackWorkspace) stackWorkspace.settingsOpen = false;
+    shell.right.close();
+    if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
+    await tick();
+    shell.mobile
+      .getRootElement()
+      ?.querySelector<HTMLElement>(
+        '.stack-workspace [aria-label="Workspace actions"]',
+      )
+      ?.focus({ preventScroll: true });
+  }
   async function closeAgent() {
     const target = agentOpener?.isConnected
       ? agentOpener
@@ -106,6 +147,22 @@
     closeable
   >
     <StoreThreadSidebar {controller} />
+  </AppShell.Sidebar>
+{/if}
+{#if stackSettingsKey && stackWorkspace}
+  <AppShell.Sidebar
+    side="right"
+    constraintPriority={0}
+    constrainedPresentation="replace-main"
+    class="community-application__standard-right-sidebar"
+    label="Workspace settings"
+    resizeLabel="Resize workspace settings"
+    closeable
+  >
+    {#key stackSettingsKey}<StoreStackWorkspaceSettings
+        controller={stackWorkspace}
+        onClose={closeStackSettings}
+      />{/key}
   </AppShell.Sidebar>
 {/if}
 {#snippet agentResponse(focused = false)}

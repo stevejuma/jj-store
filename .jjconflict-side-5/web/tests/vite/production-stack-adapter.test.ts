@@ -545,6 +545,8 @@ test("local state enables only core commands and projects named WIP into Unstage
   expect(snapshot.capabilities).toEqual([
     "create_workspace",
     "switch_workspace",
+    "update_workspace",
+    "delete_workspace",
     "apply_stack",
     "unapply_stack",
   ]);
@@ -570,6 +572,49 @@ test("local state enables only core commands and projects named WIP into Unstage
   expect(commands).toHaveLength(2);
   expect(commands[1]).toMatchObject({
     command: { kind: "unapply", branch: "topic" },
+    operation,
+    revision: 1,
+  });
+  const updated = await adapter.read();
+  const settingsRequest = {
+    ...request,
+    id: "settings",
+    revision: updated.revision,
+    readKey: updated.readKey,
+    command: {
+      kind: "update_workspace" as const,
+      workspace: "work",
+      name: "Renamed",
+      targetBranch: { name: "main", commit: base },
+    },
+  };
+  const preview = await adapter.preview(settingsRequest);
+  expect(preview.summary).toContain("Renamed");
+  await adapter.apply(settingsRequest);
+  expect(commands.at(-1)).toMatchObject({
+    command: {
+      kind: "update",
+      workspace: "work",
+      name: "Renamed",
+      target: "main",
+    },
+    operation,
+    revision: 1,
+  });
+  const deleting = await adapter.read();
+  const deleteRequest = {
+    ...request,
+    id: "delete",
+    revision: deleting.revision,
+    readKey: deleting.readKey,
+    command: { kind: "delete_workspace" as const, workspace: "work" },
+  };
+  expect((await adapter.preview(deleteRequest)).summary).toContain(
+    "unfinished JJ work are retained",
+  );
+  await adapter.apply(deleteRequest);
+  expect(commands.at(-1)).toMatchObject({
+    command: { kind: "delete", workspace: "work" },
     operation,
     revision: 1,
   });

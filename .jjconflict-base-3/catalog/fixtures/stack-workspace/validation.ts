@@ -34,6 +34,31 @@ export function validateFixtureCommand(
     !snapshot.workspaces.some((item) => item.id === command.workspace)
   )
     fail("Choose an existing workspace.");
+  if (command.kind === "update_workspace") {
+    if (
+      snapshot.active !== command.workspace ||
+      !snapshot.targetOptions?.some(
+        (t) =>
+          t.name === command.targetBranch.name &&
+          t.commit === command.targetBranch.commit,
+      )
+    )
+      fail("Choose an available target for the active workspace.");
+    if (
+      !command.name.trim() ||
+      new TextEncoder().encode(command.name).length > 128 ||
+      /[\u0000-\u001f\u007f]/u.test(command.name)
+    )
+      fail("Enter a name up to 128 bytes.");
+    if (
+      snapshot.workspaces.some(
+        (w) => w.id !== command.workspace && w.name === command.name.trim(),
+      )
+    )
+      fail("This workspace name is already in use.");
+    return;
+  }
+  if (command.kind === "delete_workspace") return;
   validateMenuFixture(snapshot, command, fail);
   if (
     "name" in command &&
@@ -117,11 +142,6 @@ export function validateFixtureCommand(
       selectedChanges(snapshot, selection);
     }
   }
-  if (
-    command.kind === "delete_workspace" &&
-    (snapshot.active === command.workspace || snapshot.workspaces.length === 1)
-  )
-    fail("Switch away before deleting this workspace.");
   if (
     command.kind === "resolve_conflict" &&
     !snapshot.conflicts.some((item) => item.path === command.path)

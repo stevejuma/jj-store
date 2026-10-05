@@ -2191,15 +2191,19 @@ remain mandatory.
 ## Ordinary local Stacks transport
 
 JST-API-001 and JST-API-002 include `POST /v1/local/repos/{repo}/stacks`.
-Version-1 commands are Refresh, Setup, Create, Switch, Apply, Unapply and
-SetTarget. Admission resolves the registered folder, validates binding
-generation and LocalTrusted Admin/same-origin access; client filesystem paths
-are forbidden. Commands validate the current operation and TOML revision.
-Refresh is explicitly a snapshotting mutation; operation-pinned query reads
-remain immutable. The response contains the selected JJ operation, local
-settings revision and named merge/WIP references, plus any post-publication
-checkout/settings warning. It has no prepared operation, archive, durable
-receipt or automatic replay contract.
+Version-1 commands are Refresh, Setup, Create, Switch, Apply, Unapply,
+SetTarget, Update and Delete. Update carries workspace identity, name and target
+bookmark, changes the active named workspace atomically, and preserves its WIP.
+Delete carries a named workspace identity and removes only its local
+configuration, retaining checkout, branch references and native unfinished work.
+Admission resolves the registered folder, validates binding generation and
+LocalTrusted Admin/same-origin access; client filesystem paths are forbidden.
+Commands validate the current operation and TOML revision. Refresh is explicitly
+a snapshotting mutation; operation-pinned query reads remain immutable. The
+response contains the selected JJ operation, local settings revision and named
+merge/WIP references, plus any post-publication checkout/settings warning. It
+has no prepared operation, archive, durable receipt or automatic replay
+contract.
 
 Stacks canvas spacing and fixed columns are client presentation governed by
 JST-UI-020; they do not alter local Stacks transport or configuration.

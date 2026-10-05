@@ -148,6 +148,7 @@
                   <StoreStackWorkspace
                     controller={stackWorkspace}
                     showPicker={false}
+                    onSettings={() => (stackWorkspace!.settingsOpen = true)}
                   />
                 {:else}
                   <CommunityProjectsColumnAlert

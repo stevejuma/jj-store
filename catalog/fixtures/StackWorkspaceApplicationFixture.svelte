@@ -11,11 +11,13 @@
     linked = true,
     continuousStack = false,
     targetBranch = "main",
+    writable = true,
   }: {
     page?: "branches" | "workspace";
     linked?: boolean;
     continuousStack?: boolean;
     targetBranch?: string;
+    writable?: boolean;
   } = $props();
   const controller = untrack(() => createInMemoryStoreController("stacks"));
   const layoutStorage = untrack(createMemoryStoryStorage);
@@ -27,11 +29,21 @@
     for (const stack of snapshot.stacks) stack.base = targetBranch;
     if (continuousStack)
       snapshot.stacks[0]!.heads = [snapshot.stacks[0]!.heads[0]!];
+    snapshot.targetOptions = [
+      snapshot.target,
+      ...snapshot.stacks.map((stack) => ({
+        ...snapshot.target,
+        name: stack.name,
+        commit: stack.heads[0]!.commit,
+        message: stack.commits.at(-1)?.message ?? stack.name,
+      })),
+    ];
     snapshot.repository = controller.state.route.repository;
     if (!linked) {
       snapshot.folder = null;
       snapshot.availability = "unlinked";
     }
+    if (!writable) snapshot.capabilities = [];
     const value = new StackWorkspaceController(
       new MockStackWorkspaceAdapter(snapshot),
     );

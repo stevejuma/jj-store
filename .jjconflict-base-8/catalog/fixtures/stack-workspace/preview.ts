@@ -39,7 +39,9 @@ export function fixtureSummary(
     case "delete_stack":
       return `Delete “${stackName(command.stack)}” and its commit entries, and remove it from every named combination. Unassigned edits remain. This can be undone.`;
     case "delete_workspace":
-      return `Delete “${workspaceName(command.workspace)}”, including its independent unassigned edits. Other named combinations remain. This can be undone.`;
+      return `Remove the saved configuration for “${workspaceName(command.workspace)}”. Branches, commits, the current checkout and unfinished JJ work are retained.`;
+    case "update_workspace":
+      return `Update workspace to name “${command.name.trim()}” and target “${command.targetBranch.name}”. Applied branches and unfinished JJ work are retained.`;
     case "switch_workspace":
       return `Switch the current folder to “${workspaceName(command.workspace)}”. Unfinished edits in “${workspace.name}” are retained independently.`;
     case "create_workspace":

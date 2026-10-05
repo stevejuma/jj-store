@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041 |
-| M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042 |
+| M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -93429,6 +93429,265 @@ entries.
   "next": "Commit this UI slice, then continue the separately requested named workspace Settings and Delete actions.",
   "summary": "12 focused stories, type/ownership/spec/progress and live gutter geometry pass. M21 stays In progress.",
   "tests": []
+},
+{
+  "id": "E-M21-042",
+  "tasks": [
+    "M21",
+    "M21.1",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "usqkzsnlnnmswoxpqqlumuuxzkrlpltu",
+  "kind": "Ordinary local workspace Settings and configuration-only removal",
+  "versions": "JJ/jj-lib 0.45.1; local settings/command version 1; Node 26.9.0, pnpm 10.32.1, Cargo 1.98.1, Vitest 4.1.11. Foundation package ranges unchanged.",
+  "formats": "Added strict Update and Delete variants to existing version-1 local Stacks command; regenerated OpenAPI and TypeScript. .jj/jj-store/stacks.toml format remains version 1. Native identities, manifest, WAL, companion, layout and retained-executor formats unchanged.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte",
+    "catalog/fixtures/StackWorkspaceApplicationFixture.svelte",
+    "catalog/fixtures/stack-workspace/canvas-layout.ts",
+    "catalog/fixtures/stack-workspace/data.ts",
+    "catalog/fixtures/stack-workspace/preview.ts",
+    "catalog/fixtures/stack-workspace/reducer.ts",
+    "catalog/fixtures/stack-workspace/validation.ts",
+    "crates/jj-store-cli/tests/local_browser/ordinary_stacks.rs",
+    "crates/jj-store-jj/src/local_stacks/config.rs",
+    "crates/jj-store-jj/src/local_stacks/mod.rs",
+    "crates/jj-store-jj/tests/local_stacks.rs",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/settings.md",
+    "docs/site/reference/api/installation.md",
+    "docs/site/reference/transport.md",
+    "docs/site/technical/local.md",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/cli.md",
+    "spec/src/compatibility.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/stack-workspace/controller.svelte.ts",
+    "web/src/lib/controller/stack-workspace/local-session.ts",
+    "web/src/lib/controller/stack-workspace/local-state.ts",
+    "web/src/lib/controller/stack-workspace/presentation.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/src/lib/ui/community-channel-settings/CommunityChannelSettings.svelte",
+    "web/src/lib/ui/store-application/StoreApplication.svelte",
+    "web/src/lib/ui/store-application/StoreApplicationMain.svelte",
+    "web/src/lib/ui/store-application/StoreApplicationRightPanels.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceActions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspacePreview.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSettings.svelte",
+    "web/tests/real/stacks-browser.spec.ts",
+    "web/tests/vite/production-stack-adapter.test.ts",
+    "web/tests/vite/stack-workspace.test.ts"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-JJ-003",
+    "JST-JJ-004",
+    "JST-UI-020",
+    "JST-API-001",
+    "JST-API-002",
+    "JST-DOC-002",
+    "JST-GOV-002",
+    "JST-GOV-003"
+  ],
+  "before": "Native command enum lacked Update/Delete (three compile diagnostics); two new Settings stories failed because the menu item was absent. Settings had no name/target edit or active-workspace removal flow.",
+  "scope": "Active named workspace Settings reuses owned Threads sidebar identity/detail/danger-zone composition, bordered Settings field rows and branch Command View. Exact advisory previews retain canceled drafts and stale command identity. Native Update validates name and target, preserving merge/WIP on name-only edits and using existing WIP rebase on target changes. Delete removes only the TOML entry and active selection, retaining physical checkout, user and retention bookmarks and native unfinished work. Standard close restores focus; leaving Settings does not close destination Thread/Agent panels. Cross-layer checks cover only this engine/HTTP command and direct UI consumers. No new recovery/storage framework or backend graph/file/hunk capability.",
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks --locked",
+      "result": "fail",
+      "failures": 3,
+      "note": "before-native.log: missing Update/Delete command variants."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "note": "before-settings-stories.log: absent Settings action."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks --locked; cargo check -p jj-store-jj --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-tests.log/native-tests-final.log: nine stock-JJ-backed tests, including dirty target rebase, stable name-only identities, active/inactive removal, retained references, malformed/stale intent and existing seven core regressions. native-check.log passes."
+    },
+    {
+      "command": "pnpm contracts:generate",
+      "result": "pass",
+      "failures": 0,
+      "note": "contracts-generate.log: new local command variants emitted in schemas/openapi.json and web/src/lib/api/generated.ts."
+    },
+    {
+      "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE=.local/stacks-settings/http-captures.json cargo test -p jj-store-cli --test local_browser filesystem_runtime_registers_and_reads_without_native_storage --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "http-tests.log: one passed, 29 filtered. Actual Update/Delete responses join 48 captures. Build succeeds with existing large __eh_frame linker warning."
+    },
+    {
+      "command": "node --input-type=module (inline responseValidator/schemaValidator over .local/stacks-settings/http-captures.json and Update/Delete requests); pnpm test:contracts",
+      "result": "pass",
+      "failures": 0,
+      "note": "All 48 actual HTTP captures and new request shapes validated; contract-tools.log: seven tooling tests and TypeScript contracts pass. Full 267-capture lane not needed for this extension of the existing command."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-stack-adapter.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "adapter-tests.log: 11 direct adapter tests."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/stack-workspace.test.ts web/tests/vite/stack-workspace-menus.test.ts web/tests/vite/stack-workspace-setup.test.ts web/tests/vite/production-stack-adapter.test.ts web/tests/vite/production-stacks-application.test.ts web/tests/vite/production-stacks-lifecycle.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "controller-tests.log: six files, 71 tests."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "fail",
+      "failures": 15,
+      "note": "Initial web five errors/catalog ten errors: ungenerated variants, generic target string versus object collision and unsupported exact role options. Corrected with targetBranch and supported locators; no contract weakening."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "note": "settings-stories.log: target option description prevented exact name match; Delete matched both confirmation and Settings. Corrected regex and dialog scope."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "note": "settings-stories-precise.log/settings-stories-final.log: null visibility assertion and duplicate No stack workspace locator; corrected null and empty-title assertions."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "verified-stories.log: five directly affected families, 19 interaction/accessibility stories. Includes setup spacing, fixed columns, Settings edit/preview retention, validation/cancel, readonly, Delete confirmation and unchanged Threads."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "final-stories.log: 15 pass after navigation guard and layout helper extraction."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 1,
+      "note": "architecture.log: Application story exceeded 450 counted lines."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 1,
+      "note": "architecture-corrected.log: first extraction still exceeded 403 counted lines; reusable canvas-layout helper resolves it."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte -t EditWorkspaceSettingsWithRetainedDraft",
+      "result": "fail",
+      "failures": 1,
+      "note": "before-identity.log: live review found the injected workspace identity snippet was not rendered. Exact assertion rejects the retained Thread Hash icon."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSettings.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "identity-final-stories.log: final 15 pass after rendering the workspace icon, retaining the default Thread icon."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture; pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final web/catalog zero errors/warnings, 229 catalog boundaries, ownership, 1096 web architecture modules and 17 package boundaries pass. Logs: *check-identity.log, ownership-final.log, architecture-identity.log, boundaries.log; earlier *-final.log passes retained."
+    },
+    {
+      "command": "pnpm dev:backend:build; JJ_STORE_DEV_PORT=7476 JJ_STORE_DEV_BACKEND_PORT=7478 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-stack-workspace-ui/target/debug/jj-store JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:backend:restart",
+      "result": "pass",
+      "failures": 0,
+      "note": "backend-build.log/backend-restart.log: only owned backend replaced; fixture retained and Vite 7476 remains running. No installed JJ or unrelated services changed."
+    },
+    {
+      "command": "pnpm web:build (first two attempts)",
+      "result": "fail",
+      "failures": 2,
+      "note": "web-build.log: stale generated API reference; web-build-final.log: stale documentation source reviews. Vite builds passed but full build was not accepted. Generated refs, owning user docs and three topic reviews updated."
+    },
+    {
+      "command": "pnpm docs:generate; pnpm docs:review local (specific ordinary Settings semantics); pnpm docs:review application (specific UI review); pnpm docs:review contracts (specific Update/Delete review)",
+      "result": "pass",
+      "failures": 0,
+      "note": "docs-generate.log/docs-review.log: generated API reference, settings user flow/local model/transport pages and coverage fingerprints updated. Application review refreshed after final identity change in docs-review-final.log."
+    },
+    {
+      "command": "pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-build-verified.log and web-build-final-identity.log: Vite and complete docs succeed; nine Mermaid diagrams, 139 files/13,952,340 bytes, valid links/anchors. Existing foundational CSS and large-chunk warnings remain non-failing."
+    },
+    {
+      "command": "node scripts/stacks-browser-acceptance.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "cold-browser.log and cold-browser-final.log: two fresh disposable real-JJ folders/server processes, one browser test each. Setup/apply/unapply, independent WIP, name and target edit, reload, Delete cancel/confirm, unchanged physical WC/files, TOML removal, companion immutability and axe pass. Temporary servers/folders cleaned up."
+    },
+    {
+      "command": "pnpm exec prettier --check (changed supported sources/spec/docs, excluding historical ledger)",
+      "result": "fail",
+      "failures": 5,
+      "note": "format-check.log: five unformatted current files. No historical ledger reformat."
+    },
+    {
+      "command": "pnpm exec prettier --write (five indicated files, then identity sources and coverage); pnpm exec prettier --check (changed supported sources/spec/docs); rustfmt --edition 2024 --check crates/jj-store-jj/src/local_stacks/mod.rs crates/jj-store-jj/src/local_stacks/config.rs crates/jj-store-jj/tests/local_stacks.rs crates/jj-store-cli/tests/local_browser/ordinary_stacks.rs",
+      "result": "pass",
+      "failures": 0,
+      "note": "format-write.log, identity-format.log, coverage-format.log, format-verified.log and rustfmt-check.log pass."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-first.log: protected file/chapter mapping passes. spec-validate.log: five validators, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "CUA live isolated demo tab inspection at http://127.0.0.1:7476/",
+      "result": "pass",
+      "failures": 0,
+      "note": "12px gutter, zero canvas leading padding, Settings layout, Command View control and Delete action verified. Warm identity observation was stale; explicit reload verifies injected workspace icon. Only Settings opened/closed; live workspace data and user tab untouched."
+    },
+    {
+      "command": "jj --no-pager diff --check",
+      "result": "fail",
+      "failures": 1,
+      "note": "Unsupported option in installed JJ; no whitespace acceptance claimed. Changed supported source formatting is verified by Prettier and focused rustfmt."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "progress-final.log: 142 tasks; spec-first-final.log: 35 protected files/eight canonical chapters; spec-validate-final.log: five validators/23 chapters/173 requirements. All 523 historical evidence objects and their raw JSON prefix preserved."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "next": "Commit this verified local Settings slice; review remaining graph and whole-file/hunk capabilities separately. Preserve the live Vite 7476/backend 7478 fixture.",
+  "summary": "Nine native engine tests, one real local HTTP test with 48 captured responses, seven contract-tool tests, 71 direct controller units, 19 affected stories and final 15 directly changed stories pass. Two fresh real-folder browser runs verify Settings, reload, confirmed deletion and retained independent unfinished work; checks and built documentation closure pass. M21 remains In progress.",
+  "tests": [
+    "crates/jj-store-jj/tests/local_stacks.rs#workspace_settings_and_removal_preserve_dirty_jj_work_and_reload",
+    "crates/jj-store-jj/tests/local_stacks.rs#workspace_settings_reject_invalid_and_stale_intent_without_config_changes",
+    "crates/jj-store-cli/tests/local_browser.rs#filesystem_runtime_registers_and_reads_without_native_storage",
+    "web/tests/vite/production-stack-adapter.test.ts#local state enables only core commands and projects named WIP into Unstaged",
+    "web/tests/real/stacks-browser.spec.ts#cold_local_megamerges_apply_unapply_and_named_wip_survive_reload"
+  ],
+  "out_of_scope": "Root aggregate check/test/build/spec:check, full Rust workspace and unrelated UI suites, full registered capture inventory, RustFS qualification, registry publication, visual comparisons/baselines and unqualified graph/file/hunk commands. No milestone promotion."
 }
 ]
 ```
