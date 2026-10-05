@@ -31,13 +31,13 @@ impl Guard {
     async fn read(
         &self,
         binding: &RecoveryBinding,
-        expected: RecordDigest,
+        expected: Option<RecordDigest>,
         capture: bool,
     ) -> code::Result<Option<PhysicalInventoryV1>> {
         self.access.authorize().await?;
         if binding.repository != self.access.repository()
             || binding.generation != self.access.generation()
-            || expected == RecordDigest::new([0; 32])
+            || expected == Some(RecordDigest::new([0; 32]))
         {
             return Err(code::Error::EpochChanged);
         }
@@ -67,13 +67,13 @@ impl Guard {
                 })
             }).await.map_err(|_|code::Error::Unavailable)?.map_err(query_error)?;
             if physical.workspace.0 != binding.physical_workspace
-                || physical.fingerprint != expected
+                || expected.is_some_and(|expected| physical.fingerprint != expected)
             {
                 return Err(code::Error::EpochChanged);
             }
             let inventory = if capture {
                 let inventory = physical.inventory().map_err(query_error)?;
-                inventory.check_selection(binding, expected)?;
+                inventory.check_selection(binding, expected.unwrap_or(physical.fingerprint))?;
                 Some(inventory)
             } else {
                 None
@@ -94,14 +94,19 @@ impl PhysicalGuard for Guard {
         binding: &RecoveryBinding,
         expected: RecordDigest,
     ) -> code::Result<()> {
-        self.read(binding, expected, false).await.map(|_| ())
+        self.read(binding, Some(expected), false).await.map(|_| ())
     }
     async fn inventory(
         &self,
         binding: &RecoveryBinding,
         expected: RecordDigest,
     ) -> code::Result<PhysicalInventoryV1> {
-        self.read(binding, expected, true)
+        self.read(binding, Some(expected), true)
+            .await?
+            .ok_or(code::Error::Invalid)
+    }
+    async fn observe(&self, binding: &RecoveryBinding) -> code::Result<PhysicalInventoryV1> {
+        self.read(binding, None, true)
             .await?
             .ok_or(code::Error::Invalid)
     }

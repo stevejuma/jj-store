@@ -269,3 +269,11 @@ legacy bytes and unchanged shared capacity. Distinguish immutable replay after
 new editor work from live physical validation; terminal upgrade and missing-body
 reconstruction remain prohibited. No saved input example may advertise a
 physical completion or production mutation capability.
+
+## Physical file progress documentation
+
+The manual MUST distinguish the sealed physical-files-installed proof from
+native checkout and command completion. Document original backups, exact
+no-replace transitions, restricted timestamp normalization, bounded canonical
+progress and partial staging recovery. Native metadata completion and durable
+combination after-state remain required before writable transport.

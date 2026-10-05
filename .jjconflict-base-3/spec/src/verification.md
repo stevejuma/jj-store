@@ -1388,3 +1388,15 @@ upgrade attempts fail without repair or rewritten history. Metadata-only
 replacement/unknown-acknowledgement tests remain distinct from engine evidence.
 Per-path installation progress and actual interrupted checkout/native tree-state
 completion remain required; production Stacks stays read-only.
+
+[E-M21-032](milestones.md) qualifies retained physical tree-file installation in
+isolated real-native/scanner fixtures. Checks cover binary/executable additions,
+deletions, new parents, retained originals and inodes, partial staging/progress,
+editor-created targets, changed backups, private/parent replacement, unsafe
+links/modes, revocation and cancellation holding foreground/admission until
+exit. A subprocess exits before and after each physical move and after final
+progress; original-input replay preserves native checkout/tree-state bytes.
+Provider/service and private runtime regressions remain separate from this
+engine evidence. Native tree-state/checkout completion, actual combination
+after-state, writable transport and complete cold UI/linked-native real-storage
+flows remain required.

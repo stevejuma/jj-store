@@ -103,7 +103,7 @@ pub(super) fn capture(recovery: &RecoveredHistory, budget: &Budget) -> Result<Ef
         changes: changes.into_values().collect(),
     })
 }
-fn object(
+pub(super) fn object(
     git: &gix::Repository,
     id: m::GitSha1Id,
     kind: Kind,

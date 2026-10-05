@@ -1951,3 +1951,11 @@ new changed-tree publication requires both references. Legacy inventory-free
 records retain bytes and read behavior, with no terminal upgrade or missing-body
 repair. These library paths add no CLI syntax, installed binary replacement or
 production mutation capability.
+
+## Private tree-file installation qualification
+
+The development test binary qualifies actual retained physical file effects and
+process loss before/after every no-replace move. It uses disposable real JJ
+folders and leaves native checkout/tree-state bytes original. No installed CLI
+command, server command route or writable production capability follows from
+this proof.

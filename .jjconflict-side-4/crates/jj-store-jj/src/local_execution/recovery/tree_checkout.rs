@@ -1,9 +1,11 @@
-//! Exact retained tree effects and physical preflight; never checkout execution.
+//! Exact retained tree effects, physical preflight and provider-owned installation.
 mod effects;
+mod installation;
 mod observation;
 mod plan;
 use super::*;
 use crate::local_browser::working_tree::{self as tree, current::decode};
+pub use installation::InstalledTreeFiles;
 pub use plan::TreeCheckoutPlanV1;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};

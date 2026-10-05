@@ -169,3 +169,9 @@ authorization, and retains admission through actual cancellation exit. No scan
 snapshots code or grants command authority. Pinned native read snapshots retain
 their existing membership, epoch and deadline rules; their private allocation
 does not change public DTOs or publication boundaries.
+
+The private physical guard also supplies a complete fresh inventory to the JJ
+provider's interrupted file installer. It shares registered access, scanner
+admission, cancellation and deadlines with ordinary validation. The provider
+alone interprets exact saved progress; fresh data neither normalizes editor
+changes nor grants a transport write capability.

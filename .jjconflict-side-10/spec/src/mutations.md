@@ -1,5 +1,14 @@
 # Typed mutations
 
+The local retained-execution provider may install resolved physical file effects
+from an exact saved tree plan and original inventory after guarded head
+publication. Provider-owned pending intent, prepared identities and no-replace
+moves preserve originals as backups and keep native checkout/tree-state bytes
+unchanged. Its sealed physical-files result is not a command receipt, native
+metadata completion or selected combination after-state. The remaining local
+protocol stays governed by JST-LOCAL-005; native manifest publication and
+production writable capabilities are unchanged.
+
 Local Stacks checkout preparation consumes a bounded read-only physical scan
 independently of the code operation selection. The scan fingerprints exact file
 bytes, modes, relative names, symlink targets and physical workspace identity,

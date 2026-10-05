@@ -129,6 +129,44 @@ async fn validation_only_guard_does_not_gain_inventory_capture() {
         Validate.inventory(&binding, expected).await,
         Err(code::Error::Invalid)
     );
+    assert_eq!(Validate.observe(&binding).await, Err(code::Error::Invalid));
+}
+#[tokio::test]
+async fn fresh_observation_preserves_scope_authorization_and_original_validation() {
+    let f = fixture::Fixture::new().await;
+    let (binding, expected) = selection(&f).await;
+    let observer = tree::Observer::new(code::Executor::new(1).unwrap(), 1).unwrap();
+    let access = Arc::new(Access {
+        inner: f.access(),
+        denied: AtomicBool::new(false),
+    });
+    let guard = observer.physical_guard(access.clone(), f.root());
+    let original = guard.observe(&binding).await.unwrap();
+    assert_eq!(original.fingerprint(), expected);
+    fs::write(f.root().join("ignored.txt"), b"fresh ignored change\n").unwrap();
+    let before = f.state();
+    let current = guard.observe(&binding).await.unwrap();
+    assert_ne!(original.fingerprint(), current.fingerprint());
+    assert_eq!(
+        guard.validate(&binding, expected).await,
+        Err(code::Error::EpochChanged)
+    );
+    assert_eq!(
+        guard.inventory(&binding, expected).await,
+        Err(code::Error::EpochChanged)
+    );
+    for case in ["repository", "generation", "workspace"] {
+        let mut bad = binding.clone();
+        match case {
+            "repository" => bad.repository = m::RepositoryId::new([9; 16]),
+            "generation" => bad.generation += 1,
+            _ => bad.physical_workspace = m::RecordDigest::new([9; 32]),
+        }
+        assert_eq!(guard.observe(&bad).await, Err(code::Error::EpochChanged));
+    }
+    access.denied.store(true, Ordering::SeqCst);
+    assert_eq!(guard.observe(&binding).await, Err(code::Error::Denied));
+    assert_eq!(f.state(), before);
 }
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn inventory_capture_cancellation_retains_shared_admission_until_worker_exits() {

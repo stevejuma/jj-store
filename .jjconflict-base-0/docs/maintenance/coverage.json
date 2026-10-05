@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the public inventory byte-bound export used by durable runtime linkage; original PhysicalInventoryV1 data still grants no provider write or completion proof. Per-path progress and native tree-state completion remain required.",
-      "fingerprint": "03419eaebd0953f8ac0c74edab9dd61981810dcc69a336c04a503245d22497db"
+      "reason": "Reviewed provider-owned version-1 tree-file progress, exact retained plan/inventory binding, identity-preserving partial staging and progress prefixes, synced intent before no-replace moves, retained backups and complete namespace verification with restricted normalization. Sealed physical-only proof preserves original native checkout/tree-state; command completion remains gated.",
+      "fingerprint": "6a023e3c64ef669bab1b9fbfad8a0c7aa636171cd0da0954b001a143782079e4"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed directory-row retention and optional capture through the existing two-pass registered scanner guard, preserving the physical digest, current authorization, cancellation and shared admission. Wire summaries remain unchanged; durable linkage and installation progress remain separate gates.",
-      "fingerprint": "ee389c61a6ca10b030c2a38a5ca957df055ec6234d94c835bce6631f360c3af4"
+      "reason": "Reviewed optional complete fresh physical observation through existing registered authorization, shared scanner admission, deadlines and cancellation. Original expected-fingerprint validation/capture remain unchanged. Only the JJ provider interprets installation progress; no wire capability or transport mutation is added.",
+      "fingerprint": "747a17748c6120ce9ee592d102c9b971a3a84065ff066d77d4d6671cf315f133"
     }
   },
   {

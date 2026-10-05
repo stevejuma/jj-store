@@ -1157,3 +1157,12 @@ and exact tree-plan physical digest before selecting a private inventory body.
 Canonical identity and byte length are informative input references only; even
 after immutable reopen/replay they cannot grant a provider progress or checkout
 completion proof. No native write interface is added by this server composition.
+
+## Retained tree-file progress
+
+Physical installation uses exact retained Git blobs and provider-owned canonical
+progress under the existing foreground lease. Prepared file/directory
+identities, synced prior intent and no-replace moves preserve originals as
+backups. Retry compares the entire namespace and admits only restricted known
+transitions. No upstream working-copy loader is invoked and native metadata
+stays original.

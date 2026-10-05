@@ -21,6 +21,11 @@ pub trait PhysicalGuard: Send + Sync {
     ) -> Result<PhysicalInventoryV1> {
         Err(Error::Invalid)
     }
+    /// Complete fresh data for exact provider-owned interrupted transitions.
+    /// This does not normalize a changed tree or grant a write capability.
+    async fn observe(&self, _binding: &RecoveryBinding) -> Result<PhysicalInventoryV1> {
+        Err(Error::Invalid)
+    }
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct VerifiedUnchangedCheckout {

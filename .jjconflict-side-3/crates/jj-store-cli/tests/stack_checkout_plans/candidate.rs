@@ -5,7 +5,7 @@ use jj_lib::{
     settings::UserSettings,
 };
 use jj_store_jj::local_evidence::{OperationArchiveV1, capture_operation_archive};
-type FileChanges<'a> = Vec<(&'a str, Option<(&'a [u8], bool)>)>;
+pub type FileChanges<'a> = Vec<(&'a str, Option<(&'a [u8], bool)>)>;
 pub async fn candidate(f: &Fixture, changes: FileChanges<'_>) -> OperationArchiveV1 {
     candidate_with_symlink(f, changes, None).await
 }

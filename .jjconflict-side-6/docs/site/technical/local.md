@@ -359,9 +359,10 @@ input, reset a terminal receipt or initialize missing storage. Tree-changing
 publication admission requires its saved reference, and loading verifies all
 original retention/effect identities before future provider revalidation.
 
-Interrupted per-path installation, native tree-state selection and verified
-after-state remain required. Neither saved input nor a journal reference is a
-completion proof. Production Stacks remains read-only.
+Neither saved input nor a journal reference is a completion proof. The private
+file installer below handles interrupted physical effects; native tree-state
+selection and complete command after-state remain required. Production Stacks
+remains read-only.
 
 The scanner can now capture a complete original `PhysicalInventoryV1` for future
 interrupted-installation guards. Sorted file fingerprints and directory stamps
@@ -370,8 +371,9 @@ files, symlinks and empty directories. The canonical data is bounded to 4097
 total records and 8 MiB and contains no file contents or absolute folder path.
 Capture uses the registered physical guard's existing authorization, deadline
 and shared admission; validation-only guards reject this optional capability.
-Provider-owned installation progress remains required. Inventory data cannot
-authorize normalization of later editor changes or attest a completed checkout.
+Provider-owned installation progress governs any later physical writes.
+Inventory data cannot authorize normalization of later editor changes or attest
+a completed checkout.
 
 The existing private plan catalog now retains the exact original inventory next
 to its immutable plan. Journal authentication and complete recovery binding
@@ -387,8 +389,41 @@ version 5. Inventory-free legacy catalogs keep their canonical representation.
 The existing 128-plan and 64-MiB aggregate budget includes saved inventories;
 the journal still stores only bounded references. New changed-tree publication
 admission requires both plan and inventory references. Terminal records cannot
-gain new input. This is durable preparation, not physical installation or native
-tree-state/checkout completion; production Stacks remains read-only.
+gain new input. These saved references prove durable preparation. The separate
+physical-file installer returns its own sealed result; native
+tree-state/checkout completion still remains unqualified and production Stacks
+stays read-only.
+
+## Private retained tree-file installation
+
+The provider can install resolved full-sparse regular/executable effects from
+the original saved plan and inventory after exact head publication. It keeps the
+native foreground lease, revalidates access/metadata/retained objects and bounds
+both the original and maximum intermediate namespace to 4097 records. This does
+not preserve dirty affected WIP; the later combination engine owns that work.
+
+Version-1 canonical progress, bounded to 32 MiB, binds the plan/inventory and a
+private `.jj/working_copy` staging directory identity. Candidate files and
+missing parents are prepared privately. Every move has a synced prior intent.
+Originals move to retained backups; candidates then move into empty targets
+using atomic no-replace operations. Editor-created targets block without
+replacement. No backup is deleted and cross-device effects fail before
+working-file writes.
+
+Interrupted replay accepts only exact known source/destination identities,
+content, size, mode and modification time. Rename-induced file ctime alone may
+change; touched directory timestamps/size are normalized only on exact known
+parents while the complete namespace is checked. Unaffected, ignored/untracked
+files and backups remain guarded. Partial staging and initial progress writes
+resume only exact retained prefixes. Completed replay keeps the installed
+inodes. The existing 30-second/64-MiB worker budget can stop an invocation with
+saved progress; retry uses that progress without preparing another candidate.
+
+`InstalledTreeFiles` proves physical effects only and retains the original
+native checkout/tree-state bytes. Native metadata completion, durable
+combination after-state and journal/transport composition remain separate
+required gates. No production writable capability or installed command is
+introduced.
 
 ## Private unchanged-tree execution join
 

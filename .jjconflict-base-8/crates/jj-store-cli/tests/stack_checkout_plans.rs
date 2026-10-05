@@ -3,6 +3,12 @@
 mod candidate;
 #[path = "../../jj-store-jj/tests/stack_foreground/fixture.rs"]
 mod fixture;
+#[path = "stack_checkout_plans/installation.rs"]
+mod installation;
+#[path = "stack_checkout_plans/installation_faults.rs"]
+mod installation_faults;
+#[path = "stack_checkout_plans/installation_process.rs"]
+mod installation_process;
 #[path = "stack_checkout_plans/inventory.rs"]
 mod inventory;
 #[path = "stack_checkout_plans/inventory_process.rs"]
@@ -58,8 +64,25 @@ impl Input {
         Self::build(false).await
     }
     async fn build(real_physical: bool) -> Self {
+        Self::build_effects(
+            real_physical,
+            vec![
+                ("file.txt", Some((b"candidate\n", true))),
+                ("src/new", Some((b"new\n", false))),
+            ],
+            |_| {},
+        )
+        .await
+    }
+    async fn build_effects(
+        real_physical: bool,
+        changes: candidate::FileChanges<'_>,
+        setup: impl FnOnce(&std::path::Path),
+    ) -> Self {
         let folder = Fixture::new().await;
         fs::write(folder.root().join("file.txt"), b"original\n").unwrap();
+        setup(&folder.root());
+        let paths = changes.iter().map(|(path, _)| (*path).into()).collect();
         let state = folder.witness().await;
         let physical = if real_physical {
             jj_store_service::working_tree::scan(
@@ -74,14 +97,7 @@ impl Input {
         } else {
             content_digest(b"original\n")
         };
-        let archive = candidate::candidate(
-            &folder,
-            vec![
-                ("file.txt", Some((b"candidate\n", true))),
-                ("src/new", Some((b"new\n", false))),
-            ],
-        )
-        .await;
+        let archive = candidate::candidate(&folder, changes).await;
         let capsule = archive.capsule().unwrap();
         let after = archive.views[&capsule.view_id].wc_commit_ids["default"];
         let combination = s::CombinationSelection {
@@ -118,7 +134,7 @@ impl Input {
             checkout: s::CheckoutEffect {
                 before: s::TreeIdentity::GitSha1(state.baseline.trees[0]).into(),
                 after: s::TreeIdentity::GitSha1(archive.commits[&after].root_tree[0]).into(),
-                paths: vec!["file.txt".into(), "src/new".into()],
+                paths,
             },
             combination,
             rewrites: vec![],

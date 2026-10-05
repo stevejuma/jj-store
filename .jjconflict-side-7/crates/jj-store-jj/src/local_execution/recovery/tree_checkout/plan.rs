@@ -54,6 +54,22 @@ impl TreeCheckoutPlanV1 {
     pub fn workspace(&self) -> Result<String> {
         Ok(decode::checkout(&self.checkout, &self.tree_state)?.workspace)
     }
+    pub(super) fn check_metadata(
+        &self,
+        recovery: &RecoveredHistory,
+        budget: &Budget,
+    ) -> Result<()> {
+        let files =
+            capture::CheckoutFiles::read(&recovery.root, recovery.access.metadata_path(), budget)?;
+        if files.checkout.bytes != self.checkout
+            || files.checkout.fingerprint != self.checkout_fingerprint
+            || files.tree.bytes != self.tree_state
+            || files.tree.fingerprint != self.tree_fingerprint
+        {
+            return Err(Error::EpochChanged);
+        }
+        Ok(())
+    }
     pub fn encode(&self) -> Result<Vec<u8>> {
         self.validate()?;
         let bytes = serde_json::to_vec(self).map_err(|_| Error::Invalid)?;

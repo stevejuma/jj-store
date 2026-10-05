@@ -18,7 +18,7 @@ pub use checkout::{CheckoutWitnessV1, PhysicalGuard, VerifiedUnchangedCheckout};
 use jj_store_model as m;
 pub use publication::PublishedHead;
 use std::time::Duration;
-pub use tree_checkout::TreeCheckoutPlanV1;
+pub use tree_checkout::{InstalledTreeFiles, TreeCheckoutPlanV1};
 pub use witness::{RecoveryBinding, RecoveryWitnessV1};
 
 pub struct RecoveredHistory {
