@@ -66,7 +66,7 @@ impl From<TreeIdentity> for TreeSelection {
 }
 impl TreeSelection {
     pub fn validate(&self, code: &CodeSelection) -> Result<()> {
-        if self.terms.is_empty() || self.terms.len() > 65 || self.terms.len() % 2 == 0 {
+        if self.terms.is_empty() || self.terms.len() > 65 || self.terms.len().is_multiple_of(2) {
             return Err(Error::Invalid);
         }
         for term in &self.terms {

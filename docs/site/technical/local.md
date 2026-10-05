@@ -237,6 +237,27 @@ bookkeeping and companion state remain unchanged. The returned proof attests
 code publication only. Guarded checkout, durable runtime receipts and command
 transport remain required before application writes are available.
 
+An unchanged-tree retained reword can now complete only the native checkout
+operation pointer. The candidate must preserve exact workspace tree terms and
+conflict labels. A trusted complete physical inventory includes dirty, ignored
+and untracked content, modes, links and directory identity; current registration
+and authorization remain required. The private service guard shares observation
+admission and cancels actual worker work before releasing its permit.
+
+The provider captures a bounded canonical checkout witness without writes.
+Installation composition must save it with the original request before pointer
+completion. Under the original foreground lease and native head lock, completion
+rechecks source, extras, indexes, metadata and physical inputs, synchronizes a
+single deterministic staging file and atomically selects exact native bytes.
+Interrupted staging can resume only an exact prefix; links, replacement and
+corruption stop selection. Physical files and native tree-state bytes stay
+unchanged. Exact retry accepts original metadata or already selected intended
+bytes; a later CLI checkout or external file edit requires explicit recovery.
+Cancellation/process loss after selection resumes the saved witness rather than
+generating a new operation. This qualifies a provider pointer boundary only;
+durable runtime witness/journal composition, tree-changing checkout and command
+transport still precede writable controls.
+
 Private server preparation now saves the exact real reword preview, original
 request identity, recovery witness and full candidate archive before reserved
 retention. A retry resumes that saved archive instead of preparing a replacement

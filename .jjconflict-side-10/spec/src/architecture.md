@@ -131,6 +131,21 @@ without reannouncing or rewinding it. The owned proof attests code publication
 only; guarded checkout, runtime journal composition and writable capabilities
 remain separate gates.
 
+The unchanged-tree checkout provider pins canonical native Checkout protobuf
+bytes to the original recovery witness and retained preparation. It changes only
+the operation pointer under the existing foreground lease and native head lock;
+physical files and tree-state bytes remain intact. Installation composition must
+save the bounded checkout witness before completion. Exact retry normalizes only
+the checkout fingerprint after the intended pointer selection and rejects later
+CLI checkout, policy changes or replaced metadata. Deterministic private staging
+accepts only an exact prefix, bounding interrupted retries without overwriting
+unsafe entries. The service's independent complete two-pass physical guard
+shares observation admission, checks current authorization and keeps worker
+admission until cancellation exits. Ignored/untracked content, modes, links and
+directory identity remain preconditions. These provider proofs do not qualify
+general tree-changing checkout, durable runtime receipt composition or writable
+capabilities.
+
 The server now joins actual unpublished reword effects with exact private
 preview/journal selection, saved recovery witness and reserved retention. The
 full candidate archive is durable before retention; acknowledgement replaces

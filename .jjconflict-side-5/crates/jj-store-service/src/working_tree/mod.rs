@@ -1,5 +1,6 @@
 //! Private physical observations. Neither a JJ snapshot nor command authority.
 mod contracts;
+mod guard;
 mod observer;
 mod projection;
 mod walk;

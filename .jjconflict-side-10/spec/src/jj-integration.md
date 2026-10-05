@@ -1089,3 +1089,14 @@ reconciliation or extra import. The original working-copy lock and pinned
 upstream head-store lock remain owned throughout synced candidate-before-old
 marker selection. Head-only publication proof does not qualify physical checkout
 or installation combination updates.
+
+Unchanged-tree checkout uses the pinned native checkout protobuf under the same
+foreground lease, without invoking a second blocking upstream working-copy lock,
+snapshotting files or rewriting tree state. A saved private canonical witness
+permits normalization of only the intended operation-pointer file stamp; all
+other original metadata/policy/binding fingerprints stay exact. Deterministic
+per-witness staging admits only an exact output prefix and completes interrupted
+writes before synced atomic pointer replacement. An owned service guard uses the
+existing complete physical scanner through data-only provider interfaces.
+Provider proof does not select the runtime journal, combination state or a
+tree-changing checkout.

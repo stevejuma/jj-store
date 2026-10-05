@@ -154,3 +154,10 @@ the current read scope. Refresh and disposal reject late choices. Choosing a
 read target enables branch browsing but leaves Workspace empty and does not
 initialize, snapshot or publish code. Missing combinations cannot imply applied
 membership or expose an Unstaged file list.
+
+The complete registered physical inventory also supplies a private
+unchanged-tree checkout guard. It shares scan admission, checks binding/current
+authorization, and retains admission through actual cancellation exit. No scan
+snapshots code or grants command authority. Pinned native read snapshots retain
+their existing membership, epoch and deadline rules; their private allocation
+does not change public DTOs or publication boundaries.

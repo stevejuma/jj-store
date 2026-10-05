@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -88693,6 +88693,252 @@ entries.
   ],
   "next": "Qualify original-request guarded checkout with fresh physical editor/ignored/untracked guards, durable interruption recovery and scoped proof; join runtime prepare/apply/status/discovery, then continue all remaining approved stages.",
   "summary": "68 direct provider cases and mapped checks qualify exact retained code-head publication. M21.2 remains In progress and production Stacks writes remain unavailable."
+},
+{
+  "id": "E-M21-024",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "sqrvnnlw",
+  "kind": "Guarded unchanged-tree native checkout pointer completion",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git SHA-1/JJ 0.45.1 profile; macOS ARM64 disposable stock-JJ folders. CARGO_INCREMENTAL=0; installed services/executables unchanged.",
+  "formats": "Installation-private canonical CheckoutWitnessV1; native Checkout operation pointer only. Tree_state, manifest/WAL, companion, journal and combination formats unchanged; no wire/schema change.",
+  "files": [
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/checkout/staging.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/checkout/witness.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/checkout.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/publication/ancestry.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/publication.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/witness.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-jj/tests/stack_unchanged_checkout/lifecycle.rs",
+    "crates/jj-store-jj/tests/stack_unchanged_checkout.rs",
+    "crates/jj-store-service/src/reads.rs",
+    "crates/jj-store-service/src/stack_workspace/selection.rs",
+    "crates/jj-store-service/src/working_tree/guard.rs",
+    "crates/jj-store-service/src/working_tree/mod.rs",
+    "crates/jj-store-service/src/working_tree/observer.rs",
+    "crates/jj-store-service/tests/working_tree_checkout.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/architecture.md",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/mutations.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "before": "Two missing provider imports, one absent scanner-guard API and two inherited strict service lint diagnostics reproduced. Prior head publication could not finish native checkout pointer.",
+  "scope": "Original-request unchanged-tree pointer completion. Canonical bounded capture without writes, required caller persistence before selection, foreground/native head locks, complete source/extra/index and physical guards, deterministic prefix staging, synced atomic selection, exact interrupted retry. Real service scanner guards are distinct from known-file fixture guards; no runtime journal receipt or writable capability implied.",
+  "tests": [
+    "crates/jj-store-jj/tests/stack_unchanged_checkout.rs#exact_unchanged_checkout_updates_only_operation_pointer_and_retries_after_reopen",
+    "crates/jj-store-jj/tests/stack_unchanged_checkout.rs#deterministic_staging_reuses_only_exact_prefix_and_rejects_unsafe_entries",
+    "crates/jj-store-jj/tests/stack_unchanged_checkout.rs#changed_dirty_ignored_and_ignore_files_fail_before_pointer_update_and_preserve_new_bytes",
+    "crates/jj-store-jj/tests/stack_unchanged_checkout.rs#later_cli_checkout_cannot_be_replaced_with_saved_candidate_pointer",
+    "crates/jj-store-jj/tests/stack_unchanged_checkout.rs#scoped_witness_canonical_encoding_and_reuse_reject_tampering",
+    "crates/jj-store-jj/tests/stack_unchanged_checkout.rs#replaced_or_unsafe_checkout_entries_fail_without_changing_targets",
+    "crates/jj-store-jj/tests/stack_unchanged_checkout/lifecycle.rs#subprocess_loss_after_pointer_selection_reopens_original_saved_witness",
+    "crates/jj-store-service/tests/working_tree_checkout.rs#complete_registered_inventory_guards_real_unchanged_checkout_and_new_untracked_files",
+    "crates/jj-store-service/tests/working_tree_checkout.rs#full_guard_rejects_binding_revocation_modes_links_ignored_bytes_and_limits",
+    "crates/jj-store-service/tests/working_tree_checkout.rs#full_guard_cancellation_retains_shared_admission_until_worker_exits",
+    "crates/jj-store-cli/tests/native_lifecycle.rs#read_session_pins_history_and_reports_divergent_heads_without_publication"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_unchanged_checkout",
+      "result": "fail",
+      "failures": 2,
+      "note": "stack-unchanged-checkout-before.log: missing PhysicalGuard/CheckoutWitnessV1 imports."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test working_tree_checkout",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-unchanged-checkout-guard-before.log: missing Observer::physical_guard."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-service --all-targets --no-deps -- -D warnings",
+      "result": "fail",
+      "failures": 2,
+      "note": "stack-unchanged-checkout-service-lint.log: inherited large_enum_variant in reads and manual_is_multiple_of in stack selection; repaired internal snapshot allocation and parity expression without public-contract changes or suppressions."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_unchanged_checkout",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-first.log: initial pointer/reopen case passes. Expanded log: nine pass, helper through parent. Staging log: final 10 pass, empty/partial/complete prefix recovery and unsafe staging rejection. Earlier wrong-path patch applied nothing; corrected before these additions."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test working_tree_checkout",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-guard-first.log: real full scanner/provider integration passes. Guard-expanded log: three pass, binding/auth/mode/link/ignored/limit and cancellation/shared admission included."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_unchanged_checkout --test stack_head_publication --test stack_source_recovery --test stack_foreground --test stack_operation_archive --test stack_reword_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-direct.log: 78 unique direct cases pass (10 checkout,19 publication,26 recovery,8 foreground,7 archive,8 reword). Six process helpers execute through parents."
+    },
+    {
+      "command": "JJ_STORE_WORKING_TREE_TEST_JJ=/opt/homebrew/bin/jj CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test working_tree_checkout --test working_tree_scan --test working_tree_projection --test working_tree_local --test working_tree_observer --test stack_workspace_contracts -- --include-ignored",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-service-direct.log: 27 pass (3 checkout,6 scan,4 projection,1 local,4 observer,9 contracts). Real observer fixtures explicitly executed with pinned JJ."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test native_lifecycle read_session_",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-read-consumer.log: five pinned-read consumers pass: membership point reads, historical/divergent pins, staged exclusion/revocation, budgets and replaced epoch. Existing linker unwind-size warning unsuppressed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-service -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-lint-after.log: both owning all-target strict lints pass, inherited diagnostics repaired."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj -p jj-store-service --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-check.log: owning all-target type checks pass."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-boundaries.log: 17 packages pass"
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-architecture.log: 1090 modules pass"
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-spec-first.log: 20 protected files/five canonical chapters pass"
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-spec-validation.log: five validators/23 chapters/173 requirements pass"
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-rust-format.log: owning/runtime formatting pass"
+    },
+    {
+      "command": "node --test scripts/governance.test.mjs scripts/progress-mapping.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-governance.log: 33 pass"
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-docs-check.log: 139-file closure, links/anchors and nine offline diagrams in both themes pass"
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "Owning source/tests formatted; no unrelated edits."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/mutations.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/site/technical/architecture.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-doc-format.log: changed documents formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed unchanged-tree native pointer completion and exact saved witness recovery, deterministic interrupted staging, complete physical guards and original-request retry. Provider retains file/tree-state bytes; general checkout, runtime journal receipts and command transport remain required.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-docs-review-local.log: final local source fingerprint refreshed."
+    },
+    {
+      "command": "pnpm docs:review services 'Reviewed complete registered two-pass physical guards with binding, ignored/untracked content, mode/link/directory preconditions, current authorization and shared scan admission retained through cancellation. Private pinned-read allocation and tree parity lint repairs preserve public contracts and authority; provider proofs do not qualify runtime receipts or tree-changing checkout.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "Owning service review acknowledgement refreshed; tool output retained in conversation."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 2,
+      "note": "stack-unchanged-checkout-progress.log: first evidence append aborted before writing because parent M21 aggregate table did not contain E023. Protected-change/evidence diagnostics; corrected append leaves all prior bodies unchanged."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-progress-after.log: 142 task/evidence checks pass after corrected E024 append."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-spec-first-final.log: 20 protected files/six canonical chapters pass after append."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-rust-format-final.log: final provider/source Rust formatting passes."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/mutations.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/site/technical/architecture.md docs/maintenance/coverage.json",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-unchanged-checkout-doc-format-check.log: review tool rewrote coverage.json formatting after prior formatter; reformat that owner file without source/content changes."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-coverage-format.log: review JSON formatted; ledger excluded."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-docs-check-final.log: final 139-file closure, links/anchors and nine offline diagrams in both themes pass after final source review."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/mutations.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/site/technical/architecture.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-doc-format-check-after.log: final documents pass after source-review JSON formatting repair."
+    },
+    {
+      "command": "python3 raw JSON evidence-body hash audit",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-unchanged-checkout-ledger-before.json and final ledger-audit.log: exactly 506 bodies; all 505 preceding raw body hashes preserved."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Stage 3 still requires durable runtime checkout witness/journal/receipt and prepare/apply/status/discovery composition plus tree-changing checkout recovery. Provider proof types are not a runtime journal; production writes remain unavailable.",
+    "Stages 4-7 remain approved and incomplete: actual setup, named merge/WIP combinations, membership/switching, exact file/issued-hunk staging and commits, graph actions/deletion/undo, linked-native real-storage and complete cold production UI flows.",
+    "Unrelated Rust workspace/RustFS, web/catalog/Storybook and root aggregates are out of scope under the targeted policy. No package publication, installed service/binary replacement, existing-repository reset/migration, screenshot comparison or baseline update. Existing large-server __eh_frame warning unsuppressed."
+  ],
+  "next": "Durably save and discover exact checkout witnesses in the original command journal, compose retained publication/pointer receipts, then continue tree-changing checkout and all remaining approved engines/UI stages.",
+  "summary": "110 unique provider/service/read-consumer cases pass. Exact unchanged-tree pointer completion, full physical guards and process-loss retry are qualified privately. Both inherited service lint diagnostics repaired. M21.2 remains In progress; production write controls remain unavailable."
 }
 ]
 ```

@@ -1,4 +1,5 @@
-//! Explicit exact source recovery/publication; no checkout writes.
+//! Exact source recovery/publication and guarded unchanged-tree pointer completion.
+mod checkout;
 mod extras;
 mod indexes;
 mod publication;
@@ -11,6 +12,7 @@ use crate::{
     local_evidence::OperationArchiveV1,
     local_metadata::{MetadataStore, StackPreparationKey},
 };
+pub use checkout::{CheckoutWitnessV1, PhysicalGuard, VerifiedUnchangedCheckout};
 use jj_store_model as m;
 pub use publication::PublishedHead;
 use std::time::Duration;
@@ -24,6 +26,7 @@ pub struct RecoveredHistory {
     key: StackPreparationKey,
     archive: OperationArchiveV1,
     publication: bool,
+    checkout: Option<CheckoutWitnessV1>,
     _permit: OwnedSemaphorePermit,
 }
 impl Foreground {
@@ -59,7 +62,7 @@ impl Coordinator {
         witness: RecoveryWitnessV1,
         key: StackPreparationKey,
     ) -> Result<RecoveredHistory> {
-        self.recover(access, root, witness, key, false).await
+        self.recover(access, root, witness, key, false, None).await
     }
     /// Trusted original-request composition only, including interrupted head
     /// selection. Proves current ancestry; never prepares a replacement command.
@@ -70,7 +73,20 @@ impl Coordinator {
         witness: RecoveryWitnessV1,
         key: StackPreparationKey,
     ) -> Result<RecoveredHistory> {
-        self.recover(access, root, witness, key, true).await
+        self.recover(access, root, witness, key, true, None).await
+    }
+    /// Resume only the trusted original request's durably saved checkout
+    /// witness, never inbound replacement metadata or an inferred new plan.
+    pub async fn resume_unchanged_checkout(
+        &self,
+        access: Arc<dyn Access>,
+        root: PathBuf,
+        witness: RecoveryWitnessV1,
+        key: StackPreparationKey,
+        checkout: CheckoutWitnessV1,
+    ) -> Result<RecoveredHistory> {
+        self.recover(access, root, witness, key, true, Some(checkout))
+            .await
     }
     async fn recover(
         &self,
@@ -79,6 +95,7 @@ impl Coordinator {
         witness: RecoveryWitnessV1,
         key: StackPreparationKey,
         publication: bool,
+        checkout: Option<CheckoutWitnessV1>,
     ) -> Result<RecoveredHistory> {
         let permit = self.workers.acquire_preparation()?;
         let cancellation = tokio_util::sync::CancellationToken::new();
@@ -112,6 +129,7 @@ impl Coordinator {
                     key,
                     archive,
                     publication,
+                    checkout,
                     _permit,
                 };
                 recovery.check(&budget).await?;
@@ -177,7 +195,9 @@ impl RecoveredHistory {
     }
     async fn check(&self, budget: &Budget) -> Result<()> {
         self.guard.check(&self.root)?;
-        if self.publication {
+        if let Some(checkout) = &self.checkout {
+            checkout::check(self, checkout, budget).await?;
+        } else if self.publication {
             publication::check(self, budget).await?;
         } else {
             self.witness.check(&self.access, &self.root, budget).await?;

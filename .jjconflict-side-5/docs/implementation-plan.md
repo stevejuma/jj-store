@@ -337,6 +337,17 @@ runtime command composition and prepare/apply/status/discovery transport still
 gate Stage 3. Production writes remain unavailable, and all seven approved
 stages remain required.
 
+E-M21-024 qualifies unchanged-tree checkout pointer completion: original-request
+canonical witness, exact-prefix deterministic staging, complete two-pass
+physical guard and cancellation/process-loss retry. Native tree-state and
+physical files remain unchanged. Real dirty/ignored/untracked, mode/link,
+authorization and binding cases are distinct from fixture provider guards. The
+strict service lint repairs retain public read and tree-selection contracts.
+This is a narrow Stage 3 provider boundary; durable runtime
+witness/journal/receipt composition, tree-changing checkout and command
+transport remain required. Stages 4-7 remain approved and incomplete, and
+production writable capabilities stay unavailable.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

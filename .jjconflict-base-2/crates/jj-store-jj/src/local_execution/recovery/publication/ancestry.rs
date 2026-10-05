@@ -10,7 +10,7 @@ const MAX_OPERATIONS: usize = 4096;
 
 /// Exact bounded operation ancestry only. No latest repository, index, view
 /// traversal, Git extras import or CLI reconciliation participates here.
-pub(super) async fn selected(
+pub(in crate::local_execution::recovery) async fn selected(
     recovery: &RecoveredHistory,
     heads: &[m::OperationId],
     budget: &Budget,

@@ -7,14 +7,14 @@ use tokio::sync::Semaphore;
 #[derive(Clone)]
 pub struct Observer {
     reader: code::Executor,
-    capacity: Arc<Semaphore>,
+    pub(super) capacity: Arc<Semaphore>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Observation {
     pub current: code::working_tree::CurrentState,
     pub projection: Projection,
 }
-struct Cancel(Cancellation);
+pub(super) struct Cancel(pub(super) Cancellation);
 impl Drop for Cancel {
     fn drop(&mut self) {
         self.0.cancel();
@@ -100,7 +100,7 @@ impl Observer {
             .map_err(|_| Error::Limit)?
     }
 }
-fn check(cancellation: &Cancellation, deadline: Instant) -> Result<()> {
+pub(super) fn check(cancellation: &Cancellation, deadline: Instant) -> Result<()> {
     if cancellation.is_cancelled() {
         return Err(Error::Cancelled);
     }
@@ -109,7 +109,7 @@ fn check(cancellation: &Cancellation, deadline: Instant) -> Result<()> {
     }
     Ok(())
 }
-fn query_error(error: code::Error) -> Error {
+pub(super) fn query_error(error: code::Error) -> Error {
     match error {
         code::Error::Canceled => Error::Cancelled,
         code::Error::Denied => Error::Denied,

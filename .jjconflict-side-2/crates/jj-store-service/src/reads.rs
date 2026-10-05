@@ -88,7 +88,7 @@ pub enum OpenRead {
 /// authorized request. The DTO is information, not a deserializable capability.
 pub struct CommittedRead {
     session: Arc<NativeSession>,
-    snapshot: ReadSnapshot,
+    snapshot: Box<ReadSnapshot>,
     base: Arc<wal::publication::ManifestSnapshot>,
     members: Mutex<BTreeSet<m::ObjectKey>>,
     inventory: OnceCell<Arc<BTreeSet<m::ObjectKey>>>,
@@ -133,7 +133,7 @@ impl ReadPin {
         let deadline = session.read_deadline(limits)?;
         let read = Arc::new(CommittedRead {
             session,
-            snapshot: self.snapshot.clone(),
+            snapshot: Box::new(self.snapshot.clone()),
             base: self.base.clone(),
             members: Mutex::new(BTreeSet::new()),
             inventory: OnceCell::new(),
@@ -175,10 +175,10 @@ impl NativeSession {
             };
             let read = CommittedRead {
                 session: self.clone(),
-                snapshot: ReadSnapshot {
+                snapshot: Box::new(ReadSnapshot {
                     authority: manifest.into(),
                     operation_id: selected,
-                },
+                }),
                 base: Arc::new(base),
                 members: Mutex::new(BTreeSet::new()),
                 inventory: OnceCell::new(),
@@ -196,7 +196,7 @@ impl CommittedRead {
     pub(crate) async fn pin(&self) -> Result<ReadPin> {
         self.authorize().await?;
         Ok(ReadPin {
-            snapshot: self.snapshot.clone(),
+            snapshot: (*self.snapshot).clone(),
             base: self.base.clone(),
         })
     }
@@ -275,7 +275,7 @@ impl CommittedRead {
             .await?;
         self.authorize().await.map_err(query_error)?;
         Ok(VisibleView {
-            snapshot: self.snapshot.clone(),
+            snapshot: (*self.snapshot).clone(),
             commits: Arc::new(commits),
         })
     }

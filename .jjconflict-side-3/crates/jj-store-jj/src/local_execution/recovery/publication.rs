@@ -1,5 +1,5 @@
 //! Exact head selection under the actual upstream head-store flock.
-mod ancestry;
+pub(super) mod ancestry;
 use super::*;
 use crate::local_browser::working_tree::current::physical;
 use records::{destination::same, synced};
@@ -30,13 +30,13 @@ pub(super) async fn check(recovery: &RecoveredHistory, budget: &Budget) -> Resul
         .check_heads(&recovery.access, &recovery.root, &heads, budget)
         .await
 }
-struct Destination {
+pub(super) struct Destination {
     path: PathBuf,
     heads: File,
     lock: guard::Guard,
 }
 impl Destination {
-    fn open(recovery: &RecoveredHistory, budget: &Budget) -> Result<Self> {
+    pub(super) fn open(recovery: &RecoveredHistory, budget: &Budget) -> Result<Self> {
         let path = recovery.access.metadata_path().join("op_heads");
         let parent = physical::directory(&path)?;
         if physical::read(&parent, "type", 64, false, budget)?
@@ -54,7 +54,7 @@ impl Destination {
         value.check()?;
         Ok(value)
     }
-    fn check(&self) -> Result<()> {
+    pub(super) fn check(&self) -> Result<()> {
         same(&self.heads, &physical::directory(&self.path)?)?;
         self.lock.check_directory(&self.heads)
     }
@@ -81,7 +81,7 @@ impl RecoveredHistory {
     }
 }
 async fn publish(recovery: &RecoveredHistory, budget: &Budget) -> Result<PublishedHead> {
-    if !recovery.publication {
+    if !recovery.publication || recovery.checkout.is_some() {
         return Err(Error::Invalid);
     }
     recovery.check(budget).await?;

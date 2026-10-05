@@ -1044,6 +1044,16 @@ paths, limits and caller cancellation return no partial result. Capturing
 global/exclude policy and proving current checkout/sparse state are now private
 provider inputs. The service observation owner verifies identical witnesses
 before and after the physical scan and current authorization before returning.
+
+The physical observation owner MAY supply a trusted unchanged-checkout guard
+through the existing complete bounded scanner. It MUST share physical admission,
+resolve only its registered root/access owner, validate repository, generation
+and physical-workspace identity, and compare the full original fingerprint.
+Ignored, untracked, symlink, content/mode and directory changes remain part of
+that guard; metadata-only pointer effects cannot weaken its scope.
+Authorization, deadline and cancellation remain current throughout the scan, and
+canceled work retains admission until the blocking worker exits. This guard
+alone does not authorize a command, infer setup or enable runtime writes.
 Sparse-excluded tracked paths do not become deletions; present outside-sparse
 paths remain obstacles and cannot become candidate additions. Admission and
 deadlines cover the complete observation, including a canceled blocking worker.

@@ -7,7 +7,10 @@ use crate::{
     local_browser::{self, Access, Error, Result, working_tree::CurrentState},
     query::{content::Limits, workers::Workers},
 };
-pub use recovery::{PublishedHead, RecoveredHistory, RecoveryBinding, RecoveryWitnessV1};
+pub use recovery::{
+    CheckoutWitnessV1, PhysicalGuard, PublishedHead, RecoveredHistory, RecoveryBinding,
+    RecoveryWitnessV1, VerifiedUnchangedCheckout,
+};
 pub use reword::{BookmarkEffect, PreparedCode, Reword, Rewrite};
 use std::{path::PathBuf, sync::Arc};
 use tokio::sync::OwnedSemaphorePermit;

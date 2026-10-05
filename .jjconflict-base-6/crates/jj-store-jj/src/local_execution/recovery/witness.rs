@@ -156,6 +156,25 @@ impl RecoveryWitnessV1 {
     pub(super) fn original_heads(&self) -> &[m::OperationId] {
         &self.heads
     }
+    pub(super) fn unchanged_tree(&self, archive: &OperationArchiveV1) -> Result<m::GitSha1Id> {
+        self.check_archive(archive)?;
+        let view = archive
+            .views
+            .get(&archive.operations[&archive.operation].view_id)
+            .ok_or(Error::Incomplete)?;
+        let id = *view
+            .wc_commit_ids
+            .get(&self.checkout.workspace)
+            .ok_or(Error::Incomplete)?;
+        let commit = archive.commits.get(&id).ok_or(Error::Incomplete)?;
+        let labels = jj_lib::conflict_labels::ConflictLabels::from_merge(
+            jj_lib::merge::Merge::from_vec(commit.conflict_labels.clone()),
+        );
+        if commit.root_tree != self.checkout.trees || labels.as_slice() != self.checkout.labels {
+            return Err(Error::Invalid);
+        }
+        Ok(id)
+    }
     pub(super) fn store(&self) -> Result<MetadataStore> {
         MetadataStore::open(&self.git_path, Default::default()).map_err(evidence_error)
     }
@@ -177,12 +196,26 @@ impl RecoveryWitnessV1 {
         expected_heads: &[m::OperationId],
         budget: &Budget,
     ) -> Result<()> {
+        self.check_normalized(access, root, expected_heads, None, budget)
+            .await
+    }
+    pub(super) async fn check_normalized(
+        &self,
+        access: &Arc<dyn Access>,
+        root: &std::path::Path,
+        expected_heads: &[m::OperationId],
+        checkout: Option<&super::checkout::CheckoutWitnessV1>,
+        budget: &Budget,
+    ) -> Result<()> {
         budget.until(access.authorize()).await??;
         if access.repository() != self.repository || access.generation() != self.generation {
             return Err(Error::EpochChanged);
         }
         for _ in 0..2 {
-            let files = capture::CheckoutFiles::read(root, access.metadata_path(), budget)?;
+            let mut files = capture::CheckoutFiles::read(root, access.metadata_path(), budget)?;
+            if let Some(checkout) = checkout {
+                checkout.normalize(&mut files)?;
+            }
             let git = gix::open(&self.git_path).map_err(|_| Error::Unavailable)?;
             let policy = capture::policy_at_git(root, &git, &self.git_path, budget)?;
             let heads = heads(access.metadata_path(), budget)?;

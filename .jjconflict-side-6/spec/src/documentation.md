@@ -50,6 +50,14 @@ changed policy, checkout or source binding requires explicit recovery. Current
 runtime writable capabilities remain unavailable, and source-review evidence
 must cover the owning publication and witness providers.
 
+The unchanged-tree checkout manual MUST separate native pointer completion from
+physical tree-changing checkout and runtime receipt completion. It documents
+original-request witness persistence before selection, unchanged file/tree-state
+bytes, deterministic exact-prefix staging, complete physical guards and exact
+retry after cancellation/process loss. The service source review covers shared
+scan admission and retained pinned-read semantics; no public schema or writable
+capability changes follow from internal allocation or parity-check lint repairs.
+
 Local preparation documentation MUST distinguish the qualified exact
 preview/journal/witness/retention join from unqualified installed authorization,
 combination authority and runtime command execution. It describes pending
