@@ -858,3 +858,9 @@ remain source-derived; existing configuration version 1 TOML and native JJ
 0.45.1 identities are unchanged. Focused real registered-folder captures and
 cold browser acceptance qualify these additive variants, independently of
 storage publication or package release qualification.
+
+LocalStacksCommand version 1 also adds selected-file Commit and an advisory
+LocalStacksPreview endpoint. Source-derived OpenAPI and TypeScript capture both
+shapes. Real JJ 0.45.1 fixtures verify selected/unselected content and retained
+merge/WIP change identities; TOML version 1 and native storage formats stay
+unchanged. Hunk and later graph capabilities require their own acceptance.

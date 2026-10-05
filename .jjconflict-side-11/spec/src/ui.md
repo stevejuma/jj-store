@@ -430,7 +430,12 @@ Editing opens an inline retained draft with the existing files and owned
 composer; Save previews the message and explicitly staged additions. Cancel
 retains the original commit. Branch-segment deletion and squash preserve lower
 segments; every simulated mutation supports the same preview, stale and undo
-rules. Remote tracking and PR actions remain outside the local UI scope.
+rules. Production Unstaged lists the active merge-to-WIP delta through bounded
+lazy reads. Whole-file selections can stage an inline commit and preview native
+insertion/squash; unsupported hunk transfers remain explicitly disabled until
+qualified. Loaded Unstaged summaries are retained in the draft selection model
+without eagerly reading patches. Remote tracking and PR actions remain outside
+the local UI scope.
 
 The Workspace canvas's existing trailing spacer MUST contain a vertically
 centered public shadcn Empty composition with a branch icon, a Drop files to

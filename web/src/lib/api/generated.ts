@@ -2074,6 +2074,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/repos/{repo}/stacks/preview": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_stacks_preview"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repositories/conversion/preview": {
     parameters: {
       query?: never;
@@ -6379,6 +6396,11 @@ export interface components {
       merge_commit: string;
       wip_commit: string;
       conflicted: boolean;
+    };
+    LocalStacksPreview: {
+      title: string;
+      summary: string;
+      paths: string[];
     };
     ConversionPreview: {
       /** Format: uint32 */
@@ -33497,6 +33519,16 @@ export interface operations {
                 workspace: string;
                 /** @constant */
                 kind: "delete";
+              }
+            | {
+                branch: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                }[];
+                /** @constant */
+                kind: "commit";
               };
         };
       };
@@ -33509,6 +33541,206 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["LocalStacksState"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_stacks_preview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation?: string | null;
+          /** Format: uint64 */
+          revision?: number | null;
+          command:
+            | {
+                /** @constant */
+                kind: "refresh";
+              }
+            | {
+                name: string;
+                target: string;
+                /** @constant */
+                kind: "setup";
+              }
+            | {
+                name: string;
+                /** @constant */
+                kind: "create";
+              }
+            | {
+                workspace: string;
+                /** @constant */
+                kind: "switch";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "apply";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "unapply";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "set_target";
+              }
+            | {
+                workspace: string;
+                name: string;
+                target: string;
+                /** @constant */
+                kind: "update";
+              }
+            | {
+                workspace: string;
+                /** @constant */
+                kind: "delete";
+              }
+            | {
+                branch: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                }[];
+                /** @constant */
+                kind: "commit";
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalStacksPreview"];
         };
       };
       /** @description Invalid request, unknown query field or invalid cursor. */

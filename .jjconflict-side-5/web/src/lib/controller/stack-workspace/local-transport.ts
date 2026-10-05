@@ -9,11 +9,18 @@ export type LocalStacksRequest = Exact<
 export type LocalStacksCommand = LocalStacksRequest["command"];
 export interface LocalStacksTransport {
   execute(request: LocalStacksRequest): Promise<Model<"LocalStacksState">>;
+  preview?(request: LocalStacksRequest): Promise<Model<"LocalStacksPreview">>;
 }
 
 export class HttpLocalStacksTransport implements LocalStacksTransport {
   constructor(readonly client: LocalClient) {}
   execute(request: LocalStacksRequest) {
     return this.client.request<Model<"LocalStacksState">>("stacks", request);
+  }
+  preview(request: LocalStacksRequest) {
+    return this.client.request<Model<"LocalStacksPreview">>(
+      "stacks/preview",
+      request,
+    );
   }
 }

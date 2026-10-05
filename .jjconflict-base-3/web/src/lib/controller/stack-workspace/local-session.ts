@@ -63,7 +63,14 @@ export class LocalStacksSession {
     );
   }
   project(snapshot: WorkspaceSnapshot) {
-    return this.state ? projectLocalStacks(snapshot, this.state) : snapshot;
+    const result = this.state
+      ? projectLocalStacks(snapshot, this.state)
+      : snapshot;
+    if (!this.source.stacks?.preview)
+      result.capabilities = result.capabilities.filter(
+        (kind) => kind !== "create_commit",
+      );
+    return result;
   }
   async references(
     references: Model<"LocalReferencesReference">[],
@@ -111,7 +118,23 @@ export class LocalStacksSession {
     if (!this.source.stacks) return unavailableStackCommand();
     const snapshot = stackReadContext(this.current(), request, this.signal);
     const command = request.command;
-    localStacksCommand(snapshot, command);
+    const local = localStacksCommand(snapshot, command);
+    if (local.kind === "commit") {
+      if (!this.source.stacks.preview) return unavailableStackCommand();
+      const preview = await this.source.stacks.preview({
+        version: 1,
+        binding_generation: this.binding.generation,
+        operation: this.pin().operation,
+        revision: this.state!.revision,
+        command: local,
+      });
+      return {
+        request,
+        title: preview.title,
+        summary: preview.summary,
+        conflicts: [],
+      };
+    }
     return {
       request,
       title:

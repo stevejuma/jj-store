@@ -42,6 +42,7 @@ export function projectLocalStacks(
             "delete_workspace",
             "apply_stack",
             "unapply_stack",
+            "create_commit",
           ]
         : [
             "create_workspace",
@@ -82,6 +83,31 @@ export function localStacksCommand(
     return snapshot.workspaces.length
       ? { kind: "create", name: command.name }
       : { kind: "setup", name: command.name, target: snapshot.target.name };
+  }
+  if (command.kind === "create_commit") {
+    const workspace = snapshot.workspaces.find((w) => w.id === snapshot.active);
+    const stack = snapshot.stacks.find((s) => s.id === command.stack);
+    const selections =
+      command.selections ?? (command.selection ? [command.selection] : []);
+    if (
+      !workspace?.wipCommit ||
+      !stack ||
+      !selections.length ||
+      selections.some((s) => s.source !== "unassigned" || s.hunks)
+    )
+      throw new WorkspaceCommandError(
+        "invalid",
+        "Select whole files from Unstaged to create this commit.",
+      );
+    return {
+      kind: "commit",
+      branch: stack.name,
+      message: command.message,
+      selections: selections.map((s) => ({
+        source: workspace.wipCommit!,
+        path: s.path,
+      })),
+    };
   }
   if (command.kind === "update_workspace") {
     if (

@@ -700,3 +700,249 @@ async fn workspace_settings_reject_invalid_and_stale_intent_without_config_chang
         bytes
     );
 }
+
+#[tokio::test]
+async fn selected_file_commit_uses_native_propagation_and_retains_wip() {
+    let temp = fixture();
+    let root = temp.path();
+    let state = refresh(root).await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Work".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    let _state = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-one".into(),
+        },
+    )
+    .await;
+    fs::write(root.join("selected.txt"), "selected\n").unwrap();
+    fs::write(root.join("remaining.txt"), "remaining\n").unwrap();
+    let state = refresh(root).await;
+    let w = &state.workspaces[0];
+    let merge_change = stock(
+        root,
+        &[
+            "log",
+            "--no-graph",
+            "-r",
+            &w.merge_commit,
+            "-T",
+            "change_id",
+        ],
+    );
+    let wip_change = stock(
+        root,
+        &["log", "--no-graph", "-r", &w.wip_commit, "-T", "change_id"],
+    );
+    let request = Request {
+        version: 1,
+        binding_generation: 1,
+        operation: Some(state.operation),
+        revision: Some(state.revision),
+        command: Command::Commit {
+            branch: "topic-one".into(),
+            message: "Selected file".into(),
+            selections: vec![local_stacks::Selection {
+                source: w.wip_commit.clone(),
+                path: "selected.txt".into(),
+            }],
+        },
+    };
+    let before = stock(root, &["op", "log", "--no-graph", "-n", "1", "-T", "id"]);
+    let preview = local_stacks::preview(
+        Arc::new(Access(root.join(".jj/repo"))),
+        root.canonicalize().unwrap(),
+        request.clone(),
+    )
+    .await
+    .unwrap();
+    assert_eq!(preview.paths, vec!["selected.txt"]);
+    assert_eq!(
+        before,
+        stock(root, &["op", "log", "--no-graph", "-n", "1", "-T", "id"])
+    );
+    let next = local_stacks::execute(
+        Arc::new(Access(root.join(".jj/repo"))),
+        root.canonicalize().unwrap(),
+        request,
+    )
+    .await
+    .unwrap();
+    assert_eq!(
+        stock(
+            root,
+            &[
+                "log",
+                "--no-graph",
+                "-r",
+                &next.workspaces[0].merge_commit,
+                "-T",
+                "change_id"
+            ]
+        ),
+        merge_change
+    );
+    assert_eq!(
+        stock(
+            root,
+            &[
+                "log",
+                "--no-graph",
+                "-r",
+                &next.workspaces[0].wip_commit,
+                "-T",
+                "change_id"
+            ]
+        ),
+        wip_change
+    );
+    assert_eq!(
+        stock(root, &["file", "show", "-r", "topic-one", "selected.txt"]),
+        "selected\n"
+    );
+    assert_eq!(
+        stock(root, &["diff", "-r", "@", "--name-only"]),
+        "remaining.txt\n"
+    );
+    let next = run(
+        root,
+        Some(&next),
+        Command::Commit {
+            branch: "topic-one".into(),
+            message: "Last file".into(),
+            selections: vec![local_stacks::Selection {
+                source: next.workspaces[0].wip_commit.clone(),
+                path: "remaining.txt".into(),
+            }],
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(root, &["log", "--no-graph", "-r", "@", "-T", "empty"]),
+        "true"
+    );
+    assert_eq!(
+        stock(
+            root,
+            &[
+                "log",
+                "--no-graph",
+                "-r",
+                &next.workspaces[0].wip_commit,
+                "-T",
+                "change_id"
+            ]
+        ),
+        wip_change
+    );
+}
+
+#[tokio::test]
+async fn selected_file_commands_reject_invalid_stale_and_immutable_sources() {
+    let temp = fixture();
+    let root = temp.path();
+    let state = refresh(root).await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Work".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    let _ = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-one".into(),
+        },
+    )
+    .await;
+    fs::write(root.join("selected.txt"), "selected\n").unwrap();
+    let state = refresh(root).await;
+    let config = fs::read(root.join(".jj/jj-store/stacks.toml")).unwrap();
+    let request = Request {
+        version: 1,
+        binding_generation: 1,
+        operation: Some(state.operation),
+        revision: Some(state.revision),
+        command: Command::Commit {
+            branch: "topic-one".into(),
+            message: "Selection".into(),
+            selections: vec![local_stacks::Selection {
+                source: state.workspaces[0].wip_commit.clone(),
+                path: "selected.txt".into(),
+            }],
+        },
+    };
+    let mut invalid = request.clone();
+    if let Command::Commit { selections, .. } = &mut invalid.command {
+        selections[0].path = "../selected.txt".into();
+    }
+    let mut stale = request.clone();
+    stale.revision = Some(state.revision + 1);
+    for invalid in [invalid, stale] {
+        assert!(
+            local_stacks::preview(
+                Arc::new(Access(root.join(".jj/repo"))),
+                root.canonicalize().unwrap(),
+                invalid.clone()
+            )
+            .await
+            .is_err()
+        );
+        assert!(
+            local_stacks::execute(
+                Arc::new(Access(root.join(".jj/repo"))),
+                root.canonicalize().unwrap(),
+                invalid
+            )
+            .await
+            .is_err()
+        );
+    }
+    fs::write(
+        root.join(".jj/repo/config.toml"),
+        "[revset-aliases]\n'immutable_heads()' = '@'\n",
+    )
+    .unwrap();
+    assert!(
+        local_stacks::preview(
+            Arc::new(Access(root.join(".jj/repo"))),
+            root.canonicalize().unwrap(),
+            request.clone()
+        )
+        .await
+        .is_err()
+    );
+    assert!(
+        local_stacks::execute(
+            Arc::new(Access(root.join(".jj/repo"))),
+            root.canonicalize().unwrap(),
+            request
+        )
+        .await
+        .is_err()
+    );
+    assert_eq!(
+        fs::read(root.join(".jj/jj-store/stacks.toml")).unwrap(),
+        config
+    );
+    assert_eq!(
+        stock(root, &["op", "log", "--no-graph", "-n", "1", "-T", "id"]).trim(),
+        state.operation.to_string()
+    );
+    assert_eq!(
+        fs::read_to_string(root.join("selected.txt")).unwrap(),
+        "selected\n"
+    );
+}

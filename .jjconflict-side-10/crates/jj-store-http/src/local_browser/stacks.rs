@@ -3,7 +3,29 @@ use super::*;
 use local::Access as _;
 use management::stacks;
 pub(super) fn router() -> Router<Arc<State>> {
-    Router::new().route("/local/repos/{repo}/stacks", post(execute))
+    Router::new()
+        .route("/local/repos/{repo}/stacks", post(execute))
+        .route("/local/repos/{repo}/stacks/preview", post(preview))
+}
+async fn preview(
+    ExtractState(state): ExtractState<Arc<State>>,
+    Path(repo): Path<m::RepositoryId>,
+    args: routes::Input<routes::Empty>,
+    body: Body<stacks::Request>,
+) -> Result<Response> {
+    routes::input(args)?;
+    let request = decode_body(body)?;
+    let access = bound_folder(&state, repo).await?;
+    access.authorize().await?;
+    let root = std::path::PathBuf::from(&access.folder.path);
+    let runtime = tokio::runtime::Handle::current();
+    let value = blocking(&state, move || {
+        runtime
+            .block_on(stacks::preview(access, root, request))
+            .map_err(map_error)
+    })
+    .await?;
+    state.json(&value)
 }
 async fn execute(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -47,6 +69,12 @@ pub(super) fn document(document: &mut crate::contract::Document) {
         "local_stacks_execute",
     );
     document.body::<stacks::Request>("/v1/local/repos/{repo}/stacks", "post");
+    document.local_endpoint::<routes::Empty, stacks::Preview>(
+        "post",
+        "/local/repos/{repo}/stacks/preview",
+        "local_stacks_preview",
+    );
+    document.body::<stacks::Request>("/v1/local/repos/{repo}/stacks/preview", "post");
 }
 #[cfg(test)]
 mod tests;

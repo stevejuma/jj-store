@@ -71,6 +71,9 @@ pub(super) struct Storage {
     _lock: fs::File,
 }
 impl Storage {
+    pub fn read_only(root: &Path) -> Result<Config> {
+        Self::read_at(&root.join(".jj/jj-store"))
+    }
     pub fn open(root: &Path) -> Result<Self> {
         let directory = root.join(".jj/jj-store");
         if let Ok(metadata) = fs::symlink_metadata(&directory)
@@ -96,7 +99,10 @@ impl Storage {
         })
     }
     pub fn read(&self) -> Result<Config> {
-        let path = self.directory.join("stacks.toml");
+        Self::read_at(&self.directory)
+    }
+    fn read_at(directory: &Path) -> Result<Config> {
+        let path = directory.join("stacks.toml");
         let metadata = match fs::symlink_metadata(&path) {
             Ok(value) => value,
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => {

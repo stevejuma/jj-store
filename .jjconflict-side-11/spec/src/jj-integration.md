@@ -1212,3 +1212,10 @@ the target changes; renaming preserves JJ identities. Deletion removes local
 configuration and retains the native WIP, checkout and retention bookmarks. Both
 commands validate the shown operation/configuration revision under the existing
 settings and working-copy locks.
+
+Selected-file commit creation inserts after an applied head, rebases
+descendants, then squashes from the current rewritten WIP with `keep_emptied`.
+Selections bind exact source commit IDs and canonical paths. The merge and WIP
+retain their change identities through native rewriting; preview validation does
+not publish or snapshot. Target ancestry and configured immutable descendants
+remain protected.

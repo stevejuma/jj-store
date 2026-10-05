@@ -2196,14 +2196,20 @@ SetTarget, Update and Delete. Update carries workspace identity, name and target
 bookmark, changes the active named workspace atomically, and preserves its WIP.
 Delete carries a named workspace identity and removes only its local
 configuration, retaining checkout, branch references and native unfinished work.
-Admission resolves the registered folder, validates binding generation and
-LocalTrusted Admin/same-origin access; client filesystem paths are forbidden.
-Commands validate the current operation and TOML revision. Refresh is explicitly
-a snapshotting mutation; operation-pinned query reads remain immutable. The
-response contains the selected JJ operation, local settings revision and named
-merge/WIP references, plus any post-publication checkout/settings warning. It
-has no prepared operation, archive, durable receipt or automatic replay
-contract.
+Commit creates a commit after an applied local bookmark and squashes exact
+selected WIP files into it while retaining the WIP child. Its selections
+identify source commit and repository-relative path. Advisory previews use
+`POST /v1/local/repos/{repo}/stacks/preview` with the same pinned request and
+return a bounded summary without snapshotting, creating configuration or
+publishing JJ state. Unsupported hunk selections remain rejected until
+qualified. Admission resolves the registered folder, validates binding
+generation and LocalTrusted Admin/same-origin access; client filesystem paths
+are forbidden. Commands validate the current operation and TOML revision.
+Refresh is explicitly a snapshotting mutation; operation-pinned query reads
+remain immutable. The response contains the selected JJ operation, local
+settings revision and named merge/WIP references, plus any post-publication
+checkout/settings warning. It has no prepared operation, archive, durable
+receipt or automatic replay contract.
 
 Stacks canvas spacing and fixed columns are client presentation governed by
 JST-UI-020; they do not alter local Stacks transport or configuration. Workspace

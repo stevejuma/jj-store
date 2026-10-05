@@ -1,5 +1,8 @@
 //! Ordinary local JJ megamerges. App settings are local; JJ owns code and checkout.
 mod config;
+mod mutations;
+mod policy;
+mod preview;
 mod settings;
 use self::config::{Config, SavedWorkspace};
 use crate::local_browser::Access;
@@ -14,6 +17,7 @@ use jj_lib::{
     working_copy::{SnapshotOptions, WorkingCopyFreshness},
     workspace::Workspace,
 };
+pub use preview::{Preview, preview};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, sync::Arc};
@@ -68,6 +72,18 @@ pub enum Command {
     Delete {
         workspace: String,
     },
+    Commit {
+        branch: String,
+        message: String,
+        selections: Vec<Selection>,
+    },
+}
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+#[schemars(rename = "LocalStacksSelection")]
+pub struct Selection {
+    pub source: String,
+    pub path: String,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -319,6 +335,24 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                         config.active = None;
                     }
                     // Keep WC, user and retention bookmarks unchanged. JJ owns unfinished work.
+                }
+                Command::Commit {
+                    ref branch,
+                    ref message,
+                    ref selections,
+                } => {
+                    mutations::commit(
+                        tx.repo_mut(),
+                        &repo,
+                        &name,
+                        &settings,
+                        &config,
+                        &wc,
+                        branch,
+                        message,
+                        selections,
+                    )
+                    .await?;
                 }
                 Command::Refresh => unreachable!(),
             }

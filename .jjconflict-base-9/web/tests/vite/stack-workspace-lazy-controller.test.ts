@@ -299,3 +299,30 @@ test("target-history reads abort when only the opaque read key changes", async (
   controller.close();
   expect(signal?.aborted).toBe(true);
 });
+
+test("loaded Unstaged files become draft selections without eager patches", async () => {
+  const { controller, adapter } = await setup();
+  adapter.readSourceFiles = async () => ({
+    files: [{ path: "draft.txt", hunks: [], content: { status: "unloaded" } }],
+  });
+  await controller.details.loadFiles("unassigned");
+  expect(
+    controller.snapshot!.workspaces.find(
+      (w) => w.id === controller.snapshot!.active,
+    )!.unassigned,
+  ).toHaveLength(1);
+  const stack = controller.snapshot!.workspaces.find(
+    (w) => w.id === controller.snapshot!.active,
+  )!.applied[0]!;
+  expect(
+    controller.commitDrafts.open(controller.snapshot!, stack, {
+      source: "unassigned",
+      path: "draft.txt",
+    }),
+  ).toBe(true);
+  expect(
+    controller.commitDrafts.get(controller.snapshot!.active!, stack)!
+      .selections,
+  ).toEqual([{ source: "unassigned", path: "draft.txt" }]);
+  controller.close();
+});

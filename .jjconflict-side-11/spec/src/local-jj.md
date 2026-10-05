@@ -757,6 +757,16 @@ independent WIP retention, stale commands, external CLI changes and cold browser
 integration. Whole-file/hunk and remaining graph commands follow this usable
 core and remain capability-disabled until qualified.
 
+Selected-file commits MUST insert a new commit after the selected applied
+bookmark and squash only the displayed WIP selection into it. The implementation
+MUST use native descendant rebasing, preserve the megamerge/WIP change
+identities and retain an emptied WIP child. Ordinary rewrites MUST NOT rebuild
+the merge. Selected-content previews are advisory, nonpublishing reads;
+execution validates the exact operation, configuration revision and source
+commits. Staging is UI intent and does not move content before confirmed
+execution. Unstaged reads the active merge-to-WIP delta using bounded paths and
+lazy patches.
+
 ## Historical retained stacks execution contracts
 
 The following implementation evidence describes the previous retained-executor

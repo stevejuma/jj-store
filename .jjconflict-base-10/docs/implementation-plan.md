@@ -5,11 +5,15 @@ and replaces the stack write path with normal jj-lib operations. Local settings
 live in `.jj/jj-store/stacks.toml`; named workspaces are megamerges plus
 retained WIP children. Configuration is local to the physical JJ workspace.
 
-First deliver setup/target, discovery/create/switch and apply/unapply together,
-with normal snapshot/ignore handling and independent unfinished work. Verify the
-production UI against a disposable local JJ folder, commit and pause for review.
-Then, after approval, deliver whole-file staging/commits, hunk transfer and the
-remaining graph/menu operations. Enable capabilities only with acceptance.
+The local setup/membership core and focused repository navigation are delivered.
+The user approved the remaining mutation plan: selected-file commits, branch and
+basic commit actions, transfers/splits, hunks, graph operations,
+deletion/conflict resolution and native Undo/Redo. Deliver each behavior in
+verified JJ changes. Native squash and descendant rebasing propagate through
+merge/WIP; preserve their change identities and retain emptied WIP. Explicit
+reparenting handles membership and externally moved bookmarks. Delete stack
+removes only its top bookmark; Undo follows ordinary repository JJ semantics and
+does not restore TOML.
 
 Use the existing clean JJ change above the verified current parent, preserve UI
 and useful browsing, and retire the stack-only archived-preparation recovery

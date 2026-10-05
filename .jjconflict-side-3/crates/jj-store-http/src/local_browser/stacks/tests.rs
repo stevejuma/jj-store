@@ -81,15 +81,16 @@ fn trusted() -> Access {
         permission: Permission::Admin,
     }
 }
-async fn request(
+async fn request_at(
     api: &HttpApi,
     repo: m::RepositoryId,
     value: serde_json::Value,
     origin: &str,
+    suffix: &str,
 ) -> (StatusCode, serde_json::Value) {
     let request = axum::http::Request::builder()
         .method("POST")
-        .uri(format!("/v1/local/repos/{repo}/stacks"))
+        .uri(format!("/v1/local/repos/{repo}/stacks{suffix}"))
         .header("host", "127.0.0.1:7443")
         .header("origin", origin)
         .header("content-type", "application/json")
@@ -102,6 +103,29 @@ async fn request(
         .await
         .unwrap();
     (status, serde_json::from_slice(&bytes).unwrap())
+}
+async fn request(
+    api: &HttpApi,
+    repo: m::RepositoryId,
+    value: serde_json::Value,
+    origin: &str,
+) -> (StatusCode, serde_json::Value) {
+    request_at(api, repo, value, origin, "").await
+}
+#[tokio::test]
+async fn preview_retains_registration_and_same_origin_admission() {
+    let root = tempfile::tempdir().unwrap();
+    let manager = manager(root.path());
+    let api = api(root.path(), manager, trusted());
+    let repo = m::RepositoryId::new([1; 16]);
+    let body = serde_json::json!({"version":1,"binding_generation":6,"operation":null,"revision":null,"command":{"kind":"commit","branch":"topic","message":"title","selections":[]}});
+    assert_eq!(
+        request_at(&api, repo, body, "https://foreign.example", "/preview")
+            .await
+            .0,
+        StatusCode::FORBIDDEN
+    );
+    assert!(!root.path().join(".jj/jj-store").exists());
 }
 #[tokio::test]
 async fn route_admits_only_registered_local_generations_and_typed_commands() {

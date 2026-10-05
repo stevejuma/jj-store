@@ -733,3 +733,92 @@ test("confirmed local membership settles before the new operation graph index is
   }
   adapter.close();
 });
+
+test("local selected-file previews bind WIP and do not execute before apply", async () => {
+  const { source, binding } = fixture();
+  const requests: unknown[] = [],
+    previews: unknown[] = [];
+  const state: Model<"LocalStacksState"> = {
+    version: 1,
+    operation,
+    revision: 1,
+    active: "work",
+    warning: null,
+    workspaces: [
+      {
+        id: "work",
+        name: "Work",
+        target: "main",
+        target_commit: base,
+        applied: ["topic"],
+        merge_commit: parent,
+        wip_commit: tip,
+        conflicted: false,
+      },
+    ],
+  };
+  source.stacks = {
+    execute: async (request) => {
+      requests.push(request);
+      return structuredClone(state);
+    },
+    preview: async (request) => {
+      previews.push(request);
+      return {
+        title: "Create commit",
+        summary: "Selected file only",
+        paths: ["README.md"],
+      };
+    },
+  };
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  const snapshot = await adapter.read();
+  expect(snapshot.capabilities).toContain("create_commit");
+  const request = {
+    id: "selected-file",
+    repository,
+    revision: snapshot.revision,
+    readKey: snapshot.readKey,
+    command: {
+      kind: "create_commit" as const,
+      stack: snapshot.stacks[0]!.id,
+      message: "Selected file",
+      selections: [{ source: "unassigned", path: "README.md" }],
+    },
+  };
+  await adapter.preview(request);
+  expect(requests).toHaveLength(1);
+  expect(previews).toEqual([
+    {
+      version: 1,
+      binding_generation: 2,
+      operation,
+      revision: 1,
+      command: {
+        kind: "commit",
+        branch: "topic",
+        message: "Selected file",
+        selections: [{ source: tip, path: "README.md" }],
+      },
+    },
+  ]);
+  await adapter.apply(request);
+  expect(requests).toHaveLength(2);
+  expect(requests[1]).toEqual(previews[0]);
+  await expect(
+    adapter.preview({
+      ...request,
+      command: {
+        ...request.command,
+        selections: [
+          { source: "unassigned", path: "README.md", hunks: ["display-only"] },
+        ],
+      },
+    }),
+  ).rejects.toThrow("whole files");
+  adapter.close();
+});

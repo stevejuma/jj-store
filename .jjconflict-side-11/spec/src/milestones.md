@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Implement approved mutations in verified slices; selected-file commit first | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -94146,6 +94146,115 @@ entries.
   "next": "Commit the verified frontend slice with Jujutsu; keep live Vite 7476/backend 7478 and Storybook 6057 running for review. Disabled local file/hunk/graph commands, publication and release qualification remain separate work.",
   "summary": "Focused repository Stacks navigation, contextual workspace/selection rail and hover-only circular Back qualify with 45 focused source tests, affected interaction/accessibility stories, both combined cold real-folder scenarios, web/catalog checks, UI ownership/architecture and live HMR verification. Open picker choices now pause/resume through reads; the widened Projects check has all 61 direct stories passing after correcting its viewport-read busy indicator. No milestone status promotion.",
   "out_of_scope": "Rust builds/tests, root aggregates, unrelated catalog suites, package publication, backend/transport changes, screenshot comparisons/baselines. Existing development binaries reused; no fixture reset, installed executable replacement or unrelated service restart."
+},
+{
+  "id": "E-M21-045",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "lqxwsswuwylruxrsqxkkznnwlpxnxsrx",
+  "kind": "Ordinary local selected-file insertion and native squash propagation",
+  "versions": "JJ/jj-lib 0.45.1; Node 26.9.0; pnpm 10.32.1; Vitest 4.1.11.",
+  "formats": "Additive LocalStacksCommand Commit and read-only preview endpoint; TOML v1 and native JJ storage unchanged.",
+  "files": [
+    "crates/jj-store-http/src/local_browser/stacks/tests.rs",
+    "crates/jj-store-http/src/local_browser/stacks.rs",
+    "crates/jj-store-jj/src/local_stacks/config.rs",
+    "crates/jj-store-jj/src/local_stacks/mod.rs",
+    "crates/jj-store-jj/src/local_stacks/mutations.rs",
+    "crates/jj-store-jj/src/local_stacks/policy.rs",
+    "crates/jj-store-jj/src/local_stacks/preview.rs",
+    "crates/jj-store-jj/tests/local_stacks.rs",
+    "docs/implementation-plan.md",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/architecture.md",
+    "spec/src/compatibility.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/stack-workspace/controller-files.ts",
+    "web/src/lib/controller/stack-workspace/controller.svelte.ts",
+    "web/src/lib/controller/stack-workspace/local-session.ts",
+    "web/src/lib/controller/stack-workspace/local-state.ts",
+    "web/src/lib/controller/stack-workspace/local-transport.ts",
+    "web/tests/vite/production-stack-adapter.test.ts",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "crates/jj-store-jj/tests/local_stacks.rs#selected_file_commit_uses_native_propagation_and_retains_wip",
+    "crates/jj-store-jj/tests/local_stacks.rs#selected_file_commands_reject_invalid_stale_and_immutable_sources",
+    "web/tests/vite/production-stack-adapter.test.ts#local selected-file previews bind WIP and do not execute before apply",
+    "web/tests/vite/stack-workspace-lazy-controller.test.ts#loaded Unstaged files become draft selections without eager patches"
+  ],
+  "runs": [
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks --locked (baseline)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Nine existing core tests pass before mutation implementation."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks selected_file_commit_uses_native_propagation_and_retains_wip --locked (before/fix)",
+      "result": "fail",
+      "failures": 1,
+      "note": "First missing public APIs, then selected files remained in WIP because insertion used the pre-rebase WIP. Fixed by resolving the rewritten WIP and rebuilding selection against its current parent."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Eleven native tests pass, including invalid/stale selection and configured immutable-source rejection without publication."
+    },
+    {
+      "command": "cargo test -p jj-store-http --lib local_browser::stacks::tests --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "Two focused admission tests pass, including same-origin and noninitializing preview."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-stack-adapter.test.ts web/tests/vite/stack-workspace-lazy-controller.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "25 adapter/lazy-controller tests pass."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceCommands.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Six cold Storybook interactions pass. Earlier title filter skipped all six and was not counted as acceptance."
+    },
+    {
+      "command": "pnpm contracts:generate; pnpm test:contracts; pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Generated public types; seven contract tests pass, type checks report zero errors/warnings, ownership passes."
+    },
+    {
+      "command": "pnpm check:architecture; pnpm spec:first (initial)",
+      "result": "fail",
+      "failures": 2,
+      "note": "Controller source budget exceeded by six lines; three mapped chapters missing. Extracted file reconciliation and added owning specification requirements."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Five validators, 23 chapters, 173 requirements pass."
+    },
+    {"command": "pnpm web:check; pnpm check:architecture; pnpm spec:first (after)", "result": "pass", "failures": 0, "note": "Zero web diagnostics; 1105 modules meet architecture limits; 18 protected files/six canonical chapters pass."},
+    {"command": "pnpm exec prettier --check changed supported files (initial)", "result": "fail", "failures": 1, "note": "Five changed files needed formatting; corrected with scoped prettier write."},
+    {"command": "pnpm exec prettier --check changed supported files; rustfmt --edition 2024 --check affected Rust; pnpm check:progress; pnpm spec:first; pnpm spec:validate", "result": "pass", "failures": 0, "note": "Formatting and all focused specification/progress checks pass. Wider aggregate lanes out of scope under targeted policy."}
+  ],
+  "result": "pending",
+  "remaining": [
+    "Continue approved branch/basic commit actions, transfers/splits, hunks, graph operations, deletion/conflict editing and native Undo/Redo; production capabilities stay disabled until accepted.",
+    "Cold real-server integrated mutation acceptance remains required after backend build/restart. Package publication and screenshot baselines excluded."
+  ]
 }
 ]
 ```

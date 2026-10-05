@@ -1095,3 +1095,8 @@ contract plus existing operation-pinned browsing. The ordinary local profile
 supersedes the stack-specific installation catalogs/retained executor as a
 production dependency. Native manifest-backed publication is unchanged and is
 not a prerequisite for this on-disk feature.
+
+Selected-file insertion/squash and its nonpublishing preview belong to this same
+local provider. UI staging retains only intent; the local operation and source
+commit guard execution. Native JJ owns descendant propagation and empty WIP
+retention, without a second merge-reconstruction service.

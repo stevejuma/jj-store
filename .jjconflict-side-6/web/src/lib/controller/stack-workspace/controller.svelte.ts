@@ -1,12 +1,11 @@
 import { outcomeText, blocksRetry } from "./local-state.js";
 import { updateWorkspaceControllerSnapshot } from "./controller-snapshot.js";
-import {
-  selectWorkspaceFile,
-  closeWorkspaceDiff,
-  activateWorkspaceDiff,
-} from "./diff-selection.js";
+import { selectWorkspaceFile, closeWorkspaceDiff } from "./diff-selection.js";
 import { WorkspaceDragSession } from "./drag-session.svelte.js";
-import { workspaceControllerFiles } from "./controller-files.js";
+import {
+  workspaceControllerFiles,
+  acceptWorkspaceFiles,
+} from "./controller-files.js";
 import { WorkspaceBranches } from "./branches.svelte.js";
 import { WorkspaceReadSession } from "./read-session.js";
 import { WorkspacePhysicalObservation } from "./physical-observation.svelte.js";
@@ -15,7 +14,6 @@ import { WorkspaceStackHistory } from "./stack-history.svelte.js";
 import { WorkspaceCommitDrafts } from "./commit-drafts.svelte.js";
 import { WorkspaceLazyDetails } from "./lazy-details.svelte.js";
 import { workspaceCommandEligibility } from "./eligibility.js";
-import { reconcileSourceDiffs } from "./retained-diffs.js";
 import { workspaceBranchSource, workspaceAggregateSource } from "./files.js";
 import { retainedWorkspaceSelection } from "./presentation.js";
 import {
@@ -88,22 +86,8 @@ export class StackWorkspaceController {
     );
     this.details = new WorkspaceLazyDetails(
       adapter,
-      (source, files, complete) => {
-        this.diffs = reconcileSourceDiffs(this.diffs, source, files, complete);
-        if (this.targetHistory.diff)
-          this.targetHistory.diff =
-            reconcileSourceDiffs(
-              [this.targetHistory.diff],
-              source,
-              files,
-              complete,
-            )[0] ?? null;
-        const active = this.diffs.find(
-          (diff) =>
-            diff.source === this.source && diff.path === this.selectedPath,
-        );
-        if (active) activateWorkspaceDiff(this, active);
-      },
+      (source, files, complete) =>
+        acceptWorkspaceFiles(this, source, files, complete),
       options.report,
     );
     this.targetHistory = new WorkspaceTargetHistory(
