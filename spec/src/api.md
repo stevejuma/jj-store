@@ -2048,16 +2048,21 @@ indexed-delivery work. Reference DTOs, signed cursors and preparation task
 contracts are unchanged; a resumed cursor still rejects a different filter and
 retains its exact old operation after publication.
 
-Composed native Changes/All reference reads with an empty query and the exact
-outer operation MUST reuse prepared ordered visible change groups and select
-their lexical window before target hydration. Eligible nonempty
-Changes/All/Bookmarks filters use operation-bound postings and exact selected
-description checks before hydration. Empty bookmark windows and workspace
-queries retain their metadata-only readers. Cold large generations return the
-existing rebuild-required response with the exact pinned snapshot; retry after
+Composed native Changes/All reference reads with an empty query MUST reuse the
+embedded operation's prepared ordered visible change groups and select their
+lexical window before target hydration. Eligible nonempty Changes/All/Bookmarks
+filters use operation-bound postings and exact selected description checks
+before hydration. Empty bookmark windows and workspace queries retain their
+metadata-only readers. Cold large generations return the existing
+rebuild-required response with the exact pinned snapshot; retry after
 preparation uses the same query and signed-window semantics. No cursor or public
-schema changes. A different embedded operation remains separate indexed-delivery
-work; small-cache profiles preserve their existing bounded filter reader.
+schema changes. Native service reference requests with a different embedded
+operation retain the outer read's current authorization and committed object
+membership while selecting the source operation's exact prepared generation.
+Cold source preparation remains explicit; existing browser pages select the same
+operation for their outer snapshot and embedded reference request. Small-cache
+profiles preserve their existing bounded filter reader. Local differently
+embedded reference recovery and paged native RPC remain separate delivery work.
 
 Local operation-prefix graph queries use ready exact-operation generations and
 existing rebuild-required recovery when cold. This delivery changes no request,

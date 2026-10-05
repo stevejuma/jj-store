@@ -1084,14 +1084,22 @@ objects or copying unselected bookmark terms. Fresh native membership,
 integrity, access, work and output checks remain mandatory. Cold construction
 and disk recovery use the existing inline threshold and explicit preparation;
 namespace leases end before selected-target reads. Standalone metadata readers
-and different-operation queries retain their previous bounds until indexed
-delivery. Nonempty Changes/All/Bookmarks queries use the same generation when
-the policy supports filtering. Postings identify candidates; exact
-key/description matching uses selected visible change targets or all bookmark
-conflict terms, including removed terms. Hidden predecessors cannot create
-visible change results. Both cursor directions probe matching rows before
-selected-only hydration. Missing filter artifacts require explicit preparation
-even for an otherwise ready index-only generation.
+retain their previous bounds. A composed reference request with a differently
+embedded operation MUST select that operation's own generation after current
+point membership admission through the outer read capability. Preserve the outer
+repository, epoch, committed membership and authorization; selecting an
+operation cannot extend that capability. Fresh operation/view proof and target
+admission remain mandatory even on a warm generation. Never reuse the outer
+operation's visibility or filter for another selection. Cold source generations
+retain the same inline threshold and explicit preparation, and retry selects the
+exact embedded operation without changing the outer read. Nonempty
+Changes/All/Bookmarks queries use the same generation when the policy supports
+filtering. Postings identify candidates; exact key/description matching uses
+selected visible change targets or all bookmark conflict terms, including
+removed terms. Hidden predecessors cannot create visible change results. Both
+cursor directions probe matching rows before selected-only hydration. Missing
+filter artifacts require explicit preparation even for an otherwise ready
+index-only generation.
 
 Native retained visibility and reference identities MUST use pre-admitted flat
 arrays rather than one tree node, formatted key and target allocation per

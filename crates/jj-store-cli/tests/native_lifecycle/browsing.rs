@@ -518,3 +518,6 @@ mod reference_windows;
 
 #[path = "reference_filters.rs"]
 mod reference_filters;
+
+#[path = "reference_embedded.rs"]
+mod reference_embedded;

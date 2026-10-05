@@ -164,6 +164,15 @@ landing retains the temporary workspace for the remaining features and does not
 complete large-scale, RSS/latency, fault/browser/RustFS or release
 qualification.
 
+E-READ-050 delivers composed native reference windows at a differently embedded
+operation. Source membership is admitted through the unchanged outer capability
+before cache work, and the source's own prepared visibility/filter determines
+the lexical window and selected target hydration. Cold preparation remains
+explicit and pinned to that source. Newer or staged operations cannot acquire
+membership from a ready cache. Local cross-operation recovery and remaining
+child/deep/difference/search/candidate/RPC delivery stay open, together with the
+separate comprehensive qualification slice.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

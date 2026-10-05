@@ -462,6 +462,11 @@ impl GraphExecutor {
             Work::Graph(..) | Work::References(..) => self.workers.acquire()?,
         };
         budget.authorize(access.as_ref()).await?;
+        let access = if let Work::References(request, _) = &work {
+            access::select_operation(access, request.operation, &budget).await?
+        } else {
+            access
+        };
         if let Work::Graph(_, page) = &work
             && (page.limit == 0 || page.limit > self.limits.max_page)
         {

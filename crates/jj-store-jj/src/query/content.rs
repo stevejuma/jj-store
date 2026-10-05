@@ -347,8 +347,7 @@ impl ContentReader {
         access: Arc<dyn ReadAccess>,
         request: references::Request,
     ) -> Result<references::Page> {
-        if request.operation == access.operation()
-            && let Some(graph) = &self.graph
+        if let Some(graph) = &self.graph
             && ((request.query.is_empty()
                 && matches!(
                     request.kind,

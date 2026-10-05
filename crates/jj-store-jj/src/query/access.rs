@@ -1,4 +1,5 @@
 use super::*;
+mod selection;
 use crate::{
     backend::BackendAuthority,
     factories::NativeAuthority,
@@ -7,6 +8,7 @@ use crate::{
 use jj_store_object::{
     self as storage, ByteRange, Condition, Download, Key, Metadata, StagedUpload, WriteOutcome,
 };
+pub(super) use selection::select_operation;
 use std::{
     future::Future as _,
     io,

@@ -1910,6 +1910,16 @@ coarse-metadata final proof before installation. Existing cold recovery,
 preparation, filter upgrade and pinned-query consumers remain focused gates;
 complete scale/browser/fault qualification stays deferred.
 
+Native embedded-operation reference regressions MUST select historical
+Changes/All and description-filtered bookmark windows under an independently
+pinned outer read. Compare both directions and arbitrary anchors with the
+ordinary reader, retain exact page operation and outer snapshot, and serve a
+prepared source above the ordinary history budget without preparing the outer
+operation. Prove exact-source cold preparation, unchanged later-publication
+windows, and rejection of newer or unpublished operations absent from the outer
+capability even when their cache is ready. Warm generations retain current
+authorization and point membership; complete qualification stays deferred.
+
 ## Freshness producer ownership
 
 State owners publish bounded, body-free semantic notices after accepted changes

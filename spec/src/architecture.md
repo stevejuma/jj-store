@@ -898,3 +898,14 @@ projection and the bounded database cache. Complete filter files remain charged
 to disk quota. This distinction prevents a disk-only projection from defeating
 valid warm reader admission; existing allocation leases and disk limits remain
 independent and unchanged.
+
+Native composed reference reads bind their prepared generation to the explicit
+embedded operation independently of the outer read selection. A private adapter
+changes only that operation selector; repository, epoch, point membership,
+complete inventory and current authorization remain owned by the outer
+capability. Admit the source operation through current point membership before
+cache admission, then retain ordinary fresh operation/view and selected-target
+checks. Cache readiness cannot grant access to later or unpublished operations.
+Cold preparation and retry retain the explicit source without changing the outer
+read or any persisted/public contract. Local cross-operation recovery remains
+separate delivery work.
