@@ -77,7 +77,7 @@
     expect(apply.getAttribute("data-variant")).toBe("default");
     expect(
       within(body as HTMLElement).getByRole("button", { name: "Delete local" }),
-    ).toBeDisabled();
+    ).toBeEnabled();
     await userEvent.click(apply);
     await applyPreview(canvasElement);
     const unapply = within(stack).getByRole("button", {

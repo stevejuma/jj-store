@@ -30,15 +30,25 @@ export function stackSourceRange(
     if (!Array.isArray(identity) || identity.length !== 2)
       throw new WorkspaceCommandError("invalid", "Unknown stack source.");
     const [id, name] = identity;
-    const head = snapshot.stacks
-      .find((stack) => stack.id === id)
-      ?.heads.find((head) => head.name === name);
+    const stack = snapshot.stacks.find((stack) => stack.id === id);
+    const head = stack?.heads.find((head) => head.name === name);
     if (!head || !snapshot.target)
       throw new WorkspaceCommandError(
         "invalid",
         "Choose a target branch first.",
       );
-    return { from: snapshot.target.commit, to: head.commit };
+    const segment = stack!.segments?.find(
+      (segment) => segment.head.name === name,
+    );
+    if (segment?.baseCommit === null)
+      throw new WorkspaceCommandError(
+        "invalid",
+        "Load more stack history to identify this branch’s lower boundary.",
+      );
+    return {
+      from: segment?.baseCommit ?? snapshot.target.commit,
+      to: head.commit,
+    };
   }
   const commit = commits.get(source);
   if (!commit)

@@ -19,6 +19,7 @@ export const workspaceAggregateSource = (source: string) =>
 export function workspaceSourceStack(
   snapshot: WorkspaceSnapshot,
   source: string,
+  preferredStack?: string,
 ) {
   if (source.startsWith("branch:")) {
     try {
@@ -31,10 +32,13 @@ export function workspaceSourceStack(
       return undefined;
     }
   }
-  return snapshot.stacks.find(
-    (stack) =>
-      source === `stack:${stack.id}` ||
-      stack.commits.some((commit) => commit.id === source),
+  const owns = (stack: WorkspaceSnapshot["stacks"][number]) =>
+    source === `stack:${stack.id}` ||
+    stack.commits.some((commit) => commit.id === source);
+  return (
+    snapshot.stacks.find(
+      (stack) => stack.id === preferredStack && owns(stack),
+    ) ?? snapshot.stacks.find(owns)
   );
 }
 function sourceCommits(snapshot: WorkspaceSnapshot, source: string) {

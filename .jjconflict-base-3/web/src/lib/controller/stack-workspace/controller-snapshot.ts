@@ -3,13 +3,17 @@ import type { WorkspaceSnapshot } from "./types.js";
 import { retainedWorkspaceDiffs } from "./retained-diffs.js";
 import { retainedStackSelections } from "./files.js";
 import { activateWorkspaceDiff } from "./diff-selection.js";
+import { projectWorkspaceFiles } from "./controller-files.js";
 export function updateWorkspaceControllerSnapshot(
   state: StackWorkspaceController,
   snapshot: WorkspaceSnapshot,
 ) {
+  state.details.sync(snapshot);
+  if (state.details.lazy)
+    for (const [source, files] of Object.entries(state.details.files))
+      projectWorkspaceFiles(snapshot, source, files);
   state.branches.sync(snapshot);
   state.histories.sync(snapshot);
-  state.details.sync(snapshot);
   const diffs = retainedWorkspaceDiffs(
     snapshot,
     state.snapshot?.active,

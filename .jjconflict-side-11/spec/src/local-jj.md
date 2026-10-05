@@ -754,8 +754,10 @@ UI confirmation.
 Core acceptance covers TOML/restart, dirty setup, create/switch, apply/unapply,
 settings update and deletion preserving checkout and native unfinished work,
 independent WIP retention, stale commands, external CLI changes and cold browser
-integration. Whole-file/hunk and remaining graph commands follow this usable
-core and remain capability-disabled until qualified.
+integration. Selected-file/hunk, graph, deletion, supported text-conflict and
+native Undo/Redo commands use the qualified ordinary-local mutation profile
+below. Unsupported selection/conflict shapes remain unavailable with explicit
+reasons; the historical retained-command profile remains separate.
 
 Selected-file commits MUST insert a new commit after the selected applied
 bookmark and squash only the displayed WIP selection into it. The implementation
@@ -1635,3 +1637,14 @@ unknown-outcome inspection remain required. Production file dragging uses exact
 loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
 branch comparisons remain read-only. Undo/Redo remains available without a
 selected named workspace.
+
+Production dependent branch segments derive from loaded native parent links and
+local bookmark annotations, with one bounded continuation for the exact
+advertised top head/target range. Only the lowest displayed segment loads more.
+Each branch’s inline net files compare its own lower boundary and head; an
+unproven paginated boundary remains unavailable until more history is loaded.
+Merge/elided ancestry retains the provider graph without invented linear
+boundaries. Visible applied lanes load their own bounded pages; other repository
+history stays unloaded. Aliases do not duplicate commit rows within a lane.
+Explicitly applied bookmarks retain their own column and UI identity, even when
+they share ancestry; browsing a branch selects its own advertised top.

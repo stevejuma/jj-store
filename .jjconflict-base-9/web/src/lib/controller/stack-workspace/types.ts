@@ -71,7 +71,8 @@ export type WorkspaceStack = {
   /** Explicit provider segments; their displayed rows are newest first. */
   segments?: {
     head: StackHead;
-    baseCommit: string;
+    /** Null until the remaining bounded history proves the lower boundary. */
+    baseCommit: string | null;
     commits: StackCommit[];
     nextCursor?: string;
   }[];

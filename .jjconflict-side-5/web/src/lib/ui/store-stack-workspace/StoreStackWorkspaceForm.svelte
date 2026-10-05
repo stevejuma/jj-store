@@ -52,6 +52,13 @@
           ? seed.stack
           : "";
   });
+  const directCommit = $derived(
+    command?.kind === "transfer"
+      ? controller.snapshot?.stacks
+          .flatMap((stack) => stack.commits)
+          .find((commit) => commit.id === command.target)
+      : undefined,
+  );
   const items = $derived(
     command?.kind === "move_commit" || command?.kind === "create_commit"
       ? (controller.snapshot?.stacks.map((stack) => ({
@@ -87,6 +94,19 @@
                 : [];
             }),
           ) ?? []),
+          ...(directCommit &&
+          !controller.snapshot?.stacks.some((stack) =>
+            stack.heads.some((head) => head.commit === directCommit.id),
+          )
+            ? [
+                {
+                  id: directCommit.id,
+                  name: directCommit.message.split("\n")[0] || "Empty commit",
+                  destination: directCommit.id,
+                  description: `Commit · ${directCommit.id.slice(0, 8)}`,
+                },
+              ]
+            : []),
         ],
   );
   async function submit() {
@@ -191,7 +211,7 @@
         {#if command.kind === "move_commit" || command.kind === "create_commit" || command.kind === "transfer"}<StoreWorkField
             label="Destination"
             description={command.kind === "transfer"
-              ? "Choose the branch whose head will receive these changes."
+              ? "Choose the branch head or selected commit to receive these changes."
               : "Choose the stack that will receive this commit."}
             disabled={controller.busy}
             ><StoreRepositoryPicker
@@ -202,12 +222,14 @@
               controlled
               repositories={items}
               emptyLabel={command.kind === "transfer"
-                ? "Choose branch"
+                ? "Choose destination"
                 : "Choose stack"}
               searchLabel={command.kind === "transfer"
-                ? "Search branches"
+                ? "Search destinations"
                 : "Search stacks"}
-              groupLabel={command.kind === "transfer" ? "Branches" : "Stacks"}
+              groupLabel={command.kind === "transfer"
+                ? "Destinations"
+                : "Stacks"}
               emptyResult="No matching destinations."
               scrollStrategy="styled"
               disabled={controller.busy}

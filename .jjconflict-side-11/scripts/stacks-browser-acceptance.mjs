@@ -40,6 +40,10 @@ try {
   const command = (...args) => run(jj, ["-R", folder, ...args]);
   writeFileSync(join(folder, "README.md"), "# Local stacks fixture\n");
   writeFileSync(join(folder, ".gitignore"), "obstacle.tmp\n");
+  writeFileSync(
+    join(folder, "hunks.txt"),
+    Array.from({ length: 40 }, (_, index) => `line-${index}\n`).join(""),
+  );
   command("describe", "-m", "Workspace target");
   command("bookmark", "create", "main");
   command("new", "main", "-m", "Topic ancestor");
@@ -155,6 +159,8 @@ ${output}`);
       folder,
       operation,
       origin,
+      jj,
+      jjConfig: join(root, "jj.toml"),
     }),
   );
   execFileSync(

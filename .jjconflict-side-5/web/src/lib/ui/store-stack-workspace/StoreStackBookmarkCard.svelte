@@ -234,7 +234,8 @@
       avatarSize="xsmall"
       {graphInset}
       continuous
-      hasMore={controller.histories.state(stack.id).hasMore}
+      hasMore={name === stack.heads.at(-1)?.name &&
+        controller.histories.state(stack.id).hasMore}
       loading={controller.histories.state(stack.id).loading}
       onLoadMore={() => void controller.histories.load(stack.id, true)}
       rowDropState={(revision) =>
@@ -246,7 +247,8 @@
       selectedId={controller.selectedCommitFor(stack.id)}
       graphLabel={`Commits in ${name}`}
       onSelect={(revision) => {
-        if (!controller.locked) controller.selectCommit(revision.eventId);
+        if (!controller.locked)
+          controller.selectCommit(revision.eventId, stack.id);
       }}
       draggable={(revision) =>
         (controller.can("move_commit") || controller.can("reorder_commit")) &&
@@ -279,7 +281,8 @@
             source={selected.id}
             ariaLabel={`Changed files in ${name}`}
             selectedPath={diff?.source === selected.id ? diff.path : null}
-            onSelectPath={(path) => controller.selectFile(selected.id, path)}
+            onSelectPath={(path) =>
+              controller.selectFile(selected.id, path, undefined, stack.id)}
           />{/if}
       {/snippet}
     </CommunityProjectsRevisionGraph>

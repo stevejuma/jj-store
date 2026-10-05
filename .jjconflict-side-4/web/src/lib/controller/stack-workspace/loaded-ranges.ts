@@ -1,8 +1,10 @@
+import { projectStackRange } from "./stack-segments.js";
 import type { StackWorkspaceReads } from "./reads.js";
 import {
   cloneWorkspace,
   type StackCommit,
   type WorkspaceStack,
+  type WorkspaceSnapshot,
 } from "./types.js";
 
 export const TARGET_RANGE = "__target_history__";
@@ -44,14 +46,8 @@ export class LoadedStackRanges {
   }
   restore(stack: WorkspaceStack, base?: string) {
     const range = this.#ranges.get(stack.id),
-      head = stack.heads[0];
-    if (
-      !range ||
-      !head ||
-      stack.heads.length !== 1 ||
-      range.head !== head.commit ||
-      range.base !== base
-    )
+      head = stack.heads.find((head) => head.name === stack.name);
+    if (!range || !head || range.head !== head.commit || range.base !== base)
       return stack;
     // Refresh the tip annotation from bookmark metadata without discarding loaded ancestry.
     const commits = range.commits.map((commit) =>
@@ -60,18 +56,29 @@ export class LoadedStackRanges {
             ...commit,
             graph: {
               ...commit.graph!,
-              bookmarks: stack.commits[0]!.graph!.bookmarks,
+              bookmarks: [
+                ...new Map(
+                  [
+                    ...commit.graph!.bookmarks,
+                    ...stack.commits.find((item) => item.id === head.commit)!
+                      .graph!.bookmarks,
+                  ].map((bookmark) => [
+                    JSON.stringify([bookmark.name, bookmark.remote]),
+                    bookmark,
+                  ]),
+                ).values(),
+              ],
             },
           }
         : commit,
     );
-    return {
-      ...stack,
-      commits: [...commits].reverse(),
-      segments: [
-        { head, baseCommit: base!, commits, nextCursor: range.cursor },
-      ],
-    };
+    return projectStackRange(stack, base!, commits, range.cursor);
+  }
+  project(snapshot: WorkspaceSnapshot) {
+    snapshot.stacks = snapshot.stacks.map((stack) =>
+      this.restore(stack, snapshot.target?.commit),
+    );
+    snapshot.loadedTargetHistory = this.target(snapshot.target?.commit);
   }
   async refresh(
     reads: StackWorkspaceReads,
@@ -85,10 +92,9 @@ export class LoadedStackRanges {
         head =
           id === TARGET_RANGE
             ? target && { commit: target.commit }
-            : stack?.heads[0];
+            : stack?.heads.find((head) => head.name === stack.name);
       if (
         !head ||
-        (id !== TARGET_RANGE && stack!.heads.length !== 1) ||
         range.head !== head.commit ||
         range.base !== (id === TARGET_RANGE ? undefined : base)
       ) {

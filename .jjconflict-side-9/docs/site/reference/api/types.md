@@ -17819,6 +17819,147 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## LocalStacksConflict
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "terms": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "source",
+    "path",
+    "terms",
+    "reason"
+  ]
+}
+```
+
+## LocalStacksHunkResponse
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "hunks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LocalStacksHunk"
+      }
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "source",
+    "path",
+    "hunks",
+    "reason"
+  ]
+}
+```
+
+## LocalStacksHunk
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "patch": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "patch"
+  ]
+}
+```
+
+## LocalStacksInspection
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "commits": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LocalStacksCommitEligibility"
+      }
+    }
+  },
+  "required": [
+    "commits"
+  ]
+}
+```
+
+## LocalStacksCommitEligibility
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "commit": {
+      "type": "string"
+    },
+    "mutable": {
+      "type": "boolean"
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "commit",
+    "mutable",
+    "reason"
+  ]
+}
+```
+
 ## LocalStacksState
 
 ```text
@@ -17856,6 +17997,21 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "null"
       ],
       "description": "Publication succeeded but settings/checkout need attention. Never retry the command."
+    },
+    "can_undo": {
+      "type": "boolean",
+      "default": false
+    },
+    "can_redo": {
+      "type": "boolean",
+      "default": false
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     }
   },
   "required": [
@@ -17864,7 +18020,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "revision",
     "active",
     "workspaces",
-    "warning"
+    "warning",
+    "can_undo",
+    "can_redo",
+    "conflicts"
   ]
 }
 ```
@@ -17901,6 +18060,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     },
     "conflicted": {
       "type": "boolean"
+    },
+    "unavailable_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "membership_changed": {
+      "type": "boolean",
+      "default": false
     }
   },
   "required": [
@@ -17911,7 +18080,35 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "applied",
     "merge_commit",
     "wip_commit",
-    "conflicted"
+    "conflicted",
+    "membership_changed"
+  ]
+}
+```
+
+## LocalStacksPreview
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "title",
+    "summary",
+    "paths"
   ]
 }
 ```

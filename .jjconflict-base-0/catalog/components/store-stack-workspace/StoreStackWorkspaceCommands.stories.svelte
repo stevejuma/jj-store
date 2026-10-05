@@ -158,8 +158,11 @@
     await unassignedFile(canvasElement, "README.md");
     await dropWorkspaceChange(
       canvas.getByRole("group", { name: "Draggable hunk document shortcut" }),
-      canvas.getByRole("button", { name: "Add workspace toolbar" }),
+      canvas.getByRole("button", { name: "Prepare add workspace toolbar" }),
     );
+    expect(
+      portal.getByRole("combobox", { name: "Destination" }),
+    ).toHaveTextContent("Prepare add workspace toolbar");
     await userEvent.click(
       portal.getByRole("button", { name: "Preview command" }),
     );
@@ -169,7 +172,7 @@
     ).not.toBeInTheDocument();
     await userEvent.click(
       canvas.getByRole("button", {
-        name: "Add workspace toolbar",
+        name: "Prepare add workspace toolbar",
       }),
     );
     await expect(

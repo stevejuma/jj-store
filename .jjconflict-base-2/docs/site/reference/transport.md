@@ -53,6 +53,17 @@ lost responses are resolved by inspecting current state/op history before
 another attempt. No command receipt or automatic replay is promised. Historical
 query pins continue to read their original operations.
 
+The same endpoint accepts local bookmark, commit, graph, discard, conflict,
+Undo/Redo and explicit Reapply commands. Guarded `stacks/inspect` inspection
+supplies native mutability; lazy `stacks/hunks` issues selections bound to
+source identity, canonical path and complete file bytes. Apply rederives those
+tokens at the exact operation/configuration pin; client display hunks are not
+accepted. `stacks/conflict` reads bounded native terms for the qualified text
+editor. Transfers use native squash and descendant propagation, preserving
+retained merge/WIP identities. Net branch comparisons grant no mutation
+authority. Undo/Redo restores native operation history and leaves local TOML
+unchanged.
+
 ## Mutations
 
 Owned workspace-discovery input binds a repository, current registration

@@ -2271,3 +2271,10 @@ unknown-outcome inspection remain required. Production file dragging uses exact
 loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
 branch comparisons remain read-only. Undo/Redo remains available without a
 selected named workspace.
+
+Dependent Stacks presentation continues to issue the existing bounded history
+query for its advertised top bookmark and target at one operation. Loaded native
+parent/bookmark facts establish segment boundaries; net file comparisons use the
+established lower boundary and head. This introduces no extra eager history
+query or backend segment authority. Unknown paginated boundaries cannot issue a
+misleading branch comparison.

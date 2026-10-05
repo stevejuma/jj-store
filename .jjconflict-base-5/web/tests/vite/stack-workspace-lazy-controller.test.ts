@@ -10,6 +10,7 @@ import {
 import { MockStackWorkspaceAdapter } from "../../../catalog/fixtures/stack-workspace/adapter.js";
 import { workspaceFixture } from "../../../catalog/fixtures/stack-workspace/data.js";
 import { workspaceBranchSource } from "../../src/lib/controller/stack-workspace/files.js";
+import { workspaceDropFeedback } from "../../src/lib/controller/stack-workspace/drag.js";
 function deferred<T>() {
   let resolve!: (value: T) => void;
   const promise = new Promise<T>((r) => {
@@ -325,6 +326,52 @@ test("loaded Unstaged files become draft selections without eager patches", asyn
     controller.commitDrafts.get(controller.snapshot!.active!, stack)!
       .selections,
   ).toEqual([{ source: "unassigned", path: "draft.txt" }]);
+  controller.close();
+});
+
+test("same-scope refresh and history retain loaded file selections", async () => {
+  const { controller, adapter, original } = await setup();
+  adapter.snapshot.capabilities = ["create_commit", "transfer"];
+  const stack = adapter.snapshot.stacks[0]!,
+    commit = stack.commits.at(-1)!;
+  commit.immutable = false;
+  await controller.refresh();
+  const readFiles = adapter.readSourceFiles;
+  adapter.readSourceFiles = async (request) =>
+    request.source === "unassigned"
+      ? { files: [{ path: "draft.txt", hunks: [] }] }
+      : readFiles(request);
+  await controller.details.loadFiles("unassigned");
+  await controller.details.loadFiles(commit.id);
+  const assertSelections = () => {
+    for (const selection of [
+      { source: "unassigned", path: "draft.txt" },
+      { source: commit.id, path: controller.filesFor(commit.id)[0]!.path },
+    ]) {
+      expect(
+        workspaceDropFeedback(
+          controller.snapshot,
+          JSON.stringify({ kind: "selection", selection }),
+          { kind: "stage", id: stack.id },
+        ).state,
+      ).toBe("valid");
+      expect(
+        controller.commitDrafts.open(controller.snapshot!, stack.id, selection),
+      ).toBe(true);
+    }
+  };
+  assertSelections();
+  await controller.refresh();
+  assertSelections();
+  Object.assign(adapter, {
+    readStackHistory: async () => ({
+      commits: cloneWorkspace(original.stacks[0]!.commits)
+        .reverse()
+        .map((item) => ({ ...item, files: [], immutable: false })),
+    }),
+  });
+  await controller.histories.load(stack.id);
+  assertSelections();
   controller.close();
 });
 

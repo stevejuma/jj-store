@@ -1,3 +1,4 @@
+import { workspaceSourceStack } from "./files.js";
 import { outcomeText, blocksRetry } from "./local-state.js";
 import { updateWorkspaceControllerSnapshot } from "./controller-snapshot.js";
 import { selectWorkspaceFile, closeWorkspaceDiff } from "./diff-selection.js";
@@ -164,20 +165,24 @@ export class StackWorkspaceController {
     this.selectedCommit = this.selectedPath = this.selection = null;
     void this.details.loadFiles(workspaceBranchSource(id, name!));
   }
-  selectCommit(id: string) {
-    if (this.locked) return;
+  selectCommit(id: string, stackId = this.selectedStack) {
+    if (this.locked || !this.snapshot) return;
     this.selectedCommit = id;
-    const stack = this.snapshot?.stacks.find((stack) =>
-      stack.commits.some((commit) => commit.id === id),
+    const stack = workspaceSourceStack(
+      this.snapshot!,
+      id,
+      stackId ?? undefined,
     );
-    if (stack)
+    if (stack) {
+      this.selectedStack = stack.id;
       this.stackSelections = { ...this.stackSelections, [stack.id]: id };
+    }
     this.selectedPath = null;
     this.selection = null;
     void this.details.loadFiles(id);
   }
-  selectFile(source: string, path: string, hunks?: string[]) {
-    selectWorkspaceFile(this, source, path, hunks);
+  selectFile(source: string, path: string, hunks?: string[], stack?: string) {
+    selectWorkspaceFile(this, source, path, hunks, stack);
   }
   closeDiff(origin: string) {
     closeWorkspaceDiff(this, origin);

@@ -568,6 +568,35 @@ describe("stack workspace UI controller and fixture", () => {
     await run(controller, { kind: "delete_stack", stack: stack.id });
     expect(controller.snapshot!.stacks).toHaveLength(3);
   });
+  it("keeps adjacent diff ownership when multiple applied branches share a native commit", async () => {
+    const { controller, adapter } = await setup();
+    const source = adapter.snapshot.stacks[0]!;
+    adapter.snapshot.stacks.push({
+      ...structuredClone(source),
+      id: "upper",
+      name: "upper",
+    });
+    adapter.snapshot.workspaces[0]!.applied.push("upper");
+    await controller.refresh();
+    for (const id of [source.id, "upper"]) {
+      controller.selectCommit("api1", id);
+      controller.selectFile("api1", "src/model.ts", undefined, id);
+    }
+    expect(controller.diffs.map((diff) => diff.origin)).toEqual([
+      "stack-api",
+      "stack-upper",
+    ]);
+    await controller.refresh();
+    expect(controller.diffs.map((diff) => diff.origin)).toEqual([
+      "stack-api",
+      "stack-upper",
+    ]);
+    expect(controller.stackSelections).toMatchObject({
+      api: "api1",
+      upper: "api1",
+    });
+    controller.close();
+  });
   it("deletes only the top stack bookmark while retaining lower bookmarks and commits", async () => {
     const { controller } = await setup();
     const before = controller.snapshot!.stacks.find(

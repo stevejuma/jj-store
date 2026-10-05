@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed ordinary jj-lib Settings updates and configuration-only workspace deletion; native checkout and retention bookmarks remain, with historical executor limits separate.",
-      "fingerprint": "570906703f56c580c381fd6b8e43ebbec3985157bb9f930df730046e4d9915a8"
+      "reason": "Reviewed qualified native local Stacks bookmark, selected-file/hunk, graph, conflict and operation-history commands; local manual now distinguishes normal squash/rebase propagation, retained empty WIP, explicit TOML membership reconciliation and unsupported conflict/delta shapes.",
+      "fingerprint": "3106a737ea009a42b3b6a3651aeb5d70a143c60ba95bdb5a00749212d1dee4bb"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented registered same-origin LocalTrusted administrative Stacks POST commands, generation and operation/config pins, and post-publication warnings.",
-      "fingerprint": "13dd5660b1e1837f8f00f6c0db9bc36cea793398995b80529d0ff8eca1661faf"
+      "reason": "Reviewed registered LocalTrusted Stacks command admission and the exact commit inspection, native hunk and conflict POST readers. Transport manual distinguishes guarded native rewrite operations and repository-wide Undo/Redo from historical retained command contracts.",
+      "fingerprint": "2b7b4c11eea246bcf0e131fc2e31d906eac898e03e5aa4bdd491d05fbf583c42"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Browsing covers focused Stacks navigation and contextual details, retained canvas and history state, disabled open picker choices during reads, and visible repository-row skeletons preserving loaded content.",
-      "fingerprint": "9b1e2d422deb6547d81372323cd5aadda2c68b6ae1e64c44d9daf195e9455fa6"
+      "reason": "Reviewed ordinary-local Stacks mutation completion, exact-scope file selections, and retained adjacent diff request ownership across native operation changes.",
+      "fingerprint": "364226744be6a5149a1d50d0d00af9c548026c1de84a96d26bae46b2ed78e700"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated LocalStacksCommand Update and Delete request variants with unchanged version-1 transport, revision admission and native work retention.",
-      "fingerprint": "7f0025c46de6d48881c119e9b354b4c334b748c8ca4f61fa55bdd821d56f4dd3"
+      "reason": "Regenerated API references for local Stacks mutation and read DTOs. Reviewed operation, binding, TOML revision, source and native hunk guards, advisory previews and unknown outcomes; the ordinary local path does not promise server receipts.",
+      "fingerprint": "c2b167af9b643efa99218006115c4edae0c4661796bf43a423d5091f61c8ffdc"
     }
   }
 ]

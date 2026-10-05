@@ -70,7 +70,9 @@ test("cold_focused_stacks_navigation_history_reload_and_return", async ({
   await tabs.getByRole("tab", { name: "Commits", exact: true }).click();
   await expect(page).toHaveURL(/\/log\?context=stacks/);
   const graph = page.getByRole("list", { name: "Revision graph", exact: true });
-  await expect(graph.or(prepare)).toBeVisible();
+  await expect
+    .poll(async () => (await graph.isVisible()) || (await prepare.isVisible()))
+    .toBe(true);
   if (await prepare.isVisible()) await prepare.click();
   await expect(graph).toBeVisible();
   const target = graph.getByRole("button", {
@@ -143,7 +145,7 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
     await page
       .getByRole("dialog")
       .getByRole("button", { name: "Apply command", exact: true })
-      .click();
+      .click({ timeout: 10000 });
     await expect(page.getByRole("dialog")).toHaveCount(0);
   };
   const create = async (name: string, first = false) => {
@@ -210,7 +212,11 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
     name: "Topic ancestor",
     exact: true,
   });
-  await expect(ancestor.or(prepare)).toBeVisible();
+  await expect
+    .poll(
+      async () => (await ancestor.isVisible()) || (await prepare.isVisible()),
+    )
+    .toBe(true);
   if (await prepare.isVisible()) await prepare.click();
   await expect(
     topic.getByRole("button", { name: "Topic ancestor", exact: true }),
@@ -228,7 +234,7 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
   const diff = page.getByRole("region", { name: /Selected changes from/ });
   // Applying a stack advances the operation independently of graph preparation.
   // Prepare that new pin explicitly if the adjacent diff needs its graph index.
-  await expect(diff.or(prepare)).toBeVisible();
+  await expect(diff).toBeVisible();
   if (await prepare.isVisible()) {
     await prepare.click();
     await expect(ancestor).toBeVisible();
@@ -241,7 +247,7 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
     await diff
       .getByRole("group", { name: /Draggable hunk/ })
       .getAttribute("draggable"),
-  ).toBe("false");
+  ).toBe("true");
   await create("Second");
   writeFileSync(join(fixture.folder, "second.txt"), "second workspace edit\n");
   await page.getByRole("button", { name: "Refresh", exact: true }).click();
@@ -252,7 +258,11 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
     name: "Active stack workspace",
     exact: true,
   });
+  await expect(
+    page.getByRole("button", { name: "Refresh", exact: true }),
+  ).toBeEnabled();
   await picker.click();
+  await expect(page.getByRole("option", { name: /Primary/ })).toBeEnabled();
   await page.getByRole("option", { name: /Primary/ }).click();
   await confirm();
   await expect(
@@ -275,6 +285,7 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
     unstaged.getByRole("button", { name: "unsnapshotted.txt", exact: true }),
   ).toBeVisible();
   await picker.click();
+  await expect(page.getByRole("option", { name: /Second/ })).toBeEnabled();
   await page.getByRole("option", { name: /Second/ }).click();
   await confirm();
   await expect(
@@ -330,7 +341,7 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
     .click();
   await expect(picker).toContainText("Second renamed");
   const wcBeforeDelete = execFileSync(
-    "/opt/homebrew/bin/jj",
+    fixture.jj,
     [
       "-R",
       fixture.folder,
@@ -361,7 +372,7 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
   );
   expect(
     execFileSync(
-      "/opt/homebrew/bin/jj",
+      fixture.jj,
       [
         "-R",
         fixture.folder,
@@ -376,7 +387,11 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
       { encoding: "utf8" },
     ),
   ).toBe(wcBeforeDelete);
+  await expect(
+    page.getByRole("button", { name: "Refresh", exact: true }),
+  ).toBeEnabled();
   await picker.click();
+  await expect(page.getByRole("option", { name: /Primary/ })).toBeEnabled();
   await page.getByRole("option", { name: /Primary/ }).click();
   await confirm();
   await expect(
@@ -392,7 +407,7 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
   expect(config).toContain("[[workspaces]]");
   expect(config).toContain('target = "main"');
   const tracked = execFileSync(
-    "/opt/homebrew/bin/jj",
+    fixture.jj,
     ["-R", fixture.folder, "--ignore-working-copy", "file", "list"],
     { encoding: "utf8" },
   );
@@ -401,6 +416,281 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
   expect(
     readFileSync(join(fixture.folder, ".git/refs/lapis/state/v1"), "utf8"),
   ).toBe(companion);
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test("cold_native_selected_file_and_hunk_mutations_with_undo_redo", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  const command = (...args: string[]) =>
+    execFileSync(fixture.jj, ["-R", fixture.folder, "--no-pager", ...args], {
+      encoding: "utf8",
+      cwd: fixture.folder,
+      env: { ...process.env, JJ_CONFIG: fixture.jjConfig },
+    }).trim();
+  const observe = (...args: string[]) =>
+    command("--ignore-working-copy", ...args);
+  const confirm = async () => {
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Apply command", exact: true })
+      .click({ timeout: 10000 });
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  };
+  const prepare = page.getByRole("button", {
+    name: "Prepare graph index",
+    exact: true,
+  });
+  const view = (name: string) =>
+    page
+      .getByRole("tablist", { name: "Local repository views" })
+      .getByRole("tab", { name, exact: true });
+  await page.goto(`/#/repos/${fixture.repository}/stacks?stack_tab=workspace`);
+  const picker = page.getByRole("combobox", {
+    name: "Active stack workspace",
+    exact: true,
+  });
+  await expect(picker).toBeVisible();
+  // Wait for the current workspace read before deciding whether setup is needed.
+  await expect(
+    page.getByRole("button", { name: "Workspace actions", exact: true }),
+  ).toBeEnabled();
+  // This test also supports an exact standalone run against the same cold seed.
+  if (
+    await page
+      .getByRole("combobox", { name: "Workspace target branch", exact: true })
+      .isVisible()
+  ) {
+    await page
+      .getByRole("combobox", { name: "Workspace target branch", exact: true })
+      .click();
+    await page.getByRole("option", { name: /^main/ }).click();
+    await page
+      .getByRole("button", { name: "Create workspace", exact: true })
+      .click();
+  } else {
+    await page
+      .getByRole("button", { name: "Workspace actions", exact: true })
+      .click();
+    await page
+      .getByRole("menuitem", { name: "Create workspace", exact: true })
+      .click();
+  }
+  await page
+    .getByRole("dialog")
+    .getByRole("textbox", { name: "Name", exact: true })
+    .fill("Mutations");
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Preview command", exact: true })
+    .click();
+  await confirm();
+  await view("Branches").click();
+  await page.getByRole("option", { name: /^topic/ }).click();
+  const topic = page.getByRole("region", { name: "Stack topic", exact: true });
+  const ancestor = topic.getByRole("button", {
+    name: "Topic ancestor",
+    exact: true,
+  });
+  await expect
+    .poll(
+      async () => (await ancestor.isVisible()) || (await prepare.isVisible()),
+    )
+    .toBe(true);
+  if (await prepare.isVisible()) await prepare.click();
+  await expect(ancestor).toBeVisible();
+  await topic.getByRole("button", { name: "Apply topic", exact: true }).click();
+  await confirm();
+  await view("Workspace").click();
+  const ensureHistory = async () => {
+    await expect
+      .poll(
+        async () => (await ancestor.isVisible()) || (await prepare.isVisible()),
+      )
+      .toBe(true);
+    if (await prepare.isVisible()) await prepare.click();
+    await expect(ancestor).toBeVisible();
+  };
+  await ensureHistory();
+  const mergeChange = observe(
+    "log",
+    "-r",
+    "@-",
+    "--no-graph",
+    "-T",
+    "change_id",
+  );
+  const wipChange = observe("log", "-r", "@", "--no-graph", "-T", "change_id");
+  writeFileSync(join(fixture.folder, "stage.txt"), "selected whole file\n");
+  const lines = Array.from({ length: 40 }, (_, index) => `line-${index}\n`);
+  lines[0] = "new-first\n";
+  lines[39] = "new-last\n";
+  writeFileSync(join(fixture.folder, "hunks.txt"), lines.join(""));
+  await page.getByRole("button", { name: "Refresh", exact: true }).click();
+  const unstaged = page.getByRole("region", {
+    name: "Unstaged files",
+    exact: true,
+  });
+  const file = unstaged.getByRole("button", { name: "stage.txt", exact: true });
+  await expect(file).toBeVisible();
+  // The new file proves the refresh selected the new operation. Only then
+  // wait for that operation's graph, rather than accepting retained old rows.
+  await ensureHistory();
+  const composer = topic.getByRole("group", {
+    name: "Commit composer for topic",
+    exact: true,
+  });
+  const stage = composer.getByRole("button", {
+    name: "Assign to topic",
+    exact: true,
+  });
+  await expect(stage).toBeEnabled();
+  await expect(file).toHaveAttribute("draggable", "true");
+  await file.dragTo(stage, { timeout: 10000 });
+  await expect(composer).toContainText("stage.txt");
+  await composer
+    .getByRole("textbox", { name: "Commit title", exact: true })
+    .fill("Selected whole file");
+  await composer
+    .getByRole("button", { name: "Create commit", exact: true })
+    .click();
+  await confirm();
+  await ensureHistory();
+  const newCommit = topic.getByRole("button", {
+    name: "Selected whole file",
+    exact: true,
+  });
+  await expect(newCommit).toBeVisible();
+  await expect(file).toHaveCount(0);
+  expect(observe("file", "show", "-r", "topic", "--", "stage.txt")).toBe(
+    "selected whole file",
+  );
+  expect(observe("log", "-r", "@-", "--no-graph", "-T", "change_id")).toBe(
+    mergeChange,
+  );
+  expect(observe("log", "-r", "@", "--no-graph", "-T", "change_id")).toBe(
+    wipChange,
+  );
+  await newCommit.click();
+  await topic.getByRole("button", { name: "stage.txt", exact: true }).click();
+  await unstaged
+    .getByRole("button", { name: "hunks.txt", exact: true })
+    .click();
+  const wipDiff = page.getByRole("region", {
+    name: "Selected changes from working",
+    exact: true,
+  });
+  const hunks = wipDiff.getByRole("group", { name: /^Draggable hunk/ });
+  await expect(hunks).toHaveCount(2);
+  await expect(
+    page.getByRole("region", { name: /^Selected changes from stack-/ }),
+  ).toHaveCount(1);
+  await expect(hunks.first()).toHaveAttribute("draggable", "true");
+  const target = topic.locator("[data-revision-id]").filter({
+    has: page.getByRole("button", { name: "Topic ancestor", exact: true }),
+  });
+  await expect(target).toHaveCount(1);
+  const ancestorCommit = await target.getAttribute("data-revision-id");
+  expect(ancestorCommit).toMatch(/^[0-9a-f]{40}$/);
+  const ancestorChange = observe(
+    "log",
+    "-r",
+    ancestorCommit!,
+    "--no-graph",
+    "-T",
+    "change_id",
+  );
+  expect(ancestorChange).not.toBe("");
+  // Start on the card surface, not selectable code or its checkbox.
+  await hunks.first().dragTo(target, {
+    sourcePosition: { x: 5, y: 5 },
+    timeout: 10000,
+  });
+  await expect(page.getByRole("dialog")).toContainText(
+    "Assign selected changes",
+  );
+  await expect(
+    page.getByRole("dialog").getByRole("combobox", { name: "Destination" }),
+  ).toContainText("Topic ancestor");
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Preview command", exact: true })
+    .click();
+  await confirm();
+  await ensureHistory();
+  await expect(hunks).toHaveCount(1);
+  const rewritten = observe(
+    "log",
+    "-r",
+    ancestorChange,
+    "--no-graph",
+    "-T",
+    "commit_id",
+  );
+  expect(rewritten).toMatch(/^[0-9a-f]{40}$/);
+  expect(
+    observe("log", "-r", ancestorChange, "--no-graph", "-T", "description"),
+  ).toBe("Topic ancestor");
+  const content = observe("file", "show", "-r", rewritten, "--", "hunks.txt");
+  expect(content).toContain("new-first");
+  expect(content).not.toContain("new-last");
+  expect(readFileSync(join(fixture.folder, "hunks.txt"), "utf8")).toContain(
+    "new-last",
+  );
+  const config = readFileSync(
+    join(fixture.folder, ".jj/jj-store/stacks.toml"),
+    "utf8",
+  );
+  await page.getByRole("button", { name: "Undo", exact: true }).click();
+  await confirm();
+  await ensureHistory();
+  await expect(hunks).toHaveCount(2);
+  await page.getByRole("button", { name: "Redo", exact: true }).click();
+  await confirm();
+  await ensureHistory();
+  await expect(hunks).toHaveCount(1);
+  expect(
+    readFileSync(join(fixture.folder, ".jj/jj-store/stacks.toml"), "utf8"),
+  ).toBe(config);
+  // Repository-wide Undo includes an ordinary CLI operation.
+  command("describe", "-r", "topic", "-m", "CLI reword");
+  await page.getByRole("button", { name: "Refresh", exact: true }).click();
+  await ensureHistory();
+  await expect(
+    topic.getByRole("button", { name: "CLI reword", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Undo", exact: true }).click();
+  await confirm();
+  await ensureHistory();
+  await expect(newCommit).toBeVisible();
+  await page.getByRole("button", { name: "Redo", exact: true }).click();
+  await confirm();
+  await ensureHistory();
+  await expect(
+    topic.getByRole("button", { name: "CLI reword", exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await ensureHistory();
+  await expect(picker).toContainText("Mutations");
+  await expect(
+    topic.getByRole("button", { name: "CLI reword", exact: true }),
+  ).toBeVisible();
+  expect(observe("log", "-r", "@-", "--no-graph", "-T", "change_id")).toBe(
+    mergeChange,
+  );
+  expect(observe("log", "-r", "@", "--no-graph", "-T", "change_id")).toBe(
+    wipChange,
+  );
   expect(
     (
       await new AxeBuilder({ page })

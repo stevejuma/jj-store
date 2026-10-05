@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import StackWorkspaceProductionFixture from "../../fixtures/StackWorkspaceProductionFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Production reads",
@@ -51,5 +51,74 @@
       }),
     );
     await browse(canvasElement);
+  }}
+/>
+
+<Story
+  name="Graph preparation survives cleared feedback"
+  args={{ cold: true, clearTransientFeedback: true }}
+  play={async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(document.body).findByRole("button", {
+        name: "Prepare graph index",
+      }),
+    );
+    await browse(canvasElement);
+  }}
+/>
+<Story
+  name="Dependent native branch segments"
+  args={{ dependent: true }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(document.body);
+    await userEvent.click(
+      await canvas.findByRole("combobox", { name: "Workspace target branch" }),
+    );
+    await userEvent.click(await body.findByRole("option", { name: /main/ }));
+    await userEvent.click(
+      await canvas.findByRole("option", { name: /^topic/ }),
+    );
+    const stack = await canvas.findByRole("region", { name: "Stack topic" });
+    await within(stack).findByRole("button", {
+      name: "Show all changes in foundation",
+    });
+    await waitFor(() =>
+      expect(
+        within(stack).getAllByRole("button", {
+          name: "Topic ancestor",
+        }),
+      ).toHaveLength(1),
+    );
+    await userEvent.click(
+      within(stack).getByRole("button", {
+        name: "Show all changes in topic",
+      }),
+    );
+    await expect(
+      await within(stack).findByRole("region", {
+        name: "Changed files in branch topic",
+      }),
+    ).toBeVisible();
+    await within(
+      within(stack).getByRole("region", {
+        name: "Changed files in branch topic",
+      }),
+    ).findByRole("button", { name: "src/topic.ts" });
+    await userEvent.click(
+      within(stack).getByRole("button", {
+        name: "Show all changes in foundation",
+      }),
+    );
+    await expect(
+      await within(stack).findByRole("region", {
+        name: "Changed files in branch foundation",
+      }),
+    ).toBeVisible();
+    await within(
+      within(stack).getByRole("region", {
+        name: "Changed files in branch foundation",
+      }),
+    ).findByRole("button", { name: "src/topic.ts" });
   }}
 />

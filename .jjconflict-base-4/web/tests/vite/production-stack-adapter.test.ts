@@ -1050,3 +1050,197 @@ test("lazy local diff reads replace display hunks with native byte-bound selecti
   expect(calls).toHaveLength(1);
   adapter.close();
 });
+
+test("dependent native ranges retain top cursors and issue per-segment tree comparisons", async () => {
+  const { source, binding, pin, references, calls } = fixture();
+  references.push({
+    ...references[1]!,
+    name: "foundation",
+    terms: [parent],
+    targets: [target(parent, [base])],
+  });
+  const original = source.stackHistory!;
+  source.stackHistory = async (query) => {
+    const result = await original(query);
+    const upper = result.data.commits[0]!;
+    const lower = structuredClone(upper);
+    lower.commit.id = parent;
+    lower.commit.parents = [base];
+    lower.edges = [{ target: base, kind: "direct" }];
+    lower.commit.bookmarks = [
+      {
+        name: "foundation",
+        remote: null,
+        added: true,
+        removed: false,
+        conflicted: false,
+      },
+    ];
+    return { ...result, data: { ...result.data, commits: [upper, lower] } };
+  };
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  const initial = await adapter.read();
+  const selected = await adapter.chooseTarget({
+    repository,
+    revision: initial.revision,
+    readKey: initial.readKey,
+    target: { name: "main", commit: base },
+  });
+  const topic = selected.stacks.find((stack) => stack.name === "topic")!;
+  await adapter.readStackHistory({
+    repository,
+    revision: selected.revision,
+    readKey: selected.readKey,
+    stack: topic.id,
+    branch: "topic",
+    head: tip,
+    base,
+    limit: 40,
+  });
+  await adapter.readSourceFiles({
+    repository,
+    revision: selected.revision,
+    readKey: selected.readKey,
+    source: workspaceBranchSource(topic.id, "foundation"),
+  });
+  expect(calls).toContainEqual(["files", operation, base, parent]);
+  const refreshed = await adapter.read();
+  const projected = refreshed.stacks.find((stack) => stack.name === "topic")!;
+  expect(projected.segments?.map((segment) => segment.head.name)).toEqual([
+    "topic",
+    "foundation",
+  ]);
+  const request = {
+    repository,
+    revision: refreshed.revision,
+    readKey: refreshed.readKey,
+  };
+  await adapter.readSourceFiles({
+    ...request,
+    source: workspaceBranchSource(topic.id, "topic"),
+  });
+  await adapter.readSourceFiles({
+    ...request,
+    source: workspaceBranchSource(topic.id, "foundation"),
+  });
+  expect(calls).toContainEqual(["files", operation, parent, tip]);
+  expect(calls).toContainEqual(["files", operation, base, parent]);
+  await expect(
+    adapter.readStackHistory({
+      ...request,
+      stack: topic.id,
+      branch: "foundation",
+      head: parent,
+      base,
+      limit: 40,
+    }),
+  ).rejects.toThrow("stack head");
+  expect(pin.operation).toBe(operation);
+  adapter.close();
+});
+
+test("newly loaded ancestor destinations are usable without a refresh", async () => {
+  const { source, binding } = fixture();
+  const previews: unknown[] = [];
+  source.stacks = {
+    execute: async () => ({
+      version: 1,
+      operation,
+      revision: 1,
+      active: "work",
+      warning: null,
+      workspaces: [
+        {
+          id: "work",
+          name: "Work",
+          target: "main",
+          target_commit: base,
+          applied: ["topic"],
+          merge_commit: "4".repeat(40),
+          wip_commit: "5".repeat(40),
+          conflicted: false,
+        },
+      ],
+    }),
+    preview: async (request) => {
+      previews.push(request.command);
+      return {
+        title: "Transfer",
+        summary: "Native squash",
+        paths: ["draft.txt"],
+      };
+    },
+    inspect: async (request) => ({
+      commits: request.commits.map((commit) => ({
+        commit,
+        mutable: true,
+        reason: null,
+      })),
+    }),
+  };
+  const history = source.stackHistory!;
+  source.stackHistory = async (query) => {
+    const page = await history(query);
+    const lower = structuredClone(page.data.commits[0]!);
+    lower.commit.id = parent;
+    lower.commit.parents = [base];
+    lower.edges = [{ target: base, kind: "direct" }];
+    return {
+      ...page,
+      data: { ...page.data, commits: [...page.data.commits, lower] },
+    };
+  };
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  try {
+    const snapshot = await adapter.read();
+    const stack = snapshot.stacks.find((stack) => stack.name === "topic")!;
+    await adapter.readStackHistory({
+      repository,
+      revision: snapshot.revision,
+      readKey: snapshot.readKey,
+      stack: stack.id,
+      branch: "topic",
+      head: tip,
+      base,
+      limit: 40,
+    });
+    await adapter.preview({
+      id: "ancestor-drop",
+      repository,
+      revision: snapshot.revision,
+      readKey: snapshot.readKey,
+      command: {
+        kind: "transfer",
+        target: parent,
+        selection: {
+          source: "unassigned",
+          path: "draft.txt",
+          hunks: ["native:" + "a".repeat(64)],
+        },
+      },
+    });
+    expect(previews).toEqual([
+      {
+        kind: "transfer",
+        target: parent,
+        selections: [
+          {
+            source: "5".repeat(40),
+            path: "draft.txt",
+            hunks: ["native:" + "a".repeat(64)],
+          },
+        ],
+      },
+    ]);
+  } finally {
+    adapter.close();
+  }
+});

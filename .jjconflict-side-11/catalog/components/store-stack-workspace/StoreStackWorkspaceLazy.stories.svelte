@@ -125,6 +125,63 @@
   }}
 />
 <Story
+  name="Same operation refresh retains an in-flight patch"
+  args={{ refreshDuringPatch: true }}
+  play={async ({ canvasElement }) => {
+    const { diff } = await openApi(canvasElement);
+    await expect(
+      await within(diff).findByRole("group", {
+        name: "Draggable hunk query endpoint",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(diff).queryByRole("status", { name: /Loading diff/ }),
+    ).toBeNull();
+  }}
+/>
+<Story
+  name="Changed operation reloads retained adjacent patches"
+  args={{ simulateOperationChange: true }}
+  play={async ({ canvasElement }) => {
+    const { canvas, diff } = await openApi(canvasElement);
+    await within(diff).findByRole("group", {
+      name: "Draggable hunk query endpoint",
+    });
+    const unstaged = canvas.getByRole("region", { name: "Unstaged files" });
+    await userEvent.click(
+      await within(unstaged).findByRole("button", { name: "README.md" }),
+    );
+    const working = await canvas.findByRole("region", {
+      name: "Selected changes from working",
+    });
+    await within(working).findByRole("group", { name: /^Draggable hunk/ });
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Simulate native operation change" }),
+    );
+    await waitFor(() => {
+      expect(canvas.getByLabelText("Fixture patch reads")).toHaveTextContent(
+        "4",
+      );
+      expect(
+        within(diff).queryByRole("status", { name: /Loading diff/ }),
+      ).toBeNull();
+      expect(
+        within(working).queryByRole("status", { name: /Loading diff/ }),
+      ).toBeNull();
+      expect(
+        within(diff).getByRole("group", {
+          name: "Draggable hunk query endpoint",
+        }),
+      ).toBeInTheDocument();
+      expect(
+        within(working).getByRole("group", {
+          name: /^Draggable hunk/,
+        }),
+      ).toBeInTheDocument();
+    });
+  }}
+/>
+<Story
   name="Unavailable patch stays explicit"
   args={{ unavailable: true }}
   play={async ({ canvasElement }) => {

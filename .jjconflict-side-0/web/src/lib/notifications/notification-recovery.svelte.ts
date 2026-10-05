@@ -44,7 +44,8 @@ export function observeNotificationRecovery(
     const conditions: [string, string | null | undefined, boolean][] = [
       [
         "repository-request",
-        status.error,
+        status.error ||
+          (settings.indexRequired ? "index rebuild required" : ""),
         status.navigation === "loading" || status.navigation === "refreshing",
       ],
       [

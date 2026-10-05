@@ -31,6 +31,39 @@ metadata. Check the foreground JJ working copy before using its normal snapshot
 workflow. This distinction also applies when a saved file looks identical to an
 older committed preview.
 
+## Local Stacks mutations
+
+In a registered ordinary local JJ repository, a named workspace retains a
+megamerge and an ordinary unfinished commit above it. Drag files or supported
+text hunks from Unstaged into a stack's staging card to compose a new commit, or
+onto an existing commit to move those changes into it. The assignment picker
+names the exact destination commit, including commits below a branch head.
+Review the preview before applying. Native squash and descendant rebasing
+propagate the changes through the existing merge and WIP; they do not rebuild
+the workspace combination. Empty unfinished commits remain available.
+
+Commit and branch menus provide reword, empty-commit and branch insertion above
+or below, rename, split selected changes, move/reorder, squash, uncommit and
+rebase where the exact native commit is mutable. Target and internal retention
+commits remain protected. Delete stack removes its top bookmark and saved
+membership, retaining lower bookmarks and commits. Abandon and selected discard
+require destructive confirmation. Discard applies only to the selected current
+WIP files or native text hunks, retaining unselected content.
+
+Hunk tokens bind the exact source and complete file bytes. Binary, mode/type,
+conflicted and oversized deltas require whole-file operations or native JJ
+tools. Net branch diffs are read-only. The local Merge Editor supports bounded
+three-term text conflicts; other native conflict shapes remain intact and
+require JJ resolution.
+
+Undo and Redo follow repository-wide native operation history, including CLI
+operations, while retaining current Git bookkeeping. They do not restore
+`.jj/jj-store/stacks.toml`. Refresh and Switch preserve saved membership without
+rebuilding it; **Reapply saved branches** explicitly reconciles the combination.
+After an unknown response, inspect current state and operation history rather
+than replaying the command. Changes can complete before the graph index is
+ready; use **Prepare graph index** to resume retained histories and diffs.
+
 ## Resolve native conflicts
 
 Open the conflict editor for an admitted conflict and inspect all relevant

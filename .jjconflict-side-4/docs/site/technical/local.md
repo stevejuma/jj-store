@@ -22,8 +22,10 @@ The Stacks page operates directly on a registered ordinary local JJ folder using
 jj-lib 0.45.1. Setup retains the existing checkout, applied branches become the
 parents of a megamerge, and a WIP child retains unfinished edits. Switching
 snapshots the outgoing workspace and checks out the selected workspace's WIP.
-Active refresh follows external branch-tip changes and normal JJ ignore,
-auto-track, sparse-checkout and file-size policy.
+Active refresh follows normal JJ ignore, auto-track, sparse-checkout and
+file-size policy. Rewrites propagate through native descendants; Refresh and
+Switch do not rebuild saved branch membership. Explicit Reapply saved branches
+reconciles it when needed.
 
 Names, target branches, ordered membership and local retention bookmark names
 are saved atomically in `.jj/jj-store/stacks.toml`. This file is outside tracked
@@ -44,8 +46,18 @@ remain in JJ; the internal retention bookmarks keep that work reachable.
 Deleting the active workspace clears its selection. Select another named
 workspace to resume it, or create one from the retained checkout.
 
-Remaining graph and file/hunk actions stay disabled until their own acceptance
-slices. Preview is advisory; commands validate the shown operation and settings
+Ordinary local controls also support selected whole-file and issued text-hunk
+commit/transfer/split, inline commit editing, bookmark creation/rename/deletion,
+reword and empty insertion, native move/reorder/rebase/squash/uncommit,
+abandonment, selected WIP discard and bounded text-conflict resolution. Native
+`squash_commits` and descendant rebasing preserve the merge/WIP change
+identities without reconstructing the combination. Emptied WIP is retained.
+Delete stack removes only its top bookmark; lower bookmarks and commits remain
+reachable. Repository-wide Undo/Redo includes CLI operations and retains current
+Git bookkeeping; it does not restore TOML. Partial binary/mode/type hunks and
+multi-sided, structural or oversized conflicts remain unsupported in the UI.
+
+Preview is advisory; commands validate the shown operation and settings
 revision. After a lost response, refresh current JJ state and inspect its
 operation history before another attempt. A reported settings or checkout
 failure after publication identifies the applied operation rather than inviting

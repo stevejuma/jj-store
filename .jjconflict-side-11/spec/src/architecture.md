@@ -1120,3 +1120,10 @@ unknown-outcome inspection remain required. Production file dragging uses exact
 loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
 branch comparisons remain read-only. Undo/Redo remains available without a
 selected named workspace.
+
+The production Stacks controller derives dependent segments from bounded native
+parent links and bookmark facts, retaining the advertised top-range cursor.
+Per-segment tree comparisons require a proven lower boundary. Applied lanes and
+their adjacent diffs retain independent UI identity even when they share native
+commits. This presentation derives no new repository authority and triggers no
+repository-wide history load.

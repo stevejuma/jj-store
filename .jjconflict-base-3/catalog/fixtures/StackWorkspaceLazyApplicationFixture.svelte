@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from "svelte";
+  import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
   import { workspaceSourceFiles } from "../../web/src/lib/controller/stack-workspace/files.js";
@@ -15,10 +16,18 @@
   let {
     failFirstPatch = false,
     unavailable = false,
-  }: { failFirstPatch?: boolean; unavailable?: boolean } = $props();
+    refreshDuringPatch = false,
+    simulateOperationChange = false,
+  }: {
+    failFirstPatch?: boolean;
+    unavailable?: boolean;
+    refreshDuringPatch?: boolean;
+    simulateOperationChange?: boolean;
+  } = $props();
   const controller = untrack(() => createInMemoryStoreController("stacks"));
   const layoutStorage = untrack(createMemoryStoryStorage);
-  const stackWorkspace = untrack(() => {
+  let patchReads = $state(0);
+  const fixture = untrack(() => {
     const original = workspaceStoryFixture();
     original.repository = controller.state.route.repository;
     const snapshot = cloneWorkspace(original);
@@ -27,7 +36,9 @@
     snapshot.readKey = "read-only-catalog-operation";
     for (const stack of snapshot.stacks)
       for (const commit of stack.commits) commit.files = [];
-    let failed = false;
+    let failed = false,
+      refreshed = false,
+      operation = 0;
     const adapter = Object.assign(new MockStackWorkspaceAdapter(snapshot), {
       async readSourceFiles(request: WorkspaceSourceRequest) {
         return {
@@ -41,6 +52,14 @@
       async readFileDiff(
         request: WorkspaceSourceRequest & { path: string },
       ): Promise<WorkspaceFile> {
+        patchReads++;
+        if (simulateOperationChange)
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        if (refreshDuringPatch && !refreshed) {
+          refreshed = true;
+          await value.refresh();
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        }
         if (failFirstPatch && !failed) {
           failed = true;
           throw new Error("The selected patch could not be loaded. Try again.");
@@ -57,8 +76,17 @@
           : { ...cloneWorkspace(file), content: { status: "ready" } };
       },
     });
-    return new StackWorkspaceController(adapter);
+    const value = new StackWorkspaceController(adapter);
+    return {
+      controller: value,
+      async advanceOperation() {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        adapter.snapshot.readKey = `catalog-operation-${++operation}`;
+        return value.refresh();
+      },
+    };
   });
+  const stackWorkspace = fixture.controller;
   onMount(() => {
     void stackWorkspace.refresh();
     return () => {
@@ -69,6 +97,12 @@
 </script>
 
 <div style="height: 100vh; min-height: 36rem">
+  {#if simulateOperationChange}
+    <Button onclick={() => fixture.advanceOperation()}
+      >Simulate native operation change</Button
+    >
+    <output aria-label="Fixture patch reads">{patchReads}</output>
+  {/if}
   <StoreRepositoryApplication
     {controller}
     {stackWorkspace}

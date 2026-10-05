@@ -143,10 +143,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       previous?.revision ?? 1,
       result.cursor,
     );
-    this.#snapshot.stacks = this.#snapshot.stacks.map((stack) =>
-      this.ranges.restore(stack, target?.commit),
-    );
-    this.#snapshot.loadedTargetHistory = this.ranges.target(target?.commit);
+    this.ranges.project(this.#snapshot);
     await this.#local.project(this.#snapshot);
     return cloneWorkspace(this.#snapshot);
   }
@@ -225,20 +222,15 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       snapshot.revision,
       page.cursor,
     );
-    this.#snapshot.stacks = this.#snapshot.stacks.map((stack) =>
-      this.ranges.restore(stack, snapshot.target?.commit),
-    );
-    this.#snapshot.loadedTargetHistory = this.ranges.target(
-      snapshot.target?.commit,
-    );
+    this.ranges.project(this.#snapshot);
     await this.#local.project(this.#snapshot);
     return cloneWorkspace(this.#snapshot);
   }
-  readTargetHistory(
+  async readTargetHistory(
     request: WorkspaceHistoryRequest | WorkspaceStackHistoryRequest,
     signal?: AbortSignal,
   ) {
-    return readIssuedStackHistory(
+    const page = await readIssuedStackHistory(
       {
         reads: this.#reads!,
         current: () => this.#context(request),
@@ -248,6 +240,8 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       request,
       signal,
     );
+    this.ranges.project(this.#context(request));
+    return page;
   }
   readStackHistory: NonNullable<StackWorkspaceAdapter["readStackHistory"]> = (
     request,

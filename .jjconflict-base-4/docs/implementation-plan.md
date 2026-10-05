@@ -6,21 +6,28 @@ live in `.jj/jj-store/stacks.toml`; named workspaces are megamerges plus
 retained WIP children. Configuration is local to the physical JJ workspace.
 
 The local setup/membership core and focused repository navigation are delivered.
-The user approved the remaining mutation plan: selected-file commits, branch and
-basic commit actions, transfers/splits, hunks, graph operations,
-deletion/conflict resolution and native Undo/Redo. Deliver each behavior in
-verified JJ changes. Native squash and descendant rebasing propagate through
-merge/WIP; preserve their change identities and retain emptied WIP. Explicit
-reparenting handles membership and externally moved bookmarks. Delete stack
+The approved mutations are wired to native JJ: selected-file/hunk commits and
+transfers, splits, branch creation/rename, positional empty commits, reword,
+move/reorder, squash/uncommit, branch rebase, bookmark deletion, abandonment,
+discard, supported text-conflict resolution and repository-wide Undo/Redo.
+Dependent branch segments use bounded native parent/bookmark reads and preserve
+independent adjacent diffs, including shared commits in separate applied lanes.
+Native squash and descendant rebasing propagate through merge/WIP, preserve
+their change identities and retain emptied WIP. Explicit reparenting handles
+membership; Refresh and Switch do not silently restore saved branches after CLI
+changes or Undo. Reapply saved branches is an explicit command. Delete stack
 removes only its top bookmark; Undo follows ordinary repository JJ semantics and
 does not restore TOML.
 
-Use the existing clean JJ change above the verified current parent, preserve UI
-and useful browsing, and retire the stack-only archived-preparation recovery
-path. Historical evidence remains unchanged. Follow JST-LOCAL-005's ordinary
-local profile; manifest-backed execution, publication and visual baselines are
-outside this slice. Lost command responses require state/op-log inspection, not
-automatic retry. Atomic TOML save is not a cross-file JJ transaction.
+Native, controller and interaction/accessibility regressions qualify each
+delivered mutation family. Cold built-server acceptance covers actual file/hunk
+dragging, merge/WIP retention, Undo/Redo and CLI interoperability. Unsupported
+partial binary/mode/type selections and multi-sided/structural/oversized
+conflict editor shapes remain explicit; native JJ values are preserved.
+Historical evidence remains unchanged. Follow JST-LOCAL-005's ordinary local
+profile; manifest-backed execution, publication and visual baselines remain
+separate. Lost command responses require state/op-log inspection, not automatic
+retry. Atomic TOML save is not a cross-file JJ transaction.
 
 # Historical backend proposal and delivery evidence
 

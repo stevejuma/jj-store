@@ -102,6 +102,7 @@ export interface StoreSettingsState extends WorkspaceLinkSettings {
   readonly indexPreparation: StoreLoadStatus;
   readonly indexPreparationError: string;
   readonly indexTaskStatus: import("../api/client.js").Task["status"] | null;
+  readonly indexRequired?: boolean;
   readonly indexOperation: string | null;
 }
 export interface StoreControllerState {

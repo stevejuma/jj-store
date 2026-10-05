@@ -9,15 +9,18 @@
       ? ""
       : state.status.error,
   );
+  const indexRequired = $derived(
+    state.settings.indexRequired || error.includes("index rebuild required"),
+  );
 </script>
 
 <StoreNotice
   noticeKey="repository-request"
   title="Repository request failed"
-  message={error}
+  message={error || (indexRequired ? "index rebuild required" : "")}
   pending={state.status.navigation === "loading" ||
     state.status.navigation === "refreshing"}
-  action={error.includes("index rebuild required")
+  action={indexRequired
     ? {
         id: "prepare-index",
         label: "Prepare graph index",

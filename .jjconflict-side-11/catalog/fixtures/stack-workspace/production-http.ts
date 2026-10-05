@@ -1,58 +1,17 @@
 import type { StoreRouteBrowser } from "../../../web/src/lib/controller/store-route-history.svelte.js";
-export const stackRepository = "b".repeat(32),
-  stackOperation = "a".repeat(128);
-const base = "1".repeat(40),
-  topic = "2".repeat(40),
-  parent = "3".repeat(40);
-const signature = {
-  name: "Alex Morgan",
-  email: "alex@example.test",
-  timestamp: { millis: 123000, offset_minutes: 0 },
-};
-const pin = {
-  version: 1,
-  profile: "git_sha1_jj045",
-  repository: stackRepository,
-  generation: 2,
-  operation: stackOperation,
-};
-const commit = (id: string, description: string, parents = [base]) => ({
-  id,
-  change_id: "c".repeat(32),
-  parents,
-  description,
-  author: signature,
-  committer: signature,
-  tree_terms: [],
-  conflicted: false,
-  divergent: false,
-  visible: true,
-  bookmarks: [],
-  workspaces: [],
-});
-const nodes = [
-  commit(topic, "Topic tip", [parent]),
-  commit(parent, "Topic ancestor"),
-];
-const reference = (name: string, node: ReturnType<typeof commit>) => ({
-  kind: "bookmark",
-  name,
-  terms: [node.id],
-  conflicted: false,
-  workspaces: [],
-  targets: [
-    {
-      commit: node.id,
-      change: node.change_id,
-      parents: node.parents,
-      description: node.description,
-      author: signature,
-      committer: signature,
-      conflicted: false,
-      workspaces: [],
-    },
-  ],
-});
+import {
+  stackRepository,
+  stackOperation,
+  base,
+  topic,
+  signature,
+  pin,
+  commit,
+  nodes,
+  reference,
+  fixtureNativeHistory,
+} from "./production-http-data.js";
+export { stackRepository, stackOperation } from "./production-http-data.js";
 const json = (value: unknown, status = 200) =>
   new Response(JSON.stringify(value), {
     status,
@@ -60,7 +19,7 @@ const json = (value: unknown, status = 200) =>
   });
 
 /** Isolated HTTP fixtures exercise the production bootstrap, lifecycle and adapter. */
-export function productionStacksHttp(cold = false) {
+export function productionStacksHttp(cold = false, dependent = false) {
   const requests: { path: string; body: any }[] = [];
   let prepared = !cold,
     hash = `#/repos/${stackRepository}/stacks?at_op=${stackOperation}`;
@@ -75,6 +34,7 @@ export function productionStacksHttp(cold = false) {
     const path = String(input),
       body = init?.body ? JSON.parse(String(init.body)) : null;
     requests.push({ path, body });
+    const history = fixtureNativeHistory(dependent);
     if (path === "/v1/bootstrap")
       return json({
         version: 1,
@@ -199,7 +159,8 @@ export function productionStacksHttp(cold = false) {
           operation: stackOperation,
           references: [
             reference("main", commit(base, "Workspace target", [])),
-            reference("topic", nodes[0]!),
+            reference("topic", history[0]!),
+            ...(dependent ? [reference("foundation", history[1]!)] : []),
           ],
           next: null,
           previous: null,
@@ -238,7 +199,7 @@ export function productionStacksHttp(cold = false) {
           head: query.query.head,
           base: query.query.base,
           commits: (query.query.head === topic
-            ? nodes
+            ? history
             : [commit(base, "Workspace target", [])]
           ).map((commit) => ({
             commit,

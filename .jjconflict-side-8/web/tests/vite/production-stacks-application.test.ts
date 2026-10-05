@@ -26,7 +26,11 @@ test("real bootstrap injects a verified Stacks controller and its route never re
           request.body?.command?.kind === "refresh",
       ),
     ).toBe(true);
-    expect(stacks.snapshot?.capabilities).toEqual(["create_workspace"]);
+    expect(stacks.snapshot?.capabilities).toEqual([
+      "create_workspace",
+      "undo",
+      "redo",
+    ]);
     expect(stacks.snapshot?.workspaces).toEqual([]);
     await stacks.chooseTarget(stacks.snapshot!.targetOptions![0]!);
     const branch = stacks.snapshot!.stacks[0]!;

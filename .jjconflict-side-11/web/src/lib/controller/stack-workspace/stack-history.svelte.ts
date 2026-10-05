@@ -1,3 +1,4 @@
+import { projectStackRange } from "./stack-segments.js";
 import {
   cloneWorkspace,
   type StackWorkspaceAdapter,
@@ -51,16 +52,16 @@ export class WorkspaceStackHistory {
     this.#cursors.clear();
     this.#states = Object.fromEntries(
       snapshot.stacks
-        .filter((stack) => stack.segments?.length === 1)
+        .filter((stack) => stack.segments)
         .map((stack) => {
-          const segment = stack.segments![0]!;
+          const segment = stack.segments!.at(-1)!;
           return [
             stack.id,
             {
               loading: false,
               loaded: true,
               error: "",
-              commits: segment.commits,
+              commits: [...stack.commits].reverse(),
               cursor: segment.nextCursor,
               hasMore: Boolean(segment.nextCursor),
             },
@@ -72,13 +73,12 @@ export class WorkspaceStackHistory {
     const snapshot = this.#context,
       state = this.state(id);
     const stack = snapshot?.stacks.find((stack) => stack.id === id),
-      head = stack?.heads[0];
+      head = stack?.heads.find((head) => head.name === stack.name);
     if (
       this.#closed ||
       !snapshot?.target ||
       !stack ||
       !head ||
-      stack.heads.length !== 1 ||
       !this.adapter.readStackHistory ||
       state.loading ||
       (state.loaded && !more && !state.error) ||
@@ -145,18 +145,12 @@ export class WorkspaceStackHistory {
         ...current,
         stacks: current.stacks.map((item) =>
           item.id === id
-            ? {
-                ...item,
-                commits: [...commits].reverse(),
-                segments: [
-                  {
-                    head,
-                    baseCommit: snapshot.target!.commit,
-                    commits,
-                    nextCursor: page.nextCursor,
-                  },
-                ],
-              }
+            ? projectStackRange(
+                item,
+                snapshot.target!.commit,
+                commits,
+                page.nextCursor,
+              )
             : item,
         ),
       });

@@ -1099,3 +1099,12 @@ graph index. Preparing history in one scenario must not substitute for a cold
 command scenario. Existing live development services stay running. This frontend
 slice changes no local JJ command or TOML contract and requires no Rust rebuild,
 package publication or screenshot baseline update.
+
+The ordinary local Stacks mutation acceptance uses the existing isolated cold
+filesystem server and explicitly built development executables. It covers
+selected-file staging, native lazy-hunk dragging, adjacent diffs and repository
+Undo/Redo, including a CLI operation, while measuring retained merge/WIP change
+identities and unchanged TOML. Graph-index preparation remains explicit after a
+new operation. The runner cleans up its own service/folder and preserves the
+live fixture. Interaction and accessibility evidence does not qualify visual
+baselines or the historical manifest-backed prepared-command profile.

@@ -40,6 +40,14 @@ qualification evidence; internal plans and evidence are not published as Help.
 
 ## Requirements
 
+The ordinary local Stacks manual MUST describe qualified jj-lib bookmark,
+selected-file/native-hunk, graph, conflict and repository-wide Undo/Redo
+operations separately from the historic retained executor. It documents native
+descendant propagation, retained WIP and merge identities, TOML outside history,
+explicit membership reconciliation, advisory previews, unknown-outcome
+inspection and unsupported partial/conflict shapes. Generated API references and
+local, HTTP, contract and application reviews cover these delivered slices.
+
 | ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                             |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | JST-DOC-001 | The application MUST provide a Markdown-first manual with getting-started instructions, concepts, workflows, configuration, application-owned CLI/API references and architecture diagrams. Implemented functionality with incomplete qualification MUST state its limits; upstream-only behavior and unimplemented roadmap features MUST NOT be presented as application capabilities. |

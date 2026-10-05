@@ -20,7 +20,11 @@ export function retainedWorkspaceDiffs(
         : workspaceSourceFiles(snapshot, diff.source)
     ).find((file) => file.path === diff.path);
     if (!file && !filesFor) continue;
-    const stack = workspaceSourceStack(snapshot, diff.source);
+    const stack = workspaceSourceStack(
+      snapshot,
+      diff.source,
+      diff.origin.startsWith("stack-") ? diff.origin.slice(6) : undefined,
+    );
     const origin =
       diff.origin === "working"
         ? "working"

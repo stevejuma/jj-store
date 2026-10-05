@@ -7,6 +7,7 @@ export function selectWorkspaceFile(
   source: string,
   path: string,
   hunks?: string[],
+  stack?: string,
 ) {
   if (controller.locked) return;
   const snapshot = controller.snapshot;
@@ -18,7 +19,7 @@ export function selectWorkspaceFile(
   const origin =
     source === "unassigned" || source === "combined"
       ? "working"
-      : `stack-${workspaceSourceStack(snapshot, source)!.id}`;
+      : `stack-${workspaceSourceStack(snapshot, source, stack ?? controller.selectedStack ?? undefined)!.id}`;
   const diff: WorkspaceOpenDiff = {
     origin,
     source,

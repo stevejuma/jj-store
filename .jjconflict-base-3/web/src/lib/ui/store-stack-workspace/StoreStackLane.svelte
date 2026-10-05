@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -39,6 +40,13 @@
     onCommand: (command: WorkspaceCommand) => void;
     onDrop: (event: DragEvent, target: "stack" | "commit", id: string) => void;
   } = $props();
+  $effect(() => {
+    const id = stack.id;
+    controller.snapshot?.readKey;
+    untrack(() => {
+      void controller.histories.load(id);
+    });
+  });
 </script>
 
 <ColumnCanvas.Column
@@ -191,8 +199,9 @@
           <Button
             variant="outline"
             size="sm"
-            disabled
-            title="Deleting local refs is not available yet."
+            disabled={!controller.can("delete_stack")}
+            title={controller.eligibility("delete_stack").reason || undefined}
+            onclick={() => onCommand({ kind: "delete_stack", stack: stack.id })}
           >
             Delete local<Trash data-icon="inline-end" aria-hidden="true" />
           </Button>

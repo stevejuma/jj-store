@@ -4,6 +4,7 @@ import { createProductionStoreState } from "../../src/lib/controller/production-
 import { initialStoreRoute } from "../../src/lib/controller/store-route-history.svelte.js";
 import type { StoreDataSource } from "../../src/lib/controller/native-data-source.js";
 import { ApiError } from "../../src/lib/api/client.js";
+import { productionStoreView } from "../../src/lib/controller/production-store-view.js";
 
 const repository = "b".repeat(32),
   operation = "a".repeat(128);
@@ -72,6 +73,31 @@ function fixture() {
       (route = { ...route, snapshotOperationId: value }),
   };
 }
+test("required graph preparation survives cleared transient feedback until recovery", () => {
+  const { data } = fixture();
+  const route = { ...initialStoreRoute(), repository, page: "stacks" as const };
+  const view = () =>
+    productionStoreView(data, route, {
+      connected: true,
+      repository,
+      canBack: false,
+      canForward: false,
+      now: 0,
+    });
+  data.neededIndex = {
+    version: 1,
+    profile: "git_sha1_jj045",
+    repository,
+    operation,
+    generation: 2,
+    heads: [operation],
+  };
+  data.status.error = "";
+  expect(view().settings.indexRequired).toBe(true);
+  expect(view().settings.indexOperation).toBe(operation);
+  data.neededIndex = null;
+  expect(view().settings.indexRequired).toBe(false);
+});
 test("a verified binding exposes owned read-only Stacks without loading details on connect", async () => {
   const { stacks, source, fetcher } = fixture();
   await stacks.restore(false);

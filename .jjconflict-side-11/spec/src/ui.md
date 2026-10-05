@@ -2483,8 +2483,8 @@ mock fixtures. Missing inspection support leaves those actions unavailable.
 Lazy changed-file summaries and requested patches update the corresponding
 loaded commit selection models, as well as Unstaged. Existing drag guides,
 staged lists, split forms and inline commit composer use native file mutations
-only after qualification. Net branch diffs remain display unions and do not
-authorize transfers.
+only after qualification. Net branch diffs compare exact boundary/head trees and
+do not authorize transfers.
 
 Native local Stacks hunk selections are issued by the guarded read-only POST
 `/v1/local/repos/{repo}/stacks/hunks`. Tokens bind native source change
@@ -2521,3 +2521,37 @@ unknown-outcome inspection remain required. Production file dragging uses exact
 loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
 branch comparisons remain read-only. Undo/Redo remains available without a
 selected named workspace.
+
+Production dependent branch segments derive from loaded native parent links and
+local bookmark annotations, with one bounded continuation for the exact
+advertised top head/target range. Only the lowest displayed segment loads more.
+Each branch’s inline net files compare its own lower boundary and head; an
+unproven paginated boundary remains unavailable until more history is loaded.
+Merge/elided ancestry retains the provider graph without invented linear
+boundaries. Visible applied lanes load their own bounded pages; other repository
+history stays unloaded. Aliases do not duplicate commit rows within a lane.
+Explicitly applied bookmarks retain their own column and UI identity, even when
+they share ancestry; browsing a branch selects its own advertised top.
+
+An exact displayed commit receiving a dropped file/hunk MUST retain its title in
+the destination picker even when it is not a bookmark head. Refreshing the
+current read scope MUST reload retained adjacent diffs; closing or changing a
+diff cancels its owned patch, while same-scope history updates do not cancel it.
+Reconciliation that retains a source/path MUST preserve its patch lifetime;
+cleanup of a completed or invalidated request MUST NOT restore a previous
+operation’s loaded state.
+
+Required graph preparation remains an unresolved view condition until successful
+preparation or repository teardown clears it. Navigation and successful reads
+may clear transient feedback without hiding the Prepare graph index action or
+changing its exact required operation.
+
+Successfully issued bounded stack histories update the adapter's current
+comparison and command projection immediately, including inspected non-head
+destinations and dependent segment boundaries. Neither mutation preview nor
+inline branch files require an intervening refresh to use those exact reads.
+
+Same-scope refresh and history updates retain authoritative loaded file
+summaries and patches in the draft/drop selection model. A changed read scope
+invalidates that cache before projection; visible cached rows cannot become
+stale selections solely because a same-operation read completed.

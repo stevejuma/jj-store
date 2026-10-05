@@ -2,7 +2,26 @@ import type { StackWorkspaceController } from "./controller.svelte.js";
 import { workspaceSourceFiles } from "./files.js";
 import { reconcileSourceDiffs } from "./retained-diffs.js";
 import { activateWorkspaceDiff } from "./diff-selection.js";
-import { cloneWorkspace, type WorkspaceFile } from "./types.js";
+import {
+  cloneWorkspace,
+  type WorkspaceFile,
+  type WorkspaceSnapshot,
+} from "./types.js";
+
+/** Reapply only the lazy cache retained by the exact current read scope. */
+export function projectWorkspaceFiles(
+  snapshot: WorkspaceSnapshot,
+  source: string,
+  files: WorkspaceFile[],
+) {
+  if (source === "unassigned") {
+    const workspace = snapshot.workspaces.find((w) => w.id === snapshot.active);
+    if (workspace) workspace.unassigned = cloneWorkspace(files);
+  }
+  for (const stack of snapshot.stacks)
+    for (const commit of stack.commits)
+      if (commit.id === source) commit.files = cloneWorkspace(files);
+}
 
 export function acceptWorkspaceFiles(
   controller: StackWorkspaceController,
@@ -10,15 +29,8 @@ export function acceptWorkspaceFiles(
   files: WorkspaceFile[],
   complete: boolean,
 ) {
-  if (source === "unassigned" && controller.snapshot) {
-    const workspace = controller.snapshot.workspaces.find(
-      (w) => w.id === controller.snapshot?.active,
-    );
-    if (workspace) workspace.unassigned = cloneWorkspace(files);
-  }
-  for (const stack of controller.snapshot?.stacks ?? [])
-    for (const commit of stack.commits)
-      if (commit.id === source) commit.files = cloneWorkspace(files);
+  if (controller.snapshot)
+    projectWorkspaceFiles(controller.snapshot, source, files);
   controller.diffs = reconcileSourceDiffs(
     controller.diffs,
     source,

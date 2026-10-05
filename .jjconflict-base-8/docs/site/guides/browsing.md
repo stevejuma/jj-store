@@ -46,12 +46,10 @@ folders. Select a branch or commit to inspect its changed files and exact diffs.
 These reads retain the selected code snapshot and do not snapshot physical edits
 or change checkout files.
 
-Named combinations, applying branches and displaying complete Unstaged work are
-still under qualification. The controller observes current unsnapshotted file
-metadata independently of historical branch selections, with bounded reads and
-cancellation. Physical observations do not include all snapshotted combination
-WIP and do not make those controls available; the page must retain its
-unavailable state until the complete local workflow is supported.
+Registered ordinary local JJ folders support named workspaces, applied branches
+and Unstaged changes. See [Local stack workspaces](#local-stack-workspaces) for
+the mutation workflow. Other repository profiles retain their own capability
+limits; physical observation alone does not authorize a command.
 
 ## Prepare history when requested
 
@@ -118,16 +116,22 @@ left-sidebar entry. Create a named workspace, then use Branches to apply or
 unapply branch stacks. Workspace shows the applied stacks and Unstaged changes;
 file diffs open beside their originating column. Each named workspace retains
 its unfinished work when you switch. Active refresh snapshots files with normal
-JJ rules and follows external branch-tip changes. Names, target and membership
-are local settings in `.jj/jj-store/stacks.toml`; they are not tracked
-repository files.
+JJ rules. Names, target and membership are local settings in
+`.jj/jj-store/stacks.toml`; they are not tracked repository files.
 
 Workspace commands complete independently of the graph index. If history at the
 new operation needs preparation, use the existing Prepare graph index action.
 Unstaged counts reflect loaded files; a `+` means more remain to load.
 
-The initial real integration supports workspace creation/switching and stack
-membership. Commit/file/hunk and remaining graph controls are still disabled.
-After a lost command response, refresh JJ state and inspect operation history
-before another attempt. Selecting another working change through the CLI keeps
-your named workspaces and clears the active selection until you choose one.
+Select a branch to load its bounded stack history. Dependent branch segments use
+native ancestry and bookmarks, with changed files inline for the selected
+segment or commit. More history loads through a bounded continuation.
+
+The local integration supports file/hunk assignment, commit editing and graph
+actions; see [Editing and conflicts](editing.md#local-stacks-mutations). After a
+lost command response, refresh JJ state and inspect operation history before
+another attempt. Selecting another working change through the CLI keeps your
+named workspaces and clears the active selection until you choose one. Undo and
+Redo follow native repository operation history, including CLI commands. They do
+not undo saved TOML settings. Refresh and Switch never silently restore saved
+branch membership; use **Reapply saved branches** to reconcile it.

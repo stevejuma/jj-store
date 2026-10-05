@@ -38,15 +38,23 @@
     controller.details.patchState(diff.source, diff.path),
   );
   const filesState = $derived(controller.details.fileState(diff.source));
+  const readScope = $derived(
+    JSON.stringify([
+      controller.snapshot?.revision,
+      controller.snapshot?.readKey,
+    ]),
+  );
   $effect(() => {
-    const source = diff.source,
-      path = diff.path;
-    controller.snapshot?.revision;
-    controller.snapshot?.readKey;
+    const source = diff.source;
+    readScope;
     untrack(() => {
       void controller.details.loadFiles(source);
     });
-    return () => controller.details.cancelDiff(source, path);
+  });
+  const patchIdentity = $derived(JSON.stringify([diff.source, diff.path]));
+  $effect(() => {
+    const [source, path] = JSON.parse(patchIdentity) as [string, string];
+    return () => untrack(() => controller.details.cancelDiff(source, path));
   });
   $effect(() => {
     if (file?.content?.status === "unloaded") {
@@ -79,7 +87,12 @@
     const hunks = checked
       ? [...new Set([...current, hunk])]
       : current.filter((value) => value !== hunk);
-    controller.selectFile(diff.source, file.path, hunks);
+    controller.selectFile(
+      diff.source,
+      file.path,
+      hunks,
+      diff.origin.startsWith("stack-") ? diff.origin.slice(6) : undefined,
+    );
   }
   const hasSelection = $derived(
     Boolean(

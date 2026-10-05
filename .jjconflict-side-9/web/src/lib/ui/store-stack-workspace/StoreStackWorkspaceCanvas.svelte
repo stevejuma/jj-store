@@ -187,9 +187,11 @@
                 void controller.selectTargetBranch();
                 return;
               }
-              const stack = snapshot.stacks.find((item) =>
-                item.heads.some((head) => head.name === name),
-              );
+              const stack =
+                snapshot.stacks.find((item) => item.name === name) ??
+                snapshot.stacks.find((item) =>
+                  item.heads.some((head) => head.name === name),
+                );
               if (stack) controller.selectStack(stack.id, name);
               else
                 controller.validation =

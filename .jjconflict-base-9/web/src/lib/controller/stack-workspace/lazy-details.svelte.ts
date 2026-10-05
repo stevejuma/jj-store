@@ -208,7 +208,11 @@ export class WorkspaceLazyDetails {
   cancelDiff(source: string, path: string) {
     const id = workspacePatchKey(source, path),
       key = `patch:${id}`;
-    this.#requests.get(key)?.abort();
+    const owner = this.#requests.get(key);
+    // A completed or invalidated read has nothing to cancel. In particular,
+    // a retiring Svelte effect must not restore state from its previous batch.
+    if (!owner) return;
+    owner.abort();
     this.#requests.delete(key);
     const state = this.patchState(source, path);
     this.#patchStates = {

@@ -38,6 +38,9 @@
   const previous = $derived(
     stack.commits[stack.commits.findIndex((item) => item.id === commit.id) - 1],
   );
+  const next = $derived(
+    stack.commits[stack.commits.findIndex((item) => item.id === commit.id) + 1],
+  );
 </script>
 
 <Menu.Root>
@@ -131,7 +134,8 @@
           onCommand({
             kind: "reorder_commit",
             commit: commit.id,
-            direction: "up",
+            target: next!.id,
+            placement: "above",
           })}><ArrowUp aria-hidden="true" />Move up</Menu.Item
       >
       <Menu.Item
@@ -141,7 +145,8 @@
           onCommand({
             kind: "reorder_commit",
             commit: commit.id,
-            direction: "down",
+            target: previous!.id,
+            placement: "below",
           })}><ArrowDown aria-hidden="true" />Move down</Menu.Item
       >
       <Menu.Item

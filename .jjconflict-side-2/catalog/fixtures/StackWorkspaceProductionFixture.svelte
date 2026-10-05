@@ -4,14 +4,33 @@
   import { createProductionStoreController } from "../../web/src/lib/controller/production-store-controller.svelte.js";
   import { productionStacksHttp } from "./stack-workspace/production-http.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
-  let { cold = false }: { cold?: boolean } = $props();
+  let {
+    cold = false,
+    dependent = false,
+    clearTransientFeedback = false,
+  }: {
+    cold?: boolean;
+    dependent?: boolean;
+    clearTransientFeedback?: boolean;
+  } = $props();
   const controller = untrack(() =>
-    createProductionStoreController(productionStacksHttp(cold)),
+    createProductionStoreController(productionStacksHttp(cold, dependent)),
   );
   const layoutStorage = untrack(createMemoryStoryStorage);
   onDestroy(() => controller.actions.destroy());
   $effect(() => {
     if (controller.stackWorkspace) controller.stackWorkspace.page = "branches";
+  });
+  $effect(() => {
+    if (
+      clearTransientFeedback &&
+      controller.state.status.error.includes("index rebuild required")
+    )
+      untrack(() => {
+        // Simulate navigation clearing transient feedback without recovery.
+        const status = controller.state.status as { error: string };
+        status.error = "";
+      });
   });
 </script>
 

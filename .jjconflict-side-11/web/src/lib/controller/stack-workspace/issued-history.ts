@@ -22,9 +22,12 @@ export async function readIssuedStackHistory(
   const snapshot = owner.current(),
     stackRequest = "stack" in request ? request : undefined;
   if (stackRequest) {
-    const head = snapshot.stacks
-      .find((stack) => stack.id === stackRequest.stack)
-      ?.heads.find((head) => head.name === request.branch);
+    const stack = snapshot.stacks.find(
+      (stack) => stack.id === stackRequest.stack,
+    );
+    const head = stack?.heads.find(
+      (head) => head.name === stack.name && head.name === request.branch,
+    );
     if (
       !head ||
       head.commit !== request.head ||
