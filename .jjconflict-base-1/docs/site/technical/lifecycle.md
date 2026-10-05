@@ -35,6 +35,26 @@ or tray actions reopen the window. Explicit Quit ends the owning process
 lifetime. An interrupted command retains normal unknown-outcome semantics—window
 closure cannot prove that a mutation was rejected.
 
+## Stack command recovery foundation
+
+The server now has a private journal primitive for exact stack preparations and
+historical receipts. Its bounded file lives outside checkouts and binds the
+installation, repository, physical JJ workspace, profile and authenticated
+actor. Opening it or discovering pending requests never initializes missing
+state. Exact retries retain the original preview and outcome; conflicting reuse
+is rejected. Capacity admission reserves room for later receipt states rather
+than evicting earlier requests.
+
+Atomic replacement and sync select journal state. Loss after replacement leaves
+an unknown outcome; reopen and exact replay recover the selected receipt. A
+publication-unknown or incomplete-checkout receipt prevents another publication
+in that physical scope. Verified checkout, rejection and retirement cannot
+return to executable preparation.
+
+This primitive does not retain JJ objects, publish operation heads or coordinate
+physical checkout. The production Stacks page continues to expose qualified
+reads while those provider execution and recovery gates are implemented.
+
 ## Desktop terminal lifetime
 
 The native host owns repository-bound PTY sessions with an Alacritty grid. The

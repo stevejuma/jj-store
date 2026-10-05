@@ -148,7 +148,7 @@ continuations and annotations.
 | ------------------------------------ | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
 | 1. Integrate UI and define contracts | Versioned service intent/selection/preparation/receipt types and read-adapter boundary delivered | Executable wire contracts accompany the recoverable executor                                  |
 | 2. Real browsing                     | Production browsing, private physical observations and exact WC/ignore comparison delivered      | Active-combination assignment and complete cold workflow acceptance                           |
-| 3. Recoverable execution             | Planned; mutations remain unavailable                                                            | Journal, prepared operation, publication, guarded checkout, durable status and fault recovery |
+| 3. Recoverable execution             | Private exact-preparation journal foundation delivered; mutations remain unavailable             | Retained provider operation, publication, guarded checkout, runtime status and fault recovery |
 | 4. Named combinations and membership | Planned; Workspace remains empty without qualified durable state                                 | Explicit setup, merge/WIP retention, apply/unapply, switching and restart                     |
 | 5. Staging and inline commits        | Reviewed UI and draft controller delivered                                                       | Exact whole-file engine, then server-issued hunk selections and transfers                     |
 | 6. Graph actions and recovery        | Reviewed menus and preview/recovery UI delivered                                                 | Qualified rewrite actions, deletion policy and guarded undo                                   |
@@ -207,6 +207,14 @@ results, while historical selections and adjacent diffs retain their own scope.
 These observations do not populate complete Unstaged or infer a combination.
 Durable execution and named combination merge/WIP state in stages 3–4 remain
 required.
+
+E-M21-012 qualifies the installation-private exact-preparation journal,
+principal/profile/physical scope, monotonic receipts, bounded pending discovery
+and capacity reservation. Real atomic-replacement faults and subprocess loss
+recover the original unresolved receipt through reopen and exact replay. This
+metadata primitive does not retain JJ object closures, publish operation heads
+or coordinate checkout. Stage 3 continues with those provider and runtime gates;
+all seven approved stages remain required before feature completion.
 
 ### Recommended scope and model
 

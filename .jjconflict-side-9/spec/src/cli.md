@@ -8,6 +8,19 @@ response contracts. This acceptance adds no installed CLI command, implicit
 snapshot, code execution or companion format change; recoverable local stack
 commands remain a separate stage.
 
+The server-owned stack command journal retains validated exact preparations and
+monotonic historical receipts in bounded installation-private state outside
+checkouts. It binds the authenticated principal and physical/profile scope,
+rejects conflicting request reuse, and recovers exact status after reopen
+without current-state validation or reexecution. Missing state is unavailable;
+only explicit creation initializes it. Synced atomic selection preserves unknown
+replacement outcomes, and exact replay confirms selected durability. One
+unresolved publication/checkout blocks another publication in that scope;
+completed, rejected and retired receipts cannot reset to executable preparation.
+This primitive adds no route, installed CLI command, provider object retention,
+upstream head publication or physical checkout capability. Those remain the next
+recoverable execution gates under JST-LOCAL-005.
+
 LocalTrusted installations with native storage own an independent conversion
 journal beside device registration. Preview captures a committed source
 operation, start retains the exact bounded archive before staging, and status

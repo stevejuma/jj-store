@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -86078,6 +86078,184 @@ entries.
   "next": "Implement and qualify the durable request journal and retained unpublished provider preparation, then guarded code publication/physical checkout before enabling combinations or writable UI.",
   "out_of_scope": "No new visual review, screenshot comparisons/baseline updates, package publication, source-reference dependencies, installed services, reset/migration, Rust code/build/test changes or unrelated UI/Rust aggregate lanes. Storybook remains 6057; source-only HMR needs no dependency/startup restart.",
   "summary": "Verified current physical-read client and independent Stacks observation with cold real dirty-folder browser evidence; M21.2 remains In progress."
+},
+{
+  "id": "E-M21-012",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "mvvlrkuw",
+  "kind": "Private exact stack preparation journal and monotonic historical receipt recovery",
+  "versions": "Pinned Rust 1.98.1; JJ 0.45.1 contracts; macOS ARM64; pnpm 10.32.1. Tests use private disposable temporary state and development test outputs only.",
+  "formats": "New bounded installation-private StackCommandJournal JSON version 1 outside checkouts: at most 128 retained records/8 MiB with 16 KiB receipt-growth reservation per record. Scope binds installation/repository/physical workspace/JJ workspace/profile; original request retains binding/combination generations. No native identity, manifest, WAL, companion or public HTTP/client format change.",
+  "files": [
+    "crates/jj-store-server/src/lib.rs",
+    "crates/jj-store-server/src/stack_command_journal/catalog.rs",
+    "crates/jj-store-server/src/stack_command_journal/tests.rs",
+    "crates/jj-store-server/src/stack_command_journal/transition.rs",
+    "crates/jj-store-server/src/stack_command_journal.rs",
+    "crates/jj-store-server/tests/stack_command_journal/admission.rs",
+    "crates/jj-store-server/tests/stack_command_journal/fixture.rs",
+    "crates/jj-store-server/tests/stack_command_journal.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/lifecycle.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/verification.md"
+  ],
+  "before": "The exact retained-preparation regression cannot import its missing server journal module.",
+  "scope": "Private leaf server journal over the unchanged shared physical file primitive and existing owned service contracts. Exact regression, complete new integration binary, focused private journal fault/process-loss tests, owning server all-target checks and no-deps strict lint, source boundaries, docs and mapped spec/progress checks. Shared file primitive and its existing consumers remain unchanged; no HTTP route, runtime executor or UI capability changes.",
+  "tests": [
+    "crates/jj-store-server/tests/stack_command_journal.rs#retained_preparation_survives_reopen_and_conflicting_request_reuse",
+    "crates/jj-store-server/tests/stack_command_journal.rs#publication_checkout_and_retirement_are_monotonic_across_reopen",
+    "crates/jj-store-server/tests/stack_command_journal.rs#pending_checkout_blocks_competing_publication_until_verified",
+    "crates/jj-store-server/tests/stack_command_journal/admission.rs#near_full_admission_reserves_space_for_blocked_checkout_and_retirement",
+    "crates/jj-store-server/src/stack_command_journal/tests.rs#lost_coordination_after_atomic_replacement_is_unknown_and_replay_syncs_original",
+    "crates/jj-store-server/src/stack_command_journal/tests.rs#process_loss_after_replacement_recovers_exact_unresolved_receipt"
+  ],
+  "runs": [
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_command_journal retained_preparation_survives_reopen_and_conflicting_request_reuse -- --exact",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-journal-before.log: missing stack_command_journal module prevents the named retention regression from compiling."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_command_journal retained_preparation_survives_reopen_and_conflicting_request_reuse -- --exact",
+      "result": "fail",
+      "failures": 7,
+      "note": "stack-journal-after-exact.log: integration fixture path was implicit; one missing-module and six missing-helper diagnostics. Fixed the explicit local fixture path; no product assertion weakened."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_command_journal retained_preparation_survives_reopen_and_conflicting_request_reuse -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-after-exact2.log and stack-journal-exact-final.log: exact regression passes after implementation and in the final source state."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_command_journal",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-integration1.log: 12 pass. stack-journal-integration-final.log: 13 pass, including additional receipt-growth reservation at the byte limit. Scope, principal/intent/preparation binding, monotonic states, competing pending commands, reopen, terminal replay, corruption, private modes/paths, missing state and capacity are qualified only for journal metadata."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --lib stack_command_journal::tests",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-unit1.log: four pass and one ignored subprocess fixture executed by the parent test. Actual lock loss after atomic replacement returns unknown; abrupt child exit after replacement before sync/ack recovers exact unresolved receipt through reopen and replay. Existing macOS linker unwind-size warning retained."
+    },
+    {
+      "command": "cargo check --locked -p jj-store-server --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-check.log: affected server all-target package check passes; no new dependency or upstream JJ import."
+    },
+    {
+      "command": "cargo clippy --locked -p jj-store-server --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-clippy.log: strict owning server source/tests pass without dependency lint. This does not qualify the six previously recorded JJ/service diagnostics or the aggregate Rust lane."
+    },
+    {
+      "command": "pnpm docs:review configuration \"Documented bounded private stack command journal scope, exact retry and restart recovery, capacity reservation and monotonic receipts. Provider object retention, operation publication and physical checkout remain unimplemented; no runtime or installed command capability changes.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-docs-review.log: server source coverage and lifecycle manual reviewed; coverage formatted explicitly."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/cli.md spec/src/local-jj.md spec/src/verification.md docs/site/technical/lifecycle.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-docs-format.log; subsequent exact verification and architecture/plan formatting in stack-journal-verification-format.log and stack-journal-plan-format.log. Never formats milestones.md. An earlier generic verification-row replacement assertion found two matching rows; corrected the edit to JST-LOCAL-005 only."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-boundaries.log: 17 owned crate boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-architecture.log: 1090 modules pass; no UI or reference-source changes."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --lib stack_command_journal::tests",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-unit-final.log: final focused private journal lane passes four tests; the ignored abrupt-exit helper is exercised as a real subprocess by its passing parent test. Existing linker unwind-size notice remains."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-rust-format-check.log: repository/runtime Rust formatting passes; cargo fmt --all was used during implementation and changed no unrelated files."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-docs-check.log: nine Mermaid diagrams, strict MkDocs build and 139-file self-contained link/anchor closure pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-journal-spec-first.log: lifecycle manual/coverage edit lacked its mapped documentation.md chapter. Added the owning requirement that journal metadata cannot imply provider retention/publication/checkout; no rule bypass."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-documentation-format.log: explicit owning chapter format; milestones.md never formatted."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-spec-first-final.log: all protected source/plan/manual changes have their owning canonical chapters after documentation repair."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-spec-validate.log: five validators, 23 chapters and 173 requirements validate."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-progress.log: 142 tasks pass bookkeeping; M21.2 stays In progress and evidence remains pending for remaining feature gates."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/cli.md spec/src/local-jj.md spec/src/documentation.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/lifecycle.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-format-check.log: changed canonical/manual/coverage documents formatted; historical ledger excluded."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/record-stack-journal-evidence.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-journal-ledger-append.log: all 493 historical JSON evidence objects preserved byte-for-byte while appending E-M21-012; no historical result/status edited."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Stage 3 remains incomplete: actual retained unpublished JJ object closures/operations, foreground working-copy locking, guarded upstream publication and checkout, runtime request/status/discovery routes and full boundary recovery qualification remain required before writable UI capabilities.",
+    "Stage 2 complete active-combination Unstaged and watcher/lifecycle acceptance, stages 4-7 durable named combinations/merge-WIP, exact file then hunk flows, graph actions/guarded undo and linked-native real-storage lifecycle remain approved work. Journal metadata with synthetic plan identities does not qualify JJ execution.",
+    "Six unchanged JJ/service strict lint diagnostics remain unresolved and unwaived as recorded in E-M21-010. Owning server no-deps lint does not claim aggregate qualification."
+  ],
+  "next": "Retain and verify real unpublished provider preparations through JJ/Git reachability, then coordinate publication and guarded foreground checkout with this journal before enabling durable combinations or writable UI.",
+  "out_of_scope": "Unchanged UI/types/Storybook/browser and generated HTTP/client contracts, full server or Rust/UI aggregate suites, real RustFS, publication, installed executable/services, repository reset/migration, screenshots/baseline updates and fresh visual review. No runtime journal path or command capability is wired by this primitive.",
+  "summary": "Verified bounded exact preparation/receipt metadata journal, real replacement/process-loss recovery and terminal replay; M21.2 remains In progress."
 }
 ]
 ```

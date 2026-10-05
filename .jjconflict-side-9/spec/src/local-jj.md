@@ -736,6 +736,32 @@ rejection and retired undone/abandoned operations. Neither completed nor retired
 receipts authorize command execution. Discovery and durable journal storage
 remain separate provider qualification.
 
+The installation-private stack command journal MUST explicitly create its
+bounded state outside repository checkouts. Open, status and pending discovery
+MUST NOT initialize missing state. Its scope binds installation, repository,
+physical workspace, JJ workspace name and code profile; binding and combination
+generations remain in each original request so historical recovery does not
+depend on the current selection. The authenticated principal, complete preview
+and original receipt MUST survive reopen. Reusing a request with different
+intent, preparation or principal MUST fail; exact retry returns the retained
+historical outcome without preparing again or resetting its state.
+
+Journal selection MUST use private physical identity checks, exclusive
+coordination, bounded reads, synced atomic replacement and directory sync.
+Acknowledgement loss after replacement is an unknown outcome. Exact replay MUST
+sync the selected record before acknowledging it. Records are never evicted to
+admit new commands: capacity exhaustion fails before selection. Admission
+reserves bounded receipt growth so later recovery transitions remain available
+even when no further preparation fits. Only one unresolved publication or
+checkout may occupy a physical scope. Prepared commands first become
+publication-unknown before upstream publication. Recovery may select only the
+matching prepared operation/view, with checkout required before verified
+completion. Completed checkout cannot regress; rejected and undone/abandoned
+records are terminal. Status matches the original request, digest and principal
+before any live-state validation. The journal alone does not prove provider
+object retention, publication or checkout and MUST NOT enable a runtime command
+capability.
+
 Server-retained content selections bind source and parent tree identities,
 complete code/device/combination selection, safe repository path, exact
 file-state fingerprint and whole-file or verified hunk scope. Commands carry

@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed final capture source/status interest split and cancellation-independent saved configuration notices; saved/effective activation remains explicit.",
-      "fingerprint": "eda4727c37acf896cd4385fa3613c3435290bef01bea9261c6e826bc1d71d89c"
+      "reason": "Documented bounded private stack command journal scope, exact retry and restart recovery, capacity reservation and monotonic receipts. Provider object retention, operation publication and physical checkout remain unimplemented; no runtime or installed command capability changes.",
+      "fingerprint": "b68ac19e2c5c547c9be7e8df8ea778e7214e708d439d0f329359542abbf31159"
     }
   },
   {

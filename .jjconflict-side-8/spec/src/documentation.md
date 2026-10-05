@@ -15,6 +15,12 @@ qualification evidence; internal plans and evidence are not published as Help.
 
 ## Delivery and validation
 
+Stack journal documentation MUST distinguish private exact-preparation and
+historical receipt metadata from actual provider object retention, code
+publication and foreground checkout. It records bounded capacity, durable
+replacement/unknown recovery, principal/physical scope and terminal retry
+semantics without presenting the primitive as a writable Stacks capability.
+
 Private physical scan documentation MUST distinguish a bounded revalidated
 inventory from a JJ snapshot, an Unstaged assignment and a filesystem CAS. It
 records limits and unsupported shapes without presenting provider projection,

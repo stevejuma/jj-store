@@ -43,6 +43,14 @@ unchanged. Active-combination merge/WIP assignment remains required before these
 reads populate complete Unstaged. No read establishes a checkout lock or
 publication authority.
 
+The server-owned stack journal selects only installation-private preparations
+and historical receipt state. It composes the existing private file primitive
+with owned service contracts, independent of upstream JJ imports and portable
+companion state. Synced replacement, exact replay, bounded admission and
+monotonic transitions qualify this metadata boundary; provider object retention,
+operation-head publication and foreground checkout remain separate Stage 3
+gates. The primitive grants no runtime mutation capability.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies
