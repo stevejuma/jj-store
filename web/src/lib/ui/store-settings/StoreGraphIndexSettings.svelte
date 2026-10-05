@@ -10,8 +10,12 @@
   const label = $derived(
     indexPreparationLabels[settings.indexPreparationKind ?? "graph"],
   );
+  const automatic = $derived(
+    settings.capabilities?.automatic_code_index === true,
+  );
   const kindSupported = $derived(
     supported &&
+      !automatic &&
       !!controller.actions.prepareKindIndex &&
       controller.state.repository.profile !== "git_sha1_jj045",
   );
@@ -30,11 +34,15 @@
       <dt>
         Repository history
         <p class="store-settings__row-description">
-          Prepare the selected operation for repository history browsing.
+          {automatic
+            ? "Repository history is prepared automatically when opened and kept current as it changes."
+            : "Prepare the selected operation for repository history browsing."}
         </p>
       </dt>
       <dd>
-        {#if supported}
+        {#if automatic && settings.indexPreparation !== "failed" && !preparing}
+          <span>Automatic</span>
+        {:else if supported}
           <div class="store-settings__actions">
             <Button
               variant="outline"
@@ -46,7 +54,9 @@
               />{preparing &&
               (settings.indexPreparationKind ?? "graph") === "graph"
                 ? "Preparing graph index…"
-                : "Prepare graph index"}</Button
+                : automatic
+                  ? "Retry history preparation"
+                  : "Prepare graph index"}</Button
             >
             {#if preparing && (settings.indexPreparationKind ?? "graph") === "graph"}
               <Button

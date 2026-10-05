@@ -1,5 +1,13 @@
 # Compatibility and release
 
+Managed core task routes and the optional default-off `automatic_code_index`
+capability are additive to HTTP V1. They reuse native/local task report schemas
+and preserve existing advanced routes and explicit advanced preparation. Private
+derived reservations use version2 for profile and epoch/generation bindings;
+version1 records retain their existing bytes. Standard JJ index format6 and
+authoritative objects, manifests, WAL, receipts and identities stay unchanged.
+No source repository migration or repair is required.
+
 CopyFamily is an additive native RPC V1 method with owned typed seed flags,
 tightening limits, complete sorted identities and traversal work. Existing
 Inventory and InventoryPage wire fields, native objects, manifest, WAL and

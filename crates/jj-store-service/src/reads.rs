@@ -313,6 +313,39 @@ impl CommittedRead {
     }
     /// Execute through the owned JJ boundary; the caller supplies trusted cache
     /// and worker limits, never user-selected local paths or store credentials.
+    pub(crate) async fn code_source(
+        self: &Arc<Self>,
+    ) -> query::Result<crate::code_indexes::NativeSource> {
+        let snapshot = self.snapshot().await.map_err(query_error)?.clone();
+        let access = preparation::Access::capture(self)
+            .await
+            .map_err(query_error)?;
+        Ok(crate::code_indexes::NativeSource {
+            snapshot,
+            access,
+            store: self.session.object_store.clone(),
+        })
+    }
+    pub async fn graph_code_index(
+        self: &Arc<Self>,
+        executor: &query::GraphExecutor,
+        prepared: Arc<query::code_index::Prepared>,
+        request: query::Request,
+        page: query::Page,
+    ) -> query::Result<query::GraphPage> {
+        self.authorize().await.map_err(query_error)?;
+        let result = executor
+            .execute_code_index(
+                self.session.object_store.clone(),
+                self.clone(),
+                prepared,
+                request,
+                page,
+            )
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(result)
+    }
     pub async fn graph(
         self: &Arc<Self>,
         executor: &jj_store_jj::query::GraphExecutor,
@@ -332,7 +365,7 @@ impl CommittedRead {
         Ok(result)
     }
 }
-fn query_error(error: Error) -> jj_store_jj::query::Error {
+pub(crate) fn query_error(error: Error) -> jj_store_jj::query::Error {
     use jj_store_jj::query::Error as Q;
     match error {
         Error::Denied => Q::Denied,

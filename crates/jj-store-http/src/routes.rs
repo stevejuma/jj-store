@@ -364,6 +364,9 @@ macro_rules! endpoints {
             (post, "/repos/{repo}/index/kinds/tasks", prepare_kind, Empty, jj_store_service::kind_tasks::Task, Reply::Json(202)),
             (get, "/repos/{repo}/index/kinds/tasks/{task}", kind_task, Empty, jj_store_service::kind_tasks::Task, Reply::Json(200)),
             (post, "/repos/{repo}/index/kinds/tasks/{task}/cancel", cancel_kind, Empty, jj_store_service::kind_tasks::Task, Reply::Json(200)),
+            (post, "/repos/{repo}/code-index/tasks", prepare_code, Empty, index_tasks::Task, Reply::Json(202)),
+            (get, "/repos/{repo}/code-index/tasks/{task}", code_task, Empty, index_tasks::Task, Reply::Json(200)),
+            (post, "/repos/{repo}/code-index/tasks/{task}/cancel", cancel_code, Empty, index_tasks::Task, Reply::Json(200)),
             (post, "/repos/{repo}/index/tasks", prepare, Empty, index_tasks::Task, Reply::Json(202)),
             (get, "/repos/{repo}/index/tasks/{task}", task, Empty, index_tasks::Task, Reply::Json(200)),
             (post, "/repos/{repo}/index/tasks/{task}/cancel", cancel, Empty, index_tasks::Task, Reply::Json(200)),
@@ -426,6 +429,7 @@ pub(super) fn document(doc: &mut Document) {
     doc.body::<crate::collab::ReactionQuery>("/v1/repos/{repo}/reactions/query", "post");
     doc.body::<kind_tasks::Prepare>("/v1/repos/{repo}/index/kinds/tasks", "post");
     doc.body::<Prepare>("/v1/repos/{repo}/index/tasks", "post");
+    doc.body::<Prepare>("/v1/repos/{repo}/code-index/tasks", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations/preview", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations", "post");
     doc.body::<jj_store_service::work::Request>("/v1/repos/{repo}/work/commands", "post");
@@ -1147,6 +1151,54 @@ async fn cancel(
     let task = state
         .tasks
         .cancel(context.session.clone(), context.value("task")?)
+        .await?;
+    state.json(&task)
+}
+
+async fn prepare_code(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+    body: std::result::Result<Json<Prepare>, axum::extract::rejection::JsonRejection>,
+) -> Result<Response> {
+    input(args)?;
+    let Json(request) = body.map_err(|_| Error::invalid())?;
+    if !matches!(state.config.access, Access::LocalTrusted { .. }) {
+        return Err(Error::denied());
+    }
+    let read = pinned(&context, &state, Some(request.operation)).await?;
+    let task = state.code_indexes.start_native(read).await?.native()?;
+    let mut response = state.json(&task)?;
+    *response.status_mut() = StatusCode::ACCEPTED;
+    Ok(response)
+}
+async fn code_task(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    if !matches!(state.config.access, Access::LocalTrusted { .. }) {
+        return Err(Error::denied());
+    }
+    let task = state
+        .code_indexes
+        .inspect_native(context.session.clone(), context.value("task")?, false)
+        .await?;
+    state.json(&task)
+}
+async fn cancel_code(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    if !matches!(state.config.access, Access::LocalTrusted { .. }) {
+        return Err(Error::denied());
+    }
+    let task = state
+        .code_indexes
+        .inspect_native(context.session.clone(), context.value("task")?, true)
         .await?;
     state.json(&task)
 }

@@ -1,3 +1,4 @@
+import { pretty } from "../api/client.js";
 import { createIndexPreparation } from "./production-index-preparation.js";
 import { createProductionSearchSettings } from "./production-search-settings.js";
 import { createProductionStorageSettings } from "./production-storage-settings.js";
@@ -39,9 +40,28 @@ export function createProductionStoreSettings(input: {
   });
   const sync = createProductionSyncSettings(options);
   const workspaces = createProductionWorkspaceLinks(options);
+  let attempted: string | null = null;
+  function recoverCodeIndex() {
+    const route = options.route?.();
+    if (
+      !data.neededIndex ||
+      data.capabilities?.automatic_code_index !== true ||
+      !options.source().prepareCodeIndex ||
+      !route ||
+      !["files", "branches"].includes(route.page) ||
+      route.evolutionCommitId ||
+      route.historyQuery
+    )
+      return;
+    const key = `${options.version()}:${pretty(data.neededIndex)}`;
+    if (attempted === key) return;
+    attempted = key;
+    void index.prepareCodeIndex();
+  }
 
   function clear() {
     index.clear();
+    attempted = null;
     workspaces.clear();
     storage.clear();
     sync.clear();
@@ -101,8 +121,16 @@ export function createProductionStoreSettings(input: {
     ...search,
     clear,
     refresh,
+    recoverCodeIndex,
     prepareKindIndex: index.prepareKindIndex,
-    prepareIndex: index.prepareIndex,
+    prepareIndex: () =>
+      data.capabilities?.automatic_code_index === true &&
+      options.source().prepareCodeIndex &&
+      options.route?.().page !== "oplog" &&
+      !options.route?.().evolutionCommitId &&
+      !options.route?.().historyQuery
+        ? index.prepareCodeIndex()
+        : index.prepareIndex(),
     cancelIndex: index.cancelIndex,
   };
 }

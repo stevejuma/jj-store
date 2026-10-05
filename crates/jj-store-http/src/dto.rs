@@ -15,6 +15,8 @@ pub(crate) struct Capabilities {
     pub read_api: bool,
     pub browsing_windows: bool,
     pub index_tasks: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub automatic_code_index: Option<bool>,
     pub events: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub application_events: Option<bool>,
@@ -245,6 +247,8 @@ impl From<&Config> for Capabilities {
             read_api: true,
             browsing_windows: true,
             index_tasks: config.native_authority,
+            automatic_code_index: matches!(config.access, Access::LocalTrusted { .. })
+                .then_some(true),
             events: config.native_authority,
             search: false,
             typed_mutations: if config.native_authority {

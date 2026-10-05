@@ -12,6 +12,7 @@ use tokio::sync::Mutex;
 #[derive(Default)]
 pub(crate) struct Monitors(Mutex<BTreeMap<Option<m::RepositoryId>, Entry>>);
 struct Entry {
+    managed: bool,
     leases: Arc<AtomicUsize>,
     task: tokio::task::JoinHandle<()>,
     producers: Option<tokio::task::JoinHandle<()>>,
@@ -23,6 +24,23 @@ impl Drop for Lease {
     }
 }
 impl Monitors {
+    pub(crate) async fn activate(
+        &self,
+        state: &Arc<State>,
+        repository: Option<m::RepositoryId>,
+        local: bool,
+    ) {
+        if !matches!(state.config.access, Access::LocalTrusted { .. }) {
+            return;
+        }
+        let Ok(lease) = self.acquire(state, repository, local).await else {
+            return;
+        };
+        if let Some(entry) = self.0.lock().await.get_mut(&repository) {
+            entry.managed = true;
+        }
+        drop(lease);
+    }
     pub(super) async fn acquire(
         &self,
         state: &Arc<State>,
@@ -37,7 +55,10 @@ impl Monitors {
         if entries.len() >= 257 {
             return Err(Error::busy());
         }
-        if observe(state, repository, local).await.is_err() {
+        if observe(state, repository, local, false, false)
+            .await
+            .is_err()
+        {
             state.freshness.observe(Change {
                 repository,
                 domain: Domain::Repository,
@@ -54,6 +75,7 @@ impl Monitors {
         entries.insert(
             repository,
             Entry {
+                managed: false,
                 leases: leases.clone(),
                 task,
                 producers,
@@ -92,6 +114,7 @@ async fn run(
         None
     };
     let mut witness = repository_witness(&weak, repository);
+    let mut activated = false;
     loop {
         let health_wake = tokio::select! {
             _ = async { if let Some(h) = &mut health { let _ = h.changed().await; } else { std::future::pending::<()>().await; } } => true,
@@ -106,7 +129,14 @@ async fn run(
         let Some(state) = weak.upgrade() else {
             return;
         };
-        if leases.load(Ordering::Acquire) == 0 {
+        let managed = state
+            .event_monitors
+            .0
+            .lock()
+            .await
+            .get(&repository)
+            .is_some_and(|e| e.managed);
+        if leases.load(Ordering::Acquire) == 0 && !managed {
             let since = *idle.get_or_insert_with(Instant::now);
             if since.elapsed() >= Duration::from_secs(15) {
                 let mut entries = state.event_monitors.0.lock().await;
@@ -153,7 +183,14 @@ async fn run(
                 continue;
             }
         }
-        if observe(&state, repository, local).await.is_err() {
+        let first = managed && !activated;
+        if let Err(error) = observe(&state, repository, local, managed, first).await {
+            if managed
+                && error.invalidates_code_index()
+                && let Some(repo) = repository
+            {
+                state.code_indexes.invalidate(repo);
+            }
             state.freshness.observe(Change {
                 repository,
                 domain: Domain::Repository,
@@ -161,6 +198,8 @@ async fn run(
                 identity: None,
                 audience: None,
             });
+        } else {
+            activated |= managed;
         }
         if local {
             let current = repository_witness(&weak, repository);
@@ -194,11 +233,19 @@ async fn local_watch(
         .ok()
         .flatten()
 }
-async fn observe(state: &State, repository: Option<m::RepositoryId>, local: bool) -> Result<()> {
+async fn observe(
+    state: &State,
+    repository: Option<m::RepositoryId>,
+    local: bool,
+    managed: bool,
+    first: bool,
+) -> Result<()> {
+    let mut local_heads = None;
     let changes = if let Some(repository) = repository {
         if local {
-            let snapshot = crate::local_browser::capture(state, repository).await?;
+            let snapshot = crate::local_browser::observe(state, repository).await?;
             let generation = snapshot.code.generation;
+            local_heads = Some(snapshot.code.clone());
             vec![
                 change(
                     Some(repository),
@@ -291,6 +338,17 @@ async fn observe(state: &State, repository: Option<m::RepositoryId>, local: bool
         changes
     };
     for change in changes {
+        if managed
+            && change.domain == Domain::Code
+            && (first
+                || !state.freshness.snapshot().1.iter().any(|old| {
+                    old.repository == repository
+                        && old.domain == Domain::Code
+                        && old.witness == change.witness
+                }))
+        {
+            super::code_indexes::maintain(state, repository, local, local_heads.take()).await?;
+        }
         state.freshness.observe(change);
     }
     Ok(())

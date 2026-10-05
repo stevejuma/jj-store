@@ -32,6 +32,30 @@ fn stores(
     .map_err(|_| Error::Unavailable)
 }
 impl GraphExecutor {
+    pub async fn prepare_managed_code_index(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        namespace: cache::managed::Namespace,
+        cancellation: Cancellation,
+    ) -> Result<Prepared> {
+        if namespace.binding()
+            != &(cache::managed::Binding::Native {
+                repository: access.repository(),
+                epoch: access.epoch(),
+            })
+        {
+            return Err(Error::EpochChanged);
+        }
+        self.prepare_inner(
+            store,
+            access,
+            namespace.path(),
+            cancellation,
+            Some(namespace),
+        )
+        .await
+    }
     /// Caller owns this private namespace and its disk reservation. Reusing it
     /// across operations lets JJ extend the latest indexed ancestor.
     pub async fn prepare_code_index(
@@ -40,6 +64,17 @@ impl GraphExecutor {
         access: Arc<dyn ReadAccess>,
         path: PathBuf,
         cancellation: Cancellation,
+    ) -> Result<Prepared> {
+        self.prepare_inner(store, access, path, cancellation, None)
+            .await
+    }
+    async fn prepare_inner(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        path: PathBuf,
+        cancellation: Cancellation,
+        namespace: Option<cache::managed::Namespace>,
     ) -> Result<Prepared> {
         if !path.is_absolute() {
             return Err(Error::Invalid);
@@ -134,6 +169,9 @@ impl GraphExecutor {
                         )
                         .await?;
                         budget.authorize(access.as_ref()).await?;
+                        if let Some(namespace) = &namespace {
+                            namespace.finish()?;
+                        }
                         Ok(Prepared {
                             operation: access.operation(),
                             repository: access.repository(),

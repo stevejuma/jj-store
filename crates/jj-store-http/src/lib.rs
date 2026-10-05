@@ -167,6 +167,7 @@ struct State {
     host: Option<RepositoryHost>,
     local_reader: jj_store_service::local_browser::code::Executor,
     local_tasks: jj_store_service::local_index_tasks::IndexTasks,
+    code_indexes: Arc<jj_store_service::code_indexes::Indexes>,
     local_jobs: Arc<Semaphore>,
     search: SearchRegistry,
     config: Config,
@@ -311,17 +312,29 @@ impl HttpApi {
         );
         let local_tasks = jj_store_service::local_index_tasks::IndexTasks::new(
             local_reader.clone(),
-            cache,
+            cache.clone(),
             Default::default(),
         )
         .map_err(|_| "HTTP local index task limits")?;
-        Ok(Self(Arc::new(State {
+        let code_indexes = jj_store_service::code_indexes::Indexes::new(
+            queries.graph().clone(),
+            local_reader.clone(),
+            cache,
+            Default::default(),
+        );
+        let graphs = if matches!(config.access, Access::LocalTrusted { .. }) {
+            graphs.with_code_indexes(code_indexes.clone())
+        } else {
+            graphs
+        };
+        let api = Self(Arc::new(State {
             freshness: jj_store_service::freshness::Hub::new(1024),
             event_monitors: Default::default(),
             event_generation: hex::encode(&repository_cursor_key[..16]),
             host,
             local_reader,
             local_tasks,
+            code_indexes,
             search,
             slots: Arc::new(Semaphore::new(config.concurrency)),
             local_jobs: Arc::new(Semaphore::new(config.workers)),
@@ -343,7 +356,9 @@ impl HttpApi {
             commands,
             uploads,
             repository_cursor_key,
-        })))
+        }));
+        application_events::resume_code_indexes(&api.0);
+        Ok(api)
     }
     pub fn search_registry(&self) -> SearchRegistry {
         self.0.search.clone()
@@ -643,6 +658,10 @@ impl FromRequestParts<Arc<State>> for Context {
             .principal(Permission::Read)
             .await
             .map_err(reads::Error::from)?;
+        state
+            .event_monitors
+            .activate(state, Some(repository), false)
+            .await;
         // Retain only range/request metadata; no bearer header enters response state.
         let mut headers = HeaderMap::new();
         for name in [

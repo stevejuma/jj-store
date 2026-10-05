@@ -235,7 +235,19 @@ impl Executor {
         Self { workers, limits }
     }
     pub async fn heads(&self, access: Arc<dyn Access>) -> Result<Heads> {
-        self.worker(access, move |access, budget| {
+        self.heads_with_permit(access, self.workers.acquire()?)
+            .await
+    }
+    pub async fn observe_heads(&self, access: Arc<dyn Access>) -> Result<Heads> {
+        self.heads_with_permit(access, self.workers.acquire_observation()?)
+            .await
+    }
+    async fn heads_with_permit(
+        &self,
+        access: Arc<dyn Access>,
+        permit: tokio::sync::OwnedSemaphorePermit,
+    ) -> Result<Heads> {
+        self.worker_with_permit(access, permit, move |access, budget| {
             Box::pin(async move {
                 let loader = loader(access.metadata_path())?;
                 let heads = loader
@@ -310,6 +322,19 @@ impl Executor {
         + 'static,
     ) -> Result<T> {
         let permit = self.workers.acquire()?;
+        self.worker_with_permit(access, permit, run).await
+    }
+    async fn worker_with_permit<T: Send + Serialize + 'static>(
+        &self,
+        access: Arc<dyn Access>,
+        permit: tokio::sync::OwnedSemaphorePermit,
+        run: impl FnOnce(
+            Arc<dyn Access>,
+            Arc<Budget>,
+        ) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<T>>>>
+        + Send
+        + 'static,
+    ) -> Result<T> {
         let budget = Arc::new(Budget::new(self.limits));
         let cancel = budget.cancellation.clone().drop_guard();
         budget.until(access.authorize()).await??;

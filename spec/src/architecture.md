@@ -1,5 +1,12 @@
 # Architecture
 
+Managed core code indexes consume owned native/local read sources through one
+service owner. Standard JJ construction remains in `jj-store-jj`. Existing HTTP
+repository monitors supply authoritative code-change episodes and existing
+freshness producers publish readiness. Persistent derived cache reservations
+share ordinary query disk quotas; immutable ready readers share process memory
+retention. No index becomes repository authority and no user source is repaired.
+
 The browser's shared preparation owner composes graph and native kind tasks
 through their typed data sources. Only the native profile supports kind starts;
 local graph preparation remains unchanged. One active task retains original

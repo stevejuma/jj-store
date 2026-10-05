@@ -15,6 +15,20 @@ use std::{
     sync::Arc,
 };
 
+/// Owned evictable cache retention registered with the existing process memory pool.
+pub struct Retained<T>(Arc<memory::Retained<T>>);
+impl<T: Send + Sync + 'static> Retained<T> {
+    pub fn new(value: Arc<T>) -> Self {
+        Self(memory::Retained::new(value))
+    }
+    pub fn get(&self) -> Option<Arc<T>> {
+        self.0.get()
+    }
+    pub fn present(&self) -> bool {
+        self.0.present()
+    }
+}
+
 pub(crate) struct Index {
     pub raw: DefaultReadonlyIndex,
     operation: jj_lib::op_store::OperationId,

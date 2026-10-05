@@ -194,6 +194,10 @@ export interface StoreDataSource {
     id: string,
     signal?: AbortSignal,
   ): Promise<KindPreparationTask>;
+  prepareCodeIndex?(
+    operation: string,
+    signal?: AbortSignal,
+  ): Promise<Task | Model<"LocalIndexTask">>;
   prepareIndex(
     operation: string,
     signal?: AbortSignal,

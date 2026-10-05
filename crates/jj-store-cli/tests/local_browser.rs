@@ -6,6 +6,10 @@ mod code_summary;
 mod index_tasks_acceptance;
 #[path = "local_browser/managed_code.rs"]
 mod managed_code;
+#[path = "local_browser/managed_http.rs"]
+mod managed_http;
+#[path = "local_browser/managed_lifecycle.rs"]
+mod managed_lifecycle;
 #[path = "local_browser/preparation.rs"]
 mod preparation_acceptance;
 #[path = "local_browser/prepared_comparisons.rs"]

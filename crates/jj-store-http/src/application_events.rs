@@ -9,8 +9,10 @@ use schemars::JsonSchema;
 use std::collections::{BTreeMap, VecDeque};
 use tokio::time::Instant;
 mod authorization;
+mod code_indexes;
 mod monitors;
 mod producers;
+pub(crate) use code_indexes::resume as resume_code_indexes;
 pub(super) use monitors::Monitors;
 
 #[derive(Deserialize, JsonSchema)]

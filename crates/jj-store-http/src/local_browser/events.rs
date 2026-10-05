@@ -43,9 +43,16 @@ async fn events(
                         .max(Duration::from_secs(1)),
                 )
                 .await;
-                let snapshot = capture(&state, repository)
-                    .await
-                    .map_err(|_| std::io::Error::other("local freshness unavailable"))?;
+                let snapshot = match observe(&state, repository).await {
+                    Ok(snapshot) => snapshot,
+                    Err(error) if error.is_busy() => {
+                        return Ok(Some((
+                            SseEvent::default().comment("keep-alive"),
+                            (state, None, previous),
+                        )));
+                    }
+                    Err(_) => return Err(std::io::Error::other("local freshness unavailable")),
+                };
                 let bytes = serde_json::to_vec(&snapshot).map_err(std::io::Error::other)?;
                 if bytes == previous {
                     SseEvent::default().comment("keep-alive")

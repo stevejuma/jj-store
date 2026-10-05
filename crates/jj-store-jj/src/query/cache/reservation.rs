@@ -1,13 +1,15 @@
 //! Cross-profile staging and retained-handle admission in the native namespace.
 use super::*;
 
-const RECORD: &str = "reservation.json";
+pub(super) const RECORD: &str = "reservation.json";
 pub(super) const OVERHEAD: u64 = 4096;
 
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct Record {
-    version: u32,
+    pub(super) version: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub managed: Option<super::managed::Binding>,
     pub repository: m::RepositoryId,
     pub bytes: u64,
     // Namespace-local bookkeeping only; persisted version1 bytes stay unchanged.
@@ -71,6 +73,7 @@ impl Reservation {
         lock.try_lock().map_err(|_| Error::Busy)?;
         let record = Record {
             version: 1,
+            managed: None,
             repository,
             bytes,
             path: directory.path().to_owned(),
@@ -118,41 +121,59 @@ pub(super) fn inspect(path: &Path) -> Result<Option<Record>> {
         .write(true)
         .open(lock_path)
         .map_err(|_| Error::Unavailable)?;
-    match lock.try_lock() {
-        Ok(()) => {
-            // A lost process cannot retain a quota reservation. Its derived
-            // generation is disposable and is never adopted without a proof.
+    let inactive = match lock.try_lock() {
+        Ok(()) => true,
+        Err(std::fs::TryLockError::WouldBlock) => false,
+        Err(std::fs::TryLockError::Error(_)) => return Err(Error::Unavailable),
+    };
+    let record = (|| {
+        let info = fs::symlink_metadata(path.join(RECORD)).map_err(|_| Error::Unavailable)?;
+        if !info.is_file() || info.len() > OVERHEAD {
+            return Err(Error::Unavailable);
+        }
+        let mut bytes = Vec::new();
+        fs::File::open(path.join(RECORD))
+            .map_err(|_| Error::Unavailable)?
+            .take(OVERHEAD + 1)
+            .read_to_end(&mut bytes)
+            .map_err(|_| Error::Unavailable)?;
+        if bytes.len() as u64 > OVERHEAD {
+            return Err(Error::Limit);
+        }
+        let mut record: Record = serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
+        if !matches!(
+            (record.version, record.managed.is_some()),
+            (1, false) | (2, true)
+        ) || record.bytes <= OVERHEAD
+            || record.bytes > 2 * 1024 * 1024 * 1024
+            || record
+                .managed
+                .as_ref()
+                .is_some_and(|b| b.repository() != record.repository)
+        {
+            return Err(Error::Unavailable);
+        }
+        record.path = path.to_owned();
+        Ok(record)
+    })();
+    let mut record = match record {
+        Ok(record) => record,
+        Err(_) if inactive => {
             remove(path)?;
-            Ok(None)
+            return Ok(None);
         }
-        Err(std::fs::TryLockError::WouldBlock) => {
-            let record = path.join(RECORD);
-            let info = fs::symlink_metadata(&record).map_err(|_| Error::Unavailable)?;
-            if !info.is_file() || info.len() > OVERHEAD {
-                return Err(Error::Unavailable);
-            }
-            let mut bytes = vec![];
-            fs::File::open(record)
-                .map_err(|_| Error::Unavailable)?
-                .take(OVERHEAD + 1)
-                .read_to_end(&mut bytes)
-                .map_err(|_| Error::Unavailable)?;
-            if bytes.len() as u64 > OVERHEAD {
-                return Err(Error::Unavailable);
-            }
-            let mut record: Record =
-                serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
-            if record.version != 1
-                || record.bytes <= OVERHEAD
-                || record.bytes > 2 * 1024 * 1024 * 1024
-            {
-                return Err(Error::Unavailable);
-            }
-            record.path = path.to_owned();
-            Ok(Some(record))
-        }
-        Err(std::fs::TryLockError::Error(_)) => Err(Error::Unavailable),
+        Err(error) => return Err(error),
+    };
+    if inactive && record.managed.is_none() {
+        remove(path)?;
+        return Ok(None);
     }
+    if inactive {
+        let budget = Budget::new(Limits::default())?;
+        let (_, bytes) = inventory(path, Policy::default(), &budget, false)?;
+        record.bytes = bytes.max(OVERHEAD + 1);
+    }
+    Ok(Some(record))
 }
 
 #[cfg(test)]

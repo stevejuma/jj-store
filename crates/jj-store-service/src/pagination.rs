@@ -75,6 +75,7 @@ pub enum Start {
 pub struct GraphPager {
     executor: GraphExecutor,
     cursors: Arc<SnapshotCursors>,
+    code_indexes: Option<Arc<crate::code_indexes::Indexes>>,
 }
 impl std::fmt::Debug for GraphPager {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -91,7 +92,15 @@ impl GraphPager {
         ))
     }
     pub fn with_cursors(executor: GraphExecutor, cursors: Arc<SnapshotCursors>) -> Self {
-        Self { executor, cursors }
+        Self {
+            executor,
+            cursors,
+            code_indexes: None,
+        }
+    }
+    pub fn with_code_indexes(mut self, indexes: Arc<crate::code_indexes::Indexes>) -> Self {
+        self.code_indexes = Some(indexes);
+        self
     }
     async fn execute_read(
         &self,
@@ -99,7 +108,16 @@ impl GraphPager {
         request: Request,
         page: query::Page,
     ) -> Result<GraphPage> {
-        match read.graph(&self.executor, request, page).await {
+        let result = if matches!(&request, Request::Log { .. }) {
+            if let Some(indexes) = &self.code_indexes {
+                indexes.native_page(read.clone(), request, page).await
+            } else {
+                read.graph(&self.executor, request, page).await
+            }
+        } else {
+            read.graph(&self.executor, request, page).await
+        };
+        match result {
             Ok(page) => Ok(page),
             Err(query::Error::IndexRebuildRequired) => Err(Error::IndexRebuildRequired {
                 snapshot: Box::new(read.snapshot().await?.clone()),

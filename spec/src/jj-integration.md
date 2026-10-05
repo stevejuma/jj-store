@@ -594,6 +594,35 @@ walker requires every parent (including placeholders) to be a stored history.
 
 ## Managed graph cache lifecycle
 
+LocalTrusted serving activates core indexing on the first repository open. The
+existing repository monitor retains this activation independently of browser
+subscriptions and supplies freshly authorized exact operations when code heads
+change. It MUST NOT introduce a second watcher, poller or full search bootstrap.
+Non-code events MUST NOT rebuild the graph. Restart discovers bounded persistent
+cache bindings and resumes the same monitors. One shared native/local owner
+coalesces selections, bounds pending/retained tasks, reauthorizes reads and task
+control, and holds construction admission through actual worker exit. Old pinned
+readers remain usable during newer construction. Cancellation, access loss and
+changed epoch/registration MUST prevent adoption. Failure does not automatically
+repeat on unchanged monitor witnesses; new code episodes or explicit reads may
+retry. Authenticated automatic maintenance remains separately deferred.
+Transient observation or admission failures retain usable pinned readers and
+retry an uncompleted activation through the existing monitor. Only confirmed
+access or identity loss invalidates readiness; a busy worker or deadline does
+not prove either condition. Background local head observation shares interactive
+admission and leaves a foreground slot available when capacity exceeds one. It
+yields without queuing when that headroom is unavailable; existing freshness
+checks catch up later.
+
+Core native and local indexes share the existing cache admission namespace and
+its slot, repository, global-byte and file-count limits. Persistent managed
+reservations retain their source profile plus native epoch or local registration
+generation, never credentials. Reserve the full construction allowance while a
+writer runs, then charge actual retained bytes. Resume activation from complete
+retained namespaces after restart. Incomplete construction may only be repaired
+in private storage. Eviction may reclaim idle derived namespaces; memory readers
+retain their exact operations independently.
+
 The server query cache uses a private `query-cache-v1` namespace below the
 pinned upstream revision and native profile. Bounded slots retain repository,
 epoch and operation bindings, a recency counter and checksums of complete

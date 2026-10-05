@@ -64,6 +64,15 @@ if (mode === "--check") {
       packageName = "jj-store-cli",
     ] of [
       [
+        "managed_http::managed_local_http_activates_without_subscribers_resumes_and_captures_tasks",
+        "JJ_STORE_MANAGED_LOCAL_CAPTURE",
+        "local_browser",
+      ],
+      [
+        "content_acceptance::http_acceptance::managed_core_http::managed_native_http_preserves_light_reads_restarts_and_captures_tasks",
+        "JJ_STORE_MANAGED_NATIVE_CAPTURE",
+      ],
+      [
         "application_events::tests::application_stream_has_independent_finite_delivery_admission_and_contract_capture",
         "JJ_STORE_APPLICATION_EVENTS_CONTRACT_CAPTURE",
         "--lib",

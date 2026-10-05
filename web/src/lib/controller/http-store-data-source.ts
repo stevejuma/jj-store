@@ -276,6 +276,9 @@ export class HttpStoreDataSource
   cancelKindIndexTask(id: string, signal?: AbortSignal) {
     return this.#writes.cancelKindIndexTask(id, signal);
   }
+  prepareCodeIndex(operation: string, signal?: AbortSignal) {
+    return this.#writes.prepareCodeIndex(operation, signal);
+  }
   prepareIndex(operation: string, signal?: AbortSignal) {
     return this.#writes.prepareIndex(operation, signal);
   }

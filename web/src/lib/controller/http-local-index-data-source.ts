@@ -5,7 +5,7 @@ import { HttpLocalCodeDataSource } from "./http-local-code-data-source.js";
 export class HttpLocalIndexDataSource extends HttpLocalCodeDataSource {
   readonly #indexPins = new Map<
     string,
-    { operation: string; generation: string }
+    { operation: string; generation: string; core: boolean }
   >();
   private validateIndexTask(
     value: Model<"LocalIndexTask">,
@@ -28,16 +28,27 @@ export class HttpLocalIndexDataSource extends HttpLocalCodeDataSource {
     fullId(value.id, 32);
     return value;
   }
-  async prepareIndex(operation: string, signal?: AbortSignal) {
+  prepareIndex(operation: string, signal?: AbortSignal) {
+    return this.prepare(operation, signal, false);
+  }
+  prepareCodeIndex(operation: string, signal?: AbortSignal) {
+    return this.prepare(operation, signal, true);
+  }
+  private async prepare(
+    operation: string,
+    signal: AbortSignal | undefined,
+    core: boolean,
+  ) {
     const head = await this.snapshot();
     signal?.throwIfAborted();
     const pin = {
       operation: fullId(operation),
       generation: String(head.generation),
+      core,
     };
     const task = this.validateIndexTask(
       await this.client.request<Model<"LocalIndexTask">>(
-        "index/tasks",
+        core ? "code-index/tasks" : "index/tasks",
         {
           operation: pin.operation,
         },
@@ -55,7 +66,7 @@ export class HttpLocalIndexDataSource extends HttpLocalCodeDataSource {
     if (!pin) throw new ApiError("task_reset");
     return this.validateIndexTask(
       await this.read<Model<"LocalIndexTask">>(
-        `index/tasks/${id}`,
+        `${pin.core ? "code-index" : "index"}/tasks/${id}`,
         undefined,
         signal,
       ),
@@ -68,7 +79,7 @@ export class HttpLocalIndexDataSource extends HttpLocalCodeDataSource {
     if (!pin) throw new ApiError("task_reset");
     return this.validateIndexTask(
       await this.client.request<Model<"LocalIndexTask">>(
-        `index/tasks/${id}/cancel`,
+        `${pin.core ? "code-index" : "index"}/tasks/${id}/cancel`,
         undefined,
         signal,
         "POST",

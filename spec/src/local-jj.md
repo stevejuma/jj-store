@@ -500,6 +500,13 @@ exact conflict terms and workspace links. Description search retains complete
 matching semantics; bounded preparation for wider queries is a separate stage.
 Existing local publication, identity and persisted formats remain unchanged.
 
+LocalTrusted core reads reuse ready standard-index membership for selected
+commits, directories, file content and diffs. Scoped content keeps its bounded
+cold reader; ordinary history and full commit detail request core preparation
+when absent. Existing explicit advanced preparation remains a separate path.
+Current folder authorization and registration generation are checked for start,
+status, cancel and reads, including after restart and external changes.
+
 Ordinary code history uses the managed standard JJ index described in
 `jj-integration.md`. Bounded source-index copying is permitted for warm reuse;
 source index repair and source metadata writes remain prohibited. Indexed

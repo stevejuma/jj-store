@@ -1,3 +1,4 @@
+import { watchCodeIndexRecovery } from "./managed-index-recovery.svelte.js";
 import { createProductionStoreSearch } from "./production-store-search-controller.js";
 import { createProductionStoreSettings } from "./production-store-index.js";
 export function createProductionReadServices(
@@ -10,6 +11,11 @@ export function createProductionReadServices(
     restore(): Promise<void>;
   },
 ) {
+  const settings = createProductionStoreSettings({
+    ...options,
+    route: () => options.history.route,
+  });
+  watchCodeIndexRecovery(() => settings.recoverCodeIndex());
   return {
     search: createProductionStoreSearch({
       data: options.data,
@@ -18,9 +24,6 @@ export function createProductionReadServices(
       isCurrent: (active) => options.current(options.version(), active),
       restoreRoute: options.restoreRoute,
     }),
-    settings: createProductionStoreSettings({
-      ...options,
-      route: () => options.history.route,
-    }),
+    settings,
   };
 }

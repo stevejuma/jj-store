@@ -24,6 +24,12 @@ Keep advanced components when removing them would require another broad rewrite.
 Standard JJ construction limitations must be reported; do not add another custom
 writer. No source-index repair, repository migration or installed binary change.
 
+E-READ-079 proves standard-index Linux reuse and native incremental
+construction. E-READ-080 adds persistent cache admission, event-driven
+maintenance, restart activation and automatic exact-selection UI recovery.
+Advanced preparation remains explicit. Landing and the original 7470 Linux app's
+cold verification are the remaining acceptance step for this narrowed plan.
+
 E-READ-078 connects native operation/copy preparation tasks to the browser's
 shared task owner, typed HTTP data source and repository index settings. Retain
 original operations, bounded progress/status admission, explicit cancellation,

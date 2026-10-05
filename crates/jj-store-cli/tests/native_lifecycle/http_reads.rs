@@ -1,3 +1,5 @@
+#[path = "managed_core_http.rs"]
+mod managed_core_http;
 use super::*;
 use axum::{
     Router,

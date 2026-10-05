@@ -15,7 +15,24 @@ const mutationInit = (request: StoreMutationRequest): RequestInit => ({
 });
 
 export class HttpStoreWriteDataSource {
+  readonly #codeTasks = new Set<string>();
   constructor(private client: Client) {}
+  async prepareCodeIndex(operation: string, signal?: AbortSignal) {
+    const task = await this.client.request<Task>(
+      "code-index/tasks",
+      {},
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ operation: fullId(operation) }),
+        signal,
+      },
+    );
+    if (this.#codeTasks.size >= 64)
+      this.#codeTasks.delete(this.#codeTasks.values().next().value!);
+    this.#codeTasks.add(fullId(task.id, 32));
+    return task;
+  }
 
   uploadConflict(
     head: Head,
@@ -110,14 +127,14 @@ export class HttpStoreWriteDataSource {
 
   indexTask(id: string, signal?: AbortSignal) {
     return this.client.request<Task>(
-      `index/tasks/${encodeURIComponent(id)}`,
+      `${this.#codeTasks.has(id) ? "code-index" : "index"}/tasks/${encodeURIComponent(id)}`,
       {},
       { signal },
     );
   }
   cancelIndexTask(id: string, signal?: AbortSignal) {
     return this.client.request<Task>(
-      `index/tasks/${encodeURIComponent(id)}/cancel`,
+      `${this.#codeTasks.has(id) ? "code-index" : "index"}/tasks/${encodeURIComponent(id)}/cancel`,
       {},
       { method: "POST", signal },
     );

@@ -12,12 +12,19 @@
   let {
     phase = "ready",
     local = false,
-  }: { phase?: "ready" | "running" | "unknown_cancel"; local?: boolean } =
-    $props();
+    automatic = false,
+  }: {
+    phase?: "ready" | "running" | "unknown_cancel";
+    local?: boolean;
+    automatic?: boolean;
+  } = $props();
   const repository = "ab".repeat(16),
     operation = "cd".repeat(64);
   const data = createProductionStoreState();
-  data.capabilities = { index_tasks: true } as typeof data.capabilities;
+  data.capabilities = {
+    index_tasks: true,
+    automatic_code_index: (() => automatic)(),
+  } as typeof data.capabilities;
   let kind: "operations" | "copies" = "operations",
     cancelAttempts = 0;
   const report = (

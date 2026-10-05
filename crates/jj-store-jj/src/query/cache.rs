@@ -1,6 +1,7 @@
 //! Disposable bounded cache slots. Only verified native objects are authority.
 pub(super) mod constructed;
 pub(in crate::query) mod generation;
+pub mod managed;
 mod proof;
 #[cfg(all(test, unix))]
 mod proof_tests;

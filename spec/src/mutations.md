@@ -1,5 +1,12 @@
 # Typed mutations
 
+Managed core indexing grants read readiness only. Construction, adoption,
+queries and task control reauthorize the source and exact epoch/registration;
+access loss prevents adoption. Fresh metadata observation leaves foreground read
+headroom when capacity permits. Retained task IDs, disk associations and ready
+index handles confer no mutation, reconciliation or publication authority.
+Existing guarded commands keep their semantic and complete-closure validation.
+
 Remote native copy-family delivery captures one checked inventory root per
 ordinary backend request and uses the same source-scoped relation provider as
 in-process reads. The owned transport facade exposes identities, conservative

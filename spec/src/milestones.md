@@ -88755,6 +88755,376 @@ entries.
     ],
     "next": "Commit this verified source proof and continue managed lifecycle/event integration in the retained workspace.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-080",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "xnpzyzls",
+    "kind": "Managed standard JJ core browsing through existing events",
+    "versions": [
+      "JJ/jj-lib 0.45.1",
+      "Rust 1.98.1",
+      "Node 26.9.0",
+      "pnpm 10.32.1",
+      "Svelte 5.57.1",
+      "Vitest 4.1.11",
+      "macOS ARM64"
+    ],
+    "formats": [
+      "Standard JJ default index format 6",
+      "Private derived reservation version 2 adds profile plus epoch/generation; version 1 bytes unchanged",
+      "Additive automatic_code_index capability and code-index/tasks routes; existing advanced task contracts unchanged",
+      "No authoritative object, manifest, WAL, receipt or identity change"
+    ],
+    "scope": "Approved stages two and three: one persistent bounded native/local owner, first-open/restart activation through existing monitors, automatic exact-operation browser recovery. Shared Rust/HTTP/UI admission and lifecycle justify complete local/native consumer binaries, actual registered contract captures and focused UI/component checks. Advanced and complete release qualification stay deferred.",
+    "requirements": [
+      "JST-JJ-005",
+      "JST-LOCAL-004",
+      "JST-API-001",
+      "JST-UI-005",
+      "JST-GOV-002"
+    ],
+    "files": [
+      "catalog/components/store-application/StoreKindPreparation.stories.svelte",
+      "catalog/fixtures/KindPreparationFixture.svelte",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-cli/tests/local_browser/managed_http.rs",
+      "crates/jj-store-cli/tests/local_browser/managed_lifecycle.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/managed_core_http.rs",
+      "crates/jj-store-http/src/application_events.rs",
+      "crates/jj-store-http/src/application_events/code_indexes.rs",
+      "crates/jj-store-http/src/application_events/monitors.rs",
+      "crates/jj-store-http/src/application_events/producers.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/local_browser.rs",
+      "crates/jj-store-http/src/local_browser/events.rs",
+      "crates/jj-store-http/src/local_browser/index_tasks.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-jj/src/local_browser/code_index.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/query/cache.rs",
+      "crates/jj-store-jj/src/query/cache/managed.rs",
+      "crates/jj-store-jj/src/query/cache/reservation.rs",
+      "crates/jj-store-jj/src/query/code_index.rs",
+      "crates/jj-store-jj/src/query/code_index/native.rs",
+      "crates/jj-store-jj/src/query/workers.rs",
+      "crates/jj-store-service/src/code_indexes.rs",
+      "crates/jj-store-service/src/code_indexes/jobs.rs",
+      "crates/jj-store-service/src/code_indexes/tasks.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/pagination.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "docs/implementation-plan.md",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/http-local-index-data-source.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/http-store-write-data-source.ts",
+      "web/src/lib/controller/managed-index-recovery.svelte.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-index-preparation.ts",
+      "web/src/lib/controller/production-read-services.ts",
+      "web/src/lib/controller/production-store-index.ts",
+      "web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte",
+      "web/tests/vite/managed-code-index.test.ts"
+    ],
+    "tests": [
+      "crates/jj-store-jj/src/query/cache/managed.rs#persistent_namespaces_share_quota_resume_and_reuse_one_repository_graph",
+      "crates/jj-store-jj/src/query/workers.rs#background_observation_preserves_foreground_admission",
+      "crates/jj-store-cli/tests/local_browser/managed_lifecycle.rs#managed_owner_coalesces_resumes_and_keeps_old_selection_during_updates",
+      "crates/jj-store-cli/tests/local_browser/managed_lifecycle.rs#managed_background_updates_coalesce_but_preserve_foreground_requests",
+      "crates/jj-store-cli/tests/local_browser/managed_lifecycle.rs#managed_cancel_and_server_teardown_release_pending_authorization",
+      "crates/jj-store-cli/tests/local_browser/managed_lifecycle.rs#managed_reads_and_controls_reject_revoked_or_changed_registration",
+      "crates/jj-store-cli/tests/local_browser/managed_http.rs#managed_local_http_activates_without_subscribers_resumes_and_captures_tasks",
+      "crates/jj-store-cli/tests/native_lifecycle/managed_core_http.rs#managed_native_http_preserves_light_reads_restarts_and_captures_tasks",
+      "crates/jj-store-cli/tests/local_browser/prepared_points_http.rs#local_point_http_uses_ready_membership_and_only_falls_back_when_cold",
+      "crates/jj-store-cli/tests/local_browser.rs#filesystem_runtime_registers_and_reads_without_native_storage",
+      "web/tests/vite/managed-code-index.test.ts#managed history recovery preserves the exact selection and does not prepare advanced inventories",
+      "web/tests/vite/managed-code-index.test.ts#failed managed recovery requires a new episode or explicit retry",
+      "web/tests/vite/managed-code-index.test.ts#automatic maintenance defaults off and advanced operation views stay explicit",
+      "web/tests/vite/managed-code-index.test.ts#navigation aborts obsolete readiness without restoring another view",
+      "web/tests/vite/managed-code-index.test.ts#explicit advanced preparation retains its existing task route"
+    ],
+    "runs": [
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/persistent-integration-check.log: duplicate prepare_inner; manager-check.log: Stats type mismatch. Both corrected in later checks."
+      },
+      {
+        "command": "cargo test -p jj-store-jj query::cache --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/cache-final.log: 18 passed, 58 filtered."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed --locked -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/local-managed-final.log: 4 passed, 1 failed, 1 ignored; HTTP fixture discriminator corrected. Earlier local-managed-http.log preserves the private Result compile error."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/local-managed-corrected.log: 6 passed, 1 ignored."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle content_acceptance::http_acceptance::managed_core_http --locked -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/native-http-final.log: missing required graph fields; earlier native-http.log preserves the principal size compile failure."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle content_acceptance::http_acceptance::managed_core_http --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/native-http-slice-final.log: 1 passed after monitor retry/coalescing correction."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": ".local/bounded-reads/managed/local-consumers-final.log: 44 passed, 2 failed, 3 ignored. Legacy ready-point compatibility and observer contention."
+      },
+      {
+        "command": "target/debug/deps/local_browser-0bf2af6282e51f36 prepared_points_http --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/point-http-before.log: warm point reread has same 15 metadata nodes as cold."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser prepared_points_http --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/point-http-corrected.log: 1 passed, original assertions unchanged."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_lifecycle --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/manager-final.log: 4 passed, including revocation/generation and teardown."
+      },
+      {
+        "command": "target/debug/deps/local_browser-0bf2af6282e51f36 filesystem_runtime_registers_and_reads_without_native_storage --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/filesystem-cold-before.log: 1 passed in isolation; establishes contention instead of consistent cold-flow failure."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/local-consumers-corrected.log: 46 passed, 1 failed, 3 ignored. Busy moved to review snapshot, confirming background pressure."
+      },
+      {
+        "command": "cargo test -p jj-store-jj query::workers::tests::background_observation_preserves_foreground_admission --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/observation-admission.log: 1 passed; other test binaries filtered to zero."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/native-consumers-final.log: 237 passed, 82.22s; complete directly affected native consumer binary."
+      },
+      {
+        "command": "cargo test -p jj-store-http application_events --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/events-final.log: 3 passed; independent finite SSE admission, restart/forged auth, shared monitors."
+      },
+      {
+        "command": "cargo check -p jj-store-http -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/consumers-check-corrected.log: affected direct Rust consumers check."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/contracts-check.log: intermediate private Error.code access compile failure during the late observation patch, corrected through is_busy()."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 2,
+        "note": ".local/bounded-reads/managed/web-check-final.log: snapshot union typing; web-check.log additionally records generated capability drift."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 3,
+        "note": ".local/bounded-reads/managed/catalog-check.log: two union type errors and one captured reactive prop warning, corrected."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/web-final.log: zero diagnostics."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/catalog-check-corrected.log: zero diagnostics; catalog boundaries checked."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreKindPreparation.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/cold-story-final.log: 5 passed using a cold Storybook process with blocking axe. Visual baselines remain unapproved."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/architecture.log: root controller 303 counted lines exceeds 300. Dedicated recovery helper resolves this."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/architecture-slice-final.log: source ownership/module architecture intact."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ownership.log: 1 validator, 23 chapters, 172 requirements."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser filesystem_runtime_registers_and_reads_without_native_storage --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/filesystem-cold-corrected.log: 1 passed."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/local-consumers-admitted.log: 47 passed; 0 failed; 3 ignored."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/contracts-check-corrected.log: actual HTTP/SSE responses conform."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/managed-code-index.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/index-freshness.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-automatic-refresh.test.ts web/tests/vite/kind-preparation.test.ts web/tests/vite/kind-preparation-http.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ui-slice-final.log: 76 passed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/managed-code-index.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/index-freshness.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-automatic-refresh.test.ts web/tests/vite/kind-preparation.test.ts web/tests/vite/kind-preparation-http.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/ui-compatibility-final.log: 77 passed, including preservation of explicit advanced task routing."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/web-compatibility-final.log: zero diagnostics after advanced routing fix."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 4,
+        "note": ".local/bounded-reads/managed/spec-first-slice-final.log: missing mapped cli/compatibility/mutations/ui chapters; added the owning managed-index contracts."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/spec-first-mapped-final.log: all protected-area chapters accounted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/canonical-mapped-final.log: mapped requirements validate."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/canonical-slice-final.log: 5 validators, 23 chapters, 172 requirements."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/architecture-admission-final.log: 993 modules."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/rust-format-slice-final.log: affected Rust files formatted."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/store-application/StoreKindPreparation.stories.svelte catalog/fixtures/KindPreparationFixture.svelte scripts/contracts.mjs spec/src/api.md spec/src/architecture.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/spec-governance.md web/src/lib/controller/{http-local-index-data-source,http-store-data-source,http-store-write-data-source,native-data-source,production-index-preparation,production-read-services,production-store-index}.ts web/src/lib/controller/managed-index-recovery.svelte.ts web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte web/tests/vite/managed-code-index.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/format-slice-final.log; later documentation and compatibility additions were formatted explicitly."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/progress-slice-final.log: 139 tasks; bookkeeping only."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md spec/src/cli.md spec/src/compatibility.md spec/src/mutations.md spec/src/ui.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/format-ledger-slice-final.log: formatted ledger and mapped chapters."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/canonical-ledger-final.log: 5 validators, 23 chapters, 172 requirements after E080."
+      }
+    ],
+    "notes": [
+      "Reuses the pinned standard JJ builder and per-operation associations proven in E079. All bookmarks share one graph namespace; metadata/reference/content reads retain their independent bounded paths. No new repository watcher, search bootstrap or authority projection.",
+      "One shared native/local queue has at most 64 retained entries and 64 pending sources. Foreground exact selections remain; background single-head selections coalesce. Construction uses the existing reserved preparation worker, a total one-hour enqueue deadline, cancellation-aware authorization and bounded Busy backoff. Teardown cancels; readiness adoption rechecks source authority.",
+      "Managed cache reservations share existing slots, repository/global bytes and file-count limits. Active construction reserves its ceiling; inactive namespaces charge actual files, survive restart, and permit bounded eviction. Source segments are checksum-validated; repair occurs only in the private copy. Process-resident handles use existing LRU admission.",
+      "Existing monitors retain first-open activation without browser/SSE leases. Startup discovers retained bindings and reconnects those monitors. Code witnesses alone enqueue upkeep. Already captured local heads are reused; transient Busy/deadline failures retain readiness and unfinished activation retries. Background local observations leave foreground headroom when capacity exceeds one; legacy freshness checks yield on Busy instead of adding pressure.",
+      "Core tasks reuse exact-operation DTOs and fresh native epoch/local registration authorization. Additive LocalTrusted-only routes preserve authenticated principal-scoped and advanced preparation paths. Browser recovery uses the owning Svelte effect, retries the retained ordinary files/branches view once, excludes advanced views, and does not spin after cancellation/failure. Setup explains automatic maintenance.",
+      "Full local consumption exposed a compatibility defect: while core preparation was pending, point reads skipped an already ready advanced index. The exact failing regression passes after restoring that fallback. Parallel local qualification also exposed foreground contention from background metadata observers; the final admission correction is covered by a deterministic worker regression and the original cold flow. Assertions remain unchanged.",
+      "Initial implementation/fixture failures were corrected: duplicate prepare_inner, local/native Stats conversion, private process Result alias, 16-byte principal identity, graph discriminator/required fields, generated capability drift, snapshot union typing and reactive fixture warning. Architecture caught a 303-line root controller; the effect moved into a dedicated helper without relaxing limits. The first contract run encountered a transient intermediate private-field compile error while a fix was being written; repeat the full registered capture lane against frozen final Rust source.",
+      "All 520 earlier ledger entries remain verbatim and JSON-identical. Preserve failed-run logs. Inherited macOS linker unwind-table warning remains. No source repair, Linux metadata write, fixture reset/migration, installed CLI replacement, package publication/push, unrelated daemon restart or visual-baseline change."
+    ],
+    "remaining": [
+      "Land accumulated E077-E080 into clean main, advance the clean 7470 preview source and cold-verify the original Linux app with its existing registration/fixture. Keep this temporary workspace open.",
+      "Advanced search/evolution/copy/deep-query optimization and authenticated automatic maintenance remain deferred. Native Linux-sized full cold construction is not qualified; owned admission may reject standard builder allocation.",
+      "Complete scale/RSS/latency/fault/RustFS/release qualification and visual baselines remain deferred. Focused checks do not promote the M13 milestone."
+    ],
+    "next": "Commit this verified managed lifecycle/UI slice, land into main and record original-dev-app cold acceptance separately.",
+    "result": "pending"
   }
 ]
 ```

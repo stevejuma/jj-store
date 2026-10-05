@@ -61,6 +61,7 @@ pub(crate) struct Capabilities {
     pub profile: &'static str,
     pub code_browse: bool,
     pub index_tasks: bool,
+    pub automatic_code_index: Option<bool>,
     pub collaboration: bool,
     pub agents: bool,
     pub reviews: bool,
@@ -333,11 +334,30 @@ async fn snapshot(
     args: routes::Input<routes::Empty>,
 ) -> Result<Response> {
     routes::input(args)?;
-    state.json(&capture(&state, repo).await?)
+    let snapshot = capture(&state, repo).await?;
+    state
+        .event_monitors
+        .activate(&state, Some(repo), true)
+        .await;
+    state.json(&snapshot)
 }
 pub(crate) async fn capture(state: &State, repo: m::RepositoryId) -> Result<Snapshot> {
+    capture_with_admission(state, repo, false).await
+}
+pub(crate) async fn observe(state: &State, repo: m::RepositoryId) -> Result<Snapshot> {
+    capture_with_admission(state, repo, true).await
+}
+async fn capture_with_admission(
+    state: &State,
+    repo: m::RepositoryId,
+    background: bool,
+) -> Result<Snapshot> {
     let access = binding(state, repo).await?;
-    let code = state.local_reader.heads(access).await?;
+    let code = if background {
+        state.local_reader.observe_heads(access).await?
+    } else {
+        state.local_reader.heads(access).await?
+    };
     let manager = manager(state)?;
     let (metadata_commit, actor) = blocking(state, move || {
         let repo = manager.open(repo).map_err(map)?;
@@ -374,6 +394,7 @@ async fn capabilities(
         profile: local::PROFILE,
         code_browse: true,
         index_tasks: true,
+        automatic_code_index: Some(true),
         collaboration: true,
         agents: true,
         reviews: true,
@@ -508,6 +529,10 @@ async fn query(
     routes::input(args)?;
     let mut query = decode_body(body)?;
     let access = binding(&state, repo).await?;
+    state
+        .event_monitors
+        .activate(&state, Some(repo), true)
+        .await;
     let generation = access.generation();
     let digest = digest(&query.request)?;
     let anchor = query
@@ -532,7 +557,45 @@ async fn query(
         generation,
         operation: query.operation,
     };
+    let core = matches!(
+        &query.request,
+        local::Request::Graph(local::GraphRequest::Log { .. }, _)
+            | local::Request::Commit { .. }
+            | local::Request::CommitSummary { .. }
+            | local::Request::Paths(_)
+            | local::Request::FileAt { .. }
+            | local::Request::Diff(_)
+            | local::Request::DiffPaths(_)
+            | local::Request::Conflicts(_)
+    );
     let data = match query.request {
+        request if core => match state
+            .code_indexes
+            .local_read(access.clone(), query.operation, request.clone())
+            .await
+        {
+            Ok(data) => data,
+            Err(local::Error::IndexRebuildRequired) => match state
+                .local_tasks
+                .read(access.clone(), query.operation, request.clone())
+                .await
+            {
+                Ok(data) => data,
+                Err(jj_store_service::local_index_tasks::Error::Query(
+                    local::Error::IndexRebuildRequired,
+                )) if !request.needs_prepared_index() => {
+                    state
+                        .local_reader
+                        .read(access, query.operation, request)
+                        .await?
+                }
+                Err(jj_store_service::local_index_tasks::Error::Query(
+                    local::Error::IndexRebuildRequired,
+                )) => return Err(Error::local_rebuild(snapshot)),
+                Err(error) => return Err(error.into()),
+            },
+            Err(error) => return Err(error.into()),
+        },
         request if request.can_use_prepared_index() => {
             match state
                 .local_tasks

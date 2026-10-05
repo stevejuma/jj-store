@@ -42,6 +42,16 @@ impl Workers {
             .try_acquire_owned()
             .map_err(|_| Error::Busy)
     }
+    /// Metadata observation yields to foreground work and leaves one read slot
+    /// available when the serving capacity permits it. No waiting queue.
+    pub(crate) fn acquire_observation(&self) -> Result<OwnedSemaphorePermit> {
+        let mut permits = self
+            .permits
+            .clone()
+            .try_acquire_many_owned(self.capacity.min(2) as u32)
+            .map_err(|_| Error::Busy)?;
+        Ok(permits.split(1).expect("one admitted observation permit"))
+    }
     /// Non-queuing admission shared by native graph, local graph and source
     /// preparation. Move the lease into the actual job until it exits.
     pub fn acquire_preparation(&self) -> Result<OwnedSemaphorePermit> {
@@ -49,6 +59,23 @@ impl Workers {
             .clone()
             .try_acquire_owned()
             .map_err(|_| Error::Busy)
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn background_observation_preserves_foreground_admission() {
+        let workers = Workers::new(2).unwrap();
+        let observing = workers.acquire_observation().unwrap();
+        assert!(matches!(workers.acquire_observation(), Err(Error::Busy)));
+        let foreground = workers.acquire().unwrap();
+        assert_eq!(workers.status().in_use, 2);
+        drop(observing);
+        assert!(matches!(workers.acquire_observation(), Err(Error::Busy)));
+        drop(foreground);
+        assert!(workers.acquire_observation().is_ok());
+        assert!(Workers::new(1).unwrap().acquire_observation().is_ok());
     }
 }
 /// The serving composition creates this once and shares its clones. Standalone

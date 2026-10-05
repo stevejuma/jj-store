@@ -6,12 +6,24 @@ use jj_lib::{index::Index as _, repo::Repo as _};
 use std::path::PathBuf;
 
 pub struct Prepared {
-    directory: tempfile::TempDir,
+    directory: Directory,
     snapshot: Snapshot,
     pub stats: Stats,
     index: Arc<standard::Index>,
     selection: [[u8; 32]; 2],
     metadata: PathBuf,
+}
+enum Directory {
+    Temporary(tempfile::TempDir),
+    Managed(PathBuf),
+}
+impl Directory {
+    fn path(&self) -> &Path {
+        match self {
+            Self::Temporary(d) => d.path(),
+            Self::Managed(p) => p,
+        }
+    }
 }
 impl Prepared {
     pub fn snapshot(&self) -> &Snapshot {
@@ -63,6 +75,55 @@ impl Executor {
         limits: preparation::Limits,
         cancellation: Cancellation,
     ) -> Result<Prepared> {
+        self.prepare_code_inner(
+            access,
+            operation,
+            root,
+            reserved_bytes,
+            limits,
+            cancellation,
+            None,
+        )
+        .await
+    }
+    pub async fn prepare_managed_code_index(
+        &self,
+        access: Arc<dyn Access>,
+        operation: m::OperationId,
+        namespace: crate::query::cache::managed::Namespace,
+        limits: preparation::Limits,
+        cancellation: Cancellation,
+    ) -> Result<Prepared> {
+        if namespace.binding()
+            != &(crate::query::cache::managed::Binding::Local {
+                repository: access.repository(),
+                generation: access.generation(),
+            })
+        {
+            return Err(Error::EpochChanged);
+        }
+        self.prepare_code_inner(
+            access,
+            operation,
+            namespace.path(),
+            namespace.bytes(),
+            limits,
+            cancellation,
+            Some(namespace),
+        )
+        .await
+    }
+    #[allow(clippy::too_many_arguments)]
+    async fn prepare_code_inner(
+        &self,
+        access: Arc<dyn Access>,
+        operation: m::OperationId,
+        root: PathBuf,
+        reserved_bytes: u64,
+        limits: preparation::Limits,
+        cancellation: Cancellation,
+        namespace: Option<crate::query::cache::managed::Namespace>,
+    ) -> Result<Prepared> {
         limits.validate()?;
         if !root.is_absolute() || reserved_bytes == 0 || reserved_bytes > 2 * 1024 * 1024 * 1024 {
             return Err(Error::Limit);
@@ -95,10 +156,16 @@ impl Executor {
                         )
                         .await?;
                         let selected = selection(&context, operation)?;
-                        let directory = tempfile::Builder::new()
-                            .prefix(".code-index-")
-                            .tempdir_in(root)
-                            .map_err(|_| Error::Unavailable)?;
+                        let directory = if namespace.is_some() {
+                            Directory::Managed(root)
+                        } else {
+                            Directory::Temporary(
+                                tempfile::Builder::new()
+                                    .prefix(".code-index-")
+                                    .tempdir_in(root)
+                                    .map_err(|_| Error::Unavailable)?,
+                            )
+                        };
                         let raw = loader(&metadata)?;
                         let guard = scoped::Guard::new(
                             raw.store().clone(),
@@ -119,17 +186,24 @@ impl Executor {
                             limits.max_metadata_records,
                         );
                         let selected_operation = operation_source.selected(operation).await?;
-                        standard::seed(
-                            &metadata.join("index"),
-                            directory.path(),
-                            &selected_operation,
-                            reserved_bytes,
-                            |bytes| {
-                                budget.work(1)?;
-                                budget.read_bytes(bytes)
-                            },
-                        )
-                        .await?;
+                        if !directory
+                            .path()
+                            .join("segments")
+                            .try_exists()
+                            .map_err(|_| Error::Unavailable)?
+                        {
+                            standard::seed(
+                                &metadata.join("index"),
+                                directory.path(),
+                                &selected_operation,
+                                reserved_bytes,
+                                |bytes| {
+                                    budget.work(1)?;
+                                    budget.read_bytes(bytes)
+                                },
+                            )
+                            .await?;
+                        }
                         let index = standard::Index::load(
                             directory.path(),
                             &selected_operation,
@@ -139,6 +213,9 @@ impl Executor {
                         )
                         .await?;
                         budget.authorize(&context.access).await?;
+                        if let Some(namespace) = &namespace {
+                            namespace.finish()?;
+                        }
                         Ok(Prepared {
                             directory,
                             snapshot: Snapshot {
@@ -171,7 +248,15 @@ impl Executor {
     ) -> Result<Response> {
         if !matches!(
             request,
-            Request::Graph(GraphRequest::Log { .. }, _) | Request::Commit { .. }
+            Request::Graph(GraphRequest::Log { .. }, _)
+                | Request::Commit { .. }
+                | Request::CommitSummary { .. }
+                | Request::Paths(_)
+                | Request::FileAt { .. }
+                | Request::File { .. }
+                | Request::Diff(_)
+                | Request::DiffPaths(_)
+                | Request::Conflicts(_)
         ) {
             return Err(Error::IndexRebuildRequired);
         }
@@ -209,6 +294,11 @@ impl Executor {
                     .map_or(&context.store, |guard| &guard.source)
                     .clone();
                 let guard = scoped::Guard::new(source, &context.access, budget.clone(), limits);
+                if !matches!(request, Request::Graph(_, _) | Request::Commit { .. }) {
+                    context.store = guard.store();
+                    context.scoped = Some(guard);
+                    return context.dispatch(operation, request, false).await;
+                }
                 let selected = operation_store::selected(&context, operation).await?;
                 let raw = loader(context.access.binding.metadata_path())?;
                 let settings = UserSettings::from_config(StackedConfig::with_defaults())

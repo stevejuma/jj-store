@@ -14,6 +14,18 @@ pub struct Error {
     search_status: Option<Box<jj_store_tantivy::paging::Status>>,
 }
 impl Error {
+    pub(crate) fn is_busy(&self) -> bool {
+        self.code == "busy"
+    }
+    pub(crate) fn invalidates_code_index(&self) -> bool {
+        matches!(
+            self.code,
+            "access_denied"
+                | "epoch_changed"
+                | "local_identity_changed"
+                | "local_registration_conflict"
+        )
+    }
     pub fn new(status: StatusCode, code: &'static str) -> Self {
         Self {
             diagnostic: None,

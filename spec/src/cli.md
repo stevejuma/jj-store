@@ -1,5 +1,13 @@
 # CLI and server commands
 
+Managed core browsing acceptance uses the CLI package's actual filesystem and
+native server fixtures. Cover first-open activation without subscribers,
+external code updates, restart reuse, unchanged source files, exact historical
+pins, multiple bookmark pages, cancellation, revoked registration and foreground
+headroom during metadata observation. Installed CLI commands remain unchanged.
+The original Linux app's cold acceptance is recorded separately from these
+fixtures and from complete release/RustFS qualification.
+
 Remote selected-family acceptance must reproduce a small exact family under
 unrelated copy/file pressure through the real native factories. Count selected
 bodies and warm descriptor reads; enforce result/work/scratch/deadline limits,

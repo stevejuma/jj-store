@@ -1,5 +1,23 @@
 # Read APIs and browser
 
+LocalTrusted native/local capabilities MAY advertise `automatic_code_index`;
+absence or false retains explicit preparation. Additive native and local
+`code-index/tasks` start/status/cancel routes use existing versioned index-task
+reports and exact-operation bodies. Native start returns202; local start retains
+its200 contract. Task control reauthorizes the repository and epoch/generation;
+restart, expiry or evicted readiness reports task reset. Authenticated serving
+rejects automatic core routes. Existing `index/tasks` advanced preparation
+routes and `index/kinds/tasks` remain compatible and explicit. Ordinary browsing
+does not depend on their full projections.
+
+The browser automatically starts or observes core preparation after a core read
+needs it, retains the selected operation and navigation, and retries that view
+once readiness is confirmed. Failed or canceled episodes remain explicit; do not
+spin retry loops. Navigation aborts obsolete observation. Files-first loading,
+independent last-change metadata and bounded bookmark windows remain intact.
+Ordinary setup presents automatic history maintenance and hides advanced
+inventory controls when this capability is enabled.
+
 The native browser can explicitly prepare operation or copy inventories at its
 selected operation through the existing kind-task routes. One preparation flow
 owns one task and at most one status/cancel request at a time. Validate task ID,

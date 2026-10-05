@@ -1,5 +1,15 @@
 # Storybook presentation catalog
 
+When `automatic_code_index` is advertised, ordinary files/branches views recover
+the exact selected operation through core task observation and retry after
+readiness. Navigation cancels obsolete observation; failure/cancellation require
+explicit retry or a new episode. Settings explain automatic history maintenance
+and hide ordinary inventory setup controls. Explicit advanced operation,
+evolution and history-query preparation retains its existing route. File names
+remain navigable before independent row metadata settles. Cold production
+component interaction, keyboard and accessibility checks remain separate from
+visual-baseline approval.
+
 Repository index settings expose native operation- and copy-inventory
 preparation as separate existing-style bordered command rows. Keep the selected
 operation, progress counts, cancel state and completion beside these controls;

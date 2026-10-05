@@ -88,3 +88,21 @@
     ).not.toBeInTheDocument();
   }}
 />
+
+<Story
+  name="Automatic history maintenance"
+  args={{ automatic: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(c.getByText("Automatic")).toBeVisible();
+    await expect(
+      c.queryByRole("button", { name: "Prepare graph index" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      c.queryByRole("button", { name: "Prepare operation inventory" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      c.queryByRole("button", { name: "Prepare copy inventory" }),
+    ).not.toBeInTheDocument();
+  }}
+/>

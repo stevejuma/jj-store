@@ -1,3 +1,4 @@
+import { pretty } from "../api/client.js";
 import { snapshotOperation, sameCodeSnapshot } from "./repository-profile.js";
 import { storeErrorMessage } from "./http-store-data-source.js";
 import type {
@@ -14,6 +15,7 @@ type Active = {
   task: Task | null;
   cancel: boolean;
   selection: KindPreparationTask["snapshot"] | null;
+  coreSelection: string | null;
   wake: () => void;
 };
 
@@ -50,7 +52,8 @@ export function createIndexPreparation(options: {
   }
   const prepareIndex = () => prepare("graph");
   const prepareKindIndex = (kind: "operations" | "copies") => prepare(kind);
-  async function prepare(kind: IndexPreparationKind) {
+  const prepareCodeIndex = () => prepare("graph", true);
+  async function prepare(kind: IndexPreparationKind, core = false) {
     const operation =
       (data.neededIndex ? snapshotOperation(data.neededIndex) : null) ??
       options.operation();
@@ -70,6 +73,7 @@ export function createIndexPreparation(options: {
       task: null,
       cancel: false,
       selection: null,
+      coreSelection: null,
       wake: () => {},
     };
     active = run;
@@ -125,7 +129,11 @@ export function createIndexPreparation(options: {
       if (navigation?.aborted || !current()) return;
       run.task =
         kind === "graph"
-          ? await source.prepareIndex(operation, run.abort.signal)
+          ? await (core ? source.prepareCodeIndex! : source.prepareIndex).call(
+              source,
+              operation,
+              run.abort.signal,
+            )
           : await source.prepareKindIndex!(operation, kind, run.abort.signal);
       const taskId = run.task.id;
       let polls = 0;
@@ -139,6 +147,21 @@ export function createIndexPreparation(options: {
           throw new Error(
             "Graph preparation returned a different task or operation.",
           );
+        if (core) {
+          const snapshot = run.task.snapshot;
+          if (
+            run.task.version !== 1 ||
+            ("repository" in snapshot
+              ? snapshot.repository
+              : snapshot.repo_id) !== source.repository ||
+            (run.coreSelection !== null &&
+              run.coreSelection !== pretty(snapshot))
+          )
+            throw new Error(
+              "History preparation returned a different selection.",
+            );
+          run.coreSelection ??= pretty(snapshot);
+        }
         if (kind !== "graph") {
           if (
             !("kind" in run.task) ||
@@ -252,5 +275,11 @@ export function createIndexPreparation(options: {
       }
     }
   }
-  return { clear, prepareIndex, prepareKindIndex, cancelIndex };
+  return {
+    clear,
+    prepareIndex,
+    prepareCodeIndex,
+    prepareKindIndex,
+    cancelIndex,
+  };
 }

@@ -1,5 +1,12 @@
 # Specification governance
 
+Managed cache/event/core-read delivery changes shared Rust admission and direct
+HTTP/UI consumers. Its relevant wider lane is the cache tests, complete local
+browser and native lifecycle binaries, registered contract response captures,
+affected package/type checks and preparation/data-source regressions. Cold
+production-component/browser evidence qualifies activation and automatic exact
+selection recovery; release/fault/RustFS/visual qualification stays deferred.
+
 Managed standard JJ core-index replacement starts with exact warm-reuse and
 incremental-construction regressions, affected Rust checks and original Linux
 read-only evidence. Keep advanced projections explicit. Event maintenance and UI
