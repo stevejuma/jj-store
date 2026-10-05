@@ -36,7 +36,7 @@ export function projectLocalStacks(
       ? "Native branch membership differs from saved configuration after a CLI/Undo change. Review it and explicitly reapply saved branches to reconcile; Refresh does not change the graph."
       : null) ??
     (active?.conflicted
-      ? "This workspace contains native JJ conflicts. Inspect and resolve them with JJ; your branch membership and unfinished work are retained."
+      ? "This workspace contains native JJ conflicts. Resolve supported conflicts in the app; your branch membership and unfinished work are retained."
       : "");
   snapshot.capabilities =
     state.warning && active

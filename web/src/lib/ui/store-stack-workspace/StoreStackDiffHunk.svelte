@@ -11,6 +11,7 @@
   } from "../../controller/stack-workspace/types.js";
   let {
     hunk,
+    displayPatch,
     drag,
     path,
     origin,
@@ -24,6 +25,7 @@
     onAssign,
   }: {
     hunk: WorkspaceHunk;
+    displayPatch?: string;
     drag: WorkspaceDragSession;
     path: string;
     origin: string;
@@ -86,9 +88,11 @@
       files={[
         {
           path,
-          patch: hunk.patch.startsWith("diff --git ")
-            ? hunk.patch
-            : `diff --git a/${path} b/${path}\n--- a/${path}\n+++ b/${path}\n${hunk.patch}`,
+          patch:
+            displayPatch ??
+            (hunk.patch.startsWith("diff --git ")
+              ? hunk.patch
+              : `diff --git a/${path} b/${path}\n--- a/${path}\n+++ b/${path}\n${hunk.patch}`),
         },
       ]}
       {viewMode}

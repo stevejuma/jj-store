@@ -1244,3 +1244,165 @@ test("newly loaded ancestor destinations are usable without a refresh", async ()
     adapter.close();
   }
 });
+
+function enableLocalState(source: StoreDataSource) {
+  source.stacks = {
+    execute: async () => ({
+      version: 1,
+      operation,
+      revision: 1,
+      active: "work",
+      warning: null,
+      conflicts: ["context.ts"],
+      workspaces: [
+        {
+          id: "work",
+          name: "Work",
+          target: "main",
+          target_commit: base,
+          applied: ["topic"],
+          merge_commit: parent,
+          wip_commit: tip,
+          conflicted: true,
+        },
+      ],
+    }),
+    preview: async () => ({ title: "Native", summary: "Native", paths: [] }),
+    inspect: async (request) => ({
+      commits: request.commits.map((commit) => ({
+        commit,
+        mutable: true,
+        reason: null,
+      })),
+    }),
+  };
+}
+test("native hunk replacement retains the complete operation-pinned patch for context expansion", async () => {
+  const { source, binding, pin } = fixture();
+  enableLocalState(source);
+  const hunks = [
+    {
+      id: "native:" + "a".repeat(64),
+      label: "@@ -2,1 +2,1 @@",
+      patch:
+        "--- a/context.ts\n+++ b/context.ts\n@@ -2,1 +2,1 @@\n-old\n+new\n",
+    },
+  ];
+  source.stacks!.hunks = async () => ({
+    source: tip,
+    path: "context.ts",
+    hunks,
+    reason: null,
+  });
+  source.diff = async () =>
+    ({
+      snapshot: pin,
+      next_cursor: null,
+      previous_cursor: null,
+      data: {
+        version: 1,
+        from: parent,
+        to: tip,
+        path: "context.ts",
+        changes: [
+          {
+            path: "context.ts",
+            before: [null],
+            after: [null],
+            sources: [],
+            content: {
+              status: "text",
+              hunks: [
+                {
+                  kind: "matching",
+                  before_start: 0,
+                  after_start: 0,
+                  before: "prefix\n",
+                  after: "prefix\n",
+                },
+                {
+                  kind: "different",
+                  before_start: 7,
+                  after_start: 7,
+                  before: "old\n",
+                  after: "new\n",
+                },
+                {
+                  kind: "matching",
+                  before_start: 11,
+                  after_start: 11,
+                  before: "suffix\n",
+                  after: "suffix\n",
+                },
+              ],
+            },
+          },
+        ],
+      },
+    }) as never;
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  try {
+    const snapshot = await adapter.read();
+    const file = await adapter.readFileDiff({
+      repository,
+      revision: snapshot.revision,
+      readKey: snapshot.readKey,
+      source: "unassigned",
+      path: "context.ts",
+    });
+    expect(file.hunks).toEqual(hunks);
+    expect(file.patch).toMatch(/^ prefix$/mu);
+    expect(file.patch).toMatch(/^ suffix$/mu);
+  } finally {
+    adapter.close();
+  }
+});
+test("conflict reads preserve ordered multi-sided and unsupported descriptors and reject stale/foreign scopes", async () => {
+  const { source, binding } = fixture();
+  enableLocalState(source);
+  const terms = ["left\n", "base\n", "right\n", "base\n", null];
+  let reason: string | null = null,
+    responseSource = tip;
+  source.stacks!.conflict = async () => ({
+    source: responseSource,
+    path: "context.ts",
+    terms,
+    reason,
+  });
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  try {
+    const snapshot = await adapter.read();
+    const request = {
+      repository,
+      revision: snapshot.revision,
+      readKey: snapshot.readKey,
+      path: "context.ts",
+    };
+    expect(await adapter.readConflict(request)).toMatchObject({
+      path: "context.ts",
+      terms,
+    });
+    reason = "Conflict versions exceed the bounded text or version limit.";
+    expect(await adapter.readConflict(request)).toMatchObject({
+      terms,
+      reason,
+    });
+    responseSource = parent;
+    await expect(adapter.readConflict(request)).rejects.toThrow();
+    await expect(
+      adapter.readConflict({ ...request, readKey: "stale" }),
+    ).rejects.toThrow();
+    adapter.close();
+    await expect(adapter.readConflict(request)).rejects.toThrow();
+  } finally {
+    adapter.close();
+  }
+});

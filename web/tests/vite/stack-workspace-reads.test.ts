@@ -201,6 +201,8 @@ test("diff presentation keeps byte offsets out of line numbers and skips matchin
   const { reads, calls } = fixture();
   const file = await reads.diff({ from: base, to: head }, textChange.path);
   assert.equal(file.content?.status, "ready");
+  assert.match(file.patch!, /^ café$/mu);
+  assert.match(file.patch!, /^ tail$/mu);
   assert.equal(file.hunks.length, 1);
   assert.match(file.hunks[0]!.patch, /@@ -2,1 \+2,1 @@\n-old\n\+new\n/u);
   assert.doesNotMatch(file.hunks[0]!.patch, /^ (café|tail)$/mu);

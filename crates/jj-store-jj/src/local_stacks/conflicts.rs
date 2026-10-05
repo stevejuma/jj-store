@@ -37,9 +37,31 @@ pub async fn conflict(
     }
     let mut terms = vec![];
     let mut reason = None;
+    let limits = crate::local_browser::Limits::default();
+    let mut text_bytes = 0usize;
+    if value.to_file_merge().is_none()
+        || value
+            .to_executable_merge()
+            .and_then(|v| jj_lib::conflicts::resolve_file_executable(&v))
+            .is_none()
+    {
+        access.authorize().await.map_err(|_| Error::Denied)?;
+        return Ok(Conflict {
+            source: request.source,
+            path: request.path,
+            terms,
+            reason: Some("This structural or mode conflict cannot be resolved as text.".into()),
+        });
+    }
     for term in value.iter() {
         let resolved = Merge::resolved(term.clone());
         if let Some(bytes) = hunks::bytes(repo.as_ref(), &path, &resolved).await? {
+            text_bytes = text_bytes.saturating_add(bytes.len());
+            if text_bytes > limits.max_text_bytes || terms.len() >= limits.max_changes {
+                reason = Some("Conflict versions exceed the bounded text or version limit.".into());
+                terms.clear();
+                break;
+            }
             terms.push(if term.is_some() {
                 Some(String::from_utf8(bytes).map_err(jj)?)
             } else {
@@ -52,10 +74,6 @@ pub async fn conflict(
             terms.clear();
             break;
         }
-    }
-    if terms.len() != 3 {
-        reason =
-            Some("This multi-sided or structural conflict requires native JJ resolution.".into());
     }
     access.authorize().await.map_err(|_| Error::Denied)?;
     Ok(Conflict {

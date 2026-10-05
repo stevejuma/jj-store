@@ -43,6 +43,7 @@
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
   import { provideDiscussionFocus } from "../store-discussion/discussion-focus.svelte.js";
   import StoreFocusedDiscussion from "../store-discussion/StoreFocusedDiscussion.svelte";
+  import StoreStackWorkspaceConflict from "../store-stack-workspace/StoreStackWorkspaceConflict.svelte";
   import StoreConflictEditor from "../store-conflicts/StoreConflictEditor.svelte";
   import { conflictEditorKey } from "../store-conflicts/conflict-editor.js";
   import { resolveLayoutStorage } from "../layout-storage.js";
@@ -78,10 +79,15 @@
   const workspaceGuard = $state({ editing: false });
   setContext(workspaceNavigationKey, workspaceGuard);
   let conflictOpen = $state(false);
+  const editorOpen = $derived(
+    conflictOpen || Boolean(stackWorkspace?.conflictOpen),
+  );
   $effect(() => {
     controller.actions.setRefreshPaused?.(
       "code-editor",
-      conflictOpen || workspaceGuard.editing,
+      conflictOpen ||
+        Boolean(stackWorkspace?.conflictOpen) ||
+        workspaceGuard.editing,
     );
     return () => controller.actions.setRefreshPaused?.("code-editor", false);
   });
@@ -94,7 +100,7 @@
     conflictOpen = true;
   });
   const workspaceBlocked = $derived(
-    conflictOpen ||
+    editorOpen ||
       workspaceGuard.editing ||
       ["previewing", "prepared", "applying", "unknown"].includes(
         controller.state.mutation.status,
@@ -123,21 +129,21 @@
   const activeNavigationItem = $derived(activeStoreNavigation(current));
   observeRepositoryThreadNavigation(() => controller);
   function selectPage(page: StorePage) {
-    if (conflictOpen) return;
+    if (editorOpen) return;
     controller.actions.selectPage(page);
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function select(item: CommunityNavigationItemModel) {
-    if (conflictOpen) return;
+    if (editorOpen) return;
     selectStoreNavigation(controller, item);
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function navigate(delta: -1 | 1) {
-    if (conflictOpen) return;
+    if (editorOpen) return;
     controller.actions.navigate(delta);
   }
   function openSettings() {
-    if (conflictOpen) return;
+    if (editorOpen) return;
     settingsOpen = true;
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
@@ -164,13 +170,14 @@
   controller={shell}
   {displayMode}
   {desktopChrome}
-  canNavigateBack={canNavigateBack && !conflictOpen}
-  canNavigateForward={canNavigateForward && !conflictOpen}
+  canNavigateBack={canNavigateBack && !editorOpen}
+  canNavigateForward={canNavigateForward && !editorOpen}
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
   {#snippet headerCenter()}{#if settingsOpen}{@render settingsRepository()}{:else if isStacksRoute(current) && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
         controller={stackWorkspace}
+        disabled={editorOpen}
       />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
         {controller}
       />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
@@ -178,14 +185,14 @@
       />{/if}{/snippet}
   {#snippet headerEnd()}{#if !settingsOpen}<StoreApplicationHeaderActions
         {controller}
-        disabled={conflictOpen}
+        disabled={editorOpen}
         detailsOpen={!detailsRail.closed}
         toggleDetails={() =>
           detailsRail.closed ? detailsRail.open() : detailsRail.close()}
       />{/if}{/snippet}
   <AppShell.Sidebar
     side="left"
-    inert={conflictOpen}
+    inert={editorOpen}
     label={settingsOpen ? "Settings sidebar" : "Repository navigation sidebar"}
     mobileLabel={settingsOpen ? "Settings" : "Repositories"}
     resizeLabel="Resize repository navigation sidebar"
@@ -228,7 +235,7 @@
     {settingsSection}
     {settingsRepository}
     {closeSettings}
-    {conflictOpen}
+    conflictOpen={editorOpen}
     {workspaceBlocked}
     {canNavigateBack}
     {canNavigateForward}
@@ -249,10 +256,10 @@
       threadFocused={threadPanel.focused}
     />{/if}
   <StoreFocusedDiscussion
-    open={!settingsOpen && !conflictOpen && !threadPanel.focused}
+    open={!settingsOpen && !editorOpen && !threadPanel.focused}
   />
   <StoreThreadFocus
-    open={!settingsOpen && !conflictOpen && threadPanel.focused}
+    open={!settingsOpen && !editorOpen && threadPanel.focused}
     {controller}
   />
   <StoreConflictEditor
@@ -261,6 +268,12 @@
     returnFocus={conflictReturnFocus}
     onClose={() => (conflictOpen = false)}
   />
+  {#if stackWorkspace && isStacksRoute(current)}
+    <StoreStackWorkspaceConflict
+      controller={stackWorkspace}
+      bind:open={stackWorkspace.conflictOpen}
+    />
+  {/if}
 </CommunityAppShell>
 {#if !settingsOpen}<StoreSearchOverlay
     {controller}

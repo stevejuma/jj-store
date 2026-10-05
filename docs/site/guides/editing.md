@@ -53,8 +53,13 @@ WIP files or native text hunks, retaining unselected content.
 Hunk tokens bind the exact source and complete file bytes. Binary, mode/type,
 conflicted and oversized deltas require whole-file operations or native JJ
 tools. Net branch diffs are read-only. The local Merge Editor supports bounded
-three-term text conflicts; other native conflict shapes remain intact and
-require JJ resolution.
+three-term text conflicts with an editable Resolved pane. Multi-sided text
+conflicts retain the native version picker and show the same editable Merge
+Editor. Compare each version with the current resolution, then explicitly stage
+the whole file for complete-file preview and guarded JJ resolution. Selecting a
+deleted version cannot replace it with an empty file. Structural, mode, binary
+and oversized conflicts retain their explicit unsupported reason and require
+native JJ tools.
 
 Undo and Redo follow repository-wide native operation history, including CLI
 operations, while retaining current Git bookkeeping. They do not restore

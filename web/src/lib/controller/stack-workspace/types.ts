@@ -2,6 +2,8 @@
 export type WorkspaceHunk = { id: string; label: string; patch: string };
 export type WorkspaceFile = {
   path: string;
+  /** Complete bounded display patch; never selection authority. */
+  patch?: string;
   hunks: WorkspaceHunk[];
   /** Real reads distinguish an unloaded patch from an empty text diff. */
   content?:
@@ -88,6 +90,8 @@ export type NamedWorkspace = {
 };
 export type WorkspaceConflict = {
   path: string;
+  terms?: (string | null)[];
+  reason?: string;
   left: string;
   base: string;
   right: string;

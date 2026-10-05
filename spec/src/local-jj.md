@@ -1834,9 +1834,13 @@ The ordinary local Stacks mutation profile now includes native bookmark deletion
 whole-file/native-hunk WIP discard, and complete native text-conflict
 resolution. Conflict terms are read lazily through guarded POST
 `stacks/conflict`; ordered three-term text conflicts use the existing Merge
-Editor. Multi-sided, structural, mode-conflicted and oversized conflicts retain
-native values and report that JJ resolution is required. Conflict paths are
-bounded to 50 per current read.
+Editor. Multi-sided text conflicts expose bounded ordered versions for in-app
+pairwise comparison in the same editable Merge Editor. Each comparison uses the
+reviewed result and the next selected native version with its actual preceding
+negative term; pair completion does not stage the whole native conflict. The
+user explicitly stages the reviewed complete text before preview. Structural,
+mode-conflicted, binary and oversized conflicts retain native values with
+explicit unsupported reasons. Conflict paths are bounded to 50 per current read.
 
 Undo/Redo restores the native repository operation stack, including CLI work,
 with native descriptions and remote tracking semantics. Current Git bookkeeping

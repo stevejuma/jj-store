@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed combined bounded loader/cache/reference preparation and topology-only recovery alongside ordinary native Stacks mutations; the local manual retains jj-lib megamerge/WIP, squash descendant propagation, local TOML, operation pins and explicit deferred recovery gates.",
-      "fingerprint": "b62b038180b33ec462997851c944eb3a092c0013fcf17230083ad2c2a1b6f1f5"
+      "reason": "Reviewed bounded ordered multi-sided text terms and complete-file resolution; actual negative terms seed comparisons, while unsupported native values, operation/configuration guards and merge/WIP identities stay intact.",
+      "fingerprint": "114e0794d09c03ca1d10102b50357a4c5106f1440f247ff7033d5fcdbaf08504"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the final scoped conflict-count stylesheet, compact one-row banner, target-side file indicators, full-width unavailable diffs and guarded shared editor; toast actions retain distinct resting, hover and focus surfaces with unchanged native commands and notification lifetime.",
-      "fingerprint": "dc7fd205252a51ce45e8c9bf8052d5418f9ba96988ff5d34cabdb6addb19b5d5"
+      "reason": "Reviewed expandable hunk context and the shared Merge Editor for three-term and multi-sided workspace conflicts. Every native version can be compared with the reviewed result; explicit whole-file staging preserves the complete resolution boundary and native commands.",
+      "fingerprint": "7baf909b815b1b5df567771905f3a6721dc2e9ea6ace2f76071790475748fc3a"
     }
   },
   {

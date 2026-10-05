@@ -1,14 +1,11 @@
 <script lang="ts">
-  import {
-    MergeEditor,
-    type MergeResolvedChange,
-  } from "@lapismd/design-core/diff";
+  import { type MergeResolvedChange } from "@lapismd/design-core/diff";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import FileWarningIcon from "@lucide/svelte/icons/file-warning";
-  import type { Model } from "../../api/client.js";
   import type { StoreConflictResolution } from "./model.js";
-  import { repositoryEditorLanguage } from "../community-projects/repository-editor-language.js";
+  import StoreConflictTerms from "./StoreConflictTerms.svelte";
+  import StoreConflictText from "./StoreConflictText.svelte";
 
   let {
     conflict,
@@ -45,7 +42,6 @@
         : undefined,
     );
   }
-  const language = $derived(repositoryEditorLanguage(conflict.path).id);
   const unsupported = $derived(
     conflict.editor.status === "unsupported"
       ? conflict.editor.reason.replaceAll("_", " ")
@@ -56,18 +52,15 @@
 <section class="store-conflict-path" aria-label={`Conflict ${conflict.path}`}>
   {#if conflict.editor.status === "text"}
     <div class="store-conflict-path__editor">
-      <MergeEditor
+      <StoreConflictText
         path={conflict.path}
-        {language}
         left={conflict.editor.contents[0]}
         base={conflict.editor.contents[1]}
         right={conflict.editor.contents[2]}
-        baseLabel="Resolved"
         editable={actions.includes("uploaded_file")}
         readOnly={uploading ||
           (!actions.includes("uploaded_file") &&
             !actions.includes("select_term"))}
-        editableSides={["base"]}
         onResolvedChange={resolved}
         onBaseChange={changed}
       />
@@ -82,25 +75,14 @@
         </Alert.Description>
       </Alert.Root>
       {#if actions.includes("select_term")}
-        <div
-          class="store-conflict-path__terms"
-          aria-label="Native conflict terms"
-        >
-          {#each conflict.terms as term (term.id)}
-            <Button
-              type="button"
-              size="sm"
-              variant={resolution?.type === "select_term" &&
-              resolution.term === term.id
-                ? "secondary"
-                : "outline"}
-              aria-pressed={resolution?.type === "select_term" &&
-                resolution.term === term.id}
-              onclick={() => onSelect({ type: "select_term", term: term.id })}
-              >Use {term.label ?? `term ${term.id}`}</Button
-            >
-          {/each}
-        </div>
+        <StoreConflictTerms
+          terms={conflict.terms}
+          selected={resolution?.type === "select_term"
+            ? resolution.term
+            : undefined}
+          disabled={uploading}
+          onSelect={(term) => onSelect({ type: "select_term", term })}
+        />
       {/if}
     </div>
   {/if}

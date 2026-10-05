@@ -316,3 +316,40 @@
     ).toBeLessThanOrEqual(390);
   }}
 />
+
+<Story
+  name="Draggable hunks retain expandable full context"
+  args={{ context: true }}
+  play={async ({ canvasElement }) => {
+    const canvas = workspaceCanvas(canvasElement);
+    await unassignedFile(canvasElement, "src/context.ts");
+    const cards = [
+      ...canvasElement.querySelectorAll<HTMLElement>(
+        ".stack-workspace__hunk-card",
+      ),
+    ];
+    expect(cards).toHaveLength(2);
+    for (const card of cards) {
+      expect(card).toHaveAttribute("draggable", "true");
+      const view = within(card);
+      for (const button of view.getAllByRole("button", {
+        name: /Show.*(?:unmodified )?lines/i,
+      }))
+        await userEvent.click(button);
+    }
+    for (const line of [
+      "context_1",
+      "context_30",
+      "context_60",
+      "changed_21",
+      "changed_41",
+    ])
+      expect(canvas.getAllByText(line, { exact: true })).toHaveLength(1);
+    await userEvent.click(
+      canvas.getByRole("radio", { name: "Show split diff" }),
+    );
+    expect(
+      canvasElement.querySelector('[data-view-mode="split"]'),
+    ).not.toBeNull();
+  }}
+/>

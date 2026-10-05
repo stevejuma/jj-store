@@ -2025,3 +2025,164 @@ async fn selected_hunk_discard_retains_unselected_hunks() {
     );
     assert!(state.can_undo);
 }
+
+#[tokio::test]
+async fn multisided_text_conflicts_offer_in_app_resolution_and_preserve_other_paths() {
+    let temp = fixture();
+    let root = temp.path();
+    for name in ["left", "right", "third"] {
+        stock(root, &["new", "main"]);
+        fs::write(root.join("base.txt"), format!("{name}\n")).unwrap();
+        fs::write(root.join("other.txt"), format!("{name}\n")).unwrap();
+        stock(root, &["bookmark", "create", name]);
+    }
+    stock(root, &["new", "main"]);
+    let mut state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Many versions".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    for name in ["left", "right", "third"] {
+        state = run(
+            root,
+            Some(&state),
+            Command::Apply {
+                branch: name.into(),
+            },
+        )
+        .await;
+    }
+    let merge = state.workspaces[0].merge_commit.clone();
+    let change = stock(root, &["log", "-r", "@", "--no-graph", "-T", "change_id"]);
+    let conflict = local_stacks::conflict(
+        Arc::new(Access(root.join(".jj/repo"))),
+        root.canonicalize().unwrap(),
+        local_stacks::HunkRequest {
+            version: 1,
+            binding_generation: 1,
+            operation: state.operation,
+            revision: state.revision,
+            source: state.workspaces[0].wip_commit.clone(),
+            path: "base.txt".into(),
+        },
+    )
+    .await
+    .unwrap();
+    assert_eq!(conflict.terms.len(), 5);
+    assert!(conflict.reason.is_none(), "{:?}", conflict.reason);
+    // Native merge ordering follows the configured parent order, not apply order.
+    let mut versions = conflict
+        .terms
+        .iter()
+        .step_by(2)
+        .cloned()
+        .collect::<Vec<_>>();
+    versions.sort();
+    assert_eq!(
+        versions,
+        vec![
+            Some("left\n".into()),
+            Some("right\n".into()),
+            Some("third\n".into())
+        ]
+    );
+    let selected = conflict
+        .terms
+        .iter()
+        .step_by(2)
+        .find(|value| value.as_deref() == Some("third\n"))
+        .unwrap()
+        .clone()
+        .unwrap();
+    state = run(
+        root,
+        Some(&state),
+        Command::Resolve {
+            path: "base.txt".into(),
+            content: selected,
+        },
+    )
+    .await;
+    assert_eq!(
+        fs::read_to_string(root.join("base.txt")).unwrap(),
+        "third\n"
+    );
+    assert_eq!(state.conflicts, vec!["other.txt"]);
+    assert_eq!(state.workspaces[0].merge_commit, merge);
+    assert_eq!(state.workspaces[0].applied, vec!["left", "right", "third"]);
+    assert_eq!(
+        stock(root, &["log", "-r", "@", "--no-graph", "-T", "change_id"]),
+        change
+    );
+}
+
+#[tokio::test]
+async fn conflict_versions_remain_bounded_and_binary_values_are_not_text() {
+    let temp = fixture();
+    let root = temp.path();
+    for (name, byte) in [("left", b'l'), ("right", b'r')] {
+        stock(root, &["new", "main"]);
+        fs::write(root.join("binary.txt"), [byte, 0]).unwrap();
+        // Each side fits individually, but their aggregate exceeds the text budget.
+        fs::write(root.join("bounded.txt"), vec![byte; 150 * 1024]).unwrap();
+        stock(root, &["bookmark", "create", name]);
+    }
+    stock(root, &["new", "main"]);
+    let mut state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Bounded conflicts".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    for name in ["left", "right"] {
+        state = run(
+            root,
+            Some(&state),
+            Command::Apply {
+                branch: name.into(),
+            },
+        )
+        .await;
+    }
+    let before = stock(root, &["op", "log", "--no-graph", "-n", "1", "-T", "id"]);
+    for path in ["binary.txt", "bounded.txt"] {
+        let request = local_stacks::HunkRequest {
+            version: 1,
+            binding_generation: 1,
+            operation: state.operation,
+            revision: state.revision,
+            source: state.workspaces[0].wip_commit.clone(),
+            path: path.into(),
+        };
+        let result = local_stacks::conflict(
+            Arc::new(Access(root.join(".jj/repo"))),
+            root.canonicalize().unwrap(),
+            request,
+        )
+        .await
+        .unwrap();
+        assert!(result.terms.is_empty());
+        let reason = result.reason.unwrap();
+        assert!(
+            reason.contains(if path == "binary.txt" {
+                "file type"
+            } else {
+                "bounded"
+            }),
+            "{reason}"
+        );
+    }
+    assert_eq!(
+        stock(root, &["op", "log", "--no-graph", "-n", "1", "-T", "id"]),
+        before
+    );
+}

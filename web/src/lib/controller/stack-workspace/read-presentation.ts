@@ -41,6 +41,7 @@ export function presentStackFile(
   const header = sections.shift() ?? "";
   return {
     path: change.path,
+    ...(patch ? { patch } : {}),
     change: structuredClone({
       before: change.before,
       after: change.after,

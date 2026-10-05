@@ -306,6 +306,22 @@ Resolve conflicts action uses the public secondary variant with a themed
 background at rest, retaining a visibly distinct hover surface and visible
 keyboard focus.
 
+Stacks retains the full bounded, operation-pinned text comparison alongside
+native hunk descriptors. Draggable cards use the shared FileDiff
+collapsed-context controls to reveal unchanged prefix, intervening and suffix
+lines, assigning each context line to one card without duplicating changed rows.
+Context expansion never changes issued hunk IDs or selection/drag authority.
+Stacks and Op Log reuse the same conflict surface, file browser and editable
+resolved-pane presentation; workspace conflict reads remain lazy per selected
+path and drafts survive file switches and browser toggles. Navigation and
+workspace switching remain disabled while the shell replacement editor is open.
+Opening resolution preview releases its surface focus lease before focusing the
+dialog. Local resolution previews/applies the selected complete file through its
+existing guarded JJ command, retaining other conflicts, WIP and workspace
+membership. Warning copy offers in-app resolution; genuinely unsupported native
+shapes retain their explicit reason and do not fabricate an editor or enable a
+command.
+
 Unstaged uses the shared virtual FileListing in all three modes. Current
 conflict paths and unresolved target-side native terms show an accessible
 warning indicator and the same background as the workspace warning banner;
@@ -2602,9 +2618,11 @@ The ordinary local Stacks mutation profile now includes native bookmark deletion
 whole-file/native-hunk WIP discard, and complete native text-conflict
 resolution. Conflict terms are read lazily through guarded POST
 `stacks/conflict`; ordered three-term text conflicts use the existing Merge
-Editor. Multi-sided, structural, mode-conflicted and oversized conflicts retain
-native values and report that JJ resolution is required. Conflict paths are
-bounded to 50 per current read.
+Editor. Multi-sided text conflicts expose bounded ordered versions for pairwise
+comparison in the same editable Merge Editor. The user reviews every version and
+explicitly stages the complete resolved file before preview. Structural, mode,
+binary and oversized values retain explicit unsupported reasons. Conflict paths
+are bounded to 50 per current read.
 
 Undo/Redo restores the native repository operation stack, including CLI work,
 with native descriptions and remote tracking semantics. Current Git bookkeeping

@@ -119,13 +119,10 @@ export class LocalStacksSession {
     this.signal.throwIfAborted();
     if (result.source !== source || result.path !== path)
       throw new ApiError("snapshot_mismatch");
-    if (result.reason || result.terms.length !== 3)
-      throw new WorkspaceCommandError(
-        "invalid",
-        result.reason ?? "This conflict needs native JJ resolution.",
-      );
     return {
       path,
+      terms: result.terms,
+      ...(result.reason ? { reason: result.reason } : {}),
       left: result.terms[0] ?? "",
       base: result.terms[1] ?? "",
       right: result.terms[2] ?? "",

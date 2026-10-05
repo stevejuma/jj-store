@@ -13,7 +13,18 @@
   let {
     writable = true,
     membershipChanged = false,
-  }: { writable?: boolean; membershipChanged?: boolean } = $props();
+    multiple = false,
+    multisided = false,
+    deletedVersion = false,
+    unsupported = false,
+  }: {
+    writable?: boolean;
+    membershipChanged?: boolean;
+    multiple?: boolean;
+    multisided?: boolean;
+    deletedVersion?: boolean;
+    unsupported?: boolean;
+  } = $props();
   const controller = untrack(() => createInMemoryStoreController("stacks"));
   const layoutStorage = untrack(createMemoryStoryStorage);
   const fixture = untrack(() => {
@@ -27,8 +38,34 @@
         right: "export const enabled = null;\n",
       },
     ];
+    if (multisided)
+      snapshot.conflicts[0]!.terms = [
+        "left\n",
+        "base\n",
+        "right\n",
+        "base\n",
+        "third\n",
+      ];
+    if (deletedVersion)
+      snapshot.conflicts[0]!.terms = [
+        "left\n",
+        "base\n",
+        "right\n",
+        "base\n",
+        null,
+      ];
+    if (unsupported)
+      snapshot.conflicts[0]!.reason =
+        "This structural or mode conflict cannot be resolved as text.";
     snapshot.workspaceWarning =
       "This workspace contains native JJ conflicts. Your branch membership and unfinished work are retained.";
+    if (multiple)
+      snapshot.conflicts.push({
+        path: "src/output.ts",
+        left: "export const output = 1;\n",
+        base: "export const output = 0;\n",
+        right: "export const output = 2;\n",
+      });
     snapshot.membershipChanged = membershipChanged;
     if (membershipChanged) snapshot.capabilities.push("reconcile_workspace");
     if (!writable) snapshot.capabilities = [];

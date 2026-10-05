@@ -54,8 +54,12 @@ abandonment, selected WIP discard and bounded text-conflict resolution. Native
 identities without reconstructing the combination. Emptied WIP is retained.
 Delete stack removes only its top bookmark; lower bookmarks and commits remain
 reachable. Repository-wide Undo/Redo includes CLI operations and retains current
-Git bookkeeping; it does not restore TOML. Partial binary/mode/type hunks and
-multi-sided, structural or oversized conflicts remain unsupported in the UI.
+Git bookkeeping; it does not restore TOML. Ordered multi-sided text versions
+support in-app review and complete-file resolution. The lazy conflict reader
+bounds total version text to 256 KiB and term count to 1,000; native ordering
+and absent terms are preserved. Partial binary/mode/type hunks and structural,
+mode, binary or oversized conflicts retain explicit unsupported reasons in the
+UI.
 
 Preview is advisory; commands validate the shown operation and settings
 revision. After a lost response, refresh current JJ state and inspect its

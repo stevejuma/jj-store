@@ -2,6 +2,7 @@
   import { untrack } from "svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import { workspaceHunkContext } from "../../controller/stack-workspace/hunk-context.js";
   import StoreStackDiffHunk from "./StoreStackDiffHunk.svelte";
   import CommunityDiffControls from "../community-diff-controls/CommunityDiffControls.svelte";
   import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
@@ -33,6 +34,9 @@
     wrap = $state(false);
   const file = $derived(
     controller.filesFor(diff.source).find((item) => item.path === diff.path),
+  );
+  const context = $derived(
+    file ? workspaceHunkContext(file) : new Map<string, string>(),
   );
   const patchRead = $derived(
     controller.details.patchState(diff.source, diff.path),
@@ -220,6 +224,7 @@
         {#each file.hunks as hunk (hunk.id)}
           <StoreStackDiffHunk
             {hunk}
+            displayPatch={context.get(hunk.id)}
             drag={controller.drag}
             origin={diff.origin}
             path={file.path}

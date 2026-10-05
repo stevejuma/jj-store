@@ -619,7 +619,8 @@
           "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
           "license": "Apache-2.0"
         }
-      ]
+      ],
+      "reason": "Owned shared FileDiff composition reused by repository/Op Log and Stacks. Stacks retains bounded unchanged context in display-only hunk partitions; native hunk tokens and drag selections remain authoritative. Conflict surface, term picker and text pane are extracted from jj-store-owned StoreConflictEditor/StoreConflictPath, using public Design Core Shell and MergeEditor without new Community source imports."
     },
     {
       "local": "web/src/lib/ui/community-composer-mention-picker/CommunityComposerMentionPicker.css",

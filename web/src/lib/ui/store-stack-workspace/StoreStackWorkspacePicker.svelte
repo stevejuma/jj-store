@@ -1,7 +1,10 @@
 <script lang="ts">
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
-  let { controller }: { controller: StackWorkspaceController } = $props();
+  let {
+    controller,
+    disabled = false,
+  }: { controller: StackWorkspaceController; disabled?: boolean } = $props();
   const snapshot = $derived(controller.snapshot);
 </script>
 
@@ -33,9 +36,9 @@
       emptyResult="No matching workspaces."
       controlled
       scrollStrategy="styled"
-      disabled={!controller.can("switch_workspace")}
+      disabled={disabled || !controller.can("switch_workspace")}
       onChange={(workspace) => {
-        if (controller.can("switch_workspace"))
+        if (!disabled && controller.can("switch_workspace"))
           void controller.prepare({ kind: "switch_workspace", workspace });
       }}
     />

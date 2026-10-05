@@ -20,7 +20,6 @@
   import StoreStackWorkspaceCanvas from "./StoreStackWorkspaceCanvas.svelte";
   import StoreStackWorkspaceForm from "./StoreStackWorkspaceForm.svelte";
   import StoreStackWorkspacePreview from "./StoreStackWorkspacePreview.svelte";
-  import StoreStackWorkspaceConflict from "./StoreStackWorkspaceConflict.svelte";
   import { selectedWorkspace } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceCommand } from "../../controller/stack-workspace/types.js";
@@ -291,8 +290,4 @@
     bind:open={formOpen}
   />
   <StoreStackWorkspacePreview {controller} />
-  <StoreStackWorkspaceConflict
-    {controller}
-    bind:open={controller.conflictOpen}
-  />
 </section>

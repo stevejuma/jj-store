@@ -1,5 +1,15 @@
 # Specification governance
 
+Stacks context and conflict-editor reuse changes owned UI presentation plus the
+bounded local native conflict reader. Qualify exact context/descriptor
+regressions, shared editor/application stories and local Stacks native tests
+with affected types, ownership, architecture, canonical and progress checks.
+Keep hunk authority, operation/configuration guards and ordered native terms
+intact. Rebuild and restart only the owned development backend; live editor
+verification does not apply resolutions to user repositories. No
+wire/persistence or Design Core contract changes, screenshot comparisons,
+baselines or release qualification are included.
+
 Stacks conflict UI refinements retain owned Community compositions and the
 public Design Core notification presenter, with focused geometry, interaction,
 controller and notification-lifetime evidence; local dependency validation does
