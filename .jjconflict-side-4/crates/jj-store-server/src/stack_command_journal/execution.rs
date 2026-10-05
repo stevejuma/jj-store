@@ -23,6 +23,10 @@ pub struct LocalExecutionV1 {
     pub tree_checkout: Option<crate::stack_checkout_plans::TreeCheckoutReferenceV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub physical_inventory: Option<crate::stack_checkout_plans::PhysicalInventoryReferenceV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub combination: Option<crate::stack_combinations::CombinationBindingV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub completion: Option<super::combination::NativeCompletionV1>,
 }
 pub fn preparation_key(principal: m::PrincipalId, preview: &s::Preview) -> StackPreparationKey {
     let request = &preview.plan.request;
@@ -60,6 +64,8 @@ impl LocalExecutionV1 {
             checkout: None,
             tree_checkout: None,
             physical_inventory: None,
+            combination: None,
+            completion: None,
         };
         value.validate(principal, preview)?;
         Ok(value)
@@ -90,11 +96,22 @@ impl LocalExecutionV1 {
             checkout: None,
             tree_checkout: None,
             physical_inventory: None,
+            combination: None,
+            completion: None,
         };
         value.validate(principal, preview)?;
         Ok(value)
     }
     pub(super) fn validate(&self, principal: m::PrincipalId, preview: &s::Preview) -> Result<()> {
+        if let Some(binding) = &self.combination {
+            binding.validate().map_err(|_| Error::Invalid)?;
+            if self.retention.is_none() || binding.selection() != &preview.plan.combination {
+                return Err(Error::IntentMismatch);
+            }
+        }
+        if let Some(completion) = &self.completion {
+            completion.validate(self)?;
+        }
         if let Some(inventory) = &self.physical_inventory {
             inventory.validate()?;
             if !self
@@ -189,6 +206,8 @@ impl StackCommandJournal {
             completed.checkout = pending.checkout.clone();
             completed.tree_checkout = pending.tree_checkout.clone();
             completed.physical_inventory = pending.physical_inventory.clone();
+            completed.combination = pending.combination.clone();
+            completed.completion = pending.completion.clone();
             if *pending != completed {
                 return Err(Error::IntentMismatch);
             }

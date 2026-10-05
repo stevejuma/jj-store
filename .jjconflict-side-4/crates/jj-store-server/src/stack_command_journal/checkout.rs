@@ -124,6 +124,9 @@ impl StackCommandJournal {
             .status(principal, apply.request_id, apply.intent_digest)?
             .ok_or(Error::NotFound)?;
         let execution = record.execution.as_ref().ok_or(Error::Invalid)?;
+        if execution.combination.is_some() {
+            return Err(Error::InvalidTransition);
+        }
         let saved = execution.checkout.as_ref().ok_or(Error::Invalid)?;
         if proof.preparation() != &execution.key
             || proof.witness() != saved.id

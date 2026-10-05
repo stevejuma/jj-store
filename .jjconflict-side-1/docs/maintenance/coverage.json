@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed immutable inventory selection beside the exact plan, complete original journal authentication/binding before catalog access, journal-then-plan lock order, body-before-reference sync, shared capacity, catalog version 2/journal version 5, legacy byte preservation and strengthened tree-publication admission. No runtime configuration, installed service, transport or physical completion is introduced.",
-      "fingerprint": "b5cdf802b2a5665965cf8254897081a772d372e12a3c2692851714754591e678"
+      "reason": "Reviewed final original combination binding and provider-proof acknowledgement code, shared unit fixtures and exact private-state loss boundaries. Documented journal version 6, unchanged historical formats, pending native evidence, journal-first locking, final combination sync before success, and the separate setup/merge/WIP and production transport gates.",
+      "fingerprint": "ec37a1b2437b3dd6f01e61f968bc6aee9f33a49014cb82abf6f6e8bcfa5ddf93"
     }
   },
   {

@@ -7,6 +7,8 @@ use serde::{Deserialize, Serialize};
 use std::{collections::BTreeSet, path::Path};
 mod authority;
 mod catalog;
+mod linkage;
+pub use linkage::CombinationBindingV1;
 mod validation;
 use catalog::Catalog;
 
@@ -224,6 +226,8 @@ impl CombinationStore {
         if principal != self.principal || journal.scope() != &self.scope {
             return Err(Error::Forbidden);
         }
+        // Do not nest journal acquisition beneath combination coordination.
+        let journal_record = journal.status(principal, apply.request_id, apply.intent_digest);
         let gate = self.root.gate()?;
         let (mut catalog, stamp) = self.read(&gate)?;
         let index = catalog
@@ -242,8 +246,7 @@ impl CombinationStore {
                 replayed: true,
             });
         }
-        let record = journal
-            .status(principal, apply.request_id, apply.intent_digest)
+        let record = journal_record
             .map_err(|_| Error::Unavailable)?
             .ok_or(Error::Unavailable)?;
         if record.preview != original.preview {
@@ -255,6 +258,14 @@ impl CombinationStore {
             || execution.archive != original.retention.archive
         {
             return Err(Error::IntentMismatch);
+        }
+        if let Some(binding) = &execution.combination {
+            if CombinationBindingV1::from_record(&self.scope, principal, original)? != *binding {
+                return Err(Error::IntentMismatch);
+            }
+            if !matches!(record.receipt.state, s::ReceiptState::Rejected { .. }) {
+                return Err(Error::Pending);
+            }
         }
         let phase = if record.receipt.completed() {
             Phase::Selected
@@ -278,4 +289,4 @@ impl CombinationStore {
     }
 }
 #[cfg(all(test, unix))]
-mod tests;
+pub(crate) mod tests;

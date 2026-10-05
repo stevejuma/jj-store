@@ -3,6 +3,12 @@
 mod candidate;
 #[path = "stack_checkout_plans/completion.rs"]
 mod completion;
+#[path = "stack_checkout_plans/coordination.rs"]
+mod coordination;
+#[path = "stack_checkout_plans/coordination_process.rs"]
+mod coordination_process;
+#[path = "stack_checkout_plans/coordination_unchanged.rs"]
+mod coordination_unchanged;
 #[path = "../../jj-store-jj/tests/stack_foreground/fixture.rs"]
 mod fixture;
 #[path = "stack_checkout_plans/installation.rs"]
@@ -81,6 +87,14 @@ impl Input {
         changes: candidate::FileChanges<'_>,
         setup: impl FnOnce(&std::path::Path),
     ) -> Self {
+        Self::build_effects_for(real_physical, changes, setup, false).await
+    }
+    async fn build_effects_for(
+        real_physical: bool,
+        changes: candidate::FileChanges<'_>,
+        setup: impl FnOnce(&std::path::Path),
+        coordinated_setup: bool,
+    ) -> Self {
         let folder = Fixture::new().await;
         fs::write(folder.root().join("file.txt"), b"original\n").unwrap();
         setup(&folder.root());
@@ -119,12 +133,27 @@ impl Input {
                     view: state.baseline.view,
                     working_copy: state.baseline.commit,
                 },
-                combination: Some(combination.clone()),
+                combination: if coordinated_setup {
+                    None
+                } else {
+                    Some(combination.clone())
+                },
                 working_tree: physical,
             },
-            s::Command::ApplyStack {
-                stack: s::StackId(m::RequestId::new([4; 16])),
-                head: s::CommitIdentity::GitSha1(after),
+            if coordinated_setup {
+                s::Command::Setup {
+                    target: s::BookmarkTarget {
+                        name: "main".into(),
+                        remote: None,
+                        head: s::CommitIdentity::GitSha1(m::GitSha1Id::new([0; 20])),
+                    },
+                    name: "Coordination fixture".into(),
+                }
+            } else {
+                s::Command::ApplyStack {
+                    stack: s::StackId(m::RequestId::new([4; 16])),
+                    head: s::CommitIdentity::GitSha1(after),
+                }
             },
         )
         .unwrap();

@@ -8,12 +8,14 @@ use serde::{Deserialize, Serialize};
 use std::path::Path;
 mod catalog;
 mod checkout;
+mod combination;
 mod execution;
 mod inventory;
 mod transition;
 mod tree_checkout;
 use catalog::Catalog;
 pub use checkout::SavedCheckoutV1;
+pub use combination::NativeCompletionV1;
 pub use execution::{LocalExecutionV1, preparation_key};
 
 pub const MAX_RECORDS: usize = 128;
@@ -115,11 +117,20 @@ impl Record {
         }
         if let Some(execution) = &self.execution {
             execution.validate(self.principal, &self.preview)?;
-            if execution.checkout.is_some()
+            if (execution.checkout.is_some() || execution.completion.is_some())
                 && !matches!(
                     self.receipt.state,
                     s::ReceiptState::Published { .. } | s::ReceiptState::Retired { .. }
                 )
+            {
+                return Err(Error::Invalid);
+            }
+            if execution.combination.is_some()
+                && let s::ReceiptState::Published {
+                    checkout: s::CheckoutState::Verified { fingerprint },
+                    ..
+                } = &self.receipt.state
+                && execution.completion.as_ref().map(|c| c.physical()) != Some(*fingerprint)
             {
                 return Err(Error::Invalid);
             }
@@ -254,11 +265,12 @@ impl StackCommandJournal {
             self.root.sync_selected(&gate, stamp)?;
             return Ok(Selection::from_record(retained, true));
         }
-        if record
-            .execution
-            .as_ref()
-            .is_some_and(|e| e.checkout.is_some() || e.tree_checkout.is_some())
-        {
+        if record.execution.as_ref().is_some_and(|e| {
+            e.checkout.is_some()
+                || e.tree_checkout.is_some()
+                || e.combination.is_some()
+                || e.completion.is_some()
+        }) {
             return Err(Error::InvalidTransition);
         }
         if catalog.records.len() == MAX_RECORDS {

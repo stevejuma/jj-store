@@ -1967,3 +1967,12 @@ selection and exact original-input replay after process loss at both boundaries.
 Provider completion retains installed file inodes and original backups, native
 path ordering and unchanged file states. It adds no installed CLI command,
 application receipt, combination selection or production capability.
+
+## Original combination acknowledgement ordering
+
+Private library composition binds a staged provider after-state before
+publication and retains native completion without acknowledging success.
+Matching combination selection and sync precede final journal acknowledgement;
+original retry cannot reselect older state. Journal version 6 is installation
+private, with legacy absent fields retained. Actual setup and merge/WIP command
+engines, public command transport and production writes remain unqualified.

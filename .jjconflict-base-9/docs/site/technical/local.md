@@ -509,3 +509,28 @@ proof of an undo engine. This join does not select real combination updates or
 qualify first-use setup, tree-changing checkout, command transport/status
 endpoints or writable UI controls. These remain required in the approved
 delivery plan.
+
+## Private original combination completion join
+
+Coordinated execution first stages the exact provider-derived after-state and
+saves its scope/principal/preview/retention-bound digest in the original
+journal. An interruption between those selections resumes the same staged body.
+Missing selected bodies cannot be rebuilt from caller snapshots. Journal version
+6 adds optional private binding and native completion references; earlier
+absent-field formats keep their bytes. The 32-KiB execution reservation covers
+these bounded references, and neither catalog evicts history to admit a command.
+
+Saving a sealed native proof keeps checkout Required or Blocked. After fresh
+provider verification, the journal selects and syncs only the original
+combination, then records verified completion last. The lock order is journal
+then combination; the legacy path never nests them in reverse. Retry after
+selection or acknowledgement loss cannot reselect older state or manufacture new
+completion input. Public transitions and legacy finish do not complete bound
+requests. Terminal historical replay returns its original outcome.
+
+Real native changed-tree and reword tests qualify proof linkage. Metadata fault
+fixtures separately cover the gap between combination selection and journal
+acknowledgement; they do not qualify a setup or merge/WIP engine. Production
+command transport, provider-derived membership/switching state and cold UI write
+flows remain required. These private methods do not expose a new CLI command or
+make the application writable.

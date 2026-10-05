@@ -234,3 +234,167 @@ async fn selected_metadata_and_retained_code_reopen_after_source_loss_and_gc() {
     assert!(!f.folder.root().join(".jj/repo/op_store").exists());
     assert!(!f.folder.root().join(".jj/repo/index").exists());
 }
+
+#[tokio::test]
+async fn original_combination_binding_is_durable_but_never_a_success_receipt() {
+    let f = Prepared::new().await;
+    let path = f.private.path().join("combinations");
+    let store = CombinationStore::create(&path, f.scope.clone(), f.actor).unwrap();
+    f.journal
+        .save_local_combination(&store, f.actor, &f.apply(), 0, &f.after, &f.retained)
+        .unwrap();
+    let journal_path = f.private.path().join("journal");
+    let bytes = std::fs::read(journal_path.join("state.json")).unwrap();
+    let state: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!(state["version"], 6);
+    let record = f
+        .journal
+        .status(f.actor, f.apply().request_id, f.apply().intent_digest)
+        .unwrap()
+        .unwrap();
+    assert!(record.execution.unwrap().combination.is_some());
+    assert!(!record.receipt.completed());
+    assert!(store.snapshot().unwrap().active.is_none());
+    let reopened = jj_store_server::stack_command_journal::StackCommandJournal::open(
+        &journal_path,
+        f.scope.clone(),
+    )
+    .unwrap();
+    reopened
+        .check_local_combination(&store, f.actor, &f.apply())
+        .unwrap();
+    assert!(
+        reopened
+            .save_local_combination(&store, f.actor, &f.apply(), 0, &f.after, &f.retained)
+            .unwrap()
+            .replayed
+    );
+    let mut other = f.after.clone();
+    other.combinations[0].name = "A replacement after-state".into();
+    assert!(
+        reopened
+            .save_local_combination(&store, f.actor, &f.apply(), 0, &other, &f.retained)
+            .is_err()
+    );
+    assert_eq!(
+        std::fs::read(journal_path.join("state.json")).unwrap(),
+        bytes
+    );
+    assert!(store.finish(&reopened, f.actor, &f.apply()).is_err());
+}
+
+#[tokio::test]
+async fn interrupted_staging_resumes_original_binding_and_checks_actor_before_store() {
+    let f = Prepared::new().await;
+    let path = f.private.path().join("combinations");
+    let store = CombinationStore::create(&path, f.scope.clone(), f.actor).unwrap();
+    store
+        .stage(f.actor, 0, &f.preview, &f.after, &f.retained)
+        .unwrap();
+    let before = std::fs::read(path.join("state.json")).unwrap();
+    f.journal
+        .save_local_combination(&store, f.actor, &f.apply(), 0, &f.after, &f.retained)
+        .unwrap();
+    assert_eq!(std::fs::read(path.join("state.json")).unwrap(), before);
+    let mut bad = f.apply();
+    bad.prepared.0 = jj_store_model::RecordDigest::new([99; 32]);
+    assert!(
+        f.journal
+            .check_local_combination(&store, f.actor, &bad)
+            .is_err()
+    );
+    assert!(
+        f.journal
+            .check_local_combination(
+                &store,
+                jj_store_model::PrincipalId::new([99; 16]),
+                &f.apply()
+            )
+            .is_err()
+    );
+    assert_eq!(std::fs::read(path.join("state.json")).unwrap(), before);
+    // A selected missing body cannot be rebuilt from the caller's old snapshot.
+    let missing = CombinationStore::create(
+        &f.private.path().join("other-store"),
+        f.scope.clone(),
+        f.actor,
+    )
+    .unwrap();
+    assert!(
+        f.journal
+            .save_local_combination(&missing, f.actor, &f.apply(), 0, &f.after, &f.retained)
+            .is_err()
+    );
+    assert!(missing.snapshot().unwrap().active.is_none());
+}
+
+#[tokio::test]
+async fn terminal_requests_cannot_gain_new_combination_bindings() {
+    let f = Prepared::new().await;
+    let store = CombinationStore::create(
+        &f.private.path().join("combinations"),
+        f.scope.clone(),
+        f.actor,
+    )
+    .unwrap();
+    f.journal
+        .transition(
+            f.actor,
+            &f.apply(),
+            &jj_store_service::stack_workspace::ReceiptState::Prepared,
+            &jj_store_service::stack_workspace::ReceiptState::Rejected {
+                reason: "Canceled before staging".into(),
+            },
+        )
+        .unwrap();
+    assert!(
+        f.journal
+            .save_local_combination(&store, f.actor, &f.apply(), 0, &f.after, &f.retained)
+            .is_err()
+    );
+    assert!(store.snapshot().unwrap().active.is_none());
+    let bytes = std::fs::read(f.private.path().join("combinations/state.json")).unwrap();
+    let state: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!(state["records"], serde_json::json!([]));
+}
+
+#[tokio::test]
+async fn bound_unpublished_rejection_discards_only_the_matching_pending_update() {
+    let f = Prepared::new().await;
+    let store = CombinationStore::create(
+        &f.private.path().join("combinations"),
+        f.scope.clone(),
+        f.actor,
+    )
+    .unwrap();
+    f.journal
+        .save_local_combination(&store, f.actor, &f.apply(), 0, &f.after, &f.retained)
+        .unwrap();
+    f.journal
+        .transition(
+            f.actor,
+            &f.apply(),
+            &jj_store_service::stack_workspace::ReceiptState::Prepared,
+            &jj_store_service::stack_workspace::ReceiptState::Rejected {
+                reason: "Canceled original bound preparation".into(),
+            },
+        )
+        .unwrap();
+    assert_eq!(
+        store.finish(&f.journal, f.actor, &f.apply()).unwrap().phase,
+        c::Phase::Rejected
+    );
+    assert!(store.snapshot().unwrap().active.is_none());
+    assert!(
+        store
+            .finish(&f.journal, f.actor, &f.apply())
+            .unwrap()
+            .replayed
+    );
+    assert!(
+        f.journal
+            .save_local_combination(&store, f.actor, &f.apply(), 0, &f.after, &f.retained)
+            .unwrap()
+            .replayed
+    );
+}

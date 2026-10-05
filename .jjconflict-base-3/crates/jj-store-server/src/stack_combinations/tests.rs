@@ -1,9 +1,9 @@
 use super::*;
 use crate::stack_combinations as c;
 #[path = "../../../jj-store-jj/tests/stack_foreground/fixture.rs"]
-mod fixture;
+pub(crate) mod fixture;
 #[path = "../../tests/stack_combinations/support.rs"]
-mod support;
+pub(crate) mod support;
 use fixture::*;
 use support::*;
 
