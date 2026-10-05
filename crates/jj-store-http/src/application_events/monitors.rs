@@ -55,17 +55,10 @@ impl Monitors {
         if entries.len() >= 257 {
             return Err(Error::busy());
         }
-        if observe(state, repository, local, false, false)
-            .await
-            .is_err()
-        {
-            state.freshness.observe(Change {
-                repository,
-                domain: Domain::Repository,
-                witness: "unavailable".into(),
-                identity: None,
-                audience: None,
-            });
+        if let Err(error) = observe(state, repository, local, false, false).await {
+            if let Some(change) = observation_failure(repository, &error) {
+                state.freshness.observe(change);
+            }
         }
         let leases = Arc::new(AtomicUsize::new(1));
         let weak = Arc::downgrade(state);
@@ -191,13 +184,9 @@ async fn run(
             {
                 state.code_indexes.invalidate(repo);
             }
-            state.freshness.observe(Change {
-                repository,
-                domain: Domain::Repository,
-                witness: "unavailable".into(),
-                identity: None,
-                audience: None,
-            });
+            if let Some(change) = observation_failure(repository, &error) {
+                state.freshness.observe(change);
+            }
         } else {
             activated |= managed;
         }
@@ -372,4 +361,30 @@ fn value_changed(
     previous: &Option<jj_store_adapters::Health>,
 ) -> bool {
     current.as_ref().map(|h| h.borrow().clone()) != *previous
+}
+
+fn observation_failure(repository: Option<m::RepositoryId>, error: &Error) -> Option<Change> {
+    if error.is_observation_pressure() {
+        return None;
+    }
+    Some(change(repository, Domain::Repository, "unavailable".into()))
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn observation_pressure_does_not_invent_repository_changes() {
+        let repository = Some(m::RepositoryId::new([7; 16]));
+        for error in [Error::busy(), Error::timeout(), Error::limit()] {
+            assert!(observation_failure(repository, &error).is_none());
+            assert!(!error.invalidates_code_index());
+        }
+        for error in [Error::denied(), Error::unavailable()] {
+            let notice = observation_failure(repository, &error).unwrap();
+            assert_eq!(notice.repository, repository);
+            assert_eq!(notice.domain, Domain::Repository);
+            assert_eq!(notice.witness, "unavailable");
+        }
+        assert!(Error::denied().invalidates_code_index());
+    }
 }

@@ -89226,6 +89226,81 @@ entries.
     ],
     "next": "Land this UI correction and record final original Linux acceptance separately.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-082",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "xrspplor",
+    "kind": "Retain freshness witnesses during observation pressure",
+    "versions": ["JJ/jj-lib 0.45.1", "Rust 1.98.1", "macOS ARM64"],
+    "formats": ["No API, schema, index or authoritative format change"],
+    "scope": "Narrow HTTP monitor correction exposed by cold Linux acceptance. Busy/deadline/resource admission retains the last witness and existing retry; confirmed access and unavailable-source errors retain their ordinary notice path.",
+    "requirements": ["JST-API-001", "JST-GOV-002"],
+    "files": [
+      "crates/jj-store-http/src/application_events/monitors.rs",
+      "crates/jj-store-http/src/error.rs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-http/src/application_events/monitors.rs#observation_pressure_does_not_invent_repository_changes"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-http application_events::monitors::tests::observation_pressure_does_not_invent_repository_changes --locked -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": ".local/bounded-reads/managed/monitor-pressure-before.log: original behavior invents an unavailable witness for Busy."
+      },
+      {
+        "command": "cargo test -p jj-store-http application_events --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/monitor-pressure-final.log: all 4 event tests pass, including the exact regression and shared-monitor/finite-stream/restart authorization tests."
+      },
+      {
+        "command": "cargo check -p jj-store-http --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/monitor-check.log: affected HTTP package check."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/monitor-architecture.log: 993 modules."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/monitor-canonical.log: canonical requirements validate."
+      },
+      {
+        "command": "cargo fmt -p jj-store-http",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust files formatted."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress && cargo fmt -p jj-store-http -- --check && pnpm exec prettier --check spec/src/api.md spec/src/architecture.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/managed/monitor-governance-final.log"
+      }
+    ],
+    "notes": [
+      "Original 7470 trace showed repeated successful snapshot/graph/commit/diff calls at an unchanged exact selection. The live SSE trace showed repository witnesses oscillating between registration generation and unavailable while background admission was Busy. This feedback loop repeatedly reset selected comparison loading. Busy is pressure, not evidence that repository state changed.",
+      "Both initial and retained monitor observations now use the concrete error classification. Existing access/identity invalidation and unavailable notices are preserved. No additional watcher, timer, queue, route or projection.",
+      "UI tests/types remain E081; no changed UI or public DTO. Full contract capture, unrelated UI/Rust tests and release/RustFS/visual qualification are out of scope. Backend rebuild, landing and final live acceptance are recorded in the following integration evidence."
+    ],
+    "remaining": [
+      "Final landing and live stable Linux browser proof pending. Advanced search/evolution/copy/deep-query, authenticated automatic maintenance and full scale/fault/RustFS/release/visual qualification stay deferred."
+    ],
+    "next": "Land this focused monitor slice, replace only preview backend, then verify stable Linux browsing and index reuse.",
+    "result": "pending"
   }
 ]
 ```

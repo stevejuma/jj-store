@@ -17,6 +17,9 @@ impl Error {
     pub(crate) fn is_busy(&self) -> bool {
         self.code == "busy"
     }
+    pub(crate) fn is_observation_pressure(&self) -> bool {
+        matches!(self.code, "busy" | "deadline_exceeded" | "resource_limit")
+    }
     pub(crate) fn invalidates_code_index(&self) -> bool {
         matches!(
             self.code,
