@@ -1,5 +1,12 @@
 # Read APIs and browser
 
+Local operation graph requests may reuse an existing prepared generation even
+without a historical prefix or child selector. Their fresh selection seal uses
+only operation metadata, and each selected row retains its canonical fingerprint
+check. Ready operation pages require no view or Git reads; supported cold pages
+remain usable without preparation. Exact pins, request/cursor semantics and code
+readers' separate view admission remain unchanged.
+
 Local operation-difference and change-page queries use an exact ready generation
 with independent retained operation/parent admission and fresh canonical source
 checks. Cold queries return the existing rebuild-required selection; ready

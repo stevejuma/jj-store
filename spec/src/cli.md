@@ -1,5 +1,13 @@
 # CLI and server commands
 
+The isolated local prepared-operation regression withholds every source view,
+Git object and source/prepared commit-index file. It compares unfiltered,
+metadata-filtered and historical/child-selector pages with ordinary results,
+while proving fresh authorization, generation and selected/historical metadata
+replacement failures. Code detail still requires its selected view. This
+delivery evidence changes no installed command and does not qualify deep paging
+or combined scale/lifecycle gates.
+
 Focused native reference regressions compare exact, forward/backward and deep
 visible windows with the ordinary reader, while retaining divergence, conflict
 terms, virtual roots, hidden-predecessor exclusion and workspace labels. The

@@ -10,6 +10,8 @@ mod preparation_acceptance;
 mod prepared_comparisons;
 #[path = "local_browser/prepared_details.rs"]
 mod prepared_details;
+#[path = "local_browser/prepared_operation_admission.rs"]
+mod prepared_operation_admission;
 #[path = "local_browser/prepared_operations.rs"]
 mod prepared_operations;
 #[path = "local_browser/prepared_points.rs"]

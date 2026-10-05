@@ -83690,6 +83690,162 @@ entries.
       "Deep operation/predecessor/copy/search continuations, retained oversized comparisons/change groups/extreme candidate continuation, paged native RPC and remaining local application search/index stay delivery work. Prepared local operation admission still reads its selected view for the existing authority seal; a metadata-only path needs its own regression.",
       "Full scale/RSS/latency/fault/cold-browser/RustFS/release and inherited generated-reference/Help/source-review refresh remain deferred."
     ]
+  },
+  {
+    "id": "E-READ-055",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "enclosing Jujutsu change oqwzuzwn",
+    "kind": "Prepared local operation graph admission without selected view or commit authority",
+    "versions": "Rust1.98.1;jj-lib/jj-cli0.45.1;native format-2;index format-6;local Git SHA-1 browser profile;macOS ARM64.",
+    "formats": "No persistence/public DTO/schema/route/cursor/RPC change. Operation graph selection uses the existing canonical operation fingerprint from JSTLOP2; code readers preserve their combined operation/view seal. Current registration access, repository/path binding, generation and bounded current-head membership remain mandatory. Plain and metadata-filtered operations reuse ready handles without constructing scoped commit grants; only separately admitted selected views may cross the read-only operation store. Verification escalation: Request.can_use_prepared_index changes local provider/HTTP dispatch for all operation graph kinds, so the complete local browser consumer suite runs with the owning JJ units and affected package checks. Unrelated UI/native suites and complete qualification stay out of scope for this local slice.",
+    "files": [
+      "crates/jj-store-cli/tests/local_browser/prepared_operation_admission.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/operation_store.rs",
+      "crates/jj-store-jj/src/local_browser/preparation/graph.rs",
+      "docs/implementation-plan.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md"
+    ],
+    "requirements": [
+      "JST-LOCAL-004",
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-API-002",
+      "JST-API-004"
+    ],
+    "next": "Commit this slice, land E-READ-053/054/055 in main, verify combined native/local readers, retain bounded-reads and continue indexed deep operation/log/evolution continuations.",
+    "commands": [],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/prepared_operation_admission.rs#prepared_operation_pages_admit_fresh_metadata_without_any_view_or_git_reads"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_admission::prepared_operation_pages_admit_fresh_metadata_without_any_view_or_git_reads -- --exact --nocapture (initial parent fixture)",
+        "result": "fail",
+        "failures": 1,
+        "note": "0 passed,1 failed Invalid: plain graph had no ready-path classification. Initial fixture also withheld loader descriptors; corrected below. local-admission-before-055.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_admission::prepared_operation_pages_admit_fresh_metadata_without_any_view_or_git_reads -- --exact --nocapture (historical-first parent fixture)",
+        "result": "fail",
+        "failures": 1,
+        "note": "0 passed,1 failed Unavailable: initial fixture withheld loader descriptors. This is not an isolated view-admission proof. Corrected fixture preserves them. local-admission-before-historical-055.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_admission::prepared_operation_pages_admit_fresh_metadata_without_any_view_or_git_reads -- --exact --nocapture (initial implementation fixture)",
+        "result": "fail",
+        "failures": 1,
+        "note": "0 passed,1 failed Unavailable: fixture removed directories needed to open the read-only backend. Corrected fixture, reran unchanged parent and implementation. local-admission-after-055.log."
+      },
+      {
+        "command": "python3 temporarily restore the three local production files from jj file show -r @-, run the corrected exact regression, and restore every in-progress file in finally",
+        "result": "fail",
+        "failures": 1,
+        "note": "0 passed,1 failed Incomplete: unchanged parent still reads the withheld selected view. Structurally valid source loader, empty Git objects, absent source/prepared index segments. local-admission-before-corrected-055.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted only affected Rust packages."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_admission::prepared_operation_pages_admit_fresh_metadata_without_any_view_or_git_reads -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 passed,37 filtered. Four requests hydrate4/5 operation metadata nodes and4636–5795 accounted bytes over20-operation history while every source view, Git body and source/prepared commit-index segment is withheld. Denied access, generation mismatch, selected/historical metadata replacement and retry pass. Code detail fails on absent/replaced selected view and succeeds after exact restoration. No source index repair or Git object creation. local-admission-corrected-after-055.log."
+      },
+      {
+        "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical chapters and delivery plan formatted."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 13.47s; test result: ok. 36 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 44.57s; 60.69s; .local/bounded-reads/performance/local-admission-local-readers-055.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 6.73s; test result: ok. 57 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.65s; 11.87s; .local/bounded-reads/performance/local-admission-owning-jj-055.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 10.98s; 11.06s; .local/bounded-reads/performance/local-admission-packages-055.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "; 0.94s; .local/bounded-reads/performance/local-admission-rust-format-055.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "package boundaries ok (17 packages); 1.28s; .local/bounded-reads/performance/local-admission-boundaries-055.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress ok (139 tasks; evidence bookkeeping only); .local/bounded-reads/performance/local-admission-progress-055.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first gate passed: 6 protected file(s), 6 canonical chapter(s).; .local/bounded-reads/performance/local-admission-spec-first-055.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validated: 5 validators, 23 chapters, 172 requirements.; .local/bounded-reads/performance/local-admission-spec-validation-055.log"
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/milestones.md",
+        "result": "fail",
+        "failures": 1,
+        "note": "New evidence JSON arrays need formatting in milestones.md; other changed documents pass. Format ledger then rerun. local-admission-docs-format-055.log."
+      },
+      {
+        "command": "python3 compare current ledger with parent-evidence-055.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All495 parent records remain JSON-identical; E-READ-055 is sole new record,496 total."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "New ledger formatting corrected; local-admission-ledger-format-055.log."
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All matched files use Prettier style; local-admission-docs-format-final-055.log."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Focused93 distinct Rust tests pass:36 complete local browser (2 existing large-fixture tests intentionally ignored) and57 owning JJ units. The exact admission regression passes independently with4–5 metadata records over20 operations and withheld source views/Git bodies/index segments. Fresh selected and historical fingerprints, current denial, generation mismatch and code-view seal/retry remain qualified. Affected JJ/service/HTTP/RPC/CLI checks, Rust format, boundaries and canonical bookkeeping pass. All final canonical progress/spec-first/spec-validation/changed-document checks pass after ledger formatting; final logs local-admission-progress-final-055.log, local-admission-spec-first-final-055.log, local-admission-spec-validation-final-055.log and local-admission-docs-delivery-final-055.log. No milestone promotion; unrelated UI/native/aggregate/full-qualification lanes are out of scope.",
+      "Indexed deep operation/log/evolution continuations; predecessor/copy/code search lookups; retained oversized comparisons/change groups/extreme filter candidate continuations; paged native RPC and remaining local application search/index remain feature delivery."
+    ]
   }
 ]
 ```

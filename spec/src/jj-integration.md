@@ -1,5 +1,13 @@
 # Native JJ integration
 
+Prepared local operation graph admission compares fresh selected operation
+metadata with the retained canonical fingerprint, without reading its view or
+creating a scoped commit backend. Unfiltered and metadata-filtered pages reuse
+the same ready identities and neighbors. The operation capability exposes no
+view unless a separate code reader has already admitted that selected view.
+Fresh access, source membership, binding, generation and metadata checks remain
+mandatory. Code readers preserve the combined operation/view seal.
+
 Local prepared operation comparisons retain canonical view fingerprints as well
 as operation fingerprints. They read admitted historical metadata directly and
 compare visibility through bounded immutable index edges, stopping at a shared

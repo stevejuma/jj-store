@@ -408,6 +408,13 @@ impl Executor {
                     )
                     .await?;
                 }
+                let operation_only = matches!(
+                    &request,
+                    Request::Graph(
+                        GraphRequest::Operations | GraphRequest::OperationsFiltered { .. },
+                        _
+                    )
+                );
                 let mut context = Context::open(
                     access,
                     operation,
@@ -415,16 +422,32 @@ impl Executor {
                     limits,
                     true,
                     vec![],
-                    false,
+                    operation_only,
                 )
                 .await?;
-                if selection(&context.access, operation, &budget)? != prepared.resident.selection {
+                let valid_selection = if operation_only {
+                    let selected = context
+                        .access
+                        .operations
+                        .get(&operation)
+                        .ok_or(Error::Incomplete)?;
+                    prepared.operation_fingerprint(operation, &budget)?
+                        == Some(operation_store::fingerprint(selected, &budget)?)
+                } else {
+                    selection(&context.access, operation, &budget)? == prepared.resident.selection
+                };
+                if !valid_selection {
                     return Err(Error::Corrupt);
                 }
                 budget.check()?;
                 Arc::get_mut(&mut context.access)
                     .ok_or(Error::Unavailable)?
                     .prepared = Some(prepared.clone());
+                if operation_only {
+                    // Only retained identities and fresh operation metadata
+                    // enter this path. No view or commit grant is constructed.
+                    return context.dispatch(operation, request, true).await;
+                }
                 let guard = scoped::Guard::new(
                     context
                         .scoped
@@ -435,14 +458,6 @@ impl Executor {
                     budget.clone(),
                     limits,
                 );
-                if matches!(
-                    &request,
-                    Request::Graph(GraphRequest::OperationsFiltered { .. }, _)
-                ) {
-                    // Prefix membership comes from the prepared operation-ID
-                    // projection. Operation pages need no commit repository.
-                    return context.dispatch(operation, request, true).await;
-                }
                 if !matches!(&request, Request::Commit { .. } | Request::Graph(_, _)) {
                     // Indexed point membership admits only selected commits;
                     // their tree/file grants still cross the scoped backend.

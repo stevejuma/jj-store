@@ -227,6 +227,15 @@ reverse-edge lookup for metadata-only warm pages. Preserve point membership,
 upstream ambiguity, exact outer pins and selected-only hydration. Main remains
 at E-READ-052; deep graph continuations and complete qualification remain open.
 
+E-READ-055 removes selected-view loading from prepared local operation graph
+admission. Fresh operation fingerprints, access, generation and source
+membership remain required; code readers retain the combined operation/view
+seal. Plain and metadata-filtered operation pages now reuse a ready generation,
+with supported cold reads unchanged. Land E-READ-053 through E-READ-055 in main,
+verify the focused combined read surface, and retain bounded-reads for indexed
+deep paging and the remaining feature work. Complete qualification remains
+deferred.
+
 ### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:

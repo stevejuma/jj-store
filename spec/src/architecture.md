@@ -1,5 +1,11 @@
 # Architecture
 
+Local operation graph admission reuses only the data-only retained operation
+lookup and fresh selected metadata. It checks the operation fingerprint before
+dispatch and constructs neither view authority nor a scoped commit backend. Code
+readers retain the combined operation/view seal. This separates metadata page
+cost from reference-map size without changing source or wire formats.
+
 Composed native unfiltered Changes/All reference reads share the graph
 executor's immutable selected-view generation and worker admission. Its ordered
 change groups come from indexed identities; content hydration begins after

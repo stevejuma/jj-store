@@ -228,8 +228,13 @@ pub(super) async fn selected_for(
         visited: Mutex::default(),
         max_operations: context.limits.max_history_visits,
         evolution,
-        view: context.access.prepared.as_ref().map(|_| {
-            o::ViewId::from_bytes(context.access.operations[&operation].view_id.as_bytes())
+        view: context.access.prepared.as_ref().and_then(|_| {
+            let view = context.access.operations[&operation].view_id;
+            context
+                .access
+                .views
+                .contains_key(&view)
+                .then(|| o::ViewId::from_bytes(view.as_bytes()))
         }),
     });
     let data = guard
