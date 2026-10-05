@@ -254,3 +254,10 @@ installation-private durable input catalog and original command reference. It
 records explicit creation, separate capacity limits, journal-to-plan lock order,
 immutable replay and mandatory provider revalidation. No saved-input example may
 claim physical completion or advertise a writable production capability.
+
+The local and service architecture manuals MUST distinguish complete original
+physical-inventory capture from permission to resume installation. Document the
+unchanged scanner digest, sorted complete file/directory rows, 4097-record and
+8-MiB canonical bounds, optional-capability refusal and existing admission,
+authorization and cancellation lifetime. Durable linkage and provider-owned
+progress remain separate gates; saved data cannot normalize new editor changes.

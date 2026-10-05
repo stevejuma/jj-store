@@ -62,10 +62,10 @@ pub(super) fn read<F: FnMut(Phase) -> Result<()>>(
     hash.update(repository.as_bytes());
     hash.update(generation.to_be_bytes());
     hash.update(workspace.0.as_bytes());
-    for (path, stamp) in directories {
+    for (path, stamp) in &directories {
         hash.update(b"D");
         frame(&mut hash, path.as_bytes());
-        frame(&mut hash, &stamp);
+        frame(&mut hash, stamp);
     }
     let entries: Vec<_> = entries.into_values().collect();
     for entry in &entries {
@@ -81,6 +81,22 @@ pub(super) fn read<F: FnMut(Phase) -> Result<()>>(
         workspace,
         fingerprint: RecordDigest::new(hash.finalize().into()),
         entries,
+        directories: directories
+            .into_iter()
+            .map(|(path, stamp)| {
+                let (words, tail) = stamp.as_chunks::<8>();
+                if !tail.is_empty() {
+                    return Err(Error::Invalid);
+                }
+                let stamp = words
+                    .iter()
+                    .map(|value| u64::from_be_bytes(*value))
+                    .collect::<Vec<_>>()
+                    .try_into()
+                    .map_err(|_| Error::Invalid)?;
+                Ok(jj_store_jj::local_execution::PhysicalDirectoryV1 { path, stamp })
+            })
+            .collect::<Result<_>>()?,
     })
 }
 fn walk<F: FnMut(Phase) -> Result<()>>(

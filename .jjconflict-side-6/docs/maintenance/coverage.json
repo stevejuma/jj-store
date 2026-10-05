@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed data-only retained/commit/tree/workspace accessors and the separately bounded durable original-input store; physical installation and native tree-state completion remain unqualified.",
-      "fingerprint": "fc65a8759df363d4d2fdd748e7818db2b9aa3e117fa7773858c03daba1458774"
+      "reason": "Reviewed bounded complete original PhysicalInventoryV1 data, canonical namespace/hash parity and optional guard capture. Saved data grants no physical write, normalization or completion authority; durable linkage and provider-owned progress remain required.",
+      "fingerprint": "f82b33ea68924749fd42481f6e4784c2e0738207e540bece223bf205bc047501"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed complete registered two-pass physical guards with binding, ignored/untracked content, mode/link/directory preconditions, current authorization and shared scan admission retained through cancellation. Private pinned-read allocation and tree parity lint repairs preserve public contracts and authority; provider proofs do not qualify runtime receipts or tree-changing checkout.",
-      "fingerprint": "eda274142a4e80ac2bb526581615a49515f1ded64b1aa09c0ef5a315263bd8b9"
+      "reason": "Reviewed directory-row retention and optional capture through the existing two-pass registered scanner guard, preserving the physical digest, current authorization, cancellation and shared admission. Wire summaries remain unchanged; durable linkage and installation progress remain separate gates.",
+      "fingerprint": "ee389c61a6ca10b030c2a38a5ca957df055ec6234d94c835bce6631f360c3af4"
     }
   },
   {

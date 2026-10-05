@@ -1053,7 +1053,17 @@ Ignored, untracked, symlink, content/mode and directory changes remain part of
 that guard; metadata-only pointer effects cannot weaken its scope.
 Authorization, deadline and cancellation remain current throughout the scan, and
 canceled work retains admission until the blocking worker exits. This guard
-alone does not authorize a command, infer setup or enable runtime writes.
+alone does not authorize a command, infer setup or enable runtime writes. For
+tree-changing recovery, the same guard MAY capture an owned bounded original
+inventory. File fingerprints and complete directory stamps MUST reproduce the
+existing physical fingerprint without changing its version or ordinary scan
+limits. The private inventory carries no file contents, credential, absolute
+source path, selection token or write proof. Capture shares the existing
+non-queuing scanner admission and authorization/cancellation lifetime;
+unavailable capabilities fail rather than substituting a partial inventory.
+Durable original-request selection and provider-owned progress remain separate
+execution gates.
+
 Sparse-excluded tracked paths do not become deletions; present outside-sparse
 paths remain obstacles and cannot become candidate additions. Admission and
 deadlines cover the complete observation, including a canceled blocking worker.

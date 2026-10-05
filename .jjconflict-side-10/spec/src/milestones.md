@@ -90314,6 +90314,303 @@ entries.
   ],
   "next": "Implement original-plan guarded interrupted physical installation and native tree-state/checkout completion; join actual durable combination after-state before writable transport/UI wiring. Continue all seven approved stages.",
   "summary": "89 unique focused Rust cases pass: 13 new CLI parents, 12 registered CLI, 34 server integration, 18 exact tree-plan provider and 12 journal/combination/plan unit parents. Strict owning/direct-consumer check/lint and governance/boundary/architecture/format/docs pass. This qualifies durable original input, not physical installation or feature completion; M21.2 remains In progress. All 510 preceding raw ledger bodies remain byte-identical."
+},
+{
+  "id": "E-M21-030",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "zlpmntul",
+  "kind": "Complete original physical inventory for interrupted-checkout guards",
+  "versions": "Rust 1.98.1; pinned JJ 0.45.1/Git SHA-1 profile; macOS ARM64. Isolated real-native and scanner fixtures; CARGO_INCREMENTAL=0. Existing development executable used for explicit folder tests; installed binaries/services unchanged.",
+  "formats": "Owned PhysicalInventoryV1 canonical JSON: 8 MiB and 4097 combined directory/file records. Directory stamps retain the eight-word dev/ino/len/mode/mtime/ctime scanner frame. Existing physical-tree/v1 fingerprint unchanged; inventory/v1 digest has a separate domain. No public wire, native, companion, WAL, plan-catalog or journal-format changes.",
+  "files": [
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/physical_inventory/validation.rs",
+    "crates/jj-store-jj/src/local_execution/physical_inventory.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/checkout.rs",
+    "crates/jj-store-service/src/working_tree/contracts.rs",
+    "crates/jj-store-service/src/working_tree/guard.rs",
+    "crates/jj-store-service/src/working_tree/inventory.rs",
+    "crates/jj-store-service/src/working_tree/mod.rs",
+    "crates/jj-store-service/src/working_tree/walk.rs",
+    "crates/jj-store-service/tests/working_tree_inventory/adversarial.rs",
+    "crates/jj-store-service/tests/working_tree_inventory/guard.rs",
+    "crates/jj-store-service/tests/working_tree_inventory.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/architecture.md",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/mutations.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-JJ-002",
+    "JST-JJ-004",
+    "JST-MUT-001",
+    "JST-GOV-002",
+    "JST-GOV-003"
+  ],
+  "before": "The exact target initially fails with two missing inventory API diagnostics. One strict lint diagnostic is fixed by checked frame conversion; the initially missing mapped architecture chapter is added. Failed development --version probe is recorded; all required final lanes pass without weakened assertions.",
+  "scope": "Original private input only: sorted complete file fingerprints and directory stamps reproduce the unchanged physical digest, including ignored/untracked paths, symlinks and empty directories. Optional registered PhysicalGuard capture shares existing bounded two-pass scan, authorization, deadline and admission through cancellation. Validation-only guards explicitly refuse capture. Canonical data conveys no normalization, physical write or completion authority.",
+  "tests": [
+    "crates/jj-store-service/tests/working_tree_inventory/adversarial.rs#noncanonical_tampered_incomplete_and_conflicting_inventory_cannot_decode",
+    "crates/jj-store-service/tests/working_tree_inventory/adversarial.rs#physical_rows_and_scope_must_match_the_exact_original_digest",
+    "crates/jj-store-service/tests/working_tree_inventory/adversarial.rs#record_byte_path_and_namespace_bounds_fail_without_a_partial_inventory",
+    "crates/jj-store-service/tests/working_tree_inventory/guard.rs#registered_access_guard_captures_complete_inventory_and_preserves_validation",
+    "crates/jj-store-service/tests/working_tree_inventory/guard.rs#revoked_and_replaced_binding_cannot_capture_or_initialize_inventory",
+    "crates/jj-store-service/tests/working_tree_inventory/guard.rs#validation_only_guard_does_not_gain_inventory_capture",
+    "crates/jj-store-service/tests/working_tree_inventory/guard.rs#inventory_capture_cancellation_retains_shared_admission_until_worker_exits",
+    "crates/jj-store-service/tests/working_tree_inventory.rs#original_inventory_roundtrips_the_complete_scanner_fingerprint",
+    "crates/jj-store-service/tests/working_tree_inventory.rs#inventory_retains_ignored_symlink_binary_and_unicode_rows_without_content"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test working_tree_inventory",
+      "result": "fail",
+      "failures": 2,
+      "note": "physical-inventory-before.log: Exact initial target fails with two missing API diagnostics, before implementation."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test working_tree_inventory",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-after-initial.log: Initial roundtrip case passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test working_tree_inventory",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-after.log: Expanded eight-case target passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test working_tree_inventory --test working_tree_checkout --test working_tree_scan --test working_tree_projection --test working_tree_local --test working_tree_observer",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-service-regressions.log: 22 pass: inventory 9, checkout guards 3, scanner 6 and projection 4. Five explicitly gated local/observer cases were ignored here and executed separately below."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-governance.log: 50 cases pass."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-boundaries.log: 17-package boundaries pass; integration data stays owned."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-architecture.log: 1090 source modules pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-service -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "fail",
+      "failures": 1,
+      "note": "physical-inventory-lint.log: One chunks_exact_to_as_chunks diagnostic; repaired with checked as_chunks framing, without suppressing lint."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-service -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-lint-final.log: Final strict owning/direct-consumer all-target lint passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 JJ_STORE_WORKING_TREE_TEST_JJ=/Users/stevejuma/code/lapismd/jj-store-stack-workspace-ui/target/debug/jj cargo test --locked -p jj-store-service --test working_tree_local --test working_tree_observer -- --ignored",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-real-folder.log: All five explicit real-folder fixtures pass against the existing isolated development executable. No installed binary or repository is replaced."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_tree_checkout --test stack_unchanged_checkout",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-provider.log: 28 provider parents pass: 18 tree-plan and 10 unchanged-checkout. Two isolated process helpers are invoked by their passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --lib working_tree",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-contracts.log: One exact service contract case passes; 15 unrelated unit cases filtered."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution --test stack_local_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-server.log: 17 private server execution/preparation parents pass: 9 execution and 8 preparation. Isolated workers are invoked by passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-cli.log: 25 direct CLI parents pass: 13 saved-plan and 12 registered-folder cases. Two saved-plan process workers are invoked by passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj -p jj-store-service -p jj-store-server -p jj-store-cli --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-check.log: Owning provider/service/server and direct CLI all-target check passes."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "source edits: Rust formatting during implementation succeeds; unrelated tracked files unchanged."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-rust-format.log: Rust formatting passes."
+    },
+    {
+      "command": "target/debug/jj --version",
+      "result": "fail",
+      "failures": 1,
+      "note": "version probe: This development CLI does not support the flag; failed probe did not change files or installed binaries."
+    },
+    {
+      "command": "target/debug/jj --help",
+      "result": "pass",
+      "failures": 0,
+      "note": "version probe: Help succeeds. This is command availability, not qualification."
+    },
+    {
+      "command": "target/debug/jj version; rustc --version; jj --version",
+      "result": "pass",
+      "failures": 0,
+      "note": "final version probes: Development version command succeeds with an empty build version string; installed stock JJ reports 0.45.1 and rustc reports 1.98.1. Do not infer a development release identity from the blank string."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed bounded complete original PhysicalInventoryV1 data, canonical namespace/hash parity and optional guard capture. Saved data grants no physical write, normalization or completion authority; durable linkage and provider-owned progress remain required.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-docs-review-local.log: Owning JJ source review acknowledged."
+    },
+    {
+      "command": "pnpm docs:review services 'Reviewed directory-row retention and optional capture through the existing two-pass registered scanner guard, preserving the physical digest, current authorization, cancellation and shared admission. Wire summaries remain unchanged; durable linkage and installation progress remain separate gates.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-docs-review-services.log: Service source review acknowledged."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md docs/site/technical/local.md docs/site/technical/architecture.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/jj-integration.md spec/src/mutations.md spec/src/documentation.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-docs-format.log: Changed documentation/review metadata only; milestones excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-architecture-format.log: Mapped canonical architecture paragraph formatted; ledger excluded."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-docs-check.log: 139-file closure, valid links/anchors and nine offline diagrams in both themes pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": "physical-inventory-spec-first.log: Initial mapped architecture chapter update was missing; added the owned data/capture boundary before final verification."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-spec-first-final.log: Protected owning sources have canonical chapter updates in the same change."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-spec-validation.log: Five validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/physical-inventory-ledger.py",
+      "note": "physical-inventory-ledger.py: appended only E-M21-030; historical payloads not reformatted.",
+      "result": "pass",
+      "failures": 0
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/physical-inventory-ledger-audit.py",
+      "note": "physical-inventory-ledger-audit.log: 512 objects; all 511 preceding raw bodies byte-identical.",
+      "result": "pass",
+      "failures": 0
+    },
+    {
+      "command": "pnpm check:progress",
+      "note": "physical-inventory-progress.log: initial aggregate evidence result was incorrectly marked pass while listed feature gaps remain; restored pending to preserve the existing milestone gate.",
+      "result": "fail",
+      "failures": 1
+    },
+    {
+      "command": "pnpm spec:first",
+      "note": "physical-inventory-spec-first-ledger.log: 16 protected files/six canonical chapters pass.",
+      "result": "pass",
+      "failures": 0
+    },
+    {
+      "command": "pnpm spec:validate",
+      "note": "physical-inventory-spec-validation-final.log: five validators/23 chapters/173 requirements pass after chapter and ledger additions.",
+      "result": "pass",
+      "failures": 0
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/local.md docs/site/technical/architecture.md docs/maintenance/coverage.json spec/src/architecture.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/mutations.md spec/src/documentation.md spec/src/verification.md",
+      "note": "physical-inventory-format-final.log: changed docs/review metadata pass; ledger excluded.",
+      "result": "pass",
+      "failures": 0
+    },
+    {
+      "command": "jj --no-pager diff --git plus Python added-line trailing-whitespace assertion",
+      "note": "physical-inventory-review.patch: added lines have no trailing whitespace; source review complete.",
+      "result": "pass",
+      "failures": 0
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-progress-final.log: 142 tasks/evidence bookkeeping pass after preserving pending status and incomplete feature gates."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/physical-inventory-ledger-audit.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-ledger-audit-final.log: 512 objects and all 511 previous raw evidence bodies byte-identical; repeated after final evidence append."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-inventory-spec-validation-ledger-final.log: final five-validator/23-chapter/173-requirement pass."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Durable original-inventory linkage and provider-owned per-path installation progress remain required. Inventory capture alone cannot normalize directory stamps altered by installation or accept arbitrary editor changes.",
+    "Actual interrupted tree-changing physical installation and native tree-state/checkout completion remain unimplemented. Dirty affected WIP still requires the qualified preservation/merge engine; current exact-plan profile remains bounded.",
+    "Actual durable combination after-state, explicit setup/merge-WIP membership/switching, prepare/apply/status/discovery transport and production wiring, whole-file/issued-hunk staging, graph/deletion/scoped undo, linked-native real-storage and complete cold UI flows remain approved and incomplete.",
+    "UI/Storybook/RustFS/root aggregate lanes are outside this owning Rust input-capture surface. No installed binary/service replacement, existing-repository reset/migration, package publication, screenshot comparison or baseline update. Production Stacks remains read-only."
+  ],
+  "next": "Durably select the complete original inventory with its exact saved command/plan, then implement provider-owned per-path installation progress, guarded interrupted checkout and native tree-state completion. Join actual combination after-state before writable transport/UI wiring; continue all seven approved stages.",
+  "summary": "98 unique focused Rust parents pass: 22 service scanner/guard/inventory/projection, five explicit real-folder observers, 28 provider checkout, one service contract, 17 server preparation/execution and 25 CLI plan/registered cases. Strict all-target check/lint and governance/boundary/architecture/format/docs/spec checks pass. This qualifies original input only; M21.2 remains In progress. All 511 preceding raw evidence bodies remain byte-identical."
 }
 ]
 ```

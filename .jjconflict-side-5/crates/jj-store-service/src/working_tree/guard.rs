@@ -2,7 +2,7 @@
 use super::*;
 use jj_store_jj::{
     local_browser as code,
-    local_execution::{PhysicalGuard, RecoveryBinding},
+    local_execution::{PhysicalGuard, PhysicalInventoryV1, RecoveryBinding},
     query::Cancellation,
 };
 use std::{path::PathBuf, sync::Arc};
@@ -27,13 +27,13 @@ impl Observer {
         })
     }
 }
-#[async_trait::async_trait]
-impl PhysicalGuard for Guard {
-    async fn validate(
+impl Guard {
+    async fn read(
         &self,
         binding: &RecoveryBinding,
         expected: RecordDigest,
-    ) -> code::Result<()> {
+        capture: bool,
+    ) -> code::Result<Option<PhysicalInventoryV1>> {
         self.access.authorize().await?;
         if binding.repository != self.access.repository()
             || binding.generation != self.access.generation()
@@ -71,12 +71,39 @@ impl PhysicalGuard for Guard {
             {
                 return Err(code::Error::EpochChanged);
             }
+            let inventory = if capture {
+                let inventory = physical.inventory().map_err(query_error)?;
+                inventory.check_selection(binding, expected)?;
+                Some(inventory)
+            } else {
+                None
+            };
             self.access.authorize().await?;
-            observer::check(&cancellation, deadline).map_err(query_error)
+            observer::check(&cancellation, deadline).map_err(query_error)?;
+            Ok(inventory)
         };
         tokio::time::timeout_at(tokio::time::Instant::from_std(deadline), read)
             .await
             .map_err(|_| code::Error::Limit)?
+    }
+}
+#[async_trait::async_trait]
+impl PhysicalGuard for Guard {
+    async fn validate(
+        &self,
+        binding: &RecoveryBinding,
+        expected: RecordDigest,
+    ) -> code::Result<()> {
+        self.read(binding, expected, false).await.map(|_| ())
+    }
+    async fn inventory(
+        &self,
+        binding: &RecoveryBinding,
+        expected: RecordDigest,
+    ) -> code::Result<PhysicalInventoryV1> {
+        self.read(binding, expected, true)
+            .await?
+            .ok_or(code::Error::Invalid)
     }
 }
 fn query_error(error: Error) -> code::Error {

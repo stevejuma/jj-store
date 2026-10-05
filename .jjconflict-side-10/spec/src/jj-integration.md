@@ -1143,3 +1143,11 @@ create a publication or checkout proof. The server saves canonical plan data
 separately from its command journal and validates the original request before
 storage access. Provider revalidation remains mandatory before any future
 physical installation, even after successful plan/reference reopen.
+
+The owned PhysicalInventoryV1 interface carries complete original scanner file
+fingerprints and directory stamps for future interrupted-checkout guards. It
+reproduces the existing scope-bound physical hash, validates canonical framing,
+path namespace and bounds, and exposes no native write capability. The optional
+PhysicalGuard capture method defaults to unavailable; trusted service capture
+must use its qualified scanner. Merely decoding inventory data cannot normalize
+changed files, attest installation or create a provider completion proof.

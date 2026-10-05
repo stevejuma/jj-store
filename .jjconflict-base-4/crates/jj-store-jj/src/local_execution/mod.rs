@@ -1,6 +1,8 @@
 //! Foreground local-JJ coordination and explicit retained head publication.
 //! Physical checkout and runtime command enablement remain separate gates.
 mod guard;
+mod physical_inventory;
+pub use physical_inventory::{PhysicalDirectoryV1, PhysicalFileV1, PhysicalInventoryV1};
 mod recovery;
 mod reword;
 use crate::{

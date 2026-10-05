@@ -1366,3 +1366,14 @@ evidence. Legacy journal bytes remain unchanged and new references cannot be
 attached to terminal outcomes. Actual interrupted physical installation, native
 tree-state completion, combination after-state and production command/UI flows
 remain required; production capabilities stay read-only.
+
+[E-M21-030](milestones.md) covers complete original physical-inventory capture.
+Scanner fixtures verify canonical roundtrip and parity with the unchanged
+physical digest, including empty directories, ignored/binary/executable files,
+symlinks and Unicode paths. Adversarial data tests reject malformed, incomplete,
+conflicting, unsafe, noncanonical, oversized and wrong-scope input. Registered
+real-native guards verify authorization, editor-state rejection, optional
+capability refusal and shared admission through cancellation; explicit
+real-folder observer fixtures retain ordinary scan behavior. These passes
+qualify original input only. Durable linkage, per-path installation progress,
+interrupted checkout and native tree-state completion remain required.

@@ -1,6 +1,7 @@
 //! Private physical observations. Neither a JJ snapshot nor command authority.
 mod contracts;
 mod guard;
+mod inventory;
 mod observer;
 mod projection;
 mod walk;
@@ -90,6 +91,8 @@ pub struct WorkingTree {
     pub workspace: PhysicalWorkspaceId,
     pub fingerprint: RecordDigest,
     pub entries: Vec<Entry>,
+    /// Complete original directory frames, including root and empty directories.
+    pub directories: Vec<jj_store_jj::local_execution::PhysicalDirectoryV1>,
 }
 struct Budget<'a, F> {
     limits: Limits,

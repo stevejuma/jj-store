@@ -137,6 +137,7 @@ mod tests {
             sparse: vec![String::new()],
         };
         let physical = WorkingTree {
+            directories: vec![],
             version: 1,
             repository: baseline.repository,
             generation: 7,

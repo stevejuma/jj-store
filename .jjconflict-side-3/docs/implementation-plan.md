@@ -403,6 +403,16 @@ input evidence, not physical installation or selected combination after-state.
 Guarded interrupted installation, native checkout/tree-state completion and all
 remaining approved stages remain required. Production Stacks stays read-only.
 
+E-M21-030 adds complete original physical-inventory capture through the existing
+registered scanner guard. Canonical file fingerprints and full directory stamps
+reproduce the unchanged physical digest, including ignored files, symlinks and
+empty directories, within 4097 records and 8 MiB. Optional capture preserves
+authorization, cancellation and shared scanner admission; validation-only guards
+remain unavailable. This is original-input evidence only. Durable linkage,
+provider-owned per-path progress, guarded interrupted installation and native
+checkout/tree-state completion remain the next foundation work before writable
+transport and UI wiring. All seven approved stages remain in progress.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

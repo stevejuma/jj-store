@@ -1228,6 +1228,27 @@ length, mutually exclusive with the unchanged-tree witness. Legacy versions 1–
 retain their original serialization and validation. Saved inputs never expand
 the journal admission budget or evict an old request.
 
+## Original full physical inventory for checkout recovery
+
+Tree-changing installation MUST retain the complete original physical inventory
+before publication or physical writes, not only its final digest. Original
+sorted file fingerprints and full directory stamps must reproduce the existing
+scope-bound scanner fingerprint. Empty directories, ignored/untracked paths,
+symlinks and unaffected editor changes remain in that input. Canonical inventory
+encoding admits at most 4097 total directory/file records and 8 MiB; source
+scanning retains its existing two-pass entry/byte/depth/deadline bounds. Missing
+parents and the exact planned effects remain separately bound by the tree plan.
+
+The service-owned physical guard MAY capture this data under its existing
+registered access, shared scanner admission and current authorization. It MUST
+verify the original repository/generation/physical identity and complete
+expected fingerprint, keep admission until canceled workers exit, and preserve
+ordinary validation behavior. A guard without this capability fails explicitly.
+Reopening canonical inventory data is not a completion proof or permission to
+normalize new editor changes. Durable linkage, exact provider-owned installation
+progress, restricted normalization of only planned transitions and verified
+after-state remain required before interrupted physical checkout can resume.
+
 ## Exact unchanged-tree checkout completion
 
 An explicit retained command whose named workspace retains identical checkout

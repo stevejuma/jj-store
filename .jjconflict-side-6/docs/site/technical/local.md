@@ -363,6 +363,17 @@ Interrupted per-path installation, native tree-state selection and verified
 after-state remain required. Neither saved input nor a journal reference is a
 completion proof. Production Stacks remains read-only.
 
+The scanner can now capture a complete original `PhysicalInventoryV1` for future
+interrupted-installation guards. Sorted file fingerprints and directory stamps
+reproduce the unchanged scope-bound physical fingerprint, including ignored
+files, symlinks and empty directories. The canonical data is bounded to 4097
+total records and 8 MiB and contains no file contents or absolute folder path.
+Capture uses the registered physical guard's existing authorization, deadline
+and shared admission; validation-only guards reject this optional capability.
+Durable original-request linkage and provider-owned installation progress remain
+required. Inventory data cannot authorize normalization of later editor changes
+or attest a completed checkout.
+
 ## Private unchanged-tree execution join
 
 The server can now execute an original retained reword through the private

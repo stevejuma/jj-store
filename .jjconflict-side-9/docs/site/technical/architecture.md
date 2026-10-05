@@ -58,6 +58,14 @@ blocking scan exits. These private reads do not snapshot files, grant staging,
 or provide command/checkout authority; transport and named-combination
 qualification remain separate steps.
 
+The same registered guard optionally captures a complete original physical
+inventory for checkout recovery. It retains sorted file fingerprints and full
+directory stamps, reproduces the existing physical digest, and shares scanner
+admission through capture and final authorization. Its bounded canonical data
+contains neither file contents nor write authority. Durable command linkage and
+provider-owned per-path progress must qualify any later installation guard;
+ordinary physical validation continues to reject changed editor state.
+
 ## What is authoritative?
 
 | State                         | Authority                                       | Rebuildable or device-local data        |

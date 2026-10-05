@@ -163,6 +163,16 @@ budget. Saved input does not prove code or checkout selection; interrupted
 installation, native tree-state selection and verified after-state remain
 required before actual tree-changing checkout or command wiring.
 
+Complete original physical input is an owned data interface in `jj-store-jj`;
+the service's independent scanner supplies its sorted file fingerprints and
+directory stamps. Canonical bounded inventory must reproduce the unchanged
+physical fingerprint. Optional capture retains the existing registered guard's
+authorization, deadline and admission through cancellation, with explicit
+refusal by validation-only guards. It carries neither upstream types nor file
+contents and grants no write or completion authority. Durable original-command
+linkage and provider-owned installation progress remain separate gates before
+planned directory transitions can be distinguished from unrelated editor work.
+
 The server now joins actual unpublished reword effects with exact private
 preview/journal selection, saved recovery witness and reserved retention. The
 full candidate archive is durable before retention; acknowledgement replaces

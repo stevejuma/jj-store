@@ -12,6 +12,15 @@ pub use witness::CheckoutWitnessV1;
 #[async_trait::async_trait]
 pub trait PhysicalGuard: Send + Sync {
     async fn validate(&self, binding: &RecoveryBinding, expected: m::RecordDigest) -> Result<()>;
+    /// Optional original full inventory capture. Validation-only guards cannot
+    /// silently substitute a digest or incomplete rows for recovery input.
+    async fn inventory(
+        &self,
+        _binding: &RecoveryBinding,
+        _expected: m::RecordDigest,
+    ) -> Result<PhysicalInventoryV1> {
+        Err(Error::Invalid)
+    }
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct VerifiedUnchangedCheckout {
