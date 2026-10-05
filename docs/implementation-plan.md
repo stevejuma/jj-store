@@ -180,6 +180,13 @@ validation checks both pins. Land E-READ-050/051 into main and verify the
 focused combined surface before continuing indexed child/deep continuations
 here. Complete scale and release qualification stays deferred.
 
+E-READ-052 lands E-READ-050/051 into the clean main workspace by advancing its
+empty change onto the verified delivery stack. No parallel main changes or merge
+conflicts require reconstruction. Verify the combined native/local reference and
+shared transport/cache consumers in main, preserve historical evidence, then
+retain and rebase bounded-reads for further delivery. Full scale and
+Help/generated-reference/source-review qualification remain deferred.
+
 Repository directory task counts now consume one body-free repository/project
 aggregate page from each visible metadata home. Returned groups count their
 complete selected root and preserve maximum task timestamps, cross-home/project

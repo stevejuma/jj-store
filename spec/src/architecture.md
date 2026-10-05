@@ -916,3 +916,9 @@ operation-parent relationship to the retained outer read before serving data.
 HTTP and browser recovery keep source preparation separate from the outer
 response/cursor pin. Caller query leases release synchronously on abort so an
 immediate retry cannot inherit an unowned pending transport.
+
+Advancing a clean main workspace to verified performance descendants preserves
+their source and historical evidence exactly. Main verification records native
+and local reference readers, shared cancellation/cache consumers and owning
+package/contract checks separately from deferred scale and Help qualification.
+The retained temporary workspace continues from that verified landing.
