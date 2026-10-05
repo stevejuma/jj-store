@@ -83,6 +83,7 @@ impl Namespace {
             let (files, _) = inventory(&namespace.path, policy, &budget, true)?;
             let damaged = files.iter().any(|(name, file)| {
                 name.strip_prefix("index/segments/")
+                    .or_else(|| name.strip_prefix("index/changed_paths/"))
                     .is_some_and(|id| id != file.digest)
             });
             if damaged {

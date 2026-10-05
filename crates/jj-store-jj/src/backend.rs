@@ -69,6 +69,7 @@ impl Default for BackendLimits {
     }
 }
 pub struct NativeBackend {
+    derived_files: Option<Arc<crate::query::code_index::merge_files::Files>>,
     runtime: crate::runtime::RuntimeContext,
     objects: Arc<NativeObjects>,
     pub(crate) authority: Arc<dyn BackendAuthority>,
@@ -100,6 +101,7 @@ impl NativeBackend {
             return Err("invalid backend limits".into());
         }
         Ok(Self {
+            derived_files: None,
             runtime: crate::runtime::RuntimeContext::current()?,
             objects,
             authority,
@@ -110,6 +112,13 @@ impl NativeBackend {
             root_change: ChangeId::from_bytes(roots::ROOT_CHANGE.as_bytes()),
             empty: roots::empty_tree_id(),
         })
+    }
+    pub(crate) fn with_derived_files(
+        mut self,
+        files: Option<Arc<crate::query::code_index::merge_files::Files>>,
+    ) -> Self {
+        self.derived_files = files;
+        self
     }
     async fn read<T: NativeCodec>(&self, key: m::ObjectKey) -> BackendResult<T> {
         self.objects.get(key).await.map_err(|e| {
@@ -220,6 +229,9 @@ impl Backend for NativeBackend {
             .run(async {
                 let _permit = self.permits.acquire().await.map_err(other)?;
                 self.authority.authorize_read().await.map_err(other)?;
+                if let Some(reader) = self.derived_files.as_ref().and_then(|files| files.read(id)) {
+                    return Ok(reader);
+                }
                 let spool = self
                     .objects
                     .get_file(m::FileId::new(id_bytes(id, "file")?))
@@ -242,6 +254,10 @@ impl Backend for NativeBackend {
         self.runtime
             .run(async {
                 let _permit = self.permits.acquire().await.map_err(other)?;
+                if let Some(files) = &self.derived_files {
+                    self.authority.authorize_read().await.map_err(other)?;
+                    return files.write(contents).await.map_err(other);
+                }
                 self.authority.authorize_write().await.map_err(other)?;
                 let (id, status) = self
                     .objects

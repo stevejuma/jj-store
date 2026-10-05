@@ -11,12 +11,12 @@ pub(super) fn spawn(weak: Weak<Indexes>) {
             let next = {
                 let mut registry = manager.registry.lock().unwrap();
                 match registry.pending.pop_front() {
-                    Some(source) => {
-                        let key = source.key();
+                    Some(job) => {
+                        let key = job.source.key();
                         registry
                             .entries
                             .get(&key)
-                            .map(|e| (source, key, e.cancel.clone(), e.expires))
+                            .map(|e| (job, key, e.cancel.clone(), e.expires))
                     }
                     None => {
                         registry.active = false;
@@ -24,9 +24,11 @@ pub(super) fn spawn(weak: Weak<Indexes>) {
                     }
                 }
             };
-            let Some((source, key, cancel, expires)) = next else {
+            let Some((job, key, cancel, expires)) = next else {
                 continue;
             };
+            let source = job.source;
+            let previous = job.previous;
             let graph = manager.graph.clone();
             let local = manager.local.clone();
             let root = manager.root.clone();
@@ -75,11 +77,57 @@ pub(super) fn spawn(weak: Weak<Indexes>) {
                         if remaining.is_zero() {
                             break Err(q::Error::Limit);
                         }
-                        match &source {
-                            Source::Native(s) => graph
+                        let timeout = remaining.min(if previous.is_some() {
+                            Duration::from_secs(30)
+                        } else {
+                            remaining
+                        });
+                        match (&source, &previous) {
+                            (Source::Native(s), Some(previous)) => graph
                                 .clone()
                                 .with_preparation_limits(q::preparation::Limits {
-                                    timeout: remaining,
+                                    timeout,
+                                    max_read_bytes: 64 * 1024 * 1024,
+                                    max_work: 1_000_000,
+                                    max_metadata_nodes: 4096,
+                                    ..Default::default()
+                                })
+                                .expect("bounded path preparation")
+                                .prepare_managed_path_index(
+                                    s.store.clone(),
+                                    s.access.clone(),
+                                    namespace,
+                                    cancel.clone(),
+                                    previous
+                                        .native()
+                                        .ok_or(q::Error::Corrupt)
+                                        .expect("native source"),
+                                )
+                                .await
+                                .map(|p| Ready::Native(Arc::new(p))),
+                            (Source::Local { access, .. }, Some(previous)) => local
+                                .prepare_managed_path_index(
+                                    access.clone(),
+                                    namespace,
+                                    local::preparation::Limits {
+                                        timeout,
+                                        max_read_bytes: 64 * 1024 * 1024,
+                                        max_work: 1_000_000,
+                                        max_metadata_records: 4096,
+                                        ..Default::default()
+                                    },
+                                    cancel.clone(),
+                                    previous
+                                        .local()
+                                        .ok_or(q::Error::Corrupt)
+                                        .expect("local source"),
+                                )
+                                .await
+                                .map(|p| Ready::Local(Arc::new(p))),
+                            (Source::Native(s), None) => graph
+                                .clone()
+                                .with_preparation_limits(q::preparation::Limits {
+                                    timeout,
                                     ..Default::default()
                                 })
                                 .expect("bounded remaining preparation time")
@@ -91,13 +139,13 @@ pub(super) fn spawn(weak: Weak<Indexes>) {
                                 )
                                 .await
                                 .map(|p| Ready::Native(Arc::new(p))),
-                            Source::Local { access, snapshot } => local
+                            (Source::Local { access, snapshot }, None) => local
                                 .prepare_managed_code_index(
                                     access.clone(),
                                     snapshot.operation,
                                     namespace,
                                     local::preparation::Limits {
-                                        timeout: remaining,
+                                        timeout,
                                         ..Default::default()
                                     },
                                     cancel.clone(),
@@ -130,6 +178,15 @@ pub(super) fn spawn(weak: Weak<Indexes>) {
                         State::Ready(stats)
                     }
                     _ if cancel.is_cancelled() => State::Canceled,
+                    Err(error) if previous.is_some() => {
+                        entry.path_failure = Some(error);
+                        entry
+                            .ready
+                            .as_ref()
+                            .and_then(|r| r.get())
+                            .map(|r| State::Ready(r.stats()))
+                            .unwrap_or(State::Failed(q::Error::IndexRebuildRequired))
+                    }
                     Err(error) => State::Failed(error),
                     _ => State::Canceled,
                 };

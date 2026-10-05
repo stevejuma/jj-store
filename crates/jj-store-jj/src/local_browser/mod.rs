@@ -806,6 +806,17 @@ fn bounded_git_object(
         .downcast_ref::<jj_lib::git_backend::GitBackend>()
         .ok_or(Error::Invalid)?
         .git_repo();
+    bounded_git_header(&repo, id, kind, budget)
+}
+fn bounded_git_header(
+    repo: &gix::Repository,
+    id: m::GitSha1Id,
+    kind: gix::object::Kind,
+    budget: &Budget,
+) -> Result<()> {
+    if id.as_bytes().iter().all(|b| *b == 0) {
+        return Ok(());
+    }
     let header = repo
         .find_header(gix::ObjectId::from_bytes_or_panic(id.as_bytes()))
         .map_err(|_| Error::Incomplete)?;

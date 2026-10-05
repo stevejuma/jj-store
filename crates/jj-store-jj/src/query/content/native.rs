@@ -49,8 +49,21 @@ impl Context {
             access: self.access.clone(),
             budget: self.budget.clone(),
         });
+        let budget = self.budget.clone();
+        let files = crate::query::code_index::merge_files::Files::new(
+            crate::query::code_index::merge_files::Hash::Native,
+            self.limits
+                .max_blob_bytes
+                .min(BackendLimits::default().max_bytes as u64) as usize,
+            BackendLimits::default().max_bytes as usize,
+            move |bytes| {
+                budget.work(1)?;
+                budget.read_bytes(bytes)
+            },
+        );
         let backend = NativeBackend::new(self.objects.clone(), authority, BackendLimits::default())
-            .map_err(|_| Error::Unavailable)?;
+            .map_err(|_| Error::Unavailable)?
+            .with_derived_files(Some(files));
         let settings = UserSettings::from_config(StackedConfig::with_defaults())
             .map_err(|_| Error::Unavailable)?;
         Ok(Store::new(

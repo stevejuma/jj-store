@@ -4,6 +4,7 @@ pub(super) mod extras;
 use super::*;
 
 pub(super) struct Reader {
+    git: gix::Repository,
     extras: extras::Extras,
     shallow: BTreeSet<gix::ObjectId>,
 }
@@ -16,6 +17,7 @@ impl Reader {
         Ok(Self {
             shallow: shallow_roots(&git, budget)?,
             extras: extras::Extras::open_point(metadata, budget)?,
+            git,
         })
     }
     pub fn commit(
@@ -24,11 +26,7 @@ impl Reader {
         id: &b::CommitId,
         budget: &Budget,
     ) -> Result<b::Commit> {
-        let git = backend
-            .downcast_ref::<jj_lib::git_backend::GitBackend>()
-            .ok_or(Error::Invalid)?
-            .git_repo();
-        commit::read(backend, &git, &self.extras, &self.shallow, id, budget)
+        commit::read(backend, &self.git, &self.extras, &self.shallow, id, budget)
     }
 }
 

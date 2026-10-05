@@ -7,7 +7,18 @@ pub struct Prepared {
     pub stats: Stats,
     repository: m::RepositoryId,
     epoch: m::EpochId,
-    index: Arc<Index>,
+    pub(crate) index: Arc<Index>,
+}
+impl Prepared {
+    pub(crate) fn validate(&self, access: &dyn ReadAccess) -> Result<()> {
+        if access.repository() != self.repository || access.operation() != self.operation {
+            return Err(Error::NotCommitted);
+        }
+        if access.epoch() != self.epoch {
+            return Err(Error::EpochChanged);
+        }
+        Ok(())
+    }
 }
 fn stores(
     store: Arc<dyn ObjectStore>,
@@ -23,12 +34,23 @@ fn stores(
         )
         .map_err(|_| Error::Limit)?,
     );
+    let charge = budget.clone();
+    let files = merge_files::Files::new(
+        merge_files::Hash::Native,
+        max_object_bytes.min(BackendLimits::default().max_bytes as u64) as usize,
+        BackendLimits::default().max_bytes,
+        move |bytes| {
+            charge.work(1)?;
+            charge.read_bytes(bytes)
+        },
+    );
     NativeStores::new(
         objects,
         Arc::new(ReadOnlyAuthority { access, budget }),
         BackendLimits::default(),
         OperationLimits::default(),
     )
+    .map(|stores| stores.with_derived_files(files))
     .map_err(|_| Error::Unavailable)
 }
 impl GraphExecutor {
@@ -53,6 +75,7 @@ impl GraphExecutor {
             namespace.path(),
             cancellation,
             Some(namespace),
+            None,
         )
         .await
     }
@@ -65,8 +88,35 @@ impl GraphExecutor {
         path: PathBuf,
         cancellation: Cancellation,
     ) -> Result<Prepared> {
-        self.prepare_inner(store, access, path, cancellation, None)
+        self.prepare_inner(store, access, path, cancellation, None, None)
             .await
+    }
+    pub async fn prepare_managed_path_index(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        namespace: cache::managed::Namespace,
+        cancellation: Cancellation,
+        previous: Arc<Prepared>,
+    ) -> Result<Prepared> {
+        previous.validate(access.as_ref())?;
+        if namespace.binding()
+            != &(cache::managed::Binding::Native {
+                repository: access.repository(),
+                epoch: access.epoch(),
+            })
+        {
+            return Err(Error::EpochChanged);
+        }
+        self.prepare_inner(
+            store,
+            access,
+            namespace.path(),
+            cancellation,
+            Some(namespace),
+            Some(previous.index.clone()),
+        )
+        .await
     }
     async fn prepare_inner(
         &self,
@@ -75,6 +125,7 @@ impl GraphExecutor {
         path: PathBuf,
         cancellation: Cancellation,
         namespace: Option<cache::managed::Namespace>,
+        previous: Option<Arc<Index>>,
     ) -> Result<Prepared> {
         if !path.is_absolute() {
             return Err(Error::Invalid);
@@ -168,6 +219,13 @@ impl GraphExecutor {
                             || budget.work(1),
                         )
                         .await?;
+                        let index = if let Some(previous) = previous {
+                            index
+                                .extend_paths(&previous, &path, loader.store(), || budget.work(1))
+                                .await?
+                        } else {
+                            index
+                        };
                         budget.authorize(access.as_ref()).await?;
                         if let Some(namespace) = &namespace {
                             namespace.finish()?;

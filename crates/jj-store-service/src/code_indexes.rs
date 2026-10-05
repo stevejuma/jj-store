@@ -1,5 +1,6 @@
 //! One bounded native/local core-index owner. Existing events supply fresh sources.
 mod jobs;
+mod paths;
 mod tasks;
 use crate::{
     freshness::{self, Domain},
@@ -110,6 +111,10 @@ impl Ready {
         }
     }
 }
+struct Job {
+    source: Source,
+    previous: Option<Arc<Ready>>,
+}
 struct Entry {
     task: Task,
     cancel: q::Cancellation,
@@ -117,11 +122,12 @@ struct Entry {
     ready: Option<q::code_index::Retained<Ready>>,
     foreground: bool,
     expires: Instant,
+    path_failure: Option<q::Error>,
 }
 #[derive(Default)]
 struct Registry {
     entries: BTreeMap<Key, Entry>,
-    pending: VecDeque<Source>,
+    pending: VecDeque<Job>,
     active: bool,
 }
 pub struct Indexes {
@@ -234,7 +240,7 @@ impl Indexes {
         let obsolete: Vec<_> = registry
             .pending
             .iter()
-            .map(Source::key)
+            .map(|job| job.source.key())
             .filter(|old| {
                 old.binding.repository() == key.binding.repository()
                     && (old.binding != key.binding
@@ -245,7 +251,7 @@ impl Indexes {
             .collect();
         registry
             .pending
-            .retain(|source| !obsolete.contains(&source.key()));
+            .retain(|job| !obsolete.contains(&job.source.key()));
         for old in obsolete {
             if let Some(entry) = registry.entries.get_mut(&old) {
                 entry.cancel.cancel();
@@ -305,11 +311,15 @@ impl Indexes {
                 cancel: Default::default(),
                 used: Instant::now(),
                 ready: None,
+                path_failure: None,
                 foreground,
                 expires: Instant::now() + std::time::Duration::from_secs(3600),
             },
         );
-        registry.pending.push_back(source);
+        registry.pending.push_back(Job {
+            source,
+            previous: None,
+        });
         if !registry.active {
             registry.active = true;
             jobs::spawn(Arc::downgrade(self));
@@ -402,6 +412,11 @@ impl Indexes {
         operation: m::OperationId,
         request: local::Request,
     ) -> q::Result<local::Response> {
+        if let local::Request::Paths(request) = &request
+            && request.include_last_change
+        {
+            return self.local_paths(access, operation, request.clone()).await;
+        }
         Self::authorize_local(access.as_ref()).await?;
         let key = Key {
             binding: Binding::Local {

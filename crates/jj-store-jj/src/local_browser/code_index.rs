@@ -9,7 +9,7 @@ pub struct Prepared {
     directory: Directory,
     snapshot: Snapshot,
     pub stats: Stats,
-    index: Arc<standard::Index>,
+    pub(super) index: Arc<standard::Index>,
     selection: [[u8; 32]; 2],
     metadata: PathBuf,
 }
@@ -83,6 +83,7 @@ impl Executor {
             limits,
             cancellation,
             None,
+            None,
         )
         .await
     }
@@ -110,6 +111,38 @@ impl Executor {
             limits,
             cancellation,
             Some(namespace),
+            None,
+        )
+        .await
+    }
+    pub async fn prepare_managed_path_index(
+        &self,
+        access: Arc<dyn Access>,
+        namespace: crate::query::cache::managed::Namespace,
+        limits: preparation::Limits,
+        cancellation: Cancellation,
+        previous: Arc<Prepared>,
+    ) -> Result<Prepared> {
+        if namespace.binding()
+            != &(crate::query::cache::managed::Binding::Local {
+                repository: access.repository(),
+                generation: access.generation(),
+            })
+            || previous.snapshot.repository != access.repository()
+            || previous.snapshot.generation != access.generation()
+            || previous.metadata != access.metadata_path()
+        {
+            return Err(Error::EpochChanged);
+        }
+        self.prepare_code_inner(
+            access,
+            previous.snapshot.operation,
+            namespace.path(),
+            namespace.bytes(),
+            limits,
+            cancellation,
+            Some(namespace),
+            Some(previous),
         )
         .await
     }
@@ -123,6 +156,7 @@ impl Executor {
         limits: preparation::Limits,
         cancellation: Cancellation,
         namespace: Option<crate::query::cache::managed::Namespace>,
+        previous: Option<Arc<Prepared>>,
     ) -> Result<Prepared> {
         limits.validate()?;
         if !root.is_absolute() || reserved_bytes == 0 || reserved_bytes > 2 * 1024 * 1024 * 1024 {
@@ -145,7 +179,7 @@ impl Executor {
                         if root.starts_with(&metadata) {
                             return Err(Error::Invalid);
                         }
-                        let context = Context::open(
+                        let mut context = Context::open(
                             access,
                             operation,
                             budget.clone(),
@@ -156,6 +190,11 @@ impl Executor {
                         )
                         .await?;
                         let selected = selection(&context, operation)?;
+                        if let Some(previous) = &previous {
+                            Arc::get_mut(&mut context.access)
+                                .ok_or(Error::Unavailable)?
+                                .code_index = Some(previous.clone());
+                        }
                         let directory = if namespace.is_some() {
                             Directory::Managed(root)
                         } else {
@@ -212,6 +251,15 @@ impl Executor {
                             || budget.work(1),
                         )
                         .await?;
+                        let index = if let Some(previous) = previous {
+                            index
+                                .extend_paths(&previous.index, directory.path(), &store, || {
+                                    budget.work(1)
+                                })
+                                .await?
+                        } else {
+                            index
+                        };
                         budget.authorize(&context.access).await?;
                         if let Some(namespace) = &namespace {
                             namespace.finish()?;

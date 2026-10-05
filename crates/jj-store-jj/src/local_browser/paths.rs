@@ -45,6 +45,8 @@ pub enum LastChangeUnavailable {
     Merge,
     Budget,
     NotRequested,
+    Pending,
+    NotFound,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[schemars(rename = "LocalPathsEntry")]
@@ -196,6 +198,41 @@ impl Context {
         mut id: m::GitSha1Id,
         rows: &VecDeque<(String, jj_lib::backend::MergedTreeValue)>,
     ) -> Result<Vec<LastChange>> {
+        if let Some(index) = self.access.code_index.as_ref().map(|p| p.index.clone()) {
+            use crate::query::code_index::path_history::Change;
+            let changes = index
+                .history
+                .read(
+                    &index.raw,
+                    store,
+                    jj_lib::backend::CommitId::from_bytes(id.as_bytes()),
+                    rows.iter()
+                        .map(|(path, _)| native_path(path))
+                        .collect::<Result<Vec<_>>>()?,
+                    |work| self.budget.work(work),
+                )
+                .await?;
+            let mut result = Vec::with_capacity(changes.len());
+            for change in changes {
+                self.budget.authorize(&self.access).await?;
+                result.push(match change {
+                    Change::Found(commit) => {
+                        self.last_change_available(
+                            m::GitSha1Id::from_slice(commit.as_bytes())
+                                .map_err(|_| Error::Corrupt)?,
+                        )
+                        .await?
+                    }
+                    Change::Pending => LastChange::Unavailable {
+                        reason: LastChangeUnavailable::Pending,
+                    },
+                    Change::Missing => LastChange::Unavailable {
+                        reason: LastChangeUnavailable::NotFound,
+                    },
+                });
+            }
+            return Ok(result);
+        }
         let mut results = vec![
             LastChange::Unavailable {
                 reason: LastChangeUnavailable::Budget

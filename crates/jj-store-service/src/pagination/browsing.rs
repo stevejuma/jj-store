@@ -36,6 +36,7 @@ pub enum Start<T> {
 pub struct BrowserPager {
     reader: ContentReader,
     cursors: Arc<SnapshotCursors>,
+    code_indexes: Option<Arc<crate::code_indexes::Indexes>>,
 }
 struct OpenRequest<'a> {
     session: Arc<NativeSession>,
@@ -49,7 +50,15 @@ struct OpenRequest<'a> {
 }
 impl BrowserPager {
     pub fn with_cursors(reader: ContentReader, cursors: Arc<SnapshotCursors>) -> Self {
-        Self { reader, cursors }
+        Self {
+            reader,
+            cursors,
+            code_indexes: None,
+        }
+    }
+    pub fn with_code_indexes(mut self, indexes: Arc<crate::code_indexes::Indexes>) -> Self {
+        self.code_indexes = Some(indexes);
+        self
     }
     pub async fn references(
         &self,
@@ -145,23 +154,25 @@ impl BrowserPager {
                 snapshot: retained.unwrap(),
             });
         };
-        let data = read
-            .paths(
-                &self.reader,
-                paths::Request {
-                    include_last_change: request.include_last_change,
-                    commit: request.commit,
-                    path: request.path,
-                    recursive: request.recursive,
-                    limit: request.limit,
-                    anchor: position.as_ref().map(|p| p.0.clone()),
-                    direction: position.map_or(direction, |p| p.1),
-                },
-            )
-            .await?;
+        let limit = request.limit;
+        let request = paths::Request {
+            include_last_change: request.include_last_change,
+            commit: request.commit,
+            path: request.path,
+            recursive: request.recursive,
+            limit: request.limit,
+            anchor: position.as_ref().map(|p| p.0.clone()),
+            direction: position.map_or(direction, |p| p.1),
+        };
+        let data = if let Some(indexes) = &self.code_indexes {
+            indexes
+                .native_paths(read.clone(), &self.reader, request)
+                .await?
+        } else {
+            read.paths(&self.reader, request).await?
+        };
         Ok(Start::Window(Box::new(
-            self.finish(read, fingerprint, request.limit, data, false)
-                .await?,
+            self.finish(read, fingerprint, limit, data, false).await?,
         )))
     }
     async fn open(

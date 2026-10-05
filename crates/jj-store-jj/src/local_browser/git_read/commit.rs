@@ -35,7 +35,7 @@ pub(in super::super) fn read(
             backend.empty_tree_id().clone(),
         ));
     }
-    bounded_git_object(backend, git_id(id)?, gix::object::Kind::Commit, budget)?;
+    bounded_git_header(git, git_id(id)?, gix::object::Kind::Commit, budget)?;
     let oid = gix::ObjectId::from_bytes_or_panic(id.as_bytes());
     let object = git.find_object(oid).map_err(|_| Error::Incomplete)?;
     let commit = object.try_to_commit_ref().map_err(|_| Error::Corrupt)?;

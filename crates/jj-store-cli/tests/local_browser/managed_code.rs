@@ -208,3 +208,371 @@ async fn linux_standard_index_reuse_and_history_pages() {
         extras
     );
 }
+
+#[tokio::test]
+async fn indexed_path_history_resumes_beyond_sixty_four_commits() {
+    let source = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    jj(source.path(), &["git", "init", "--colocate"]);
+    fs::create_dir(source.path().join("old-directory")).unwrap();
+    fs::write(source.path().join("old-directory/old.txt"), "original\n").unwrap();
+    jj(source.path(), &["describe", "-m", "Original file change"]);
+    for _ in 0..70 {
+        jj(source.path(), &["new", "-m", "Unrelated commit"]);
+    }
+    let commit = jj(
+        source.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let metadata = source.path().join(".jj/repo");
+    let before = super::preparation_acceptance::files(&metadata);
+    let access: Arc<dyn q::Access> = Arc::new(CooperativeBinding(ReadBinding(metadata.clone())));
+    let executor = q::Executor::new(1).unwrap();
+    let operation = executor.heads(access.clone()).await.unwrap().heads[0];
+    use jj_store_jj::query::cache::{
+        Policy,
+        managed::{Binding, Namespace},
+    };
+    let binding = Binding::Local {
+        repository: access.repository(),
+        generation: access.generation(),
+    };
+    let namespace = Namespace::acquire(output.path(), binding.clone(), Policy::default()).unwrap();
+    let mut prepared = Arc::new(
+        executor
+            .prepare_managed_code_index(
+                access.clone(),
+                operation,
+                namespace,
+                Default::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
+    let request = q::Request::Paths(q::paths::Request {
+        commit,
+        path: String::new(),
+        recursive: false,
+        include_last_change: true,
+        limit: 20,
+        anchor: None,
+        direction: Default::default(),
+    });
+    let mut resolved = false;
+    for batch in 0..4 {
+        let q::Response::Paths(page) = executor
+            .read_code_index(access.clone(), prepared.clone(), request.clone())
+            .await
+            .unwrap()
+        else {
+            panic!()
+        };
+        assert_eq!(page.entries[0].path, "old-directory");
+        assert!(page.stats.metadata_nodes < 140, "{:?}", page.stats);
+        if let q::paths::LastChange::Available { description, .. } = &page.entries[0].last_change {
+            assert_eq!(description.trim(), "Original file change");
+            resolved = true;
+            let q::Response::Paths(cached) = executor
+                .read_code_index(access.clone(), prepared.clone(), request.clone())
+                .await
+                .unwrap()
+            else {
+                panic!()
+            };
+            assert!(
+                cached.stats.metadata_nodes < 6,
+                "cached lookup must not revisit ancestry: {:?}",
+                cached.stats
+            );
+            break;
+        }
+        assert!(
+            batch < 2,
+            "history must resume rather than replay the first batch"
+        );
+        let namespace =
+            Namespace::acquire(output.path(), binding.clone(), Policy::default()).unwrap();
+        prepared = Arc::new(
+            executor
+                .prepare_managed_path_index(
+                    access.clone(),
+                    namespace,
+                    Default::default(),
+                    Cancellation::default(),
+                    prepared,
+                )
+                .await
+                .unwrap(),
+        );
+        assert!(
+            prepared
+                .path()
+                .join("changed_paths")
+                .read_dir()
+                .unwrap()
+                .next()
+                .is_some()
+        );
+    }
+    assert!(
+        resolved,
+        "bounded metadata batches must eventually reach history older than 64 commits"
+    );
+    assert_eq!(super::preparation_acceptance::files(&metadata), before);
+}
+
+#[tokio::test]
+async fn wide_path_history_skips_unrelated_commits_once_per_window() {
+    let source = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    jj(source.path(), &["git", "init", "--colocate"]);
+    fs::create_dir(source.path().join("old-directory")).unwrap();
+    for row in 0..50 {
+        fs::write(
+            source
+                .path()
+                .join(format!("old-directory/file-{row:02}.txt")),
+            "original\n",
+        )
+        .unwrap();
+    }
+    jj(
+        source.path(),
+        &["describe", "-m", "Original directory change"],
+    );
+    for row in 0..25 {
+        jj(source.path(), &["new", "-m", "Unrelated change"]);
+        fs::write(
+            source.path().join("old-directory/unrelated.txt"),
+            format!("{row}\n"),
+        )
+        .unwrap();
+    }
+    let commit = jj(
+        source.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let metadata = source.path().join(".jj/repo");
+    let before = super::preparation_acceptance::files(&metadata);
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(metadata.clone()));
+    let executor = q::Executor::new(1).unwrap();
+    let operation = executor.heads(access.clone()).await.unwrap().heads[0];
+    let prepared = Arc::new(
+        executor
+            .prepare_code_index(
+                access.clone(),
+                operation,
+                output.path().into(),
+                16 * 1024 * 1024,
+                Default::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
+    let request = q::Request::Paths(q::paths::Request {
+        commit,
+        path: "old-directory".into(),
+        recursive: false,
+        include_last_change: true,
+        limit: 50,
+        anchor: None,
+        direction: Default::default(),
+    });
+    let q::Response::Paths(first) = executor
+        .read_code_index(access.clone(), prepared.clone(), request.clone())
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(first.entries.len(), 50);
+    assert!(first.stats.work < 20_000, "{:?}", first.stats);
+    assert!(first.entries.iter().all(|entry| matches!(
+        entry.last_change,
+        q::paths::LastChange::Unavailable {
+            reason: q::paths::LastChangeUnavailable::Pending
+        }
+    )));
+    let q::Response::Paths(second) = executor
+        .read_code_index(access, prepared, request)
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(second.entries.iter().all(|entry| matches!(
+        &entry.last_change,
+        q::paths::LastChange::Available { description, .. }
+            if description.trim() == "Original directory change"
+    )));
+    assert_eq!(super::preparation_acceptance::files(&metadata), before);
+}
+
+#[tokio::test]
+async fn source_changed_path_index_is_copied_without_repair_or_history_tree_reads() {
+    let source = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    jj(source.path(), &["git", "init", "--colocate"]);
+    fs::write(source.path().join("file.txt"), "original\n").unwrap();
+    jj(source.path(), &["describe", "-m", "Original"]);
+    jj(source.path(), &["new", "-m", "Unchanged"]);
+    let commit = jj(
+        source.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    jj(
+        source.path(),
+        &["debug", "index-changed-paths", "--limit", "100"],
+    );
+    let metadata = source.path().join(".jj/repo");
+    let before = super::preparation_acceptance::files(&metadata);
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(metadata.clone()));
+    let executor = q::Executor::new(1).unwrap();
+    let operation = executor.heads(access.clone()).await.unwrap().heads[0];
+    let prepared = Arc::new(
+        executor
+            .prepare_code_index(
+                access.clone(),
+                operation,
+                output.path().into(),
+                16 * 1024 * 1024,
+                Default::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
+    assert!(
+        prepared
+            .path()
+            .join("changed_paths")
+            .read_dir()
+            .unwrap()
+            .next()
+            .is_some()
+    );
+    let q::Response::Paths(page) = executor
+        .read_code_index(
+            access,
+            prepared,
+            q::Request::Paths(q::paths::Request {
+                commit,
+                path: String::new(),
+                recursive: false,
+                include_last_change: true,
+                limit: 20,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(
+        matches!(&page.entries[0].last_change, q::paths::LastChange::Available { description, .. } if description.trim() == "Original")
+    );
+    assert!(page.stats.metadata_nodes < 8, "{:?}", page.stats);
+    assert_eq!(super::preparation_acceptance::files(&metadata), before);
+}
+
+// Reproduce a backend admission future exhausting Tokio's cooperative budget
+// while JJ polls file predicates synchronously through pollster.
+struct CooperativeBinding(ReadBinding);
+#[async_trait::async_trait]
+impl q::Access for CooperativeBinding {
+    fn repository(&self) -> jj_store_model::RepositoryId {
+        self.0.repository()
+    }
+    fn generation(&self) -> u64 {
+        self.0.generation()
+    }
+    fn metadata_path(&self) -> &std::path::Path {
+        self.0.metadata_path()
+    }
+    async fn authorize(&self) -> q::Result<()> {
+        for _ in 0..130 {
+            tokio::task::consume_budget().await;
+        }
+        self.0.authorize().await
+    }
+}
+
+#[tokio::test]
+async fn indexed_merge_history_resolves_parent_contents_without_source_writes() {
+    let source = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    jj(source.path(), &["git", "init", "--colocate"]);
+    fs::write(source.path().join("merged.txt"), "a\nb\nc\n").unwrap();
+    jj(source.path(), &["describe", "-m", "Base"]);
+    jj(source.path(), &["bookmark", "create", "base"]);
+    jj(source.path(), &["new", "base", "-m", "Left edit"]);
+    fs::write(source.path().join("merged.txt"), "A\nb\nc\n").unwrap();
+    jj(source.path(), &["bookmark", "create", "left"]);
+    jj(source.path(), &["new", "base", "-m", "Right edit"]);
+    fs::write(source.path().join("merged.txt"), "a\nb\nC\n").unwrap();
+    jj(source.path(), &["bookmark", "create", "right"]);
+    jj(
+        source.path(),
+        &["new", "left", "right", "-m", "Merge both lines"],
+    );
+    let commit = jj(
+        source.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let metadata = source.path().join(".jj/repo");
+    let before = super::preparation_acceptance::files(&metadata);
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(metadata.clone()));
+    let executor = q::Executor::new(1).unwrap();
+    let operation = executor.heads(access.clone()).await.unwrap().heads[0];
+    let prepared = Arc::new(
+        executor
+            .prepare_code_index(
+                access.clone(),
+                operation,
+                output.path().into(),
+                16 * 1024 * 1024,
+                Default::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
+    let q::Response::Paths(page) = executor
+        .read_code_index(
+            access,
+            prepared,
+            q::Request::Paths(q::paths::Request {
+                commit,
+                path: String::new(),
+                recursive: false,
+                include_last_change: true,
+                limit: 20,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(page.entries.len(), 1);
+    assert!(
+        matches!(&page.entries[0].last_change, q::paths::LastChange::Available { description, .. } if description.trim() == "Right edit"),
+        "{:?}",
+        page.entries[0].last_change
+    );
+    assert_eq!(super::preparation_acceptance::files(&metadata), before);
+}

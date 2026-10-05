@@ -41595,7 +41595,7 @@
       },
       "LastChangeUnavailable": {
         "type": "string",
-        "enum": ["merge", "budget", "not_requested"]
+        "enum": ["merge", "budget", "not_requested", "pending", "not_found"]
       },
       "Envelope_ConflictResponse": {
         "type": "object",
@@ -43421,7 +43421,7 @@
       },
       "LocalPathsLastChangeUnavailable": {
         "type": "string",
-        "enum": ["merge", "budget", "not_requested"]
+        "enum": ["merge", "budget", "not_requested", "pending", "not_found"]
       },
       "LocalReferencesPage": {
         "type": "object",

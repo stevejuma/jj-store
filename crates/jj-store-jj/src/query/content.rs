@@ -176,9 +176,11 @@ pub struct ContentReader {
     limits: Limits,
     workers: Workers,
     graph: Option<super::GraphExecutor>,
+    code_index: Option<Arc<super::code_index::Prepared>>,
 }
 pub(super) struct Context {
     pub(super) limits: Limits,
+    pub(super) code_index: Option<Arc<super::code_index::Prepared>>,
     pub(super) budget: Arc<Budget>,
     pub(super) access: Arc<dyn ReadAccess>,
     pub(super) objects: Arc<NativeObjects>,
@@ -209,7 +211,12 @@ impl ContentReader {
             limits,
             workers,
             graph: None,
+            code_index: None,
         })
+    }
+    pub fn with_code_index(mut self, prepared: Arc<super::code_index::Prepared>) -> Self {
+        self.code_index = Some(prepared);
+        self
     }
     pub(super) fn with_graph(mut self, graph: super::GraphExecutor) -> Self {
         self.graph = Some(graph);
@@ -225,6 +232,10 @@ impl ContentReader {
     ) -> Result<T> {
         let permit = self.workers.acquire()?;
         let limits = self.limits;
+        let code_index = self.code_index.clone();
+        if let Some(index) = &code_index {
+            index.validate(access.as_ref())?;
+        }
         let budget = Arc::new(Budget::new(super::Limits {
             metadata: limits.metadata,
             max_object_bytes: limits.max_read_bytes,
@@ -248,6 +259,7 @@ impl ContentReader {
                 );
                 let context = Context {
                     limits,
+                    code_index,
                     budget: budget.clone(),
                     access: access.clone(),
                     objects,

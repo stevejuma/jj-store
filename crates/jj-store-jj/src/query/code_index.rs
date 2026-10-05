@@ -1,5 +1,8 @@
 //! Standard JJ graph only. No custom visibility, operation or filter projection.
+pub(crate) mod merge_files;
 mod native;
+pub(crate) mod path_history;
+mod path_index;
 use super::{Error, Result, memory};
 use jj_lib::{
     default_index::{DefaultIndexStore, DefaultReadonlyIndex},
@@ -31,6 +34,7 @@ impl<T: Send + Sync + 'static> Retained<T> {
 
 pub(crate) struct Index {
     pub raw: DefaultReadonlyIndex,
+    pub history: Arc<path_history::History>,
     operation: jj_lib::op_store::OperationId,
     _memory: Arc<memory::Lease>,
 }
@@ -96,6 +100,7 @@ impl Index {
         };
         Ok(Self {
             raw,
+            history: Arc::default(),
             operation: operation.id().clone(),
             _memory: memory,
         })
@@ -177,29 +182,37 @@ pub(crate) async fn seed(
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => continue,
             Err(_) => return Err(Error::Unavailable),
         };
-        if !metadata.is_file() || metadata.len() != 66 {
+        if !metadata.is_file() || metadata.len() > 16 * 1024 {
             return Err(Error::Corrupt);
         }
         let mut link = vec![];
         fs::File::open(path)
             .map_err(|_| Error::Unavailable)?
-            .take(67)
+            .take(16 * 1024 + 1)
             .read_to_end(&mut link)
             .map_err(|_| Error::Unavailable)?;
         charge(link.len())?;
-        if link.len() != 66 || link[..2] != [10, 64] {
+        if link.len() > 16 * 1024 {
             return Err(Error::Corrupt);
         }
         break (operation.id().hex(), link);
     };
-    let mut next = Some(
-        link[2..]
+    use prost::Message as _;
+    let control = SegmentControl::decode(link.as_slice()).map_err(|_| Error::Corrupt)?;
+    if control.commit_segment_id.len() != 64
+        || control.changed_path_segment_ids.len() > 128
+        || control
+            .changed_path_segment_ids
             .iter()
-            .map(|b| format!("{b:02x}"))
-            .collect::<String>(),
-    );
+            .any(|id| id.len() != 64)
+        || control.changed_path_start_commit_pos.is_none()
+            != control.changed_path_segment_ids.is_empty()
+    {
+        return Err(Error::Corrupt);
+    }
+    let mut next = Some(bytes_hex(&control.commit_segment_id));
     let mut seen = std::collections::BTreeSet::new();
-    let mut total = 66u64;
+    let mut total = link.len() as u64;
     while let Some(name) = next {
         charge(0)?;
         if !hex(&name, 128) || !seen.insert(name.clone()) {
@@ -224,6 +237,28 @@ pub(crate) async fn seed(
             &mut charge,
         )?;
         next = parent;
+    }
+    if !control.changed_path_segment_ids.is_empty() {
+        fs::create_dir_all(target.join("changed_paths")).map_err(|_| Error::Unavailable)?;
+        for id in control.changed_path_segment_ids {
+            charge(0)?;
+            let name = bytes_hex(&id);
+            let path = source.join("changed_paths").join(&name);
+            let metadata = fs::symlink_metadata(&path).map_err(|_| Error::Unavailable)?;
+            if !metadata.is_file() {
+                return Err(Error::Corrupt);
+            }
+            total = total
+                .checked_add(metadata.len())
+                .filter(|n| *n <= max_bytes)
+                .ok_or(Error::Limit)?;
+            copy_segment(
+                &path,
+                &target.join("changed_paths").join(name),
+                metadata.len(),
+                &mut charge,
+            )?;
+        }
     }
     fs::write(target.join("op_links").join(operation), link).map_err(|_| Error::Unavailable)?;
     Ok(())
@@ -269,6 +304,9 @@ fn copy_segment(
     {
         return Err(Error::Corrupt);
     }
+    if header.len() >= 20 && header[..4] == 0u32.to_le_bytes() {
+        return Ok(None);
+    }
     if header.len() < 8 || header[..4] != 6u32.to_le_bytes() {
         return Err(Error::Corrupt);
     }
@@ -283,4 +321,18 @@ fn copy_segment(
         }
         _ => Err(Error::Corrupt),
     }
+}
+
+// JJ 0.45.1 default_index.proto (Apache-2.0); read-only source-copy framing.
+#[derive(prost::Message)]
+struct SegmentControl {
+    #[prost(bytes = "vec", tag = "1")]
+    commit_segment_id: Vec<u8>,
+    #[prost(uint32, optional, tag = "2")]
+    changed_path_start_commit_pos: Option<u32>,
+    #[prost(bytes = "vec", repeated, tag = "3")]
+    changed_path_segment_ids: Vec<Vec<u8>>,
+}
+fn bytes_hex(bytes: &[u8]) -> String {
+    bytes.iter().map(|b| format!("{b:02x}")).collect()
 }

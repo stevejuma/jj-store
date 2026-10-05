@@ -4855,7 +4855,8 @@ export interface components {
           status: "unavailable";
         };
     /** @enum {string} */
-    LastChangeUnavailable: "merge" | "budget" | "not_requested";
+    LastChangeUnavailable:
+      "merge" | "budget" | "not_requested" | "pending" | "not_found";
     Envelope_ConflictResponse: {
       snapshot: components["schemas"]["ReadSnapshot"];
       data: components["schemas"]["ConflictResponse"];
@@ -5732,7 +5733,8 @@ export interface components {
           status: "unavailable";
         };
     /** @enum {string} */
-    LocalPathsLastChangeUnavailable: "merge" | "budget" | "not_requested";
+    LocalPathsLastChangeUnavailable:
+      "merge" | "budget" | "not_requested" | "pending" | "not_found";
     LocalReferencesPage: {
       /** Format: uint32 */
       version: number;

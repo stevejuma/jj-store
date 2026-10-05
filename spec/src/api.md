@@ -587,11 +587,14 @@ that reference; resolving one target must not replace the selected reference.
 `GET /commits/{commit}/paths` returns direct file and directory terms for a
 nonrecursive path window, while a recursive query walks leaf paths only as far
 as the requested forward window plus a bounded probe. It reports exact native
-terms and batches bounded last-change attribution. Attribution compares exact
-path terms along the selected commit's first-parent history, including merges. A
-merge is the last change when its path differs from its first parent; an
-unchanged path continues through that parent. The fixed ancestry budget remains
-an explicit unavailable state rather than substitution with the selected commit.
+terms. Managed core attribution uses JJ file-history semantics over the selected
+commit's ancestors, including changes on merged branches. Names load without
+ancestry work. Optional metadata advances at most 64 candidate commits per
+batch; `pending` means another bounded batch can resume, rather than permanent
+unavailability. Resolved rows and a bounded credential-free ancestry frontier
+are reused on the exact immutable operation/commit/path selection. An exhausted
+history with no change reports `not_found`. Compatibility readers without a
+managed index retain their separately bounded first-parent lookup.
 
 Each browsing response carries signed `previous_cursor` and `next_cursor` values
 over the same retained snapshot registry as graph and directory pages. Their
@@ -2057,13 +2060,15 @@ before target hydration; each returned target retains exact pinned membership.
 
 Path windows accept `include_last_change` (default true for existing clients).
 False returns row identities and `not_requested` attribution without walking
-parents. Attribution traverses one shared first-parent chain per window, capped
-at 64 visits, and does not stop merely because a commit has multiple parents.
-Exhaustion retains explicit budget outcomes. Clients load rows before
-attribution, use independent cursor bindings for each query, and join metadata
-only to matching immutable commit/path/term identities. Metadata failure cannot
-discard rows. Directory navigation shows a skeleton while its file read is
-loading even when the repository retains a prior snapshot. Ready file names
+parents. Managed attribution uses one shared JJ ancestry window, capped at 64
+candidates per batch. It filters only those candidates through JJ's file
+predicate and resumes from the unvisited ancestry frontier. Pending rows keep
+skeletons while the client repeats that exact optional read with bounded
+concurrency and backoff; navigation cancels obsolete work. Terminal failure
+settles optional metadata without discarding rows. Each metadata result is
+joined only to matching immutable commit/path/term identities. Metadata failure
+cannot discard rows. Directory navigation shows a skeleton while its file read
+is loading even when the repository retains a prior snapshot. Ready file names
 remain independent of optional row attribution and pagination retains already
 loaded rows.
 

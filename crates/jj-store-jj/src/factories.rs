@@ -32,6 +32,7 @@ pub trait NativeAuthority: BackendAuthority + OperationAuthority {
 }
 #[derive(Clone)]
 pub struct NativeStores {
+    derived_files: Option<Arc<crate::query::code_index::merge_files::Files>>,
     objects: Arc<NativeObjects>,
     authority: Arc<dyn NativeAuthority>,
     backend_limits: BackendLimits,
@@ -56,11 +57,19 @@ impl NativeStores {
         NativeBackend::new(objects.clone(), authority.clone(), backend_limits)?;
         NativeOpStore::new(objects.clone(), authority.clone(), operation_limits)?;
         Ok(Self {
+            derived_files: None,
             objects,
             authority,
             backend_limits,
             operation_limits,
         })
+    }
+    pub(crate) fn with_derived_files(
+        mut self,
+        files: Arc<crate::query::code_index::merge_files::Files>,
+    ) -> Self {
+        self.derived_files = Some(files);
+        self
     }
     fn backend(&self) -> AuthorityResult<NativeBackend> {
         NativeBackend::new(
@@ -68,6 +77,7 @@ impl NativeStores {
             self.authority.clone(),
             self.backend_limits,
         )
+        .map(|backend| backend.with_derived_files(self.derived_files.clone()))
     }
     fn operations(&self) -> AuthorityResult<NativeOpStore> {
         NativeOpStore::new(

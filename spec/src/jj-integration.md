@@ -1017,16 +1017,41 @@ include directory entries. They MUST NOT descend into unrelated child trees to
 construct a direct-child page. Conflict terms retain upstream trivial-resolution
 semantics; deeper content remains separately admitted.
 
-Optional path attribution is a separately budgeted request. Within a window the
-reader shares one parent-chain traversal and retains upstream path-value and
-merge-term semantics. First-parent attribution includes merge commits: changed
-terms belong to the integration commit; equal terms continue along its first
-parent. The existing 64-visit cap and request admission remain unchanged; no
-second-parent history or merge-base reconstruction is requested. Exhaustion
-reports unavailable attribution without invented last-change commits.
-Lightweight local commit headers expose native commit data without requiring
-visible-change/evolution evaluation. Scoped file content requires exact
-commit/path/file agreement before opening a stream.
+Optional managed path attribution uses JJ's File revset predicate and normal
+merged-parent comparison, preserving original branch changes and merge conflict
+resolutions. A shared ancestry window admits at most 64 candidates per request;
+wide windows reduce that count to at most 1024 candidate/path evaluations so
+directory width cannot multiply an entire history batch by every pending row.
+For multiple unresolved rows, a single union File predicate first excludes
+commits that touch none of their paths. Only matching candidates enter
+row-specific predicates, and both passes share the candidate/path admission.
+Unresolved rows resume using a bounded evictable ID-only frontier. Cache hits
+still require fresh authority and exact immutable path terms. JJ file-predicate
+polls use the existing unconstrained runtime boundary so synchronous upstream
+polling cannot stall on a scheduler-only cooperative yield; owned work, byte,
+cancellation and deadline admission still applies. No credential, store, stream
+or request is retained. Cache entries and frontier/row scratch are bounded and
+charged to the existing process allocation allowance. Names-only reads do no
+ancestry or changed-path preparation. The existing managed task queue may extend
+JJ's standard changed-path index at most 64 commits per demand batch, with
+independent preparation bytes/work/deadline/cancellation admission. Publish
+graph readiness before optional path maintenance and retain usable ready handles
+while it runs. Source indexes remain read-only; changed-path output and
+operation associations belong only to the managed disposable namespace. No
+second indexing framework or repository authority is introduced. Compatibility
+readers retain the old bounded first-parent contract. Lightweight local commit
+headers expose native commit data without requiring visible-change/evolution
+evaluation. Scoped file content requires exact commit/path/file agreement before
+opening a stream.
+
+JJ's clean merged-parent comparison may synthesize file content. Read adapters
+retain these blobs only for the current request, under fresh read authorization,
+existing work/byte/deadline limits, per-file admission, at most 4096 blobs and
+64MiB total content. Allocation leases follow returned readers. Identities use
+the original backend hash (Git SHA-1 blob framing or native Blake2b-512
+content). Synthetic content never writes source objects, indexes or repository
+authority, and does not grant access to unrelated content. Ordinary backend
+writes retain their existing mutation authorization and publication contract.
 
 Workspace references are projected directly from the pinned view's workspace
 map. Shared targets are hydrated once per window; target annotations on a
@@ -1204,7 +1229,7 @@ not reserve a new entry or evict unrelated pages. These quotas govern one shared
 serving namespace; independent standalone executor roots remain independently
 configured. Missing native operation indexes, including additional operations
 selected by predicates, use the owned format-6 constructor. Interactive
-construction uses compact ordered scratch capped at64MiB, charging the shared
+construction uses compact ordered scratch capped at 64MiB, charging the shared
 resident pool before copying keys/fields or growing tables; it retains no commit
 bodies and enforces the inline commit threshold before adding nodes. Small
 explicit preparation uses the same scratch when its writable allowance is below

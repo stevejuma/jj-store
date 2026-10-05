@@ -374,6 +374,7 @@ impl Work {
                     .ok_or(Error::Unavailable)?;
                 let context = content::Context {
                     limits,
+                    code_index: None,
                     budget: budget.clone(),
                     access: access.clone(),
                     objects,

@@ -192,3 +192,77 @@ async fn managed_local_http_activates_without_subscribers_resumes_and_captures_t
         fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();
     }
 }
+
+#[tokio::test]
+async fn managed_http_path_metadata_resumes_and_preserves_source_state() {
+    let temp = tempfile::tempdir().unwrap();
+    let folder = temp.path().join("repo");
+    jj(
+        temp.path(),
+        &["git", "init", "--colocate", folder.to_str().unwrap()],
+    );
+    fs::create_dir(folder.join("old-directory")).unwrap();
+    fs::write(folder.join("old-directory/file.txt"), "original\n").unwrap();
+    jj(&folder, &["describe", "-m", "Original change"]);
+    for _ in 0..70 {
+        jj(&folder, &["new", "-m", "Unrelated"]);
+    }
+    jj(&folder, &["bookmark", "create", "main", "other"]);
+    let commit = jj(
+        &folder,
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    );
+    let operation = jj(&folder, &["op", "log", "--no-graph", "-n", "1", "-T", "id"]);
+    let identity = installation::initialize_filesystem(&temp.path().join("state")).unwrap();
+    let mut config = Config::load(&identity.config).unwrap();
+    let port = std::net::TcpListener::bind("127.0.0.1:0")
+        .unwrap()
+        .local_addr()
+        .unwrap();
+    config.bind = port;
+    config.public_url = format!("http://{port}/");
+    let (stop, running) = server(&config).await;
+    let client = reqwest::Client::new();
+    let (status, registered) = request(&client, port, "/local/repositories", Some(&json!({"version":1,"request_id":"38383838383838383838383838383838","expected_revision":0,"path":folder,"name":"Path history"})), false).await;
+    assert_eq!(status, 200, "{registered}");
+    let id = registered["binding"]["repository"].as_str().unwrap();
+    let base = format!("/local/repos/{id}/query");
+    let before = super::preparation_acceptance::files(&folder.join(".jj/repo"));
+    let query = |include_last_change| json!({"operation":operation,"cursor":null,"request":{"kind":"paths","query":{"commit":commit,"path":"","recursive":false,"include_last_change":include_last_change,"limit":20,"anchor":null,"direction":"forward"}}});
+    let (status, names) = request(&client, port, &base, Some(&query(false)), false).await;
+    assert_eq!(status, 200, "{names}");
+    assert_eq!(
+        names["data"]["data"]["entries"][0]["last_change"]["reason"],
+        "not_requested"
+    );
+    let deadline = tokio::time::Instant::now() + Duration::from_secs(15);
+    let mut batches = 0;
+    loop {
+        let (status, page) = request(&client, port, &base, Some(&query(true)), false).await;
+        assert_eq!(status, 200, "{page}");
+        let entry = &page["data"]["data"]["entries"][0];
+        assert_eq!(entry["path"], "old-directory", "{page}");
+        assert_eq!(entry["terms"], names["data"]["data"]["entries"][0]["terms"]);
+        if entry["last_change"]["status"] == "available" {
+            assert_eq!(
+                entry["last_change"]["description"].as_str().unwrap().trim(),
+                "Original change"
+            );
+            break;
+        }
+        assert_eq!(entry["last_change"]["reason"], "pending", "{page}");
+        batches += 1;
+        assert!(
+            tokio::time::Instant::now() < deadline,
+            "metadata never resumed"
+        );
+        tokio::time::sleep(Duration::from_millis(100)).await;
+    }
+    assert!(batches > 0);
+    stop.send(()).unwrap();
+    running.await.unwrap();
+    assert_eq!(
+        super::preparation_acceptance::files(&folder.join(".jj/repo")),
+        before
+    );
+}

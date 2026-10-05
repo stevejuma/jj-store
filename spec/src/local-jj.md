@@ -683,11 +683,21 @@ all must agree with a selected native tree term before content can be read.
 These queries reuse scoped read capabilities, preserve explicit conflict terms
 and do not admit unrelated Git objects. Legacy bare-ID reads retain their
 membership checks. `include_last_change=false` returns file rows independently
-of history; explicit attribution shares one bounded parent traversal across the
-page. Its first-parent comparison includes merges without walking other parent
-histories; a changed path belongs to that integration commit, while an unchanged
-path continues toward its previous change. Retain the 64-visit cap and all
-scoped authorization, native path terms and request admission.
+of history; managed attribution uses JJ file-history predicates on bounded
+64-commit ancestry windows. Its ID-only continuation and resolved-row cache are
+scoped to the exact operation, commit and path window; they never admit
+arbitrary Git objects. Pending metadata resumes with fresh authorization and
+immutable term checks. Standard changed-path preparation extends only the
+private managed copy in bounded demand batches through the existing task worker.
+Compatible source changed-path segments may be copied under the same
+framing/checksum/file/byte admission as graph segments. Source operation links,
+indexes, Git refs and extra metadata remain unchanged. Compatibility readers
+retain their 64-visit first-parent fallback.
+
+Managed JJ merged-parent file comparisons may retain bounded request-local
+synthetic Git blobs, using canonical Git blob identities and read authorization.
+These disappear with the request and its readers; source objects and refs remain
+unchanged. No mutation capability is granted by this scratch content.
 
 Local workspace windows and exact bookmark/workspace resolution consume only the
 selected operation/view and returned target records. Neither needs a JJ index or

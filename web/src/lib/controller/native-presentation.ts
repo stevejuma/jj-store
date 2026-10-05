@@ -212,7 +212,7 @@ export function presentPaths(
       >((entry) => {
         const value = entry.last_change;
         if (value.status === "unavailable")
-          return value.reason === "not_requested"
+          return ["not_requested", "pending"].includes(value.reason)
             ? []
             : [[entry.path, undefined]];
         return [

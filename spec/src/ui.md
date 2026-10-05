@@ -3,8 +3,15 @@
 Opening a directory shows the existing directory skeleton while its files load,
 including navigation within a retained repository snapshot. Pagination keeps
 loaded rows and its existing tail skeleton. File names become navigable before
-optional Description and Updated metadata settles; merge-history attribution
-retains the selected first-parent semantics and bounded unavailable outcomes.
+optional Description and Updated metadata settles; managed row attribution uses
+JJ file-history semantics and resumes pending metadata in bounded requests with
+backoff, including temporary busy admission. Resolved rows remain visible while
+other rows use skeletons. Cache eviction cannot replace resolved metadata with
+pending state for the same immutable selection. Changing the directory, selected
+commit, operation or source cancels obsolete metadata; stale results cannot
+overwrite the new view. Optional failure preserves usable filenames. Transient
+state feedback belongs in the shared toast service, with no additional inline
+preparation messages.
 
 When `automatic_code_index` is advertised, ordinary Files, Branches and Commits
 views recover the exact selected operation through core task observation and

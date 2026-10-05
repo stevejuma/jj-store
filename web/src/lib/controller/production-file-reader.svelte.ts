@@ -78,7 +78,11 @@ export function createProductionFileReader(context: FileReaderContext) {
     const previous = data.pathPages.get(pathPageKey(path, recursive));
     if (more && !previous?.cursor) return false;
     data.status.files = more ? "refreshing" : "loading";
-    const signal = metadata.bind(commit, operation);
+    const signal = metadata.bind(
+      commit,
+      operation,
+      pathPageKey(path, recursive),
+    );
     try {
       const value = await readPaths(source, operation, commit, {
         path,

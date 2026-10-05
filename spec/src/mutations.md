@@ -1,5 +1,17 @@
 # Typed mutations
 
+Optional path-history maintenance uses the existing read preparation worker and
+retains only bounded derived IDs and standard JJ index output. It MUST NOT
+retain authorization, publish repository state or become a prerequisite for
+guarded mutations. Every later metadata batch reauthorizes its pinned source;
+optional maintenance failure leaves the existing graph handle available.
+
+JJ read adapters may synthesize clean merged-parent files in bounded
+request-local memory to evaluate file history. They use read authorization and
+canonical file identities; no source or native object write, WAL entry or
+manifest publication occurs. Ordinary backend writes continue to require
+mutation authorization.
+
 Managed core indexing grants read readiness only. Construction, adoption,
 queries and task control reauthorize the source and exact epoch/registration;
 access loss prevents adoption. Fresh metadata observation leaves foreground read

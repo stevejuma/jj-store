@@ -322,6 +322,11 @@ impl HttpApi {
             cache,
             Default::default(),
         );
+        let browser = if matches!(config.access, Access::LocalTrusted { .. }) {
+            browser.with_code_indexes(code_indexes.clone())
+        } else {
+            browser
+        };
         let graphs = if matches!(config.access, Access::LocalTrusted { .. }) {
             graphs.with_code_indexes(code_indexes.clone())
         } else {

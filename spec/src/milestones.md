@@ -90466,6 +90466,462 @@ entries.
       "Full release/RustFS/scale/RSS, registry-resolved foundational packages and visual baselines remain outside this narrow slice. Existing reproduced package Clippy diagnostics from E-READ-084 are unchanged and not rerun."
     ],
     "next": "Commit this verified narrow slice and advance clean main with Jujutsu; preserve the temporary workspace and fixed 7470 preview. Deeper metadata coverage requires a separately scoped bounded-history policy."
+  },
+  {
+    "id": "E-READ-087",
+    "date": "2026-10-05",
+    "tasks": ["M4.1", "M4.6", "M4.9", "M4.10", "M13.4"],
+    "requirements": [
+      "JST-API-001",
+      "JST-API-005",
+      "JST-UI-003",
+      "JST-JJ-003",
+      "JST-LOCAL-004"
+    ],
+    "kind": "Resumable JJ file-history attribution through existing managed indexes",
+    "revision": "enclosing Jujutsu change wpvmvnlq",
+    "before": "E-READ-086 left 22 root and 18 arch Linux rows permanently Budget-unavailable beyond 64 first-parent visits. Exact >64 regression failed before implementation. Real acceptance also exposed repeated Git handle validation, synchronous JJ File polling exhausting Tokio cooperative budget, and read-only rejection of clean merged-parent synthetic file writes. Real block/root/arch limit-50 requests later hit 30-second proxy 502 deadlines; linux-ui-windows-final.log/json records this. The combined candidate/path cap removes the deadline failure; union filtering subsequently reduces repeated unrelated comparisons.",
+    "scope": "Keep filename-only reads unchanged. Use JJ File predicates over ancestry batches of at most 64 commits and 1024 candidate/path evaluations, with a union predicate excluding unrelated commits before per-row checks. Retain operation/commit/path-scoped bounded ID-only continuation and resolved-row reuse. Reuse the managed preparation queue to optionally extend upstream standard changed-path indexes; no watcher or authoritative indexing framework. Add Pending/NotFound outcomes and cancellable UI retry/backoff, preserving resolved rows and skeletons. Reuse one Git handle per local request. Supply bounded request-local canonical merge blobs without source/native publication. UI also preserves validated resolved metadata if an evicted server checkpoint returns Pending for the same immutable terms.",
+    "formats": "HTTP V1 additive native/local Pending and NotFound unavailable reasons; generated OpenAPI/TypeScript updated. Pinned JJ 0.45.1 changed-path format-0 and commit format-6 remain upstream formats in disposable managed copies. No source/index/ref write, native stored-format, manifest/WAL/receipt/cursor/credential/installed CLI change.",
+    "versions": "macOS ARM64; Rust 1.98.1; JJ/jj-lib/jj-core 0.45.1; Node 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Vitest 4.1.11; Storybook 10.5.7.",
+    "files": [
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs",
+      "crates/jj-store-cli/tests/local_browser/managed_http.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/path_metadata.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-jj/Cargo.toml",
+      "crates/jj-store-jj/src/backend.rs",
+      "crates/jj-store-jj/src/factories.rs",
+      "crates/jj-store-jj/src/local_browser/code_index.rs",
+      "crates/jj-store-jj/src/local_browser/git_read/commit.rs",
+      "crates/jj-store-jj/src/local_browser/git_read.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/paths.rs",
+      "crates/jj-store-jj/src/local_browser/scoped.rs",
+      "crates/jj-store-jj/src/query/cache/managed.rs",
+      "crates/jj-store-jj/src/query/code_index/merge_files.rs",
+      "crates/jj-store-jj/src/query/code_index/native.rs",
+      "crates/jj-store-jj/src/query/code_index/path_history.rs",
+      "crates/jj-store-jj/src/query/code_index/path_index.rs",
+      "crates/jj-store-jj/src/query/code_index.rs",
+      "crates/jj-store-jj/src/query/content/native.rs",
+      "crates/jj-store-jj/src/query/content/paths.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-service/src/code_indexes/jobs.rs",
+      "crates/jj-store-service/src/code_indexes/paths.rs",
+      "crates/jj-store-service/src/code_indexes.rs",
+      "crates/jj-store-service/src/pagination/browsing.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/mutations.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/native-presentation.ts",
+      "web/src/lib/controller/production-file-metadata.ts",
+      "web/src/lib/controller/production-file-reader.svelte.ts",
+      "web/tests/vite/production-file-reader.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#indexed_path_history_resumes_beyond_sixty_four_commits",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#source_changed_path_index_is_copied_without_repair_or_history_tree_reads",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#indexed_merge_history_resolves_parent_contents_without_source_writes",
+      "crates/jj-store-cli/tests/local_browser/managed_http.rs#managed_http_path_metadata_resumes_and_preserves_source_state",
+      "crates/jj-store-cli/tests/native_lifecycle/path_metadata.rs#path_metadata_crosses_merges_and_retains_the_ancestry_bound",
+      "crates/jj-store-cli/tests/local_browser/managed_code.rs#wide_path_history_skips_unrelated_commits_once_per_window"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser indexed_path_history_resumes_beyond_sixty_four_commits --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "before.log: one exact product regression; metadata beyond 64 ancestors never resolves."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser indexed_path_history_resumes_beyond_sixty_four_commits --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-final.log and cooperative-final.log: JJ ancestry continuation, optional changed-path extension, cached reuse and synchronous/cooperative-poll regression pass; source byte parity retained."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser source_changed_path_index_is_copied_without_repair_or_history_tree_reads --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "source-copy-final.log: upstream changed-path segments copied with no source repair/tree scans."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_http_path_metadata_resumes_and_preserves_source_state --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "http-path-final.log: real HTTP optional attribution resumes; names-only query remains independent; source state preserved."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_code:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-managed-reader-final.log: 4 passed and one explicit large-repository fixture ignored before scratch merge addition."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_acceptance:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-final.log and native-metadata-runtime-final.log: bounded native metadata continuation and cached reuse pass."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_acceptance:: --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "native-merge-files.log: clean merge synthesizes content successfully; fixture wrongly assumed Right edit wins equal-time native branch ordering. Inspecting actual native JJ topological traversal requires Left edit; assertion remains exact and rejects merge attribution."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_acceptance:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-merge-corrected.log: exact four-row attribution, continuation, cached reuse and untouched injected authoritative-write fault pass."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser indexed_merge_history_resolves_parent_contents_without_source_writes --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-merge-files.log: clean merged-parent contents yield original branch edit; complete source .jj/repo byte parity holds."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "local-suite-final.log: 51 passed/1 failed/3 ignored. Fixed 3-second automatic activation check observed index_rebuild_required under concurrent pressure; exact rerun local-pressure-rerun.log passed."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_local_http_activates_without_subscribers_resumes_and_captures_tasks --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-pressure-rerun.log: exact activation failure rerun passed without weakening assertions."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked -- --test-threads=4",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-suite-bounded-concurrency.log: 52 passed/3 ignored before scratch addition."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "native-suite-final.log: 238 passed/1 failed; independent upstream deep-anchor expected graph query reached Limit under pressure. Exact native-pressure-rerun.log passed."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle prepared_all_log_pages_seek_deep_anchors_under_fixed_work --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-pressure-rerun.log: exact deep-anchor rerun passed without assertion changes."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "merge-files-check.log: scratch limit usize/u64 compile mismatches; fixed before corrected package check."
+      },
+      {
+        "command": "cargo check (affected JJ/service packages; check-initial.log, check-service.log, check-service-corrected.log)",
+        "result": "fail",
+        "failures": 10,
+        "note": "Initial integration failures: omitted Context.code_index (1), missing prost dependency for checked source index link decoding (8), moved request in service wrapper (1). Corrected before check-service-final.log; later final exact package command passes."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "merge-files-check-corrected.log and packages-frozen-final.log: all affected package checks pass after scratch and allocation fixes."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "contracts-generate.log: additive Pending and NotFound native/local reasons generated; existing routes unchanged."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "contracts-final.log: registered captures were interrupted near the end by concurrent scratch implementation with a temporary compile error. This run is not passing contract evidence."
+      },
+      {
+        "command": "pnpm exec vitest run --config web/vitest.config.ts web/tests/vite/production-file-reader.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "ui-busy-final.log: nonexistent config; corrected to catalog/vitest.config.ts."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project unit web/tests/vite/production-file-reader.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "ui-busy-corrected.log: invalid project selection; corrected to catalog-unit."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "ui-frozen-final.log: eight tests pass, including Pending/Busy continuation, failure preservation, cancellation and ready-row retention."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-frozen-final.log: zero errors and warnings."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreDirectoryNavigation.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "cold-directory.log: one fresh browser/component story passes; retained-snapshot folder skeleton preserved."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "architecture-frozen-final.log: 1000 production modules pass."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "boundaries-frozen-final.log: 17 package boundaries pass."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "ownership-frozen-final.log: UI source ownership passes."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-first-frozen-final.log: 33 protected files with seven owning canonical chapters."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "canonical-final.log: five validators, 23 chapters and 172 requirements before final scratch contract prose; final canonical lane remains required."
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "merge-format.log: Rust formatting applied."
+      },
+      {
+        "command": "pnpm exec prettier --write (seven changed canonical chapters and four frontend files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "format-final.log: changed canonical and UI files formatted."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "fail",
+        "failures": 1,
+        "note": "Earlier linker output recorded disk exhaustion and truncated generated executables. Removed only regenerable artifacts owned by this slice and rebuilt; installed CLI/source/fixture preserved. backend-build-errors.log now contains the subsequent successful rebuild."
+      },
+      {
+        "command": "pnpm dev:backend:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "backend-build-runtime.log: recovered explicit development binaries; later native/local scratch tests rebuilt the same bins successfully. Existing linker unwind warning remains."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 pnpm dev:backend:restart",
+        "result": "fail",
+        "failures": 1,
+        "note": "preview-restart-final.log: old scoped File polling stalled graceful shutdown. Verified owned process/executable/config before stopping that preview backend; no other service changed."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "preview-restart-merge.log: scratch-enabled backend started against preserved fixture; Vite remains running."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked (full binary; concurrency flags not retained)",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-suite-frozen-final.log: 239 passed/0 failed after request-local scratch/allocation fixes; before the final private candidate/path admission and union filtering."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked (full binary; concurrency flags not retained)",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-suite-frozen-final.log: 53 passed/0 failed/3 explicitly ignored after scratch/allocation fixes; before the final private work admission and new wide-directory regression."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_code:: --locked -- --test-threads=2",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-wide-window-final.log: 5 passed/0 failed/1 ignored after combined candidate/path admission and synchronous runtime boundary."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_acceptance:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-wide-window-final.log: one native continuation/merge/no-authority-write regression passes after combined admission."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "packages-wide-window-final.log: affected packages pass after combined admission/runtime changes."
+      },
+      {
+        "command": "python3 -u .local/path-history-fix/linux-wide-after.py",
+        "result": "pass",
+        "failures": 0,
+        "note": "linux-wide-after.log/json: real fixed Linux operation/commit through 7470 proxy, limit 50, 12 finite batches each for block/root/arch. All 36 responses are 200 and below the 30-second transport deadline; block remains 50 Pending at 12 batches, root and arch progress. This predates final union filtering and does not prove complete row coverage."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser wide_path_history_skips_unrelated_commits_once_per_window --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "wide-window-prefilter-before.log and wide-window-prefilter-before-same-directory.log: 50-row fixtures pass before union filtering, including the 20,000-work ceiling, continuation and full source byte parity. This is a passing boundary fixture, not a reproduced unit failure."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_code:: --locked -- --test-threads=2",
+        "result": "pass",
+        "failures": 0,
+        "note": "local-prefilter-final.log: final source, 6 passed/0 failed/1 ignored; continuation, 50-row shared filtering, clean merges, source byte parity, index copying and warm graph reuse."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle path_metadata_acceptance:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "native-prefilter-final.log: final-source exact native merge attribution/continuation/cache/no-authority-write regression passes."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser managed_http_path_metadata_resumes_and_preserves_source_state --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "http-prefilter-final.log: final-source HTTP continuation, names-only independence and source state preservation pass."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "packages-prefilter-final.log: affected package checks pass on final production source."
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "rust-format-prefilter-final.log: final Rust source format passes."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-first-prefilter-final.log: 33 protected files and 8 canonical chapters pass."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "canonical-prefilter-final.log: five validators, 23 chapters and 172 requirements pass."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "preview-prefilter-restart.log: valid final-source backend running at 7472 behind preserved 7470 Vite proxy/fixture."
+      },
+      {
+        "command": "python3 -u .local/path-history-fix/linux-prefilter-after.py",
+        "result": "fail",
+        "failures": 3,
+        "note": "linux-prefilter-after.log: first cold metadata read returned 200 Pending; following block/root/arch reads returned resource_limit 413 during graph preparation. Explicit existing code-index prepare endpoint recovered to Ready; subsequent finite same-selection acceptance is recorded separately. No source/fixture reset."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "contracts-frozen-final.log: generated OpenAPI/TypeScript match; 283 actual HTTP/SSE responses conform, seven contract tests and TypeScript contract compilation pass. Final private Rust admission/filter changes are additionally covered by final managed/native/HTTP targets."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "ui-eviction-before.log: 8 passed/1 failed; a pending result after cache eviction removed an already resolved description. Exact new regression reproduces the defect."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "ui-eviction-final.log: final UI source, nine tests pass including cache eviction, partial completion, Busy backoff, failure retention, cancellation and filename-first behavior."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-eviction-final.log: final UI source has zero errors and warnings."
+      },
+      {
+        "command": "python3 -u .local/path-history-fix/linux-prefilter-after.py",
+        "result": "pass",
+        "failures": 0,
+        "note": "linux-prefilter-ready-after.log/json: final-source ready index, same fixed Linux operation/commit and limit 50. 60 finite responses all 200, maximum 12.621s. Block resolves blk-mq.c beyond the old cap after 36 batches (1 Available/49 Pending); root ends 20 Available/21 Pending; arch 5 Available/18 Pending. No exhaustive metadata or cold/pressure qualification claim. The preceding cold 413 episode remains an explicit gap."
+      },
+      {
+        "command": "CUA fresh Linux root navigation, arch folder click and request observation through 7470",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh UI visibly loads filenames, then Description/Updated progressively. linux-root-skeleton-final.png, linux-root-metadata-final.png and linux-folder-navigation-final.png show metadata skeletons and folder-navigation skeleton. Navigation cancels obsolete request (net::ERR_ABORTED); observed metadata requests return 200. This is focused browser evidence, not visual baseline approval or complete large-repo acceptance."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreDirectoryNavigation.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "cold-directory-final.log: final UI source, one fresh browser/component interaction passes; directory-navigation skeleton preserved. No visual baseline update."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress-final.log: 139 tasks, evidence bookkeeping passes; task status rows unchanged."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "canonical-final-complete.log: final UI/Rust contracts validate with five validators, 23 chapters and 172 requirements."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-first-final-complete.log: final source passes 33 protected files and eight canonical chapters."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/api.md spec/src/cli.md spec/src/compatibility.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/milestones.md spec/src/mutations.md spec/src/ui.md web/src/lib/api/generated.ts web/src/lib/controller/native-presentation.ts web/src/lib/controller/production-file-metadata.ts web/src/lib/controller/production-file-reader.svelte.ts web/tests/vite/production-file-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "format-check-final-complete.log: all changed canonical and UI files are formatted."
+      },
+      {
+        "command": "node .local/path-history-fix/format-ledger.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "ledger-format-final.log: only E-READ-087 formatted; all 529 previous evidence entries preserved byte-for-byte in the historical text prefix and unchanged as parsed JSON."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Implementation and focused regression targets are verified; no milestone promotion. Exhaustive Linux row coverage is unqualified: after the finite final acceptance, block has 49 Pending rows, root 21 and arch 18. Cold very old history can require many batches; reducing all remaining cold-history cost is deferred.",
+      "One final cold graph-preparation episode returned resource_limit 413; explicit existing preparation retry recovered to Ready and subsequent finite requests passed. Large-repository cold/preparation pressure remains a qualification gap.",
+      "Complete release, scale/RSS, fault/RustFS, registry-resolved foundational packages and visual baselines remain deferred. Existing E-READ-084 Clippy diagnostics are unchanged and not rerun. Root aggregate spec/check/test/build lanes are out of scope under targeted verification policy."
+    ],
+    "next": "Land this verified implementation slice on clean main with Jujutsu and retain the temporary workspace and 7470 preview. Qualify cold large-repository preparation and complete older-row coverage in a separately bounded follow-up; no broader search/evolution/copy optimization in this slice."
   }
 ]
 ```

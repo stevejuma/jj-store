@@ -20,6 +20,7 @@ pub(super) struct Guard {
     code_index: Option<Arc<code_index::Prepared>>,
     construction: Mutex<Option<Vec<crate::query::memory::Lease>>>,
     reader: Mutex<Option<git_read::Reader>>,
+    derived_files: Option<Arc<crate::query::code_index::merge_files::Files>>,
 }
 impl std::fmt::Debug for Guard {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -34,7 +35,20 @@ fn unsupported<T>() -> b::BackendResult<T> {
 }
 impl Guard {
     pub fn new(source: Arc<Store>, pin: &Pin, budget: Arc<Budget>, limits: Limits) -> Arc<Self> {
+        let charge = budget.clone();
+        let derived_files = pin.code_index.as_ref().map(|_| {
+            crate::query::code_index::merge_files::Files::new(
+                crate::query::code_index::merge_files::Hash::Git,
+                4 * 1024 * 1024,
+                64 * 1024 * 1024,
+                move |bytes| {
+                    charge.work(1)?;
+                    charge.read_bytes(bytes)
+                },
+            )
+        });
         Arc::new(Self {
+            derived_files,
             source,
             binding: pin.binding.clone(),
             budget,
@@ -202,6 +216,20 @@ impl b::Backend for Scoped {
         path: &RepoPath,
         id: &b::FileId,
     ) -> b::BackendResult<IoPin<Box<dyn AsyncRead + Send>>> {
+        if let Some(reader) = self
+            .0
+            .derived_files
+            .as_ref()
+            .and_then(|files| files.read(id))
+        {
+            self.0
+                .budget
+                .until(self.0.binding.authorize())
+                .await
+                .map_err(error)?
+                .map_err(error)?;
+            return Ok(reader);
+        }
         let id_owned = git_id(id).map_err(error)?;
         self.0
             .admit(ObjectKey::File(id_owned), Some(path))
@@ -247,10 +275,23 @@ impl b::Backend for Scoped {
     }
     async fn write_file(
         &self,
-        _: &RepoPath,
-        _: &mut (dyn AsyncRead + Send + Unpin),
+        path: &RepoPath,
+        contents: &mut (dyn AsyncRead + Send + Unpin),
     ) -> b::BackendResult<b::FileId> {
-        unsupported()
+        native::path(path.as_internal_file_string()).map_err(error)?;
+        self.0
+            .budget
+            .until(self.0.binding.authorize())
+            .await
+            .map_err(error)?
+            .map_err(error)?;
+        self.0
+            .derived_files
+            .as_ref()
+            .ok_or_else(|| error(Error::Denied))?
+            .write(contents)
+            .await
+            .map_err(error)
     }
     async fn write_symlink(&self, _: &RepoPath, _: &str) -> b::BackendResult<b::SymlinkId> {
         unsupported()

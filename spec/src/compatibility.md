@@ -1,5 +1,11 @@
 # Compatibility and release
 
+Optional V1 path metadata adds `pending` and `not_found` reasons. Pending rows
+resume through bounded requests; older non-managed readers retain their existing
+results. Managed namespaces can copy and extend pinned JJ 0.45.1 changed-path
+format-0 segments alongside commit format-6 segments. These are disposable
+adapters; source indexes and authoritative repository formats remain unchanged.
+
 Managed core task routes and the optional default-off `automatic_code_index`
 capability are additive to HTTP V1. They reuse native/local task report schemas
 and preserve existing advanced routes and explicit advanced preparation. Private
