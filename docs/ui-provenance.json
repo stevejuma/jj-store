@@ -619,7 +619,8 @@
           "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
           "license": "Apache-2.0"
         }
-      ]
+      ],
+      "reason": "Owned shared FileDiff composition reused by repository/Op Log and Stacks. Stacks retains bounded unchanged context in display-only hunk partitions; native hunk tokens and drag selections remain authoritative. Conflict surface, term picker and text pane are extracted from jj-store-owned StoreConflictEditor/StoreConflictPath, using public Design Core Shell and MergeEditor without new Community source imports."
     },
     {
       "local": "web/src/lib/ui/community-composer-mention-picker/CommunityComposerMentionPicker.css",
@@ -1910,6 +1911,16 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraphSvg.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjectsRevisionGraph.svelte",
+          "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [
@@ -2028,6 +2039,14 @@
     {
       "local": "web/src/lib/ui/store-terminal/StoreTerminalToggle.svelte",
       "reason": "Application-owned header control for the native terminal; shares expanded-state chrome with the existing sidebar controls."
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSpacer.svelte",
+      "reason": "Application-owned composition of public Design Core Empty, Button and the existing workspace drop guide inside the public trailingSpacer snippet; not copied from an external checkout."
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDetailsActions.svelte",
+      "reason": "Application-owned composition of existing Design Core Buttons and the owned navigation styling for capability-gated workspace rail actions; reuses the current Stacks controller and Merge Editor, with no external source dependency."
     }
   ],
   "desktopAppearance": {
@@ -2083,5 +2102,342 @@
         "changes": "Repository-owned muted toolbar, rounded terminal tabs with inline leading close controls, stronger hover/focus states and trailing window actions; a one-pixel resize separator retains its hit area. Header toggle follows Community sidebar geometry with a bottom indicator. Accessible tablist and close controls remain separate in the DOM and share CSS grid columns."
       }
     ]
-  }
+  },
+  "adaptations": [
+    {
+      "local": "web/src/lib/controller/stack-workspace/presentation.ts",
+      "reason": "Dependent bookmark segment grouping and applied stack normalization.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/branches-stack-model.ts",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/controller/stack-workspace/drag.ts",
+      "reason": "Typed drag payloads and explicit command mapping. The application-owned new-stack target retains exact file/folder/hunk selections for its existing mocked creation form and confirmed inline draft.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/vcs-workspace-dnd.ts",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte",
+      "reason": "Existing repository branch picker and full-width applied stack canvas; independent diff columns immediately after their origins and public trailing canvas space/settings. Changeyard layout adaptation maintained locally. Public Design Core trailingSpacer content composes the application-owned shadcn Empty branch prompt within the existing spacer; no added column or reference dependency.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/branches-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        },
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        },
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/components/vcs-file-columns.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackLane.svelte",
+      "reason": "Bookmark sections, commit actions and assignment targets composed from existing application components. Branches-only Apply/Unapply and disabled Delete local action card is copied from StackHeaderActions into the column body using the existing Card and Button primitives.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/branches-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        },
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        },
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/branches-view.tsx#StackHeaderActions",
+          "revision": "b0caf0741f17454f2bc48ef3448d741d231f9299",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackBookmarkCard.svelte",
+      "reason": "Locally maintained Changeyard bookmark card grouping, composed with owned author, time, revision graph and file components; aligned small avatars, continuous stems and trailing commit actions. Exact branch-header commit drops, inset inline branch files and the rounded left selection marker copied from the JJ board. Owned follow-up uses wrapping chips, inset content-aligned file lists, concise visible headings and selection markers without text chips.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/branches-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        },
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackUnstaged.svelte",
+      "reason": "Applied workspace Unstaged column, with owned file listing and all controls in the header.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/branches-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        },
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceActions.svelte",
+      "reason": "Existing application body navigation composition; copied reference command grouping, with icon actions beside Projects-style body tabs. The centered workspace picker independently reuses the owned repository Command View in the Projects header slot.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/branches-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        },
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackBookmarkActions.svelte",
+      "reason": "Optional bookmark action bar adapted from the Changeyard workspace stack group with existing public buttons, tooltips and menus.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackDiffHunk.svelte",
+      "reason": "Copied Changeyard separate hunk-card, shaded monospace range/context header and drag-payload composition using owned Card and diff presentation.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/components/vcs-file-columns.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackCommitComposer.svelte",
+      "reason": "Copied Changeyard StackStartCommitPanel inline draft, staged-file listing and title/description/cancel/preview composition using owned file listing and public Card and Field components.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx#StackStartCommitPanel",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackDropGuide.svelte",
+      "reason": "Copied Changeyard valid/invalid target guide and status presentation, using owned icons and semantic tokens.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx#workspaceDropTargetOverlayClassName",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/controller/stack-workspace/drag-session.svelte.ts",
+      "reason": "Copied active payload/target lifecycle, child-aware leave handling and valid/invalid drop feedback, adapted to the injected frontend controller.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx#handleDragOver",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackCommitActions.svelte",
+      "reason": "Copied Changeyard commit kebab options, Copy and positional submenus, with owned public menus and application notifications.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackRelativeActions.svelte",
+      "reason": "Copied Changeyard Add empty commit and Create branch above/below placement semantics as public menu composition.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackCopyMenu.svelte",
+      "reason": "Owned StoreRecordMenu copy composition adapted to copied Changeyard change ID, commit hash/message and branch-name options; outcomes use application notifications.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceForm.svelte",
+      "reason": "Adapted independent/dependent creation from the user Changeyard reference with existing exclusive Toggle Group, owned Settings form rows and repository Command View picker; assignment destinations show branch names while previewing exact head commit identities.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "catalog/fixtures/stack-workspace/menu-reducer.ts",
+      "reason": "Isolated mock simulation of copied Changeyard positional and branch-segment command semantics; no repository execution.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "catalog/fixtures/stack-workspace/menu-validation.ts",
+      "reason": "Isolated fixture validation of exact branch/commit boundaries and immutable targets for copied local menu semantics.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackStagedFiles.svelte",
+      "reason": "Copied Changeyard staged header/count/list-mode and file rows above a separated composer, using public Card, Column Canvas title/count and File Listing. Staged list controls occupy the public Card Action slot at the header edge.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx#StackStartCommitPanel",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/stack-workspace-drag.css",
+      "reason": "Locally maintained Changeyard target shading and dashed guide, with an opaque readable label and threshold insertion borders adapted to owned semantic tokens.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/jj-board-view.tsx#workspaceDropTargetOverlayClassName",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/controller/stack-workspace/commit-placement.ts",
+      "reason": "Owned validation for exact branch-header destinations, immutable descendants and commit row insertion thresholds, extending the copied Changeyard drag contract for the explicitly requested commit moves and sorting.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/vcs-workspace-dnd.ts",
+          "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "reason": "Applied/local branch grouping and trailing Workspace chip copied from the Changeyard branch inventory composition; retained owned repository branch rows, filters, virtualization and Command View keyboard selection. Grouping is opt-in for the Stacks Branches tab.",
+      "sources": [
+        {
+          "repository": "changeyard",
+          "path": "packages/vcs/src/views/branches-view.tsx#BranchRow",
+          "revision": "b0caf0741f17454f2bc48ef3448d741d231f9299",
+          "license": null,
+          "attribution": "Changeyard local source. No license declaration found in the root or vcs package manifests or applicable LICENSE files during inspection; do not infer Apache-2.0 from jj-store. Adaptation explicitly authorized by the user for this UI slice."
+        }
+      ]
+    }
+  ]
 }

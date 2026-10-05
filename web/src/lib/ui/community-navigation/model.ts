@@ -1,4 +1,5 @@
 export type StorePage =
+  | "stacks"
   | "branches"
   | "log"
   | "oplog"

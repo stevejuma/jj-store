@@ -1,7 +1,4 @@
-import type {
-  StoreSearchResult,
-  StoreSearchState,
-} from "./store-search-types.js";
+import type { StoreSearchState } from "./store-search-types.js";
 export type {
   StoreSearchResultKind,
   StoreSearchResult,
@@ -11,14 +8,11 @@ import type { RepositoryProfile } from "./repository-profile.js";
 import type { StoreSettingsState } from "./store-settings-types.js";
 export type { StoreSettingsState } from "./store-settings-types.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
-import type { FileDiffLineContext } from "@lapismd/design-core/diff";
 import type { Model } from "../api/client.js";
-import type { ReviewDetail } from "./repository-read-types.js";
 export type StoreConflictDescriptor =
   import("./repository-read-types.js").CodeConflict;
 export type StoreConflictUpload = Model<"ConflictUpload">;
 import type { CommunityMemberModel } from "../ui/community-workspace/model.js";
-import type { StorePage } from "../ui/community-navigation/model.js";
 import type {
   RepositoryLogGraph,
   RepositoryLogRevision,
@@ -26,10 +20,7 @@ import type {
   RepositoryWorkingCopy,
 } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
-import type {
-  StoreMutationCommand,
-  StoreMutationState,
-} from "./store-mutation-types.js";
+import type { StoreMutationState } from "./store-mutation-types.js";
 export interface RepositoryBlob {
   path: string;
   contents?: string;
@@ -161,6 +152,9 @@ export interface StoreControllerState {
 }
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
+  /** Workspace binding discovery can continue after repository connection. */
+  readonly stackWorkspaceLoading?: boolean;
+  readonly stackWorkspace?: import("./stack-workspace/controller.svelte.js").StackWorkspaceController;
   readonly freshness?: import("./application-freshness.js").ApplicationFreshness;
   readonly historyQuery?: import("./history-query-types.js").HistoryQueryController;
   readonly configuration?: import("./server-settings.svelte.js").ServerSettingsManagement;
@@ -172,114 +166,12 @@ export interface StoreController {
   readonly projects?: import("./projects-hub-types.js").ProjectsHubController;
   readonly work?: import("./work-types.js").WorkController;
   readonly state: StoreControllerState;
-  readonly actions: {
-    connect(connection: StoreConnection): Promise<void>;
-    disconnect(): void;
-    destroy(): void;
-    refresh(): Promise<void>;
-    selectOperation(id: string): Promise<void>;
-    selectComparisonParent(id: string): Promise<void>;
-    refreshSettings(
-      section?: import("./settings-refresh.js").SettingsRefreshScope,
-    ): Promise<void>;
-    setRefreshPaused?(key: string, paused: boolean): void;
-    refreshWorkspaceLinks(): Promise<void>;
-    setWorkspacePath(path: string): void;
-    linkWorkspace(): Promise<void>;
-    pickWorkspaceFolder(): Promise<void>;
-    prepareKindIndex?(kind: Model<"KindPreparationKind">): Promise<void>;
-    prepareIndex(): Promise<void>;
-    cancelIndex(): Promise<void>;
-    setSearchDraft(
-      patch: Partial<import("./search-settings.js").SearchDraft>,
-    ): void;
-    cancelSearchDraft(): void;
-    refreshSearchSettings(): Promise<void>;
-    saveSearchSettings(): Promise<void>;
-    controlSearch(
-      action: import("./search-settings.js").SearchAction,
-    ): Promise<void>;
-    waitForSync(capture: boolean): Promise<void>;
-    stopSyncWait(): void;
-    refreshSyncSettings(): Promise<void>;
-    refreshStorage(): Promise<void>;
-    startStorage(
-      action: import("./storage-settings.js").StorageAction,
-    ): Promise<void>;
-    retryStorage(): Promise<void>;
-    controlSync(action: import("./sync-settings.js").SyncAction): Promise<void>;
-    loadMore(
-      collection:
-        | "workspaces"
-        | "bookmarks"
-        | "graph"
-        | "evolution"
-        | "files"
-        | "detail"
-        | "search"
-        | "agents"
-        | "transcript"
-        | "reviews",
-    ): Promise<void>;
-    search(query: string): Promise<void>;
-    selectSearchResult(result: StoreSearchResult): Promise<void>;
-    captureReconciliation(): Promise<import("../api/client.js").Head>;
-    previewMutation(
-      command: StoreMutationCommand,
-      captured?: import("../api/client.js").Head,
-    ): Promise<void>;
-    applyMutation(): Promise<void>;
-    checkMutationStatus(): Promise<void>;
-    resetMutation(): void;
-    uploadConflict(
-      commit: string,
-      path: string,
-      fingerprint: string,
-      bytes: Uint8Array,
-    ): Promise<StoreConflictUpload>;
-    openWorkingFile?(
-      path: string,
-    ): Promise<import("./working-copy-types.js").WorkingFile>;
-    saveWorkingFile?(
-      selection: import("./working-copy-types.js").WorkingFileSelection,
-      contents: string,
-    ): Promise<import("./working-copy-types.js").WorkingFile>;
-    setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
-    toggleDirectory(path: string): void | Promise<void>;
-    openRoute?(route: StoreRoute): Promise<void>;
-    openThreads?(id?: string | null, repository?: string): Promise<void>;
-    openReview?(repository: string, thread: string): Promise<void>;
-    openRepository(id: string): void | Promise<void>;
-    selectPage(page: StorePage): void | Promise<void>;
-    navigate(delta: -1 | 1): void | Promise<void>;
-    selectBookmark(name: string): void | Promise<void>;
-    selectWorkingCopy(commit: string, workspace?: string): void | Promise<void>;
-    selectWorkspace(workspace: string | null): void | Promise<void>;
-    selectRevision(id: string | null): void | Promise<void>;
-    selectEvolution(id: string | null): void | Promise<void>;
-    selectFile(path: string | null): void | Promise<void>;
-    selectDirectory(path: string): void | Promise<void>;
-    selectAgentSession(id: string | null): void | Promise<void>;
-    selectReviewThread(id: string | null): void | Promise<void>;
-    createRepositoryReview?(text: string): Promise<void>;
-    readAgentToolReview?(toolCallId: string): Promise<ReviewDetail | undefined>;
-    replyToReview(text: string, parentCommentId?: string): Promise<void>;
-    editReviewComment(
-      commentId: string,
-      expectedRevisionId: string,
-      text: string,
-    ): Promise<void>;
-    commentOnDiffLine(
-      context: FileDiffLineContext,
-      text: string,
-    ): Promise<void>;
-    commentOnAgentTool(toolCallId: string, text: string): Promise<void>;
-    readAgentSessionReview?(): Promise<ReviewDetail | undefined>;
-    commentOnAgentSession?(text: string): Promise<void>;
-    setReviewResolved(resolved: boolean): Promise<void>;
-    checkReviewAction(): Promise<void>;
-    selectRef(value: string): void | Promise<void>;
-    signIn(): void | Promise<void>;
-    signOut(): void | Promise<void>;
-  };
+  readonly actions: import("./controller-actions.js").StoreControllerActions;
 }
+
+/** Host-owned transport and routing inputs; defaults retain ordinary browser startup. */
+export type ProductionStoreControllerOptions = {
+  fetcher?: typeof fetch;
+  now?: () => number;
+  browser?: import("./store-route-history.svelte.js").StoreRouteBrowser;
+};

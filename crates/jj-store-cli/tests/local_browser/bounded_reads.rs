@@ -517,17 +517,62 @@ async fn registered_large_repository_metadata_smoke() {
         page.stats,
         page.references.len()
     );
-    if let Some(q::references::Reference::Bookmark { targets, .. }) = page.references.first() {
-        if let Some(target) = targets.first() {
+    if let Some(q::references::Reference::Bookmark { targets, .. }) = page.references.first()
+        && let Some(target) = targets.first()
+    {
+        let started = std::time::Instant::now();
+        let q::Response::Paths(paths) = reader
+            .read(
+                access.clone(),
+                operation,
+                q::Request::Paths(q::paths::Request {
+                    include_last_change: false,
+                    last_change_mode: Default::default(),
+                    commit: target.commit,
+                    path: String::new(),
+                    recursive: false,
+                    limit: 10,
+                    anchor: None,
+                    direction: Default::default(),
+                }),
+            )
+            .await
+            .unwrap()
+        else {
+            panic!()
+        };
+        eprintln!(
+            "Linux directory: {:?}; {:?}; rows={}",
+            started.elapsed(),
+            paths.stats,
+            paths.entries.len()
+        );
+        let q::Response::CommitSummary(header) = reader
+            .read(
+                access.clone(),
+                operation,
+                q::Request::CommitSummary {
+                    commit: target.commit,
+                },
+            )
+            .await
+            .unwrap()
+        else {
+            panic!()
+        };
+        let q::ObjectData::Commit(header) = header.data else {
+            panic!()
+        };
+        if let Some(parent) = header.parents.first() {
             let started = std::time::Instant::now();
-            let q::Response::Paths(paths) = reader
+            let q::Response::Paths(history) = reader
                 .read(
                     access.clone(),
                     operation,
                     q::Request::Paths(q::paths::Request {
                         include_last_change: false,
                         last_change_mode: Default::default(),
-                        commit: target.commit,
+                        commit: *parent,
                         path: String::new(),
                         recursive: false,
                         limit: 10,
@@ -541,17 +586,29 @@ async fn registered_large_repository_metadata_smoke() {
                 panic!()
             };
             eprintln!(
-                "Linux directory: {:?}; {:?}; rows={}",
+                "Linux historical directory: {:?}; {:?}; rows={}",
                 started.elapsed(),
-                paths.stats,
-                paths.entries.len()
+                history.stats,
+                history.entries.len()
             );
-            let q::Response::CommitSummary(header) = reader
+        }
+        if let Some(entry) = paths.entries.iter().find(|entry| {
+            matches!(
+                entry.terms.first(),
+                Some(Some(q::dto::TreeValue::File { .. }))
+            )
+        }) {
+            let Some(q::dto::TreeValue::File { id: file, .. }) = entry.terms[0] else {
+                panic!()
+            };
+            let q::Response::FileAt(contents) = reader
                 .read(
                     access.clone(),
                     operation,
-                    q::Request::CommitSummary {
+                    q::Request::FileAt {
                         commit: target.commit,
+                        path: entry.path.clone(),
+                        file,
                     },
                 )
                 .await
@@ -559,64 +616,7 @@ async fn registered_large_repository_metadata_smoke() {
             else {
                 panic!()
             };
-            let q::ObjectData::Commit(header) = header.data else {
-                panic!()
-            };
-            if let Some(parent) = header.parents.first() {
-                let started = std::time::Instant::now();
-                let q::Response::Paths(history) = reader
-                    .read(
-                        access.clone(),
-                        operation,
-                        q::Request::Paths(q::paths::Request {
-                            include_last_change: false,
-                            last_change_mode: Default::default(),
-                            commit: *parent,
-                            path: String::new(),
-                            recursive: false,
-                            limit: 10,
-                            anchor: None,
-                            direction: Default::default(),
-                        }),
-                    )
-                    .await
-                    .unwrap()
-                else {
-                    panic!()
-                };
-                eprintln!(
-                    "Linux historical directory: {:?}; {:?}; rows={}",
-                    started.elapsed(),
-                    history.stats,
-                    history.entries.len()
-                );
-            }
-            if let Some(entry) = paths.entries.iter().find(|entry| {
-                matches!(
-                    entry.terms.first(),
-                    Some(Some(q::dto::TreeValue::File { .. }))
-                )
-            }) {
-                let Some(q::dto::TreeValue::File { id: file, .. }) = entry.terms[0] else {
-                    panic!()
-                };
-                let q::Response::FileAt(contents) = reader
-                    .read(
-                        access.clone(),
-                        operation,
-                        q::Request::FileAt {
-                            commit: target.commit,
-                            path: entry.path.clone(),
-                            file,
-                        },
-                    )
-                    .await
-                    .unwrap()
-                else {
-                    panic!()
-                };
-                eprintln!("Linux scoped file {}: {} bytes", entry.path, contents.bytes);
-            }
+            eprintln!("Linux scoped file {}: {} bytes", entry.path, contents.bytes);
         }
     }
 }

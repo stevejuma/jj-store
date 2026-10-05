@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed bounded catalog-root membership while preserving full publication/recovery closure proofs, staged exclusion and manifest CAS; storage explains point reads without changing publication or snapshot semantics.",
-      "fingerprint": "7bef126fd51cc54b9420577dcea1e538cd7512e1955a6adb84d7bac1bb2d8a10"
+      "reason": "Reviewed combined main catalog-root point reads and Stacks WAL/object/model history against publication, storage and snapshot manuals; manifest CAS, staged exclusion, closure proofs and retained request semantics remain accurate.",
+      "fingerprint": "3df507c63636483f3b9970c0bde6ed4eb4c5c8340adfed9768167bd438fda552"
     }
   },
   {
@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed integrated prepared visibility, bounded resident reclamation and external local heads/companion monitoring; no source authority or Git transport semantics changed.",
-      "fingerprint": "4fb4ed317303c6fae9112758caf02e5c11095c1cb1f9e98ad39a94f13b22fc92"
+      "reason": "Reviewed merged bounded native/local reads and ordinary Stacks commands against the local manual: metadata admission remains read-only, JJ megamerge and retained WIP use native transactions and recovery retains exact extras.",
+      "fingerprint": "cbf60aa628e28711e07b2d6e640974238db2d69909a24e2150a6849bdc2f53a9"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed independent task audience witness keys and final audience regression; event settlements remain scoped process-local hints and current authorization remains authoritative.",
-      "fingerprint": "03d17e2e022050716dcdf0b7466909cdc4223c00f9b9f6054ea22e92fb84e9ee"
+      "reason": "Reviewed combined local read admission and Stacks service interfaces against architecture/transport documentation: authorization remains owned by registered local bindings and no service becomes repository authority.",
+      "fingerprint": "3371fc8e4d549406b0072a2a369453166573722fdd89d39beee128b74d8e46ff"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed final capture source/status interest split and cancellation-independent saved configuration notices; saved/effective activation remains explicit.",
-      "fingerprint": "eda4727c37acf896cd4385fa3613c3435290bef01bea9261c6e826bc1d71d89c"
+      "reason": "Reviewed combined main watcher and local workspace configuration against lifecycle/configuration manuals: installation settings remain separate from physical .jj/jj-store/stacks.toml and local startup procedures are unchanged.",
+      "fingerprint": "8471a4a3a369415131633fac6628427aa77b4807b45b1060c74fe0ef4e774c7c"
     }
   },
   {
@@ -109,8 +109,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed paired CLI/server local-reader/task wiring and source pins. Command syntax, explicit development binaries and installation/task recovery tutorials remain accurate; regenerated parser references introduce no new syntax.",
-      "fingerprint": "b7ccd2beebade8a91a6e968fef3f309b14681d5c61f5c4d45d0d417eb9abf87c"
+      "reason": "Reviewed rebased paired CLI/server reader wiring and Stacks working-tree owner against installation and CLI tutorials; explicit development binaries and original request recovery remain accurate, with no parser syntax changes or new release qualification.",
+      "fingerprint": "b06cb23c03c29a9e73b4a8dd0e4ddd4ad01ce076a9c85c8cbda61718469a5849"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed advertised authenticated application SSE ready/changed/reset, bounded replay and current delivery authorization; transport reference documents lifetime and outage fallback.",
-      "fingerprint": "f48f3033163a12fb79fa56f54ee1f173a5620e2f37cb9e1e4fd9c69b2c93d7be"
+      "reason": "Reviewed merged registered-folder binding against security/transport manuals: cached inner validation retains fresh boundary authorization; Stacks and working-tree commands retain same-origin and generation guards.",
+      "fingerprint": "3fc9bded7f78e62b5fcb70c5e0fa0accc3ae2e5797ecf64bf7ba8881dfaff3c0"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed preservation of queued event deadlines across unrelated notices, bounded retries only for retained healthy dirtiness, and cold regression for prompt two-client Work refresh.",
-      "fingerprint": "831cc56f9909fa1f28ea5f4c5163316889a8371ab64c65c52fcbc4a3d61a8500"
+      "reason": "Reviewed combined directory reuse and focused Stacks startup/chip/navigation presentation against browsing and editing guides; loaded pages, initial skeletons, retained drafts and bounded context remain accurately described.",
+      "fingerprint": "0b4b1aa87be3e554983afea9647149045d9be8aaefe040a86174bd804f1c628d"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated application event schemas and actual SSE capture; event hints do not replace authorized reads or durable command receipts.",
-      "fingerprint": "0e69029a71e1fa4203280a8e2b814b7b97a00ccb4cedfc0ef7281a7cb4c47610"
+      "reason": "Reviewed combined generated paths and ordinary Stacks route contracts against transport/CLI guides; additive path metadata mode and existing Stacks inputs retain exact operation and local generation boundaries.",
+      "fingerprint": "965c335c82b7907e4dcb22577ad4f35990a00462d89fc1bfd407a342580dc2c9"
     }
   }
 ]

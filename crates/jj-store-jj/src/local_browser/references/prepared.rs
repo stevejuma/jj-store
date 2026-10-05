@@ -39,6 +39,7 @@ fn bookmarks<'a>(
     Box::new(
         view.local_bookmarks
             .range::<str, _>((low, high))
+            .filter(|(name, _)| !name.starts_with("jj-store/workspaces/"))
             .map(|(name, target)| Selection::Bookmark(name, target)),
     )
 }
@@ -99,7 +100,8 @@ pub(super) async fn read(context: &Context, view: &dto::View, request: &Request)
     }
     let first = if request.kind == Kind::All {
         view.local_bookmarks
-            .first_key_value()
+            .iter()
+            .find(|(name, _)| !name.starts_with("jj-store/workspaces/"))
             .map(|(name, _)| format!("bookmark:{name}"))
     } else {
         None
@@ -112,7 +114,9 @@ pub(super) async fn read(context: &Context, view: &dto::View, request: &Request)
             (request.kind == Kind::All)
                 .then(|| {
                     view.local_bookmarks
-                        .last_key_value()
+                        .iter()
+                        .rev()
+                        .find(|(name, _)| !name.starts_with("jj-store/workspaces/"))
                         .map(|(name, _)| format!("bookmark:{name}"))
                 })
                 .flatten()
@@ -154,13 +158,13 @@ pub(super) async fn read(context: &Context, view: &dto::View, request: &Request)
         };
         let mut targets = Vec::with_capacity(ids.len());
         for id in ids {
-            if !hydrated.contains_key(&id) {
+            if let std::collections::btree_map::Entry::Vacant(entry) = hydrated.entry(id) {
                 let target = context
                     .targets(view, std::iter::once(id))
                     .await?
                     .pop()
                     .ok_or(Error::Incomplete)?;
-                hydrated.insert(id, target);
+                entry.insert(target);
             }
             targets.push(hydrated[&id].clone());
         }

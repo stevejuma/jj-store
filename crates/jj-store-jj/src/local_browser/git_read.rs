@@ -1,9 +1,9 @@
 //! Bounded source reads without GitBackend extra import or table reconciliation.
 pub(super) mod commit;
-pub(super) mod extras;
+pub(crate) mod extras;
 use super::*;
 
-pub(super) struct Reader {
+pub(crate) struct Reader {
     git: gix::Repository,
     extras: extras::Extras,
     shallow: BTreeSet<gix::ObjectId>,
@@ -27,6 +27,19 @@ impl Reader {
         budget: &Budget,
     ) -> Result<b::Commit> {
         commit::read(backend, &self.git, &self.extras, &self.shallow, id, budget)
+    }
+    /// Recovery must preserve original JJ extras, never infer a synthetic
+    /// change identity when the original record has disappeared.
+    pub(crate) fn exact_commit(
+        &self,
+        backend: &dyn b::Backend,
+        id: &b::CommitId,
+        budget: &Budget,
+    ) -> Result<b::Commit> {
+        if id != backend.root_commit_id() {
+            self.extras.require(id.as_bytes(), budget)?;
+        }
+        self.commit(backend, id, budget)
     }
 }
 

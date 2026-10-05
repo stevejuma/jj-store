@@ -1,3 +1,39 @@
+# Ordinary local stack workspace delivery — 5 October 2026
+
+The updated user-approved plan keeps the reviewed UI and operation-pinned reads,
+and replaces the stack write path with normal jj-lib operations. Local settings
+live in `.jj/jj-store/stacks.toml`; named workspaces are megamerges plus
+retained WIP children. Configuration is local to the physical JJ workspace.
+
+The local setup/membership core and focused repository navigation are delivered.
+The approved mutations are wired to native JJ: selected-file/hunk commits and
+transfers, splits, branch creation/rename, positional empty commits, reword,
+move/reorder, squash/uncommit, branch rebase, bookmark deletion, abandonment,
+discard, supported text-conflict resolution and repository-wide Undo/Redo.
+Dependent branch segments use bounded native parent/bookmark reads and preserve
+independent adjacent diffs, including shared commits in separate applied lanes.
+Native squash and descendant rebasing propagate through merge/WIP, preserve
+their change identities and retain emptied WIP. Explicit reparenting handles
+membership; Refresh and Switch do not silently restore saved branches after CLI
+changes or Undo. Reapply saved branches is an explicit command. Delete stack
+removes only its top bookmark; Undo follows ordinary repository JJ semantics and
+does not restore TOML.
+
+Native, controller and interaction/accessibility regressions qualify each
+delivered mutation family. Cold built-server acceptance covers actual file/hunk
+dragging, merge/WIP retention, Undo/Redo and CLI interoperability. Unsupported
+partial binary/mode/type selections and multi-sided/structural/oversized
+conflict editor shapes remain explicit; native JJ values are preserved.
+Historical evidence remains unchanged. Follow JST-LOCAL-005's ordinary local
+profile; manifest-backed execution, publication and visual baselines remain
+separate. Lost command responses require state/op-log inspection, not automatic
+retry. Atomic TOML save is not a cross-file JJ transaction.
+
+# Historical backend proposal and delivery evidence
+
+The plan below is preserved as historical context and superseded for ordinary
+local Stacks writes by the plan above.
+
 # jj-store implementation plan
 
 The approved core-browsing simplification replaces the superseded custom graph
@@ -55,6 +91,775 @@ Accepted 26 September 2026. The canonical requirements in `spec/src` govern
 behavior. [milestones.md](../spec/src/milestones.md) is the single
 implementation progress ledger. The [original attachment](reference/README.md)
 is archived unchanged as non-normative reference material.
+
+## Local stacks backend proposal
+
+Reviewed 5 October 2026 against the original UI-first request, JST-UI-020 and
+the app-shell Storybook on port 6057. The user approved backend implementation
+and production UI wiring on 5 October 2026. M21.2 is now In progress and follows
+the delivery order below. The existing UI is the intended product surface.
+Visual baseline approval and foundational package publication remain separate
+gates.
+
+### Review of the current UI
+
+The original split still holds: production-owned presentation and controller
+code are exercised through an isolated stateful catalog adapter; production
+checkout commands have not been enabled. The initial UI review used `687f056b`;
+the follow-up review uses the current workspace parent `83844c5e`, which
+includes real read wiring and private backend preparation/recovery. Fresh
+inspection of the existing Storybook on port 6057 covered Workspace,
+applied/local branch groups, the body Apply action and inline branch files.
+Source review additionally covered production discovery, command eligibility,
+preparation, cancellation, status and receipt handling. The original review
+covered conflict preview, cancellation and target history. Neither review
+substitutes for interaction, accessibility, geometry or cold production command
+acceptance.
+
+| Original intent                                     | Current result                                                                               | Integration implication                                                                 |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| A separate Stacks destination                       | App-shell injection, Branches and Workspace body tabs, centered workspace picker             | Keep the composition; production bootstrap must own and inject the real controller      |
+| Stack browsing and applying branches                | Existing branch picker, dependent branch cards, target history and Apply/Unapply preview     | Supply bounded real branch/graph reads and exact membership commands                    |
+| Combined local workspace                            | Fixed Unstaged, applied lanes, independent adjacent diffs, inline drafts and file/hunk drops | Replace simulated trees and command outcomes with actual JJ and checkout state          |
+| Named combinations with independent unfinished work | Mock workspaces retain their own Unstaged edits                                              | Implement durable combination identity, merge/WIP retention and safe physical switching |
+| Reuse the application and source references         | Owned Community/Changeyard adaptations and public Design Core primitives                     | Preserve provenance; no runtime or build dependency on either reference checkout        |
+| Only repositories available on this machine         | Folder, profile and capability fields; controller rejects missing folders                    | Enforce verified device binding and command eligibility on the server                   |
+
+The UI now covers more than branch browsing and apply/unapply: positional
+rewrites, split/squash, branch-segment deletion, named combinations and retained
+drafts are part of its contract. Wire these incrementally and advertise each
+capability only when its backend behavior is qualified.
+
+### Gaps that must be resolved before enabling writes
+
+This list records the original review before implementation. The delivery status
+below identifies which gaps the subsequent verified slices have addressed.
+
+1. **No production adapter exists.** `web/src/App.svelte` supplies only the
+   repository controller. The Stacks injection exists in the application shell,
+   but its controller is instantiated by catalog fixtures and tests.
+2. **The frontend snapshot is not a wire contract.** A numeric `revision`, plain
+   string identities, eagerly embedded files/patches and a flat commit array do
+   not capture operation pins, physical checkout changes, graph parents or
+   profile-specific identities. Keep the presentation model behind a typed
+   adapter, and extend it where it cannot represent real states.
+3. **Aggregate diffs are presentation unions.** `stack-workspace/files.ts`
+   concatenates per-commit hunks. A file changed and then reverted must
+   disappear from a branch's net diff. Real branch/stack diffs must compare the
+   exact boundary and head trees; transfer eligibility needs verified hunk
+   ownership.
+4. **Recovery and undo are only simulated.** The fixture stores receipts and
+   previous snapshots in memory. Production needs durable request discovery
+   after browser/server restart, exact prepared operations, checkout recovery
+   and guarded undo. Replaying a receipt must never execute an undone command
+   again or replace the visible current state with an old receipt snapshot.
+5. **Conflict and file models are too narrow.** The catalog has path plus
+   left/base/right text and patch strings. Real JJ conflicts can have multiple
+   ordered terms; file changes include additions, deletions, renames, binary,
+   executable and symlink cases. Use existing native conflict fingerprints,
+   content limits and unsupported-state presentation rather than flattening
+   them.
+6. **Lifecycle wiring is incomplete.** Add repository/binding-scoped controller
+   ownership, automatic refresh, pending-command restoration, cancellation and
+   teardown. Distinguish stable change identity from rewritten commit identity;
+   preserve valid selections through explicit rewrite mappings and invalidate
+   ambiguous selections without silently widening a staged selection.
+
+The default checkout reviewed at `d1a25261` already contains newer bounded local
+reads, index preparation and application freshness work than this UI workspace.
+Its local capabilities still report `code_mutations: false` and
+`working_copy_edit: true`. The existing physical-file Save is an isolated file
+write, not a JJ snapshot or recoverable multi-file checkout transaction. M13.4's
+JST-LOCAL-005 command-publication prerequisite remains necessary; unrelated
+search and conversion completion should not block this feature.
+
+### Current delivery status — 5 October 2026
+
+The production application now owns and explicitly injects a read-only Stacks
+controller for registered LocalTrusted Git-backed JJ folders. Bounded bookmark
+continuations, stack and target history, exact boundary-to-head file lists and
+independent adjacent diffs use the existing operation-pinned code API. Graph
+index preparation uses the existing application notice and explicit action.
+Connection teardown and repository/binding changes dispose only Stacks-owned
+reads; a failed refresh does not promote a partially refreshed read scope. Valid
+loaded ranges and historical diff selections survive refresh with fresh
+continuations and annotations.
+
+| Delivery stage                       | Current state                                                                                                                                                  | Remaining acceptance                                                                                              |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 1. Integrate UI and define contracts | Versioned service intent/selection/preparation/receipt types and read-adapter boundary delivered                                                               | Executable wire contracts accompany the recoverable executor                                                      |
+| 2. Real browsing                     | Production browsing, private physical observations and exact WC/ignore comparison delivered                                                                    | Active-combination assignment and complete cold workflow acceptance                                               |
+| 3. Recoverable execution             | Private retained reword execution, exact head recovery, unchanged-tree receipts and recoverable physical/native tree checkout delivered; mutations unavailable | Actual combination engines/after-state, production command transport/status and complete execution fault recovery |
+| 4. Named combinations and membership | Private initial setup from a retained real JJ merge/WIP candidate; production workspace discovery remains unavailable                                          | Production discovery, dirty-work capture, apply/unapply, switching and restart                                    |
+| 5. Staging and inline commits        | Reviewed UI and draft controller delivered                                                                                                                     | Exact whole-file engine, then server-issued hunk selections and transfers                                         |
+| 6. Graph actions and recovery        | Reviewed menus and preview/recovery UI delivered                                                                                                               | Qualified rewrite actions, deletion policy and guarded undo                                                       |
+| 7. Linked-native lifecycle           | Planned; linked-native commands remain unavailable                                                                                                             | Manifest/checkout recovery, complete cold flows and real-storage evidence                                         |
+
+E-M21-006 records focused controller, production Storybook and cold real-folder
+browsing evidence. This is an intermediate read delivery, not completion of
+M21.2. It does not fabricate combinations, expose a command executor, scan or
+snapshot physical edits, or replace the ordinary repository Log/Branches views.
+The seven-stage order below remains the approved implementation plan.
+
+E-M21-007 adds the private physical fingerprint foundation: bounded regular-file
+and symlink observations, complete checkout obstacles and two-pass stale
+detection. It does not yet perform provider baseline/ignore projection, expose a
+scan endpoint, populate Unstaged or grant a command capability. Stage 2 remains
+incomplete until those provider reads and cold real-folder integration qualify.
+
+E-M21-008 adds a private exact named-workspace baseline and raw-content/mode
+comparison using JJ's captured ignore rules. Tracked ignored changes remain
+changes; untracked candidate additions and ignored files remain checkout
+obstacles. Stage 2 still requires current checkout/sparse proof, global/exclude
+policy capture, transport and cold registered-folder integration. Historical
+baseline reads and private projection helpers do not populate active Unstaged or
+enable writes.
+
+E-M21-009 integrates private current checkout/sparse/ignore witnesses with the
+bounded physical observation service. It verifies metadata, policy and operation
+heads before and after the scan, checks access throughout, and retains scan
+admission until a canceled worker exits. Real disposable CLI fixtures cover
+sparse scope, unsnapshotted files, policy/metadata races and cancellation
+without writes. No scan route or active-combination assignment is enabled by
+this slice; Stage 2 and M21.2 remain incomplete.
+
+E-M21-010 adds the bounded registered-folder `working-tree/observe` route and
+owned versioned request/response contracts. It resolves paths from registration,
+binds the expected generation and exact operation, and returns changed-path
+metadata plus read fingerprints without content, private ignore policy or
+command tokens. The existing cold filesystem-server fixture records real dirty
+changes and unchanged code/companion/physical state. Generated response
+inventory and client contracts include the endpoint. Production physical-read
+integration, active-combination assignment and cold browser acceptance remain
+unfinished; this route enables no writable UI control. The production projection
+correctly retains `active: null` and no named workspaces before setup. A
+disk-only delta against the WC baseline is not the complete Unstaged difference
+from a durable combination merge: snapshotted WIP must also be accounted for.
+Physical-read client ownership can be integrated separately, while complete
+Unstaged assignment must wait for the recoverable execution and combination
+engine in stages 3–4.
+
+E-M21-011 integrates the owned, uncached physical-read client and a separately
+owned controller observation. It validates exact registered pins, complete
+bounds, ordered terms/paths and coherent changed-file metadata without narrowing
+integers. Fresh current-head checks bracket the read; ambiguous heads remain
+unavailable. Refresh and disposal cancel only owned work and reject late
+results, while historical selections and adjacent diffs retain their own scope.
+These observations do not populate complete Unstaged or infer a combination.
+Durable execution and named combination merge/WIP state in stages 3–4 remain
+required.
+
+E-M21-012 qualifies the installation-private exact-preparation journal,
+principal/profile/physical scope, monotonic receipts, bounded pending discovery
+and capacity reservation. Real atomic-replacement faults and subprocess loss
+recover the original unresolved receipt through reopen and exact replay. This
+metadata primitive does not retain JJ object closures, publish operation heads
+or coordinate checkout. Stage 3 continues with those provider and runtime gates;
+all seven approved stages remain required before feature completion.
+
+E-M21-013 adds reserved-ref archival retention for exact prepared operation/view
+and code capsules, separate from the companion ref. Real unpublished JJ fixture
+code survives source operation/index loss and Git GC; immutable scope/intent
+slots reject collisions and conflicting retries. This primitive is still
+separate from production command generation, source operation-ancestry recovery,
+head publication, foreground checkout and runtime status. Required owning JJ
+lint also repairs four inherited read-helper diagnostics without changing read
+admission or preparation semantics; direct local/native read acceptance records
+the expanded verification surface.
+
+E-M21-014 qualifies nonblocking foreground coordination against the pinned stock
+JJ CLI, with exact post-lock checkout/policy/head validation, busy admission,
+cancellation, process-loss release and replaced-lock/directory rejection. The
+lease exposes only owned metadata witnesses and never snapshots, publishes or
+updates checkout bookkeeping. Physical editor bytes still require their separate
+fresh guard. Stage 3 continues with production preparation and publication plus
+guarded durable checkout and runtime journal/status composition.
+
+E-M21-015 adds real unpublished reword preparation through the foreground lease.
+Exact source/prepared capsules, visible ancestry, descendant rewrites, author
+and tree invariants, ordered bookmark effects and unchanged checkout trees are
+verified against real JJ fixtures. Candidate-write cancellation and
+authorization loss expose no preparation or publication. The provider output is
+compatible with reserved-ref retention, but server command policy, exact request
+journal composition, source operation-ancestry recovery, publication and
+checkout remain required. Other command kinds and all later approved stages
+remain incomplete.
+
+E-M21-016 retains the complete bounded source operation ancestry and historical
+views/code alongside the selected capsule in explicit version-2 preparation
+records. Legacy version-1 slots remain immutable. Read-only source capture,
+exact private upstream materialization, historical-only code reachability,
+malformed/link/limit rejection and exact replay are verified against real JJ
+fixtures, including source loss and Git GC. Real reword generation now performs
+strict source capture before candidate work, returns complete candidate history
+and verifies all original records. Missing original extras fail before implicit
+import or candidate writes. This supplies recovery input; server policy/journal
+composition, source restoration, head publication, guarded checkout and runtime
+fault acceptance remain required. All seven approved stages continue unchanged.
+
+E-M21-017 adds explicit source operation/view restoration through a saved
+bounded private witness and original reserved retention key. Recovery
+revalidates physical binding, checkout/policy/heads and foreground coordination
+without loading a missing operation or index store. Complete conflict preflight
+precedes synced create-only writes; exact retry preserves existing records and
+leaves heads, index, extras, companion and physical checkout untouched.
+Process-loss and cancellation acceptance remain part of this owning provider
+slice. Runtime original-request policy/journal composition, extra/index
+recovery, publication and guarded checkout are still required before writable
+capability. The seven approved stages remain unchanged.
+
+E-M21-018 joins actual unpublished reword preparation with its exact preview,
+original principal/request/intent, private recovery witness and reserved
+retention. Pending journal selection saves the full candidate archive before
+retaining code, closing the interruption window without re-preparing on retry.
+Acknowledgement retains the exact commit/digest and releases only the pending
+archive body. Real process loss before/after retention, cancellation, source
+operation/index loss and Git GC retain the same preview and receipt. Legacy
+records are immutable; pending archives count toward 128 records/8 MiB and
+cannot proceed to publication. This is a trusted composition seam with fixture
+authorization/combination/physical context, not installed command authority.
+Runtime policy, extra/index recovery, publication, guarded checkout and
+prepare/apply/status/discovery remain Stage 3 work. Stages 4-7 remain approved
+and required; production capabilities are still read-only.
+
+E-M21-019 adds the registered preparation authority adapter: only the configured
+LocalTrusted Admin principal is eligible, paths/generations come from device
+registration, and physical selection comes from the existing bounded observer.
+Trusted combination ownership supplies active selection and protected heads at
+the actually observed workspace. Reword checks exact immutable ancestry before
+candidate writes. Real CLI-folder/registry acceptance covers external edits,
+registration removal and pending replay after operation/index loss and GC;
+combination ownership is still supplied by an isolated fixture. This adapter
+does not create setup or wire command transport. Durable combination ownership,
+extra/index recovery, publication, checkout and remaining stages stay required.
+
+E-M21-020 adds the private durable combination metadata owner and its real
+reserved-code archive linkage. Selected snapshots remain unchanged while an
+exact provider update is pending; a matching completed journal checkout receipt
+precedes device selection. Reopen, conflicting retry, private-state replacement,
+capacity and process-loss cases retain the original outcome and cannot rewind
+later state. Registered preparation now checks the stored operation/view/WIP
+against the actual physical workspace. This qualifies metadata and command
+context, with simulated publication/checkout receipts clearly separated from
+real provider evidence. First-use setup, merge/WIP generation, membership and
+switching engines remain Stage 4 work; source extra/index recovery, publication,
+guarded checkout and command transport still gate Stage 3. Production writes
+remain unavailable and all seven approved stages continue.
+
+E-M21-021 qualifies explicit missing-extra restoration through the saved
+foreground lease and original retained archive. Complete private preflight
+compares existing native metadata and verifies canonical missing records before
+synced create-only segment/head selection. Original bytes remain intact through
+cancellation, process loss, lock replacement/contention, unsafe links and exact
+retry. This does not import refs or publish operation heads, rebuild source
+indexes, write checkout state or enable mutations. Derived-index recovery, safe
+publication, guarded checkout and runtime command composition still gate Stage
+3; all later approved stages remain required.
+
+E-M21-022 qualifies separate original/candidate derived-index restoration from
+the same saved archive through the existing bounded builder. Native private
+decoding verifies indexed commit/change identities and parent edges; existing
+CLI mappings preserve their bytes and the original operation cannot acquire
+future candidate visibility. Cancellation/process loss after one association,
+directory replacement, authorization loss and unsafe/oversized input retain
+exact retry. This closes the private missing-index primitive, with safe
+operation publication, guarded checkout and command transport still required
+before Stage 3 writable acceptance. Stages 4-7 remain approved and incomplete.
+
+E-M21-023 qualifies exact retained operation-head publication under the original
+foreground lease and actual upstream head-store flock. Complete dependency
+preflight, bounded native ancestry and synced candidate-before-original markers
+preserve concurrent CLI siblings and physical checkout bytes. Retry after
+cancellation/process loss completes partial selection; retry through a later CLI
+descendant acknowledges the original candidate without reannouncement or
+rewinding. Ordinary history restoration keeps its strict original-head witness.
+This provider proof attests code publication only. Guarded checkout, durable
+runtime command composition and prepare/apply/status/discovery transport still
+gate Stage 3. Production writes remain unavailable, and all seven approved
+stages remain required.
+
+E-M21-024 qualifies unchanged-tree checkout pointer completion: original-request
+canonical witness, exact-prefix deterministic staging, complete two-pass
+physical guard and cancellation/process-loss retry. Native tree-state and
+physical files remain unchanged. Real dirty/ignored/untracked, mode/link,
+authorization and binding cases are distinct from fixture provider guards. The
+strict service lint repairs retain public read and tree-selection contracts.
+This is a narrow Stage 3 provider boundary; durable runtime
+witness/journal/receipt composition, tree-changing checkout and command
+transport remain required. Stages 4-7 remain approved and incomplete, and
+production writable capabilities stay unavailable.
+
+E-M21-025 joins original retained reword publication to the private durable
+checkout witness and typed receipt pipeline. Exact interrupted and
+killed-process recovery, saved dependency repair, immutable witnesses,
+historical terminal replay and real registered-folder physical policy are tested
+separately from fixture combination/retirement outcomes. Version-3 witness
+catalogs preserve older read-only records and reserve bounded growth before
+publication. This private code/checkout execution is not production transport or
+selected combination state. General checkout, first-use setup, actual
+combinations, prepare/apply/status/discovery routes and all later approved
+stages remain required; writable UI capabilities stay unavailable.
+
+E-M21-026 removes the Prepared first-apply source-loss dependency on readable
+current history. Authorized registration is resolved first; exact retained
+operation/extra/index recovery runs under the original foreground lease before
+source-backed current selection checks. Missing or changed combination state,
+new editor bytes and revoked registration still prevent publication, and
+terminal replay never repairs lost state. This remains private reword execution;
+general checkout, actual combination selection and production transport/UI
+qualification remain required.
+
+E-M21-027 revalidates trusted immutable ancestry before unpublished retained
+reword publication, including Unknown retry. Already-selected original code uses
+acknowledgement-only recovery after policy changes, with no reannouncement if
+the original candidate disappears. Bounded archived graph checks,
+authorization/cancellation lifetime and real registered policy transitions are
+qualified separately from actual combination state. General checkout, real
+combination engines, production command transport and UI wiring remain required.
+
+Known Published receipts also use acknowledgement-only recovery before witness
+persistence, so later selected-head loss never repeats that publication.
+
+E-M21-028 adds exact tree-changing checkout preparation under the original
+retained lease. Plans bind real source/candidate trees, native metadata bytes,
+affected file fingerprints and ancestor identities; preparation and original
+revalidation leave physical files and checkout metadata unchanged. Resolved
+regular/executable files, binary bytes, additions/deletions and full sparse
+coverage are qualified for preparation. Unsafe links/modes, aliases,
+file/directory transitions, dirty affected files and existing ignored/untracked
+targets are rejected. Killed-worker reopening is provider evidence, not durable
+server command or physical-installation acceptance. Persisting plans with the
+original journal, retaining interrupted per-path installation and selecting
+native tree-state/verified after-state remain required. Production writes remain
+unavailable and all seven approved stages continue.
+
+E-M21-029 adds the bounded private checkout-plan catalog and version-4 original
+journal references. The journal authenticates and validates complete retained
+preparation/effect linkage before plan access; synced plan selection precedes
+reference selection under journal-then-plan lock order. Immutable exact replay,
+unknown replacement acknowledgement, capacity pressure and process loss on both
+sides of reference selection are tested. Existing format-1/2/3 reads keep their
+bytes and terminal requests cannot gain new execution input. This is durable
+input evidence, not physical installation or selected combination after-state.
+Guarded interrupted installation, native checkout/tree-state completion and all
+remaining approved stages remain required. Production Stacks stays read-only.
+
+E-M21-030 adds complete original physical-inventory capture through the existing
+registered scanner guard. Canonical file fingerprints and full directory stamps
+reproduce the unchanged physical digest, including ignored files, symlinks and
+empty directories, within 4097 records and 8 MiB. Optional capture preserves
+authorization, cancellation and shared scanner admission; validation-only guards
+remain unavailable. This is original-input evidence only. Durable linkage,
+provider-owned per-path progress, guarded interrupted installation and native
+checkout/tree-state completion remain the next foundation work before writable
+transport and UI wiring. All seven approved stages remain in progress.
+
+E-M21-031 durably binds the complete original physical inventory to its exact
+saved checkout plan and original command. Catalog version 2 selects/syncs the
+body before journal version 5 selects its digest/length/plan reference. Original
+authentication and full recovery binding precede catalog access; immutable
+replay, legacy bytes, missing-body refusal and interrupted body/reference
+selection remain separate from current physical validation. New changed-tree
+publication admission now requires both references. Provider-owned per-path
+progress, guarded interrupted installation, native checkout/tree-state
+completion and actual combination after-state remain required before command
+transport and writable UI wiring. All seven approved stages remain in progress.
+
+E-M21-032 qualifies actual physical file installation from exact retained trees,
+with provider-owned version-1 progress, prepared inode identities, synced intent
+before each no-replace move and retained original backups. Complete inventory
+comparison normalizes only planned moves on known files/parents. Resolved
+binary, executable, addition/deletion and nested-parent effects, editor-created
+targets, private/parent replacement, backup changes, authorization loss,
+cancellation and abrupt loss around each physical transition are covered. Replay
+preserves staged inodes and does not repeat completed moves. Native
+checkout/tree-state bytes remain original; this is a sealed physical-files
+proof, not command completion. Native metadata completion and actual durable
+combination after-state still gate Stage 3 writable transport. Stages 4-7 remain
+approved and incomplete.
+
+E-M21-033 adds native tree-state/checkout completion after sealed physical
+installation. A provider-owned version-1 frame binds the original
+plan/inventory, installed physical fingerprint and prepared native inode
+identities before metadata replacement. Exact replay preserves physical inodes
+and retained backups; original or intended native states are the only admitted
+recovery states. Native component ordering, signed millisecond timestamps,
+unaffected file-state preservation and cleared Watchman clock retain stock-JJ
+consumption. This closes a narrow provider boundary. Actual durable combination
+after-state, original command acknowledgement, writable transport and complete
+execution fault recovery remain Stage 3-4 work; all seven approved stages remain
+required. Production Stacks stays read-only.
+
+E-M21-034 adds the original staged-combination binding and ordered native
+completion join. Journal version 6 retains the exact private after-state digest
+before publication. Sealed native completion remains pending until matching
+combination selection/sync, with final journal acknowledgement last. Real native
+changed-tree and reword proofs, process-loss retries, missing-state refusal and
+metadata acknowledgement faults exercise this coordination. Provider-generated
+setup/merge/WIP engines and registered runtime composition remain unqualified;
+fixture snapshots do not establish them. Production Stacks stays read-only and
+all seven approved stages remain required.
+
+E-M21-035 delivers real first-use setup through the registered authority. An
+exact existing local or already-known remote target produces an unpublished
+merge commit and WIP child, preserving original history, refs, other workspace
+selections and physical files. The WIP initially retains the existing named WC
+baseline tree. Dirty unsnapshotted edits remain guarded on disk; they are not
+yet captured in that WIP. Retention, publication, native pointer completion and
+combination selection use the original journal identity and ordered completion
+join. This qualifies private setup, not production workspace discovery,
+membership/switching, complete Unstaged reads or writable UI.
+
+### Next implementation checkpoint: command transport and initial setup
+
+The first public recovery boundary now defines validated original command
+results, exact status, actor-scoped pending discovery and cancellation identity
+inputs. Existing journal projections exclude private execution state and do not
+initialize missing state. This closes the result-contract portion of checkpoint
+1 only. Owned bounded current-workspace records and the authenticated selected
+combination-catalog projection are also now defined, including absent/ready/
+stale/pending state and private-data exclusion. The actual registered discovery
+runtime must still join physical observation, selected catalog and original
+journal recovery. Runtime composition, transport and production lifecycle remain
+required. Cancellation execution is still absent.
+
+E-M21-039 supplies the owning provider's stable physical identity read for
+historical admission. It matches the current observer's identity, rejects unsafe
+paths, replacement during the read and revoked access, and does not require
+current operation/index, checkout/tree-state, policy or editor-file reads. The
+registered runtime must still resolve trusted registration and compare the
+original scope before journal access. Runtime storage placement, initialization,
+command composition, transport and production lifecycle remain unimplemented.
+Work pauses after this verified provider slice at the user's request; the seven
+approved stages remain incomplete.
+
+The seven stages below remain the approved scope. Continue Stage 3 and the
+initial-setup portion of Stage 4 as a small production vertical slice before
+implementing further command families. Reuse the existing Stacks presentation;
+extend its adapter/controller models where real outcomes cannot fit. Keep each
+mutation capability disabled until its executor, transport and production UI
+flow have passed their acceptance checks.
+
+1. **Define owned public discovery and lifecycle contracts.** Add bounded
+   workspace state, pending-request discovery and public command-result types
+   under `crates/jj-store-service/src/stack_workspace/`, plus an owned runtime
+   interface implemented by the server. Reuse the existing versioned
+   selection/intent/prepared/receipt contracts. Public results project preview,
+   historical receipt and replay information; never serialize the journal's
+   private execution record, archive bytes, native paths or retention keys.
+   Discovery distinguishes absent configuration from unreadable, stale or
+   pending state. Reads cannot create a journal, combination store or code ref.
+   Current selected combinations and their generations are separate from any
+   command's historical outcome. Keep workspace lists and pending discovery
+   bounded by explicit service limits; the current private catalogs cap them at
+   64 combinations and 128 request records respectively.
+2. **Compose the registered runtime.** Resolve repository, physical workspace,
+   JJ workspace, installation and authenticated principal through existing
+   registration and private execution state. Reuse registered authority,
+   foreground coordination, physical observation and combination/journal owners.
+   Initialize missing private state only while preparing an explicitly
+   authorized setup. Status and exact recovery authenticate the original request
+   before current code/combination checks; changed heads or active combinations
+   cannot hide a recoverable historical request. Registration and physical
+   authorization still apply. Candidate, intent and assigned combination ID
+   survive response loss and process restart unchanged.
+3. **Expose local-only HTTP operations.** Add workspace-state, prepare, apply,
+   exact status, pending discovery and unpublished cancellation under the
+   existing `/local/repos/{repo}` route family. Final route names and schemas
+   belong in the API chapter with implementation. Use the service runtime
+   interface so HTTP does not depend on the server crate. Resolve folder access
+   on the server, retain LocalTrusted Admin and same-origin admission, register
+   contracts in the route inventory, then regenerate OpenAPI and client types.
+   Apply supplies the original prepared identity, not replacement command input.
+   Cancellation binds that same identity and can reject only an unpublished
+   preparation; it cannot discard unknown publication or incomplete checkout.
+   Preserve the historical terminal result and retained code evidence.
+4. **Wire the existing production adapter and controller.** Project durable
+   named combinations into the centered picker and membership into the branch
+   groups/Workspace lanes. Map the existing `create_workspace` action to Setup
+   only when discovery proves no combination exists; subsequent creation maps to
+   the separately qualified CreateCombination engine. Keep target selection an
+   operation-scoped read until the user previews setup. Numeric UI revision is
+   not execution authority: retain the full service selection, intent digest,
+   request ID and prepared ID in a separate command envelope. Extend outcomes to
+   retain prepared, rejected/stale, publication unknown, published with
+   required/blocked checkout, completed and retired states. Show exact preview
+   effects through the existing dialog; model unavailable Unstaged explicitly
+   rather than rendering an unqualified empty file list as proof of no edits.
+5. **Complete pending restoration and refresh.** Restore original prepared or
+   unresolved requests through bounded discovery on connect/reconnect and
+   browser/server restart. Prepare response loss must retain the request ID and
+   exact intent for lookup; the current prepare catch path drops that evidence.
+   Status must carry the intent digest as well as the ID. Cancel preview must
+   await backend cancellation rather than merely clearing frontend state. A
+   completed receipt triggers a separate read of current state; it never
+   installs its old snapshot or retries a finished command as a new request.
+   Report a failed refresh separately from the confirmed command result. Retain
+   drafts, independent diffs and valid historical selections through existing
+   scoped lifecycle ownership and rewrite mappings.
+
+Acceptance for this checkpoint is a cold real-app first-use flow against a
+disposable registered Git-backed JJ folder: choose an exact target, preview,
+cancel or apply, reopen the browser/server, discover the original request and
+show the selected combination only after verified completion. Include lost
+prepare/apply responses, stale physical selection, revoked/replaced binding,
+cross-principal lookup, missing private state and published-but-blocked
+checkout. Prove historical status does not rewind current state and ordinary
+browsing does not initialize private state. Verify public results exclude
+private execution data, and verify every unsupported command stays unavailable.
+This checkpoint does not advertise complete Unstaged, apply/unapply, switching
+or content-transfer capabilities.
+
+Afterward continue Stage 4 with complete dirty-work capture, real merge/WIP
+rebuild, apply/unapply and named-combination switching. Then deliver exact
+whole-file commits before server-issued hunk transfers in Stage 5, remaining
+graph/deletion/scoped-undo commands in Stage 6, and linked-native plus complete
+cold production lifecycle qualification in Stage 7. Preserve unsnapshotted edits
+before leaving a combination; the initial setup's guarded disk preservation is
+not a substitute for that capture engine.
+
+### Recommended scope and model
+
+First qualify explicitly registered Git-backed JJ folders under the current
+supported Git SHA-1/JJ profile. Follow with physically linked native workspaces
+through the same owned interfaces, retaining native manifest/WAL publication. A
+native repository merely hosted on loopback does not qualify as a local
+checkout. Ordinary Git-only repositories require a separate provider or explicit
+JJ initialization and are not silently converted by this feature.
+
+Keep three identities distinct: repository, physical JJ workspace/device
+binding, and named stack combination. One physical folder has one active
+combination. Another linked physical workspace must not accidentally share its
+active pointer, pending checkout or draft state. Do not hard-code `main` as the
+target: use a configured local bookmark or already-known remote-tracking ref,
+resolve an exact head and show a picker when it is absent or ambiguous. Normal
+reads do not fetch, initialize a combination, snapshot files or reconcile heads.
+
+Changeyard's JJ backend applies stacks by changing the parents of `@`; its
+documented JJ support does not include long-lived workspace refs or committing
+selected WIP as a new stack commit. JJButler's named workspace model uses a
+separate merge and WIP commit per combination. Adopt the latter **concept** to
+meet our independent unfinished-work requirement, with owned code and jj-store
+publication/recovery rules. Neither existing engine is a drop-in dependency.
+
+For each combination, retain a target selection, ordered applied stacks, an
+internal merge commit and a child WIP commit. Rebuilding membership merges the
+selected stack tips using JJ tree semantics, then reapplies the difference
+between the old merge and old WIP. Carry unsnapshotted physical edits into that
+exact preservation step. Removing the last stack leaves target plus WIP usable.
+Applying a dependent stack includes its ancestry once; unapplying removes its
+contribution without deleting its bookmarks or commits. Switching restores the
+chosen combination's WIP. Shared branch rewrites invalidate other combinations'
+derived merges; preserve their WIP and rebuild only through a reviewed command
+when needed, never by mutating on a read.
+
+Store names, active binding, request journals and combination configuration as
+versioned private device state. Retain code trees through real JJ reachability
+and owned internal refs with a reserved namespace; hide these from user branch
+discovery and normal selected push. Specify GC retention and namespace collision
+handling before use. Do not put device paths or active execution journals in the
+portable companion ref. Code publication, device-state selection and physical
+checkout are separate boundaries joined by an explicit recovery protocol, not
+claimed to be one atomic transaction. Native code still publishes only through
+manifest CAS; local Git-backed code still uses upstream JJ operation heads.
+
+Derive stack segments from bounded ancestry and exact bookmark targets relative
+to the workspace target. Maintain stable stack IDs separately from mutable
+branch names. Do not impose the mock's linear ordering on merge commits,
+divergent changes or conflicted bookmark targets: show the graph and disable
+ambiguous mutations with a reason until those shapes are qualified. Above/below
+commands must identify their parent boundary explicitly.
+
+### Delivery sequence after approval
+
+#### 1. Integrate the UI and define the production contracts
+
+Bring the preserved UI slice together with current main in a dedicated
+integration workspace. Retain newer graph reads, freshness and unrelated work;
+preserve historical ledger entries. Update the owning UI/API/local-JJ chapters
+with approved contracts before enabling runtime behavior.
+
+Define a versioned workspace selection containing repository/profile, verified
+binding generation, physical workspace identity, explicit code operation/view,
+combination generation and working-tree fingerprint. Commands bind this
+selection, exact source/destination identities, canonical intent digest and a
+stable request ID. Preview returns a server-owned prepared ID and exact affected
+commits, bookmarks, paths, conflicts and checkout effects. Apply names that
+prepared result rather than recomputing against an unpinned latest state.
+Preview may stage unreachable immutable candidates but does not publish heads or
+write checkout files; apply revalidates its physical and logical preconditions.
+
+Extend the adapter with bounded stack/branch pages, commit files, net branch
+diffs and hunk reads, plus pending-request discovery. Keep unavailable, pending,
+committed, rejected/stale and unknown outcomes distinct. Represent code
+publication with incomplete checkout explicitly. Add per-action eligibility and
+reasons, including unsupported graph/file shapes. The current controller and
+mocks remain the consumer of those interfaces.
+
+Acceptance: contract generation, adapter/controller tests for stale selections,
+rewrite mappings and unsupported actions, and the affected app-shell stories. No
+real mutation is enabled by this step.
+
+#### 2. Deliver real browsing in the existing Stacks UI
+
+Reuse device folder registration and native workspace verification. Implement
+bounded stack discovery and operation-pinned history/file/diff queries in
+`jj-store-jj`, exposed through owned service interfaces and existing HTTP/client
+contract generation. Build the production adapter and inject it from the real
+application lifecycle. The sidebar requires a verified eligible binding; a stale
+direct link explains unavailability instead of constructing a mock. Keep
+endpoints under existing LocalTrusted admission and same-origin policy; commands
+name authorized binding IDs rather than arbitrary client folder paths.
+
+Only visible branches/commits/files load details. Target history retains opaque
+snapshot-bound continuations; other stack histories must also be bounded. Reuse
+main's index preparation and cancellation states. Read current disk edits
+without publishing a JJ operation, with scan/byte limits and a checkout
+fingerprint. Watchers signal invalidation; they do not snapshot or assign work.
+
+Acceptance: a real local folder shows target, stacks, inline files and multiple
+adjacent diffs; long histories stay bounded. Missing, replaced, unlinked and
+remote-only repositories cannot gain mutation access. Reads leave code heads,
+companion state and physical files unchanged.
+
+#### 3. Implement the recoverable local execution foundation
+
+Complete the narrow JST-LOCAL-005 path needed by stacks. Keep upstream JJ
+imports in `jj-store-jj`/CLI, service policy behind owned types, and device
+binding and journal orchestration in the server/composition layer. Coordinate
+with the foreground JJ working-copy lock and preserve concurrent operation
+siblings.
+
+Persist exact intent and prepared unpublished operation before publication.
+Record checkout before/after trees, selected files, binding and combination
+updates. Recovery distinguishes preparation, publication, checkout and receipt
+completion. Detect external CLI/editor changes at apply and checkout boundaries;
+never overwrite newly modified, ignored or untracked files because a preview was
+previously valid. Do not release the pending state as successful until the
+required checkout is verified. Use explicit recovery when new edits prevent
+completion. Status and exact retry must survive process loss without generating
+another command. A duplicate identity with different intent is rejected.
+
+Acceptance: fault injection before/after each durable boundary, dropped
+responses, restart, competing commands, changed folder identity, external edits,
+concurrent heads and retry after undo/abandon. Qualify this before any writable
+UI control.
+
+#### 4. Make combinations and stack membership usable
+
+Implement explicit first-use setup that preserves existing `@` and dirty files,
+then create/switch combinations and apply/unapply stacks. Setup offers the
+workspace target choice and shows its checkout effect through existing form and
+preview components. It does not happen automatically when opening the page.
+
+Implement merge/WIP rebuild and base-only fallback, with per-combination durable
+unfinished work. Reuse the workspace picker, branch Apply/Unapply body action,
+Unstaged column and conflict presentation. Derive membership from verified
+durable state, not client booleans. Report missing/externally rewritten inputs
+and require an explicit repair/re-preview instead of silently dropping work.
+
+Acceptance: apply two independent stacks plus a dependent segment, preserve
+unrelated WIP on apply/unapply, remove every stack, switch between combinations
+containing different edits to the same path, restart and restore exact state.
+Include overlapping stack changes and dirty checkout conflicts.
+
+#### 5. Wire staging and inline commits
+
+Keep staging as draft intent: dropping into a composer neither moves files nor
+creates a commit. Commit preparation reads exact selected file/hunk content and
+produces the real tree update, remaining WIP, rewritten descendants and bookmark
+effects. Start with whole-file flows, then enable verified hunk transfers,
+partial commits and split through the same exact-selection engine.
+
+Use server-issued selection tokens tied to source/parent trees, path identity,
+content/mode fingerprints and diff version; never execute client-supplied patch
+text or a bare hunk index. Whole-file selection includes the exact selected file
+state, not later edits. Directory drops remain the exact loaded file set.
+Aggregate ownership that cannot be proven remains readable but not draggable.
+Handle edits to the same path across stacks, revert-to-base, rename/delete,
+binary/large files and unsupported modes explicitly.
+
+Acceptance: stage/cancel leaves disk and history unchanged; commit only selected
+files or hunks; move committed content to another commit or Unstaged; preserve
+unselected edits; retain the draft on stale/unknown results and clear it only
+after confirmed completion. Reload discovers pending requests; any optional
+draft persistence uses private device state without credentials in browser
+storage.
+
+#### 6. Complete graph actions and recovery UI
+
+Implement independent/dependent creation; branch and stack rename; empty commit
+and branch placement above/below; reword/edit; commit moves and sorting; split,
+squash, uncommit and rebase; then branch/stack/combination deletion. Show each
+command's exact rewrite closure, other affected combinations and immutable
+boundaries. Copy actions stay local to the UI.
+
+Before deletion is enabled, settle the mock's ambiguous semantics explicitly:
+deleting a bookmark and abandoning a segment are distinct operations. Preserve
+lower/shared history and other workspace references, and identify any abandoned
+changes in the preview. Do not reuse the mock's array deletion as policy.
+
+Reuse existing conflict terms/fingerprints and application merge components for
+multiple paths and native terms. Scope undo to an exact completed application
+operation plus its device/checkout effects; reject or preview a new inverse when
+later external work exists. Do not invoke repository-wide last-operation undo
+blindly. Undo must not rewind unrelated companion collaboration metadata.
+
+Acceptance: all exposed mutation menus have real capability/preview/apply/status
+behavior, with before/after graph and tree evidence, immutable/shared-descendant
+cases, conflict resolution, guarded undo and restart recovery.
+
+#### 7. Qualify linked native workspaces and the complete lifecycle
+
+Provide native execution through the existing prepare/WAL/receipt/manifest path
+and a verified physical-workspace checkout coordinator. A native folder link
+alone does not prove this coordinator exists. Keep the capability off until
+manifest publication and disk checkout recovery are qualified together. Use the
+same presentation and adapter semantics with explicit native identity types.
+
+Attach repository/binding-scoped events, reconnect and bounded periodic refresh
+to the existing application freshness owner. Preserve historical selections,
+valid adjacent diffs, retained drafts and unresolved requests across refresh;
+cancel reads and dispose subscriptions on repository switch/disconnect. Reuse
+application toasts for transient outcomes and contextual recovery controls for
+pending work. Browser routes retain the page, physical workspace and named
+combination without allowing URL parameters to grant folder access.
+
+Acceptance: cold filesystem-only and linked-native flows through the real app,
+multiple folders and repositories, browser/server restart, external CLI/editor
+changes, offline/reconnect, dropped events, unknown outcomes and missing links.
+Qualify native publication with real storage evidence where required, separately
+from fake-store tests. Retain existing repository log and ordinary branch views.
+
+### Verification and completion
+
+Each slice adds its exact regression first and records commands and results in
+the single ledger. Run affected Rust packages and HTTP contract checks for
+backend boundaries, web/catalog types and the specific stack stories for UI
+wiring, ownership/architecture and owning specification/progress checks. Broaden
+only for the changed shared surfaces under the repository test policy. Cold
+tests are required for command durability, lifecycle and packaged serving; a
+mock receipt or screenshot cannot qualify those gates.
+
+The first useful delivery is real browsing, followed by durable apply/unapply
+and named combinations. Full M21.2 acceptance additionally requires the
+supported file/hunk, history-action and recovery paths in both advertised local
+profiles. Push/PR submission, Git-only support, nested combinations, automatic
+checkout migration and package publication are separate scope. Unsupported
+actions stay explicit; do not describe a read-only or file-only milestone as
+full completion.
+
+Source anchors for this review are `web/src/lib/controller/stack-workspace/`,
+`catalog/fixtures/stack-workspace/`, `web/src/App.svelte`, `spec/src/ui.md`,
+`spec/src/api.md`, `spec/src/local-jj.md`, main's
+`crates/jj-store-http/src/local_browser.rs`, and
+`crates/jj-store-service/src/working_copy.rs`. Reference comparisons use
+Changeyard's `docs/vcs/jj-supported-functionality.md` and
+`src/vcs/jj/workspace.ts`, plus JJButler's
+`spec/src/20-domain-model/entities/workspace.md`,
+`crates/jj-workspace/src/stack_derivation.rs` and
+`crates/jj-vcs/src/workspace_ops.rs`. These are read-only source references, not
+package dependencies or an instruction to copy their authority model.
 
 ## Large repository read implementation
 
@@ -980,3 +1785,14 @@ separate milestone.
 E-FRESH-006 records local main integration and temporary workspace retirement.
 Integration preserves the qualified production tree and original main ancestry;
 it does not restart development services or publish repository history.
+
+E-M21-035 delivers explicit initial setup through actual registered-folder
+preparation, exact retained candidate publication, unchanged-tree native pointer
+completion and durable combination selection. The server assigns the initial
+combination identity once and reconstructs its merge/WIP/target solely from the
+saved provider archive. Unsnapshotted edits remain unchanged on disk; setup does
+not snapshot them or claim that they already live in the WIP tree. Interrupted
+retention, publication and checkout resume the original candidate and identity.
+This begins Stage 4; membership/switching and dirty-work capture still require
+separate engines. Command transport, writable production UI and the remaining
+approved stages remain incomplete. No setup is triggered by browsing.

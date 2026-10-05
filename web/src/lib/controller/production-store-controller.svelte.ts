@@ -1,4 +1,4 @@
-import { repositoryReaders } from "./repository-sources.js";
+import { createProductionStacks } from "./production-stacks.svelte.js";
 import { createReadScope } from "./read-scope.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
 import { createEntitySearch } from "./production-entity-search.js";
@@ -8,10 +8,11 @@ import { createProfileRouteRestorer } from "./production-profile-route.js";
 import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
 import { startProductionSessionEvents } from "./production-session-events.js";
-import { ApplicationFreshness } from "./application-freshness.js";
 
-import { createLocalConfiguration } from "./production-local-configuration.js";
-import type { StoreController } from "./contracts.js";
+import type {
+  StoreController,
+  ProductionStoreControllerOptions,
+} from "./contracts.js";
 
 import type { StoreDataSource } from "./native-data-source.js";
 import { createProductionStoreReaders } from "./production-store-reader.svelte.js";
@@ -19,38 +20,32 @@ import { createProductionStoreState } from "./production-store-state.svelte.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import { productionControllerSurface } from "./production-store-view.js";
 import { createProductionReadServices } from "./production-read-services.js";
-import { createProductionStoreMutations } from "./production-store-mutations.js";
-import { createProductionStoreConflicts } from "./production-store-conflicts.js";
 import {
   createProductionSelections,
   requireProductionSource,
   resetConnectionView,
-  destroyProductionStoreLifecycle,
   authorizationReady,
-  controllerAbortScopes,
+  createProductionConnectionScope,
 } from "./production-store-lifecycle.svelte.js";
 import { createProductionStoreActions } from "./production-store-actions.js";
-import { createProductionMutationCommitter } from "./production-mutation-commit.js";
+import { createProductionCommandServices } from "./production-command-services.js";
 
 export function createProductionStoreController(
-  options: { fetcher?: typeof fetch; now?: () => number } = {},
+  options: ProductionStoreControllerOptions = {},
 ): StoreController {
-  const history = createStoreRouteHistory();
+  const history = createStoreRouteHistory(options.browser);
   const data = createProductionStoreState();
-  const freshness = new ApplicationFreshness(options.fetcher, () =>
-    disconnect("Access denied", true),
-  );
-  const local = createLocalConfiguration(data, options.fetcher, freshness);
   let source: StoreDataSource | null = null,
     sessionToken: string | null = null;
   let session = 0;
-  const { sources, threadNavigation } = repositoryReaders(
-    () => data.repositories,
-    () => sessionToken,
+  const connection = createProductionConnectionScope(
+    data,
     options.fetcher,
+    () => sessionToken,
     () => disconnect("Access denied", true),
   );
-  let { feed, discovery, lifecycle } = controllerAbortScopes();
+  const { sources, threadNavigation, local, freshness, lifecycle } = connection;
+  let { feed, discovery } = connection;
   const { invalidate, signal, version } = createReadScope();
   const follow = (active: StoreDataSource) =>
     automatic.follow(active, (feed = new AbortController()).signal);
@@ -65,8 +60,16 @@ export function createProductionStoreController(
     begin: invalidate,
     signal,
     current,
+    restoreStacks: (contextOnly) =>
+      contextOnly ? stacks.ensure() : stacks.restore(),
   });
 
+  const stacks = createProductionStacks({
+    data,
+    source: () => source,
+    route: () => history.route,
+    fetcher: options.fetcher,
+  });
   const {
     projects,
     clear: clearProjects,
@@ -112,7 +115,7 @@ export function createProductionStoreController(
     signal,
     current,
     restoreRoute,
-    restore: reader.restorePage,
+    restore: restoreRoute,
     freshness,
   });
 
@@ -130,6 +133,7 @@ export function createProductionStoreController(
   function disconnect(message = "", denied = false, preserveSession = false) {
     const repositoryStatus = data.status.repositories;
     invalidate();
+    stacks.clear();
     automatic.reset();
     feed.abort();
     stopProjectEvents();
@@ -177,7 +181,10 @@ export function createProductionStoreController(
         disconnect,
         configure: mutations.configure,
         follow,
-        connected: threadsIntegration.connected,
+        connected: async () => {
+          await threadsIntegration.connected();
+          await stacks.restore(false);
+        },
         projects,
         reader,
         fetcher: options.fetcher,
@@ -218,18 +225,12 @@ export function createProductionStoreController(
     invalidate,
     follow,
   });
-  const mutations = createProductionStoreMutations({
-    state: data.mutation,
+  const { mutations, conflictUploads } = createProductionCommandServices({
+    data,
     source: activeSource,
-    head: () => data.head,
     current: (active) => active === source,
-    committed: createProductionMutationCommitter(history, refresh),
-  });
-  const conflictUploads = createProductionStoreConflicts({
-    source: activeSource,
-    head: () => data.head,
-    current: (active) => active === source,
-    uploadLimit: () => data.conflictUploadBytes,
+    history,
+    refresh,
   });
   const { selectRevision, branchActions } = createProductionSelections({
     data,
@@ -252,13 +253,11 @@ export function createProductionStoreController(
     connect: ({ repository, token }) => connect(repository, token),
     connectRepository,
     disconnect: () => disconnect(),
-    destroy: () => {
-      local.destroy();
-      destroyProductionStoreLifecycle(lifecycle, disconnect, history);
-    },
+    destroy: () => connection.destroy(disconnect, history),
     refresh,
     selectOperation,
     restoreRoute,
+    ensureStacks: () => stacks.ensure(),
     activeRepository: () =>
       data.status.connection === "connected" ? source?.repository : undefined,
     invalidate,
@@ -293,6 +292,7 @@ export function createProductionStoreController(
     () => sessionToken,
     {
       historyQuery,
+      stacks,
       threads: threadsIntegration,
       projects,
       threadNavigation,

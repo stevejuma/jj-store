@@ -230,7 +230,9 @@ test("branch targets scope native history and expose repository decorations", as
     operationGraph.getByText("Snapshot", { exact: true }),
   ).toBeVisible();
   await expect(
-    operationGraph.getByText("head 1", { exact: true }),
+    operationGraph.locator('[data-ui-part="community-chip"]', {
+      hasText: "head 1",
+    }),
   ).toHaveAttribute("data-chip-tone", "accent");
 });
 test("multiple_heads_require_choice_and_events_preserve_the_selected_view", async ({

@@ -56,5 +56,8 @@ pub mod content_search;
 mod thread_directory;
 
 pub mod working_copy;
+pub mod working_tree;
 
 pub mod conversion;
+
+pub mod stack_workspace;

@@ -3,7 +3,7 @@ use super::*;
 use local::Access as _;
 pub(crate) struct Binding {
     manager: Arc<dyn management::LocalRepositories>,
-    folder: management::LocalFolder,
+    pub(super) folder: management::LocalFolder,
     generation: u64,
     admission: Option<Arc<management::admission::FolderAdmission>>,
 }
@@ -60,6 +60,9 @@ pub(crate) async fn binding(
     state: &State,
     repo: m::RepositoryId,
 ) -> Result<Arc<dyn local::Access>> {
+    Ok(bound_folder(state, repo).await?)
+}
+pub(super) async fn bound_folder(state: &State, repo: m::RepositoryId) -> Result<Arc<Binding>> {
     let manager = manager(state)?;
     let check = manager.clone();
     let (folder, generation) = blocking(state, move || check.folder(repo).map_err(map)).await?;

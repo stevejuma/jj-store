@@ -1,5 +1,5 @@
 //! Operation-pinned ordinary GitBackend reads. No checkout or publication methods.
-mod budget;
+pub(crate) mod budget;
 pub mod code_index;
 pub mod code_summary;
 pub mod conflicts;
@@ -8,7 +8,7 @@ mod diff_copies;
 pub mod diff_summary;
 mod dispatch;
 pub mod dto;
-mod git_read;
+pub(crate) mod git_read;
 mod graph_types;
 mod graphs;
 mod history;
@@ -20,6 +20,8 @@ pub mod paths;
 pub mod preparation;
 pub mod references;
 mod scoped;
+pub mod stacks;
+pub mod working_tree;
 pub use crate::query::Error;
 pub use crate::query::content::{Direction, Limits};
 use budget::Budget;
@@ -136,6 +138,7 @@ pub struct FileContent {
 )]
 pub enum Request {
     Graph(GraphRequest, GraphWindow),
+    StackHistory(stacks::Request),
     QueryInfo,
     Commit {
         commit: m::GitSha1Id,
@@ -175,6 +178,7 @@ impl Request {
                 | Self::OperationDiff(_)
                 | Self::OperationChanges(_)
                 | Self::Graph(GraphRequest::Log { .. } | GraphRequest::Evolution { .. }, _)
+                | Self::StackHistory(_)
         ) || matches!(self, Self::Graph(GraphRequest::OperationsFiltered { query }, _)
             if crate::query::language::operations::Filter::parse(query).is_ok_and(|filter| filter.needs_prefix_lookup()))
             || matches!(self, Self::References(r) if
@@ -209,6 +213,7 @@ impl Request {
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]
 pub enum Response {
     Graph(GraphPage),
+    StackHistory(stacks::Page),
     QueryInfo(crate::query::language::QueryInfo),
     Commit(Box<CommitDetail>),
     CommitSummary(Object),
@@ -359,7 +364,7 @@ impl Executor {
         result
     }
 }
-fn loader(path: &Path) -> Result<RepoLoader> {
+pub(crate) fn loader(path: &Path) -> Result<RepoLoader> {
     let settings = UserSettings::from_config(StackedConfig::with_defaults())
         .map_err(|_| Error::Unavailable)?;
     if std::fs::read_to_string(path.join("store/type"))

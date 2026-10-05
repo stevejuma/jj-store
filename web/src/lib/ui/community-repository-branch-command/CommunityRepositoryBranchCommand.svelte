@@ -10,8 +10,12 @@
   import type { Bookmark } from "../../projects/presentation.js";
   import type { RepositoryWorkingCopy } from "../../projects/repository-log.js";
   import CommunityRepositoryBranchEmpty from "./CommunityRepositoryBranchEmpty.svelte";
+  import type { ScrollAreaStrategy } from "@lapismd/design-core/shadcn/scroll-area";
   let {
     bookmarks,
+    targetBookmark,
+    groupWorkspaceBookmarks = false,
+    scrollStrategy = "auto",
     workingCopies = [],
     selected = "",
     selectedCommit = null,
@@ -24,6 +28,11 @@
     onLoadMore,
   }: {
     bookmarks: readonly Bookmark[];
+    /** Optional workspace target card, independent of the loaded bookmark filters. */
+    targetBookmark?: Bookmark;
+    /** Group the loaded applied bookmarks without changing repository picker defaults. */
+    groupWorkspaceBookmarks?: boolean;
+    scrollStrategy?: ScrollAreaStrategy;
     workingCopies?: readonly RepositoryWorkingCopy[];
     selected?: string;
     selectedCommit?: string | null;
@@ -53,6 +62,20 @@
       return inFilter && (!search || searchable.includes(search));
     });
   });
+  const groups = $derived(
+    groupWorkspaceBookmarks
+      ? [
+          {
+            heading: "Applied",
+            bookmarks: visible.filter((item) => item.workspace),
+          },
+          {
+            heading: "Local branches",
+            bookmarks: visible.filter((item) => !item.workspace),
+          },
+        ].filter((group) => group.bookmarks.length)
+      : [{ heading: "Bookmarks", bookmarks: visible }],
+  );
 </script>
 
 {#snippet bookmarkRow(bookmark: Bookmark)}
@@ -108,6 +131,13 @@
   shouldFilter={false}
   disablePointerSelection
 >
+  {#if targetBookmark}
+    <CommandView.List {scrollStrategy} aria-label="Workspace target branch">
+      <CommandView.Group heading="Target branch">
+        {@render bookmarkRow(targetBookmark)}
+      </CommandView.Group>
+    </CommandView.List>
+  {/if}
   {#each workingCopies as workingCopy (workingCopy.workspace)}
     <CommunityWorkingCopyCard
       copy={workingCopy}
@@ -132,22 +162,24 @@
     placeholder="Search branches"
     aria-label="Search branches"
   />
-  <CommandView.List>
+  <CommandView.List {scrollStrategy}>
     {#if visible.length === 0}
       <CommunityRepositoryBranchEmpty {filter} {query} />
     {:else}
-      <CommandView.Group heading="Bookmarks">
-        <CommunityProjectsVirtualRows
-          rows={visible}
-          row={bookmarkRow}
-          getKey={(bookmark) => bookmark.name}
-          estimateSize={() => 132}
-          {hasMore}
-          {loading}
-          loadingLabel="Loading more bookmarks"
-          {onLoadMore}
-        />
-      </CommandView.Group>
+      {#each groups as group, index (group.heading)}
+        <CommandView.Group heading={group.heading}>
+          <CommunityProjectsVirtualRows
+            rows={group.bookmarks}
+            row={bookmarkRow}
+            getKey={(bookmark) => bookmark.name}
+            estimateSize={() => 132}
+            hasMore={index === groups.length - 1 && hasMore}
+            {loading}
+            loadingLabel="Loading more bookmarks"
+            {onLoadMore}
+          />
+        </CommandView.Group>
+      {/each}
     {/if}
   </CommandView.List>
 </CommandView.Root>
@@ -220,7 +252,6 @@
   }
   .community-bookmark-card__heading {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
     min-width: 0;
@@ -232,6 +263,8 @@
     color: var(--muted-foreground);
   }
   .community-bookmark-card__heading :global([data-ui-part="item-label"]) {
+    flex: 1;
+    min-width: 0;
     font-size: var(--community-text-body);
     font-weight: 650;
     overflow-wrap: anywhere;

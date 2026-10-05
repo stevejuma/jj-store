@@ -12,6 +12,11 @@ existing session query cache also retains successful local names-only reads for
 30 seconds, with registration-generation and exact request keys. History batches
 remain transient so pending results never delay progress through a cache hit.
 
+Repository log compositions accept the selected comparison's unavailable reason
+directly when used without an application controller. Controller-owned native
+reasons remain authoritative. Binary and bounded text failures retain their
+explicit contextual explanation in ordinary and focused Stacks history views.
+
 Opening a directory shows the existing directory skeleton while its files load,
 including navigation within a retained repository snapshot. Pagination keeps
 loaded rows and its existing tail skeleton. File names become navigable before
@@ -109,13 +114,16 @@ request and can be downloaded. Source project links retain their identities.
 
 Thread directory and selected conversation reads start concurrently through the
 repository/session/profile query cache. Navigation cancels obsolete reads;
-confirmed reactions invalidate and reload only their exact target, retaining
-other reactions, messages, reply context, emoji definitions and raster URLs.
-Unknown outcomes keep the original intent and receipt identity. Explicit refresh
-invalidates displayed collections; SSE queues automatic active-view refresh.
-Reaction reads are deduplicated across main/reply views and limited to four
-concurrent requests. Reply counts and descendants use indexed passes without
-changing loaded-history, exact revision, draft or scroll semantics. Unneeded JJ
+caller cancellation releases its observer synchronously before an identical
+retry can attach. Only the last observer release aborts shared transport; other
+active consumers retain their read and focus/draft state. Confirmed reactions
+invalidate and reload only their exact target, retaining other reactions,
+messages, reply context, emoji definitions and raster URLs. Unknown outcomes
+keep the original intent and receipt identity. Explicit refresh invalidates
+displayed collections; SSE queues automatic active-view refresh. Reaction reads
+are deduplicated across main/reply views and limited to four concurrent
+requests. Reply counts and descendants use indexed passes without changing
+loaded-history, exact revision, draft or scroll semantics. Unneeded JJ
 log/reference reads do not run when restoring Threads. Cached reads retain
 current repository-session isolation and cursor-reset behavior; no batch API or
 durable read index is added.
@@ -285,12 +293,455 @@ unchanged.
 | JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show the Projects hub, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; retain the repository route and selections on return and resume queued updates; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health automatically while open; and expose native graph preparation in Repository independently from text-search health, using only a graph-reported or explicitly selected operation.                                                                                                                                                                                                                                      |
 | JST-UI-013 | Repository pages MUST expose a Community-style section header after the body tabs with a searchable workspace Command View; workspace context MUST use the exact native name, survive URL/history restoration at a pinned operation, preserve shared commit identities and keep operation/collaboration history repository-wide.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by capability-gated Stacks, Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                                                                                                  |
 | JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, project-scoped and installation-wide Agents directories, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows, tab-row search and trailing icon-only filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and refresh displayed metadata automatically after committed saves and new data. |
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, repository-owned sidebar thread children, an accessible Repositories Browse threads action and contextual repository breadcrumbs, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                    |
 | JST-UI-018 | The browser MUST expose the complete Buzz-derived device Appearance page, persist and restore app-wide preferences, apply resolved themes and typography to all owned conversations and overlays, retain native links and drafts, and offer working local link cards and responsive Focus/Split discussions and agent responses without altering repository authority.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | JST-UI-019 | Operational feedback MUST use scoped session-only Design Core toasts with explicit lifetimes, deduplication, recovery clearing, dismissal suppression and accessible severity; validation, content empty states and exact mutation recovery MUST remain inline.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| JST-UI-020 | Local stack workspace presentation MUST reuse existing application and Changeyard compositions, use a transport-independent controller with isolated stateful mocked adapters, preserve explicit assignment and exact preview/recovery state, and enable production backend integration only through qualified local provider capabilities.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+
+## Local stack workspace catalog
+
+Responsive repository and Stacks tabs skip duplicate width/section measurements
+so a visible overflow trigger remains mounted and usable during initial layout.
+
+Stacks tracks binding discovery independently after repository connection is
+ready. Initial connection, binding discovery and the first workspace read show a
+labelled busy skeleton across Branches, Workspace, Commits and Op Log. A
+verified binding seed enables navigation but is not loaded workspace content; it
+cannot briefly render unavailable or empty workspace banners. Successful
+workspace reads release the skeleton; later refreshes retain loaded content,
+drafts and selections. Failed reads use scoped condition notifications and an
+Empty recovery state with Retry; confirmed missing bindings use contextual Empty
+presentation, without duplicate inline error banners.
+
+JST-UI-020 requires an interactive local stack workspace catalog with a
+transport-independent production controller and an injected stateful fixture
+adapter. A capability-gated Stacks repository tab appears immediately before
+Branches; there is no separate Stacks sidebar item. The repository stays
+highlighted in left navigation while focused. Stacks replaces ordinary
+repository tabs and trailing repository/refresh/Terminal actions with Back,
+Branches, Workspace, Commits and Op Log using the shared body-tab styling and
+accessible overflow. The Details toggle, centered workspace picker and existing
+Stacks actions remain available across all four views. Commits and Op Log reuse
+repository-wide history and its exact operation/selection reads. The existing
+repository Branches page stays separate. The right sidebar retains selection
+details and workspace Settings but suppresses ordinary repository navigation and
+actions. Its far-right details rail shows the active workspace name/ID, target
+branch, applied-stack count and local folder, then the selected stack/branch,
+commit or file. Focused history shows selected repository-wide commit/operation
+metadata instead of stale canvas selections. Read-only rows follow existing
+Settings presentation; copy is available only for IDs/hashes. Workspace ID copy
+hover and keyboard focus use the rounded, seven-percent foreground tint of left
+sidebar buttons. A separate Actions section reuses the sidebar's icon buttons
+for workspace settings, branch browsing, refresh, and explicit saved-membership
+reconciliation when needed. Resolve conflicts opens the same capability-gated
+workspace editor from this rail and the local-workspace notification across all
+four focused tabs, retaining the selected view and diffs. Unavailable or pending
+commands cannot execute through either entry point. Resolved conflicts clear
+their condition notice and disable resolution actions. The notification's
+Resolve conflicts action uses the public secondary variant with a themed
+background at rest, retaining a visibly distinct hover surface and visible
+keyboard focus.
+
+Stacks retains the full bounded, operation-pinned text comparison alongside
+native hunk descriptors. Draggable cards use the shared FileDiff
+collapsed-context controls to reveal unchanged prefix, intervening and suffix
+lines, assigning each context line to one card without duplicating changed rows.
+Context expansion never changes issued hunk IDs or selection/drag authority.
+Stacks and Op Log reuse the same conflict surface, file browser and editable
+resolved-pane presentation; workspace conflict reads remain lazy per selected
+path and drafts survive file switches and browser toggles. Navigation and
+workspace switching remain disabled while the shell replacement editor is open.
+Opening resolution preview releases its surface focus lease before focusing the
+dialog. Local resolution previews/applies the selected complete file through its
+existing guarded JJ command, retaining other conflicts, WIP and workspace
+membership. Warning copy offers in-app resolution; genuinely unsupported native
+shapes retain their explicit reason and do not fabricate an editor or enable a
+command. Multi-sided text comparison uses one compact Command View popover
+picker instead of a row of version buttons or an introductory paragraph. Its
+24px trigger uses the public Merge Editor centered header slot between the
+filename and change pager. A trailing kebab menu provides Wrap lines, Sync
+horizontal scroll, Ignore whitespace and Ignore case; synchronization defaults
+on and comparison filters default off. Workspace and native Op Log conflict
+editors share these controls and the gutter fix. Items match standard menu
+typography and grouped layout without an extra bold caption. Version-1 browser
+local storage retains only these four boolean display preferences, accepting
+earlier two-field records with comparison defaults, across editor remounts and
+reloads; malformed or unavailable storage falls back safely. Changing comparison
+settings preserves edited and accepted resolution text, while filters cannot
+certify a native conflict resolved or authorize a command. Menu Escape retains
+the conflict surface and returns focus to its trigger. Sticky line-number
+gutters remain above horizontally scrolled text and current-hunk overlays.
+Options preserve native order and show a version label, exact text line/byte
+counts and a bounded first differing-line preview. Search includes this detail;
+keyboard selection, Escape and trigger focus restoration reuse the shared
+Command View/Popover behavior. Deleted versions stay visible but disabled.
+Changing the comparison retains the reviewed resolution and still requires
+explicit whole-file staging.
+
+Unstaged uses the shared virtual FileListing in all three modes. Current
+conflict paths and unresolved target-side native terms show an accessible
+warning indicator and the same background as the workspace warning banner;
+resolved target values are not marked merely because their before-side was
+conflicted. Selected and hovered conflict rows retain this warning surface with
+a visible selection marker. Unavailable Stacks diffs show one description
+without a duplicate title, spanning both column edges directly below the header;
+the existing hunk scrollbar padding remains intact. The top workspace conflict
+banner has one row with its message, a labelled conflict-count chip and a
+trailing Resolve conflicts button, without listing paths or adding a separate
+title row; its warning icon is vertically centered with the text, vertical
+padding is 4px and the row has an 8px bottom margin. The count uses the smaller
+indicator font on a compact round secondary surface distinct from the warning
+background.
+
+Back uses a ghost public Button with circular hover treatment, an icon and
+tooltip and restores the exact entry repository route and selections; a direct
+or reloaded focused link without that session route falls back to Overview.
+Frontend-only `context=stacks` on Log/Op Log and `stack_tab=branches|workspace`
+on Stacks round-trip through reload and browser history, rejecting duplicate or
+incompatible fields. Legacy Stacks links default to Workspace. The canvas and
+its controller remain mounted through focused history navigation to preserve
+forms, drafts, columns, diffs and pending commands; repository, binding and
+authorization changes retain owned teardown. Binding revalidation must not
+replace or repin an in-flight canvas selection/read or command for the same
+owner. Switching canvas tabs revalidates that owner without rereading an already
+loaded workspace. Explicit and automatic refresh retain their normal data reads.
+History is read only when its tab is selected, and a direct focused history link
+initializes workspace context without eagerly loading stack histories. This
+presentation does not change local JJ commands or TOML configuration. The
+application shell accepts an injected stack controller only for its matching
+local repository. Branch selection opens a stack column with an explicit Apply
+to workspace action. Workspace places Unstaged first, followed only by applied
+stack columns, each with a staging/commit card and dependent bookmark cards
+containing author metadata and the existing revision graph. It presents named
+device-local combinations, independent WIP, explicit file/hunk assignment,
+command previews, conflicts and undo. Ordinary local JJ execution uses advisory
+previews and state/op-log inspection after unknown outcomes, without automatic
+command replay. Named workspace settings live in `.jj/jj-store/stacks.toml`;
+active refresh snapshots with normal JJ policy. The first production command
+slice enables setup, create/switch and apply/unapply; other controls remain
+capability-disabled until their owning engines are qualified. Native operation
+changes invalidate lazy graph ranges and their cursors; commands can settle
+before the new graph index is prepared. History is loaded again at the new pin
+through the existing explicit preparation flow. Unstaged counts use loaded real
+file summaries, with a continuation marker when incomplete; inactive workspaces
+do not claim an unloaded file count. Mocked Git-backed and linked native
+profiles use the same components. Unlinked or unavailable repositories cannot
+activate checkout commands. The snapshot carries the current physical folder on
+this device; absence of a folder link disables commands even when availability
+is incorrectly reported ready. Branches and Workspace use the existing Projects
+body tabs. Icon actions occupy the body navigation beside those tabs without a
+second toolbar or profile chip. The workspace picker occupies the centered top
+body header, using the same ghost repository picker as Settings and the same
+header slot as the Projects breadcrumb; branch filters remain in their body
+column. A picker already open when a pending read disables it must also disable
+its choices and continuation, retaining the popover so selection resumes when
+the read settles. The column canvas fills the available page width and retains
+trailing space and its public settings. The canvas uses Design Core compact
+rectangular Panel Toggle defaults in column headers and collapsed rails, with
+controlled state and reversible hover/focus bar previews. Consumer icons and
+controller actions remain supported. The canvas starts directly below the body
+tabs without an extra layout gap or top canvas padding. The twelve-pixel leading
+inset belongs to the horizontal Scroll Area outside its viewport, on both tabs,
+with zero leading padding on the canvas and content wrapper. The gutter remains
+visible beside expanded or collapsed fixed columns through horizontal scrolling
+and clips scrolling content so none shows behind it. The unconfigured workspace
+target-branch Settings form has twelve-pixel outer margins on all sides and fits
+within the body width. Every branch, Unstaged, stack and diff column can be
+resized with pointer and keyboard controls. Unstaged on Workspace and the
+Branches picker on Branches use the public `fixed` column property to retain
+their full expanded width or normal collapsed rail while the canvas scrolls
+horizontally, with no replacement return rail. Pinning releases temporarily when
+the scrolling columns cannot fit their minimum width and restores as space
+returns, without changing saved widths or collapsed state. The branch column
+uses the owned repository branch command picker, including its filters and
+dependent bookmark selection. Opening a file diff inserts it immediately to the
+right of its originating Unstaged or stack column. Each origin retains its own
+open file, hunk selection and diff controls; opening, selecting or closing
+another stack's diff does not replace it. Refresh and commands preserve valid
+diffs, remove unavailable sources and hunks, and clear Unstaged selections when
+switching named combinations.
+
+The Branches picker groups applied bookmarks under Applied and all other loaded
+bookmarks under Local branches, using the existing Command View groups and
+retaining search, filters and keyboard selection. Workspace chips align to the
+trailing edge of each branch title row. The page starts with its body tabs,
+without a duplicate target-branch header. The Branches column places a
+selectable workspace target branch card above its filter tabs, reusing the
+repository bookmark card. Selecting a stack does not change that target. Only
+the Branches tab shows this card. Selecting it opens one read-only stack with
+that branch's entire history, newest first. History loads in bounded pages near
+the scroll edge and uses the existing virtual revision rows so large histories
+do not render every commit. The history card supplies the same graph inset as
+ordinary stack cards so its header icon stays beside vertically aligned title,
+author and chip rows, aligned with commit content. Selecting a commit expands
+its changed files inline; opening a file places its read-only diff to the right
+of the history column. Target history cannot be applied, staged or rewritten.
+Selecting another branch returns to the ordinary stack flow. Selected stacks
+expose Apply to workspace or Unapply from workspace in a body action card rather
+than the column header. Membership actions keep the existing preview and mock
+apply flow, update branch groups after confirmation, and remain disabled while a
+command is pending. Delete local remains visibly unavailable as in the source
+reference. Workspace stacks retain Unapply in their menus without the body card.
+
+The workspace footer reuses lightly shaded owned chips for folder, named
+workspace, base branch, applied-stack count and unstaged-file count. Existing
+Folder, Project and Git branch icons identify the corresponding values without
+the redundant Folder: or Base: prefixes; count icons retain their text labels.
+The retained-draft action pairs its label with the existing edit icon and uses
+the same chip surface. Neutral theme foreground at seven-percent tint supplies a
+very light grey in light mode and the corresponding subdued dark-mode surface.
+
+The horizontal canvas, column bodies, branch and workspace Command Views, and
+expanded file lists use explicit styled shadcn Scroll Areas. Stack and diff
+columns on both tabs reserve content padding before their vertical scrollbar,
+matching the eight-pixel left inset around stack cards while the rail stays
+against the column's right border. The Branches picker column retains its
+existing insets without the additional scrollbar reserve; its selected stack and
+adjacent diff columns receive the same balanced spacing as Workspace stack and
+diff columns. Stack columns omit the redundant Applied and Base metadata row;
+conflict status remains visible in the column header. Inline commit and
+staged-file lists keep natural row height within their column's styled viewport.
+Unstaged contains only its file list in the body; listing modes, browse and
+collapse controls live in its vertically centered header row, without a
+file-scope switch. Bookmark names reuse the column title primitive and its bold
+font styling. Clicking any non-action part of a stack or bookmark header selects
+that branch segment; its title button provides the same keyboard action. The
+selected branch shows its own changed files immediately under its header inside
+the same card, including the top branch; lower branch files are excluded. The
+column header selects the top branch and never moves its list above the commit
+composer. Selected branch headers and commit rows carry the same rounded left
+border marker copied from Changeyard; expanded branch files use the same inset
+spacing as commit files, aligned to the branch content above without a header
+separator. Header chips share the available row and wrap when space is limited.
+Expanded branch and commit lists show only Changed files as their heading,
+retaining specific accessible names. The left marker indicates selection without
+a redundant Selected chip. Neutral header and commit chips retain an opaque
+surface distinct from the row hover. Catalog examples include multiple commits
+in each bookmark stack. Kebab menus size to their contents with a wider minimum
+and viewport bounds; Unapply stack uses the eject icon. Page action buttons show
+icons with accessible names and shadcn tooltips. The named workspace selector
+reuses the repository Command View picker with search and preserves the active
+combination until the previewed switch succeeds. Dependent bookmark cards use an
+SVG connector with the same stroke and exact horizontal center as the commit
+stems in both adjacent cards, verified from rendered geometry before and after
+selection and resizing. Row measurements coalesce outside resize observer
+delivery and cancel on teardown. Cards have an optional action bar with an
+empty-commit action, Push presentation and trailing menu. Its background remains
+visibly distinct from an adjacent hovered commit. Push remains disabled in this
+UI slice. Branch action-bar and commit kebabs align at the same trailing inset.
+Kebab buttons use the existing ghost-button hover mechanics with a contextual
+semantic surface that remains distinct from the surrounding row in either theme.
+Workspace diffs place view, wrapping and split actions in the column header.
+Creating or amending a commit uses file/hunk drop targets rather than redundant
+diff body buttons. Each hunk has its own draggable card containing its patch,
+with the exact unified range/context header in a compact shaded monospace strip,
+selection and keyboard assignment controls. Split panes have names that
+distinguish their originating stack/file/hunk. Aggregate hunks may be dragged
+only when one mutable origin owns the path and hunk identity; ambiguous or
+immutable sources remain read-only. Each drag carries only that source hunk.
+Native file and directory row drags use public File Listing callbacks.
+Whole-file drags require one mutable owner for all hunks; directories carry
+exact loaded file selections. Changeyard-derived feedback distinguishes staging
+a new commit, transferring files/hunks to a mutable commit, moving or squashing
+commits, and returning committed changes to Unstaged. Staging panels and
+individual stack bodies accept drops. Branch headers accept mutable commit drops
+into that exact branch segment, including dependent segments and moves between
+segments of the same stack. Missing branches, the source's current segment and
+moves that rewrite immutable history reject the drop. Commit row sorting uses
+the top and bottom quarter of the row as above/below insertion targets with a
+visible edge border; the center retains the squash target. Sorting retains
+identities and changes, and rejects self, redundant, stale and immutable
+rewrites. Header drops and sorting open exact previews before apply. One active
+target shows an inset dashed guide and explicit valid/invalid text with an icon.
+Its opaque background and foreground stacking keep the guide readable above the
+target shading and underlying content; foreign drags, immutable or stale
+sources, self-targets and pending commands cannot mutate or stage changes.
+Entering target children preserves its guide; leaving, dropping, cancelling or
+teardown clears drag feedback. Drops stage files or open an exact preview and
+never apply a command immediately. Unstaged has a small horizontal body inset.
+
+Creating a stack uses the existing Settings form group and separate bordered
+rows for Name, Branch relationship and the conditional Add to stack picker.
+Labels and descriptions occupy the leading content area with controls alongside
+or below them at narrow widths. Independent and Dependent choices use the
+existing exclusive toggle group. Independent creates a separate stack at the
+base; Dependent requires an existing stack selected through the owned searchable
+Command View and creates its new top branch segment without duplicating history.
+Assign selected changes uses the same Settings rows for Destination and Selected
+changes. Its searchable Command View lists branch names with the exact head
+commit title; the chosen head identity remains the previewed destination.
+Committed changes may also return to Unstaged through that picker. Commit
+movement dialogs reuse the same picker for their stack destinations. Commit
+menus expose Copy change ID/hash/message, Add empty commit above/below, Create
+branch above/below, Reword, Edit, Delete and the existing movement/split
+commands. Branch menus expose Copy name, Create branch above/below, Add empty
+commit, Squash all commits, Rename, Delete and Unapply. Copy remains available
+for immutable commits; history mutations validate their exact target and reject
+immutable rewrites. Below targets the parent boundary, including the stack base.
+Editing opens an inline retained draft with the existing files and owned
+composer; Save previews the message and explicitly staged additions. Cancel
+retains the original commit. Branch-segment deletion and squash preserve lower
+segments; every simulated mutation supports the same preview, stale and undo
+rules. Production Unstaged lists the active merge-to-WIP delta through bounded
+lazy reads. Whole-file selections can stage an inline commit and preview native
+insertion/squash; unsupported hunk transfers remain explicitly disabled until
+qualified. Loaded Unstaged summaries are retained in the draft selection model
+without eagerly reading patches. Remote tracking and PR actions remain outside
+the local UI scope.
+
+The Workspace canvas's existing trailing spacer MUST contain a vertically
+centered public shadcn Empty composition with a branch icon, a Drop files to
+start a branch prompt, and a Create a new branch action. Its plain surface has
+no dotted background or leading border, and its 390-pixel width matches a
+default stack column. This is trailing content rather than a registered stack
+column; the Branches page retains its blank 240-pixel spacer. The action opens
+the existing independent/dependent creation form. Exact file/folder/hunk drops
+preview creation, then stage the retained selections in an inline draft only
+after confirmed branch creation; unknown outcomes retain request identity and do
+not stage early, and source files remain until the commit is confirmed.
+
+The idle commit panel has two separated sections: a shaded drop target with a
+visible two-pixel dashed border above the Start a commit action. Starting or
+dropping changes switches to a stack-like card with a Staged header, count,
+folder/list controls and file rows above a separate composer section. Staged
+listing controls align to the far right of their header. Creating a commit opens
+an inline stack form with a normal-height title input of at least 36 pixels, in
+its own bottom-bordered row with a separator spanning the full card width
+without horizontal insets, and the owned application composer for its
+description. Dropping files or hunks opens that form and lists staged files;
+multiple drops retain their exact selections. Staging and cancelling do not
+mutate the mock snapshot. Drafts are scoped to the named combination and stack,
+survive preview cancellation and unknown outcomes, and clear only after
+confirmed commit success.
+
+The Workspace gap between the commit panel and its first branch card MUST match
+the twelve-pixel gap between branch cards, with the form both closed and open.
+Both gaps share the same application spacing token; Branches keeps its existing
+Apply/Unapply card spacing.
+
+Branch-header file lists reuse the commit-row file listing with an inset around
+the panel. Resizing action-bearing commit rows MUST retain their natural content
+height in both directions across width breakpoints; horizontal copy width
+reserves MUST NOT become vertical flex bases. Selected commit rows and branch
+headers retain their selection labels and show the Changeyard-style rounded left
+border marker without shifting the graph, avatars or row contents.
+
+Named combinations share this folder while retaining independent unassigned
+edits. Preview text identifies destinations and explains deletion of a stack or
+combination; deletion and undo are exercised only in memory in this slice.
+
+Reuse existing owned Community rows, IDs, authors, file lists, diff controls,
+notifications and Settings forms, and public Design Core column, menu, dialog
+and merge primitives. Adapt Changeyard stack grouping and drag/drop behavior
+with source provenance; do not import either reference checkout or duplicate
+equivalent primitives. Production stays independent of catalog fixtures.
+
+This first UI slice introduces frontend contracts only. All catalog mutations
+change isolated in-memory fixtures; no checkout, operation heads, companion ref,
+manifest, API, RPC or Rust runtime is changed. Named combinations preserve
+unassigned work independently; removing every applied stack remains usable.
+Previews bind a snapshot and immutable request, with a distinct apply step.
+Stale results retain drafts; unknown outcomes retain the original request and
+block new commands until status or exact retry resolves it. Keyboard/menu
+actions cover drag/drop workflows. Functional and accessibility acceptance is
+separate from visual approval. The user approved backend integration on 5
+October 2026 after this UI review. Production wiring MUST retain the same owned
+controller and components, require a verified physical device binding, and
+advertise only qualified provider read and mutation capabilities. Catalog
+adapters remain isolated.
+
+Production stack read projection MUST retain an explicit repository, profile,
+binding generation and code-operation pin. History loads one bounded page
+without loading files or patches. Provider parents, graph edges, bookmark
+annotations, workspaces, conflicts and divergence remain available; unloaded
+files cannot imply an empty commit or manufacture linear parents. Net file lists
+compare the explicit boundary and head, including an empty list for reverted
+changes, rather than unioning per-commit hunks. Selected patches load
+independently. Unloaded, text-ready and unavailable content remain distinct;
+ordered file terms, modes and rename/copy sources remain intact. Matching-only
+diff blocks are not shown as changed hunks, and byte offsets are never treated
+as line numbers. Presentation hunk identities confer no mutation or transfer
+authority. Caller cancellation and read-owner disposal reject late results
+without closing the repository's shared transport. This read foundation does not
+fabricate a named combination or enable a command executor; production ownership
+MUST explicitly inject this adapter into the served App and dispose only its
+owned reads on repository, binding or authorization changes.
+
+The shared stack controller MUST support optional lazy file-summary and patch
+reads without substituting mock unions for missing provider data. Loading, retry
+and continuation state belong to each source or diff, and cannot lock unrelated
+browsing. Branch and commit selections load their inline file panel; only
+opening a listed file loads its patch. Independent adjacent diffs retain their
+sources while another selection loads. Scope changes, closing a diff and
+controller disposal cancel only the owned reads and reject late completion. File
+continuations remain bounded and advancing. Copy and browsing stay available
+when mutation capabilities are absent; each mutation control uses its own
+advertised capability and unavailable reason. A disabled executor is never
+called to discover whether a command is eligible.
+
+Unconfigured local checkouts MUST represent an absent workspace target and named
+combination explicitly. Opening Stacks does not invent a base bookmark, applied
+membership or unfinished files. Branch browsing offers an existing command-view
+target picker through the Settings form composition. Choosing that target is an
+operation-scoped read selection; it initializes no combination, publishes no JJ
+operation and writes no checkout or private configuration. Missing or ambiguous
+targets require an explicit choice. Workspace shows an existing empty state
+until a qualified named combination exists, and command eligibility requires the
+necessary target/combination state in addition to advertised capability.
+
+The production stack adapter MUST verify the existing LocalTrusted registry
+binding against the code snapshot generation before exposing its folder. It
+loads bounded bookmark metadata without files or patches, retains conflicted
+targets as unavailable choices, and requires an exact explicit target choice.
+Stack and target history pages bind this read scope and retain provider graph
+boundaries. Source file summaries and selected patches compare exact trees;
+merge commits with no chosen comparison parent stay explicitly unavailable.
+Adapter disposal cancels its reads without closing the shared repository
+transport. Read projection advertises no mutation capability until the durable
+executor is separately qualified.
+
+The Stacks controller owns current physical observation independently from its
+historical branch read scope. Observation selects one explicit current operation
+from a fresh verified binding snapshot and rechecks it after the read; absent or
+multiple heads remain unavailable without reconciliation. A historical selection
+is never silently replaced by the current checkout. Refresh supersedes previous
+observations, disposal cancels only Stacks-owned requests, and late results
+cannot replace newer state. Failed reads clear current observation evidence
+while retaining branch/diff selections. Physical changed-path metadata is not
+complete Unstaged: durable combination merge/WIP state must qualify before
+assignment.
+
+The production lifecycle owner MUST require LocalTrusted access, the supported
+local profile, advertised code-read capability and matching registered binding
+generation. Stacks routes MUST restore their own bounded reads instead of
+requesting the ordinary Log graph. Index preparation and read failures reuse
+application notices without duplicate Stacks feedback. Branch/target pickers
+retain bounded continuation and unavailable choices. Refresh MUST revalidate
+loaded ranges against exact heads and boundaries, replace obsolete cursors and
+retain valid historical source/diff selections. A failed refresh MUST NOT
+install a partially refreshed read owner. Teardown rejects late discovery and
+reads; identity or folder mismatch removes the controller.
+
+Private physical scan/WC baseline comparisons do not establish active Unstaged
+assignment. The UI must keep this capability unavailable until composition
+qualifies active-combination assignment and production read integration. Private
+current checkout/sparse/ignore witnesses and service observation now supply
+these provider inputs, and a registered bounded observation route exposes safe
+read summaries; these do not themselves grant a UI capability. A historical
+working-copy baseline cannot become the active physical folder merely because it
+shares a workspace name.
+
+The 5 October alignment review and proposed backend delivery order are recorded
+in
+[the implementation plan](../../docs/implementation-plan.md#local-stacks-backend-proposal).
+The review preserves this UI and its controller boundary while identifying real
+net diffs, bounded reads, capability eligibility, durable recovery and lifecycle
+wiring as integration work. The subsequent user request approves implementation
+of this delivery order; M21.2 remains incomplete until real provider, checkout
+and lifecycle acceptance is recorded.
 
 ## Application notifications
 
@@ -980,6 +1431,11 @@ operations and immutable commit/operation selections remain retained. Optional
 Refresh can still capture current heads. Updates replace the current history
 entry and preserve the deep selection when it remains available.
 
+JJ Log and Op Log graph chips cap their inline size at 16rem and the available
+row width. Long bookmark, workspace and device labels use ellipsis while their
+complete values remain in accessible text and hover titles. Chip rows wrap
+without displacing graph identities or creating horizontal overflow.
+
 Every asynchronous browsing surface preserves its final geometry while loading.
 Branches renders bookmark-card placeholders in its initial path column; JJ Log
 and Op Log render their graph/status composition; Files renders its file-tree
@@ -1525,6 +1981,9 @@ banners and premature empty or unavailable states do not replace those
 skeletons. Once a snapshot is displayed, background refresh retains its content
 and drafts; settled failures and unsupported features retain their explicit
 notices.
+
+Repository directory loading also reflects its visible-row metadata reads,
+retaining their viewport observation leases and any already loaded rows.
 
 ### Native collaboration action placement
 
@@ -2176,3 +2635,105 @@ validated durable receipt alone completes conversion and permits navigation to
 its independent destination. Historical selections, drafts and exact pending
 commands survive all automatic freshness reads. Browser idle, renewal, external
 change latency and recovery require cold built-bundle qualification.
+
+JST-UI-020's workspace actions menu opens active named workspace Settings in the
+standard right application sidebar, reusing Threads settings identity, detail
+and destructive-action presentation. Settings use existing bordered Settings
+field rows for name and a Command View target-branch picker. One bordered group
+starts with Workspace ID, followed by name and target, without nested frames. A
+separator precedes one horizontal row of Cancel and Save buttons with icons
+inside that same rounded frame; the row has no explanatory label. Workspace ID
+padding matches the editable rows. Drafts survive preview cancellation and
+stale-command errors; unavailable local capabilities disable edits. Save reviews
+the exact name/target command before execution. Delete workspace requires a
+destructive confirmation explaining that only saved workspace configuration is
+removed: branches and unfinished native JJ work are retained. Successful
+deletion closes Settings and updates workspace selection; no generic
+commit/file/hunk command is enabled.
+
+Local stack/basic commit actions consume native previews and point inspection
+for displayed commits. UI commit mutability never comes from graph position or
+mock fixtures. Missing inspection support leaves those actions unavailable.
+
+Lazy changed-file summaries and requested patches update the corresponding
+loaded commit selection models, as well as Unstaged. Existing drag guides,
+staged lists, split forms and inline commit composer use native file mutations
+only after qualification. Net branch diffs compare exact boundary/head trees and
+do not authorize transfers.
+
+Native local Stacks hunk selections are issued by the guarded read-only POST
+`/v1/local/repos/{repo}/stacks/hunks`. Tokens bind native source change
+identity, canonical path and complete before/after bytes; apply rederives them
+at the exact operation/configuration pin. Client patches and display-only IDs
+are rejected. Partial text deltas use native squash with emptied sources
+retained, without reconstructing the megamerge. Binary, conflict, mode/type and
+bounded-diff limits remain whole-file-only. Net branch comparisons remain
+presentation-only.
+
+Local graph commands use native `move_commits` insertion/reordering and full
+`squash_commits` for squash/uncommit. WIP is retained as a native child; graph
+rewrites do not reconstruct the merge. Branch squash/rebase discovers at most
+500 commits in its segment and stops at the next user bookmark boundary. Visible
+source identity, configured immutability and workspace-target protection are
+validated at preview and apply; retention commits are not graph sources.
+
+The ordinary local Stacks mutation profile now includes native bookmark deletion
+(top bookmark only; lower bookmarks and commits retained), abandonment, selected
+whole-file/native-hunk WIP discard, and complete native text-conflict
+resolution. Conflict terms are read lazily through guarded POST
+`stacks/conflict`; ordered three-term text conflicts use the existing Merge
+Editor. Multi-sided text conflicts expose bounded ordered versions for pairwise
+comparison in the same editable Merge Editor. The user reviews every version and
+explicitly stages the complete resolved file before preview. Structural, mode,
+binary and oversized values retain explicit unsupported reasons. Conflict paths
+are bounded to 50 per current read. While selected file text loads, the shared
+conflict content shows an accessible busy skeleton with a header and three
+panes, keeping the file browser and action header visible, hiding prior file
+text and disabling stage/preview until the read completes. Loading copy is
+screen-reader-only; errors retain their contextual feedback. Workspace and
+focused Op Log share this loading presentation.
+
+Undo/Redo restores the native repository operation stack, including CLI work,
+with native descriptions and remote tracking semantics. Current Git bookkeeping
+is retained, as in JJ. TOML is not an Undo journal. Missing or restored
+references remain visible as unavailable choices/reasons; Refresh and Switch
+never rebuild membership automatically. Explicit Reapply saved branches
+reconciles membership and preserves WIP. Operation/config/source guards and
+unknown-outcome inspection remain required. Production file dragging uses exact
+loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
+branch comparisons remain read-only. Undo/Redo remains available without a
+selected named workspace.
+
+Production dependent branch segments derive from loaded native parent links and
+local bookmark annotations, with one bounded continuation for the exact
+advertised top head/target range. Only the lowest displayed segment loads more.
+Each branch’s inline net files compare its own lower boundary and head; an
+unproven paginated boundary remains unavailable until more history is loaded.
+Merge/elided ancestry retains the provider graph without invented linear
+boundaries. Visible applied lanes load their own bounded pages; other repository
+history stays unloaded. Aliases do not duplicate commit rows within a lane.
+Explicitly applied bookmarks retain their own column and UI identity, even when
+they share ancestry; browsing a branch selects its own advertised top.
+
+An exact displayed commit receiving a dropped file/hunk MUST retain its title in
+the destination picker even when it is not a bookmark head. Refreshing the
+current read scope MUST reload retained adjacent diffs; closing or changing a
+diff cancels its owned patch, while same-scope history updates do not cancel it.
+Reconciliation that retains a source/path MUST preserve its patch lifetime;
+cleanup of a completed or invalidated request MUST NOT restore a previous
+operation’s loaded state.
+
+Required graph preparation remains an unresolved view condition until successful
+preparation or repository teardown clears it. Navigation and successful reads
+may clear transient feedback without hiding the Prepare graph index action or
+changing its exact required operation.
+
+Successfully issued bounded stack histories update the adapter's current
+comparison and command projection immediately, including inspected non-head
+destinations and dependent segment boundaries. Neither mutation preview nor
+inline branch files require an intervening refresh to use those exact reads.
+
+Same-scope refresh and history updates retain authoritative loaded file
+summaries and patches in the draft/drop selection model. A changed read scope
+invalidates that cache before projection; visible cached rows cannot become
+stale selections solely because a same-operation read completed.

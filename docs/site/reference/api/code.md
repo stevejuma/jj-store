@@ -3376,6 +3376,21 @@ Requires current repository read permission. Unknown query fields are rejected. 
       "explode": true
     },
     {
+      "name": "last_change_mode",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "string",
+        "enum": [
+          "quick",
+          "history"
+        ],
+        "default": "quick"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
       "name": "limit",
       "in": "query",
       "required": false,
@@ -3577,6 +3592,14 @@ Requires current repository read permission. Unknown query fields are rejected. 
         "type": "boolean",
         "default": true
       },
+      "last_change_mode": {
+        "type": "string",
+        "enum": [
+          "quick",
+          "history"
+        ],
+        "default": "quick"
+      },
       "limit": {
         "type": "integer",
         "format": "uint",
@@ -3693,6 +3716,21 @@ Runs the same authorized GET validation and drops the body. No JSON, binary byte
       "explode": true
     },
     {
+      "name": "last_change_mode",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "string",
+        "enum": [
+          "quick",
+          "history"
+        ],
+        "default": "quick"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
       "name": "limit",
       "in": "query",
       "required": false,
@@ -3802,6 +3840,14 @@ Runs the same authorized GET validation and drops the body. No JSON, binary byte
       "include_last_change": {
         "type": "boolean",
         "default": true
+      },
+      "last_change_mode": {
+        "type": "string",
+        "enum": [
+          "quick",
+          "history"
+        ],
+        "default": "quick"
       },
       "limit": {
         "type": "integer",

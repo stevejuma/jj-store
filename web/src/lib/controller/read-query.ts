@@ -15,9 +15,10 @@ export async function readQuery<T>(
   const release = observer.subscribe(() => {});
   let stop: (() => void) | undefined;
   let released = false;
-  const dispose = () => {
+  const cleanup = () => {
     if (released) return;
     released = true;
+    if (stop) signal?.removeEventListener("abort", stop);
     release();
     observer.destroy();
   };
@@ -28,9 +29,9 @@ export async function readQuery<T>(
       read,
       new Promise<never>((_, reject) => {
         stop = () => {
-          // A retry in the same turn must see this caller's lease released.
-          // Other active observers continue to own their shared transport.
-          dispose();
+          // A same-key retry can start before this async function's finally.
+          // Release ownership first so it cannot reuse canceled transport.
+          cleanup();
           reject(signal.reason ?? new DOMException("Aborted", "AbortError"));
         };
         signal.addEventListener("abort", stop, { once: true });
@@ -38,7 +39,6 @@ export async function readQuery<T>(
       }),
     ]);
   } finally {
-    if (stop) signal?.removeEventListener("abort", stop);
-    dispose();
+    cleanup();
   }
 }

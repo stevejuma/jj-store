@@ -2040,6 +2040,108 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/repos/{repo}/working-tree/observe": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_working_tree_observe"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/stacks/conflict": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_stacks_conflict"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/stacks/hunks": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_stacks_hunks"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/stacks/inspect": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_stacks_inspect"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/stacks": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_stacks_execute"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/stacks/preview": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_stacks_preview"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repositories/conversion/preview": {
     parameters: {
       query?: never;
@@ -5368,6 +5470,11 @@ export interface components {
         }
       | {
           /** @constant */
+          kind: "stack_history";
+          data: components["schemas"]["LocalStackHistoryPage"];
+        }
+      | {
+          /** @constant */
           kind: "query_info";
           data: components["schemas"]["QueryInfo"];
         }
@@ -5569,6 +5676,16 @@ export interface components {
       object_bytes: number;
       /** Format: uint64 */
       work: number;
+    };
+    LocalStackHistoryPage: {
+      /** Format: uint32 */
+      version: number;
+      operation: components["schemas"]["OperationId"];
+      head: components["schemas"]["GitSha1Id"];
+      base: components["schemas"]["GitSha1Id"] | null;
+      commits: components["schemas"]["LocalGraphCommitNode"][];
+      next: components["schemas"]["GitSha1Id"] | null;
+      stats: components["schemas"]["LocalGraphStats"];
     };
     LocalCommitDetail: {
       object: components["schemas"]["LocalCodeObject"];
@@ -6277,6 +6394,112 @@ export interface components {
       workspace: string;
       path: string;
       fingerprint: string;
+    };
+    ObservedWorkingTree: {
+      snapshot: components["schemas"]["WorkingTreeSnapshot"];
+      changes: components["schemas"]["WorkingTreeChange"][];
+      /** Format: uint32 */
+      obstacle_count: number;
+    };
+    WorkingTreeSnapshot: {
+      /** Format: uint32 */
+      version: number;
+      repository: components["schemas"]["RepositoryId"];
+      /** Format: uint64 */
+      binding_generation: number;
+      operation: components["schemas"]["OperationId"];
+      view: components["schemas"]["ViewId"];
+      workspace: string;
+      working_copy: components["schemas"]["GitSha1Id"];
+      trees: components["schemas"]["GitSha1Id"][];
+      tree_labels: string[];
+      physical_workspace: components["schemas"]["RecordDigest"];
+      metadata_fingerprint: components["schemas"]["RecordDigest"];
+      physical_fingerprint: components["schemas"]["RecordDigest"];
+    };
+    WorkingTreeChange: {
+      path: string;
+      status: components["schemas"]["WorkingTreeChangeStatus"];
+      before: components["schemas"]["WorkingTreeFileState"] | null;
+      after: components["schemas"]["WorkingTreeFileState"] | null;
+    };
+    /** @enum {string} */
+    WorkingTreeChangeStatus: "added" | "modified" | "deleted";
+    WorkingTreeFileState: {
+      kind: components["schemas"]["WorkingTreeFileKind"];
+      /** Format: uint64 */
+      bytes: number;
+      content_digest: components["schemas"]["RecordDigest"];
+    };
+    WorkingTreeFileKind:
+      | {
+          executable: boolean;
+          /** @constant */
+          type: "file";
+        }
+      | {
+          /** @constant */
+          type: "symlink";
+        };
+    LocalStacksConflict: {
+      source: string;
+      path: string;
+      terms: (string | null)[];
+      reason: string | null;
+    };
+    LocalStacksHunkResponse: {
+      source: string;
+      path: string;
+      hunks: components["schemas"]["LocalStacksHunk"][];
+      reason: string | null;
+    };
+    LocalStacksHunk: {
+      id: string;
+      label: string;
+      patch: string;
+    };
+    LocalStacksInspection: {
+      commits: components["schemas"]["LocalStacksCommitEligibility"][];
+    };
+    LocalStacksCommitEligibility: {
+      commit: string;
+      mutable: boolean;
+      reason: string | null;
+    };
+    LocalStacksState: {
+      /** Format: uint32 */
+      version: number;
+      operation: components["schemas"]["OperationId"];
+      /** Format: uint64 */
+      revision: number;
+      active: string | null;
+      workspaces: components["schemas"]["LocalStacksWorkspace"][];
+      /** @description Publication succeeded but settings/checkout need attention. Never retry the command. */
+      warning: string | null;
+      /** @default false */
+      can_undo: boolean;
+      /** @default false */
+      can_redo: boolean;
+      /** @default [] */
+      conflicts: string[];
+    };
+    LocalStacksWorkspace: {
+      id: string;
+      name: string;
+      target: string;
+      target_commit: string;
+      applied: string[];
+      merge_commit: string;
+      wip_commit: string;
+      conflicted: boolean;
+      unavailable_reason?: string | null;
+      /** @default false */
+      membership_changed: boolean;
+    };
+    LocalStacksPreview: {
+      title: string;
+      summary: string;
+      paths: string[];
     };
     ConversionPreview: {
       /** Format: uint32 */
@@ -28798,6 +29021,18 @@ export interface operations {
               }
             | {
                 /** @constant */
+                kind: "stack_history";
+                query: {
+                  head: string;
+                  /** @description None means bounded target history. Some excludes all base ancestors. */
+                  base?: string | null;
+                  /** Format: uint */
+                  limit: number;
+                  after?: string | null;
+                };
+              }
+            | {
+                /** @constant */
                 kind: "query_info";
               }
             | {
@@ -33129,6 +33364,1243 @@ export interface operations {
         };
       };
       /** @description stale_work, cursor_reset, intent_conflict or work_replication_unsupported. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_working_tree_observe: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ObservedWorkingTree"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description stale_work, cursor_reset, intent_conflict or work_replication_unsupported. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_stacks_conflict: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation: string;
+          /** Format: uint64 */
+          revision: number;
+          source: string;
+          path: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalStacksConflict"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_stacks_hunks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation: string;
+          /** Format: uint64 */
+          revision: number;
+          source: string;
+          path: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalStacksHunkResponse"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_stacks_inspect: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation: string;
+          /** Format: uint64 */
+          revision: number;
+          commits: string[];
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalStacksInspection"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_stacks_execute: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation?: string | null;
+          /** Format: uint64 */
+          revision?: number | null;
+          command:
+            | {
+                /** @constant */
+                kind: "refresh";
+              }
+            | {
+                /** @constant */
+                kind: "reconcile";
+              }
+            | {
+                /** @constant */
+                kind: "undo";
+              }
+            | {
+                /** @constant */
+                kind: "redo";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "delete_branch";
+              }
+            | {
+                commit: string;
+                /** @constant */
+                kind: "abandon";
+              }
+            | {
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "discard";
+              }
+            | {
+                path: string;
+                content: string;
+                /** @constant */
+                kind: "resolve";
+              }
+            | {
+                commit: string;
+                target: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                /** @constant */
+                kind: "move";
+              }
+            | {
+                commit: string;
+                target: string;
+                /** @constant */
+                kind: "squash";
+              }
+            | {
+                commit: string;
+                /** @constant */
+                kind: "uncommit";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "rebase";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "squash_branch";
+              }
+            | {
+                name: string;
+                target: string;
+                /** @constant */
+                kind: "setup";
+              }
+            | {
+                name: string;
+                /** @constant */
+                kind: "create";
+              }
+            | {
+                workspace: string;
+                /** @constant */
+                kind: "switch";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "apply";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "unapply";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "set_target";
+              }
+            | {
+                workspace: string;
+                name: string;
+                target: string;
+                /** @constant */
+                kind: "update";
+              }
+            | {
+                workspace: string;
+                /** @constant */
+                kind: "delete";
+              }
+            | {
+                target: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "transfer";
+              }
+            | {
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "split";
+              }
+            | {
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "edit";
+              }
+            | {
+                name: string;
+                parent?: string | null;
+                /** @constant */
+                kind: "create_stack";
+              }
+            | {
+                commit: string;
+                name: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                /** @constant */
+                kind: "create_branch";
+              }
+            | {
+                branch: string;
+                name: string;
+                /** @constant */
+                kind: "rename_branch";
+              }
+            | {
+                commit: string;
+                message: string;
+                /** @constant */
+                kind: "reword";
+              }
+            | {
+                commit: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                message: string;
+                /** @constant */
+                kind: "empty";
+              }
+            | {
+                branch: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "commit";
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalStacksState"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_stacks_preview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation?: string | null;
+          /** Format: uint64 */
+          revision?: number | null;
+          command:
+            | {
+                /** @constant */
+                kind: "refresh";
+              }
+            | {
+                /** @constant */
+                kind: "reconcile";
+              }
+            | {
+                /** @constant */
+                kind: "undo";
+              }
+            | {
+                /** @constant */
+                kind: "redo";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "delete_branch";
+              }
+            | {
+                commit: string;
+                /** @constant */
+                kind: "abandon";
+              }
+            | {
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "discard";
+              }
+            | {
+                path: string;
+                content: string;
+                /** @constant */
+                kind: "resolve";
+              }
+            | {
+                commit: string;
+                target: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                /** @constant */
+                kind: "move";
+              }
+            | {
+                commit: string;
+                target: string;
+                /** @constant */
+                kind: "squash";
+              }
+            | {
+                commit: string;
+                /** @constant */
+                kind: "uncommit";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "rebase";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "squash_branch";
+              }
+            | {
+                name: string;
+                target: string;
+                /** @constant */
+                kind: "setup";
+              }
+            | {
+                name: string;
+                /** @constant */
+                kind: "create";
+              }
+            | {
+                workspace: string;
+                /** @constant */
+                kind: "switch";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "apply";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "unapply";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "set_target";
+              }
+            | {
+                workspace: string;
+                name: string;
+                target: string;
+                /** @constant */
+                kind: "update";
+              }
+            | {
+                workspace: string;
+                /** @constant */
+                kind: "delete";
+              }
+            | {
+                target: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "transfer";
+              }
+            | {
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "split";
+              }
+            | {
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "edit";
+              }
+            | {
+                name: string;
+                parent?: string | null;
+                /** @constant */
+                kind: "create_stack";
+              }
+            | {
+                commit: string;
+                name: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                /** @constant */
+                kind: "create_branch";
+              }
+            | {
+                branch: string;
+                name: string;
+                /** @constant */
+                kind: "rename_branch";
+              }
+            | {
+                commit: string;
+                message: string;
+                /** @constant */
+                kind: "reword";
+              }
+            | {
+                commit: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                message: string;
+                /** @constant */
+                kind: "empty";
+              }
+            | {
+                branch: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
+                /** @constant */
+                kind: "commit";
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalStacksPreview"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
       409: {
         headers: {
           [name: string]: unknown;

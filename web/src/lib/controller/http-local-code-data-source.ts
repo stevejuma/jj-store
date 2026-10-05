@@ -1,3 +1,5 @@
+import { HttpWorkingTree } from "./http-working-tree.js";
+import { HttpLocalStacksTransport } from "./stack-workspace/local-transport.js";
 import { ApiError, fullId } from "../api/client.js";
 import { codeId } from "./repository-profile.js";
 import type {
@@ -21,6 +23,8 @@ export class HttpLocalCodeDataSource extends HttpLocalQuery {
     signal?.throwIfAborted();
     return summary;
   }
+  readonly stacks = new HttpLocalStacksTransport(this.client);
+  readonly workingTree = new HttpWorkingTree(this.client);
   references(operation: string, cursor?: string, input: ReferenceQuery = {}) {
     return this.query<"references">(
       operation,
@@ -71,6 +75,38 @@ export class HttpLocalCodeDataSource extends HttpLocalQuery {
       input.cursor,
       input.signal,
     );
+  }
+  async stackHistory(
+    input: import("./native-data-source.js").StackHistoryQuery,
+  ) {
+    const limit = input.limit ?? 40;
+    if (!Number.isInteger(limit) || limit < 1 || limit > 500)
+      throw new ApiError("invalid_stack_page");
+    const head = codeId(input.head, this.profile);
+    const base =
+      input.base === undefined ? null : codeId(input.base, this.profile);
+    const result = await this.query<"stack_history">(
+      input.operation,
+      { kind: "stack_history", query: { head, base, limit, after: null } },
+      input.cursor,
+      input.signal,
+    );
+    const page = result.data;
+    if (
+      page.version !== 1 ||
+      page.operation !== input.operation ||
+      page.head !== head ||
+      page.base !== base
+    )
+      throw new ApiError("snapshot_mismatch");
+    if (
+      !Array.isArray(page.commits) ||
+      page.commits.length > limit ||
+      Boolean(page.next) !== Boolean(result.next_cursor) ||
+      (result.next_cursor !== null && result.next_cursor === input.cursor)
+    )
+      throw new ApiError("invalid_stack_page");
+    return result;
   }
   commit(id: string, operation: string) {
     return this.query<"commit">(operation, {
@@ -165,7 +201,13 @@ export class HttpLocalCodeDataSource extends HttpLocalQuery {
       cursor,
     );
   }
-  diffPaths(operation: string, from: string, to: string, cursor?: string) {
+  diffPaths(
+    operation: string,
+    from: string,
+    to: string,
+    cursor?: string,
+    signal?: AbortSignal,
+  ) {
     return this.query<"diff_paths">(
       operation,
       {
@@ -180,18 +222,30 @@ export class HttpLocalCodeDataSource extends HttpLocalQuery {
         },
       },
       cursor,
+      signal,
     );
   }
-  diff(operation: string, from: string, to: string, path: string) {
-    return this.query<"diff">(operation, {
-      kind: "diff",
-      query: {
-        from: codeId(from, this.profile),
-        to: codeId(to, this.profile),
-        path,
-        content: true,
+  diff(
+    operation: string,
+    from: string,
+    to: string,
+    path: string,
+    signal?: AbortSignal,
+  ) {
+    return this.query<"diff">(
+      operation,
+      {
+        kind: "diff",
+        query: {
+          from: codeId(from, this.profile),
+          to: codeId(to, this.profile),
+          path,
+          content: true,
+        },
       },
-    });
+      undefined,
+      signal,
+    );
   }
   conflicts(operation: string, commit: string) {
     return this.query<"conflicts">(operation, {

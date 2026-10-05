@@ -1,5 +1,10 @@
 //! Exact source context for the pinned ordinary GitBackend profile.
 mod capture;
+mod operation_archive;
+pub(crate) use operation_archive::MAX_ARCHIVE_BYTES;
+pub use operation_archive::{
+    OperationArchiveLimits, OperationArchiveV1, capture_operation_archive,
+};
 mod commits;
 mod operations;
 mod views;

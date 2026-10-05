@@ -10,6 +10,8 @@ mod managed_code;
 mod managed_http;
 #[path = "local_browser/managed_lifecycle.rs"]
 mod managed_lifecycle;
+#[path = "local_browser/ordinary_stacks.rs"]
+mod ordinary_stacks;
 #[path = "local_browser/preparation.rs"]
 mod preparation_acceptance;
 #[path = "local_browser/prepared_comparisons.rs"]
@@ -38,8 +40,12 @@ mod reference_embedded;
 mod review_acceptance;
 #[path = "local_browser/scoped_differences.rs"]
 mod scoped_differences;
+#[path = "local_browser/stacks.rs"]
+mod stacks;
 #[path = "local_browser/working_copy.rs"]
 mod working_copy_acceptance;
+#[path = "local_browser/working_tree.rs"]
+mod working_tree_acceptance;
 use jj_store_cli::local_browser::LocalFolders;
 use jj_store_service::local_browser::FolderProvider;
 use std::{fs, process::Command};
@@ -1060,6 +1066,71 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         40
     );
     let selected = &page["data"]["data"]["data"]["nodes"][0]["commit"]["id"];
+    let stack_request = json!({"kind":"stack_history","query":{"head":selected,"base":null,"limit":1,"after":null}});
+    let stack_page: Value = post(
+        &format!("/local/repos/{id}/query"),
+        json!({"operation":operation,"request":stack_request,"cursor":null}),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(stack_page["snapshot"]["operation"], operation);
+    assert_eq!(stack_page["data"]["kind"], "stack_history");
+    assert_eq!(stack_page["data"]["data"]["head"], *selected);
+    assert_eq!(
+        stack_page["data"]["data"]["commits"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    let stack_cursor = stack_page["next_cursor"].as_str().unwrap();
+    let next_stack_page: Value = post(
+        &format!("/local/repos/{id}/query"),
+        json!({"operation":operation,"request":stack_request,"cursor":stack_cursor}),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert_ne!(
+        stack_page["data"]["data"]["commits"][0]["commit"]["id"],
+        next_stack_page["data"]["data"]["commits"][0]["commit"]["id"]
+    );
+    let changed_stack_range = json!({"kind":"stack_history","query":{"head":selected,"base":selected,"limit":1,"after":null}});
+    assert_eq!(
+        post(
+            &format!("/local/repos/{id}/query"),
+            json!({"operation":operation,"request":changed_stack_range,"cursor":stack_cursor})
+        )
+        .send()
+        .await
+        .unwrap()
+        .status(),
+        reqwest::StatusCode::BAD_REQUEST
+    );
+    let forged_anchor = json!({"kind":"stack_history","query":{"head":selected,"base":null,"limit":1,"after":selected}});
+    assert_eq!(
+        post(
+            &format!("/local/repos/{id}/query"),
+            json!({"operation":operation,"request":forged_anchor,"cursor":null})
+        )
+        .send()
+        .await
+        .unwrap()
+        .status(),
+        reqwest::StatusCode::BAD_REQUEST
+    );
+
     for request in [
         json!({"kind":"commit","query":{"commit":selected}}),
         json!({"kind":"graph","query":[{"graph":"evolution","commit":selected},{"limit":1,"after":null}]}),
@@ -1601,6 +1672,7 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     );
     drop(stream);
     let mut review_samples = working_copy_acceptance::qualify(&endpoint, id, &folder).await;
+    review_samples.extend(working_tree_acceptance::qualify(&endpoint, id, &folder).await);
     for (kind, exact) in [
         ("workspaces", None),
         ("workspaces", Some("default")),
@@ -1659,6 +1731,7 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     .await
     .unwrap();
     assert_eq!(query_info["data"]["data"]["jj_version"], "0.45.1");
+    review_samples.extend(ordinary_stacks::qualify(&endpoint, id, &folder).await);
     let filtered_operations: Value = post(&format!("/local/repos/{id}/query"), json!({"operation":operation,"request":{"kind":"graph","query":[{"graph":"operations_filtered","query":"from:@ snapshot:false"},{"limit":1,"after":null}]},"cursor":null})).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
     assert_eq!(filtered_operations["data"]["kind"], "graph");
     if let Ok(path) = std::env::var("JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE") {
@@ -1677,6 +1750,8 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
                 sample("/v1/local/repos/{repo}/index/tasks/{task}", "get", ready_task),
                 sample("/v1/local/repos/{repo}/index/tasks/{task}/cancel", "post", cancel_task),
                 sample("/v1/local/repos/{repo}/query", "post", page),
+                sample("/v1/local/repos/{repo}/query", "post", stack_page),
+                sample("/v1/local/repos/{repo}/query", "post", next_stack_page),
                 sample("/v1/local/repos/{repo}/query", "post", query_info),
                 sample("/v1/local/repos/{repo}/query", "post", filtered_operations),
                 sample("/v1/local/repos/{repo}/agents/sessions", "post", agents),

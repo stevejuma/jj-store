@@ -57,7 +57,7 @@ impl Stamp {
         })
     }
 }
-pub(in super::super) struct Extras {
+pub(crate) struct Extras {
     heads: Vec<String>,
     segments: BTreeMap<String, Segment>,
 }
@@ -194,6 +194,13 @@ impl Extras {
         Ok(self.record(id, budget)?.change)
     }
     pub fn record(&self, id: &[u8], budget: &Budget) -> Result<Record> {
+        self.find_record(id, budget).map(Option::unwrap_or_default)
+    }
+    pub(in super::super) fn require(&self, id: &[u8], budget: &Budget) -> Result<()> {
+        self.find_record(id, budget)?.ok_or(Error::Incomplete)?;
+        Ok(())
+    }
+    pub(crate) fn find_record(&self, id: &[u8], budget: &Budget) -> Result<Option<Record>> {
         let mut result: Option<Vec<u8>> = None;
         for head in &self.heads {
             let mut next = Some(head);
@@ -215,10 +222,7 @@ impl Extras {
                 next = segment.parent.as_ref();
             }
         }
-        result
-            .map(|value| decode(&value))
-            .transpose()
-            .map(Option::unwrap_or_default)
+        result.map(|value| decode(&value)).transpose()
     }
 }
 impl Segment {
@@ -316,7 +320,7 @@ fn varint(input: &mut &[u8]) -> Result<u64> {
     Err(Error::Corrupt)
 }
 #[derive(Default)]
-pub(in super::super) struct Record {
+pub(crate) struct Record {
     pub change: Option<b::ChangeId>,
     pub predecessors: Vec<b::CommitId>,
     pub trees: Vec<b::TreeId>,
@@ -334,7 +338,7 @@ fn decode(mut input: &[u8]) -> Result<Record> {
         let wire = tag & 7;
         if field == 0
             || (matches!(field, 1 | 2 | 4) && wire != 2)
-            || (matches!(field, 8 | 9 | 10) && wire != 0)
+            || (matches!(field, 8..=10) && wire != 0)
         {
             return Err(Error::Corrupt);
         }

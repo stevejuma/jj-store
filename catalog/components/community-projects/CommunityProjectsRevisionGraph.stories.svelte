@@ -17,6 +17,56 @@
             : revision.message,
     })),
   };
+  const longBookmark =
+    "jj-store/workspaces/" + "workspace-identity/".repeat(10) + "wip";
+  const longLabels = (operation: boolean) => ({
+    ...(operation ? operations : fixtureGraph()),
+    revisions: [
+      {
+        ...(operation
+          ? operations.revisions[0]!
+          : fixtureGraph().revisions[0]!),
+        bookmarks: [
+          {
+            name: longBookmark,
+            added: true,
+            removed: false,
+            conflicted: false,
+          },
+        ],
+        workspaces: ["workspace-".repeat(30)],
+      },
+    ],
+    ...(operation
+      ? { commitLabel: "operation ID", graphLabel: "Operation graph" }
+      : {}),
+  });
+  async function boundedChips(element: HTMLElement) {
+    await waitFor(() =>
+      expect(
+        element.querySelector(".community-revision-graph-copy__chips"),
+      ).not.toBeNull(),
+    );
+    const chips = element.querySelector<HTMLElement>(
+      ".community-revision-graph-copy__chips",
+    )!;
+    const bounds = chips.getBoundingClientRect();
+    for (const chip of chips.querySelectorAll<HTMLElement>(
+      '[data-ui-part="community-chip"]',
+    )) {
+      const rect = chip.getBoundingClientRect();
+      expect(rect.width).toBeLessThanOrEqual(256);
+      expect(rect.right).toBeLessThanOrEqual(bounds.right + 1);
+    }
+    const bookmark = within(chips).getByText(longBookmark);
+    expect(bookmark.scrollWidth).toBeGreaterThan(bookmark.clientWidth);
+    expect(getComputedStyle(bookmark).textOverflow).toBe("ellipsis");
+    expect(
+      bookmark
+        .closest('[data-ui-part="community-chip"]')
+        ?.getAttribute("title"),
+    ).toContain(longBookmark);
+  }
   const linear = Array.from({ length: 160 }, (_, index) => ({
     ...fixtureGraph().revisions[0]!,
     eventId: (index + 1).toString(16).padStart(128, "0"),
@@ -52,6 +102,25 @@
 </script>
 
 <Story
+  name="JJ Log long chips stay within the row"
+  args={longLabels(false)}
+  play={async ({ canvasElement }) => boundedChips(canvasElement)}
+>
+  {#snippet template(args)}<div class="wide-graph-scroll">
+      <CommunityProjectsRevisionGraph {...args} />
+    </div>{/snippet}
+</Story>
+<Story
+  name="Op Log long chips stay within the row"
+  args={longLabels(true)}
+  play={async ({ canvasElement }) => boundedChips(canvasElement)}
+>
+  {#snippet template(args)}<div class="wide-graph-scroll">
+      <CommunityProjectsRevisionGraph {...args} />
+    </div>{/snippet}
+</Story>
+
+<Story
   name="Paged loading uses a skeleton"
   args={{ loading: true }}
   play={async ({ canvasElement }) => {
@@ -79,10 +148,11 @@
       ["feature/native-objects", "accent"],
       ["feature/native-objects@origin", "neutral"],
     ] as const) {
-      await expect(within(nativeRow).getByText(label)).toHaveAttribute(
-        "data-chip-tone",
-        tone,
-      );
+      await expect(
+        within(nativeRow)
+          .getByText(label)
+          .closest('[data-ui-part="community-chip"]'),
+      ).toHaveAttribute("data-chip-tone", tone);
     }
     const workingCopyRow = canvas
       .getAllByText("Working copy")
@@ -93,7 +163,8 @@
     await expect(
       within(workingCopyRow)
         .getAllByText("Working copy")
-        .find((element) => element.hasAttribute("data-chip-tone")),
+        .find((element) => element.closest('[data-ui-part="community-chip"]'))
+        ?.closest('[data-ui-part="community-chip"]'),
     ).toHaveAttribute("data-chip-tone", "success");
   }}
 />
@@ -106,14 +177,14 @@
   }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("head 1")).toHaveAttribute(
-      "data-chip-tone",
-      "accent",
-    );
-    await expect(canvas.getByText("Working copy")).toHaveAttribute(
-      "data-chip-tone",
-      "success",
-    );
+    await expect(
+      canvas.getByText("head 1").closest('[data-ui-part="community-chip"]'),
+    ).toHaveAttribute("data-chip-tone", "accent");
+    await expect(
+      canvas
+        .getByText("Working copy")
+        .closest('[data-ui-part="community-chip"]'),
+    ).toHaveAttribute("data-chip-tone", "success");
   }}
 />
 <Story

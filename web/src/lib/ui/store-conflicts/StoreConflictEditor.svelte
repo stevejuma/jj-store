@@ -1,12 +1,8 @@
 <script lang="ts">
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
-  import { AppShell } from "@lapismd/design-core/shell";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
-  import { Button } from "@lapismd/design-core/shadcn/button";
-  import XIcon from "@lucide/svelte/icons/x";
   import { MediaQuery } from "svelte/reactivity";
-  import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
-  import StoreConflictBody from "./StoreConflictBody.svelte";
+  import StoreConflictSurface from "./StoreConflictSurface.svelte";
   import StoreConflictHeaderActions from "./StoreConflictHeaderActions.svelte";
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
@@ -120,30 +116,23 @@
   }
 </script>
 
-<AppShell.SurfaceLayer
+<StoreConflictSurface
   {open}
   {returnFocus}
   label="Resolve native conflicts"
-  coverPanelIds={["right"]}
-  mobilePlacement="root"
-  dismissOnEscape={!pending && !uploadingPath}
-  onDismiss={close}
-  class="store-conflict-editor"
+  busy={pending || Boolean(uploadingPath)}
+  locked={pending || Boolean(mutation.result) || Boolean(uploadingPath)}
+  bind:browserOpen
+  compact={compact.current}
+  files={view.conflicts}
+  activePath={active?.path ?? ""}
+  onSelect={(path) => {
+    activePath = path;
+    if (compact.current) browserOpen = false;
+  }}
+  onClose={close}
 >
-  <AppShell.SurfaceLayer.Header class="store-conflict-editor__header">
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      aria-label={`${browserOpen ? "Hide" : "Show"} conflict file browser`}
-      title={`${browserOpen ? "Hide" : "Show"} conflict file browser`}
-      aria-expanded={browserOpen}
-      aria-controls="conflict-file-browser"
-      onclick={() => (browserOpen = !browserOpen)}
-    >
-      <CommunitySidebarToggleIcon expanded={browserOpen} />
-    </Button>
-    <h1 class="store-conflict-editor__title">Resolve conflicts</h1>
+  {#snippet actions()}
     <StoreConflictHeaderActions
       {controller}
       {active}
@@ -163,86 +152,64 @@
       }}
       onPreview={preview}
     />
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      aria-label="Close conflict editor"
-      disabled={pending || Boolean(uploadingPath)}
-      onclick={close}><XIcon aria-hidden="true" /></Button
+  {/snippet}
+  {#if mutation.result}
+    <StoreMutationPreview result={mutation.result} />
+    {#if mutation.status === "unknown"}<Alert.Root>
+        <Alert.Title>Publication outcome unknown</Alert.Title>
+        <Alert.Description>
+          Keep this request identity and check its durable status. The staged
+          file handles and conflict fingerprints remain unchanged.
+        </Alert.Description>
+      </Alert.Root>
+    {:else if mutation.status === "committed"}<StoreNotice
+        noticeKey={`mutation-result:${mutation.requestId ?? "new"}`}
+        title="Conflicts resolved"
+        message="The atomic resolution receipt was committed and the snapshot was refreshed."
+        severity="info"
+        lifetime="timed"
+      />
+    {:else if mutation.status === "failed"}<StoreNotice
+        noticeKey={`mutation-failure:${mutation.requestId ?? "new"}`}
+        title="Resolution rejected"
+        message={mutation.error}
+        severity="error"
+        lifetime="dismiss"
+      />{/if}
+  {/if}
+  {#each view.conflicts as conflict (conflict.path)}
+    <div
+      class="store-conflict-editor__path"
+      hidden={Boolean(mutation.result) || active?.path !== conflict.path}
     >
-  </AppShell.SurfaceLayer.Header>
-  <AppShell.SurfaceLayer.Body class="store-conflict-editor__body">
-    <StoreConflictBody
-      files={view.conflicts}
-      activePath={active?.path ?? ""}
-      {browserOpen}
-      compact={compact.current}
-      locked={pending || Boolean(mutation.result) || Boolean(uploadingPath)}
-      onSelect={(path) => {
-        activePath = path;
-        if (compact.current) browserOpen = false;
-      }}
+      <StoreConflictPath
+        {conflict}
+        resolution={selections.get(conflict.path)}
+        actions={view.conflictResolutionActions}
+        uploading={uploadingPath === conflict.path}
+        uploadError={active?.path === conflict.path ? uploadError : ""}
+        onSelect={(resolution) => choose(conflict.path, resolution)}
+        bind:merged={
+          () =>
+            drafts[conflict.path] ??
+            (conflict.editor.status === "text"
+              ? conflict.editor.contents[1]
+              : ""),
+          (contents) => (drafts[conflict.path] = contents)
+        }
+      />
+    </div>
+  {/each}
+  {#if validation || ((!mutation.result || mutation.status === "unknown") && mutation.error)}<p
+      class="store-conflict-editor__error"
+      role="alert"
     >
-      {#if mutation.result}
-        <StoreMutationPreview result={mutation.result} />
-        {#if mutation.status === "unknown"}<Alert.Root>
-            <Alert.Title>Publication outcome unknown</Alert.Title>
-            <Alert.Description>
-              Keep this request identity and check its durable status. The
-              staged file handles and conflict fingerprints remain unchanged.
-            </Alert.Description>
-          </Alert.Root>
-        {:else if mutation.status === "committed"}<StoreNotice
-            noticeKey={`mutation-result:${mutation.requestId ?? "new"}`}
-            title="Conflicts resolved"
-            message="The atomic resolution receipt was committed and the snapshot was refreshed."
-            severity="info"
-            lifetime="timed"
-          />
-        {:else if mutation.status === "failed"}<StoreNotice
-            noticeKey={`mutation-failure:${mutation.requestId ?? "new"}`}
-            title="Resolution rejected"
-            message={mutation.error}
-            severity="error"
-            lifetime="dismiss"
-          />{/if}
-      {/if}
-      {#each view.conflicts as conflict (conflict.path)}
-        <div
-          class="store-conflict-editor__path"
-          hidden={Boolean(mutation.result) || active?.path !== conflict.path}
-        >
-          <StoreConflictPath
-            {conflict}
-            resolution={selections.get(conflict.path)}
-            actions={view.conflictResolutionActions}
-            uploading={uploadingPath === conflict.path}
-            uploadError={active?.path === conflict.path ? uploadError : ""}
-            onSelect={(resolution) => choose(conflict.path, resolution)}
-            bind:merged={
-              () =>
-                drafts[conflict.path] ??
-                (conflict.editor.status === "text"
-                  ? conflict.editor.contents[1]
-                  : ""),
-              (contents) => (drafts[conflict.path] = contents)
-            }
-          />
-        </div>
-      {/each}
-      {#if validation || ((!mutation.result || mutation.status === "unknown") && mutation.error)}<p
-          class="store-conflict-editor__error"
-          role="alert"
-        >
-          {validation || mutation.error}
-        </p>{/if}
-      {#if !active && !mutation.result}<Alert.Root>
-          <Alert.Title>No conflict descriptors</Alert.Title>
-          <Alert.Description>
-            Select a conflicted commit before opening this editor.
-          </Alert.Description>
-        </Alert.Root>{/if}
-    </StoreConflictBody>
-  </AppShell.SurfaceLayer.Body>
-</AppShell.SurfaceLayer>
+      {validation || mutation.error}
+    </p>{/if}
+  {#if !active && !mutation.result}<Alert.Root>
+      <Alert.Title>No conflict descriptors</Alert.Title>
+      <Alert.Description>
+        Select a conflicted commit before opening this editor.
+      </Alert.Description>
+    </Alert.Root>{/if}
+</StoreConflictSurface>

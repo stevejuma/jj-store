@@ -13,7 +13,7 @@ export interface NotificationInput {
   message: string;
   severity?: StoreNotification["severity"];
   lifetime?: NotificationLifetime;
-  action?: { id: string; label: string; run(): void };
+  action?: NonNullable<NotificationToastRecord["action"]> & { run(): void };
 }
 export type NotificationEvent = {
   type: "published" | "resolved" | "dismissed";
@@ -53,7 +53,15 @@ export class NotificationService {
       id,
       severity: input.severity ?? "error",
       lifetime: input.lifetime ?? "condition",
-      ...(action ? { action: { id: action.id, label: action.label } } : {}),
+      ...(action
+        ? {
+            action: {
+              id: action.id,
+              label: action.label,
+              ...(action.variant ? { variant: action.variant } : {}),
+            },
+          }
+        : {}),
     };
     const fingerprint = JSON.stringify(record);
     const episode = this.episodes.get(id);

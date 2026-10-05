@@ -36,6 +36,16 @@ export interface GraphQuery {
   commit?: string;
 }
 
+/** Head/base range and cursor stay bound to one explicit code operation. */
+export interface StackHistoryQuery {
+  operation: string;
+  head: string;
+  base?: string;
+  cursor?: string;
+  limit?: number;
+  signal?: AbortSignal;
+}
+
 export interface ReferenceQuery {
   kind?: "bookmarks" | "workspaces" | "changes" | "all";
   exact?: string;
@@ -69,6 +79,8 @@ export type StoreReviewCommandRequest = Exact<
 export interface StoreDataSource {
   readonly repository: string;
   readonly workingCopy?: import("./working-copy-types.js").WorkingCopyTransport;
+  readonly stacks?: import("./stack-workspace/local-transport.js").LocalStacksTransport;
+  readonly workingTree?: import("./working-tree-types.js").WorkingTreeTransport;
   readonly threads?: import("./thread-types.js").ThreadTransport;
   readonly profile?: RepositoryProfile;
   readonly searchSettings?: import("./search-settings.js").SearchSettingsTransport;
@@ -94,6 +106,9 @@ export interface StoreDataSource {
     kind: "log" | "operations" | "evolution",
     query: GraphQuery,
   ): Promise<Browse.CodeEnvelope<Browse.CodeGraph>>;
+  stackHistory?(
+    query: StackHistoryQuery,
+  ): Promise<Browse.CodeEnvelope<Model<"LocalStackHistoryPage">>>;
   commitSummary?(
     id: string,
     operation: string,
@@ -138,12 +153,14 @@ export interface StoreDataSource {
     from: string,
     to: string,
     cursor?: string,
+    signal?: AbortSignal,
   ): Promise<Browse.CodeWindow<Browse.CodeDiffPaths>>;
   diff(
     operation: string,
     from: string,
     to: string,
     path: string,
+    signal?: AbortSignal,
   ): Promise<Browse.CodeEnvelope<Browse.CodeDiff>>;
   conflicts(
     operation: string,

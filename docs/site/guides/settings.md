@@ -62,3 +62,18 @@ are not an export archive or a substitute for qualified backup/restore.
 Destructive garbage collection, automatic promotion and multi-writer serving
 remain disabled. Do not delete candidates, journals or storage files manually to
 resolve a reported maintenance condition.
+
+## Local Stacks workspace settings
+
+For a registered ordinary JJ repository, open **Stacks → Workspace actions →
+Settings**. The Details table starts with the copyable Workspace ID, followed by
+the active workspace name and target branch. The branch picker searches
+available unambiguous heads. Save reviews the exact change; Cancel leaves the
+saved configuration unchanged.
+
+Deleting a workspace requires confirmation. It removes the saved workspace
+configuration, preserving the checkout, branches, commits and unfinished native
+JJ work. Settings are stored locally in `.jj/jj-store/stacks.toml` and do not
+enter repository history. See
+[local stack workspaces](../technical/local.md#local-stack-workspaces) for
+retention and unknown-command outcomes.

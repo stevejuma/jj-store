@@ -1,5 +1,11 @@
 # Architecture
 
+Main/Stacks workspace integration preserves both source histories and all
+historical evidence. The native cache keeps bounded resident weights and
+request-scoped loader ownership; the archived recovery reader builds topology
+without preparing text filters. Focused native query, local workspace,
+registered HTTP and browser checks qualify the combined tree.
+
 Managed core code indexes consume owned native/local read sources through one
 service owner. Standard JJ construction remains in `jj-store-jj`. Existing HTTP
 repository monitors supply authoritative code-change episodes and existing
@@ -269,6 +275,222 @@ companion Snapshot, source path, principal or folder binding. Root and query
 windows hold data-only lifetime charges; current companion admission is still
 performed by JJ integration before reuse. Warm lookups do not hold the cache map
 lock through cold decoding or normalization.
+
+The approved M21.2 delivery order in
+[the implementation plan](../../docs/implementation-plan.md#local-stacks-backend-proposal)
+preserves the approved UI-first boundary. It separates operation-pinned stack
+reads, recoverable local JJ execution, device-local named combinations and
+physical checkout coordination. Local Git-backed operation publication and
+native manifest publication remain distinct provider responsibilities. The user
+approved backend implementation on 5 October 2026. Runtime capabilities remain
+gated by qualified provider behavior under JST-UI-020 and JST-LOCAL-005;
+approval alone does not enable commands.
+
+Production Stacks read ownership is explicitly injected by the served App after
+LocalTrusted registry, profile, read-capability and binding-generation checks.
+Bounded operation-pinned references, histories and exact tree comparisons reuse
+the repository transport; route restoration and cancellation retain independent
+read ownership. Failed candidate refreshes cannot replace the current complete
+scope. Physical scan, private combinations and recoverable execution remain
+subsequent implementation boundaries.
+
+The service owns the private physical scan and typed fingerprint independently
+of upstream JJ imports. It reads descriptor-relative paths without following
+symlinks and observes ignored/untracked obstacles as well as candidate files.
+The integration provider must separately qualify exact code baseline and ignore
+semantics before projecting Unstaged; scan data does not establish stack
+membership or publication authority.
+
+The private JJ reader now supplies an operation-pinned named-workspace baseline
+with bounded raw file/link digests. The service compares this to the physical
+observation, retaining tracked ignored changes and untracked file/link
+obstacles. Ignore parsing stays in the JJ integration and consumes explicitly
+captured bytes. The private current provider now verifies existing bounded
+checkout metadata, exact tree terms/labels and sparse scope, and captures global
+and repository-exclude policy. The service observation owner compares this
+witness before and after the two-pass physical scan, retaining bounded admission
+through cancellation and checking current authorization. The registered
+observation transport exposes bounded change summaries and read fingerprints
+without private policy or content. The owned physical client validates complete
+records and lossless integers without historical caching. The Stacks controller
+owns this observation separately, brackets it with fresh current-head checks and
+cancels its own work on supersession or disposal. Historical selections remain
+unchanged. Active-combination merge/WIP assignment remains required before these
+reads populate complete Unstaged. No read establishes a checkout lock or
+publication authority.
+
+The server-owned stack journal selects only installation-private preparations
+and historical receipt state. It composes the existing private file primitive
+with owned service contracts, independent of upstream JJ imports and portable
+companion state. Synced replacement, exact replay, bounded admission and
+monotonic transitions qualify this metadata boundary; provider object retention,
+operation-head publication and foreground checkout remain separate Stage 3
+gates. The primitive grants no runtime mutation capability.
+
+JJ integration owns the separate reserved-ref preparation retainer. It consumes
+existing owned Git evidence capsules and links their complete bounded physical
+code closure, independent of companion state and server journal selection.
+Archival operation/view data survives source operation/index loss without
+granting a head-publication or checkout capability. Runtime composition must
+still join exact preparation, journal, code publication and checkout boundaries.
+
+The JJ local execution coordinator owns a nonblocking foreground working-copy
+lease with the same kernel lock identity as the pinned CLI. It reuses bounded
+checkout witnesses through owned authorization interfaces, retains admission
+until release and rejects stale/replaced metadata or lock identities. The lease
+does not snapshot, publish or finish checkout state. Composition must separately
+revalidate physical bytes and join the retained exact operation with journal,
+publication and checkout recovery before enabling writes.
+
+Local reword preparation consumes and returns the foreground lease through a
+blocking worker. It pins the exact source, checks visible ancestry and bounded
+unsigned/resolved input, stages a real unpublished transaction, then verifies
+descendant and bookmark effects with unchanged author/tree/checkout invariants.
+Owned source/prepared capsules can feed retention; no upstream repository handle
+or publication ability escapes. Server command policy and exact historical
+journal lookup still precede any runtime use. Other commands, source ancestry
+recovery, head publication and guarded checkout remain separate execution gates.
+
+Recoverable preparation additionally captures the complete bounded source
+operation DAG and historical views in an owned archive. Descriptor-relative
+operation/view reads and the existing bounded read-only Git decoder avoid source
+index repair, implicit extra import and no-GC ref writes. The reserved
+retainer's version-2 record binds this history to its unchanged selected capsule
+and links every historical code/tree dependency. Legacy version-1 slots remain
+immutable. Private upstream materialization verifies exact operation/view IDs
+and fields after source loss and GC; it does not restore source metadata or
+publish heads. Server request/journal composition, restoration, publication and
+checkout are still required Stage 3 boundaries. Real reword preparation performs
+strict source-history capture before candidate writes and returns complete
+candidate ancestry, checking that every original record remains unchanged. No
+implicit original-extra import or synthetic change identity reaches the mutation
+transaction.
+
+JJ integration also owns explicit immutable source-history restoration, using an
+installation-private versioned witness captured under the foreground lease. The
+witness and original retention key cross the data-only composition boundary; no
+upstream repository or mutable handle does. Saved checkout/policy/heads and
+physical Git binding can be revalidated after operation/index loss. Source
+restoration consumes exact reserved history and retains the foreground lock and
+worker admission, with complete conflict preflight and synced create-only
+records. It neither publishes heads nor repairs extras/index/checkout state. The
+server must still join original authenticated journal lookup, publication and
+checkout recovery before exposing commands.
+
+Explicit retained-extra recovery additionally consumes the saved history lease.
+It captures bounded no-follow table segments and head markers, compares complete
+existing metadata, and uses pinned upstream serialization in a private mirror to
+verify only the missing records. Synced create-only writes preserve existing
+segment/head bytes under the original nonblocking extra-table lock.
+Cancellation, process loss, replacement and authorization loss retain exact
+retry input. No implicit import, head publication, derived index or checkout
+state is involved; those Stage 3 gates remain separate.
+
+Explicit retained-index recovery reuses the existing bounded disk-backed builder
+through an archive-only Source. Original and candidate indexes are built
+separately and verified through bounded framing and upstream native decoding.
+Denied fallback operation/view traversal prevents backend import. Complete
+commit/change identities and parent edges are compared to the acknowledged
+archive; valid existing CLI index bytes remain intact and original selections
+cannot gain future candidate visibility. Synced create-only segments precede
+associations, with exact retry after process loss. Head publication and guarded
+checkout remain separate Stage 3 boundaries.
+
+Exact retained operation-head publication uses a separate original-request
+recovery path with the saved checkout/policy witness unchanged. Bounded private
+native decoding proves current operation ancestry; it never loads a latest
+repository or reconciles heads. The original foreground lease and actual
+upstream head-store flock enclose complete source/extra/index preflight and
+synced candidate-before-original marker selection. Concurrent sibling heads
+remain intact, and a retry after later CLI work acknowledges the candidate
+without reannouncing or rewinding it. The owned proof attests code publication
+only; guarded checkout, runtime journal composition and writable capabilities
+remain separate gates.
+
+The unchanged-tree checkout provider pins canonical native Checkout protobuf
+bytes to the original recovery witness and retained preparation. It changes only
+the operation pointer under the existing foreground lease and native head lock;
+physical files and tree-state bytes remain intact. Installation composition must
+save the bounded checkout witness before completion. Exact retry normalizes only
+the checkout fingerprint after the intended pointer selection and rejects later
+CLI checkout, policy changes or replaced metadata. Deterministic private staging
+accepts only an exact prefix, bounding interrupted retries without overwriting
+unsafe entries. The service's independent complete two-pass physical guard
+shares observation admission, checks current authorization and keeps worker
+admission until cancellation exits. Ignored/untracked content, modes, links and
+directory identity remain preconditions. These provider proofs do not qualify
+general tree-changing checkout, durable runtime receipt composition or writable
+capabilities.
+
+Tree-changing checkout now has a separate exact private preparation path. It
+reads the retained archive's named source/candidate workspace trees through
+identity-checked bounded Git objects and captures native checkout/tree-state
+bytes, affected file stamps and no-follow ancestor-directory identities. The
+original foreground lease and worker admission remain owned through cancellation
+and guard validation. Full sparse coverage and resolved regular/executable files
+are the initial profile; unsupported modes, aliases, dirty affected files and
+ignored/untracked obstacles fail without writes. Canonical plan data can be
+reopened and compared to the original retained effects, but is not a provider
+proof. A separate explicit installation-private catalog now saves bounded
+canonical plans before the original journal selects a digest/length reference.
+The journal-to-plan lock order, complete retention/effect linkage and immutable
+replay keep interruptions discoverable without growing the command journal's
+budget. Saved input does not prove code or checkout selection; interrupted
+installation, native tree-state selection and verified after-state remain
+required before actual tree-changing checkout or command wiring.
+
+Complete original physical input is an owned data interface in `jj-store-jj`;
+the service's independent scanner supplies its sorted file fingerprints and
+directory stamps. Canonical bounded inventory must reproduce the unchanged
+physical fingerprint. Optional capture retains the existing registered guard's
+authorization, deadline and admission through cancellation, with explicit
+refusal by validation-only guards. It carries neither upstream types nor file
+contents and grants no write or completion authority. Durable original-command
+linkage and provider-owned installation progress remain separate gates before
+planned directory transitions can be distinguished from unrelated editor work.
+
+The server saves complete original inventory alongside its immutable exact plan
+within the existing private catalog budget. It authenticates the original
+journal request before store access and selects/syncs the inventory body before
+its digest/length/plan reference under journal-then-plan lock order. Catalog
+version 2 and journal version 5 preserve inventory-free legacy encodings. Saved
+inventory grants no provider execution authority; per-path progress and native
+checkout/tree-state completion remain required before production writes.
+
+The server now joins actual unpublished reword effects with exact private
+preview/journal selection, saved recovery witness and reserved retention. The
+full candidate archive is durable before retention; acknowledgement replaces
+only that pending body with the exact retained commit and archive digest. Retry
+looks up original principal/request/intent before live context and resumes saved
+evidence without a new transaction. Catalog version 2 preserves legacy bytes and
+rejects reinterpretation. JJ integration retains saved archives under its actual
+foreground lock without loading or restoring lost source operation/index state.
+Owned data crosses this composition; no upstream JJ imports do. Real
+installation authority, combinations, publication and guarded checkout remain
+required before transport or writable capabilities.
+
+Registered local preparation context now derives the configured LocalTrusted
+Admin principal, canonical folder and generation through the existing device
+registry and CLI folder provider. Every access rechecks that registration. The
+existing bounded physical observer supplies current metadata and exact physical
+fingerprints. Trusted combination ownership supplies active identity/generation
+and immutable heads for the actually observed workspace; absence never creates
+setup. The JJ provider checks protected ancestry before candidate writes. Saved
+request replay still precedes live context; recovery resolves registration
+without scanning lost operation/index state. Durable combination ownership and
+runtime transport/publication/checkout remain separately required.
+
+The installation-owned combination catalog now stores bounded named entries,
+exact target/merge/WIP and ordered stack references, original retained-code
+anchors, selected state and pending provider-derived updates. Its scope
+separates physical workspaces and principals. The existing private device-file
+primitive provides exclusive coordination and synced atomic replacement.
+Original request replay cannot restore an old active pointer. A pending update
+blocks preparation; selection requires the matching journal's completed checkout
+and retained execution linkage. The registered authority additionally compares
+the stored operation/view/WIP with the actual current workspace. This metadata
+component does not publish code, create merge/WIP commits or execute checkout;
+those provider/runtime gates remain required.
 
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
@@ -1153,3 +1375,179 @@ Native operation-neighbor projections share the existing immutable prepared
 generation and resident memory pool. Retained lookup contains identities and
 edges, never request capabilities or native metadata bodies. Metadata-only warm
 operation reads construct fresh authorized stores and reuse no source loader.
+
+The WorkStore pager reuses validated immutable root data through the service's
+bounded collaboration materialization cache. Ordered keys, normalized searchable
+fields and one-pass aggregate counts remain derived service projections. Fresh
+captured manifest envelopes and request limits stay outside the cache; native
+continuations retain query-matching keys and share the underlying root charge.
+Local browse hydrates only its selected window with the same projector; shared
+local reconstruction and application search indexes remain separate delivery
+work. No domain format, storage authority or upstream JJ import moves into the
+service.
+
+Native application content search retains service-owned immutable field indexes
+under repository/epoch/domain-root keys. It admits normalized body growth before
+cloning fields, derives recent/search orders once and retains compact query keys
+for continuation. Snippets are generated only for returned hits. The cache holds
+data only, with separate bounded root and cursor retention; each request
+captures its manifest envelope and rechecks viewer, inventory limits and
+authorization. No search cache or field index becomes domain authority or a
+persisted format. The server uses a maintained platform filesystem-notification
+adapter for hint-only local repository monitoring. Native storage, manifest
+publication, captured JJ reads and authorization retain their owned boundaries.
+A notification never selects authority; missed notifications fall back to shared
+bounded witness checks rather than per-browser history scans.
+
+Private server execution now joins original retained reword preparation to
+actual head publication, saved unchanged-tree checkout witness and typed
+provider acknowledgements. Authentication and original identity lookup precede
+execution; first apply verifies current registered combination and physical
+inputs, while pending retry resumes original recovery. Journal
+PublicationUnknown is durable before head selection; saved checkout input
+precedes pointer completion. Legacy completed receipts stay historical, current
+proof-free execution transitions are rejected, and exact completed/retired
+replay never scans or opens a provider. Witness-bearing catalogs use private
+version 3 with bounded reserved growth; ordinary reads never upgrade older
+catalogs. This code/checkout join still needs combination selection, general
+checkout, production transport and UI capability qualification.
+
+Retained Prepared first apply resolves registration without source reads,
+restores exact source dependencies under the original foreground lease, then
+reads and checks current combination/code/physical policy before publication.
+This ordering supports operation/index loss without weakening stale-selection or
+editor guards. Terminal replay bypasses recovery; revoked bindings cannot
+restore any source state.
+
+Unpublished retained reword execution, including original Unknown retry, checks
+current trusted immutable ancestry over the retained source before selecting a
+head. Already-selected original publication uses an acknowledgement-only path
+when current mutation policy is skipped. Informative status cannot reauthorize
+publication; if that selected candidate disappears, acknowledgement fails
+without reannouncement. Policy/status work retains foreground and worker
+ownership, supports cancellation and never mutates code or source metadata.
+
+Known Published receipts also require acknowledgement-only recovery before
+checkout witness persistence. Losing current head selection cannot authorize the
+already-published candidate again; keep the original receipt pending.
+
+## Retained physical installation boundary
+
+The JJ provider owns exact per-path progress and no-replace physical file moves.
+The service guard supplies complete fresh observations under existing registered
+access, shared admission and deadlines. It does not normalize files or grant a
+write capability. Original checkout/tree-state bytes remain unchanged; the
+sealed physical result cannot acknowledge a command or select a named
+combination.
+
+## Retained native completion boundary
+
+The JJ provider separately owns exact native tree-state/checkout completion from
+sealed physical installation. A bounded provider frame and prepared inode
+identities permit original-request recovery without a new command or upstream
+working-copy initialization. Native and physical proofs remain separate from the
+authenticated journal and combination after-state; production Stacks stays
+read-only until those joins and transport qualification pass.
+
+## Durable checkout and combination join
+
+The installation journal owns original command acknowledgement. Coordinated
+execution saves the exact staged combination binding before publication, retains
+sealed native completion as pending, selects and syncs that combination, and
+acknowledges the command last. Journal-then-combination lock order avoids
+inverse nesting. Neither a saved digest nor a metadata fixture grants execution;
+provider verification and the owning command engine remain required.
+
+## Initial setup ownership
+
+Explicit local stack setup uses the JJ provider to generate and retain an
+unpublished target/merge/WIP archive. The registered server authority supplies
+folder access and complete physical selection without inventing an active
+combination. The server derives initial installation state from acknowledged
+provider retention, binds it to the original journal before publication, and
+selects it after native checkout but before final acknowledgement. Browsing
+never creates this state. HTTP command transport, writable controller wiring,
+membership/switching and dirty-work capture remain separate qualification gates.
+
+The public recovery boundary projects service-owned original preview/receipt
+pairs from the existing installation journal. Stable repository/physical/JJ
+workspace/profile scope is independent of live generations; exact status binds
+the original actor, ID and digest. Pending discovery is bounded and excludes
+terminal history. Public results MUST exclude private execution archives,
+retention keys, principals and installation paths. These contracts and
+projections do not create state or enable transport, runtime cancellation or
+production mutations; current workspace discovery remains separate work.
+
+Owned workspace-discovery records separate the complete observed selection from
+the installation's selected combination catalog. The server projects that
+catalog only from an existing authenticated scope, preserving selected state
+during pending coordination without exposing proposed state or retention.
+Runtime composition must join original journal recovery and current physical
+observation before reporting readiness. Bounded catalog projection and contract
+validation alone do not qualify this runtime or enable production controls.
+
+Stable physical recovery admission belongs to the JJ provider. It reuses the
+observer's directory identity digest through a bounded read that checks root and
+`.jj` across authorization without loading current operation/checkout state or
+scanning editor files. Server runtime composition must separately resolve the
+registered canonical root and compare the original physical identity before
+journal access. The provider primitive alone does not wire that runtime.
+
+The follow-up UI/backend review retains the seven-stage delivery scope. The next
+production checkpoint composes this qualified initial setup through
+service-owned bounded workspace discovery and public command-result interfaces,
+then existing local HTTP admission and the production Stacks adapter. HTTP
+consumes the owned runtime interface; it cannot depend on the server
+implementation or expose private journal execution data. Original status/pending
+recovery stays separate from current workspace discovery. Controller request
+retention, explicit unpublished cancellation and current-state refresh require
+qualification before this checkpoint can advertise a writable capability. The
+detailed checkpoint in
+[the implementation plan](../../docs/implementation-plan.md#next-implementation-checkpoint-command-transport-and-initial-setup)
+is planning evidence, not executable route or lifecycle acceptance. Initial
+setup preserves dirty bytes on disk; complete Unstaged projection, capture
+before switching, membership engines and the later content/graph/native stages
+remain required.
+
+## Ordinary local stack workspace composition
+
+Local Stacks execution is a jj-store-jj provider reached through the existing
+registered-folder service boundary and LocalTrusted HTTP admission. Its physical
+workspace owns `.jj/jj-store/stacks.toml`, and normal JJ bookmarks retain merge
+and WIP commits. Browser presentation consumes a small versioned local state
+contract plus existing operation-pinned browsing. The ordinary local profile
+supersedes the stack-specific installation catalogs/retained executor as a
+production dependency. Native manifest-backed publication is unchanged and is
+not a prerequisite for this on-disk feature.
+
+Selected-file insertion/squash and its nonpublishing preview belong to this same
+local provider. UI staging retains only intent; the local operation and source
+commit guard execution. Native JJ owns descendant propagation and empty WIP
+retention, without a second merge-reconstruction service.
+
+The ordinary local Stacks mutation profile now includes native bookmark deletion
+(top bookmark only; lower bookmarks and commits retained), abandonment, selected
+whole-file/native-hunk WIP discard, and complete native text-conflict
+resolution. Conflict terms are read lazily through guarded POST
+`stacks/conflict`; ordered three-term text conflicts use the existing Merge
+Editor. Multi-sided, structural, mode-conflicted and oversized conflicts retain
+native values and report that JJ resolution is required. Conflict paths are
+bounded to 50 per current read.
+
+Undo/Redo restores the native repository operation stack, including CLI work,
+with native descriptions and remote tracking semantics. Current Git bookkeeping
+is retained, as in JJ. TOML is not an Undo journal. Missing or restored
+references remain visible as unavailable choices/reasons; Refresh and Switch
+never rebuild membership automatically. Explicit Reapply saved branches
+reconciles membership and preserves WIP. Operation/config/source guards and
+unknown-outcome inspection remain required. Production file dragging uses exact
+loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
+branch comparisons remain read-only. Undo/Redo remains available without a
+selected named workspace.
+
+The production Stacks controller derives dependent segments from bounded native
+parent links and bookmark facts, retaining the advertised top-range cursor.
+Per-segment tree comparisons require a proven lower boundary. Applied lanes and
+their adjacent diffs retain independent UI identity even when they share native
+commits. This presentation derives no new repository authority and triggers no
+repository-wide history load.

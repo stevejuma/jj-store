@@ -1,7 +1,7 @@
 use super::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 use tokio::time::Instant;
-pub(super) struct Budget {
+pub(crate) struct Budget {
     pub cancellation: tokio_util::sync::CancellationToken,
     pub limits: crate::query::Limits,
     deadline: Instant,
@@ -106,7 +106,7 @@ impl Budget {
             result = tokio::time::timeout_at(self.deadline, future) => result.map_err(|_| Error::Limit),
         }
     }
-    pub async fn authorize(&self, pin: &Pin) -> Result<()> {
+    pub(super) async fn authorize(&self, pin: &Pin) -> Result<()> {
         self.work(1)?;
         self.until(pin.binding.check()).await?
     }

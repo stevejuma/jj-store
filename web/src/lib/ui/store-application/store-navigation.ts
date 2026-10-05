@@ -35,6 +35,7 @@ export function selectStoreNavigation(
     void controller.projects.openHub();
   else if (
     [
+      "stacks",
       "branches",
       "log",
       "oplog",

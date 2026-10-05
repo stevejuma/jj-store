@@ -155,7 +155,7 @@ fn read_open(
         contents,
     })
 }
-fn stamp(info: &std::fs::Metadata) -> Vec<u8> {
+pub(crate) fn stamp(info: &std::fs::Metadata) -> Vec<u8> {
     [
         info.dev(),
         info.ino(),

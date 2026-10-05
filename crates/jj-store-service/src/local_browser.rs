@@ -2,6 +2,7 @@
 pub mod admission;
 use crate::local_repository::LocalRepository;
 pub use jj_store_jj::local_browser as code;
+pub use jj_store_jj::local_stacks as stacks;
 use jj_store_model::{RepositoryId, RequestId};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};

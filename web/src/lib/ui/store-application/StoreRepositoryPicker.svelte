@@ -7,6 +7,7 @@
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import XIcon from "@lucide/svelte/icons/x";
+  import type { ScrollAreaStrategy } from "@lapismd/design-core/shadcn/scroll-area";
   let {
     id,
     label = "Repository",
@@ -16,6 +17,14 @@
     allowEmpty = false,
     disabled = false,
     variant = "outline",
+    searchLabel = "Search repositories",
+    groupLabel = "Repositories",
+    emptyResult = "No matching repositories.",
+    controlled = false,
+    scrollStrategy = "auto",
+    hasMore = false,
+    loading = false,
+    onLoadMore,
     onChange,
   }: {
     id?: string;
@@ -24,12 +33,21 @@
       id: string;
       name: string;
       permission?: string | null;
+      description?: string;
     }[];
     value?: string;
     emptyLabel?: string;
     allowEmpty?: boolean;
     disabled?: boolean;
     variant?: "outline" | "ghost";
+    searchLabel?: string;
+    groupLabel?: string;
+    emptyResult?: string;
+    controlled?: boolean;
+    scrollStrategy?: ScrollAreaStrategy;
+    hasMore?: boolean;
+    loading?: boolean;
+    onLoadMore?: () => void;
     onChange?: (value: string) => void;
   } = $props();
   let open = $state(false),
@@ -47,7 +65,8 @@
     if (next) query = "";
   }
   function choose(next: string) {
-    value = next;
+    if (disabled) return;
+    if (!controlled) value = next;
     open = false;
     onChange?.(next);
   }
@@ -97,8 +116,8 @@
       <div class="store-repository-picker__search">
         <CommandView.Input
           bind:value={query}
-          placeholder="Search repositories"
-          aria-label="Search repositories"
+          placeholder={searchLabel}
+          aria-label={searchLabel}
         />
         <Popover.Close
           >{#snippet child({ props })}<Button
@@ -106,18 +125,19 @@
               type="button"
               variant="ghost"
               size="icon-sm"
-              aria-label="Close repository selector"
+              aria-label={`Close ${label.toLowerCase()} selector`}
               ><XIcon aria-hidden="true" /></Button
             >{/snippet}</Popover.Close
         >
       </div>
-      <CommandView.List>
+      <CommandView.List {scrollStrategy}>
         {#if !visible.length && !(allowEmpty && !query)}<CommandView.Empty
-            >No matching repositories.</CommandView.Empty
+            >{emptyResult}</CommandView.Empty
           >{/if}
-        <CommandView.Group heading="Repositories">
+        <CommandView.Group heading={groupLabel}>
           {#if allowEmpty && !query}<CommandView.Item
               value="__no_repository__"
+              {disabled}
               onSelect={() => choose("")}
             >
               <CommandView.ItemIcon
@@ -130,6 +150,7 @@
           {#each visible as repo (repo.id)}
             <CommandView.Item
               value={repo.id}
+              {disabled}
               keywords={[repo.name, repo.id]}
               onSelect={() => choose(repo.id)}
             >
@@ -142,13 +163,24 @@
               >
               <CommandView.ItemLabel>{repo.name}</CommandView.ItemLabel>
               <CommandView.ItemDescription
-                >{repo.id.slice(0, 8)}{repo.permission
-                  ? ` · ${repo.permission} access`
-                  : ""}</CommandView.ItemDescription
+                >{repo.description ??
+                  `${repo.id.slice(0, 8)}${repo.permission ? ` · ${repo.permission} access` : ""}`}</CommandView.ItemDescription
               >
             </CommandView.Item>
           {/each}
         </CommandView.Group>
+        {#if hasMore}<CommandView.Group heading="More branches"
+            ><CommandView.Item
+              value="__load_more__"
+              disabled={disabled || loading}
+              onSelect={() => onLoadMore?.()}
+              ><CommandView.ItemLabel
+                >{loading
+                  ? "Loading branches…"
+                  : "Load more branches"}</CommandView.ItemLabel
+              ></CommandView.Item
+            ></CommandView.Group
+          >{/if}
       </CommandView.List>
     </CommandView.Root>
   </Popover.Content>

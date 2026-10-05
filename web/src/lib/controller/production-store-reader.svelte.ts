@@ -30,6 +30,7 @@ export interface ReaderContext {
   signal?(): AbortSignal;
   current(ticket: number, source: StoreDataSource): boolean;
   report(cause: unknown): void;
+  restoreStacks?(contextOnly?: boolean): Promise<void>;
 }
 
 export function createProductionStoreReaders(
@@ -251,6 +252,7 @@ export function createProductionStoreReader(
     if (commit) await fileReader.loadFiles(commit);
   }
   const reads = {
+    restoreStacks: context.restoreStacks,
     ...references,
     loadGraph,
     ...evolution,

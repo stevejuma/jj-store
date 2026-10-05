@@ -21,7 +21,6 @@ import type {
 import type { StoreMutationRequest } from "./store-mutation-types.js";
 import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
 import { HttpCollaborationDataSource } from "./http-collaboration-data-source.js";
-import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 
 import { HttpThreadsDataSource } from "./http-threads-data-source.js";
 import {
@@ -38,7 +37,6 @@ export class HttpStoreDataSource
   readonly #scope: StoreQueryScope;
   readonly #collaboration: HttpCollaborationDataSource;
   readonly #files: HttpFileReads;
-  readonly #writes: HttpStoreWriteDataSource;
   readonly work: HttpWorkDataSource;
   readonly threads: HttpThreadsDataSource;
   #active = true;
@@ -72,7 +70,6 @@ export class HttpStoreDataSource
       queryClient,
       this.#scope,
     );
-    this.#writes = new HttpStoreWriteDataSource(this.#client);
     this.#collaboration = new HttpCollaborationDataSource(
       this.#client,
       queryClient,
@@ -166,22 +163,36 @@ export class HttpStoreDataSource
         }),
     );
   }
-  diffPaths(operation: string, from: string, to: string, cursor?: string) {
+  diffPaths(
+    operation: string,
+    from: string,
+    to: string,
+    cursor?: string,
+    signal?: AbortSignal,
+  ) {
     const query = { at_op: operation, from, to, cursor, limit: 50 };
     return this.#query<Model<"Window4">>(
       "diff-paths",
       operation,
       query,
-      (signal) => this.#client.request("diff/paths", query, { signal }),
+      (shared) => this.#client.request("diff/paths", query, { signal: shared }),
+      signal,
     );
   }
-  diff(operation: string, from: string, to: string, path: string) {
+  diff(
+    operation: string,
+    from: string,
+    to: string,
+    path: string,
+    signal?: AbortSignal,
+  ) {
     const query = { at_op: operation, from, to, path, content: true };
     return this.#query<Envelope<Model<"FileDiffResponse">>>(
       "diff",
       operation,
       query,
-      (signal) => this.#client.request("diff", query, { signal }),
+      (shared) => this.#client.request("diff", query, { signal: shared }),
+      signal,
     );
   }
   conflicts(operation: string, commit: string) {
@@ -204,7 +215,7 @@ export class HttpStoreDataSource
     fingerprint: string,
     bytes: Uint8Array,
   ) {
-    return this.#writes.uploadConflict(head, commit, path, fingerprint, bytes);
+    return this.writes.uploadConflict(head, commit, path, fingerprint, bytes);
   }
   search(input: SearchQuery) {
     const query = {
@@ -255,38 +266,13 @@ export class HttpStoreDataSource
     return this.#collaboration.reviewCommandStatus(id);
   }
   previewMutation(request: StoreMutationRequest) {
-    return this.#writes.previewMutation(request);
+    return this.writes.previewMutation(request);
   }
   applyMutation(request: StoreMutationRequest) {
-    return this.#writes.applyMutation(request);
+    return this.writes.applyMutation(request);
   }
   mutationStatus(requestId: string) {
-    return this.#writes.mutationStatus(requestId);
-  }
-  prepareKindIndex(
-    operation: string,
-    kind: Model<"KindPreparationKind">,
-    signal?: AbortSignal,
-  ) {
-    return this.#writes.prepareKindIndex(operation, kind, signal);
-  }
-  kindIndexTask(id: string, signal?: AbortSignal) {
-    return this.#writes.kindIndexTask(id, signal);
-  }
-  cancelKindIndexTask(id: string, signal?: AbortSignal) {
-    return this.#writes.cancelKindIndexTask(id, signal);
-  }
-  prepareCodeIndex(operation: string, signal?: AbortSignal) {
-    return this.#writes.prepareCodeIndex(operation, signal);
-  }
-  prepareIndex(operation: string, signal?: AbortSignal) {
-    return this.#writes.prepareIndex(operation, signal);
-  }
-  cancelIndexTask(id: string, signal?: AbortSignal) {
-    return this.#writes.cancelIndexTask(id, signal);
-  }
-  indexTask(id: string, signal?: AbortSignal) {
-    return this.#writes.indexTask(id, signal);
+    return this.writes.mutationStatus(requestId);
   }
   close() {
     this.#active = false;

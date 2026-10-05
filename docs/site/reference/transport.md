@@ -25,7 +25,63 @@ body and an interrupted observation is not confirmed cancellation. Keep
 observing the captured task until its terminal status; never retarget it to a
 newer selection. These tasks build derived indexes and do not publish code.
 
+Local `stack_history` queries retain an exact operation, head and optional base.
+Their opaque continuation belongs to that range and page size; raw internal
+anchors are refused. The client checks the nested range as well as the envelope
+and refuses oversized or non-advancing pages. This additive read variant grants
+no stack mutation or physical checkout capability.
+
+Local `working-tree/observe` is a read-only POST with a version, expected
+registered binding generation and exact operation. The server resolves the
+folder and compares bounded current checkout/sparse/ignore witnesses around a
+two-pass physical scan. Its complete response contains changed-path summaries,
+operation/view/WC identities and read fingerprints, with no physical contents or
+global ignore-policy paths/bytes. Stale bindings or checkout state fail rather
+than returning a partial scan. These fingerprints do not issue staging tokens,
+assign changes to a combination or enable checkout commands.
+
+### Local Stacks
+
+`POST /v1/local/repos/{repo}/stacks` operates on the registered physical JJ
+workspace. `refresh` snapshots current working files using JJ policy and returns
+an operation pin. Setup, create, switch, apply, unapply and set-target commands
+also name the expected operation, binding generation and local TOML revision.
+Their response identifies the resulting operation and named merge/WIP commits.
+Settings live in `.jj/jj-store/stacks.toml`; code stays in JJ storage. This
+local path uses normal JJ transactions and checkout. Previews are advisory and
+lost responses are resolved by inspecting current state/op history before
+another attempt. No command receipt or automatic replay is promised. Historical
+query pins continue to read their original operations.
+
+The same endpoint accepts local bookmark, commit, graph, discard, conflict,
+Undo/Redo and explicit Reapply commands. Guarded `stacks/inspect` inspection
+supplies native mutability; lazy `stacks/hunks` issues selections bound to
+source identity, canonical path and complete file bytes. Apply rederives those
+tokens at the exact operation/configuration pin; client display hunks are not
+accepted. `stacks/conflict` reads bounded native terms for the qualified text
+editor. Transfers use native squash and descendant propagation, preserving
+retained merge/WIP identities. Net branch comparisons grant no mutation
+authority. Undo/Redo restores native operation history and leaves local TOML
+unchanged.
+
 ## Mutations
+
+Owned workspace-discovery input binds a repository, current registration
+generation and exact operation. Its response distinguishes absent, ready, stale
+and pending state and retains a scoped complete selected-combination catalog.
+Catalogs are limited to 64 combinations, 4096 stack members per combination and
+eight MiB. These records and existing-state projections have no HTTP route yet;
+runtime must join the observed checkout and original pending requests before
+reporting usable state. Missing configuration is distinct from an unreadable
+store, and reading either never initializes setup.
+
+The service defines versioned stack command status, pending and cancellation
+inputs for future local transport. Status requires the original stable scope,
+request ID and intent digest; cancellation also names the original preparation.
+Results contain the original validated preview, historical receipt and replay
+flag. They never carry private execution data or a replacement current snapshot.
+These contracts and journal projections do not add HTTP routes or enable stack
+mutations. Cancellation identity validation is not an execution protocol.
 
 Typed commands carry a stable request identity, exact intent and applicable
 expected versions. The authenticated actor is derived by the service; caller
@@ -63,3 +119,10 @@ Local requests retain exact loopback origin/protocol rules; shared requests use
 current scoped credentials. Static application and Help assets have their own
 allowlists. Unknown `/v1` paths never fall back to HTML, and filesystem paths
 from a request never select arbitrary static files.
+
+The ordinary local Stacks endpoint also accepts version-1 Update and Delete
+commands. Update edits the active named workspace's name and target together;
+Delete removes only its saved local configuration. Both validate the shown
+operation and TOML revision. Native work is retained; unknown outcomes require
+inspection instead of automatic replay. See
+[Local repositories](../technical/local.md#local-stack-workspaces).

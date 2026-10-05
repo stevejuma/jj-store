@@ -35,6 +35,63 @@ or tray actions reopen the window. Explicit Quit ends the owning process
 lifetime. An interrupted command retains normal unknown-outcome semantics—window
 closure cannot prove that a mutation was rejected.
 
+## Stack command recovery foundation
+
+The server now has a private journal primitive for exact stack preparations and
+historical receipts. Its bounded file lives outside checkouts and binds the
+installation, repository, physical JJ workspace, profile and authenticated
+actor. Opening it or discovering pending requests never initializes missing
+state. Exact retries retain the original preview and outcome; conflicting reuse
+is rejected. Capacity admission reserves room for later receipt states rather
+than evicting earlier requests.
+
+Public journal projections preserve original status across live generation
+changes. They authenticate the original actor and stable physical/profile scope
+before returning a validated preview/receipt pair. Pending discovery includes
+prepared, publication-unknown and required/blocked checkout states, and excludes
+terminal results. Exact status retains terminal history. Neither read creates
+private state or changes code, disk or combination selection. The registered
+runtime must separately admit folder access before exposing these projections;
+HTTP composition and coordinated unpublished cancellation remain unimplemented.
+
+The combination owner now exposes a validated public selected catalog from
+existing authenticated private state. It preserves selected combinations while
+an update is pending, reports that coordination flag and strips proposed
+after-state and retention keys. Scope/actor mismatch and corrupted state fail;
+reads do not create missing state. The versioned workspace response contract
+separates absent, ready, stale and pending readiness. Real initial-setup
+evidence checks the public selected code against the observed native checkout,
+but the registered discovery runtime and production picker remain unwired.
+
+Atomic replacement and sync select journal state. Loss after replacement leaves
+an unknown outcome; reopen and exact replay recover the selected receipt. A
+publication-unknown or incomplete-checkout receipt prevents another publication
+in that physical scope. Verified checkout, rejection and retirement cannot
+return to executable preparation.
+
+Actual local reword preparation now composes this journal with the owning JJ
+provider. It selects the exact preview, recovery witness and full candidate
+archive as pending before reserved-ref retention. Acknowledgement records the
+identical retained commit/digest and removes only the pending archive body. The
+128-record/8-MiB capacity includes pending archives and receipt-growth
+allowance. Interrupted preparation resumes the original archive rather than
+creating a replacement operation. Legacy metadata-only records retain their
+encoding and cannot be upgraded to execution evidence. This composition
+currently uses a trusted authority seam; installed command/combination
+authority, publication and guarded checkout still need qualification before
+production writable controls.
+
+Registered preparation is limited to the configured LocalTrusted Admin principal
+and currently verified device folders. It reuses bounded physical observation
+and resolves active combination/immutable policy through a separate trusted
+owner. Exact retained replay requires current authorization but does not
+revalidate live combination/physical selection. Production combination ownership
+and command transport/publication/checkout still require qualification.
+
+This primitive does not retain JJ objects, publish operation heads or coordinate
+physical checkout. The production Stacks page continues to expose qualified
+reads while those provider execution and recovery gates are implemented.
+
 ## Desktop terminal lifetime
 
 The native host owns repository-bound PTY sessions with an Alacritty grid. The
@@ -76,3 +133,12 @@ check cannot establish production CSP, resource staging or native host behavior.
 Cold built-site browser and platform-specific desktop checks provide that
 evidence. The [development guide](../contributing/development.md) lists the
 relevant lanes.
+
+Private combination state separates pending provider effects from the selected
+active pointer. It retains the exact original preview, complete proposed state
+and acknowledged code-retention anchor before execution. Current preparation is
+unavailable while the update is pending. The original journal must report the
+matching verified checkout before device selection; rejected unpublished input
+can be discarded without advancing the selected revision. Reopen and exact
+replay preserve the outcome without replacing later active state. This metadata
+owner does not execute publication, switching, merge/WIP creation or checkout.

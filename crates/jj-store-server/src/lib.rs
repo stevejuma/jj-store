@@ -33,6 +33,10 @@ mod replication;
 pub mod search;
 mod search_config;
 pub mod server_settings;
+pub mod stack_checkout_plans;
+pub mod stack_combinations;
+pub mod stack_command_journal;
+pub mod stack_preparation;
 pub mod storage;
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

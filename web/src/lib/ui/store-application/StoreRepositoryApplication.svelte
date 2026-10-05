@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
@@ -15,11 +16,13 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   let {
     controller,
+    stackWorkspace,
     initiallyCollapsed = true,
     displayMode = "auto",
     layoutStorage,
   }: {
     controller: StoreController;
+    stackWorkspace?: StackWorkspaceController;
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
     layoutStorage?: Storage;
@@ -45,6 +48,7 @@
 
 <StoreApplication
   {controller}
+  {stackWorkspace}
   {initiallyCollapsed}
   {displayMode}
   {layoutStorage}

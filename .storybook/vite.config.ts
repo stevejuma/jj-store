@@ -7,6 +7,13 @@ export default defineConfig({
   // Process source-distributed Svelte rune modules through the normal compiler.
   optimizeDeps: {
     include: [
+      "bits-ui",
+      "@lucide/svelte/icons/arrow-left-right",
+      "@lucide/svelte/icons/ban",
+      "@lucide/svelte/icons/eject",
+      "@lucide/svelte/icons/arrow-up",
+      "@lucide/svelte/icons/arrow-down",
+      "@lucide/svelte/icons/upload",
       "@lucide/svelte/icons/arrow-left",
       "@lucide/svelte/icons/archive",
       "@lucide/svelte/icons/book-open",

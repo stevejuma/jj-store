@@ -166,6 +166,7 @@ struct State {
     event_generation: String,
     host: Option<RepositoryHost>,
     local_reader: jj_store_service::local_browser::code::Executor,
+    working_tree: jj_store_service::working_tree::Observer,
     local_tasks: jj_store_service::local_index_tasks::IndexTasks,
     code_indexes: Arc<jj_store_service::code_indexes::Indexes>,
     local_jobs: Arc<Semaphore>,
@@ -332,12 +333,15 @@ impl HttpApi {
         } else {
             graphs
         };
+        let working_tree = jj_store_service::working_tree::Observer::new(local_reader.clone(), 1)
+            .map_err(|_| "HTTP physical observation limits")?;
         let api = Self(Arc::new(State {
             freshness: jj_store_service::freshness::Hub::new(1024),
             event_monitors: Default::default(),
             event_generation: hex::encode(&repository_cursor_key[..16]),
             host,
             local_reader,
+            working_tree,
             local_tasks,
             code_indexes,
             search,

@@ -107,6 +107,7 @@ export function productionStoreView(
       indexCancellationUnconfirmed: data.indexCancellationUnconfirmed,
       indexPreparationError: data.indexPreparationError,
       indexTaskStatus: data.indexTaskStatus,
+      indexRequired: data.neededIndex !== null,
       indexOperation:
         (data.neededIndex ? snapshotOperation(data.neededIndex) : null) ??
         route.snapshotOperationId,
@@ -201,6 +202,10 @@ export function productionControllerSurface(
   source: () => Parameters<typeof productionControllerView>[2],
   token: () => string | null,
   options: {
+    stacks?: {
+      readonly controller: StoreController["stackWorkspace"];
+      readonly loading: boolean;
+    };
     threads: Pick<
       ReturnType<
         typeof import("./production-threads-integration.js").createThreadsIntegration
@@ -221,6 +226,12 @@ export function productionControllerSurface(
   pause?: StoreController["actions"]["setRefreshPaused"],
 ): StoreController {
   return {
+    get stackWorkspaceLoading() {
+      return options.stacks?.loading ?? false;
+    },
+    get stackWorkspace() {
+      return options.stacks?.controller;
+    },
     capture: options.capture,
     configuration: options.configuration,
     freshness: options.freshness,
