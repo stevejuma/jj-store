@@ -1,5 +1,9 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import { setContext, type Snippet } from "svelte";
+  import {
+    conflictMenuContext,
+    type ConflictMenuState,
+  } from "./menu-context.js";
   import { AppShell } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import XIcon from "@lucide/svelte/icons/x";
@@ -37,6 +41,13 @@
     actions: Snippet;
     children: Snippet;
   } = $props();
+  const menus = new Set<symbol>();
+  let menuCount = $state(0);
+  setContext<ConflictMenuState>(conflictMenuContext, (id, next) => {
+    if (next) menus.add(id);
+    else menus.delete(id);
+    menuCount = menus.size;
+  });
 </script>
 
 <AppShell.SurfaceLayer
@@ -45,7 +56,7 @@
   {label}
   coverPanelIds={["right"]}
   mobilePlacement="root"
-  dismissOnEscape={!busy && dismissOnEscape}
+  dismissOnEscape={!busy && dismissOnEscape && menuCount === 0}
   onDismiss={onClose}
   class="store-conflict-editor"
 >

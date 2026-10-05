@@ -2513,3 +2513,13 @@ operation/configuration guards remain authoritative. Line/byte counts and a
 bounded content preview are derived locally; no commit origin is inferred and no
 additional transport read or command shape is introduced. Nested picker
 dismissal and the full-body conflict surface remain session-only UI state.
+Centered and trailing Merge Editor header snippets are presentation-only public
+dependency seams. Wrap, horizontal-sync, whitespace and case comparison
+preferences persist locally under `jj-store/merge-editor/v1`, containing only
+version and wrap/syncHorizontalScroll/ignoreWhitespace/ignoreCase booleans, with
+earlier two-field records retained and no command, content or credential
+persistence.
+
+The shared conflict file-loading skeleton consumes the existing lazy
+selected-path read and changes no endpoint, request, response or mutation
+contract.

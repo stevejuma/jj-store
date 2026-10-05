@@ -321,13 +321,26 @@ existing guarded JJ command, retaining other conflicts, WIP and workspace
 membership. Warning copy offers in-app resolution; genuinely unsupported native
 shapes retain their explicit reason and do not fabricate an editor or enable a
 command. Multi-sided text comparison uses one compact Command View popover
-picker instead of a row of version buttons or an introductory paragraph. Options
-preserve native order and show a version label, exact text line/byte counts and
-a bounded first differing-line preview. Search includes this detail; keyboard
-selection, Escape and trigger focus restoration reuse the shared Command
-View/Popover behavior. Deleted versions stay visible but disabled. Changing the
-comparison retains the reviewed resolution and still requires explicit
-whole-file staging.
+picker instead of a row of version buttons or an introductory paragraph. Its
+24px trigger uses the public Merge Editor centered header slot between the
+filename and change pager. A trailing kebab menu provides Wrap lines, Sync
+horizontal scroll, Ignore whitespace and Ignore case; synchronization defaults
+on and comparison filters default off. Workspace and native Op Log conflict
+editors share these controls and the gutter fix. Items match standard menu
+typography and grouped layout without an extra bold caption. Version-1 browser
+local storage retains only these four boolean display preferences, accepting
+earlier two-field records with comparison defaults, across editor remounts and
+reloads; malformed or unavailable storage falls back safely. Changing comparison
+settings preserves edited and accepted resolution text, while filters cannot
+certify a native conflict resolved or authorize a command. Menu Escape retains
+the conflict surface and returns focus to its trigger. Sticky line-number
+gutters remain above horizontally scrolled text and current-hunk overlays.
+Options preserve native order and show a version label, exact text line/byte
+counts and a bounded first differing-line preview. Search includes this detail;
+keyboard selection, Escape and trigger focus restoration reuse the shared
+Command View/Popover behavior. Deleted versions stay visible but disabled.
+Changing the comparison retains the reviewed resolution and still requires
+explicit whole-file staging.
 
 Unstaged uses the shared virtual FileListing in all three modes. Current
 conflict paths and unresolved target-side native terms show an accessible
@@ -2629,7 +2642,12 @@ Editor. Multi-sided text conflicts expose bounded ordered versions for pairwise
 comparison in the same editable Merge Editor. The user reviews every version and
 explicitly stages the complete resolved file before preview. Structural, mode,
 binary and oversized values retain explicit unsupported reasons. Conflict paths
-are bounded to 50 per current read.
+are bounded to 50 per current read. While selected file text loads, the shared
+conflict content shows an accessible busy skeleton with a header and three
+panes, keeping the file browser and action header visible, hiding prior file
+text and disabling stage/preview until the read completes. Loading copy is
+screen-reader-only; errors retain their contextual feedback. Workspace and
+focused Op Log share this loading presentation.
 
 Undo/Redo restores the native repository operation stack, including CLI work,
 with native descriptions and remote tracking semantics. Current Git bookkeeping

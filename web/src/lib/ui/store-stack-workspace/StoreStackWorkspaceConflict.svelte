@@ -2,7 +2,7 @@
   import { tick, untrack } from "svelte";
   import { MediaQuery } from "svelte/reactivity";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { Spinner } from "@lapismd/design-core/shadcn/spinner";
+  import StoreConflictSkeleton from "../store-conflicts/StoreConflictSkeleton.svelte";
   import Eye from "@lucide/svelte/icons/eye";
   import FileCheck from "@lucide/svelte/icons/file-check-2";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
@@ -175,7 +175,7 @@
     message={failure}
     lifetime="condition"
   />
-  {#if loading}<p role="status"><Spinner />Loading conflict…</p>{/if}
+  {#if loading}<StoreConflictSkeleton />{/if}
   {#each controller.snapshot?.conflicts ?? [] as item (item.path)}
     {@const value =
       loaded[item.path] ?? (!controller.adapter.readConflict ? item : null)}

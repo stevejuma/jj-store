@@ -6,7 +6,13 @@ Editor review and whole-file staging; pair completion cannot prove the complete
 conflict resolved. Unsupported native shapes retain their reasons. The
 comparison version picker is a compact searchable Command View with text counts
 and a bounded preview; its Escape action retains the full-width conflict
-surface.
+surface. Its smaller trigger is centered in the Merge Editor header, beside a
+settings menu for wrapping, default-enabled horizontal synchronization,
+whitespace and case comparison; workspace and native Op Log editors share menu
+typography and behavior; display preferences persist in browser local storage
+and do not contain resolution drafts. Selected-file loading uses a three-pane
+merge skeleton with an accessible busy status while preserving the header and
+file browser.
 
 The browsing manual describes conflict indicators, workspace rail actions and
 the shared editor entry from the attention toast, including its resting button

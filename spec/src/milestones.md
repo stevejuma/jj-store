@@ -107979,6 +107979,270 @@ entries.
   "next": "Keep the existing local preview available; native conflict execution and separately deferred unsupported shapes/release/visual qualification remain unchanged.",
   "summary": "The picker retains reviewed merge text when switching versions and keeps deletion choices visibly disabled. Command labels/search include exact line and UTF-8 byte counts plus at most 100 characters of content preview. Owned nested-open state suppresses shell Escape dismissal while the picker is active. Both native and workspace editors cover the measured body boundary without the inherited second 8px inset.",
   "verification_scope": "UI-only: exact picker regressions, shared native/workspace conflict stories, web/catalog types, ownership/architecture, live geometry and keyboard confirmation, focused formatting and document/specification/progress checks. Rust builds/tests, root aggregates, screenshot comparisons, baseline changes and publication are out of scope."
+},
+{
+  "id": "E-M21-057",
+  "tasks": [
+    "M21",
+    "M21.1",
+    "M21.2"
+  ],
+  "date": "2026-10-06",
+  "kind": "ui",
+  "change": "Enclosing Jujutsu change: Add shared conflict loading skeleton and merge editor settings",
+  "scope": "Center the compact version picker in the public Merge Editor header; share a standard four-option persisted settings menu across native and workspace/Op Log conflict editors; default horizontal synchronization on, preserve drafts across comparison changes, keep text beneath gutters and show a three-pane skeleton during lazy file reads.",
+  "files": [
+    "catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+    "catalog/fixtures/StackWorkspaceConflictApplicationFixture.svelte",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/editing.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/store-conflicts/StoreConflictSkeleton.svelte",
+    "web/src/lib/ui/store-conflicts/StoreConflictSurface.svelte",
+    "web/src/lib/ui/store-conflicts/StoreConflictText.svelte",
+    "web/src/lib/ui/store-conflicts/menu-context.ts",
+    "web/src/lib/ui/store-conflicts/merge-editor-settings.ts",
+    "web/src/lib/ui/store-stack-workspace/StoreStackConflictVersionPicker.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackConflictVersions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceConflict.svelte",
+    "web/tests/merge-editor-settings.test.ts"
+  ],
+  "versions": "JJ 0.45.1; pnpm 10.32.1; Svelte 5.57.1; Design Core source 0.1.2: rmlqkuql/5c8be23b and draft-retention follow-up yuktqxxq/61dfda30 through the existing supported temporary validation dependency. Portable ^0.2.0 manifest and registry lockfile retained.",
+  "formats": "Browser-local jj-store/merge-editor/v1 stores version and wrap, syncHorizontalScroll, ignoreWhitespace, ignoreCase booleans only; earlier two-field records retain values and default new filters off. No drafts, content, credentials, HTTP/RPC, native commands, TOML, layout, manifest or WAL changes.",
+  "runs": [
+    {
+      "command": "Design Core: pnpm test:storybook src/shared/diff/merge-editor/MergeEditor.stories.svelte -t \"Centers host controls\"",
+      "result": "pass",
+      "failures": 0,
+      "detail": "No tests executed: human-readable filter did not match generated PascalCase story names (15 skipped); reran the exact file. /tmp/merge-header-before.log records the actual regression run."
+    },
+    {
+      "command": "Design Core: pnpm test:storybook src/shared/diff/merge-editor/MergeEditor.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Before centered slot: 1 failed/14 passed. The header control did not render. /tmp/merge-header-before.log."
+    },
+    {
+      "command": "Design Core: pnpm test:storybook src/shared/diff/merge-editor/MergeEditor.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Centered slot: 15 passed, measuring 720/480/320px center, non-overlap, narrow second row, retained focus and pager. /tmp/merge-header-after.log."
+    },
+    {
+      "command": "Design Core: pnpm checks",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Initial governance stopped the aggregate on a multi-sentence acceptance bullet; corrected the normative wording. Other two lanes were cancelled. /tmp/merge-header-checks.log."
+    },
+    {
+      "command": "Design Core: pnpm test:storybook src/shared/diff/merge-editor/MergeEditor.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "detail": "Before gutter/default-sync fix: 2 failed/15 passed. Editable/current-hunk text painted over gutter and horizontal synchronization defaulted off. /tmp/merge-settings-before.log."
+    },
+    {
+      "command": "Design Core: pnpm test:storybook src/shared/diff/merge-editor/MergeEditor.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "After source fix: 17 passed; hit-tested scrolled text/current highlights beneath gutters and default horizontal synchronization. /tmp/merge-settings-after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Before picker relocation: 1 failed/2 passed; trigger outside Merge Editor toolbar. /tmp/stack-header-before.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Initial settings integration: 1 failed/3 passed. Preventing selection also prevented CheckboxItem state updates. Replaced with public closeOnSelect=false. /tmp/stack-settings-before.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Fresh browser process: 15 passed, including centered 24px picker, persisted settings after editor remount, retained draft, Escape/trigger focus and native/workspace conflict flows. /tmp/stack-settings-stories.log."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/merge-editor-settings.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "detail": "3 passed: malformed/foreign storage, exact preference-only serialization and storage-denial fallback. /tmp/stack-settings-unit.log."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Both: 0 errors/0 warnings; 242 catalog modules. /tmp/stack-settings-web.log and /tmp/stack-settings-catalog.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Ownership validates 1 checker/23 chapters/173 requirements; architecture validates 1136 modules. /tmp/stack-settings-ownership.log and /tmp/stack-settings-architecture.log."
+    },
+    {
+      "command": "pnpm install --offline --force --ignore-scripts; jj restore --from @- pnpm-lock.yaml; cmp <installed/source MergeEditor.svelte and MergeEditor.css>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Refreshed the existing supported temporary validation dependency; exact runtime source matches. Portable package manifest and registry lockfile unchanged. /tmp/stack-header-dependency.log."
+    },
+    {
+      "command": "Owned Vite-only restart and pnpm storybook --port 6057 --ci",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Fresh UI process on 7476 and owned Storybook on 6057; backend PID 42570 and .local/dev-demo preserved. No Rust builds, backend restart or reset."
+    },
+    {
+      "command": "CUA live picker geometry, settings reload, native horizontal scroll, menu sizing and Escape",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Live picker height 24px, center error 0.00390625px; settings restored after reload and sync defaults on. Center pane scrollLeft=468.5px and gutter hit-test stays above text. Menu width 224px/item height 32px; live merge and Workspace Settings item typography both Inter 14px/400/20px. Escape retains editor and focuses trigger. Initial busy read recovered via Refresh. Focused Op Log has the same four options, preserves typed resolution and restores both comparison options after reload; filters reset off afterward. Tab-local 4000ms CDP latency exposed the actual loading skeleton, then latency reset to zero, Network disabled and loaded editor confirmed. Temporary tab closed; no resolution applied. Proof: .local/stacks-merge-header/live-oplog-settings.png and live-loading-skeleton.png."
+    },
+    {
+      "command": "Design Core: pnpm spec:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Validate, mdbook and specification-first lanes pass. /tmp/merge-settings-spec-final.log."
+    },
+    {
+      "command": "Design Core: pnpm checks",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Initial header/gutter slice: 722 units, 670 stories, 15 workspace, 11 shell, 3 AI and 48 shadcn browser tests plus one governed skip; types/static/audit/governance passed. Committed rmlqkuql/5c8be23b. /tmp/merge-settings-checks.log."
+    },
+    {
+      "command": "Design Core: pnpm test:storybook src/shared/diff/merge-editor/MergeEditor.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Comparison settings discarded edited content: 1 failed/17 passed. /tmp/merge-comparison-before.log."
+    },
+    {
+      "command": "Design Core: pnpm test:storybook src/shared/diff/merge-editor/MergeEditor.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "18 passed after separating content identity from comparison-model identity; edited and accepted three-way content survives both filters. /tmp/merge-comparison-after.log."
+    },
+    {
+      "command": "Design Core: pnpm checks",
+      "result": "fail",
+      "failures": 4,
+      "detail": "Four type errors from unsupported testing-library exact role-query option; removed it without relaxing exact string names. /tmp/merge-comparison-checks.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "fail",
+      "failures": 8,
+      "detail": "Same unsupported testing-library exact option in new consumer assertions; corrected, then zero diagnostics. /tmp/stack-all-settings-catalog.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "0 errors/0 warnings; 242 catalog modules. /tmp/stack-all-settings-catalog-final.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "17 shared conflict stories passed before skeleton addition: all four settings, matched typography, retained drafts, native staging and focused Op Log notification-to-editor flow. The attempted ordinary Op Log fixture targeted an ineligible commit after operation selection; reverted fixture change and retained capability guards. /tmp/stack-all-settings-final-stories.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Skeleton regression before implementation: 1 failed/5 passed. /tmp/stack-skeleton-before.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "6 passed; controlled deferred read holds skeleton until explicit fixture release, without timing sleeps; stage stays disabled and skeleton disappears on loaded editable content. /tmp/stack-skeleton-after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final fresh browser process: 18 stories passed. /tmp/stack-merge-complete-stories.log."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/merge-editor-settings.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final 4 units passed: defaults, malformed/foreign records, exact preference-only serialization, denial fallback and compatibility with earlier two-field records. /tmp/stack-merge-complete-unit.log."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final 0 errors/0 warnings; 242 catalog modules. /tmp/stack-skeleton-web.log and /tmp/stack-skeleton-catalog.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final ownership: 1 checker/23 chapters/173 requirements; architecture: 1137 modules. /tmp/stack-merge-complete-ownership.log and /tmp/stack-merge-complete-architecture.log."
+    },
+    {
+      "command": "Design Core: pnpm spec:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final validate, mdbook and spec-first lanes pass. /tmp/merge-comparison-spec-final.log."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Preliminary evidence check rejected pass with unfinished required checks in remaining; final entry is completed only after those checks pass."
+    },
+    {
+      "command": "pnpm docs:review application <shared conflict settings and skeleton review>; pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Refreshed application source fingerprint after the final shared settings, retained drafts and skeleton changes; documentation reflects the supported native and focused Op Log paths."
+    },
+    {
+      "command": "Design Core: pnpm checks",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final required nonvisual aggregate passed: 722 units, 671 stories, 15 workspace, 11 shell, 3 AI and 48 shadcn browser tests plus one governed skip; types, specification, formatting, static catalog and audit passed. Follow-up committed yuktqxxq/61dfda30. /tmp/merge-comparison-checks-final.log."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Documentation closure 139 files/14824866 bytes, links and anchors valid; 9 Mermaid diagrams rendered in light/dark offline. /tmp/stack-merge-complete-docs.log."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final spec-first: 15 protected files/4 canonical chapters; validate: 5 checkers/23 chapters/173 requirements. /tmp/stack-merge-complete-first.log and /tmp/stack-merge-complete-spec.log."
+    },
+    {
+      "command": "pnpm exec prettier --check <19 changed files>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "All matched files use Prettier code style. /tmp/stack-merge-complete-format.log."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "detail": "142 tasks; evidence bookkeeping passes. Verified the 595 historical evidence entries remain byte-equivalent as JSON data. /tmp/stack-merge-complete-progress.log."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "next": "Keep existing preview services available; source and consumer changes are separately committed. Registry-only release qualification and visual baselines remain outside this UI slice.",
+  "summary": "Shared native/workspace conflict presentation has standard menu typography, four safe persisted display settings and compact host header controls. Comparison changes retain editable and accepted content; filters cannot certify native completion. Opaque gutters cover scrolled code and current highlights. A busy three-pane skeleton replaces visible loading copy while retaining file navigation and disabled command controls. Focused Op Log uses the same presentation; whole-file staging and native capability guards remain unchanged.",
+  "verification_scope": "Source-first Merge Editor regressions and required Design Core nonvisual aggregate; directly affected shared native/workspace/Op Log editor stories, web/catalog types, preference units, ownership/architecture, refreshed dependency/cold live browser and canonical/manual/progress checks. Consumer root aggregates, Rust builds/tests, screenshot comparisons, baseline updates and package publication are out of scope under the targeted UI policy. No milestone promotion or live resolution."
 }
 ]
 ```

@@ -87,7 +87,7 @@
       <Button
         {...props}
         variant="outline"
-        size="sm"
+        size="xs"
         role="combobox"
         aria-label="Comparison version"
         aria-expanded={open}

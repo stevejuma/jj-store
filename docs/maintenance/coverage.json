@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the workspace conflict Command View comparison picker, bounded native text summaries, deleted-version guards and nested Escape/focus retention. The shared conflict surface consumes the public zero trailing inset to cover the whole measured body.",
-      "fingerprint": "f0113ef794a8ed53a1fa26d61fbef6555f6b04af08a5798a560d20e061e6c7ab"
+      "reason": "Reviewed shared native and focused Op Log conflict editors, compact centered version picker, standard four-option menu, retained drafts across comparison changes, preference-only local persistence, synchronized opaque gutters and lazy-read skeleton presentation; exact native staging and guarded commands remain unchanged.",
+      "fingerprint": "7cf591cf649e09f8be4e76935e9c9db4f77d7c6b3cdb6610ae1af88fd8780a86"
     }
   },
   {

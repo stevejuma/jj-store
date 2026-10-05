@@ -55,12 +55,23 @@ conflicted and oversized deltas require whole-file operations or native JJ
 tools. Net branch diffs are read-only. The local Merge Editor supports bounded
 three-term text conflicts with an editable Resolved pane. Multi-sided text
 conflicts retain the native version picker and show the same editable Merge
-Editor. Choose a version in the searchable comparison picker; each option shows
-line/byte counts and a short content preview. Compare it with the current
-resolution, then explicitly stage the whole file for complete-file preview and
-guarded JJ resolution. Selecting a deleted version cannot replace it with an
-empty file. Structural, mode, binary and oversized conflicts retain their
-explicit unsupported reason and require native JJ tools.
+Editor. Its small comparison picker sits in the center of the editor header.
+Choose a version in the searchable picker; each option shows line/byte counts
+and a short content preview. Compare it with the current resolution, then
+explicitly stage the whole file for complete-file preview and guarded JJ
+resolution. Selecting a deleted version cannot replace it with an empty file.
+Structural, mode, binary and oversized conflicts retain their explicit
+unsupported reason and require native JJ tools.
+
+Workspace and Op Log share the editor header settings menu: Wrap lines, Sync
+horizontal scroll, Ignore whitespace and Ignore case. Synchronization starts
+enabled and comparison filters start off. All four display preferences are
+remembered in browser local storage; changing them retains your resolution text.
+Comparison filters do not complete conflict resolution; stage the reviewed whole
+file explicitly. Resolution drafts are not saved in local storage. Line-number
+gutters remain opaque above horizontally scrolled text. While a conflict file
+loads, a merge skeleton fills the editor area and keeps the header and file
+browser available. Stage and preview remain disabled until the file is ready.
 
 Undo and Redo follow repository-wide native operation history, including CLI
 operations, while retaining current Git bookkeeping. They do not restore

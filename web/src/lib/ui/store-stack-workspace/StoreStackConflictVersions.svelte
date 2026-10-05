@@ -21,18 +21,6 @@
   const base = $derived(value.terms?.[Math.max(1, version - 1)] ?? value.base);
 </script>
 
-<StoreStackConflictVersionPicker
-  terms={value.terms ?? []}
-  selected={version}
-  disabled={locked}
-  onOpenChange={onPickerOpen}
-  onSelect={(index) => {
-    if (locked || value.terms?.[index] === null || index === version) return;
-    left = reviewed ?? left;
-    version = index;
-    onDraft(left, false);
-  }}
-/>
 <StoreConflictText
   path={value.path}
   {left}
@@ -51,4 +39,20 @@
     reviewed = content;
     onDraft(content, false);
   }}
-/>
+>
+  {#snippet headerCenter()}
+    <StoreStackConflictVersionPicker
+      terms={value.terms ?? []}
+      selected={version}
+      disabled={locked}
+      onOpenChange={onPickerOpen}
+      onSelect={(index) => {
+        if (locked || value.terms?.[index] === null || index === version)
+          return;
+        left = reviewed ?? left;
+        version = index;
+        onDraft(left, false);
+      }}
+    />
+  {/snippet}
+</StoreConflictText>

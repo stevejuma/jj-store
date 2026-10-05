@@ -6,6 +6,7 @@
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
   import { MockStackWorkspaceAdapter } from "./stack-workspace/adapter.js";
+  import type { StackWorkspaceAdapter } from "../../web/src/lib/controller/stack-workspace/types.js";
   import {
     fixtureFile,
     workspaceStoryFixture,
@@ -17,6 +18,7 @@
     multisided = false,
     deletedVersion = false,
     unsupported = false,
+    deferredConflict = false,
   }: {
     writable?: boolean;
     membershipChanged?: boolean;
@@ -24,7 +26,9 @@
     multisided?: boolean;
     deletedVersion?: boolean;
     unsupported?: boolean;
+    deferredConflict?: boolean;
   } = $props();
+  let completeRead = $state<(() => void) | undefined>();
   const controller = untrack(() => createInMemoryStoreController("stacks"));
   const layoutStorage = untrack(createMemoryStoryStorage);
   const fixture = untrack(() => {
@@ -95,6 +99,20 @@
     };
     files.push(metadata, resolved);
     const adapter = new MockStackWorkspaceAdapter(snapshot);
+    if (deferredConflict) {
+      const readConflict: NonNullable<
+        StackWorkspaceAdapter["readConflict"]
+      > = async ({ path }) => {
+        await new Promise<void>((resolve) => (completeRead = resolve));
+        completeRead = undefined;
+        const value = adapter.snapshot.conflicts.find(
+          (item) => item.path === path,
+        );
+        if (!value) throw Error("Fixture conflict unavailable");
+        return { ...value };
+      };
+      Object.assign(adapter, { readConflict });
+    }
     return { adapter, workspace: new StackWorkspaceController(adapter) };
   });
   const stackWorkspace = fixture.workspace;
@@ -112,13 +130,22 @@
     void stackWorkspace.refresh();
     return () => {
       stackWorkspace.close();
+      completeRead?.();
       controller.actions.destroy();
     };
   });
 </script>
 
 <div class="stack-conflict-application-fixture">
-  <Button variant="ghost" onclick={recover}>Simulate conflict recovery</Button>
+  <div>
+    <Button variant="ghost" onclick={recover}>Simulate conflict recovery</Button
+    >
+    {#if deferredConflict}<Button
+        variant="ghost"
+        disabled={!completeRead}
+        onclick={() => completeRead?.()}>Complete conflict read</Button
+      >{/if}
+  </div>
   <StoreRepositoryApplication
     {controller}
     {stackWorkspace}

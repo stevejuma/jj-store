@@ -4,11 +4,20 @@
   import StoreConflictEditor from "../../../web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte";
   import StoreConflictEditorFixture from "../../fixtures/StoreConflictEditorFixture.svelte";
   import { conflicts } from "../../fixtures/conflicts.js";
+  import { mergeEditorSettingsKey } from "../../../web/src/lib/ui/store-conflicts/merge-editor-settings.js";
 
   const { Story } = defineMeta({
     title: "JJ Store/Mutations/Conflict editor",
     component: StoreConflictEditor,
     tags: ["visual-pending"],
+    beforeEach: () => {
+      const prior = localStorage.getItem(mergeEditorSettingsKey);
+      localStorage.removeItem(mergeEditorSettingsKey);
+      return () => {
+        if (prior === null) localStorage.removeItem(mergeEditorSettingsKey);
+        else localStorage.setItem(mergeEditorSettingsKey, prior);
+      };
+    },
   });
 
   async function sheetFor(canvasElement: HTMLElement) {
@@ -39,6 +48,46 @@
     );
   }
 </script>
+
+<Story
+  name="Native editor shares merge header settings and retains filtered drafts"
+  play={async ({ canvasElement }) => {
+    const { page, dialog, view } = await sheetFor(canvasElement);
+    const editor = view.getByRole("textbox", { name: "Edit Resolved" });
+    await userEvent.clear(editor);
+    await userEvent.type(editor, "// Op Log retained draft\n");
+    const trigger = view.getByRole("button", { name: "Merge editor settings" });
+    expect(trigger.closest(".ui-diff-merge-editor__nav")).not.toBeNull();
+    await userEvent.click(trigger);
+    for (const name of [
+      "Wrap lines",
+      "Sync horizontal scroll",
+      "Ignore whitespace",
+      "Ignore case",
+    ]) {
+      expect(page.getByRole("menuitemcheckbox", { name })).toBeVisible();
+    }
+    expect(
+      page.getByRole("menuitemcheckbox", { name: "Sync horizontal scroll" }),
+    ).toHaveAttribute("aria-checked", "true");
+    await userEvent.click(
+      page.getByRole("menuitemcheckbox", { name: "Ignore whitespace" }),
+    );
+    await userEvent.click(
+      page.getByRole("menuitemcheckbox", { name: "Ignore case" }),
+    );
+    await userEvent.keyboard("{Escape}");
+    expect(dialog).toBeVisible();
+    expect(trigger).toHaveFocus();
+    expect(editor).toHaveValue("// Op Log retained draft\n");
+    await userEvent.click(
+      view.getByRole("button", { name: "Stage merged file" }),
+    );
+    expect(view.getByRole("button", { name: "Preview 1/2" })).toBeEnabled();
+  }}
+>
+  {#snippet template()}<StoreConflictEditorFixture />{/snippet}
+</Story>
 
 <Story
   name="Atomic term resolution"
